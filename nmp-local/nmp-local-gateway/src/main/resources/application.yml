@@ -1,0 +1,53 @@
+server:
+  port: 8004
+spring:
+  application:
+   name: gateway
+  redis:
+    database: 0
+    host: 192.168.72.230
+    port: 6379
+    password: 123456
+    timeout: 500
+    lettuce:
+      pool:
+        max-active: 100
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+          - id: gateway-service
+            uri: http://127.0.0.1:8001
+            predicates:
+              - Path=/network-manager/**
+            filters:
+              - StripPrefix=0
+
+    sentinel:
+      transport:
+        port: 8720
+        dashboard: 192.168.72.230:8090
+eureka:
+  client: #客户端注册进eureka服务列表内
+    service-url:
+      #defaultZone: http://localhost:7001/eureka
+       defaultZone: http://localhost:7002/eureka/
+  instance:
+    instance-id:  gateway
+    prefer-ip-address: true     #访问路径可以显示IP地址
+ 
+info: 
+  app.name: gateway
+  company.name: www.matrictime.com
+  build.artifactId: $project.artifactId$
+  build.version: $project.version$
+logging:
+  file:
+    path: logs
+  level:
+    com.jzsg: info
