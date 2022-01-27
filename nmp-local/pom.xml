@@ -11,8 +11,9 @@
     <modules>
         <module>nmp-local-eureka</module>
         <module>nmp-local-business</module>
-        <module>nmpl-local-message</module>
+        <module>nmp-local-message</module>
         <module>nmp-local-gateway</module>
+        <module>nmp-local-common</module>
     </modules>
 
     <properties>
