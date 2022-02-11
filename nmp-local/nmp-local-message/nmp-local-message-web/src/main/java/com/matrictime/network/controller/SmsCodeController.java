@@ -1,11 +1,11 @@
-package src.main.java.com.matrictime.network.controller;
+package com.matrictime.network.controller;
 
-import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.SmsCodeRequest;
 import com.matrictime.network.request.VoiceCallRequest;
 import com.matrictime.network.service.RedisOperateService;
-import src.main.java.com.matrictime.network.service.SmsService;
+import com.matrictime.network.service.SmsService;
 import com.matrictime.network.service.VoiceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import src.main.java.com.matrictime.network.service.VoiceService;
 
 /**
  * @author jiruyi
@@ -31,8 +30,8 @@ import src.main.java.com.matrictime.network.service.VoiceService;
 @Slf4j
 public class SmsCodeController {
 
-    @Autowired
-    private SmsService smsService;
+//    @Autowired
+//    private SmsService smsService;
 
     @Autowired
     private VoiceService voiceService;
@@ -57,7 +56,7 @@ public class SmsCodeController {
                     || ObjectUtils.isEmpty(smsCodeRequest.getBizCode())){
                 return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
-            return  smsService.sendSmsCode(smsCodeRequest.getPhoneNo(),smsCodeRequest.getBizCode());
+            return null;
         }catch (Exception e){
             log.error("smsSend exception:{}",e.getMessage());
             return new Result(false,e.getMessage());

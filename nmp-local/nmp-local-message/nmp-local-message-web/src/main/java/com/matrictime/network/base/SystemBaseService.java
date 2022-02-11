@@ -1,4 +1,4 @@
-package src.main.java.com.matrictime.network.base;
+package com.matrictime.network.base;
 
 import com.matrictime.network.model.Result;
 import org.slf4j.Logger;

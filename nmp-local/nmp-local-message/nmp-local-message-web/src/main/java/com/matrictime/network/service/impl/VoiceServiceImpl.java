@@ -1,19 +1,17 @@
-package src.main.java.com.matrictime.network.service.impl;
+package com.matrictime.network.service.impl;//package src.main.java.com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.dyvmsapi20170525.models.SingleCallByTtsRequest;
 import com.aliyun.teaopenapi.models.Config;
 import com.matrictime.network.base.SystemBaseService;
-import com.matrictime.network.base.SystemException;
-import com.matrictime.network.base.exception.ErrorMessageContants;
-import com.matrictime.network.base.util.DateUtils;
-import com.matrictime.network.dao.domian.UserDomainService;
-import com.matrictime.network.dao.model.NetworkUser;
+import com.matrictime.network.dao.model.NmplUser;
+import com.matrictime.network.domain.NmplUserDomainService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.VoiceCallRequest;
 import com.matrictime.network.service.VoiceService;
+import com.matrictime.network.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import src.main.java.com.matrictime.network.base.SystemBaseService;
-import src.main.java.com.matrictime.network.service.VoiceService;
 
 import java.util.Date;
 import java.util.List;
@@ -49,12 +45,13 @@ public class VoiceServiceImpl extends SystemBaseService implements VoiceService 
     private  String accessKeySecret;
 
     @Autowired
-    private UserDomainService userDomainService;
+    private NmplUserDomainService userDomainService;
+
     @Value("${vms.request.url}")
     private  String vmsUrl;
     /**
      * @title voiceCall
-     * @param [voiceCallRequest]
+     * @param []
      * @return com.matrictime.network.model.Result
      * @description
      * @author jiruyi
@@ -106,12 +103,12 @@ public class VoiceServiceImpl extends SystemBaseService implements VoiceService 
     public Result voiceCallBactch(VoiceCallRequest voiceCallRequest) {
         Result result =  new Result();
         try {
-            List<NetworkUser> userList  = userDomainService.getAllUserInfo();
+            List<NmplUser> userList  = userDomainService.getAllUserInfo();
             if(CollectionUtils.isEmpty(userList)){
                 return result;
             }
-            List<String> phoneList = userList.stream().filter(item -> item.getRoleType() == 1 || item.getRoleType() == 2)
-                    .map(NetworkUser::getPhone).collect(Collectors.toList());
+            List<String> phoneList = userList.stream().filter(item -> item.getRoleId().equals("1") || item.getRoleId().equals(2))
+                    .map(NmplUser::getPhoneNumber).collect(Collectors.toList());
             if(CollectionUtils.isEmpty(phoneList)){
                 return result;
             }

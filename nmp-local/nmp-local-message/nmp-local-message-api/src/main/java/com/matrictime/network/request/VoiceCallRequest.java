@@ -1,7 +1,9 @@
 package com.matrictime.network.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -14,6 +16,8 @@ import java.util.List;
  */
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class VoiceCallRequest {
     //接收语音通知的手机号码
     private String calledNumber;

@@ -1,4 +1,4 @@
-package src.main.java.com.matrictime.network;
+package com.matrictime.network;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

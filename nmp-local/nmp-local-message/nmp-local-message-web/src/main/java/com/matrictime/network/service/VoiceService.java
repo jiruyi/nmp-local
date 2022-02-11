@@ -1,4 +1,4 @@
-package src.main.java.com.matrictime.network.service;
+package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.VoiceCallRequest;
