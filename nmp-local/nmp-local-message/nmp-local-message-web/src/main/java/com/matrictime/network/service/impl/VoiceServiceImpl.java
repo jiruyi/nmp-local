@@ -73,6 +73,7 @@ public class VoiceServiceImpl extends SystemBaseService implements VoiceService 
             //1.构建发送参数
             com.aliyun.dyvmsapi20170525.Client client = createVmsClient();
             SingleCallByTtsRequest singleCallByTtsRequest = new SingleCallByTtsRequest();
+
             //json 校验
             if(!isJson(voiceCallRequest.getTtsParam())){
                 throw new SystemException(ErrorMessageContants.JSON_ERROR_FAIL_MSG);

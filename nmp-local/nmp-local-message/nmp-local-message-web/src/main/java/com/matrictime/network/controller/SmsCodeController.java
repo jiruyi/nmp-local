@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class SmsCodeController {
 
-//    @Autowired
-//    private SmsService smsService;
+    @Autowired
+    private SmsService smsService;
 
     @Autowired
     private VoiceService voiceService;
@@ -56,7 +56,7 @@ public class SmsCodeController {
                     || ObjectUtils.isEmpty(smsCodeRequest.getBizCode())){
                 return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
-            return null;
+            return  smsService.sendSmsCode(smsCodeRequest.getPhoneNo(),smsCodeRequest.getBizCode());
         }catch (Exception e){
             log.error("smsSend exception:{}",e.getMessage());
             return new Result(false,e.getMessage());

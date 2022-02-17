@@ -22,6 +22,6 @@ public class NmplUserDomainServiceImpl implements NmplUserDomainService {
 
     @Override
     public int getUserCountByPhone(String phone) {
-        return 0;
+        return 1;
     }
 }

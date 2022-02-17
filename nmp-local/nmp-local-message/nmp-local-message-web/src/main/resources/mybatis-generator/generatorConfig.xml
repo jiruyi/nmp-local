@@ -45,7 +45,7 @@
         <!--               selectByExampleQueryId="true">-->
         <!--        </table>-->
 
-        <table tableName="nmpl_user" domainObjectName="NmplUser"
+        <table tableName="nmpl_sms_detail" domainObjectName="NmplSmsDetail"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
