@@ -17,7 +17,6 @@
         <module>business-dao</module>
         <module>business-service</module>
         <module>business-web</module>
-        <module>nmp-local-message-apl</module>
     </modules>
 
     <properties>
