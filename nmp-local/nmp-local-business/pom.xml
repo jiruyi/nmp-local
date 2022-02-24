@@ -2,15 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>nmp-local</artifactId>
-        <groupId>com.matrictime.cn</groupId>
-        <version>1.0.0</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
 
+
+    <groupId>com.matrictime.cn</groupId>
     <artifactId>nmp-local-business</artifactId>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
+    <modelVersion>4.0.0</modelVersion>
     <modules>
         <module>business-api</module>
         <module>business-base</module>

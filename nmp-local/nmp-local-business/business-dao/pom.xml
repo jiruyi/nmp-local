@@ -21,6 +21,7 @@
             <groupId>com.matrictime.cn</groupId>
             <artifactId>business-base</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -39,7 +40,7 @@
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
                 <version>1.4.0</version>
                 <configuration>
-                    <configurationFile>../network-manager-dao/src/main/resources/mybatis-generator/generatorConfig.xml
+                    <configurationFile>../business-dao/src/main/resources/mybatis-generator/generatorConfig.xml
                     </configurationFile>
                     <verbose>true</verbose>
                     <overwrite>true</overwrite>
