@@ -19,8 +19,10 @@ public class MyRedisConfig {
     @Bean(name = "redisTemplate")
     public RedisTemplate<String,Object> getRedisTemplate(RedisConnectionFactory factory){
         RedisTemplate<String,Object> redisTemplate = new RedisTemplate<String,Object>();
+
         redisTemplate.setConnectionFactory(factory);
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         redisTemplate.setKeySerializer(stringRedisSerializer);
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);

@@ -7,7 +7,7 @@ import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.AesEncryptUtil;
 import com.matrictime.network.dao.domain.UserDomainService;
-import com.matrictime.network.dao.model.NmplLogintDetail;
+import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LoginRequest;
@@ -172,11 +172,19 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
     }
 
 
+    /**
+     * @title insetLoginDetail
+     * @param [loginRequest, list, result]
+     * @return void
+     * @description
+     * @author jiruyi
+     * @create 2022/2/25 0025 9:32
+     */
     public void insetLoginDetail(LoginRequest loginRequest, List<NmplUser> list, Result<LoginResponse> result){
         try {
             String ip = ObjectUtils.isEmpty(request.getHeader("X-Real-IP"))
                     ?request.getRemoteAddr():request.getHeader("X-Real-IP");
-            NmplLogintDetail loginDetail = NmplLogintDetail.builder()
+            NmplLoginDetail loginDetail = NmplLoginDetail.builder()
                     .loginIp(ip)
                     .loginAddr(loginRequest.getLoginAddr())
                     .loginType(Byte.valueOf(loginRequest.getType()))
@@ -186,9 +194,13 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             //补充字段
             if(!CollectionUtils.isEmpty(list) && !ObjectUtils.isEmpty(list.get(NumberUtils.INTEGER_ZERO))){
                 loginDetail.setNickName(list.get(NumberUtils.INTEGER_ZERO).getNickName());
+                loginDetail.setLoginAccount(list.get(NumberUtils.INTEGER_ZERO).getLoginAccount());
             }
-            // int n = userDomainService.insertLoginDetail(loginDetail);
-            //   log.info("insetLoginDetail result num:{}",n);
+            if(ObjectUtils.isEmpty(loginDetail.getLoginAccount())){
+                loginDetail.setLoginAccount(loginRequest.getPhone());
+            }
+            int n = userDomainService.insertLoginDetail(loginDetail);
+            log.info("insetLoginDetail result num:{}",n);
         }catch (Exception e){
             log.error("insetLoginDetail exception:{}",e.getMessage());
         }
