@@ -50,6 +50,21 @@
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
         </table>
+        <table tableName="nmpl_base_station_info" domainObjectName="NmplBaseStationInfo"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
+        <table tableName="nmpl_device_info" domainObjectName="NmplDeviceInfo"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
+        <table tableName="nmpl_link_relation" domainObjectName="NmplLinkRelation"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
         <!--        <table tableName="network_region_info" domainObjectName="NetworkRegionInfo"-->
         <!--               enableCountByExample="true" enableUpdateByExample="true"-->
         <!--               enableDeleteByExample="true" enableSelectByExample="true"-->
