@@ -17,6 +17,10 @@ public class ErrorMessageContants {
 
 	public static final String LoginType_IS_ERROR_MSG = "登录方式不存在";
 
+	public static final String PHONE_EXIST_ERROR_MSG = "手机号已存在";
+
+	public static final String LOGINACCOUNT_EXIST_ERROR_MSG = "登录账号已存在";
+
 	public static final String PHONE_CODE_IS_NULL_MSG = "手机号或者短信验证码为空";
 
 	public static final String USERNAME_NO_EXIST_MSG = "用户名不存在";

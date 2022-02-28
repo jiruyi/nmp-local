@@ -1,7 +1,14 @@
 package com.matrictime.network.dao.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class NmplUser {
     private Long userId;
 
