@@ -2,13 +2,18 @@ package com.matrictime.network.dao.domain.impl;
 
 import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.dao.domain.UserDomainService;
+import com.matrictime.network.dao.mapper.NmplLoginDetailMapper;
 import com.matrictime.network.dao.mapper.NmplUserMapper;
+import com.matrictime.network.dao.model.NmplLoginDetail;
+import com.matrictime.network.dao.model.NmplLoginDetailExample;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.dao.model.NmplUserExample;
 import com.matrictime.network.request.LoginRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -25,6 +30,9 @@ public class UserDomainServiceImpl implements UserDomainService {
 
     @Autowired
     private NmplUserMapper userMapper;
+
+    @Autowired
+    private NmplLoginDetailMapper loginDetailMapper;
     
     /**
       * @title getUserByParamter
@@ -48,5 +56,21 @@ public class UserDomainServiceImpl implements UserDomainService {
         List<NmplUser> userList =  userMapper.selectByExample(userExample);
         log.info("UserDomainService.getUserByParamter() result is :{}",userList);
         return userList;
+    }
+
+    /**
+      * @title insertLoginDetail
+      * @param [logintDetail]
+      * @return int
+      * @description 
+      * @author jiruyi
+      * @create 2022/2/25 0025 9:25
+      */
+    @Override
+    public int insertLoginDetail(NmplLoginDetail loginDetail) {
+        if(ObjectUtils.isEmpty(loginDetail)){
+            return NumberUtils.INTEGER_ZERO;
+        }
+        return loginDetailMapper.insertSelective(loginDetail);
     }
 }
