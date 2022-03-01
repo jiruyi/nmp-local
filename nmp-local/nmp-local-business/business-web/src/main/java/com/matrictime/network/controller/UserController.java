@@ -11,6 +11,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LoginRequest;
 import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.LoginResponse;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.UserListResponse;
 import com.matrictime.network.service.UserService;
 import io.swagger.annotations.Api;
@@ -137,19 +138,24 @@ public class UserController {
         }
     }
 
+    /**
+      * @title selectUserList
+      * @param [userRequest]
+      * @return com.matrictime.network.model.Result<com.matrictime.network.response.PageInfo>
+      * @description 
+      * @author jiruyi
+      * @create 2022/3/1 0001 9:36
+      */
     @ApiOperation(value = "用户查询")
     @SystemLog(opermodul = "用户管理",operDesc = "用户查询",operType = "查询")
     @RequestMapping(value = "/select",method = RequestMethod.POST)
-    public Result<UserListResponse> selectUserList(@RequestBody UserRequest userRequest){
+    public Result<PageInfo> selectUserList(@RequestBody UserRequest userRequest){
         try {
-
-            //2.
-            //return  userService.insertUser(userRequest);
+           return userService.selectUserList(userRequest);
         }catch (Exception e){
-            log.error("用户:{}插入发生异常：{}", userRequest,e.getMessage());
+            log.error("用户查询发生异常：{}", userRequest,e.getMessage());
             return new Result<>(false,e.getMessage());
         }
-        return  null;
     }
 
 

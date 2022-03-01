@@ -66,6 +66,6 @@ public interface UserService {
       * @author jiruyi
       * @create 2022/2/28 0028 16:46
       */
-    Result<PageInfo<NmplUser>> selectUserList(UserRequest userRequest);
+    Result<PageInfo> selectUserList(UserRequest userRequest);
     
 }

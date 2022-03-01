@@ -6,7 +6,7 @@ import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.AesEncryptUtil;
-import com.matrictime.network.context.RequestContext;
+import com.matrictime.network.convert.UserConvert;
 import com.matrictime.network.dao.domain.UserDomainService;
 import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplUser;
@@ -50,6 +50,9 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
 
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private UserConvert userConvert;
 
     @Override
     public Result<LoginResponse> login(LoginRequest loginRequest) {
@@ -172,15 +175,17 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
      * @create 2022/2/28 0028 16:46
      */
     @Override
-    public Result<PageInfo<NmplUser>> selectUserList(UserRequest userRequest) {
+    public Result<PageInfo> selectUserList(UserRequest userRequest) {
         try {
             PageInfo pageInfo = userDomainService.selectUserList(userRequest);
+            //参数转换
+            List<UserRequest> list =  userConvert.to(pageInfo.getList());
+            pageInfo.setList(list);
+            return buildResult(pageInfo);
         }catch (Exception e){
-
+            log.error("selectUserList exception :{}",e.getMessage());
+            return  failResult(e);
         }
-
-
-        return null;
     }
 
     /**
