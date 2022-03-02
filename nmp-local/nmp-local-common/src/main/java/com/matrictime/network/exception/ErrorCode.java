@@ -24,4 +24,8 @@ public class ErrorCode {
      */
     public static final String PARAM_EXCEPTION = "10002";
 
+    /**
+     * 必要参数为空
+     */
+    public static final String PARAM_IS_NULL = "10003";
 }

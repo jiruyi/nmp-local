@@ -6,9 +6,13 @@
 <generatorConfiguration>
 
     <context id="my" targetRuntime="MyBatis3" defaultModelType="flat">
-        <commentGenerator>
-            <property name="suppressDate" value="false"/>
-            <property name="suppressAllComments" value="true"/>
+        <commentGenerator type="org.mybatis.generator.internal.CommentGenerator">
+            <property name="author" value="hexu"/>
+            <property name="allArgsConstructor" value="false"/>
+            <property name="noArgsConstructor" value="false"/>
+            <property name="toString" value="false"/>
+            <property name="builder.toBuilder" value="false"/>
+            <property name="builder" value="false"/>
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
@@ -45,7 +49,7 @@
         <!--               selectByExampleQueryId="true">-->
         <!--        </table>-->
 
-        <table tableName="nmpl_login_detail" domainObjectName="NmplLoginDetail"
+        <table tableName="nmpl_config" domainObjectName="NmplConfig"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
