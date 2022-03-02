@@ -464,4 +464,22 @@
       is_exist = #{isExist,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <insert id="insertDevice" parameterType="com.matrictime.network.request.DeviceInfoRequest">
+    insert into nmpl_device_info (device_id, device_name,
+      device_type, other_type, enter_network_time,
+      device_admain, remark, public_network_ip,
+      public_network_port, lan_ip, lan_port,
+      station_network_id, station_random_seed,
+      relation_operator_id, create_user, create_time,
+      update_user, update_time
+      )
+    values (#{deviceId,jdbcType=VARCHAR}, #{deviceName,jdbcType=VARCHAR},
+      #{deviceType,jdbcType=CHAR}, #{otherType,jdbcType=CHAR}, #{enterNetworkTime,jdbcType=VARCHAR},
+      #{deviceAdmain,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{publicNetworkIp,jdbcType=VARCHAR},
+      #{publicNetworkPort,jdbcType=VARCHAR}, #{lanIp,jdbcType=VARCHAR}, #{lanPort,jdbcType=VARCHAR},
+      #{stationNetworkId,jdbcType=VARCHAR}, #{stationRandomSeed,jdbcType=VARCHAR},
+      #{relationOperatorId,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR},
+      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}
+      )
+  </insert>
 </mapper>
