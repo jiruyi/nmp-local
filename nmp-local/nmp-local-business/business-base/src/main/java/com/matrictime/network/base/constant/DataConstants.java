@@ -45,4 +45,5 @@ public class DataConstants {
     public static final String DEVICE_LOG_REDIS_CHANNEL = "DEVICE_LOG";
 
 
+    public static final long SUPER_ADMIN = 1;
 }

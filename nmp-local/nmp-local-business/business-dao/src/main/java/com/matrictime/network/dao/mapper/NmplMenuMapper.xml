@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplMenuMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplMenu">
+    <id column="menu_id" jdbcType="BIGINT" property="menuId" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="parent_menu_id" jdbcType="BIGINT" property="parentMenuId" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="is_frame" jdbcType="TINYINT" property="isFrame" />
+    <result column="menu_type" jdbcType="TINYINT" property="menuType" />
+    <result column="menu_status" jdbcType="TINYINT" property="menuStatus" />
+    <result column="perms_code" jdbcType="VARCHAR" property="permsCode" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="is_exist" jdbcType="TINYINT" property="isExist" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    menu_id, menu_name, parent_menu_id, url, is_frame, menu_type, menu_status, perms_code, 
+    create_user, create_time, update_user, update_time, remark, is_exist
+  </sql>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplMenuExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmpl_menu
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from nmpl_menu
+    where menu_id = #{menuId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nmpl_menu
+    where menu_id = #{menuId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplMenuExample">
+    delete from nmpl_menu
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplMenu">
+    insert into nmpl_menu (menu_id, menu_name, parent_menu_id, 
+      url, is_frame, menu_type, 
+      menu_status, perms_code, create_user, 
+      create_time, update_user, update_time, 
+      remark, is_exist)
+    values (#{menuId,jdbcType=BIGINT}, #{menuName,jdbcType=VARCHAR}, #{parentMenuId,jdbcType=BIGINT}, 
+      #{url,jdbcType=VARCHAR}, #{isFrame,jdbcType=TINYINT}, #{menuType,jdbcType=TINYINT}, 
+      #{menuStatus,jdbcType=TINYINT}, #{permsCode,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{remark,jdbcType=VARCHAR}, #{isExist,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplMenu">
+    insert into nmpl_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="menuId != null">
+        menu_id,
+      </if>
+      <if test="menuName != null">
+        menu_name,
+      </if>
+      <if test="parentMenuId != null">
+        parent_menu_id,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="isFrame != null">
+        is_frame,
+      </if>
+      <if test="menuType != null">
+        menu_type,
+      </if>
+      <if test="menuStatus != null">
+        menu_status,
+      </if>
+      <if test="permsCode != null">
+        perms_code,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="isExist != null">
+        is_exist,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="menuId != null">
+        #{menuId,jdbcType=BIGINT},
+      </if>
+      <if test="menuName != null">
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentMenuId != null">
+        #{parentMenuId,jdbcType=BIGINT},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="isFrame != null">
+        #{isFrame,jdbcType=TINYINT},
+      </if>
+      <if test="menuType != null">
+        #{menuType,jdbcType=TINYINT},
+      </if>
+      <if test="menuStatus != null">
+        #{menuStatus,jdbcType=TINYINT},
+      </if>
+      <if test="permsCode != null">
+        #{permsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isExist != null">
+        #{isExist,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplMenuExample" resultType="java.lang.Long">
+    select count(*) from nmpl_menu
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmpl_menu
+    <set>
+      <if test="record.menuId != null">
+        menu_id = #{record.menuId,jdbcType=BIGINT},
+      </if>
+      <if test="record.menuName != null">
+        menu_name = #{record.menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.parentMenuId != null">
+        parent_menu_id = #{record.parentMenuId,jdbcType=BIGINT},
+      </if>
+      <if test="record.url != null">
+        url = #{record.url,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isFrame != null">
+        is_frame = #{record.isFrame,jdbcType=TINYINT},
+      </if>
+      <if test="record.menuType != null">
+        menu_type = #{record.menuType,jdbcType=TINYINT},
+      </if>
+      <if test="record.menuStatus != null">
+        menu_status = #{record.menuStatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.permsCode != null">
+        perms_code = #{record.permsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createUser != null">
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null">
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isExist != null">
+        is_exist = #{record.isExist,jdbcType=TINYINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmpl_menu
+    set menu_id = #{record.menuId,jdbcType=BIGINT},
+      menu_name = #{record.menuName,jdbcType=VARCHAR},
+      parent_menu_id = #{record.parentMenuId,jdbcType=BIGINT},
+      url = #{record.url,jdbcType=VARCHAR},
+      is_frame = #{record.isFrame,jdbcType=TINYINT},
+      menu_type = #{record.menuType,jdbcType=TINYINT},
+      menu_status = #{record.menuStatus,jdbcType=TINYINT},
+      perms_code = #{record.permsCode,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      is_exist = #{record.isExist,jdbcType=TINYINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplMenu">
+    update nmpl_menu
+    <set>
+      <if test="menuName != null">
+        menu_name = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentMenuId != null">
+        parent_menu_id = #{parentMenuId,jdbcType=BIGINT},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="isFrame != null">
+        is_frame = #{isFrame,jdbcType=TINYINT},
+      </if>
+      <if test="menuType != null">
+        menu_type = #{menuType,jdbcType=TINYINT},
+      </if>
+      <if test="menuStatus != null">
+        menu_status = #{menuStatus,jdbcType=TINYINT},
+      </if>
+      <if test="permsCode != null">
+        perms_code = #{permsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isExist != null">
+        is_exist = #{isExist,jdbcType=TINYINT},
+      </if>
+    </set>
+    where menu_id = #{menuId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplMenu">
+    update nmpl_menu
+    set menu_name = #{menuName,jdbcType=VARCHAR},
+      parent_menu_id = #{parentMenuId,jdbcType=BIGINT},
+      url = #{url,jdbcType=VARCHAR},
+      is_frame = #{isFrame,jdbcType=TINYINT},
+      menu_type = #{menuType,jdbcType=TINYINT},
+      menu_status = #{menuStatus,jdbcType=TINYINT},
+      perms_code = #{permsCode,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+      is_exist = #{isExist,jdbcType=TINYINT}
+    where menu_id = #{menuId,jdbcType=BIGINT}
+  </update>
+
+
+  <select id="queryAllPerms" resultType="string">
+    select b.perms_code from nmpl_role_menu_relation a ,nmpl_menu b
+    where  a.menu_id = b.menu_id
+    and a.role_id = #{roleId}
+  </select>
+
+  <select id="queryAllMenu" resultType="com.matrictime.network.modelVo.NmplMenu">
+    select * from nmpl_menu where is_exist=1;
+  </select>
+</mapper>

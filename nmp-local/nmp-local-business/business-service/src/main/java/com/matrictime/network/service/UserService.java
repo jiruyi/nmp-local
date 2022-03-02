@@ -1,8 +1,11 @@
 package com.matrictime.network.service;
 
+import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LoginRequest;
+import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.LoginResponse;
+import com.matrictime.network.response.PageInfo;
 
 /**
  * @author jiruyi
@@ -22,4 +25,47 @@ public interface UserService {
       * @create 2022/2/24 0024 11:33
       */
     Result<LoginResponse> login(LoginRequest loginRequest);
+
+    /**
+      * @title insertUser
+      * @param [userRequest]
+      * @return com.matrictime.network.model.Result<java.lang.Integer>
+      * @description 
+      * @author jiruyi
+      * @create 2022/2/28 0028 11:36
+      */
+    Result<Integer> insertUser(UserRequest userRequest);
+
+
+
+    /**
+      * @title updateUser
+      * @param [userRequest]
+      * @return com.matrictime.network.model.Result<java.lang.Integer>
+      * @description  更新用户
+      * @author jiruyi
+      * @create 2022/2/28 0028 14:41
+      */
+    Result<Integer> updateUser(UserRequest userRequest);
+
+    /**
+      * @title deleteUser
+      * @param [userRequest]
+      * @return com.matrictime.network.model.Result<java.lang.Integer>
+      * @description 
+      * @author jiruyi
+      * @create 2022/2/28 0028 15:53
+      */
+    Result<Integer> deleteUser(UserRequest userRequest);
+
+    /**
+      * @title selectUserList
+      * @param [userRequest]
+      * @return com.matrictime.network.model.Result<java.lang.Integer>
+      * @description 
+      * @author jiruyi
+      * @create 2022/2/28 0028 16:46
+      */
+    Result<PageInfo> selectUserList(UserRequest userRequest);
+    
 }

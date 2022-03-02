@@ -6,16 +6,20 @@ import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.AesEncryptUtil;
+import com.matrictime.network.convert.UserConvert;
 import com.matrictime.network.dao.domain.UserDomainService;
 import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LoginRequest;
+import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.LoginResponse;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.UserService;
 import com.matrictime.network.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -47,6 +51,9 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
     @Autowired
     private HttpServletRequest request;
 
+    @Autowired
+    private UserConvert userConvert;
+
     @Override
     public Result<LoginResponse> login(LoginRequest loginRequest) {
         Result<LoginResponse> result = null;
@@ -77,6 +84,108 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
         /**6.0 插入登录明细*/
         insetLoginDetail(loginRequest,list,result);
         return result;
+    }
+
+    /**
+     * @title insertUser
+     * @param [userRequest]
+     * @return com.matrictime.network.model.Result<java.lang.Integer>
+     * @description  插入用户
+     * @author jiruyi
+     * @create 2022/2/28 0028 11:08
+     */
+    @Override
+    public Result<Integer> insertUser(UserRequest userRequest) {
+        Result<Integer> result = null;
+        try {
+            //1.根据手机号码查询
+            List<NmplUser> listUser = userDomainService.getUserByPhone(userRequest.getPhoneNumber());
+            if(!CollectionUtils.isEmpty(listUser)){
+                throw new SystemException(ErrorMessageContants.PHONE_EXIST_ERROR_MSG);
+            }
+            listUser = userDomainService.getUserByLoginAccount(userRequest.getLoginAccount());
+            if(!CollectionUtils.isEmpty(listUser)){
+                throw new SystemException(ErrorMessageContants.LOGINACCOUNT_EXIST_ERROR_MSG);
+            }
+            // userRequest.setCreateUser(String.valueOf(RequestContext.getUser().getUserId()));
+            int count = userDomainService.insertUser(userRequest);
+            result = buildResult(count);
+        }catch (Exception e){
+            log.error("用户{}创建异常：{}",userRequest,e.getMessage());
+            result = failResult(e);
+        }
+
+        return result;
+    }
+
+    /**
+     * @title updateUser
+     * @param [userRequest]
+     * @return com.matrictime.network.model.Result<java.lang.Integer>
+     * @description
+     * @author jiruyi
+     * @create 2022/2/28 0028 15:01
+     */
+    @Override
+    public Result<Integer> updateUser(UserRequest userRequest) {
+        Result<Integer> result = null;
+        try {
+            //1.根据手机号码查询
+            List<NmplUser> listUser = userDomainService.getUserByPhone(userRequest.getPhoneNumber());
+            if(!CollectionUtils.isEmpty(listUser)){
+                throw new SystemException(ErrorMessageContants.PHONE_EXIST_ERROR_MSG);
+            }
+            //userRequest.setUpdateUser(String.valueOf(RequestContext.getUser().getUserId()));
+            int count = userDomainService.updateUser(userRequest);
+            result = buildResult(count);
+        }catch (Exception e){
+            log.error("用户{}创建异常：{}",userRequest,e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    /**
+     * @title deleteUser
+     * @param [userRequest]
+     * @return com.matrictime.network.model.Result<java.lang.Integer>
+     * @description
+     * @author jiruyi
+     * @create 2022/2/28 0028 16:01
+     */
+    @Override
+    public Result<Integer> deleteUser(UserRequest userRequest) {
+        Result<Integer> result = null;
+        try {
+            int count = userDomainService.deleteUser(userRequest);
+            result = buildResult(count);
+        }catch (Exception e){
+            log.error("用户{}创建异常：{}",userRequest,e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    /**
+     * @title selectUserList
+     * @param [userRequest]
+     * @return com.matrictime.network.model.Result<java.lang.Integer>
+     * @description
+     * @author jiruyi
+     * @create 2022/2/28 0028 16:46
+     */
+    @Override
+    public Result<PageInfo> selectUserList(UserRequest userRequest) {
+        try {
+            PageInfo pageInfo = userDomainService.selectUserList(userRequest);
+            //参数转换
+            List<UserRequest> list =  userConvert.to(pageInfo.getList());
+            pageInfo.setList(list);
+            return buildResult(pageInfo);
+        }catch (Exception e){
+            log.error("selectUserList exception :{}",e.getMessage());
+            return  failResult(e);
+        }
     }
 
     /**

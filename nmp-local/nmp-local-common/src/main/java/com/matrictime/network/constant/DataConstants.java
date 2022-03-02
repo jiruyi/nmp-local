@@ -44,5 +44,9 @@ public class DataConstants {
     public static final String TARGET_LAST_KEY = "targetLastMap";
     public static final String DEVICE_LOG_REDIS_CHANNEL = "DEVICE_LOG";
 
+    public static final String EDIT_TYPE_ADD = "1";
+    public static final String EDIT_TYPE_UPD = "2";
+    public static final String EDIT_TYPE_DEL = "3";
+
 
 }

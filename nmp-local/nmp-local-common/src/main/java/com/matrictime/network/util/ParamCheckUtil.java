@@ -1,6 +1,7 @@
 package com.matrictime.network.util;
 
 import com.matrictime.network.exception.ErrorCode;
+import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -144,6 +145,19 @@ public class ParamCheckUtil {
         if (StringUtils.isBlank(paramStr)) {
             throw new SystemException(ErrorCode.PARAM_EXCEPTION, exceptionMsg);
         }
+    }
+
+    /**
+     * 验证前端输入字符串类型参数不能为空
+     *
+     * @param paramStr
+     */
+    public static boolean checkVoStrBlank(String paramStr) throws SystemException {
+
+        if (StringUtils.isBlank(paramStr) || "null".equals(paramStr.toLowerCase()) || "undefined".equals(paramStr.toLowerCase())) {
+            return true;
+        }
+        return false;
     }
 
     /**
