@@ -15,7 +15,13 @@ public class BaseRequest implements Serializable {
 
     private static final long serialVersionUID = -2664440672733655871L;
 
+    /**
+     * 分页页数（不传默认第一页）
+     */
     private int pageNo = 1;
 
+    /**
+     * 分页展示条数（不传默认10条）
+     */
     private int pageSize = 10;
 }

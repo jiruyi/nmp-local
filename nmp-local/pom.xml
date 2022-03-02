@@ -43,4 +43,30 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.shalousun</groupId>
+                    <artifactId>smart-doc-maven-plugin</artifactId>
+                    <version>2.3.8</version>
+                    <configuration>
+                        <!--指定生成文档的使用的配置文件-->
+                        <configFile>${basedir}/src/main/resources/smart-doc.json</configFile>
+                        <!--指定项目名称-->
+                        <projectName>nmp-local</projectName>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>html</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

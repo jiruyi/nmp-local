@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplConfigExtMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplConfig">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="device_type" jdbcType="CHAR" property="deviceType" />
+    <result column="config_name" jdbcType="VARCHAR" property="configName" />
+    <result column="config_code" jdbcType="VARCHAR" property="configCode" />
+    <result column="config_value" jdbcType="VARCHAR" property="configValue" />
+    <result column="default_value" jdbcType="VARCHAR" property="defaultValue" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, device_type, config_name, config_code, config_value, default_value, unit, status, 
+    create_time, create_user, update_time, update_user, is_exist, remark
+  </sql>
+
+  <sql id="Query_Column_List">
+    id, config_name, config_code, config_value, default_value, unit, status,
+    create_time, create_user, update_time, update_user, is_exist, remark
+  </sql>
+
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplConfig" resultMap="BaseResultMap">
+    select
+    <include refid="Query_Column_List" />,
+    (case
+    when device_type = '1' then '基站'
+    when device_type = '2' then '分发机'
+    when device_type = '3' then '生成机'
+    when device_type = '4' then '缓存机'
+    else ''
+    end ) as device_type
+    from nmpl_config
+    <where>
+      <if test="configName != null and configName !=''">
+        config_name like #{configName,jdbcType=VARCHAR}
+      </if>
+    </where>
+    order by update_time desc
+  </select>
+
+</mapper>
