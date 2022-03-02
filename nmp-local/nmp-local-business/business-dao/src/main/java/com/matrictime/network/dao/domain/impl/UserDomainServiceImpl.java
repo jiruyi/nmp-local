@@ -12,6 +12,7 @@ import com.matrictime.network.dao.model.NmplLoginDetailExample;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.dao.model.NmplUserExample;
 import com.matrictime.network.request.LoginRequest;
+import com.matrictime.network.request.UserInfo;
 import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -203,5 +204,21 @@ public class UserDomainServiceImpl implements UserDomainService {
         List<NmplUser> list = userMapper.selectByExample(userExample);
         PageInfo<NmplUser> pageResult =  new PageInfo<>((int)page.getTotal(), page.getPages(), list);
         return  pageResult;
+    }
+
+    /**
+      * @title passwordReset
+      * @param [userInfo]
+      * @return int
+      * @description
+      * @author jiruyi
+      * @create 2022/3/2 0002 9:34
+      */
+    @Override
+    public int passwordReset(UserInfo userInfo) {
+        //根据主键修改密码
+        NmplUser nmplUser = NmplUser.builder().userId(Long.valueOf(userInfo.getUserId()))
+                .password(userInfo.getNewPassword()).build();
+        return  userMapper.updateByPrimaryKeySelective(nmplUser);
     }
 }

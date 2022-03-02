@@ -9,6 +9,7 @@ import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LoginRequest;
+import com.matrictime.network.request.UserInfo;
 import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.LoginResponse;
 import com.matrictime.network.response.PageInfo;
@@ -19,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.NumberUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -139,19 +141,19 @@ public class UserController {
     }
 
     /**
-      * @title selectUserList
-      * @param [userRequest]
-      * @return com.matrictime.network.model.Result<com.matrictime.network.response.PageInfo>
-      * @description 
-      * @author jiruyi
-      * @create 2022/3/1 0001 9:36
-      */
+     * @title selectUserList
+     * @param [userRequest]
+     * @return com.matrictime.network.model.Result<com.matrictime.network.response.PageInfo>
+     * @description
+     * @author jiruyi
+     * @create 2022/3/1 0001 9:36
+     */
     @ApiOperation(value = "用户查询")
     @SystemLog(opermodul = "用户管理",operDesc = "用户查询",operType = "查询")
     @RequestMapping(value = "/select",method = RequestMethod.POST)
     public Result<PageInfo> selectUserList(@RequestBody UserRequest userRequest){
         try {
-           return userService.selectUserList(userRequest);
+            return userService.selectUserList(userRequest);
         }catch (Exception e){
             log.error("用户查询发生异常：{}", userRequest,e.getMessage());
             return new Result<>(false,e.getMessage());
@@ -173,9 +175,7 @@ public class UserController {
     public Result<Integer> updateUser(@RequestBody UserRequest userRequest){
         try {
             /**1.0 参数校验**/
-            if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getLoginAccount())
-                    || ObjectUtils.isEmpty(userRequest.getPassword())
-                    || ObjectUtils.isEmpty(userRequest.getUserId())
+            if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())
                     || ObjectUtils.isEmpty(userRequest.getPhoneNumber())
                     || ObjectUtils.isEmpty(userRequest.getRoleId())){
                 return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
@@ -205,10 +205,50 @@ public class UserController {
             if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
                 return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
-            //2. 插入
-            return  userService.updateUser(userRequest);
+            //2. 删除
+            return  userService.deleteUser(userRequest);
         }catch (Exception e){
             log.error("用户:{}插入发生异常：{}", userRequest,e.getMessage());
+            return new Result<>(false,e.getMessage());
+        }
+    }
+
+
+    /**
+     * @title passwordReset
+     * @param [userRequest]
+     * @return com.matrictime.network.model.Result<java.lang.Integer>
+     * @description
+     * @author jiruyi
+     * @create 2022/3/1 0001 11:09
+     */
+    @ApiOperation(value = "密码重置")
+    @SystemLog(opermodul = "用户管理模块",operDesc = "密码重置",operType = "重置")
+    @RequestMapping(value = "/reset",method = RequestMethod.POST)
+    public Result<Integer> passwordReset(@RequestBody UserInfo userInfo){
+        try {
+            /**1.0 参数校验**/
+            if(ObjectUtils.isEmpty(userInfo) || ObjectUtils.isEmpty(userInfo.getType())
+                    || ObjectUtils.isEmpty(userInfo.getUserId()))
+            {
+                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            if( ObjectUtils.isEmpty(userInfo.getNewPassword()) || ObjectUtils.isEmpty(userInfo.getConfirmPassword())){
+                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            //个人信息密码修改
+            if("1".equals(userInfo.getType())){
+                if( ObjectUtils.isEmpty(userInfo.getOldPassword())){
+                    return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+                }
+            }
+            //密码一致行校验
+            if(!userInfo.getNewPassword().equals(userInfo.getConfirmPassword())){
+                return new Result(false, ErrorMessageContants.TWO_PASSWORD_ERROR_MSG);
+            }
+            return userService.passwordReset(userInfo);
+        }catch (Exception e){
+            log.error("用户:{}插入发生异常：{}", userInfo,e.getMessage());
             return new Result<>(false,e.getMessage());
         }
     }

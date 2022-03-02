@@ -3,6 +3,7 @@ package com.matrictime.network.dao.domain;
 import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.request.LoginRequest;
+import com.matrictime.network.request.UserInfo;
 import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.PageInfo;
 
@@ -107,5 +108,15 @@ public interface UserDomainService {
       * @create 2022/2/28 0028 17:17
       */
     PageInfo<NmplUser> selectUserList(UserRequest userRequest);
+    
+    /**
+      * @title passwordReset
+      * @param [userInfo]
+      * @return int
+      * @description 
+      * @author jiruyi
+      * @create 2022/3/2 0002 9:35
+      */
+    int passwordReset(UserInfo userInfo);
 
 }
