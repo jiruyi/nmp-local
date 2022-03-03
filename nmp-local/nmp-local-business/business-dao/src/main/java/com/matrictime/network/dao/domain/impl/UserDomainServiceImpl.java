@@ -185,23 +185,9 @@ public class UserDomainServiceImpl implements UserDomainService {
      */
     @Override
     public PageInfo<NmplUser> selectUserList(UserRequest userRequest) {
-        NmplUserExample userExample = new NmplUserExample();
-        NmplUserExample.Criteria criteria = userExample.createCriteria();
-        if(!ObjectUtils.isEmpty(userRequest.getLoginAccount())){
-            criteria.andLoginAccountEqualTo(userRequest.getLoginAccount());
-        }
-        if(!ObjectUtils.isEmpty(userRequest.getPhoneNumber())){
-            criteria.andPhoneNumberEqualTo(userRequest.getPhoneNumber());
-        }
-        if(!ObjectUtils.isEmpty(userRequest.getCreateTime())){
-            criteria.andCreateTimeEqualTo(new Date(Long.valueOf(userRequest.getCreateTime())));
-        }
-        if(!ObjectUtils.isEmpty(userRequest.getRemark())){
-            criteria.andRoleIdEqualTo(userRequest.getRoleId());
-        }
         //分页
         Page page = PageHelper.startPage(userRequest.getPageNo(),userRequest.getPageSize());
-        List<NmplUser> list = userMapper.selectByExample(userExample);
+        List<NmplUser> list = userMapper.selectByCondition(userRequest);
         PageInfo<NmplUser> pageResult =  new PageInfo<>((int)page.getTotal(), page.getPages(), list);
         return  pageResult;
     }

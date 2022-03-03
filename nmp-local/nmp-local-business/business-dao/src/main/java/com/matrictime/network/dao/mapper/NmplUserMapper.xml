@@ -96,6 +96,28 @@
       order by ${orderByClause}
     </if>
   </select>
+
+  <select id="selectByCondition" parameterType="com.matrictime.network.request.UserRequest" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nmpl_user
+    <where>
+      <if test="loginAccount != null">
+        login_account = #{loginAccount}
+      </if>
+      <if test="roleId != null">
+        and role_id = #{roleId}
+      </if>
+      <if test="phoneNumber != null">
+        and phone_number = #{phoneNumber}
+      </if>
+      <if test="createTime != null">
+        and date(create_time) = #{createTime}
+      </if>
+  </where>
+    ORDER BY user_id DESC
+  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
