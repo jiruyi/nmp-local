@@ -1,5 +1,11 @@
 package com.matrictime.network.dao.domain;
 
+import com.matrictime.network.dao.model.NmplOperateLog;
+import com.matrictime.network.model.Result;
+import com.matrictime.network.request.LogRequest;
+import com.matrictime.network.response.PageInfo;
+import org.springframework.web.bind.annotation.RequestBody;
+
 /**
  * @author jiruyi
  * @copyright www.matrictime.com
@@ -8,4 +14,6 @@ package com.matrictime.network.dao.domain;
  * @desc
  */
 public interface LogDomainService {
+
+    PageInfo<NmplOperateLog> queryLogList(LogRequest logRequest);
 }

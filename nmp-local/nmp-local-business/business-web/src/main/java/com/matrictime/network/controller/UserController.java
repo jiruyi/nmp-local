@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @project nmp-local
  * @date 2022/2/21 0021 17:38
  * @desc
+ * 用户信息相关
  */
 @RequestMapping(value = "/user")
 @Api(value = "用户信息相关",tags = "用户信息相关")
