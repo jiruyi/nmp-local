@@ -1,8 +1,10 @@
 package com.matrictime.network.controller;
 
 
+import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.service.DeviceService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -21,17 +23,200 @@ public class DeviceController {
     @Resource
     private DeviceService deviceService;
 
-    @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    @ApiOperation(value = "设备接口",notes = "设备信息插入")
-    public Result<Integer> insertDevice(@RequestBody DeviceInfoRequest deviceInfoRequest){
+    @RequestMapping(value = "/insertDispenser",method = RequestMethod.POST)
+    @ApiOperation(value = "分发机接口",notes = "分发机信息插入")
+    public Result<Integer> insertDispenser(@RequestBody DeviceInfoRequest deviceInfoRequest){
         Result<Integer> result = new Result<>();
         try {
+            deviceInfoRequest.setDeviceType(DeviceTypeEnum.DISPENSER.getCode());
             result = deviceService.insertDevice(deviceInfoRequest);
         }catch (Exception e){
-            log.info("新增设备异常:insertDevice{}",e.getMessage());
+            log.info("新增分发机异常:insertDispenser{}",e.getMessage());
             result.setSuccess(false);
-            result.setErrorMsg("新增设备异常");
+            result.setErrorMsg("新增分发机异常");
         }
         return result;
     }
+
+    @RequestMapping(value = "/deleteDispenser",method = RequestMethod.POST)
+    @ApiOperation(value = "分发机接口",notes = "删除分发机信息")
+    public Result<Integer> deleteDispenser(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            result = deviceService.deleteDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("删除设备信息异常:deleteDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("删除分发机信息异常");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/updateDispenser",method = RequestMethod.POST)
+    @ApiOperation(value = "更新分发机接口",notes = "更新分发机信息")
+    public Result<Integer> updateDispenser(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            result = deviceService.updateDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("更新分发机信息异常:updateDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("更新分发机信息异常");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/selectDispenser",method = RequestMethod.POST)
+    @ApiOperation(value = "查询分发机接口",notes = "查询分发机信息")
+    public Result<DeviceResponse> selectDispenser(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<DeviceResponse> result = new Result<>();
+        try {
+            result = deviceService.selectDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("查询分发机信息异常:updateDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("查询分发机信息异常");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/insertGenerator",method = RequestMethod.POST)
+    @ApiOperation(value = "生成机接口",notes = "生成机信息插入")
+    public Result<Integer> insertGenerator(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            deviceInfoRequest.setDeviceType(DeviceTypeEnum.GENERATOR.getCode());
+            result = deviceService.insertDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("新增生成机异常:insertDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("新增生成机异常");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/deleteGenerator",method = RequestMethod.POST)
+    @ApiOperation(value = "生成机接口",notes = "删除生成机信息")
+    public Result<Integer> deleteGenerator(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            result = deviceService.deleteDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("删除生成机信息:deleteGenerator{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("删除生成机信息异常");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/updateGenerator",method = RequestMethod.POST)
+    @ApiOperation(value = "更新生成机接口",notes = "更新生成机信息")
+    public Result<Integer> updateGenerator(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            result = deviceService.updateDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("更新生成机信息:updateDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("更新生成机信息异常");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/selectGenerator",method = RequestMethod.POST)
+    @ApiOperation(value = "查询生成机接口",notes = "查询生成机信息")
+    public Result<DeviceResponse> selectGenerator(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<DeviceResponse> result = new Result<>();
+        try {
+            result = deviceService.selectDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("查询生成机信息异常:updateDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("查询生成机信息异常");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/insertCache",method = RequestMethod.POST)
+    @ApiOperation(value = "缓存机接口",notes = "缓存机信息插入")
+    public Result<Integer> insertCache(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            deviceInfoRequest.setDeviceType(DeviceTypeEnum.CACHE.getCode());
+            result = deviceService.insertDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("新增缓存机异常:insertDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("新增缓存机异常");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/deleteCache",method = RequestMethod.POST)
+    @ApiOperation(value = "缓存机接口",notes = "删除缓存机信息")
+    public Result<Integer> deleteCache(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            result = deviceService.deleteDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("删除缓存机信息:deleteCache{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("删除缓存机信息异常");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/updateCache",method = RequestMethod.POST)
+    @ApiOperation(value = "更新缓存机接口",notes = "更新缓存机信息")
+    public Result<Integer> updateCache(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            result = deviceService.updateDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("更新缓存机信息:updateDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("更新缓存机信息异常");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/selectCache",method = RequestMethod.POST)
+    @ApiOperation(value = "查询缓存机接口",notes = "查询缓存机信息")
+    public Result<DeviceResponse> selectCache(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<DeviceResponse> result = new Result<>();
+        try {
+            result = deviceService.selectDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("查询缓存机信息异常:selectCache{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("查询缓存机信息异常");
+        }
+        return result;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

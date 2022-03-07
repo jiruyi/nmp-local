@@ -4,7 +4,7 @@ import com.matrictime.network.dao.model.NmplBaseStationInfo;
 import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
 import java.util.List;
 
-import com.matrictime.network.model.BaseStationInfoVo;
+import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import org.apache.ibatis.annotations.Param;
 

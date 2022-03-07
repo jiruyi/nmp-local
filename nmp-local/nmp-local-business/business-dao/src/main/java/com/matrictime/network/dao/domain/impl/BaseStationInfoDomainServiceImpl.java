@@ -2,7 +2,7 @@ package com.matrictime.network.dao.domain.impl;
 
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
-import com.matrictime.network.model.BaseStationInfoVo;
+import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

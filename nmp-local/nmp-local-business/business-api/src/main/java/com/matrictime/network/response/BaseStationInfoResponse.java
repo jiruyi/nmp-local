@@ -1,6 +1,6 @@
 package com.matrictime.network.response;
 
-import com.matrictime.network.model.BaseStationInfoVo;
+import com.matrictime.network.modelVo.BaseStationInfoVo;
 
 import java.util.List;
 

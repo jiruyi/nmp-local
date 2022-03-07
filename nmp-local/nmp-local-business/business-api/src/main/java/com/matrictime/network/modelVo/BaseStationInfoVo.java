@@ -1,20 +1,19 @@
-package com.matrictime.network.model;
+package com.matrictime.network.modelVo;
 
-public class DeviceInfoVo {
+import java.util.Date;
 
+public class BaseStationInfoVo {
     private String id;
 
-    private String deviceId;
+    private String stationId;
 
-    private String deviceName;
+    private String stationName;
 
-    private String deviceType;
+    private String stationType;
 
-    private String otherType;
+    private Date enterNetworkTime;
 
-    private String enterNetworkTime;
-
-    private String deviceAdmain;
+    private String stationAdmain;
 
     private String remark;
 
@@ -52,52 +51,44 @@ public class DeviceInfoVo {
         this.id = id;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    public String getStationId() {
+        return stationId;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setStationId(String stationId) {
+        this.stationId = stationId;
     }
 
-    public String getDeviceName() {
-        return deviceName;
+    public String getStationName() {
+        return stationName;
     }
 
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
+    public void setStationName(String stationName) {
+        this.stationName = stationName;
     }
 
-    public String getDeviceType() {
-        return deviceType;
+    public String getStationType() {
+        return stationType;
     }
 
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType;
+    public void setStationType(String stationType) {
+        this.stationType = stationType;
     }
 
-    public String getOtherType() {
-        return otherType;
-    }
-
-    public void setOtherType(String otherType) {
-        this.otherType = otherType;
-    }
-
-    public String getEnterNetworkTime() {
+    public Date getEnterNetworkTime() {
         return enterNetworkTime;
     }
 
-    public void setEnterNetworkTime(String enterNetworkTime) {
+    public void setEnterNetworkTime(Date enterNetworkTime) {
         this.enterNetworkTime = enterNetworkTime;
     }
 
-    public String getDeviceAdmain() {
-        return deviceAdmain;
+    public String getStationAdmain() {
+        return stationAdmain;
     }
 
-    public void setDeviceAdmain(String deviceAdmain) {
-        this.deviceAdmain = deviceAdmain;
+    public void setStationAdmain(String stationAdmain) {
+        this.stationAdmain = stationAdmain;
     }
 
     public String getRemark() {
@@ -180,20 +171,20 @@ public class DeviceInfoVo {
         this.createUser = createUser;
     }
 
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
     public String getUpdateUser() {
         return updateUser;
     }
 
     public void setUpdateUser(String updateUser) {
         this.updateUser = updateUser;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
     public String getUpdateTime() {

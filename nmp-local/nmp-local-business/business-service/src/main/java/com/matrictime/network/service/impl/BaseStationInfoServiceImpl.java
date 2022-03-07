@@ -1,7 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
-import com.matrictime.network.model.BaseStationInfoVo;
+import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;

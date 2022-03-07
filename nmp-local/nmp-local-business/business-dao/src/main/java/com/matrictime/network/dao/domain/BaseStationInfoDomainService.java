@@ -1,6 +1,6 @@
 package com.matrictime.network.dao.domain;
 
-import com.matrictime.network.model.BaseStationInfoVo;
+import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 
 import java.util.List;

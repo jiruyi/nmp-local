@@ -485,7 +485,7 @@
     delete from nmpl_base_station_info
     where station_id = #{stationId,jdbcType=VARCHAR}
   </delete>
-  <select id="selectBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.model.BaseStationInfoVo">
+  <select id="selectBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
     select id,station_id, station_name, station_type,
            remark, public_network_ip,
            lan_ip, station_network_id,

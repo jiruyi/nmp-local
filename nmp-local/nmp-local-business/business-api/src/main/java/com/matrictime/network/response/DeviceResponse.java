@@ -1,6 +1,6 @@
 package com.matrictime.network.response;
 
-import com.matrictime.network.model.DeviceInfoVo;
+import com.matrictime.network.modelVo.DeviceInfoVo;
 
 import java.util.List;
 
