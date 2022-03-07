@@ -12,6 +12,7 @@ import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LoginRequest;
+import com.matrictime.network.request.UserInfo;
 import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.LoginResponse;
 import com.matrictime.network.response.PageInfo;
@@ -132,7 +133,8 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
         try {
             //1.根据手机号码查询
             List<NmplUser> listUser = userDomainService.getUserByPhone(userRequest.getPhoneNumber());
-            if(!CollectionUtils.isEmpty(listUser)){
+            if(!CollectionUtils.isEmpty(listUser) &&
+                    !userRequest.getUserId().equals(listUser.get(0).getUserId().toString())){
                 throw new SystemException(ErrorMessageContants.PHONE_EXIST_ERROR_MSG);
             }
             //userRequest.setUpdateUser(String.valueOf(RequestContext.getUser().getUserId()));
@@ -182,6 +184,35 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             List<UserRequest> list =  userConvert.to(pageInfo.getList());
             pageInfo.setList(list);
             return buildResult(pageInfo);
+        }catch (Exception e){
+            log.error("selectUserList exception :{}",e.getMessage());
+            return  failResult(e);
+        }
+    }
+
+    /**
+      * @title passwordReset
+      * @param [userInfo]
+      * @return com.matrictime.network.model.Result<java.lang.Integer>
+      * @description 密码重置
+      * @author jiruyi
+      * @create 2022/3/2 0002 9:32
+      */
+    @Override
+    public Result<Integer> passwordReset(UserInfo userInfo) {
+        try {
+            //个人信息密码修改 查询老密码
+            if("1".equals(userInfo.getType())){
+                NmplUser nmplUser = userDomainService.getUserById(Long.valueOf(userInfo.getUserId()));
+                if(ObjectUtils.isEmpty(nmplUser)){
+                    throw new SystemException(ErrorMessageContants.USER_NO_EXIST_ERROR_MSG);
+                }
+                if(!userInfo.getOldPassword().equals(nmplUser.getPassword())){
+                    throw new SystemException(ErrorMessageContants.OLD_PASSWORD_ERROR_MSG);
+                }
+            }
+            int count = userDomainService.passwordReset(userInfo);
+            return  buildResult(count);
         }catch (Exception e){
             log.error("selectUserList exception :{}",e.getMessage());
             return  failResult(e);

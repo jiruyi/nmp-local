@@ -3,6 +3,8 @@ package com.matrictime.network.dao.mapper;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.dao.model.NmplUserExample;
 import java.util.List;
+
+import com.matrictime.network.request.UserRequest;
 import org.apache.ibatis.annotations.Param;
 
 public interface NmplUserMapper {
@@ -27,4 +29,7 @@ public interface NmplUserMapper {
     int updateByPrimaryKeySelective(NmplUser record);
 
     int updateByPrimaryKey(NmplUser record);
+
+    List<NmplUser> selectByCondition(UserRequest userRequest);
+
 }

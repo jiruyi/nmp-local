@@ -3,6 +3,7 @@ package com.matrictime.network.service;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LoginRequest;
+import com.matrictime.network.request.UserInfo;
 import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.LoginResponse;
 import com.matrictime.network.response.PageInfo;
@@ -67,5 +68,16 @@ public interface UserService {
       * @create 2022/2/28 0028 16:46
       */
     Result<PageInfo> selectUserList(UserRequest userRequest);
+
+
+    /**
+      * @title passwordReset
+      * @param [userInfo]
+      * @return com.matrictime.network.model.Result<java.lang.Integer>
+      * @description  密码重置
+      * @author jiruyi
+      * @create 2022/3/1 0001 17:05
+      */
+    Result<Integer> passwordReset(UserInfo userInfo);
     
 }

@@ -19,6 +19,12 @@ public class ErrorMessageContants {
 
 	public static final String PHONE_EXIST_ERROR_MSG = "手机号已存在";
 
+	public static final String USER_NO_EXIST_ERROR_MSG = "用户不存在";
+
+	public static final String OLD_PASSWORD_ERROR_MSG = "初始密码不正确";
+
+	public static final String TWO_PASSWORD_ERROR_MSG = "两次密码不一致";
+
 	public static final String LOGINACCOUNT_EXIST_ERROR_MSG = "登录账号已存在";
 
 	public static final String PHONE_CODE_IS_NULL_MSG = "手机号或者短信验证码为空";

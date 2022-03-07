@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplOperateLogMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplOperateLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="channel_type" jdbcType="TINYINT" property="channelType" />
+    <result column="oper_modul" jdbcType="VARCHAR" property="operModul" />
+    <result column="oper_url" jdbcType="VARCHAR" property="operUrl" />
+    <result column="oper_type" jdbcType="VARCHAR" property="operType" />
+    <result column="oper_desc" jdbcType="VARCHAR" property="operDesc" />
+    <result column="oper_requ_param" jdbcType="VARCHAR" property="operRequParam" />
+    <result column="oper_resp_param" jdbcType="VARCHAR" property="operRespParam" />
+    <result column="oper_method" jdbcType="VARCHAR" property="operMethod" />
+    <result column="oper_user_id" jdbcType="VARCHAR" property="operUserId" />
+    <result column="oper_user_name" jdbcType="VARCHAR" property="operUserName" />
+    <result column="is_success" jdbcType="BIT" property="isSuccess" />
+    <result column="source_ip" jdbcType="VARCHAR" property="sourceIp" />
+    <result column="oper_level" jdbcType="VARCHAR" property="operLevel" />
+    <result column="oper_time" jdbcType="TIMESTAMP" property="operTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, channel_type, oper_modul, oper_url, oper_type, oper_desc, oper_requ_param, oper_resp_param, 
+    oper_method, oper_user_id, oper_user_name, is_success, source_ip, oper_level, oper_time, 
+    remark, create_time, update_time
+  </sql>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplOperateLogExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmpl_operate_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="queryLogList" parameterType="com.matrictime.network.request.LogRequest" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nmpl_operate_log
+    <where>
+      <if test="operUserId != null">
+        oper_user_id = #{operUserId}
+      </if>
+      <if test="operUserName != null">
+        and oper_user_name = #{operUserName}
+      </if>
+      <if test="operDate != null">
+        and date(create_time) = #{operDate}
+      </if>
+    </where>
+    order  by id desc
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from nmpl_operate_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nmpl_operate_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplOperateLogExample">
+    delete from nmpl_operate_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplOperateLog">
+    insert into nmpl_operate_log (id, channel_type, oper_modul, 
+      oper_url, oper_type, oper_desc, 
+      oper_requ_param, oper_resp_param, oper_method, 
+      oper_user_id, oper_user_name, is_success, 
+      source_ip, oper_level, oper_time, 
+      remark, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{channelType,jdbcType=TINYINT}, #{operModul,jdbcType=VARCHAR}, 
+      #{operUrl,jdbcType=VARCHAR}, #{operType,jdbcType=VARCHAR}, #{operDesc,jdbcType=VARCHAR}, 
+      #{operRequParam,jdbcType=VARCHAR}, #{operRespParam,jdbcType=VARCHAR}, #{operMethod,jdbcType=VARCHAR}, 
+      #{operUserId,jdbcType=VARCHAR}, #{operUserName,jdbcType=VARCHAR}, #{isSuccess,jdbcType=BIT}, 
+      #{sourceIp,jdbcType=VARCHAR}, #{operLevel,jdbcType=VARCHAR}, #{operTime,jdbcType=TIMESTAMP}, 
+      #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplOperateLog">
+    insert into nmpl_operate_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="channelType != null">
+        channel_type,
+      </if>
+      <if test="operModul != null">
+        oper_modul,
+      </if>
+      <if test="operUrl != null">
+        oper_url,
+      </if>
+      <if test="operType != null">
+        oper_type,
+      </if>
+      <if test="operDesc != null">
+        oper_desc,
+      </if>
+      <if test="operRequParam != null">
+        oper_requ_param,
+      </if>
+      <if test="operRespParam != null">
+        oper_resp_param,
+      </if>
+      <if test="operMethod != null">
+        oper_method,
+      </if>
+      <if test="operUserId != null">
+        oper_user_id,
+      </if>
+      <if test="operUserName != null">
+        oper_user_name,
+      </if>
+      <if test="isSuccess != null">
+        is_success,
+      </if>
+      <if test="sourceIp != null">
+        source_ip,
+      </if>
+      <if test="operLevel != null">
+        oper_level,
+      </if>
+      <if test="operTime != null">
+        oper_time,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="channelType != null">
+        #{channelType,jdbcType=TINYINT},
+      </if>
+      <if test="operModul != null">
+        #{operModul,jdbcType=VARCHAR},
+      </if>
+      <if test="operUrl != null">
+        #{operUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="operType != null">
+        #{operType,jdbcType=VARCHAR},
+      </if>
+      <if test="operDesc != null">
+        #{operDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="operRequParam != null">
+        #{operRequParam,jdbcType=VARCHAR},
+      </if>
+      <if test="operRespParam != null">
+        #{operRespParam,jdbcType=VARCHAR},
+      </if>
+      <if test="operMethod != null">
+        #{operMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="operUserId != null">
+        #{operUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="operUserName != null">
+        #{operUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="isSuccess != null">
+        #{isSuccess,jdbcType=BIT},
+      </if>
+      <if test="sourceIp != null">
+        #{sourceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="operLevel != null">
+        #{operLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null">
+        #{operTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplOperateLogExample" resultType="java.lang.Long">
+    select count(*) from nmpl_operate_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmpl_operate_log
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.channelType != null">
+        channel_type = #{record.channelType,jdbcType=TINYINT},
+      </if>
+      <if test="record.operModul != null">
+        oper_modul = #{record.operModul,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operUrl != null">
+        oper_url = #{record.operUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operType != null">
+        oper_type = #{record.operType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operDesc != null">
+        oper_desc = #{record.operDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operRequParam != null">
+        oper_requ_param = #{record.operRequParam,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operRespParam != null">
+        oper_resp_param = #{record.operRespParam,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operMethod != null">
+        oper_method = #{record.operMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operUserId != null">
+        oper_user_id = #{record.operUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operUserName != null">
+        oper_user_name = #{record.operUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isSuccess != null">
+        is_success = #{record.isSuccess,jdbcType=BIT},
+      </if>
+      <if test="record.sourceIp != null">
+        source_ip = #{record.sourceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operLevel != null">
+        oper_level = #{record.operLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operTime != null">
+        oper_time = #{record.operTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmpl_operate_log
+    set id = #{record.id,jdbcType=BIGINT},
+      channel_type = #{record.channelType,jdbcType=TINYINT},
+      oper_modul = #{record.operModul,jdbcType=VARCHAR},
+      oper_url = #{record.operUrl,jdbcType=VARCHAR},
+      oper_type = #{record.operType,jdbcType=VARCHAR},
+      oper_desc = #{record.operDesc,jdbcType=VARCHAR},
+      oper_requ_param = #{record.operRequParam,jdbcType=VARCHAR},
+      oper_resp_param = #{record.operRespParam,jdbcType=VARCHAR},
+      oper_method = #{record.operMethod,jdbcType=VARCHAR},
+      oper_user_id = #{record.operUserId,jdbcType=VARCHAR},
+      oper_user_name = #{record.operUserName,jdbcType=VARCHAR},
+      is_success = #{record.isSuccess,jdbcType=BIT},
+      source_ip = #{record.sourceIp,jdbcType=VARCHAR},
+      oper_level = #{record.operLevel,jdbcType=VARCHAR},
+      oper_time = #{record.operTime,jdbcType=TIMESTAMP},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplOperateLog">
+    update nmpl_operate_log
+    <set>
+      <if test="channelType != null">
+        channel_type = #{channelType,jdbcType=TINYINT},
+      </if>
+      <if test="operModul != null">
+        oper_modul = #{operModul,jdbcType=VARCHAR},
+      </if>
+      <if test="operUrl != null">
+        oper_url = #{operUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="operType != null">
+        oper_type = #{operType,jdbcType=VARCHAR},
+      </if>
+      <if test="operDesc != null">
+        oper_desc = #{operDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="operRequParam != null">
+        oper_requ_param = #{operRequParam,jdbcType=VARCHAR},
+      </if>
+      <if test="operRespParam != null">
+        oper_resp_param = #{operRespParam,jdbcType=VARCHAR},
+      </if>
+      <if test="operMethod != null">
+        oper_method = #{operMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="operUserId != null">
+        oper_user_id = #{operUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="operUserName != null">
+        oper_user_name = #{operUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="isSuccess != null">
+        is_success = #{isSuccess,jdbcType=BIT},
+      </if>
+      <if test="sourceIp != null">
+        source_ip = #{sourceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="operLevel != null">
+        oper_level = #{operLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null">
+        oper_time = #{operTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplOperateLog">
+    update nmpl_operate_log
+    set channel_type = #{channelType,jdbcType=TINYINT},
+      oper_modul = #{operModul,jdbcType=VARCHAR},
+      oper_url = #{operUrl,jdbcType=VARCHAR},
+      oper_type = #{operType,jdbcType=VARCHAR},
+      oper_desc = #{operDesc,jdbcType=VARCHAR},
+      oper_requ_param = #{operRequParam,jdbcType=VARCHAR},
+      oper_resp_param = #{operRespParam,jdbcType=VARCHAR},
+      oper_method = #{operMethod,jdbcType=VARCHAR},
+      oper_user_id = #{operUserId,jdbcType=VARCHAR},
+      oper_user_name = #{operUserName,jdbcType=VARCHAR},
+      is_success = #{isSuccess,jdbcType=BIT},
+      source_ip = #{sourceIp,jdbcType=VARCHAR},
+      oper_level = #{operLevel,jdbcType=VARCHAR},
+      oper_time = #{operTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

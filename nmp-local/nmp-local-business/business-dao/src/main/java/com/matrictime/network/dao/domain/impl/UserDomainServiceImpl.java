@@ -12,6 +12,7 @@ import com.matrictime.network.dao.model.NmplLoginDetailExample;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.dao.model.NmplUserExample;
 import com.matrictime.network.request.LoginRequest;
+import com.matrictime.network.request.UserInfo;
 import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -184,24 +185,26 @@ public class UserDomainServiceImpl implements UserDomainService {
      */
     @Override
     public PageInfo<NmplUser> selectUserList(UserRequest userRequest) {
-        NmplUserExample userExample = new NmplUserExample();
-        NmplUserExample.Criteria criteria = userExample.createCriteria();
-        if(!ObjectUtils.isEmpty(userRequest.getLoginAccount())){
-            criteria.andLoginAccountEqualTo(userRequest.getLoginAccount());
-        }
-        if(!ObjectUtils.isEmpty(userRequest.getPhoneNumber())){
-            criteria.andPhoneNumberEqualTo(userRequest.getPhoneNumber());
-        }
-        if(!ObjectUtils.isEmpty(userRequest.getCreateTime())){
-            criteria.andCreateTimeEqualTo(new Date(Long.valueOf(userRequest.getCreateTime())));
-        }
-        if(!ObjectUtils.isEmpty(userRequest.getRemark())){
-            criteria.andRoleIdEqualTo(userRequest.getRoleId());
-        }
         //分页
         Page page = PageHelper.startPage(userRequest.getPageNo(),userRequest.getPageSize());
-        List<NmplUser> list = userMapper.selectByExample(userExample);
+        List<NmplUser> list = userMapper.selectByCondition(userRequest);
         PageInfo<NmplUser> pageResult =  new PageInfo<>((int)page.getTotal(), page.getPages(), list);
         return  pageResult;
+    }
+
+    /**
+      * @title passwordReset
+      * @param [userInfo]
+      * @return int
+      * @description
+      * @author jiruyi
+      * @create 2022/3/2 0002 9:34
+      */
+    @Override
+    public int passwordReset(UserInfo userInfo) {
+        //根据主键修改密码
+        NmplUser nmplUser = NmplUser.builder().userId(Long.valueOf(userInfo.getUserId()))
+                .password(userInfo.getNewPassword()).build();
+        return  userMapper.updateByPrimaryKeySelective(nmplUser);
     }
 }
