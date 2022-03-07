@@ -1,29 +1,66 @@
 package com.matrictime.network.dao.model;
 
-import lombok.Builder;
-
 import java.util.Date;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
+@Data
 public class NmplLoginDetail {
+    /**
+     * 主键
+     */
     private Long id;
 
+    /**
+     * 用户名字
+     */
     private String loginAccount;
 
+    /**
+     * 昵称
+     */
     private String nickName;
 
+    /**
+     * 登录ip
+     */
     private String loginIp;
 
+    /**
+     * 登录地址
+     */
     private String loginAddr;
 
+    /**
+     * 登录方式  1:密码登录 2：手机验证码
+     */
     private Byte loginType;
 
+    /**
+     * 1:成功 2:失败
+     */
     private Boolean isSuccess;
 
+    /**
+     * 失败原因
+     */
     private String failCause;
 
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
+    /**
+     * 更新时间
+     */
     private Date updateTime;
 
     public Long getId() {

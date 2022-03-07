@@ -48,7 +48,7 @@ public class ErrorMessageContants {
 	public static final String DEVICE_ID_IS_NULL_MSG = "设备id不能为空";
 
 	public static final String OPER_DESC_IS_NULL_MSG = "操作信息不能为空";
-	public static final String OPER_TYPE_IS_NULL_MSG = "操作类型不能为空";
+	public static final String OPER_TYPE_IS_NULL_MSG = "设备类型不能为空";
 
 	public static final String DEVICE_NOT_EXIST_MSG = "设备不存在";
 
