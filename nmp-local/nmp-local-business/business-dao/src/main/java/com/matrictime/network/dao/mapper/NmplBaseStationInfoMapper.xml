@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplBaseStationInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="station_type" jdbcType="CHAR" property="stationType" />
+    <result column="enter_network_time" jdbcType="TIMESTAMP" property="enterNetworkTime" />
+    <result column="station_admain" jdbcType="VARCHAR" property="stationAdmain" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="public_network_ip" jdbcType="VARCHAR" property="publicNetworkIp" />
+    <result column="public_network_port" jdbcType="VARCHAR" property="publicNetworkPort" />
+    <result column="lan_ip" jdbcType="VARCHAR" property="lanIp" />
+    <result column="lan_port" jdbcType="VARCHAR" property="lanPort" />
+    <result column="station_status" jdbcType="CHAR" property="stationStatus" />
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+    <result column="station_random_seed" jdbcType="VARCHAR" property="stationRandomSeed" />
+    <result column="relation_operator_id" jdbcType="VARCHAR" property="relationOperatorId" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, station_id, station_name, station_type, enter_network_time, station_admain, remark, 
+    public_network_ip, public_network_port, lan_ip, lan_port, station_status, station_network_id, 
+    station_random_seed, relation_operator_id, create_user, create_time, update_user, 
+    update_time, is_exist
+  </sql>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmpl_base_station_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from nmpl_base_station_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nmpl_base_station_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfoExample">
+    delete from nmpl_base_station_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfo">
+    insert into nmpl_base_station_info (id, station_id, station_name, 
+      station_type, enter_network_time, station_admain, 
+      remark, public_network_ip, public_network_port, 
+      lan_ip, lan_port, station_status, 
+      station_network_id, station_random_seed, relation_operator_id, 
+      create_user, create_time, update_user, 
+      update_time, is_exist)
+    values (#{id,jdbcType=BIGINT}, #{stationId,jdbcType=VARCHAR}, #{stationName,jdbcType=VARCHAR}, 
+      #{stationType,jdbcType=CHAR}, #{enterNetworkTime,jdbcType=TIMESTAMP}, #{stationAdmain,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{publicNetworkIp,jdbcType=VARCHAR}, #{publicNetworkPort,jdbcType=VARCHAR}, 
+      #{lanIp,jdbcType=VARCHAR}, #{lanPort,jdbcType=VARCHAR}, #{stationStatus,jdbcType=CHAR}, 
+      #{stationNetworkId,jdbcType=VARCHAR}, #{stationRandomSeed,jdbcType=VARCHAR}, #{relationOperatorId,jdbcType=VARCHAR}, 
+      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfo">
+    insert into nmpl_base_station_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="stationId != null">
+        station_id,
+      </if>
+      <if test="stationName != null">
+        station_name,
+      </if>
+      <if test="stationType != null">
+        station_type,
+      </if>
+      <if test="enterNetworkTime != null">
+        enter_network_time,
+      </if>
+      <if test="stationAdmain != null">
+        station_admain,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="publicNetworkIp != null">
+        public_network_ip,
+      </if>
+      <if test="publicNetworkPort != null">
+        public_network_port,
+      </if>
+      <if test="lanIp != null">
+        lan_ip,
+      </if>
+      <if test="lanPort != null">
+        lan_port,
+      </if>
+      <if test="stationStatus != null">
+        station_status,
+      </if>
+      <if test="stationNetworkId != null">
+        station_network_id,
+      </if>
+      <if test="stationRandomSeed != null">
+        station_random_seed,
+      </if>
+      <if test="relationOperatorId != null">
+        relation_operator_id,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="isExist != null">
+        is_exist,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationName != null">
+        #{stationName,jdbcType=VARCHAR},
+      </if>
+      <if test="stationType != null">
+        #{stationType,jdbcType=CHAR},
+      </if>
+      <if test="enterNetworkTime != null">
+        #{enterNetworkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stationAdmain != null">
+        #{stationAdmain,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="publicNetworkIp != null">
+        #{publicNetworkIp,jdbcType=VARCHAR},
+      </if>
+      <if test="publicNetworkPort != null">
+        #{publicNetworkPort,jdbcType=VARCHAR},
+      </if>
+      <if test="lanIp != null">
+        #{lanIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lanPort != null">
+        #{lanPort,jdbcType=VARCHAR},
+      </if>
+      <if test="stationStatus != null">
+        #{stationStatus,jdbcType=CHAR},
+      </if>
+      <if test="stationNetworkId != null">
+        #{stationNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationRandomSeed != null">
+        #{stationRandomSeed,jdbcType=VARCHAR},
+      </if>
+      <if test="relationOperatorId != null">
+        #{relationOperatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isExist != null">
+        #{isExist,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfoExample" resultType="java.lang.Long">
+    select count(*) from nmpl_base_station_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmpl_base_station_info
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.stationId != null">
+        station_id = #{record.stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stationName != null">
+        station_name = #{record.stationName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stationType != null">
+        station_type = #{record.stationType,jdbcType=CHAR},
+      </if>
+      <if test="record.enterNetworkTime != null">
+        enter_network_time = #{record.enterNetworkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.stationAdmain != null">
+        station_admain = #{record.stationAdmain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.publicNetworkIp != null">
+        public_network_ip = #{record.publicNetworkIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.publicNetworkPort != null">
+        public_network_port = #{record.publicNetworkPort,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lanIp != null">
+        lan_ip = #{record.lanIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lanPort != null">
+        lan_port = #{record.lanPort,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stationStatus != null">
+        station_status = #{record.stationStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.stationNetworkId != null">
+        station_network_id = #{record.stationNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stationRandomSeed != null">
+        station_random_seed = #{record.stationRandomSeed,jdbcType=VARCHAR},
+      </if>
+      <if test="record.relationOperatorId != null">
+        relation_operator_id = #{record.relationOperatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createUser != null">
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null">
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isExist != null">
+        is_exist = #{record.isExist,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmpl_base_station_info
+    set id = #{record.id,jdbcType=BIGINT},
+      station_id = #{record.stationId,jdbcType=VARCHAR},
+      station_name = #{record.stationName,jdbcType=VARCHAR},
+      station_type = #{record.stationType,jdbcType=CHAR},
+      enter_network_time = #{record.enterNetworkTime,jdbcType=TIMESTAMP},
+      station_admain = #{record.stationAdmain,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      public_network_ip = #{record.publicNetworkIp,jdbcType=VARCHAR},
+      public_network_port = #{record.publicNetworkPort,jdbcType=VARCHAR},
+      lan_ip = #{record.lanIp,jdbcType=VARCHAR},
+      lan_port = #{record.lanPort,jdbcType=VARCHAR},
+      station_status = #{record.stationStatus,jdbcType=CHAR},
+      station_network_id = #{record.stationNetworkId,jdbcType=VARCHAR},
+      station_random_seed = #{record.stationRandomSeed,jdbcType=VARCHAR},
+      relation_operator_id = #{record.relationOperatorId,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{record.isExist,jdbcType=BIT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfo">
+    update nmpl_base_station_info
+    <set>
+      <if test="stationId != null">
+        station_id = #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationName != null">
+        station_name = #{stationName,jdbcType=VARCHAR},
+      </if>
+      <if test="stationType != null">
+        station_type = #{stationType,jdbcType=CHAR},
+      </if>
+      <if test="enterNetworkTime != null">
+        enter_network_time = #{enterNetworkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stationAdmain != null">
+        station_admain = #{stationAdmain,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="publicNetworkIp != null">
+        public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
+      </if>
+      <if test="publicNetworkPort != null">
+        public_network_port = #{publicNetworkPort,jdbcType=VARCHAR},
+      </if>
+      <if test="lanIp != null">
+        lan_ip = #{lanIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lanPort != null">
+        lan_port = #{lanPort,jdbcType=VARCHAR},
+      </if>
+      <if test="stationStatus != null">
+        station_status = #{stationStatus,jdbcType=CHAR},
+      </if>
+      <if test="stationNetworkId != null">
+        station_network_id = #{stationNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationRandomSeed != null">
+        station_random_seed = #{stationRandomSeed,jdbcType=VARCHAR},
+      </if>
+      <if test="relationOperatorId != null">
+        relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isExist != null">
+        is_exist = #{isExist,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfo">
+    update nmpl_base_station_info
+    set station_id = #{stationId,jdbcType=VARCHAR},
+      station_name = #{stationName,jdbcType=VARCHAR},
+      station_type = #{stationType,jdbcType=CHAR},
+      enter_network_time = #{enterNetworkTime,jdbcType=TIMESTAMP},
+      station_admain = #{stationAdmain,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
+      public_network_port = #{publicNetworkPort,jdbcType=VARCHAR},
+      lan_ip = #{lanIp,jdbcType=VARCHAR},
+      lan_port = #{lanPort,jdbcType=VARCHAR},
+      station_status = #{stationStatus,jdbcType=CHAR},
+      station_network_id = #{stationNetworkId,jdbcType=VARCHAR},
+      station_random_seed = #{stationRandomSeed,jdbcType=VARCHAR},
+      relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{isExist,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

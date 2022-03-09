@@ -68,4 +68,8 @@ public class ErrorMessageContants {
 
 	public static final String JSON_ERROR_FAIL_MSG = "JSON解析失败";
 
+	public static final String SIGNAL_I_EXCEPTION_MSG = "信令已开启追踪";
+
+	public static final String SIGNAL_O_EXCEPTION_MSG = "信令关闭参数校验有误";
+
 }

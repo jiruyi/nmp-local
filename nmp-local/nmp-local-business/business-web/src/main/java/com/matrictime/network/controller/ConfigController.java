@@ -3,8 +3,10 @@ package com.matrictime.network.controller;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.EditConfigReq;
 import com.matrictime.network.request.QueryConfigByPagesReq;
+import com.matrictime.network.request.ResetDefaultConfigReq;
 import com.matrictime.network.response.EditConfigResp;
 import com.matrictime.network.response.QueryConfigByPagesResp;
+import com.matrictime.network.response.ResetDefaultConfigResp;
 import com.matrictime.network.service.ConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 /**
- * 配置controller
+ * 配置相关请求接口
  */
 public class ConfigController {
 
@@ -40,7 +42,6 @@ public class ConfigController {
         }
     }
 
-    //
 
     /**
      * 查询接口（支持分页查询）
@@ -57,10 +58,23 @@ public class ConfigController {
         }
     }
 
-    // 恢复默认接口（支持全量恢复,同时需要同步数据）
 
-    // 根据设备类型查询列表
+    /**
+     * 恢复默认接口（支持全量恢复,同时需要同步数据）
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/resetDefaultConfig",method = RequestMethod.POST)
+    public Result<ResetDefaultConfigResp> resetDefaultConfig(@RequestBody ResetDefaultConfigReq req){
+        try {
+            return  configService.resetDefaultConfig(req);
+        }catch (Exception e){
+            log.error("queryConfigByPages exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+    // 根据设备类型查询列表(待定)
 
-    // 调用http接口同步接口（支持批量）
+    // 调用http接口同步接口（支持批量D）
 
 }
