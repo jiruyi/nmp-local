@@ -90,6 +90,25 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="queryLoginDetailList" parameterType="com.matrictime.network.model.LoginDetail" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nmpl_login_detail
+    <where>
+      <if test="loginAccount != null">
+        login_account = #{loginAccount}
+      </if>
+      <if test="isSuccess != null">
+        and is_success = #{isSuccess}
+      </if>
+      <if test="loginTime != null">
+        and date(create_time) = #{loginTime}
+      </if>
+    </where>
+    order  by id desc
+  </select>
+
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -289,4 +308,5 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
 </mapper>

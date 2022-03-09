@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplDeviceLogMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplDeviceLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="devcie_name" jdbcType="VARCHAR" property="devcieName" />
+    <result column="device_type" jdbcType="CHAR" property="deviceType" />
+    <result column="device_ip" jdbcType="VARCHAR" property="deviceIp" />
+    <result column="oper_type" jdbcType="VARCHAR" property="operType" />
+    <result column="oper_desc" jdbcType="VARCHAR" property="operDesc" />
+    <result column="oper_user" jdbcType="VARCHAR" property="operUser" />
+    <result column="oper_time" jdbcType="TIMESTAMP" property="operTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, device_id, devcie_name, device_type, device_ip, oper_type, oper_desc, oper_user, 
+    oper_time, create_time, update_time
+  </sql>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplDeviceLogExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmpl_device_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+
+  <select id="queryDeviceLogList" parameterType="com.matrictime.network.model.DeviceLog" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nmpl_device_log
+    <where>
+      <if test="deviceId != null and deviceId != ''">
+        device_id = #{deviceId}
+      </if>
+      <if test="deviceType != null and deviceType != ''">
+        and device_type = #{deviceType}
+      </if>
+      <if test="operDesc != null and operDesc != ''">
+        and oper_desc like concat #{deviceType}
+      </if>
+      <if test="operTime != null">
+        and date(oper_time) = #{operTime}
+      </if>
+    </where>
+     order by id desc
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from nmpl_device_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nmpl_device_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplDeviceLogExample">
+    delete from nmpl_device_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplDeviceLog">
+    insert into nmpl_device_log (id, device_id, devcie_name, 
+      device_type, device_ip, oper_type, 
+      oper_desc, oper_user, oper_time, 
+      create_time, update_time)
+    values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{devcieName,jdbcType=VARCHAR}, 
+      #{deviceType,jdbcType=CHAR}, #{deviceIp,jdbcType=VARCHAR}, #{operType,jdbcType=VARCHAR}, 
+      #{operDesc,jdbcType=VARCHAR}, #{operUser,jdbcType=VARCHAR}, #{operTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplDeviceLog">
+    insert into nmpl_device_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="deviceId != null">
+        device_id,
+      </if>
+      <if test="devcieName != null">
+        devcie_name,
+      </if>
+      <if test="deviceType != null">
+        device_type,
+      </if>
+      <if test="deviceIp != null">
+        device_ip,
+      </if>
+      <if test="operType != null">
+        oper_type,
+      </if>
+      <if test="operDesc != null">
+        oper_desc,
+      </if>
+      <if test="operUser != null">
+        oper_user,
+      </if>
+      <if test="operTime != null">
+        oper_time,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="deviceId != null">
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="devcieName != null">
+        #{devcieName,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        #{deviceType,jdbcType=CHAR},
+      </if>
+      <if test="deviceIp != null">
+        #{deviceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="operType != null">
+        #{operType,jdbcType=VARCHAR},
+      </if>
+      <if test="operDesc != null">
+        #{operDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="operUser != null">
+        #{operUser,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null">
+        #{operTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplDeviceLogExample" resultType="java.lang.Long">
+    select count(*) from nmpl_device_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmpl_device_log
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.deviceId != null">
+        device_id = #{record.deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.devcieName != null">
+        devcie_name = #{record.devcieName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deviceType != null">
+        device_type = #{record.deviceType,jdbcType=CHAR},
+      </if>
+      <if test="record.deviceIp != null">
+        device_ip = #{record.deviceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operType != null">
+        oper_type = #{record.operType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operDesc != null">
+        oper_desc = #{record.operDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operUser != null">
+        oper_user = #{record.operUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operTime != null">
+        oper_time = #{record.operTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmpl_device_log
+    set id = #{record.id,jdbcType=BIGINT},
+      device_id = #{record.deviceId,jdbcType=VARCHAR},
+      devcie_name = #{record.devcieName,jdbcType=VARCHAR},
+      device_type = #{record.deviceType,jdbcType=CHAR},
+      device_ip = #{record.deviceIp,jdbcType=VARCHAR},
+      oper_type = #{record.operType,jdbcType=VARCHAR},
+      oper_desc = #{record.operDesc,jdbcType=VARCHAR},
+      oper_user = #{record.operUser,jdbcType=VARCHAR},
+      oper_time = #{record.operTime,jdbcType=TIMESTAMP},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplDeviceLog">
+    update nmpl_device_log
+    <set>
+      <if test="deviceId != null">
+        device_id = #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="devcieName != null">
+        devcie_name = #{devcieName,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        device_type = #{deviceType,jdbcType=CHAR},
+      </if>
+      <if test="deviceIp != null">
+        device_ip = #{deviceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="operType != null">
+        oper_type = #{operType,jdbcType=VARCHAR},
+      </if>
+      <if test="operDesc != null">
+        oper_desc = #{operDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="operUser != null">
+        oper_user = #{operUser,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null">
+        oper_time = #{operTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplDeviceLog">
+    update nmpl_device_log
+    set device_id = #{deviceId,jdbcType=VARCHAR},
+      devcie_name = #{devcieName,jdbcType=VARCHAR},
+      device_type = #{deviceType,jdbcType=CHAR},
+      device_ip = #{deviceIp,jdbcType=VARCHAR},
+      oper_type = #{operType,jdbcType=VARCHAR},
+      oper_desc = #{operDesc,jdbcType=VARCHAR},
+      oper_user = #{operUser,jdbcType=VARCHAR},
+      oper_time = #{operTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

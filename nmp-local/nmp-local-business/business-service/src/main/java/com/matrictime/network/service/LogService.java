@@ -1,8 +1,12 @@
 package com.matrictime.network.service;
 
+import com.matrictime.network.model.DeviceLog;
+import com.matrictime.network.model.LoginDetail;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LogRequest;
+import com.matrictime.network.request.LoginRequest;
 import com.matrictime.network.response.PageInfo;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * @author jiruyi
@@ -13,5 +17,12 @@ import com.matrictime.network.response.PageInfo;
  */
 public interface LogService {
 
-    public Result<PageInfo> queryNetworkLogList(LogRequest request);
+     Result<PageInfo> queryNetworkLogList(LogRequest request);
+
+     Result<PageInfo> queryLoginDetailList(LoginDetail loginDetail);
+
+     Result saveDeviceLog( DeviceLog deviceLog);
+
+     Result<PageInfo> queryDeviceLogList(DeviceLog deviceLog);
+
 }

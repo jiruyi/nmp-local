@@ -3,6 +3,9 @@ package com.matrictime.network.dao.mapper;
 import com.matrictime.network.dao.model.NmplBaseStationInfo;
 import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
 import java.util.List;
+
+import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.request.BaseStationInfoRequest;
 import org.apache.ibatis.annotations.Param;
 
 public interface NmplBaseStationInfoMapper {
@@ -27,4 +30,12 @@ public interface NmplBaseStationInfoMapper {
     int updateByPrimaryKeySelective(NmplBaseStationInfo record);
 
     int updateByPrimaryKey(NmplBaseStationInfo record);
+
+    int insertBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
+
+    int updateBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
+
+    int deleteBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
+
+    List<BaseStationInfoVo> selectBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
 }
