@@ -1,9 +1,14 @@
 package com.matrictime.network.config;
 
+import com.matrictime.network.base.constant.DataConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -15,6 +20,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 public class MyRedisConfig {
+
 
     @Bean(name = "redisTemplate")
     public RedisTemplate<String,Object> getRedisTemplate(RedisConnectionFactory factory){
@@ -30,6 +36,13 @@ public class MyRedisConfig {
         redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
         return  redisTemplate;
     }
-
+    
+    @Bean
+    RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+//        container.addMessageListener(messageListener(),new ChannelTopic(DataConstants.DEVICE_LOG_REDIS_CHANNEL));
+        return container;
+    }
 
 }

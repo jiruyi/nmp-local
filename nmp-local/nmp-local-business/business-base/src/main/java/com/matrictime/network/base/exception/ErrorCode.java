@@ -24,4 +24,14 @@ public class ErrorCode {
      */
     public static final String PARAM_EXCEPTION = "10002";
 
+    /**
+     * 信令已开启追踪
+     */
+    public static final String SIGNAL_I_EXCEPTION = "signal_10000";
+
+    /**
+     * 信令关闭参数校验有误
+     */
+    public static final String SIGNAL_O_EXCEPTION = "signal_10001";
+
 }

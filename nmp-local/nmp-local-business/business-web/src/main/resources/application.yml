@@ -36,6 +36,12 @@ spring:
           slow-sql-millis: 3000
       time-between-eviction-runs-millis: 10000
       min-evictable-idle-time-millis: 30000
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
 
   redis:
     database: 0

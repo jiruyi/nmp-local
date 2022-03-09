@@ -13,6 +13,8 @@ public class ErrorMessageContants {
 
 	public static final String PARAM_IS_NULL_MSG = "必输入参为空";
 
+	public static final String PARAM_IS_UNEXPECTED_MSG = "入参有误";
+
 	public static final String USERNAME_IS_NULL_MSG = "用户名或者密码为空";
 
 	public static final String LoginType_IS_ERROR_MSG = "登录方式不存在";

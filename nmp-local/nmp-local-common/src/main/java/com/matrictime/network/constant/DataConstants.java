@@ -48,5 +48,13 @@ public class DataConstants {
     public static final String EDIT_TYPE_UPD = "2";
     public static final String EDIT_TYPE_DEL = "3";
 
+    public static final String EDIT_RANGE_PART = "1";
+    public static final String EDIT_RANGE_ALL = "2";
+
+    public static final boolean IS_EXIST = true;
+    public static final boolean IS_NOT_EXIST = false;
+
+    public static final String FILE_TYPE_CSV = ".csv";
+
 
 }

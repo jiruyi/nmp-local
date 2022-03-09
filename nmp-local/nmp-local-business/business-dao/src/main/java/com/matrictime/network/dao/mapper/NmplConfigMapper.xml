@@ -9,7 +9,7 @@
     <result column="config_value" jdbcType="VARCHAR" property="configValue" />
     <result column="default_value" jdbcType="VARCHAR" property="defaultValue" />
     <result column="unit" jdbcType="VARCHAR" property="unit" />
-    <result column="status" jdbcType="BIT" property="status" />
+    <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -118,7 +118,7 @@
       is_exist, remark)
     values (#{id,jdbcType=BIGINT}, #{deviceType,jdbcType=CHAR}, #{configName,jdbcType=VARCHAR}, 
       #{configCode,jdbcType=VARCHAR}, #{configValue,jdbcType=VARCHAR}, #{defaultValue,jdbcType=VARCHAR}, 
-      #{unit,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{unit,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
       #{isExist,jdbcType=BIT}, #{remark,jdbcType=VARCHAR})
   </insert>
@@ -191,7 +191,7 @@
         #{unit,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        #{status,jdbcType=BIT},
+        #{status,jdbcType=TINYINT},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -244,7 +244,7 @@
         unit = #{record.unit,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null">
-        status = #{record.status,jdbcType=BIT},
+        status = #{record.status,jdbcType=TINYINT},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -278,7 +278,7 @@
       config_value = #{record.configValue,jdbcType=VARCHAR},
       default_value = #{record.defaultValue,jdbcType=VARCHAR},
       unit = #{record.unit,jdbcType=VARCHAR},
-      status = #{record.status,jdbcType=BIT},
+      status = #{record.status,jdbcType=TINYINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -311,7 +311,7 @@
         unit = #{unit,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        status = #{status,jdbcType=BIT},
+        status = #{status,jdbcType=TINYINT},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -342,7 +342,7 @@
       config_value = #{configValue,jdbcType=VARCHAR},
       default_value = #{defaultValue,jdbcType=VARCHAR},
       unit = #{unit,jdbcType=VARCHAR},
-      status = #{status,jdbcType=BIT},
+      status = #{status,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},

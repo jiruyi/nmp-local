@@ -46,4 +46,22 @@ public class DataConstants {
 
 
     public static final long SUPER_ADMIN = 1;
+
+    public static final String IOTYPE_I = "1";
+    public static final String IOTYPE_O = "0";
+
+    // 基站
+    public static final String DEVICE_BIG_TYPE_0 = "0";
+    // 分发机、加密机等
+    public static final String DEVICE_BIG_TYPE_1 = "1";
+
+    public static final String STATION_STATUS_UNACTIVE = "01";
+    public static final String STATION_STATUS_ACTIVE = "02";
+    public static final String STATION_STATUS_DOWN = "04";
+
+    /**
+     * redis key
+     */
+    public static final String HEART_CHECK_DEVICE_ID = "heart_check_device_id:";
+
 }
