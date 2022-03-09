@@ -43,12 +43,11 @@ public class LogController {
     @RequestMapping(value = "/oper/query",method = RequestMethod.POST)
     public Result<PageInfo> queryLogList(@RequestBody LogRequest logRequest){
         try {
-            logService.queryNetworkLogList(logRequest);
+            return  logService.queryNetworkLogList(logRequest);
         }catch (Exception e){
             log.error("queryLogList发生异常：{}", e.getMessage());
             return new Result<>(false,e.getMessage());
         }
-        return null;
     }
 
     /**

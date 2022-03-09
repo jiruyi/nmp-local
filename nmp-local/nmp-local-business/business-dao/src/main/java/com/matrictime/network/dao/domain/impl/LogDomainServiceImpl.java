@@ -18,9 +18,11 @@ import com.matrictime.network.request.LogRequest;
 import com.matrictime.network.request.LoginRequest;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -43,6 +45,14 @@ public class LogDomainServiceImpl extends SystemBaseService implements LogDomain
 
     @Autowired
     private NmplDeviceLogMapper deviceLogMapper;
+
+    @Override
+    public int saveLog(NmplOperateLog operateLog) {
+        if(ObjectUtils.isEmpty(operateLog)){
+            return NumberUtils.INTEGER_ZERO;
+        }
+        return  operateLogMapper.insertSelective(operateLog);
+    }
 
     /**
      * @title queryLogList
