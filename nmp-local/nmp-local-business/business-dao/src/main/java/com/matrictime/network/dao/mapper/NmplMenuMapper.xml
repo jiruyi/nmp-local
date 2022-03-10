@@ -359,7 +359,7 @@
     and a.role_id = #{roleId}
   </select>
 
-  <select id="queryAllMenu" resultType="com.matrictime.network.modelVo.NmplMenu">
+  <select id="queryAllMenu" resultType="com.matrictime.network.modelVo.NmplMenuVo">
     select * from nmpl_menu where is_exist=1;
   </select>
 </mapper>

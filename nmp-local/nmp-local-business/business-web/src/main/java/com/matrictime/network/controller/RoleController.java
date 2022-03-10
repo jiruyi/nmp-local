@@ -43,7 +43,7 @@ public class RoleController {
 
     @ApiOperation(value = "角色创建接口",notes = "角色创建")
     @RequestMapping(value = "/save",method = RequestMethod.POST)
-    //@RequiresPermissions("sys:role:save")
+    @RequiresPermissions("sys:role:save")
     public Result saveRole(@RequestBody RoleRequest roleRequest){
         return roleService.save(roleRequest);
     }

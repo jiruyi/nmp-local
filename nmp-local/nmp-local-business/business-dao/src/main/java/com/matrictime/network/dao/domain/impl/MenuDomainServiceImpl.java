@@ -2,7 +2,7 @@ package com.matrictime.network.dao.domain.impl;
 
 import com.matrictime.network.dao.domain.MenuDomainService;
 import com.matrictime.network.dao.mapper.NmplMenuMapper;
-import com.matrictime.network.modelVo.NmplMenu;
+import com.matrictime.network.modelVo.NmplMenuVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +18,12 @@ public class MenuDomainServiceImpl  implements MenuDomainService {
     NmplMenuMapper nmplMenuMapper;
 
     @Override
-    public List<NmplMenu> queryAllMenu() {
-        List<NmplMenu> menuList = nmplMenuMapper.queryAllMenu();
-        List<NmplMenu> first = new ArrayList<>();
-        Map<Long,List<NmplMenu>> second = new HashMap<>();
-        Map<Long,List<NmplMenu>> third = new HashMap<>();
-        for (NmplMenu nmplMenu : menuList) {
+    public List<NmplMenuVo> queryAllMenu() {
+        List<NmplMenuVo> menuList = nmplMenuMapper.queryAllMenu();
+        List<NmplMenuVo> first = new ArrayList<>();
+        Map<Long,List<NmplMenuVo>> second = new HashMap<>();
+        Map<Long,List<NmplMenuVo>> third = new HashMap<>();
+        for (NmplMenuVo nmplMenu : menuList) {
             if (nmplMenu.getMenuType()==0){
                 first.add(nmplMenu);
             }
@@ -40,9 +40,9 @@ public class MenuDomainServiceImpl  implements MenuDomainService {
                 third.get(nmplMenu.getParentMenuId()).add(nmplMenu);
             }
         }
-        for (NmplMenu nmplMenu : first) {
+        for (NmplMenuVo nmplMenu : first) {
             nmplMenu.setChild(second.get(nmplMenu.getMenuId()));
-            for (NmplMenu menu : nmplMenu.getChild()) {
+            for (NmplMenuVo menu : nmplMenu.getChild()) {
                 menu.setChild(third.get(menu.getMenuId()));
             }
         }
