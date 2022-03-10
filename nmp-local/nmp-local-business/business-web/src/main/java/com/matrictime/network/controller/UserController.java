@@ -15,6 +15,7 @@ import com.matrictime.network.response.LoginResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.UserListResponse;
 import com.matrictime.network.service.UserService;
+import com.matrictime.network.shiro.ShiroUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -106,6 +107,7 @@ public class UserController {
             }
             redisTemplate.delete(loginRequest.getUserId()+ DataConstants.USER_LOGIN_JWT_TOKEN);
             log.info("用户:{}退出系统", RequestContext.getUser().getUserId());
+            ShiroUtils.logout();
             return new Result(true, ErrorMessageContants.LOGOUT_SUCCESS_MSG);
         }catch (Exception e){
             log.error("用户:{}logout发生异常：{}", RequestContext.getUser().getUserId(),e.getMessage());

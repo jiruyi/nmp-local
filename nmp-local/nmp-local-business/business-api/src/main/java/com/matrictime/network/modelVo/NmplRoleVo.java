@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.util.Date;
 @Data
-public class NmplRole {
+public class NmplRoleVo {
     /**
      * 角色ID
      */

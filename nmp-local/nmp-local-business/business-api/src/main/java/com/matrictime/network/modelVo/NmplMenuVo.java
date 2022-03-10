@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class NmplMenu {
+public class NmplMenuVo {
     /**
      * 菜单ID
      */
@@ -59,5 +59,5 @@ public class NmplMenu {
     /**
      *  菜单子集
      */
-    private List<NmplMenu> child;
+    private List<NmplMenuVo> child;
 }
