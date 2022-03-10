@@ -104,7 +104,7 @@
         and device_type = #{deviceType}
       </if>
       <if test="operDesc != null and operDesc != ''">
-        and oper_desc like concat #{deviceType}
+        and oper_desc like concat ('%',#{operDesc},'%')
       </if>
       <if test="operTime != null">
         and date(oper_time) = #{operTime}

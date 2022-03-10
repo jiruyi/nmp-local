@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.convert.DeviceLogConvert;
 import com.matrictime.network.convert.LoginLogConvert;
 import com.matrictime.network.convert.OperateLogConvert;
 import com.matrictime.network.dao.domain.LogDomainService;
@@ -40,6 +41,9 @@ public class LogServiceImpl extends SystemBaseService implements LogService {
 
     @Autowired
     private LoginLogConvert loginLogConvert;
+
+    @Autowired
+    private DeviceLogConvert deviceLogConvert;
 
     @Override
     public Result<PageInfo> queryNetworkLogList(LogRequest request) {
@@ -106,7 +110,7 @@ public class LogServiceImpl extends SystemBaseService implements LogService {
     public Result<PageInfo> queryDeviceLogList(DeviceLog deviceLog) {
         try {
             PageInfo pageInfo = logDomainService.queryDeviceLogList(deviceLog);
-            List<LoginDetail> list = loginLogConvert.to(pageInfo.getList());
+            List<DeviceLog> list = deviceLogConvert.to(pageInfo.getList());
             pageInfo.setList(list);
             return  buildResult(pageInfo);
         }catch (Exception e){

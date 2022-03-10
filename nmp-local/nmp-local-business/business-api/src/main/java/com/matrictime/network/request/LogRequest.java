@@ -1,5 +1,9 @@
 package com.matrictime.network.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * @author jiruyi
  * @copyright www.matrictime.com
@@ -7,6 +11,9 @@ package com.matrictime.network.request;
  * @date 2022/3/2 0002 16:23
  * @desc
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class LogRequest extends BaseRequest {
 
     /**

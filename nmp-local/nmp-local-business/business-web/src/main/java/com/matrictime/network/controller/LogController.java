@@ -70,6 +70,14 @@ public class LogController {
         }
     }
 
+    /**
+      * @title saveDeviceLog
+      * @param [deviceLog]
+      * @return com.matrictime.network.model.Result
+      * @description 
+      * @author jiruyi
+      * @create 2022/3/10 0010 14:04
+      */
     @ApiOperation(value = "设备日志保存",notes = "设备日志保存")
     @SystemLog(opermodul = "日志管理模块",operDesc = "设备日志保存",operType = "插入")
     @RequestMapping(value = "/device/save",method = RequestMethod.POST)
