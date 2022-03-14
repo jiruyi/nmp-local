@@ -8,7 +8,6 @@ import com.matrictime.network.model.DeviceLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LogRequest;
 import com.matrictime.network.model.LoginDetail;
-import com.matrictime.network.request.LoginRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.LogService;
 import io.swagger.annotations.Api;
@@ -22,11 +21,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * 日志相关
  * @author jiruyi
  * @copyright www.matrictime.com
  * @project nmp-local
  * @date 2022/3/2 0002 15:39
- * @desc
+ *
+ *
  */
 
 @RequestMapping(value = "/log")
@@ -71,10 +72,10 @@ public class LogController {
     }
 
     /**
+      * 设备日志保存
       * @title saveDeviceLog
       * @param [deviceLog]
       * @return com.matrictime.network.model.Result
-      * @description 
       * @author jiruyi
       * @create 2022/3/10 0010 14:04
       */
@@ -103,10 +104,11 @@ public class LogController {
 
 
     /**
+     * 设备日志查询
      * @title ApiOperation
      * @param []
      * @return
-     * @description 设备日志查询
+     * @description
      * @author jiruyi
      * @create 2022/3/7 0007 11:38
      */
