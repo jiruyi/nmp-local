@@ -19,15 +19,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeviceLog  extends BaseRequest {
 
+    /**
+     * 设备编号
+     */
     private String deviceId;
-
+    /**
+     * 设备名称
+     */
     private String deviceName;
-
+    /**
+     * 设备IP
+     */
     private String deviceIp;
-
+    /**
+     * 上报内容
+     */
     private String operDesc;
     /**
-     * 设备类型
+     * 设备类型 1 基站 2分发机
      */
     private String deviceType;
 
@@ -39,7 +48,12 @@ public class DeviceLog  extends BaseRequest {
      */
     private String operType;
 
+    /**
+     * 操作人
+     */
     private String operUser;
-
+    /**
+     * 操作时间
+     */
     private String operTime;
 }
