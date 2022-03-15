@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplBillExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplBill">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="owner_id" jdbcType="VARCHAR" property="ownerId" />
+        <result column="stream_id" jdbcType="VARCHAR" property="streamId" />
+        <result column="flow_number" jdbcType="VARCHAR" property="flowNumber" />
+        <result column="time_length" jdbcType="VARCHAR" property="timeLength" />
+        <result column="key_num" jdbcType="VARCHAR" property="keyNum" />
+        <result column="hybrid_factor" jdbcType="VARCHAR" property="hybridFactor" />
+        <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+        <result column="start_time" jdbcType="VARCHAR" property="startTime" />
+        <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, owner_id, stream_id, flow_number, time_length, key_num, hybrid_factor, upload_time,
+    start_time, end_time
+    </sql>
+
+    <select id="queryByCondition" resultType="com.matrictime.network.modelVo.NmplBillVo">
+        select * from nmpl_bill
+        <where>
+            <trim prefix="(" suffix=")" suffixOverrides="and">
+                <if test="ownerId != null">
+                    owner_id = #{ownerId,jdbcType=VARCHAR} and
+                </if>
+                <if test="streamId != null">
+                    stream_id = #{streamId,jdbcType=VARCHAR} and
+                </if>
+                <if test="flowNumber != null">
+                    flow_number = #{flowNumber,jdbcType=VARCHAR} and
+                </if>
+                <if test="timeLength != null">
+                    time_length = #{timeLength,jdbcType=VARCHAR} and
+                </if>
+                <if test="keyNum != null">
+                    key_num = #{keyNum,jdbcType=VARCHAR} and
+                </if>
+                <if test="hybridFactor != null">
+                    hybrid_factor = #{hybridFactor,jdbcType=VARCHAR} and
+                </if>
+                <if test="uploadTime != null">
+                    upload_time = #{uploadTime,jdbcType=TIMESTAMP} and
+                </if>
+                <if test="startTime != null">
+                    start_time &gt;= #{startTime,jdbcType=VARCHAR} and
+                </if>
+                <if test="endTime != null">
+                    end_time &lt;= #{endTime,jdbcType=VARCHAR}
+                </if>
+            </trim>
+        </where>
+
+    </select>
+    
+
+    <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.NmplBillVo">
+        insert into nmpl_bill (id, owner_id, stream_id,
+        flow_number, time_length, key_num,hybrid_factor, upload_time, start_time,end_time) values
+        <foreach collection ="list" item="bill" separator =",">
+            (#{bill.id}, #{bill.ownerId},#{bill.streamId}, #{bill.flowNumber}, #{bill.timeLength}, #{bill.keyNum}, #{bill.hybridFactor}
+            , #{bill.uploadTime}, #{bill.startTime}, #{bill.endTime})
+        </foreach >
+    </insert>
+
+</mapper>

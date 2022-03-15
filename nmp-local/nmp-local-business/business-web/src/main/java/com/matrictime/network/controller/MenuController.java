@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 菜单管理
+ */
 @RequestMapping(value = "/menu")
 @Api(value = "菜单管理",tags = "菜单管理")
 @RestController
@@ -24,6 +27,10 @@ public class MenuController {
     @Autowired
     MenuService menuService;
 
+    /**
+     * 菜单查询
+     * @return
+     */
     @ApiOperation(value = "菜单查询接口",notes = "查询所有菜单")
     @RequestMapping(value = "/queryAllMenu",method = RequestMethod.POST)
     @RequiresPermissions("sys:power:query")

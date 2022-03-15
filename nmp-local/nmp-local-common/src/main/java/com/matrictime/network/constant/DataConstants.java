@@ -56,5 +56,5 @@ public class DataConstants {
 
     public static final String FILE_TYPE_CSV = ".csv";
 
-
+    //public static final long SUPER_ADMIN = 1;
 }

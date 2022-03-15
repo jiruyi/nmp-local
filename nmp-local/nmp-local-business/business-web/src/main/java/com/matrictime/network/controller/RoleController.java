@@ -25,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 角色管理接口
+ */
 @RequestMapping(value = "/role")
 @Api(value = "角色管理",tags = "用户角色管理")
 @RestController
@@ -34,6 +37,12 @@ public class RoleController {
     @Autowired
     RoleService roleService;
 
+
+    /**
+     * 角色条件查询
+     * @param roleRequest
+     * @return
+     */
     @ApiOperation(value = "角色条件查询接口",notes = "条件查询，默认全量查询")
     @RequestMapping(value = "/queryByCondition",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:query")
@@ -41,6 +50,11 @@ public class RoleController {
         return roleService.queryByConditon(roleRequest);
     }
 
+    /**
+     * 角色创建
+     * @param roleRequest
+     * @return
+     */
     @ApiOperation(value = "角色创建接口",notes = "角色创建")
     @RequestMapping(value = "/save",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:save")
@@ -48,6 +62,11 @@ public class RoleController {
         return roleService.save(roleRequest);
     }
 
+    /**
+     * 角色编辑
+     * @param roleRequest
+     * @return
+     */
     @ApiOperation(value = "角色编辑接口",notes = "角色编辑")
     @RequestMapping(value = "/modify",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:update")
@@ -55,6 +74,11 @@ public class RoleController {
         return roleService.modify(roleRequest);
     }
 
+    /**
+     * 角色删除
+     * @param roleRequest
+     * @return
+     */
     @ApiOperation(value = "角色删除接口",notes = "角色删除")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:delete")
@@ -62,6 +86,11 @@ public class RoleController {
         return roleService.delete(roleRequest);
     }
 
+    /**
+     * 单一角色查询
+     * @param roleRequest
+     * @return
+     */
     @ApiOperation(value = "单一角色查询接口",notes = "查询一个角色具体信息")
     @RequestMapping(value = "/queryOne",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:query")
