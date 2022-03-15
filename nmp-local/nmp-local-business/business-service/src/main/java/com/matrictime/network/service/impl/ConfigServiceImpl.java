@@ -6,10 +6,11 @@ import com.github.pagehelper.PageInfo;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplConfigMapper;
+import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplConfigExtMapper;
-import com.matrictime.network.dao.model.NmplConfig;
-import com.matrictime.network.dao.model.NmplConfigExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
@@ -17,9 +18,11 @@ import com.matrictime.network.modelVo.NmplConfigVo;
 import com.matrictime.network.request.EditConfigReq;
 import com.matrictime.network.request.QueryConfigByPagesReq;
 import com.matrictime.network.request.ResetDefaultConfigReq;
+import com.matrictime.network.request.SyncConfigReq;
 import com.matrictime.network.response.EditConfigResp;
 import com.matrictime.network.response.QueryConfigByPagesResp;
 import com.matrictime.network.response.ResetDefaultConfigResp;
+import com.matrictime.network.response.SyncConfigResp;
 import com.matrictime.network.service.ConfigService;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +34,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
 
 @Slf4j
@@ -44,8 +51,14 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     @Autowired(required = false)
     private NmplConfigMapper nmplConfigMapper;
 
+    @Autowired(required = false)
+    private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
+
+    @Autowired(required = false)
+    private NmplDeviceInfoMapper nmplDeviceInfoMapper;
+
     @Override
-    public Result<QueryConfigByPagesResp> queryByPages(QueryConfigByPagesReq req) {
+    public Result<QueryConfigByPagesResp> queryConfigByPages(QueryConfigByPagesReq req) {
         Result result;
         try {
             PageInfo<NmplConfig> pageInfo = PageHelper.startPage(req.getPageNo(), req.getPageSize()).doSelectPageInfo(new ISelect() {
@@ -64,7 +77,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             resp.setPageInfo(pageInfo);
             result = buildResult(resp);
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("ConfigServiceImpl.queryConfigByPages Exception:{}",e.getMessage());
             result = failResult(e);
         }
 
@@ -108,10 +121,10 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             EditConfigResp resp = new EditConfigResp();
             result = buildResult(resp);
         }catch (SystemException e){
-            log.error(e.getMessage());
+            log.error("ConfigServiceImpl.editConfig SystemException:{}",e.getMessage());
             result = failResult(e.getCode(),e.getMessage());
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("ConfigServiceImpl.editConfig Exception:{}",e.getMessage());
             result = failResult(e);
         }
 
@@ -123,7 +136,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
         Result result;
         try {
             checkResetDefaultConfigParam(req);
-            List<Long> successIds = new ArrayList<>(req.getIds().size());
+            List<Long> successIds = new ArrayList<>();
             List<Long> failIds = new ArrayList<>();
             switch (req.getEditRange()){
                 case DataConstants.EDIT_RANGE_PART:
@@ -168,11 +181,150 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             resp.setSuccessIds(successIds);
             resp.setFailIds(failIds);
             result = buildResult(resp);
+        }catch (SystemException e){
+            log.error("ConfigServiceImpl.resetDefaultConfig SystemException:{}",e.getMessage());
+            result = failResult(e.getCode(),e.getMessage());
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("ConfigServiceImpl.resetDefaultConfig Exception:{}",e.getMessage());
             result = failResult(e);
         }
 
+        return result;
+    }
+
+    @Override
+    public Result<SyncConfigResp> syncConfig(SyncConfigReq req) {
+        Result result;
+        try {
+            checkSyncConfigParam(req);
+            List<String> successIds = new ArrayList<>();
+            List<String> failIds = new ArrayList<>();
+            switch (req.getEditRange()){
+                case DataConstants.EDIT_RANGE_PART:
+                    for (String deviceId : req.getDeviceIds()){
+                        Map<String,String> httpParam = new HashMap<>(8);
+                        NmplConfig nmplConfig = nmplConfigMapper.selectByPrimaryKey(req.getConfigId());
+                        if (nmplConfig != null){
+                            httpParam.put("configCode",nmplConfig.getConfigCode());
+                            httpParam.put("configValue",nmplConfig.getConfigValue());
+                            httpParam.put("unit",nmplConfig.getUnit());
+                        }
+                        switch (req.getDeviceType()){
+                            case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_1:
+                                NmplBaseStationInfoExample bExample = new NmplBaseStationInfoExample();
+                                bExample.createCriteria().andStationIdEqualTo(deviceId).andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
+                                List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bExample);
+                                if (!CollectionUtils.isEmpty(stationInfos)){
+                                    NmplBaseStationInfo info = stationInfos.get(0);
+                                    httpParam.put("ip",info.getPublicNetworkIp());
+                                    httpParam.put("port",info.getPublicNetworkPort());
+                                }
+                                break;
+                            case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_2:
+                            case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_3:
+                            case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_4:
+                                NmplDeviceInfoExample dExample = new NmplDeviceInfoExample();
+                                dExample.createCriteria().andDeviceIdEqualTo(deviceId).andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
+                                List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dExample);
+                                if (!CollectionUtils.isEmpty(deviceInfos)){
+                                    NmplDeviceInfo info = deviceInfos.get(0);
+                                    httpParam.put("ip",info.getPublicNetworkIp());
+                                    httpParam.put("port",info.getPublicNetworkPort());
+                                }
+                                break;
+                            default:
+                                log.warn("device_id:{} device_type is not illegal",deviceId);
+                                break;
+                        }
+                        Result syncRes = httpSyncConfig(httpParam);
+                        if (syncRes.isSuccess()){
+                            successIds.add(deviceId);
+                            continue;
+                        }
+                        failIds.add(deviceId);
+                    }
+                    break;
+                case DataConstants.EDIT_RANGE_ALL:
+                    NmplConfigExample example = new NmplConfigExample();
+                    example.createCriteria().andIsExistEqualTo(IS_EXIST);
+                    List<NmplConfig> nmplConfigs = nmplConfigMapper.selectByExample(example);
+                    if (!CollectionUtils.isEmpty(nmplConfigs)){
+                        for (NmplConfig config : nmplConfigs){
+                            Map<String,String> httpParam = new HashMap<>(8);
+                            httpParam.put("configCode",config.getConfigCode());
+                            httpParam.put("configValue",config.getConfigValue());
+                            httpParam.put("unit",config.getUnit());
+                            switch (config.getDeviceType()){
+                                case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_1:
+                                    NmplBaseStationInfoExample bExample = new NmplBaseStationInfoExample();
+                                    bExample.createCriteria().andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
+                                    List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bExample);
+                                    if (!CollectionUtils.isEmpty(stationInfos)){
+                                        for (NmplBaseStationInfo info : stationInfos){
+                                            httpParam.put("ip",info.getPublicNetworkIp());
+                                            httpParam.put("port",info.getPublicNetworkPort());
+                                            Result syncRes = httpSyncConfig(httpParam);
+                                            if (syncRes.isSuccess()){
+                                                successIds.add(info.getStationId());
+                                            }else {
+                                                failIds.add(info.getStationId());
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_2:
+                                case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_3:
+                                case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_4:
+                                    NmplDeviceInfoExample dExample = new NmplDeviceInfoExample();
+                                    dExample.createCriteria().andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
+                                    List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dExample);
+                                    if (!CollectionUtils.isEmpty(deviceInfos)){
+                                        for (NmplDeviceInfo info : deviceInfos){
+                                            httpParam.put("ip",info.getPublicNetworkIp());
+                                            httpParam.put("port",info.getPublicNetworkPort());
+                                            Result syncRes = httpSyncConfig(httpParam);
+                                            if (syncRes.isSuccess()){
+                                                successIds.add(info.getDeviceId());
+                                            }else {
+                                                failIds.add(info.getDeviceId());
+                                            }
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    log.warn("config:{} device_type is not illegal",config.getId());
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    throw new SystemException(ErrorCode.PARAM_EXCEPTION, "editRange"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+            SyncConfigResp resp = new SyncConfigResp();
+            resp.setSuccessIds(successIds);
+            resp.setFailIds(failIds);
+            result = buildResult(resp);
+        }catch (SystemException e){
+            log.error("ConfigServiceImpl.syncConfig SystemException:{}",e.getMessage());
+            result = failResult(e.getCode(),e.getMessage());
+        }catch (Exception e){
+            log.error("ConfigServiceImpl.syncConfig Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+
+        return result;
+    }
+
+    @Override
+    public Result httpSyncConfig(Map<String,String> map) {
+        Result result;
+        try {
+            result = buildResult(null);
+        }catch (Exception e){
+            log.warn("ConfigServiceImpl.httpSyncConfig Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
         return result;
     }
 
@@ -198,4 +350,21 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "ids"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
     }
+
+    private void checkSyncConfigParam(SyncConfigReq req) {
+        if (ParamCheckUtil.checkVoStrBlank(req.getEditRange())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "editRange"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (req.getConfigId() != null){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "configId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getDeviceType())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "deviceType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (DataConstants.EDIT_RANGE_PART.equals(req.getEditRange()) && CollectionUtils.isEmpty(req.getDeviceIds())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "deviceIds"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+
 }

@@ -55,9 +55,18 @@ public class DataConstants {
     // 分发机、加密机等
     public static final String DEVICE_BIG_TYPE_1 = "1";
 
+    public static final String SYSTEM_ID_0 = "00";
+    public static final String SYSTEM_ID_1 = "01";
+    public static final String SYSTEM_ID_2 = "02";
+
     public static final String STATION_STATUS_UNACTIVE = "01";
     public static final String STATION_STATUS_ACTIVE = "02";
     public static final String STATION_STATUS_DOWN = "04";
+
+    public static final String CONFIG_DEVICE_TYPE_1 = "1";
+    public static final String CONFIG_DEVICE_TYPE_2 = "2";
+    public static final String CONFIG_DEVICE_TYPE_3 = "3";
+    public static final String CONFIG_DEVICE_TYPE_4 = "4";
 
     /**
      * redis key

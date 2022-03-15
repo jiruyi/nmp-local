@@ -26,6 +26,8 @@ import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -34,6 +36,7 @@ import java.util.*;
 
 @Slf4j
 @Service
+@PropertySource(value = "classpath:/businessConfig.properties",encoding = "UTF-8")
 public class SignalServiceImpl extends SystemBaseService implements SignalService {
 
     @Autowired(required = false)
@@ -50,6 +53,9 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
 
     @Autowired(required = false)
     private NmplSignalExtMapper nmplSignalExtMapper;
+
+    @Value("${signal.tableHeaderArr}")
+    private String[] tableHeaderArr;
 
     @Override
     public Result<EditSignalResp> editSignal(EditSignalReq req) {
@@ -191,7 +197,6 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
                     }
                 }
             }
-            String[] tableHeaderArr = {"id","设备编号","信令名称","发送方ip","接收方ip","信令内容","业务模块","上报时间","创建时间","更新时间"};
             byte[] bytes = ExportCSVUtil.writeCsvAfterToBytes(tableHeaderArr, cellList);
             ExportSignalResp resp = new ExportSignalResp();
             resp.setBytes(bytes);
