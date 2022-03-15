@@ -2,22 +2,23 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.BaseStationInfoRequest;
-import com.matrictime.network.response.BaseStationInfoResponse;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BaseStationInfoService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 @RestController
 @RequestMapping(value = "/baseStation",method = RequestMethod.POST)
 @Slf4j
 public class BaseStationController {
 
-    @Autowired
+    @Resource
     private BaseStationInfoService baseStationInfoService;
 
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
@@ -64,8 +65,8 @@ public class BaseStationController {
 
     @RequestMapping(value = "/select",method = RequestMethod.POST)
     @ApiOperation(value = "基站接口",notes = "根据条件基站信息查询")
-    public Result<BaseStationInfoResponse> selectBaseStationInfo(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
-        Result<BaseStationInfoResponse> result = new Result<>();
+    public Result<PageInfo> selectBaseStationInfo(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
+        Result<PageInfo> result = new Result<>();
         try {
             result = baseStationInfoService.selectBaseStationInfo(baseStationInfoRequest);
         }catch (Exception e){

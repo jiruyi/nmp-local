@@ -1,10 +1,14 @@
 package com.matrictime.network.dao.domain.impl;
 
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +38,19 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
     }
 
     @Override
-    public List<DeviceInfoVo> selectDevice(DeviceInfoRequest deviceInfoRequest) {
+    public PageInfo<DeviceInfoVo> selectDevice(DeviceInfoRequest deviceInfoRequest) {
+        Page page = PageHelper.startPage(deviceInfoRequest.getPageNo(),deviceInfoRequest.getPageSize());
+        List<DeviceInfoVo> deviceInfoVoList = nmplDeviceInfoMapper.selectDevice(deviceInfoRequest);
+        PageInfo<DeviceInfoVo> pageResult =  new PageInfo<>();
+        pageResult.setList(deviceInfoVoList);
+        pageResult.setCount((int) page.getTotal());
+        pageResult.setPages(page.getPages());
+        return  pageResult;
+    }
+
+    @Override
+    public List<DeviceInfoVo> selectLinkDevice(DeviceInfoRequest deviceInfoRequest) {
         return nmplDeviceInfoMapper.selectDevice(deviceInfoRequest);
     }
+
 }

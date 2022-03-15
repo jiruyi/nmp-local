@@ -495,8 +495,8 @@
     where device_id = #{deviceId,jdbcType=VARCHAR}
   </update>
   <select id="selectDevice" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.DeviceInfoVo">
-    select device_id,device_name,public_network_ip,
-           relation_operator_id,remark,create_user,lan_ip
+    select device_id,device_name,public_network_ip,public_network_port,
+           relation_operator_id,remark,create_user,lan_ip,lan_port
     from nmpl_device_info
     <where>
       is_exist = 1 and station_status = 2
@@ -505,6 +505,9 @@
       </if>
       <if test="deviceName != null and deviceName != ''">
         and device_name = #{deviceName,jdbcType=VARCHAR}
+      </if>
+      <if test="deviceType != null and deviceType != ''">
+        and device_type = #{deviceType,jdbcType=CHAR}
       </if>
       <if test="relationOperatorId != null and relationOperatorId != ''">
         and relation_operator_id = #{relationOperatorId,jdbcType=CHAR}

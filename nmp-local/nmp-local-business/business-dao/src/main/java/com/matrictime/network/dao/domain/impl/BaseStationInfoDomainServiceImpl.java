@@ -1,20 +1,23 @@
 package com.matrictime.network.dao.domain.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 
 @Service
 @Slf4j
 public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainService {
-    @Autowired
+    @Resource
     private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
 
     @Override
@@ -33,7 +36,24 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     }
 
     @Override
-    public List<BaseStationInfoVo> selectBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
+    public PageInfo<BaseStationInfoVo> selectBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
+        Page page = PageHelper.startPage(baseStationInfoRequest.getPageNo(),baseStationInfoRequest.getPageSize());
+        List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationInfo(baseStationInfoRequest);
+        PageInfo<BaseStationInfoVo> pageResult =  new PageInfo<>();
+        pageResult.setList(baseStationInfoVoList);
+        pageResult.setCount((int) page.getTotal());
+        pageResult.setPages(page.getPages());
+        return  pageResult;
+    }
+
+    @Override
+    public List<BaseStationInfoVo> selectLinkBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
         return nmplBaseStationInfoMapper.selectBaseStationInfo(baseStationInfoRequest);
     }
+
+    @Override
+    public List<BaseStationInfoVo> selectBaseStationBatch(List<String> list) {
+        return nmplBaseStationInfoMapper.selectBaseStationBatch(list);
+    }
+
 }
