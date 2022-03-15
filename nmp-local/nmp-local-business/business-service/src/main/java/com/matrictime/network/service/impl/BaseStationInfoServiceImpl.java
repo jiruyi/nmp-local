@@ -3,8 +3,10 @@ package com.matrictime.network.service.impl;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.LinkRelationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BaseStationInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,12 +86,29 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
     }
 
     @Override
-    public Result<BaseStationInfoResponse> selectBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
-        Result<BaseStationInfoResponse> result = new Result<>();
+    public Result<PageInfo> selectBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
+        Result<PageInfo> result = new Result<>();
         try {
-            BaseStationInfoResponse baseStationInfoResponse = new BaseStationInfoResponse();
-            List<BaseStationInfoVo> baseStationInfos = baseStationInfoDomainService.selectBaseStationInfo(baseStationInfoRequest);
-            baseStationInfoResponse.setBaseStationInfoList(baseStationInfos);
+            PageInfo pageInfo = baseStationInfoDomainService.selectBaseStationInfo(baseStationInfoRequest);
+            result.setResultObj(pageInfo);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
+    /**
+     * 根据前端页面条件自动关联获取基站信息
+     */
+    @Override
+    public Result<BaseStationInfoResponse> selectLinkBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
+        Result<BaseStationInfoResponse> result = new Result<>();
+        BaseStationInfoResponse baseStationInfoResponse = new BaseStationInfoResponse();
+        try {
+            baseStationInfoResponse.setBaseStationInfoList(baseStationInfoDomainService.
+                    selectLinkBaseStationInfo(baseStationInfoRequest));
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
         }catch (Exception e){
@@ -98,6 +117,25 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         }
         return result;
     }
+
+    @Override
+    public Result<BaseStationInfoResponse> selectBaseStationBatch(List<String> list) {
+        Result<BaseStationInfoResponse> result = new Result<>();
+        BaseStationInfoResponse baseStationInfoResponse = new BaseStationInfoResponse();
+        try {
+            baseStationInfoResponse.setBaseStationInfoList(baseStationInfoDomainService.
+                    selectBaseStationBatch(list));
+            result.setResultObj(baseStationInfoResponse);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
+
+
 
 
     private String getFormatDate(Date date){

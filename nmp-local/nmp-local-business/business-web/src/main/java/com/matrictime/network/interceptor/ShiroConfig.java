@@ -54,7 +54,8 @@ public class ShiroConfig {
         filterMap.put("/static/**","anon");
         filterMap.put("/user/**", "anon");
         filterMap.put("/role/**", "anon");
-
+        filterMap.put("/bill/saveBill","anon");
+        filterMap.put("/data/saveData","anon");
 
         //filterMap.put("/**", "authc");
         shiroFilter.setFilterChainDefinitionMap(filterMap);

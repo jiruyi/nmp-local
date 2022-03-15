@@ -2,8 +2,10 @@ package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.response.PageInfo;
 
 import java.util.List;
+
 
 public interface DeviceDomainService {
 
@@ -13,5 +15,7 @@ public interface DeviceDomainService {
 
     int updateDevice(DeviceInfoRequest deviceInfoRequest);
 
-    List<DeviceInfoVo> selectDevice(DeviceInfoRequest deviceInfoRequest);
+    PageInfo<DeviceInfoVo> selectDevice(DeviceInfoRequest deviceInfoRequest);
+
+    List<DeviceInfoVo> selectLinkDevice(DeviceInfoRequest deviceInfoRequest);
 }

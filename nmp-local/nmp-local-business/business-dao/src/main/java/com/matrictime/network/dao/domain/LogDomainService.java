@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 public interface LogDomainService {
 
+     int saveLog(NmplOperateLog operateLog);
+
     PageInfo<NmplOperateLog> queryLogList(LogRequest logRequest);
 
     PageInfo<NmplLoginDetail> queryLoginDetailList(LoginDetail loginDetail);

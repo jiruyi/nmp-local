@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplBillMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplBill">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="owner_id" jdbcType="VARCHAR" property="ownerId" />
+    <result column="stream_id" jdbcType="VARCHAR" property="streamId" />
+    <result column="flow_number" jdbcType="VARCHAR" property="flowNumber" />
+    <result column="time_length" jdbcType="VARCHAR" property="timeLength" />
+    <result column="key_num" jdbcType="VARCHAR" property="keyNum" />
+    <result column="hybrid_factor" jdbcType="VARCHAR" property="hybridFactor" />
+    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+    <result column="start_time" jdbcType="VARCHAR" property="startTime" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, owner_id, stream_id, flow_number, time_length, key_num, hybrid_factor, upload_time, 
+    start_time, end_time
+  </sql>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplBillExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmpl_bill
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from nmpl_bill
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nmpl_bill
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplBillExample">
+    delete from nmpl_bill
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplBill">
+    insert into nmpl_bill (id, owner_id, stream_id, 
+      flow_number, time_length, key_num, 
+      hybrid_factor, upload_time, start_time, 
+      end_time)
+    values (#{id,jdbcType=BIGINT}, #{ownerId,jdbcType=VARCHAR}, #{streamId,jdbcType=VARCHAR}, 
+      #{flowNumber,jdbcType=VARCHAR}, #{timeLength,jdbcType=VARCHAR}, #{keyNum,jdbcType=VARCHAR}, 
+      #{hybridFactor,jdbcType=VARCHAR}, #{uploadTime,jdbcType=TIMESTAMP}, #{startTime,jdbcType=VARCHAR}, 
+      #{endTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplBill">
+    insert into nmpl_bill
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="ownerId != null">
+        owner_id,
+      </if>
+      <if test="streamId != null">
+        stream_id,
+      </if>
+      <if test="flowNumber != null">
+        flow_number,
+      </if>
+      <if test="timeLength != null">
+        time_length,
+      </if>
+      <if test="keyNum != null">
+        key_num,
+      </if>
+      <if test="hybridFactor != null">
+        hybrid_factor,
+      </if>
+      <if test="uploadTime != null">
+        upload_time,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="ownerId != null">
+        #{ownerId,jdbcType=VARCHAR},
+      </if>
+      <if test="streamId != null">
+        #{streamId,jdbcType=VARCHAR},
+      </if>
+      <if test="flowNumber != null">
+        #{flowNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="timeLength != null">
+        #{timeLength,jdbcType=VARCHAR},
+      </if>
+      <if test="keyNum != null">
+        #{keyNum,jdbcType=VARCHAR},
+      </if>
+      <if test="hybridFactor != null">
+        #{hybridFactor,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadTime != null">
+        #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplBillExample" resultType="java.lang.Long">
+    select count(*) from nmpl_bill
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmpl_bill
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.ownerId != null">
+        owner_id = #{record.ownerId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.streamId != null">
+        stream_id = #{record.streamId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.flowNumber != null">
+        flow_number = #{record.flowNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.timeLength != null">
+        time_length = #{record.timeLength,jdbcType=VARCHAR},
+      </if>
+      <if test="record.keyNum != null">
+        key_num = #{record.keyNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hybridFactor != null">
+        hybrid_factor = #{record.hybridFactor,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uploadTime != null">
+        upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.startTime != null">
+        start_time = #{record.startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.endTime != null">
+        end_time = #{record.endTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmpl_bill
+    set id = #{record.id,jdbcType=BIGINT},
+      owner_id = #{record.ownerId,jdbcType=VARCHAR},
+      stream_id = #{record.streamId,jdbcType=VARCHAR},
+      flow_number = #{record.flowNumber,jdbcType=VARCHAR},
+      time_length = #{record.timeLength,jdbcType=VARCHAR},
+      key_num = #{record.keyNum,jdbcType=VARCHAR},
+      hybrid_factor = #{record.hybridFactor,jdbcType=VARCHAR},
+      upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
+      start_time = #{record.startTime,jdbcType=VARCHAR},
+      end_time = #{record.endTime,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplBill">
+    update nmpl_bill
+    <set>
+      <if test="ownerId != null">
+        owner_id = #{ownerId,jdbcType=VARCHAR},
+      </if>
+      <if test="streamId != null">
+        stream_id = #{streamId,jdbcType=VARCHAR},
+      </if>
+      <if test="flowNumber != null">
+        flow_number = #{flowNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="timeLength != null">
+        time_length = #{timeLength,jdbcType=VARCHAR},
+      </if>
+      <if test="keyNum != null">
+        key_num = #{keyNum,jdbcType=VARCHAR},
+      </if>
+      <if test="hybridFactor != null">
+        hybrid_factor = #{hybridFactor,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadTime != null">
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplBill">
+    update nmpl_bill
+    set owner_id = #{ownerId,jdbcType=VARCHAR},
+      stream_id = #{streamId,jdbcType=VARCHAR},
+      flow_number = #{flowNumber,jdbcType=VARCHAR},
+      time_length = #{timeLength,jdbcType=VARCHAR},
+      key_num = #{keyNum,jdbcType=VARCHAR},
+      hybrid_factor = #{hybridFactor,jdbcType=VARCHAR},
+      upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      start_time = #{startTime,jdbcType=VARCHAR},
+      end_time = #{endTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

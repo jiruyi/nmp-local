@@ -3,6 +3,8 @@ package com.matrictime.network.service;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.response.DeviceResponse;
+import com.matrictime.network.response.PageInfo;
+
 
 
 public interface DeviceService {
@@ -13,5 +15,7 @@ public interface DeviceService {
 
     Result<Integer> updateDevice(DeviceInfoRequest deviceInfoRequest);
 
-    Result<DeviceResponse> selectDevice(DeviceInfoRequest deviceInfoRequest);
+    Result<PageInfo> selectDevice(DeviceInfoRequest deviceInfoRequest);
+
+    Result<DeviceResponse> selectLinkDevice(DeviceInfoRequest deviceInfoRequest);
 }

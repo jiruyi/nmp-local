@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplRouteMapper">
+    <insert id="insertRoute" parameterType="com.matrictime.network.request.RouteRequest">
+        insert into nmpl_route (
+            access_device_id,boundary_device_id,create_user,
+            create_time,update_user,update_time
+        )
+        values(
+            #{accessDeviceId,jdbcType=VARCHAR},
+            #{boundaryDeviceId,jdbcType=VARCHAR},
+            #{createUser,jdbcType=CHAR},
+            #{createTime,jdbcType=VARCHAR},
+            #{updateUser,jdbcType=VARCHAR},
+            #{updateTime,jdbcType=VARCHAR}
+        )
+    </insert>
+    <delete id="deleteRoute" parameterType="com.matrictime.network.request.RouteRequest">
+        delete from nmpl_route where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <update id="updateRoute" parameterType="com.matrictime.network.request.RouteRequest">
+        update nmpl_route set access_device_id = #{accessDeviceId,jdbcType=VARCHAR},
+        boundary_device_id = #{boundaryDeviceId,jdbcType=VARCHAR},
+        update_user = #{updateUser,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <select id="selectRoute" parameterType="com.matrictime.network.request.RouteRequest" resultType="com.matrictime.network.modelVo.RouteVo">
+        select id,access_device_id,boundary_device_id,create_user,update_user,create_time,update_time,is_exist
+        from nmpl_route
+        <where>
+            <if test="boundaryDeviceId != null and boundaryDeviceId != ''">
+                boundary_device_id = #{boundaryDeviceId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+</mapper>

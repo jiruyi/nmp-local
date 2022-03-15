@@ -3,6 +3,8 @@ package com.matrictime.network.dao.mapper;
 import com.matrictime.network.dao.model.NmplMenu;
 import com.matrictime.network.dao.model.NmplMenuExample;
 import java.util.List;
+
+import com.matrictime.network.modelVo.NmplMenuVo;
 import org.apache.ibatis.annotations.Param;
 
 public interface NmplMenuMapper {
@@ -30,6 +32,6 @@ public interface NmplMenuMapper {
 
     List<String> queryAllPerms(Long roleId);
 
-    List<com.matrictime.network.modelVo.NmplMenu> queryAllMenu();
+    List<NmplMenuVo> queryAllMenu();
 
 }

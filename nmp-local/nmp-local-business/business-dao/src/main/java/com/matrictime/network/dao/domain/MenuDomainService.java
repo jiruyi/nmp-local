@@ -1,10 +1,10 @@
 package com.matrictime.network.dao.domain;
 
-import com.matrictime.network.modelVo.NmplMenu;
+import com.matrictime.network.modelVo.NmplMenuVo;
 
 import java.util.List;
 
 public interface MenuDomainService {
-    public List<NmplMenu> queryAllMenu();
+    public List<NmplMenuVo> queryAllMenu();
 
 }

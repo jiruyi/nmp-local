@@ -11,6 +11,7 @@ import com.matrictime.network.dao.mapper.NmplRoleMapper;
 import com.matrictime.network.dao.mapper.NmplRoleMenuRelationMapper;
 import com.matrictime.network.dao.mapper.NmplUserMapper;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.modelVo.NmplRoleVo;
 import com.matrictime.network.request.RoleRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.RoleResponse;
@@ -38,7 +39,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     @Autowired
     NmplMenuMapper nmplMenuMapper;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer save(RoleRequest roleRequest)
     {
@@ -67,7 +68,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         }
         return result;
     }
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer delete(RoleRequest roleRequest) {
 
@@ -82,10 +83,11 @@ public class RoleDomainServiceImpl implements RoleDomainService {
 
         NmplRole nmplRole = new NmplRole();
         nmplRole.setRoleId(roleRequest.getRoleId());
-        nmplRole.setStatus(Byte.valueOf("0"));
+        nmplRole.setIsExist(Byte.valueOf("0"));
+        nmplRole.setUpdateTime(new Date());
         return nmplRoleMapper.updateByPrimaryKeySelective(nmplRole);
     }
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer modify(RoleRequest roleRequest) {
         Integer result = 0;
@@ -101,6 +103,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
                 throw new SystemException("存在相同角色名称或角色编码");
             }
         }
+        nmplRole.setUpdateTime(new Date());
         result = nmplRoleMapper.updateByPrimaryKeySelective(nmplRole);
 
         //将角色之前的权限删除 更新权限信息
@@ -124,7 +127,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     }
 
     @Override
-    public PageInfo<com.matrictime.network.modelVo.NmplRole> queryByConditions(RoleRequest roleRequest) {
+    public PageInfo<NmplRoleVo> queryByConditions(RoleRequest roleRequest) {
         NmplRoleExample nmplRoleExample = new NmplRoleExample();
         NmplRoleExample.Criteria criteria = nmplRoleExample.createCriteria();
         if (!roleRequest.isAdmin()){
@@ -145,10 +148,10 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         Page page = PageHelper.startPage(roleRequest.getPageNo(),roleRequest.getPageSize());
         List<NmplRole> nmplRoleList = nmplRoleMapper.selectByExample(nmplRoleExample);
 
-        PageInfo<com.matrictime.network.modelVo.NmplRole> pageResult =  new PageInfo<>();
-        List<com.matrictime.network.modelVo.NmplRole> nmplRoles = new ArrayList<>();
+        PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
+        List<NmplRoleVo> nmplRoles = new ArrayList<>();
         for (NmplRole nmplRole : nmplRoleList) {
-            com.matrictime.network.modelVo.NmplRole role = new com.matrictime.network.modelVo.NmplRole();
+            NmplRoleVo role = new NmplRoleVo();
             BeanUtils.copyProperties(nmplRole,role);
             nmplRoles.add(role);
         }
