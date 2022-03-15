@@ -1,3 +1,10 @@
 {
-  "outPath": "D://doc"
+  "serverUrl": "http://127.0.0.1:8002/nmp-local-business/",
+  "isStrict": false,
+  "allInOne": true,
+  "outPath": "D://doc",
+  "coverOld": true,
+  "style":"xt256",
+  "createDebugPage": true,
+  "md5EncryptedHtmlName": false
 }

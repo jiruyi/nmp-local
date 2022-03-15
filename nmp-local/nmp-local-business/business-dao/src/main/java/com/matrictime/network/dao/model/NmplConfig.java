@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 
  * @author   hexu
- * @date   2022-03-02
+ * @date   2022-03-03
  */
 @Data
 public class NmplConfig {
@@ -46,9 +46,9 @@ public class NmplConfig {
     private String unit;
 
     /**
-     * 状态 1正常 0 停用
+     * 状态 1同步 0 未同步
      */
-    private Boolean status;
+    private Byte status;
 
     /**
      * 创建时间
@@ -71,7 +71,7 @@ public class NmplConfig {
     private String updateUser;
 
     /**
-     * 状态 1:存在  0:删除
+     * 状态 true:存在(1)  false:删除(0)
      */
     private Boolean isExist;
 
@@ -136,11 +136,11 @@ public class NmplConfig {
         this.unit = unit == null ? null : unit.trim();
     }
 
-    public Boolean getStatus() {
+    public Byte getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Byte status) {
         this.status = status;
     }
 

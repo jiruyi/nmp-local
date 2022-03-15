@@ -49,7 +49,7 @@
         <!--               selectByExampleQueryId="true">-->
         <!--        </table>-->
 
-        <table tableName="nmpl_operate_log" domainObjectName="NmplOperateLog"
+        <table tableName="nmpl_device_log" domainObjectName="NmplDeviceLog"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">

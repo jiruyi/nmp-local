@@ -7,8 +7,8 @@ import java.util.Date;
 
 @Data
 public class NmplConfigVo implements Serializable {
-    private static final long serialVersionUID = 7952780693158402766L;
 
+    private static final long serialVersionUID = -2288406664669678585L;
     /**
      * 主键
      */
@@ -45,9 +45,9 @@ public class NmplConfigVo implements Serializable {
     private String unit;
 
     /**
-     * 状态 1正常 0 停用
+     * 状态 1同步 0 未同步
      */
-    private Boolean status;
+    private Byte status;
 
     /**
      * 创建时间
@@ -70,7 +70,7 @@ public class NmplConfigVo implements Serializable {
     private String updateUser;
 
     /**
-     * 状态 1:存在  0:删除
+     * 状态 true:存在(1)  false:删除(0)
      */
     private Boolean isExist;
 

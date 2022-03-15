@@ -7,7 +7,7 @@ import com.matrictime.network.dao.domain.RoleDomainService;
 import com.matrictime.network.dao.mapper.NmplRoleMenuRelationMapper;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.NmplRole;
+import com.matrictime.network.modelVo.NmplRoleVo;
 import com.matrictime.network.request.RoleRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.RoleResponse;
@@ -37,7 +37,7 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
                 roleRequest.setAdmin(true);
             }
             //多条件查询
-            PageInfo<NmplRole> pageResult =  new PageInfo<>();
+            PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
             pageResult = roleDomainService.queryByConditions(roleRequest);
             result = buildResult(pageResult);
         }catch (Exception e){
@@ -53,7 +53,7 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
         Result<Integer> result;
         try {
             NmplUser nmplUser = ShiroUtils.getUserEntity();
-            //roleRequest.setCreateUser(nmplUser.getNickName());
+            roleRequest.setCreateUser(nmplUser.getNickName());
             result = buildResult(roleDomainService.save(roleRequest));
         }catch (Exception e){
             log.info("创建角色异常",e.getMessage());
@@ -108,7 +108,8 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
     }
 
     @Override
-    public Result<RoleResponse> queryOne(RoleRequest roleRequest) {
+    public Result<RoleResponse>
+    queryOne(RoleRequest roleRequest) {
 
         Result<RoleResponse> result = null;
         try {

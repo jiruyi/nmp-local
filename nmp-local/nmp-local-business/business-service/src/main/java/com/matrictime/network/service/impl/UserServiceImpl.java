@@ -20,6 +20,9 @@ import com.matrictime.network.service.UserService;
 import com.matrictime.network.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,6 +33,8 @@ import org.springframework.util.ObjectUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -75,6 +80,13 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
                 checkMobileCode(loginRequest,list);
             }
             /**5 生成token放入redis**/
+
+
+            Subject subject = SecurityUtils.getSubject();
+            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(list.get(NumberUtils.INTEGER_ZERO).getNickName(),
+                    list.get(NumberUtils.INTEGER_ZERO).getPassword());
+            subject.login(usernamePasswordToken);
+
             String token = buildToken(list.get(NumberUtils.INTEGER_ZERO));
             LoginResponse response = LoginResponse.builder().token(token).build();
             result = buildResult(response);
@@ -85,6 +97,8 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
         /**6.0 插入登录明细*/
         insetLoginDetail(loginRequest,list,result);
         return result;
+
+
     }
 
     /**

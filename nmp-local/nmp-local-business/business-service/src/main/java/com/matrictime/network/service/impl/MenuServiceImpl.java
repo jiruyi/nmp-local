@@ -2,7 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.dao.domain.MenuDomainService;
-import com.matrictime.network.modelVo.NmplMenu;
+import com.matrictime.network.modelVo.NmplMenuVo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.response.MenuResponse;
 import com.matrictime.network.service.MenuService;
@@ -23,7 +23,7 @@ public class MenuServiceImpl extends SystemBaseService implements MenuService {
     public Result<MenuResponse> queryAllMenu() {
         Result<MenuResponse> result = null;
         try {
-           List<NmplMenu> menuList = menuDomainService.queryAllMenu();
+           List<NmplMenuVo> menuList = menuDomainService.queryAllMenu();
            MenuResponse menuResponse = new MenuResponse();
            menuResponse.setList(menuList);
            result = buildResult(menuResponse);

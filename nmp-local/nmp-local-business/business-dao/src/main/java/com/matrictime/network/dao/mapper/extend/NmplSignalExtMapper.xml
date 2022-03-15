@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplSignalExtMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplSignal">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="signal_name" jdbcType="VARCHAR" property="signalName" />
+    <result column="send_ip" jdbcType="VARCHAR" property="sendIp" />
+    <result column="receive_ip" jdbcType="VARCHAR" property="receiveIp" />
+    <result column="signal_content" jdbcType="VARCHAR" property="signalContent" />
+    <result column="business_module" jdbcType="VARCHAR" property="businessModule" />
+    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    s.id, s.device_id, s.signal_name, s.send_ip, s.receive_ip, s.signal_content, s.business_module,
+    s.upload_time, s.create_time, s.update_time, s.is_exist
+  </sql>
+  <select id="selectPagesByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from
+        nmpl_signal_io io
+    left join
+        nmpl_signal s
+    on
+        io.device_id = s.device_id
+    where
+        io.update_user = #{userId,jdbcType=VARCHAR}
+    order by
+        s.create_time desc
+  </select>
+
+  <select id="selectDeviceIdsByUserId" parameterType="java.lang.String" resultType="java.lang.String">
+    select
+        device_id
+    from
+        nmpl_signal_io
+    where
+        update_user = #{userId,jdbcType=VARCHAR}
+    and
+        is_exist = '1'
+    and
+        status = '1'
+  </select>
+</mapper>

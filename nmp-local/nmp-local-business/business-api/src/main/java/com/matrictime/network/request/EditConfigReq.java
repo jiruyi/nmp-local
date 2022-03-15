@@ -14,7 +14,7 @@ public class EditConfigReq implements Serializable {
      * 操作类型（1：新增 2：修改 3：删除）-必输
      *
      */
-    private String EditType;
+    private String editType;
 
     /**
      * 批量编辑对象-修改必输
@@ -23,6 +23,7 @@ public class EditConfigReq implements Serializable {
 
     /**
      * 批量删除id列表（单条删除亦可）-删除必输
+     * 备注：物理删除，逻辑删除请使用修改方式修改isExist字段为0
      */
-    private List<Integer> delIds;
+    private List<Long> delIds;
 }

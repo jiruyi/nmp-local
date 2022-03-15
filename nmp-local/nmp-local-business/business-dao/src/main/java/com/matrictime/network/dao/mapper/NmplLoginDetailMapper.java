@@ -3,6 +3,9 @@ package com.matrictime.network.dao.mapper;
 import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplLoginDetailExample;
 import java.util.List;
+
+import com.matrictime.network.model.LoginDetail;
+import com.matrictime.network.request.LoginRequest;
 import org.apache.ibatis.annotations.Param;
 
 public interface NmplLoginDetailMapper {
@@ -27,4 +30,6 @@ public interface NmplLoginDetailMapper {
     int updateByPrimaryKeySelective(NmplLoginDetail record);
 
     int updateByPrimaryKey(NmplLoginDetail record);
+
+    List<NmplLoginDetail> queryLoginDetailList(LoginDetail loginDetail);
 }
