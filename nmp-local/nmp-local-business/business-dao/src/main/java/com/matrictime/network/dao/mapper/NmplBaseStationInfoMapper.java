@@ -38,4 +38,7 @@ public interface NmplBaseStationInfoMapper {
     int deleteBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
 
     List<BaseStationInfoVo> selectBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
+
+    List<BaseStationInfoVo> selectBaseStationBatch(@Param("stationId") List<String> list );
+
 }

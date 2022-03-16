@@ -289,4 +289,45 @@
       is_exist = #{isExist,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <insert id="insertLinkRelation" parameterType="com.matrictime.network.request.LinkRelationRequest">
+    insert into nmpl_link_relation (link_name, link_type,
+                main_device_id, follow_device_id, create_user,
+                create_time, update_user, update_time)
+    values (#{linkName,jdbcType=VARCHAR},#{linkType,jdbcType=VARCHAR}, #{mainDeviceId,jdbcType=VARCHAR},
+            #{followDeviceId,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR},
+            #{createTime,jdbcType=VARCHAR}, #{updateUser,jdbcType=VARCHAR},
+            #{updateTime,jdbcType=VARCHAR})
+  </insert>
+  <delete id="deleteLinkRelation" parameterType="com.matrictime.network.request.LinkRelationRequest">
+    delete from nmpl_link_relation where main_device_id = #{mainDeviceId,jdbcType=VARCHAR}
+           and follow_device_id = #{followDeviceId,jdbcType=VARCHAR}
+  </delete>
+  <update id="updateLinkRelation" parameterType="com.matrictime.network.request.LinkRelationRequest">
+    update nmpl_link_relation set link_name = #{linkName,jdbcType=VARCHAR},
+      link_type = #{linkType,jdbcType=VARCHAR},
+      main_device_id = #{mainDeviceId,jdbcType=VARCHAR},
+      follow_device_id = #{followDeviceId,jdbcType=VARCHAR}
+    where main_device_id = #{mainDeviceId,jdbcType=VARCHAR}
+    and follow_device_id = #{followDeviceId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectLinkRelation" parameterType="com.matrictime.network.request.LinkRelationRequest" resultType="com.matrictime.network.modelVo.LinkRelationVo">
+    select id link_name,link_type,main_device_id,follow_device_id,create_user from nmpl_link_relation
+    <where>
+      is_exist = 1
+      <if test="linkName != null and linkName != ''">
+        and link_name = #{linkName,jdbcType=VARCHAR}
+      </if>
+      <if test="linkType != null and linkType != ''">
+        and link_type = #{linkType,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+  <select id="selectLinkRelationStation" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
+    select station_id,station_name,public_network_ip,public_network_port,lan_ip,lan_port
+    from nmpl_base_station_info
+  </select>
+  <select id="selectLinkRelationDevice" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.DeviceInfoVo">
+    select device_id,device_name,public_network_ip,public_network_port,lan_ip,lan_port
+    from nmpl_device_info
+  </select>
 </mapper>

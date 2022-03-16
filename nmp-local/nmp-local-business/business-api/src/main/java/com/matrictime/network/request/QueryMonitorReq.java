@@ -7,4 +7,9 @@ import java.io.Serializable;
 @Data
 public class QueryMonitorReq implements Serializable {
     private static final long serialVersionUID = 5243291451021847867L;
+
+    /**
+     * 小区id
+     */
+    private String roId;
 }

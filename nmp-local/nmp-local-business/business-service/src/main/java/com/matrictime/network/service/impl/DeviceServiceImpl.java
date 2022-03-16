@@ -4,6 +4,7 @@ import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.response.DeviceResponse;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -75,18 +76,32 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public Result<DeviceResponse> selectDevice(DeviceInfoRequest deviceInfoRequest) {
-        Result<DeviceResponse> result = new Result<>();
-        DeviceResponse deviceResponse = new DeviceResponse();
+    public Result<PageInfo> selectDevice(DeviceInfoRequest deviceInfoRequest) {
+        Result<PageInfo> result = new Result<>();
         try {
-            deviceResponse.setDeviceInfoVos(deviceDomainService.selectDevice(deviceInfoRequest));
-            result.setResultObj(deviceResponse);
+            PageInfo pageInfo = deviceDomainService.selectDevice(deviceInfoRequest);
+            result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorCode(e.getMessage());
+            result.setErrorMsg(e.getMessage());
             result.setSuccess(false);
         }
         return result;
+    }
+
+    @Override
+    public Result<DeviceResponse> selectLinkDevice(DeviceInfoRequest deviceInfoRequest) {
+        Result<DeviceResponse> result = new Result<>();
+        try {
+            DeviceResponse deviceResponse = new DeviceResponse();
+            deviceResponse.setDeviceInfoVos(deviceDomainService.selectLinkDevice(deviceInfoRequest));
+            result.setResultObj(deviceResponse);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return null;
     }
 
 

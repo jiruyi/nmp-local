@@ -5,6 +5,7 @@ import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.response.DeviceResponse;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -68,12 +69,12 @@ public class DeviceController {
 
     @RequestMapping(value = "/selectDispenser",method = RequestMethod.POST)
     @ApiOperation(value = "查询分发机接口",notes = "查询分发机信息")
-    public Result<DeviceResponse> selectDispenser(@RequestBody DeviceInfoRequest deviceInfoRequest){
-        Result<DeviceResponse> result = new Result<>();
+    public Result<PageInfo> selectDispenser(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<PageInfo> result = new Result<>();
         try {
             result = deviceService.selectDevice(deviceInfoRequest);
         }catch (Exception e){
-            log.info("查询分发机信息异常:updateDispenser{}",e.getMessage());
+            log.info("查询分发机信息异常:selectDispenser{}",e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg("查询分发机信息异常");
         }
@@ -125,8 +126,8 @@ public class DeviceController {
 
     @RequestMapping(value = "/selectGenerator",method = RequestMethod.POST)
     @ApiOperation(value = "查询生成机接口",notes = "查询生成机信息")
-    public Result<DeviceResponse> selectGenerator(@RequestBody DeviceInfoRequest deviceInfoRequest){
-        Result<DeviceResponse> result = new Result<>();
+    public Result<PageInfo> selectGenerator(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<PageInfo> result = new Result<>();
         try {
             result = deviceService.selectDevice(deviceInfoRequest);
         }catch (Exception e){
@@ -182,8 +183,8 @@ public class DeviceController {
 
     @RequestMapping(value = "/selectCache",method = RequestMethod.POST)
     @ApiOperation(value = "查询缓存机接口",notes = "查询缓存机信息")
-    public Result<DeviceResponse> selectCache(@RequestBody DeviceInfoRequest deviceInfoRequest){
-        Result<DeviceResponse> result = new Result<>();
+    public Result<PageInfo> selectCache(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<PageInfo> result = new Result<>();
         try {
             result = deviceService.selectDevice(deviceInfoRequest);
         }catch (Exception e){

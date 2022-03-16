@@ -3,6 +3,13 @@ package com.matrictime.network.dao.mapper;
 import com.matrictime.network.dao.model.NmplLinkRelation;
 import com.matrictime.network.dao.model.NmplLinkRelationExample;
 import java.util.List;
+
+import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.DeviceInfoVo;
+import com.matrictime.network.modelVo.LinkRelationVo;
+import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.request.LinkRelationRequest;
 import org.apache.ibatis.annotations.Param;
 
 public interface NmplLinkRelationMapper {
@@ -27,4 +34,16 @@ public interface NmplLinkRelationMapper {
     int updateByPrimaryKeySelective(NmplLinkRelation record);
 
     int updateByPrimaryKey(NmplLinkRelation record);
+
+    int insertLinkRelation(LinkRelationRequest linkRelationRequest);
+
+    int deleteLinkRelation(LinkRelationRequest linkRelationRequest);
+
+    int updateLinkRelation(LinkRelationRequest linkRelationRequest);
+
+    List<LinkRelationVo> selectLinkRelation(LinkRelationRequest linkRelationRequest);
+
+    List<BaseStationInfoVo> selectLinkRelationStation(BaseStationInfoRequest baseStationInfoRequest);
+
+    List<DeviceInfoVo> selectLinkRelationDevice(DeviceInfoRequest deviceInfoRequest);
 }

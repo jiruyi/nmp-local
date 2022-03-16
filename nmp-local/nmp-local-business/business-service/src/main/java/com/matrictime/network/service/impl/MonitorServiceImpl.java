@@ -14,8 +14,10 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.CheckHeartReq;
 import com.matrictime.network.request.QueryMonitorReq;
+import com.matrictime.network.request.TotalLoadChangeReq;
 import com.matrictime.network.response.CheckHeartResp;
 import com.matrictime.network.response.QueryMonitorResp;
+import com.matrictime.network.response.TotalLoadChangeResp;
 import com.matrictime.network.service.MonitorService;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -83,14 +85,14 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                     redisTemplate.opsForValue().set(HEART_CHECK_DEVICE_ID+req.getDeviceId(),true,healthDeadlineTime, TimeUnit.SECONDS);
                     break;
                 default:
-                    log.error("checkHeart error: 设备id:{},状态为{}",req.getDeviceId(),status);
+                    log.error("MonitorServiceImpl.checkHeart error: 设备id:{},状态为{}",req.getDeviceId(),status);
                     throw new SystemException(ErrorMessageContants.DEVICE_NOT_ACTIVE_MSG);
             }
 
             CheckHeartResp resp = new CheckHeartResp();
             result = buildResult(resp);
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("MonitorServiceImpl.checkHeart Exception:{}",e.getMessage());
             result = failResult(e);
         }
 
@@ -99,6 +101,11 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
 
     @Override
     public Result<QueryMonitorResp> queryMonitor(QueryMonitorReq req) {
+        return null;
+    }
+
+    @Override
+    public Result<TotalLoadChangeResp> totalLoadChange(TotalLoadChangeReq req) {
         return null;
     }
 

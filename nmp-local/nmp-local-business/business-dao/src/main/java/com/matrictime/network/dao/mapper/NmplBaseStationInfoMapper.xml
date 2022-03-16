@@ -487,8 +487,8 @@
   </delete>
   <select id="selectBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
     select id,station_id, station_name, station_type,
-           remark, public_network_ip,
-           lan_ip, station_network_id,
+           remark, public_network_ip,public_network_port,
+           lan_ip, station_network_id,lan_port,
            relation_operator_id, create_user
     from nmpl_base_station_info
     <where>
@@ -505,6 +505,19 @@
       <if test="relationOperatorId != null and relationOperatorId != ''">
         and relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
       </if>
+      <if test="stationType != null and stationType != ''">
+        and station_type = #{stationType,jdbcType=VARCHAR}
+      </if>
     </where>
+  </select>
+  <select id="selectBaseStationBatch" parameterType="list" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
+    select id,station_id, station_name, station_type,
+           remark, public_network_ip,public_network_port,
+           lan_ip, station_network_id,lan_port,
+           relation_operator_id, create_user
+    from nmpl_base_station_info where station_id in
+    <foreach collection="stationId" item="item" open="(" close=")" separator=",">
+        #{item,jdbcType=VARCHAR}
+    </foreach>
   </select>
 </mapper>
