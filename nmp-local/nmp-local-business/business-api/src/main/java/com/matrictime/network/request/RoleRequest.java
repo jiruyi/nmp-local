@@ -14,6 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleRequest extends BaseRequest implements Serializable {
+
+    private static final long serialVersionUID = -2777337116972869483L;
     /**
      * 角色ID
      */

@@ -13,6 +13,8 @@ public interface NmplDataCollectExtMapper {
 
     List<DataCollectVo> linkQueryByCondition(DataCollectReq dataCollectReq);
 
+    List<DataCollectVo> stationLinkQuery(DataCollectReq dataCollectReq);
+
 
     Integer batchInsert(@Param("list") List<DataCollectVo> dataCollectVos);
 

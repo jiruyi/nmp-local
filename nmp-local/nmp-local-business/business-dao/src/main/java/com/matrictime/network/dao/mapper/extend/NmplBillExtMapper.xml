@@ -51,16 +51,16 @@
                 </if>
             </trim>
         </where>
-
+        order by upload_time desc
     </select>
     
 
     <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.NmplBillVo">
         insert into nmpl_bill (id, owner_id, stream_id,
-        flow_number, time_length, key_num,hybrid_factor, upload_time, start_time,end_time) values
+        flow_number, time_length, key_num,hybrid_factor, start_time,end_time) values
         <foreach collection ="list" item="bill" separator =",">
             (#{bill.id}, #{bill.ownerId},#{bill.streamId}, #{bill.flowNumber}, #{bill.timeLength}, #{bill.keyNum}, #{bill.hybridFactor}
-            , #{bill.uploadTime}, #{bill.startTime}, #{bill.endTime})
+            ,#{bill.startTime}, #{bill.endTime})
         </foreach >
     </insert>
 

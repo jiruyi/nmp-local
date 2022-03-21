@@ -39,8 +39,15 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
 
     @Override
     public PageInfo<DataCollectVo> queryByConditions(DataCollectReq dataCollectReq) {
-        Page page = PageHelper.startPage(dataCollectReq.getPageNo(),dataCollectReq.getPageSize());
-        List<DataCollectVo> dataCollectVos = nmplDataCollectExtMapper.linkQueryByCondition(dataCollectReq);
+        Page page = null;
+        List<DataCollectVo> dataCollectVos = new ArrayList<>();
+        if(dataCollectReq.getDeviceType().equals("01")){
+            page = PageHelper.startPage(dataCollectReq.getPageNo(),dataCollectReq.getPageSize());
+            dataCollectVos = nmplDataCollectExtMapper.stationLinkQuery(dataCollectReq);
+        }else {
+            page = PageHelper.startPage(dataCollectReq.getPageNo(),dataCollectReq.getPageSize());
+            dataCollectVos = nmplDataCollectExtMapper.linkQueryByCondition(dataCollectReq);
+        }
         PageInfo<DataCollectVo> pageResult =  new PageInfo<>();
         pageResult.setList(dataCollectVos);
         pageResult.setCount((int) page.getTotal());
@@ -53,7 +60,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         if (CollectionUtils.isEmpty(dataCollectReq.getDataCollectVoList())){
             NmplDataCollect dataCollect = new NmplDataCollect();
             BeanUtils.copyProperties(dataCollectReq,dataCollect);
-            return nmplDataCollectMapper.insert(dataCollect);
+            return nmplDataCollectMapper.insertSelective(dataCollect);
         }else {
             return nmplDataCollectExtMapper.batchInsert(dataCollectReq.getDataCollectVoList());
         }

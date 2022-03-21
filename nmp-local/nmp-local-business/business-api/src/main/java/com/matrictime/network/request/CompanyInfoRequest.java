@@ -7,6 +7,9 @@ import java.util.Date;
 
 @Data
 public class CompanyInfoRequest extends BaseRequest implements Serializable {
+
+
+    private static final long serialVersionUID = 1855455628511537134L;
     /**
      * 单位id
      */

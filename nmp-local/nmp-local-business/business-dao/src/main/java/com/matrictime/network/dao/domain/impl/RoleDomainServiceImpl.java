@@ -54,6 +54,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         }
         nmplRole.setCreateTime(new Date());
         nmplRole.setUpdateTime(new Date());
+        nmplRole.setIsExist(Byte.valueOf("1"));
         nmplRoleMapper.insert(nmplRole);
         List<Long>menuList = new ArrayList<>();
         menuList = roleRequest.getMeduId();
@@ -85,6 +86,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         nmplRole.setRoleId(roleRequest.getRoleId());
         nmplRole.setIsExist(Byte.valueOf("0"));
         nmplRole.setUpdateTime(new Date());
+        nmplRole.setUpdateUser(roleRequest.getUpdateUser());
         return nmplRoleMapper.updateByPrimaryKeySelective(nmplRole);
     }
     @Transactional(rollbackFor = Exception.class)
@@ -104,6 +106,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             }
         }
         nmplRole.setUpdateTime(new Date());
+        nmplRole.setUpdateUser(roleRequest.getUpdateUser());
         result = nmplRoleMapper.updateByPrimaryKeySelective(nmplRole);
 
         //将角色之前的权限删除 更新权限信息

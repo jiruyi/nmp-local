@@ -123,6 +123,7 @@ public class DataController {
     /**
      * 状态监控统计数据
      */
+    @RequiresPermissions("sys:sign:query")
     @RequestMapping(value = "/monitorData",method = RequestMethod.POST)
     public Result monitorData(@RequestBody MonitorReq monitorReq){
         return dataCollectService.monitorData(monitorReq);
@@ -132,6 +133,7 @@ public class DataController {
     /**
      * 状态监控top10
      */
+    @RequiresPermissions("sys:sign:query")
     @RequestMapping(value = "/monitorDataTopTen",method = RequestMethod.POST)
     public Result monitorDataTopTen(@RequestBody MonitorReq monitorReq){
         return dataCollectService.monitorDataTopTen(monitorReq);

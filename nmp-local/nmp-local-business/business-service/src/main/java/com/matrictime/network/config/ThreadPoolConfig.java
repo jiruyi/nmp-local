@@ -3,8 +3,10 @@ package com.matrictime.network.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -13,19 +15,26 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
 @EnableAsync //开启异步任务
+@PropertySource(value = "classpath:/businessConfig.properties",encoding = "UTF-8")
 public class ThreadPoolConfig {
     private static final Logger logger = LoggerFactory.getLogger(ThreadPoolConfig.class);
+    @Value("${thread.corePoolSize}")
+    private Integer corePoolSize;
+    @Value("${thread.maxPoolSize}")
+    private Integer maxPoolSize;
+    @Value("${thread.queueCapacity}")
+    private Integer queueCapacity;
 
     @Bean
     public Executor asyncServiceExecutor() {
         logger.info("start asyncServiceExecutor");
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         //配置核心线程数
-        executor.setCorePoolSize(5);
+        executor.setCorePoolSize(corePoolSize);
         //配置最大线程数
-        executor.setMaxPoolSize(10);
+        executor.setMaxPoolSize(maxPoolSize);
         //配置队列大小
-        executor.setQueueCapacity(500);
+        executor.setQueueCapacity(queueCapacity);
         //配置线程池中的线程的名称前缀
         executor.setThreadNamePrefix("async-service-");
 

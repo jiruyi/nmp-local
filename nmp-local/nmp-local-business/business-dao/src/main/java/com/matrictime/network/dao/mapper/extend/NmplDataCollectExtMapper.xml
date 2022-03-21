@@ -37,29 +37,75 @@
         <if test="unit != null">
             and a.unit = #{unit,jdbcType=VARCHAR}
         </if>
-        <if test="uploadTime != null">
-            and a.upload_time = #{uploadTime,jdbcType=TIMESTAMP}
+<!--        <if test="uploadTime != null">-->
+<!--            and a.upload_time = #{uploadTime,jdbcType=TIMESTAMP}-->
+<!--        </if>-->
+        <if test="startTime != null">
+            and a.create_time  &gt;= #{startTime,jdbcType=TIMESTAMP}
         </if>
-        <if test="createTime != null">
-            and a.create_time = #{createTime,jdbcType=TIMESTAMP}
+        <if test="endTime != null">
+            and a.create_time &lt;= #{endTime,jdbcType=VARCHAR}
         </if>
-        <if test="updateTime != null">
-            and a.update_time = #{updateTime,jdbcType=TIMESTAMP}
-        </if>
+<!--        <if test="updateTime != null">-->
+<!--            and a.update_time = #{updateTime,jdbcType=TIMESTAMP}-->
+<!--        </if>-->
         <if test="stationStatus !=null">
             and b.station_status = #{stationStatus,jdbcType=VARCHAR}
         </if>
+        order by a.create_time desc
     </select>
+
+
+    <select id="stationLinkQuery" resultType="com.matrictime.network.modelVo.DataCollectVo">
+        select a.* ,b.station_status  from nmpl_data_collect a ,nmpl_base_station_info b where a.device_id = b.station_id
+        <if test="deviceId != null">
+            and a.device_id = #{deviceId,jdbcType=VARCHAR}
+        </if>
+        <if test="deviceName != null">
+            and a.device_name = #{deviceName,jdbcType=VARCHAR}
+        </if>
+        <if test="deviceType != null">
+            and a.device_type = #{deviceType,jdbcType=VARCHAR}
+        </if>
+        <if test="dataItemName != null">
+            and a.data_item_name = #{dataItemName,jdbcType=VARCHAR}
+        </if>
+        <if test="dataItemCode != null">
+            and a.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
+        </if>
+        <if test="dataItemValue != null">
+            and a.data_item_value = #{dataItemValue,jdbcType=VARCHAR}
+        </if>
+        <if test="unit != null">
+            and a.unit = #{unit,jdbcType=VARCHAR}
+        </if>
+<!--        <if test="uploadTime != null">-->
+<!--            and a.upload_time = #{uploadTime,jdbcType=TIMESTAMP}-->
+<!--        </if>-->
+        <if test="startTime != null">
+            and a.create_time  &gt;= #{startTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime != null">
+            and a.create_time &lt;= #{endTime,jdbcType=VARCHAR}
+        </if>
+<!--        <if test="updateTime != null">-->
+<!--            and a.update_time = #{updateTime,jdbcType=TIMESTAMP}-->
+<!--        </if>-->
+        <if test="stationStatus !=null">
+            and b.station_status = #{stationStatus,jdbcType=VARCHAR}
+        </if>
+        order by a.create_time desc
+    </select>
+
 
 
     <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.DataCollectVo">
         insert into nmpl_data_collect (id, device_id, device_name,
         device_type, data_item_name, data_item_code,
-        data_item_value, unit, upload_time,
-        create_time, update_time) values
+        data_item_value, unit) values
         <foreach collection ="list" item="data" separator =",">
             (#{data.id}, #{data.deviceId},#{data.deviceName}, #{data.deviceType}, #{data.dataItemName}, #{data.dataItemCode},
-            #{data.dataItemValue}, #{data.unit}, #{data.uploadTime}, #{data.createTime},#{data.updateTime})
+            #{data.dataItemValue}, #{data.unit})
         </foreach >
     </insert>
 
