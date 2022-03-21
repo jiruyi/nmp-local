@@ -62,4 +62,9 @@ public class NmplSignalVo implements Serializable {
      * 状态true:存在(1)  false:删除(0)
      */
     private Boolean isExist;
+
+    /**
+     * 用户id
+     */
+    private String userId;
 }

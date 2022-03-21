@@ -246,6 +246,19 @@ public class DateUtils {
      * @param n
      * @return
      */
+    public static Date addMinuteForDate(Date date, int n) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MINUTE, n);
+        return calendar.getTime();
+    }
+
+    /**
+     * 指定日期 +/- N天
+     *
+     * @param n
+     * @return
+     */
     public static Date addDayForDate(Date date, int n) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);

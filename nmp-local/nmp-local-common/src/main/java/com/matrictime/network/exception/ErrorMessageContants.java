@@ -60,4 +60,6 @@ public class ErrorMessageContants {
 
 	public static final String JSON_ERROR_FAIL_MSG = "JSON解析失败";
 
+	public static final String DEVICE_IS_ON_TRACK = "启动追踪失败，已有设备在追踪中:";
+
 }

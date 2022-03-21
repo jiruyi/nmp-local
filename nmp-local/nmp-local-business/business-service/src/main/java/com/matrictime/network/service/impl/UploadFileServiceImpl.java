@@ -2,6 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
@@ -38,17 +39,18 @@ public class UploadFileServiceImpl extends SystemBaseService implements UploadFi
             // check param is legal
             checkUploadSingleFileParam(req);
 
-            String filePath = req.getModuleName()+req.getUploadPath();
+            String filePath = uploadBasePath + req.getModuleName() + DataConstants.KEY_SLASH + req.getUploadPath();
             File destFilePath = new File(filePath);
             if (!destFilePath.exists()){
                 destFilePath.mkdirs();
             }
+
             String fileName = filePath+req.getFileName();
             File destFile = new File(fileName);
             req.getFile().transferTo(destFile);
 
             UploadSingleFileResp resp = new UploadSingleFileResp();
-            resp.setFileName(filePath);
+            resp.setFilePath(filePath);
             resp.setFileName(req.getFileName());
             result = buildResult(resp);
         }catch (SystemException e){
@@ -64,7 +66,7 @@ public class UploadFileServiceImpl extends SystemBaseService implements UploadFi
 
     private void checkUploadSingleFileParam(UploadSingleFileReq req) {
         if (ParamCheckUtil.checkVoStrBlank(req.getUploadPath())){
-            throw new SystemException(ErrorCode.PARAM_IS_NULL, "systemId"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "uploadPath"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (ParamCheckUtil.checkVoStrBlank(req.getFileName())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "fileName"+ ErrorMessageContants.PARAM_IS_NULL_MSG);

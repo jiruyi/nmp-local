@@ -81,5 +81,15 @@
         order by  data_item_value desc limit 10
     </select>
 
+    <select id="countLoad" resultType="java.math.BigDecimal">
+        select
+            sum(data_item_value)
+        where
+            create_time <![CDATA[ >= ]]> #{beginTime,jdbcType=TIMESTAMP}
+        and create_time <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP}
+        and data_item_code = '临时值'
+        and device_id = #{deviceId,jdbcType=VARCHAR}
+    </select>
+
 
 </mapper>

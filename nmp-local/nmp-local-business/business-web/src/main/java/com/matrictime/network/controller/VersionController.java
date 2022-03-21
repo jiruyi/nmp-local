@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
@@ -27,11 +28,12 @@ public class VersionController {
      * @return
      */
     @RequestMapping (value = "/editVersion",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "编辑版本信息",operType = "操作")
     public Result<EditVersionResp> editVersion(@RequestBody EditVersionReq req){
         try {
             return  versionService.editVersion(req);
         }catch (Exception e){
-            log.error("editVersion exception:{}",e.getMessage());
+            log.error("VersionController.editVersion exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
@@ -42,11 +44,12 @@ public class VersionController {
      * @return
      */
     @RequestMapping (value = "/uploadVersionFile",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "上传版本文件",operType = "上传")
     public Result<UploadVersionFileResp> uploadVersionFile(@RequestBody UploadVersionFileReq req){
         try {
             return  versionService.uploadVersionFile(req);
         }catch (Exception e){
-            log.error("uploadVersionFile exception:{}",e.getMessage());
+            log.error("VersionController.uploadVersionFile exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
@@ -57,11 +60,12 @@ public class VersionController {
      * @return
      */
     @RequestMapping (value = "/deleteVersionFile",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "删除版本文件",operType = "删除")
     public Result<DeleteVersionFileResp> deleteVersionFile(@RequestBody DeleteVersionFileReq req){
         try {
             return  versionService.deleteVersionFile(req);
         }catch (Exception e){
-            log.error("deleteVersionFile exception:{}",e.getMessage());
+            log.error("VersionController.deleteVersionFile exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
@@ -72,11 +76,12 @@ public class VersionController {
      * @return
      */
     @RequestMapping (value = "/queryVersionFile",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "根据系统查询版本文件列表",operType = "查询")
     public Result<QueryVersionFileResp> queryVersionFile(@RequestBody QueryVersionFileReq req){
         try {
             return  versionService.queryVersionFile(req);
         }catch (Exception e){
-            log.error("queryVersionFile exception:{}",e.getMessage());
+            log.error("VersionController.queryVersionFile exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
@@ -87,26 +92,28 @@ public class VersionController {
      * @return
      */
     @RequestMapping (value = "/queryVersionFileDetail",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "查询推送设备/详情",operType = "查询")
     public Result<QueryVersionFileDetailResp> queryVersionFileDetail(@RequestBody QueryVersionFileDetailReq req){
         try {
             return  versionService.queryVersionFileDetail(req);
         }catch (Exception e){
-            log.error("queryVersionFileDetail exception:{}",e.getMessage());
+            log.error("VersionController.queryVersionFileDetail exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
 
     /**
-     * 查询推送设备/详情
+     * 推送设备
      * @param req
      * @return
      */
     @RequestMapping (value = "/pushVersionFile",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "推送设备",operType = "推送")
     public Result<PushVersionFileResp> pushVersionFile(@RequestBody PushVersionFileReq req){
         try {
             return  versionService.pushVersionFile(req);
         }catch (Exception e){
-            log.error("pushVersionFile exception:{}",e.getMessage());
+            log.error("VersionController.pushVersionFile exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
@@ -117,11 +124,12 @@ public class VersionController {
      * @return
      */
     @RequestMapping (value = "/startVersionFile",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "启动版本文件",operType = "操作")
     public Result<StartVersionFileResp> startVersionFile(@RequestBody StartVersionFileReq req){
         try {
             return  versionService.startVersionFile(req);
         }catch (Exception e){
-            log.error("startVersionFile exception:{}",e.getMessage());
+            log.error("VersionController.startVersionFile exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

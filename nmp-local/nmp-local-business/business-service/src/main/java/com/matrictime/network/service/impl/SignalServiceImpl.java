@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.matrictime.network.base.SystemBaseService;
@@ -93,10 +94,10 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             EditConfigResp resp = new EditConfigResp();
             result = buildResult(resp);
         }catch (SystemException e){
-            log.error(e.getMessage());
+            log.error("SignalServiceImpl.editSignal SystemException:{}",e.getMessage());
             result = failResult(e.getCode(),e.getMessage());
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("SignalServiceImpl.editSignal Exception:{}",e.getMessage());
             result = failResult(e);
         }
 
@@ -106,23 +107,50 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     @Override
     public Result<SignalIoResp> signalIo(SignalIoReq req) {
         Result result;
+        SignalIoResp resp = new SignalIoResp();
         try {
             checkSignalIoParam(req);
             List<NmplDeviceVo> vos = req.getDeviceVos();
+            List<String> successIds = new ArrayList<>(vos.size());
+            List<String> failIds = new ArrayList<>();
             switch (req.getIoType()){
                 case com.matrictime.network.base.constant.DataConstants.IOTYPE_O:
-                case com.matrictime.network.base.constant.DataConstants.IOTYPE_I:
                     for(NmplDeviceVo vo : vos){
-                        sendSignalByBigType(req.getUserId(),vo,req.getIoType());
+                        boolean flag = sendSignalByBigType(req.getUserId(), vo, req.getIoType());
+                        if (flag){
+                            successIds.add(vo.getDeviceId());
+                        }else {
+                            failIds.add(vo.getDeviceId());
+                        }
+                    }
+                    break;
+                case com.matrictime.network.base.constant.DataConstants.IOTYPE_I:
+                    // 判断是否有设备被其他用户追踪中
+                    for(NmplDeviceVo vo : vos){
+                        NmplSignalIoExample example = new NmplSignalIoExample();
+                        example.createCriteria().andDeviceIdEqualTo(vo.getDeviceId()).andStatusEqualTo(com.matrictime.network.base.constant.DataConstants.IOTYPE_I).andIsExistEqualTo(DataConstants.IS_EXIST);
+                        List<NmplSignalIo> signalIos = nmplSignalIoMapper.selectByExample(example);
+                        if (!CollectionUtils.isEmpty(signalIos)){
+                            throw new SystemException(ErrorMessageContants.DEVICE_IS_ON_TRACK+signalIos.get(0).getDeviceId());
+                        }
+                    }
+                    for(NmplDeviceVo vo : vos){
+                        boolean flag = sendSignalByBigType(req.getUserId(),vo,req.getIoType());
+                        if (flag){
+                            successIds.add(vo.getDeviceId());
+                        }else {
+                            failIds.add(vo.getDeviceId());
+                        }
                     }
                     break;
                 default:
                     throw new SystemException(ErrorCode.PARAM_EXCEPTION, "ioType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-            SignalIoResp resp = new SignalIoResp();
+            resp.setSuccessIds(successIds);
+            resp.setFailIds(failIds);
             result = buildResult(resp);
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("SignalServiceImpl.signalIo Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -133,6 +161,14 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
         Result result;
         try {
             checkCleanSignalParam(req);
+            for(String id : req.getDeviceIds()){
+                NmplSignalIoExample example = new NmplSignalIoExample();
+                example.createCriteria().andDeviceIdEqualTo(id).andStatusEqualTo(com.matrictime.network.base.constant.DataConstants.IOTYPE_I).andIsExistEqualTo(DataConstants.IS_EXIST);
+                List<NmplSignalIo> signalIos = nmplSignalIoMapper.selectByExample(example);
+                if (!CollectionUtils.isEmpty(signalIos)){
+                    throw new SystemException(ErrorMessageContants.DEVICE_IS_ON_TRACK+signalIos.get(0).getDeviceId());
+                }
+            }
             NmplSignal signal = new NmplSignal();
             signal.setIsExist(DataConstants.IS_NOT_EXIST);
             for (String id : req.getDeviceIds()){
@@ -143,7 +179,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             CleanSignalResp resp = new CleanSignalResp();
             result = buildResult(resp);
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("SignalServiceImpl.cleanSignal Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -163,7 +199,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             resp.setPageInfo(pageInfo);
             result = buildResult(resp);
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("SignalServiceImpl.querySignalByPage Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -202,7 +238,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             resp.setBytes(bytes);
             result = buildResult(resp);
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("SignalServiceImpl.exportSignal Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -214,10 +250,19 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     private boolean sendSignalIo(String ip, String port, Map<String,String> param){
         boolean flag = false;
         try {
-            String post = HttpClientUtil.post(ip + port, param);
-            flag = true;
+            String postResp = HttpClientUtil.post(ip + port, param);
+            JSONObject jsonObject = JSONObject.parseObject(postResp);
+            if (jsonObject != null){
+                Object success = jsonObject.get("isSuccess");
+                if (success != null && success instanceof Boolean){
+                    if ((Boolean)success){
+                        flag = true;
+                    }
+                }
+            }
+            log.info("SignalServiceImpl.sendSignalIo http postResp:{},ip:{},port:{}",postResp,ip,port);
         }catch (IOException e){
-            log.warn("sendSignalIo exception"+e.getMessage());
+            log.warn("SignalServiceImpl.sendSignalIo IOException:{}",e.getMessage());
         }
         return flag;
     }
@@ -243,7 +288,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
         }
     }
 
-    private void sendSignalByBigType(String userId,NmplDeviceVo vo, String ioType) throws IOException{
+    private boolean sendSignalByBigType(String userId,NmplDeviceVo vo, String ioType) throws IOException{
         String id = vo.getDeviceId();
         String bigType = vo.getDeviceBigType();
         boolean io = false;
@@ -254,24 +299,26 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
 
         if (com.matrictime.network.base.constant.DataConstants.DEVICE_BIG_TYPE_0.equals(bigType)){
             NmplBaseStationInfoExample example = new NmplBaseStationInfoExample();
-            example.createCriteria().andStationIdEqualTo(id).andIsExistEqualTo(DataConstants.IS_EXIST);
+            example.createCriteria().andStationIdEqualTo(id).andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(DataConstants.IS_EXIST);
             List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(example);
             if (!CollectionUtils.isEmpty(nmplBaseStationInfos)){
                 NmplBaseStationInfo info = nmplBaseStationInfos.get(0);
                 String ip = info.getPublicNetworkIp();
                 String port = info.getPublicNetworkPort();
                 Map<String,String> map = new HashMap<>(2);
+                map.put("opType",ioType);
                 io = sendSignalIo(ip, port, map);
             }
         }else if (com.matrictime.network.base.constant.DataConstants.DEVICE_BIG_TYPE_1.equals(bigType)){
             NmplDeviceInfoExample example = new NmplDeviceInfoExample();
-            example.createCriteria().andDeviceIdEqualTo(id).andIsExistEqualTo(DataConstants.IS_EXIST);
+            example.createCriteria().andDeviceIdEqualTo(id).andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(DataConstants.IS_EXIST);
             List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(example);
             if (!CollectionUtils.isEmpty(nmplDeviceInfos)){
                 NmplDeviceInfo info = nmplDeviceInfos.get(0);
                 String ip = info.getPublicNetworkIp();
                 String port = info.getPublicNetworkPort();
                 Map<String,String> map = new HashMap<>(2);
+                map.put("opType",ioType);
                 io = sendSignalIo(ip, port, map);
             }
         }
@@ -283,6 +330,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
         if (io){
             addSignalIo(userId,id,ioType);
         }
+        return io;
     }
 
     private void checkEditSignalParam(EditSignalReq req) {
