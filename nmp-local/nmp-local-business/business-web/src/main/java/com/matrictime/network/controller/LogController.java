@@ -104,7 +104,7 @@ public class LogController {
 
 
     /**
-     * 设备日志查询
+     * 设备日志查询 xin git
      * @title ApiOperation
      * @param []
      * @return
