@@ -29,12 +29,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * 用户信息相关
  * @author jiruyi
  * @copyright www.matrictime.com
  * @project nmp-local
  * @date 2022/2/21 0021 17:38
- * @desc
- * 用户信息相关
+ *
  */
 @RequestMapping(value = "/user")
 @Api(value = "用户信息相关",tags = "用户信息相关")
@@ -50,10 +50,10 @@ public class UserController {
     private RedisTemplate redisTemplate;
 
     /**
+     * 登录接口
      * @title login
      * @param [loginRequest]
      * @return com.matrictime.network.model.Result<LoginResponse>
-     * @description
      * @author jiruyi
      * @create 2022/2/24 0024 10:13
      */

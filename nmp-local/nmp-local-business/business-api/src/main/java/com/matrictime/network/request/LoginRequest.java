@@ -18,18 +18,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginRequest extends BaseRequest {
 
+     /**
+      *  登录账号
+      */
     private String loginAccount;
-
+    /**
+     *  密码
+     */
     private String password;
-
+    /**
+     *  手机号
+     */
     private String phone;
 
     private String email;
-
+    /**
+     *  短信验证码
+     */
     private String smsCode;
-
+    /**
+     *  登录类型 1用户名密码  2手机验验证码
+     */
     private String type;
-
+    /**
+     *  用户id
+     */
     private String userId;
 
     /**
