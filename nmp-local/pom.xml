@@ -14,6 +14,7 @@
         <module>nmp-local-message</module>
         <module>nmp-local-gateway</module>
         <module>nmp-local-common</module>
+        <module>user-center</module>
     </modules>
 
     <properties>
