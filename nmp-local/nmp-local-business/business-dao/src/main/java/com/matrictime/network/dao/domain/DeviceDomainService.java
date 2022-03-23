@@ -1,6 +1,7 @@
 package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.modelVo.DeviceInfoVo;
+import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.response.PageInfo;
 
@@ -18,4 +19,6 @@ public interface DeviceDomainService {
     PageInfo<DeviceInfoVo> selectDevice(DeviceInfoRequest deviceInfoRequest);
 
     List<DeviceInfoVo> selectLinkDevice(DeviceInfoRequest deviceInfoRequest);
+
+    StationVo selectDeviceId(DeviceInfoRequest deviceInfoRequest);
 }

@@ -1,9 +1,11 @@
 package com.matrictime.network.service.impl;
 
+import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.LinkRelationVo;
+import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.PageInfo;
@@ -31,8 +33,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         Integer insertFlag = null;
         try {
             baseStationInfoRequest.setCreateTime(getFormatDate(date));
-            baseStationInfoRequest.setExist(true);
-            baseStationInfoRequest.setStationStatus("01");
+            baseStationInfoRequest.setStationId(SnowFlake.nextId_String());
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);
@@ -134,8 +135,18 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         return result;
     }
 
-
-
+    @Override
+    public Result<StationVo> selectDeviceId(BaseStationInfoRequest baseStationInfoRequest) {
+        Result<StationVo> result = new Result<>();
+        try {
+            result.setResultObj(baseStationInfoDomainService.selectDeviceId(baseStationInfoRequest));
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
 
 
     private String getFormatDate(Date date){

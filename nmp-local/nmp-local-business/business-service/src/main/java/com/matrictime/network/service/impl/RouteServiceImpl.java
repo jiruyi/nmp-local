@@ -1,7 +1,6 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.config.RestTemplateContextConfig;
-import com.matrictime.network.config.ThreadPoolContextConfig;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.RouteDomainService;
 import com.matrictime.network.model.Result;
@@ -11,16 +10,19 @@ import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.RouteRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.RouteService;
+import com.matrictime.network.util.ListSplitUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 @Service
@@ -35,27 +37,16 @@ public class RouteServiceImpl implements RouteService {
     @Resource
     private RestTemplateContextConfig restTemplateContextConfig;
 
-    @Resource
-    private ThreadPoolContextConfig threadPoolContextConfig;
+    private final String HTTP_URL = "HTTP://";
 
     @Override
     public Result<Integer> insertRoute(RouteRequest routeRequest) {
         Result<Integer> result = new Result();
         Date date = new Date();
-        List<Future<Result>> results = new LinkedList<Future<Result>>();
-        BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         try {
             routeRequest.setCreateTime(getFormatDate(date));
             Integer insetFlag = routeDomainService.insertRoute(routeRequest);
-            if(insetFlag != null){
-                List<BaseStationInfoVo> baseStationInfoVoList =
-                        baseStationInfoDomainService.selectLinkBaseStationInfo(baseStationInfoRequest);
-                SendRouteCallable sendRouteCallable = new SendRouteCallable(baseStationInfoVoList,routeRequest);
-                for(int poolIndex = 0;poolIndex<5;poolIndex ++){
-                    Future<Result> future = threadPoolContextConfig.getThreadPoolExecutor().submit(sendRouteCallable);
-                    results.add(future);
-                }
-            }
+            //List<Future<List<Result>>> futures = collectResult(routeRequest);
             result.setResultObj(insetFlag);
             result.setSuccess(true);
         }catch (Exception e){
@@ -84,7 +75,9 @@ public class RouteServiceImpl implements RouteService {
         Date date = new Date();
         try {
             routeRequest.setUpdateTime(getFormatDate(date));
-            result.setResultObj(routeDomainService.updateRoute(routeRequest));
+            Integer updateFlag = routeDomainService.updateRoute(routeRequest);
+            //List<Future<List<Result>>> futures = collectResult(routeRequest);
+            result.setResultObj(updateFlag);
             result.setSuccess(true);
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
@@ -106,28 +99,36 @@ public class RouteServiceImpl implements RouteService {
         return result;
     }
 
-    class SendRouteCallable implements Callable<Result> {
-
-        private List<BaseStationInfoVo> ipList;
-
-        private RouteRequest postForEntity;
-
-        public SendRouteCallable(List<BaseStationInfoVo> ipList, RouteRequest postForEntity) {
-            this.ipList = ipList;
-            this.postForEntity = postForEntity;
+    /*
+    * 多线程推送路由信息
+    * */
+    @Async("asyncServiceExecutor")
+    public Future<List<Result>> sendRoute(List<BaseStationInfoVo> ipList,RouteRequest postForEntity){
+        List<Result> resultList = new ArrayList<>();
+        for(int ipIndex = 0;ipIndex<ipList.size();ipIndex ++){
+            ResponseEntity<Result> routeVoResponseEntity = restTemplateContextConfig.getRestTemplate().
+                    postForEntity(HTTP_URL + ipList.get(ipIndex).getPublicNetworkIp()+":"+
+                            ipList.get(ipIndex).getPublicNetworkPort()+"/nmp-local-business/menu/queryAllMenu",
+                            postForEntity, Result.class);
+            resultList.add(routeVoResponseEntity.getBody());
         }
+        return new AsyncResult<>(resultList);
+    }
 
-        @Override
-        public Result call() throws Exception {
-            for(int ipIndex = 0;ipIndex<ipList.size();ipIndex ++){
-                ResponseEntity<Result> routeVoResponseEntity = restTemplateContextConfig.getRestTemplate().
-                        postForEntity("192.168.72.47:8002/nmp-local-business/menu/queryAllMenu", postForEntity, Result.class);
-                if(routeVoResponseEntity == null){
-                    return new Result(false,"失败");
-                }
-            }
-            return new Result(true,"成功");
+    /*
+      获取多线程推送后的返回值
+    * */
+    private List<Future<List<Result>>> collectResult(RouteRequest routeRequest){
+        BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
+        List<Future<List<Result>>> futureLinkedList = new LinkedList<>();
+        List<BaseStationInfoVo> baseStationInfoVoList =
+                baseStationInfoDomainService.selectLinkBaseStationInfo(baseStationInfoRequest);
+        List<List<BaseStationInfoVo>> list = ListSplitUtil.split(baseStationInfoVoList,10);
+        for(int poolIndex = 0;poolIndex<list.size();poolIndex ++){
+            Future<List<Result>> sendRoute = sendRoute(list.get(poolIndex), routeRequest);
+            futureLinkedList.add(sendRoute);
         }
+        return futureLinkedList;
     }
 
 
@@ -136,4 +137,6 @@ public class RouteServiceImpl implements RouteService {
         SimpleDateFormat creatDateToString = new SimpleDateFormat(creatDate);
         return creatDateToString.format(date);
     }
+
+
 }
