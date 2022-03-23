@@ -7,6 +7,7 @@ import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
+import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,11 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
     @Override
     public List<DeviceInfoVo> selectLinkDevice(DeviceInfoRequest deviceInfoRequest) {
         return nmplDeviceInfoMapper.selectDevice(deviceInfoRequest);
+    }
+
+    @Override
+    public StationVo selectDeviceId(DeviceInfoRequest deviceInfoRequest) {
+        return nmplDeviceInfoMapper.selectDeviceId(deviceInfoRequest);
     }
 
 }

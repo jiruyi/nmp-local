@@ -5,6 +5,7 @@ import com.matrictime.network.dao.model.NmplDeviceInfoExample;
 import java.util.List;
 
 import com.matrictime.network.modelVo.DeviceInfoVo;
+import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.DeviceInfoRequest;
 import org.apache.ibatis.annotations.Param;
 
@@ -38,6 +39,8 @@ public interface NmplDeviceInfoMapper {
     int updateDevice(DeviceInfoRequest deviceInfoRequest);
 
     List<DeviceInfoVo> selectDevice(DeviceInfoRequest deviceInfoRequest);
+
+    StationVo selectDeviceId(DeviceInfoRequest deviceInfoRequest);
 
 
 

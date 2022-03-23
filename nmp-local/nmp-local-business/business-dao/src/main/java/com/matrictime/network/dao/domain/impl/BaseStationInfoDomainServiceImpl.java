@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,11 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     @Override
     public List<BaseStationInfoVo> selectBaseStationBatch(List<String> list) {
         return nmplBaseStationInfoMapper.selectBaseStationBatch(list);
+    }
+
+    @Override
+    public StationVo selectDeviceId(BaseStationInfoRequest baseStationInfoRequest) {
+        return nmplBaseStationInfoMapper.selectDeviceId(baseStationInfoRequest);
     }
 
 }
