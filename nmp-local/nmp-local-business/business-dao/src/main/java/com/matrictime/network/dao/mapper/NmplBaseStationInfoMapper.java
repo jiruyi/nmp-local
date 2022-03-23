@@ -5,6 +5,7 @@ import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
 import java.util.List;
 
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import org.apache.ibatis.annotations.Param;
 
@@ -40,5 +41,7 @@ public interface NmplBaseStationInfoMapper {
     List<BaseStationInfoVo> selectBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
 
     List<BaseStationInfoVo> selectBaseStationBatch(@Param("stationId") List<String> list );
+
+    StationVo selectDeviceId(BaseStationInfoRequest baseStationInfoRequest);
 
 }

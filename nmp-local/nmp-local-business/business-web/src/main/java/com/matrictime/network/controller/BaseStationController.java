@@ -1,9 +1,14 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BaseStationInfoService;
+import com.matrictime.network.service.DeviceService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +25,9 @@ public class BaseStationController {
 
     @Resource
     private BaseStationInfoService baseStationInfoService;
+
+    @Resource
+    private DeviceService deviceService;
 
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     @ApiOperation(value = "基站接口",notes = "基站信息插入")
@@ -76,4 +84,37 @@ public class BaseStationController {
         }
         return result;
     }
+
+    @RequestMapping(value = "/selectDeviceId",method = RequestMethod.POST)
+    @ApiOperation(value = "基站接口",notes = "根据条件基站信息查询")
+    public Result<StationVo> selectDeviceId(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<StationVo> result = new Result<>();
+        BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
+        try {
+            if(deviceInfoRequest == null || deviceInfoRequest.getDeviceType() == null ||
+                    deviceInfoRequest.getLanIp() == null){
+                return new Result<>(false,"请求参数异常");
+            }
+            if(DeviceTypeEnum.DISPENSER.getCode().equals(deviceInfoRequest.getDeviceType()) ||
+                    DeviceTypeEnum.GENERATOR.getCode().equals(deviceInfoRequest.getDeviceType()) ||
+                    DeviceTypeEnum.CACHE.getCode().equals(deviceInfoRequest.getDeviceType())){
+                result = deviceService.selectDeviceId(deviceInfoRequest);
+                if(result.getResultObj() == null){
+                    return new Result<>(false,"dataBase中没有该数据");
+                }
+            }else {
+                baseStationInfoRequest.setLanIp(deviceInfoRequest.getLanIp());
+                result = baseStationInfoService.selectDeviceId(baseStationInfoRequest);
+                if(result.getResultObj() == null){
+                    return new Result<>(false,"dataBase中没有该数据");
+                }
+            }
+        }catch (Exception e){
+            log.info("根据条件查询基站异常:selectBaseStationInfo{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("根据条件查询基站异常");
+        }
+        return result;
+    }
+
 }
