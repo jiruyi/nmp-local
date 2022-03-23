@@ -142,10 +142,10 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         if (roleRequest.getStartTime() != null) {
-            criteria.andCreateTimeGreaterThanOrEqualTo(sf.parse(roleRequest.getStartTime());
+            criteria.andCreateTimeGreaterThanOrEqualTo(sf.parse(roleRequest.getStartTime()));
         }
         if(roleRequest.getEndTime() != null){
-            criteria.andCreateTimeLessThanOrEqualTo(sf.parse(roleRequest.getEndTime());
+            criteria.andCreateTimeLessThanOrEqualTo(sf.parse(roleRequest.getEndTime()));
         }
         criteria.andIsExistEqualTo(Byte.valueOf("1"));
         Page page = PageHelper.startPage(roleRequest.getPageNo(),roleRequest.getPageSize());
