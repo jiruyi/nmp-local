@@ -15,4 +15,6 @@ public interface CompanyInfoDomainService {
     public PageInfo<NmplCompanyInfoVo> queryByConditions(CompanyInfoRequest companyInfoRequest);
 //
 //    public RoleResponse queryOne(CompanyInfoRequest roleRequest);
+
+    public String getPreBID(String companyCode);
 }

@@ -72,8 +72,10 @@ public class RoleRequest extends BaseRequest implements Serializable {
     private Byte isExist;
 
     private boolean isAdmin;
-
-    private List<Long> meduId;
+    /**
+     * 菜单id
+     */
+    private List<Long> menuId;
     /**
      * 开始时间
      */

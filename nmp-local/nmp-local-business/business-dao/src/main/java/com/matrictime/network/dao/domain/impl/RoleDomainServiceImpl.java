@@ -41,7 +41,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer save(RoleRequest roleRequest)
+    public Integer save(RoleRequest roleRequest)throws Exception
     {
         NmplRole nmplRole = new NmplRole();
         BeanUtils.copyProperties(roleRequest,nmplRole);
@@ -52,12 +52,12 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         if (!CollectionUtils.isEmpty(nmplRoles)){
             throw new SystemException("存在相同角色名称或角色编码");
         }
-        nmplRole.setCreateTime(new Date());
-        nmplRole.setUpdateTime(new Date());
+//        nmplRole.setCreateTime(new Date());
+//        nmplRole.setUpdateTime(new Date());
         nmplRole.setIsExist(Byte.valueOf("1"));
-        nmplRoleMapper.insert(nmplRole);
+        nmplRoleMapper.insertSelective(nmplRole);
         List<Long>menuList = new ArrayList<>();
-        menuList = roleRequest.getMeduId();
+        menuList = roleRequest.getMenuId();
         Integer result = 0;
         if (!CollectionUtils.isEmpty(menuList)){
             for (Long meduId : menuList) {
@@ -71,7 +71,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     }
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer delete(RoleRequest roleRequest) {
+    public Integer delete(RoleRequest roleRequest)throws Exception {
 
         //判断该用户是否有关联用户
         List<NmplUser> users = new ArrayList<>();
@@ -91,7 +91,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     }
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer modify(RoleRequest roleRequest) {
+    public Integer modify(RoleRequest roleRequest)throws Exception {
         Integer result = 0;
         //修改角色基本信息
         NmplRole nmplRole = new NmplRole();
@@ -117,7 +117,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
 
         //新增该用户权限
         List<Long>menuList = new ArrayList<>();
-        menuList = roleRequest.getMeduId();
+        menuList = roleRequest.getMenuId();
         if (!CollectionUtils.isEmpty(menuList)){
             for (Long meduId : menuList) {
                 NmplRoleMenuRelation nmplRoleMenuRelation = new NmplRoleMenuRelation();
@@ -130,7 +130,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     }
 
     @Override
-    public PageInfo<NmplRoleVo> queryByConditions(RoleRequest roleRequest) {
+    public PageInfo<NmplRoleVo> queryByConditions(RoleRequest roleRequest) throws Exception{
         NmplRoleExample nmplRoleExample = new NmplRoleExample();
         NmplRoleExample.Criteria criteria = nmplRoleExample.createCriteria();
         if (!roleRequest.isAdmin()){
@@ -139,13 +139,13 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         if (roleRequest.getRoleName()!=null){
             criteria.andRoleNameEqualTo(roleRequest.getRoleName());
         }
-        if (roleRequest.getStartTime()!=null&&roleRequest.getEndTime()!=null){
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            try {
-                criteria.andCreateTimeBetween(sf.parse(roleRequest.getStartTime()),sf.parse(roleRequest.getEndTime()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        if (roleRequest.getStartTime() != null) {
+            criteria.andCreateTimeGreaterThanOrEqualTo(sf.parse(roleRequest.getStartTime());
+        }
+        if(roleRequest.getEndTime() != null){
+            criteria.andCreateTimeLessThanOrEqualTo(sf.parse(roleRequest.getEndTime());
         }
         criteria.andIsExistEqualTo(Byte.valueOf("1"));
         Page page = PageHelper.startPage(roleRequest.getPageNo(),roleRequest.getPageSize());
@@ -166,7 +166,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     }
 
     @Override
-    public RoleResponse queryOne(RoleRequest roleRequest) {
+    public RoleResponse queryOne(RoleRequest roleRequest)throws Exception {
         RoleResponse response = new RoleResponse();
         NmplRole nmplRole = nmplRoleMapper.selectByPrimaryKey(roleRequest.getRoleId());
         BeanUtils.copyProperties(nmplRole,response);

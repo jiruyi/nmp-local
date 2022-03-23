@@ -157,4 +157,22 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         pageResult.setPages(page.getPages());
         return pageResult;
     }
+
+
+    @Override
+    public String getPreBID(String companyCode) {
+        List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(null);
+        Map<String,NmplCompanyInfo> map = new HashMap<>();
+        for (NmplCompanyInfo info : infos) {
+            map.put(info.getCompanyCode(),info);
+        }
+        if(map.get(companyCode)!=null){
+            NmplCompanyInfo village = map.get(companyCode);
+            NmplCompanyInfo region = map.get(village.getParentCode());
+            NmplCompanyInfo operator = map.get(region.getParentCode());
+            return operator.getCountryCode()+"-"+operator.getCompanyCode()+"-"+region.getCompanyCode()+"-"+village.getCompanyCode();
+        } else {
+            return "";
+        }
+    }
 }

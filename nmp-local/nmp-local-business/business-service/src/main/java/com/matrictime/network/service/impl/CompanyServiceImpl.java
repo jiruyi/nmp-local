@@ -90,5 +90,4 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
         return result;
     }
 
-
 }
