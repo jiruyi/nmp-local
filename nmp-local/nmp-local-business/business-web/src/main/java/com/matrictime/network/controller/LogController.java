@@ -84,8 +84,8 @@ public class LogController {
     @RequestMapping(value = "/device/save",method = RequestMethod.POST)
     public Result saveDeviceLog(@RequestBody DeviceLog deviceLog){
         try {
-            if(ObjectUtils.isEmpty(deviceLog.getDeviceId())){
-                throw  new SystemException(ErrorMessageContants.DEVICE_ID_IS_NULL_MSG);
+            if(ObjectUtils.isEmpty(deviceLog.getDeviceIp())){
+                throw  new SystemException(ErrorMessageContants.DEVICE_IP_IS_NULL_MSG);
             }
             if(ObjectUtils.isEmpty(deviceLog.getOperDesc())){
                 throw  new SystemException(ErrorMessageContants.OPER_DESC_IS_NULL_MSG);
@@ -104,7 +104,7 @@ public class LogController {
 
 
     /**
-     * 设备日志查询
+     * 设备日志查询 xin git
      * @title ApiOperation
      * @param []
      * @return
