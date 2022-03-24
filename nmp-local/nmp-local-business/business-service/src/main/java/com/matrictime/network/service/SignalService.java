@@ -42,7 +42,14 @@ public interface SignalService {
      * @param req
      * @return
      */
-    Result<QuerySignalByPageResp> querySignalByPage(QuerySignalByPageReq req);
+    Result<PageInfo> querySignalByPage(QuerySignalByPageReq req);
+
+    /**
+     * 根据userId查询设备列表
+     * @param req
+     * @return
+     */
+    Result<QuerySignalSelectDeviceIdsResp> querySignalSelectDeviceIds(QuerySignalSelectDeviceIdsReq req);
 
     /**
      * 信令导出

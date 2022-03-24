@@ -94,7 +94,7 @@ public class SignalController {
     @RequestMapping (value = "/querySignalByPage",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令轮询分页查询",operType = "查询")
 //    @RequiresPermissions("sys:sign:query")
-    public Result<QuerySignalByPageResp> querySignalByPage(@RequestBody QuerySignalByPageReq req){
+    public Result<PageInfo> querySignalByPage(@RequestBody QuerySignalByPageReq req){
         try {
             return  signalService.querySignalByPage(req);
         }catch (Exception e){
@@ -102,6 +102,24 @@ public class SignalController {
             return new Result(false,e.getMessage());
         }
     }
+
+    /**
+     * 根据用户id查询已选设备列表
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/querySignalSelectDeviceIds",method = RequestMethod.POST)
+    @SystemLog(opermodul = "信令模块",operDesc = "根据用户id查询已选设备列表",operType = "查询")
+//    @RequiresPermissions("sys:sign:query")
+    public Result<QuerySignalSelectDeviceIdsResp> querySignalSelectDeviceIds(@RequestBody QuerySignalSelectDeviceIdsReq req){
+        try {
+            return  signalService.querySignalSelectDeviceIds(req);
+        }catch (Exception e){
+            log.error("SignalController.querySignalSelectDeviceIds exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
 
     /**
      * 信令导出

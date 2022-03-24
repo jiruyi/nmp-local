@@ -1,8 +1,7 @@
 package com.matrictime.network.service.impl;
 
-import com.github.pagehelper.ISelect;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.constant.DataConstants;
@@ -19,16 +18,12 @@ import com.matrictime.network.request.EditConfigReq;
 import com.matrictime.network.request.QueryConfigByPagesReq;
 import com.matrictime.network.request.ResetDefaultConfigReq;
 import com.matrictime.network.request.SyncConfigReq;
-import com.matrictime.network.response.EditConfigResp;
-import com.matrictime.network.response.QueryConfigByPagesResp;
-import com.matrictime.network.response.ResetDefaultConfigResp;
-import com.matrictime.network.response.SyncConfigResp;
+import com.matrictime.network.response.*;
 import com.matrictime.network.service.ConfigService;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,25 +55,20 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     private NmplDeviceInfoMapper nmplDeviceInfoMapper;
 
     @Override
-    public Result<QueryConfigByPagesResp> queryConfigByPages(QueryConfigByPagesReq req) {
+    public Result<PageInfo> queryConfigByPages(QueryConfigByPagesReq req) {
         Result result;
 
         try {
-            QueryConfigByPagesResp resp = new QueryConfigByPagesResp();
-            PageInfo<NmplConfig> pageInfo = PageHelper.startPage(req.getPageNo(), req.getPageSize()).doSelectPageInfo(new ISelect() {
-                @Override
-                public void doSelect() {
-                    NmplConfig nmplConfig = new NmplConfig();
-                    if (StringUtils.isNotBlank(req.getConfigName())){
-                        StringBuffer sb = new StringBuffer("%").append(req.getConfigName()).append("%");
-                        nmplConfig.setConfigName(sb.toString());
-                    }
-                    nmplConfigExtMapper.selectByExample(nmplConfig);
-                }
-            });
+            Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
+            NmplConfig nmplConfig = new NmplConfig();
+            if (StringUtils.isNotBlank(req.getConfigName())){
+                StringBuffer sb = new StringBuffer("%").append(req.getConfigName()).append("%");
+                nmplConfig.setConfigName(sb.toString());
+            }
+            List<NmplConfig> nmplConfigs = nmplConfigExtMapper.selectByExample(nmplConfig);
+            PageInfo<NmplConfig> pageResult =  new PageInfo<>((int)page.getTotal(), page.getPages(), nmplConfigs);
 
-            resp.setPageInfo(pageInfo);
-            result = buildResult(resp);
+            result = buildResult(pageResult);
         }catch (Exception e){
             log.error("ConfigServiceImpl.queryConfigByPages Exception:{}",e.getMessage());
             result = failResult(e);

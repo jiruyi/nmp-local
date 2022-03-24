@@ -12,29 +12,29 @@
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://192.168.239.101:3306/jzsg" userId="root"
-                        password="Jry@1992">
+                        connectionURL="jdbc:mysql://192.168.72.230:3306/user_center" userId="root"
+                        password="Jzsg@2021">
             <property name="nullCatalogMeansCurrent" value="true" />
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.atjzsg.springcloud.dao.model"
+        <javaModelGenerator targetPackage="com.matrictime.network.dao.model"
                             targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="com.atjzsg.springcloud.dao.mapper"
+        <sqlMapGenerator targetPackage="com.matrictime.network.dao.mapper"
                          targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
 
-        <javaClientGenerator targetPackage="com.atjzsg.springcloud.dao.mapper"
+        <javaClientGenerator targetPackage="com.matrictime.network.dao.mapper"
                              targetProject="src/main/java" type="XMLMAPPER">
-            <property name="enableSubPackages" value="true"/>
+            <property name="enableSubPackages" value="true"/>k
         </javaClientGenerator>
 
 
-        <table tableName="123" domainObjectName="User"
+        <table tableName="user" domainObjectName="User"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">

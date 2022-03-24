@@ -113,6 +113,9 @@
       <if test="operDate != null">
         and date(create_time) = #{operDate}
       </if>
+      <if test="operLevel != null">
+        and oper_level = #{operLevel}
+      </if>
     </where>
     order  by id desc
   </select>

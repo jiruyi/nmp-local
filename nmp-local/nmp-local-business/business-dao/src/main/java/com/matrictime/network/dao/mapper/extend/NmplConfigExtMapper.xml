@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.matrictime.network.dao.mapper.extend.NmplConfigExtMapper">
-  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplConfig">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.extend.NmplConfigExt">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="device_type" jdbcType="CHAR" property="deviceType" />
+    <result column="device_type_name" jdbcType="CHAR" property="deviceTypeName" />
     <result column="config_name" jdbcType="VARCHAR" property="configName" />
     <result column="config_code" jdbcType="VARCHAR" property="configCode" />
     <result column="config_value" jdbcType="VARCHAR" property="configValue" />
@@ -19,12 +20,12 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, device_type, config_name, config_code, config_value, default_value, unit, status, 
+    id, device_type, config_name, config_code, config_value, default_value, unit, status,
     create_time, create_user, update_time, update_user, is_exist, remark
   </sql>
 
   <sql id="Query_Column_List">
-    id, config_name, config_code, config_value, default_value, unit, status,
+    id, device_type, config_name, config_code, config_value, default_value, unit, status,
     create_time, create_user, update_time, update_user, is_exist, remark
   </sql>
 
@@ -37,7 +38,7 @@
     when device_type = '3' then '生成机'
     when device_type = '4' then '缓存机'
     else ''
-    end ) as device_type
+    end ) as device_type_name
     from nmpl_config
     <where>
       <if test="configName != null and configName !=''">
