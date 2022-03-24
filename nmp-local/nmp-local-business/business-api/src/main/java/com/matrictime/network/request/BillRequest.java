@@ -10,6 +10,8 @@ import java.util.List;
 
 @Data
 public class BillRequest extends BaseRequest implements Serializable {
+
+    private static final long serialVersionUID = -8897605799075175452L;
     /**
      * 主键
      */

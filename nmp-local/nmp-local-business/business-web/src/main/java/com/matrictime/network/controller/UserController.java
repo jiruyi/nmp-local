@@ -13,6 +13,7 @@ import com.matrictime.network.request.UserInfo;
 import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.LoginResponse;
 import com.matrictime.network.response.PageInfo;
+import com.matrictime.network.response.UserInfoResp;
 import com.matrictime.network.response.UserListResponse;
 import com.matrictime.network.service.UserService;
 import com.matrictime.network.shiro.ShiroUtils;
@@ -29,12 +30,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * 用户信息相关
  * @author jiruyi
  * @copyright www.matrictime.com
  * @project nmp-local
  * @date 2022/2/21 0021 17:38
- * @desc
- * 用户信息相关
+ *
  */
 @RequestMapping(value = "/user")
 @Api(value = "用户信息相关",tags = "用户信息相关")
@@ -50,10 +51,10 @@ public class UserController {
     private RedisTemplate redisTemplate;
 
     /**
+     * 登录接口
      * @title login
      * @param [loginRequest]
      * @return com.matrictime.network.model.Result<LoginResponse>
-     * @description
      * @author jiruyi
      * @create 2022/2/24 0024 10:13
      */
@@ -256,5 +257,24 @@ public class UserController {
         }
     }
 
+
+
+
+    @ApiOperation(value = "获取单个用户信息",notes = "用户姓名，电话，userId")
+    @SystemLog(opermodul = "用户管理模块",operDesc = "查询用户",operType = "查询")
+    @RequestMapping (value = "/getUserInfo",method = RequestMethod.POST)
+    public Result<UserInfoResp> selectUserInfo(@RequestBody UserRequest userRequest){
+        Result<UserInfoResp> responseResult= new Result();
+        try {
+            if(ObjectUtils.isEmpty(userRequest.getUserId())){
+                userRequest.setUserId(String.valueOf(RequestContext.getUser().getUserId()));
+            }
+            responseResult =  userService.getUserInfo(userRequest);
+        }catch (Exception e){
+            responseResult.setErrorMsg(e.getMessage());
+            responseResult.setSuccess(false);
+        }
+        return responseResult;
+    }
 
 }

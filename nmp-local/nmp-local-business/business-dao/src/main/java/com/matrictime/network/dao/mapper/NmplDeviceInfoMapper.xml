@@ -512,6 +512,12 @@
       <if test="relationOperatorId != null and relationOperatorId != ''">
         and relation_operator_id = #{relationOperatorId,jdbcType=CHAR}
       </if>
+      <if test="lanIp != null and lanIp != ''">
+        and lan_ip = #{lanIp,jdbcType=CHAR}
+      </if>
     </where>
+  </select>
+  <select id="selectDeviceId" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.StationVo">
+    select device_id from nmpl_device_info where lan_ip = #{lanIp,jdbcType=CHAR}
   </select>
 </mapper>

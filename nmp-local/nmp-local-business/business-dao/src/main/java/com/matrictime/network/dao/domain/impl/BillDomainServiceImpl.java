@@ -48,7 +48,7 @@ public class BillDomainServiceImpl implements BillDomainService {
         if (CollectionUtils.isEmpty(billRequest.getNmplBillVoList())){
             NmplBill nmplBill = new NmplBill();
             BeanUtils.copyProperties(billRequest,nmplBill);
-            return nmplBillMapper.insert(nmplBill);
+            return nmplBillMapper.insertSelective(nmplBill);
         }else {
             return nmplBillExtMapper.batchInsert(billRequest.getNmplBillVoList());
         }

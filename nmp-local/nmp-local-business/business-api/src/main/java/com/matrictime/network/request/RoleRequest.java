@@ -14,6 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleRequest extends BaseRequest implements Serializable {
+
+    private static final long serialVersionUID = -2777337116972869483L;
     /**
      * 角色ID
      */
@@ -70,8 +72,10 @@ public class RoleRequest extends BaseRequest implements Serializable {
     private Byte isExist;
 
     private boolean isAdmin;
-
-    private List<Long> meduId;
+    /**
+     * 菜单id
+     */
+    private List<Long> menuId;
     /**
      * 开始时间
      */

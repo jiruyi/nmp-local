@@ -7,6 +7,7 @@ import com.matrictime.network.request.UserInfo;
 import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.LoginResponse;
 import com.matrictime.network.response.PageInfo;
+import com.matrictime.network.response.UserInfoResp;
 
 /**
  * @author jiruyi
@@ -79,5 +80,7 @@ public interface UserService {
       * @create 2022/3/1 0001 17:05
       */
     Result<Integer> passwordReset(UserInfo userInfo);
+
+    Result<UserInfoResp> getUserInfo(UserRequest userRequest);
     
 }

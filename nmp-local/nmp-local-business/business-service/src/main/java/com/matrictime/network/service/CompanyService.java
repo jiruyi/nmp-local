@@ -14,4 +14,5 @@ public interface CompanyService {
 
     Result<PageInfo>queryByConditon(CompanyInfoRequest companyInfoRequest);
 
+
 }

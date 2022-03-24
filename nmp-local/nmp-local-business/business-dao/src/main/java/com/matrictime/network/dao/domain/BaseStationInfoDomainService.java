@@ -1,9 +1,9 @@
 package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.PageInfo;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,4 +21,6 @@ public interface BaseStationInfoDomainService {
     List<BaseStationInfoVo> selectLinkBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
 
     List<BaseStationInfoVo> selectBaseStationBatch(List<String> list );
+
+    StationVo selectDeviceId(BaseStationInfoRequest baseStationInfoRequest);
 }
