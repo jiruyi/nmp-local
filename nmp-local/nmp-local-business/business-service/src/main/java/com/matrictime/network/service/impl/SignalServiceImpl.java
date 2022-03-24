@@ -1,8 +1,8 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.constant.DataConstants;
@@ -225,21 +225,35 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     }
 
     @Override
-    public Result<QuerySignalByPageResp> querySignalByPage(QuerySignalByPageReq req) {
+    public Result<PageInfo> querySignalByPage(QuerySignalByPageReq req) {
         Result result;
         try {
-            QuerySignalByPageResp resp = new QuerySignalByPageResp();
             checkQuerySignalByPageParam(req);
-            List<String> deviceIds = nmplSignalExtMapper.selectDeviceIdsByUserId(req.getUserId());
-            PageInfo<NmplSignal> pageInfo = PageHelper.startPage(req.getPageNo(), req.getPageSize()).doSelectPageInfo(() -> {
-                nmplSignalExtMapper.selectPagesByUserId(req.getUserId());
-            });
 
-            resp.setDeviceIds(deviceIds);
-            resp.setPageInfo(pageInfo);
-            result = buildResult(resp);
+            Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
+            List<NmplSignal> nmplSignals = nmplSignalExtMapper.selectPagesByUserId(req.getUserId());
+            PageInfo<NmplSignal> pageResult =  new PageInfo<>((int)page.getTotal(), page.getPages(), nmplSignals);
+
+            result = buildResult(pageResult);
         }catch (Exception e){
             log.error("SignalServiceImpl.querySignalByPage Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    @Override
+    public Result<QuerySignalSelectDeviceIdsResp> querySignalSelectDeviceIds(QuerySignalSelectDeviceIdsReq req) {
+        Result result;
+        try {
+            QuerySignalSelectDeviceIdsResp resp = new QuerySignalSelectDeviceIdsResp();
+            checkQuerySignalSelectDeviceIdsParam(req);
+            List<String> deviceIds = nmplSignalExtMapper.selectDeviceIdsByUserId(req.getUserId());
+
+            resp.setDeviceIds(deviceIds);
+            result = buildResult(resp);
+        }catch (Exception e){
+            log.error("SignalServiceImpl.querySignalSelectDeviceIds Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -492,6 +506,12 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     }
 
     private void checkQuerySignalByPageParam(QuerySignalByPageReq req){
+        if (ParamCheckUtil.checkVoStrBlank(req.getUserId())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "userId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+    private void checkQuerySignalSelectDeviceIdsParam(QuerySignalSelectDeviceIdsReq req){
         if (ParamCheckUtil.checkVoStrBlank(req.getUserId())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "userId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
