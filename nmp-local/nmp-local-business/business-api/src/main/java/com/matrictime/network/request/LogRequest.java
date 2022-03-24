@@ -31,7 +31,7 @@ public class LogRequest extends BaseRequest {
 
     private Boolean isSuccess;
 
-    private Boolean operLevel;
+    private String operLevel;
 
 
 
