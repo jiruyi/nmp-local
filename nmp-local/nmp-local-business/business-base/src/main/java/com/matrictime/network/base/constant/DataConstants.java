@@ -68,6 +68,10 @@ public class DataConstants {
     public static final String CONFIG_DEVICE_TYPE_3 = "3";
     public static final String CONFIG_DEVICE_TYPE_4 = "4";
 
+    public static final Boolean VERSION_FILE_IS_PUSHED = true;
+
+    public static final Boolean VERSION_FILE_IS_STARTED = true;
+
     /**
      * redis key
      */

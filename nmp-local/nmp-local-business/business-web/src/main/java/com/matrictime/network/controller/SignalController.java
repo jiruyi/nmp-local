@@ -9,6 +9,7 @@ import com.matrictime.network.response.*;
 import com.matrictime.network.service.SignalService;
 import com.matrictime.network.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/signalIo",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令启停",operType = "操作")
+//    @RequiresPermissions("sys:sign:track")
     public Result<SignalIoResp> signalIo(@RequestBody SignalIoReq req){
         try {
             return signalService.signalIo(req);
@@ -60,12 +62,7 @@ public class SignalController {
     @SystemLog(opermodul = "信令模块",operDesc = "信令上报",operType = "操作")
     public Result addSignal(@RequestBody NmplSignalVo req){
         try {
-            EditSignalReq signalReq = new EditSignalReq();
-            List<NmplSignalVo> vos = new ArrayList<>(1);
-            vos.add(req);
-            signalReq.setEditType(DataConstants.EDIT_TYPE_ADD);
-            signalReq.setNmplSignalVos(vos);
-            return  signalService.editSignal(signalReq);
+            return  signalService.addSignal(req);
         }catch (Exception e){
             log.error("SignalController.addSignal exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -79,6 +76,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/cleanSignal",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令清空",operType = "操作")
+//    @RequiresPermissions("sys:sign:clear")
     public Result<CleanSignalResp> cleanSignal(@RequestBody CleanSignalReq req){
         try {
             return  signalService.cleanSignal(req);
@@ -95,6 +93,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/querySignalByPage",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令轮询分页查询",operType = "查询")
+//    @RequiresPermissions("sys:sign:query")
     public Result<QuerySignalByPageResp> querySignalByPage(@RequestBody QuerySignalByPageReq req){
         try {
             return  signalService.querySignalByPage(req);
@@ -111,6 +110,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/exportSignal",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令导出",operType = "操作")
+//    @RequiresPermissions("sys:sign:export")
     public Result<ExportSignalResp> exportSignal(@RequestBody ExportSignalReq req, HttpServletResponse response){
         try {
             String fileName = DateUtils.dateToString(new Date())+DataConstants.FILE_TYPE_CSV;

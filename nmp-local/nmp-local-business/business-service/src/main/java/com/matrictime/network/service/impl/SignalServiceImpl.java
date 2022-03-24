@@ -29,6 +29,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -55,6 +56,9 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     @Autowired(required = false)
     private NmplSignalExtMapper nmplSignalExtMapper;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @Value("${signal.tableHeaderArr}")
     private String[] tableHeaderArr;
 
@@ -62,6 +66,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     public Result<EditSignalResp> editSignal(EditSignalReq req) {
         Result result;
         try {
+            EditConfigResp resp = null;
             // check param is legal
             checkEditSignalParam(req);
             switch (req.getEditType()){
@@ -91,7 +96,6 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
                     throw new SystemException(ErrorCode.PARAM_EXCEPTION, "editType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
 
-            EditConfigResp resp = new EditConfigResp();
             result = buildResult(resp);
         }catch (SystemException e){
             log.error("SignalServiceImpl.editSignal SystemException:{}",e.getMessage());
@@ -107,8 +111,8 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     @Override
     public Result<SignalIoResp> signalIo(SignalIoReq req) {
         Result result;
-        SignalIoResp resp = new SignalIoResp();
         try {
+            SignalIoResp resp = new SignalIoResp();
             checkSignalIoParam(req);
             List<NmplDeviceVo> vos = req.getDeviceVos();
             List<String> successIds = new ArrayList<>(vos.size());
@@ -157,9 +161,44 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     }
 
     @Override
+    public Result addSignal(NmplSignalVo req) {
+        Result result;
+        try {
+            // check param is legal
+            checkAddSignalParam(req);
+            // if user logout,stop adding signal to this user
+            boolean isOn = checkUserIsOn(req.getDeviceId());
+            if (isOn){
+                EditSignalReq signalReq = new EditSignalReq();
+                List<NmplSignalVo> vos = new ArrayList<>(1);
+                vos.add(req);
+                signalReq.setEditType(DataConstants.EDIT_TYPE_ADD);
+                signalReq.setNmplSignalVos(vos);
+                Result<EditSignalResp> editSignal = editSignal(signalReq);
+                if (editSignal.isSuccess()){
+                    result = buildResult(null);
+                }else {
+                    result = failResult(editSignal.getErrorCode(),editSignal.getErrorMsg());
+                }
+            }else {
+                result = buildResult(null);
+            }
+        }catch (SystemException e){
+            log.error("SignalServiceImpl.editSignal SystemException:{}",e.getMessage());
+            result = failResult(e.getCode(),e.getMessage());
+        }catch (Exception e){
+            log.error("SignalServiceImpl.editSignal Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+
+        return result;
+    }
+
+    @Override
     public Result<CleanSignalResp> cleanSignal(CleanSignalReq req) {
         Result result;
         try {
+            CleanSignalResp resp = null;
             checkCleanSignalParam(req);
             for(String id : req.getDeviceIds()){
                 NmplSignalIoExample example = new NmplSignalIoExample();
@@ -176,7 +215,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
                 example.createCriteria().andDeviceIdEqualTo(id).andIsExistEqualTo(DataConstants.IS_EXIST);
                 nmplSignalMapper.updateByExampleSelective(signal,example);
             }
-            CleanSignalResp resp = new CleanSignalResp();
+
             result = buildResult(resp);
         }catch (Exception e){
             log.error("SignalServiceImpl.cleanSignal Exception:{}",e.getMessage());
@@ -189,12 +228,13 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     public Result<QuerySignalByPageResp> querySignalByPage(QuerySignalByPageReq req) {
         Result result;
         try {
+            QuerySignalByPageResp resp = new QuerySignalByPageResp();
             checkQuerySignalByPageParam(req);
             List<String> deviceIds = nmplSignalExtMapper.selectDeviceIdsByUserId(req.getUserId());
             PageInfo<NmplSignal> pageInfo = PageHelper.startPage(req.getPageNo(), req.getPageSize()).doSelectPageInfo(() -> {
                 nmplSignalExtMapper.selectPagesByUserId(req.getUserId());
             });
-            QuerySignalByPageResp resp = new QuerySignalByPageResp();
+
             resp.setDeviceIds(deviceIds);
             resp.setPageInfo(pageInfo);
             result = buildResult(resp);
@@ -209,6 +249,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     public Result<ExportSignalResp> exportSignal(ExportSignalReq req) {
         Result result;
         try {
+            ExportSignalResp resp = new ExportSignalResp();
             checkExportSignalParam(req);
             List<Object[]> cellList = new ArrayList<>();
             for (String deviceId : req.getDeviceIds()){
@@ -226,15 +267,15 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
                         obj[4] = signal.getReceiveIp();
                         obj[5] = signal.getSignalContent();
                         obj[6] = signal.getBusinessModule();
-                        obj[7] = signal.getUploadTime();
-                        obj[8] = signal.getCreateTime();
-                        obj[9] = signal.getUpdateTime();
+                        obj[7] = DateUtils.formatDateToString(signal.getUploadTime());
+                        obj[8] = DateUtils.formatDateToString(signal.getCreateTime());
+                        obj[9] = DateUtils.formatDateToString(signal.getUpdateTime());
                         cellList.add(obj);
                     }
                 }
             }
             byte[] bytes = ExportCSVUtil.writeCsvAfterToBytes(tableHeaderArr, cellList);
-            ExportSignalResp resp = new ExportSignalResp();
+
             resp.setBytes(bytes);
             result = buildResult(resp);
         }catch (Exception e){
@@ -303,8 +344,8 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(example);
             if (!CollectionUtils.isEmpty(nmplBaseStationInfos)){
                 NmplBaseStationInfo info = nmplBaseStationInfos.get(0);
-                String ip = info.getPublicNetworkIp();
-                String port = info.getPublicNetworkPort();
+                String ip = info.getLanIp();
+                String port = info.getLanPort();
                 Map<String,String> map = new HashMap<>(2);
                 map.put("opType",ioType);
                 io = sendSignalIo(ip, port, map);
@@ -315,8 +356,8 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(example);
             if (!CollectionUtils.isEmpty(nmplDeviceInfos)){
                 NmplDeviceInfo info = nmplDeviceInfos.get(0);
-                String ip = info.getPublicNetworkIp();
-                String port = info.getPublicNetworkPort();
+                String ip = info.getLanIp();
+                String port = info.getLanPort();
                 Map<String,String> map = new HashMap<>(2);
                 map.put("opType",ioType);
                 io = sendSignalIo(ip, port, map);
@@ -331,6 +372,60 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             addSignalIo(userId,id,ioType);
         }
         return io;
+    }
+
+    private boolean checkUserIsOn(String deviceId){
+        boolean result = true;
+        NmplSignalIoExample example = new NmplSignalIoExample();
+        example.createCriteria().andDeviceIdEqualTo(deviceId).andStatusEqualTo(com.matrictime.network.base.constant.DataConstants.IOTYPE_I).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<NmplSignalIo> nmplSignalIos = nmplSignalIoMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(nmplSignalIos)){
+                String userId = nmplSignalIos.get(0).getUpdateUser();
+                Object redisToken  = redisTemplate.opsForValue().get(userId + com.matrictime.network.base.constant.DataConstants.USER_LOGIN_JWT_TOKEN);
+                if (redisToken == null){
+                    result = false;
+                    SignalIoReq req = new SignalIoReq();
+                    req.setUserId(userId);
+                    req.setIoType(com.matrictime.network.base.constant.DataConstants.IOTYPE_O);
+                    List<NmplDeviceVo> signalIoVos = getSignalIoVos(userId);
+                    req.setDeviceVos(signalIoVos);
+                    signalIo(req);
+                }
+        }
+        return result;
+    }
+
+    private List<NmplDeviceVo> getSignalIoVos(String userId){
+        NmplSignalIoExample example = new NmplSignalIoExample();
+        example.createCriteria().andUpdateUserEqualTo(userId).andStatusEqualTo(com.matrictime.network.base.constant.DataConstants.IOTYPE_I).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<NmplSignalIo> nmplSignalIos = nmplSignalIoMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(nmplSignalIos)){
+            List<NmplDeviceVo> nmplDeviceVos = new ArrayList<>(nmplSignalIos.size());
+            for (NmplSignalIo signalIo : nmplSignalIos){
+                String deviceId = signalIo.getDeviceId();
+                NmplDeviceVo vo = new NmplDeviceVo();
+                vo.setDeviceId(deviceId);
+                NmplBaseStationInfoExample bexample = new NmplBaseStationInfoExample();
+                bexample.createCriteria().andStationIdEqualTo(deviceId);
+                List<NmplBaseStationInfo> binfos = nmplBaseStationInfoMapper.selectByExample(bexample);
+                if (CollectionUtils.isEmpty(binfos)){
+                    NmplDeviceInfoExample dexample = new NmplDeviceInfoExample();
+                    dexample.createCriteria().andDeviceIdEqualTo(deviceId);
+                    List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dexample);
+                    if (CollectionUtils.isEmpty(deviceInfos)){
+                        log.info("SignalServiceImpl.getSignalIoVos deviceId:{},基站表和非基站表没有记录",deviceId);
+                        continue;
+                    }else {
+                        vo.setDeviceBigType(com.matrictime.network.base.constant.DataConstants.DEVICE_BIG_TYPE_1);
+                    }
+                }else {
+                    vo.setDeviceBigType(com.matrictime.network.base.constant.DataConstants.DEVICE_BIG_TYPE_0);
+                }
+                nmplDeviceVos.add(vo);
+            }
+            return nmplDeviceVos;
+        }
+        return null;
     }
 
     private void checkEditSignalParam(EditSignalReq req) {
@@ -407,4 +502,30 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "deviceIds"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
     }
+
+    private void checkAddSignalParam(NmplSignalVo req){
+        if (ParamCheckUtil.checkVoStrBlank(req.getDeviceId())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "DeviceId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getSignalName())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SignalName"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getSendIp())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SendIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getReceiveIp())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "ReceiveIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getSignalContent())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SignalContent"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getBusinessModule())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "BusinessModule"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (req.getUploadTime() == null){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "UploadTime"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+
 }

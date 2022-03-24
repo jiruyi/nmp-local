@@ -67,6 +67,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     @Override
     public Result<CheckHeartResp> checkHeart(CheckHeartReq req) {
         Result result;
+        CheckHeartResp resp = null;
         try {
             checkHeartParam(req);
 
@@ -99,7 +100,6 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                     throw new SystemException(ErrorMessageContants.DEVICE_NOT_ACTIVE_MSG);
             }
 
-            CheckHeartResp resp = new CheckHeartResp();
             result = buildResult(resp);
         }catch (Exception e){
             log.error("MonitorServiceImpl.checkHeart Exception:{}",e.getMessage());
@@ -112,9 +112,9 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     @Override
     public Result<QueryMonitorResp> queryMonitor(QueryMonitorReq req) {
         Result result;
-        QueryMonitorResp resp = new QueryMonitorResp();
 
         try {
+            QueryMonitorResp resp = null;
             queryMonitorParam(req);
             String roId = req.getRoId();
             NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
@@ -163,6 +163,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                         baseInfo.setRelDevices(relDevices);
                     }
                 }
+                resp = new QueryMonitorResp();
                 resp.setDeviceInfoRelVos(baseInfos);
             }
 
@@ -177,9 +178,11 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     @Override
     public Result<TotalLoadChangeResp> totalLoadChange(TotalLoadChangeReq req) {
         Result result;
+
         try {
+            TotalLoadChangeResp resp = null;
             totalLoadChangeParam(req);
-            TotalLoadChangeResp resp = new TotalLoadChangeResp();
+
             switch (req.getBigType()){
                 case DEVICE_BIG_TYPE_0:
                     NmplBaseStationInfoExample bexample = new NmplBaseStationInfoExample();
@@ -200,6 +203,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                             }
                             dataMap.put(stationInfo.getStationId(),totalLoadVos);
                         }
+                        resp = new TotalLoadChangeResp();
                         resp.setDataMap(dataMap);
                     }
                     break;
@@ -222,6 +226,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                             }
                             dataMap.put(deviceInfo.getDeviceId(),totalLoadVos);
                         }
+                        resp = new TotalLoadChangeResp();
                         resp.setDataMap(dataMap);
                     }
                     break;

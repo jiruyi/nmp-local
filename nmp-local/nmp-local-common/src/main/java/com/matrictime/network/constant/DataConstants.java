@@ -37,6 +37,10 @@ public class DataConstants {
 
     public static final String KEY_SLASH = "/";
 
+    public static final String LEFT_BRACKET = "(";
+
+    public static final String RIGHT_BRACKET = ")";
+
     public static final String PHONE_SMS_DAY_COUNT = "phone_sms_count_day:";
 
     public static final String NETWORK_LOG_COUNT = "network_log_count";

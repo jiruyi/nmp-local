@@ -1,5 +1,6 @@
 package com.matrictime.network.util;
 
+import com.matrictime.network.constant.DataConstants;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -31,6 +32,8 @@ public class HttpClientUtil {
 
     private static final Integer TIME_OUT = 60000;
 
+    private static final String HTTP_TITLE = "http://";
+
     private HttpClientUtil() {
     }
 
@@ -54,6 +57,40 @@ public class HttpClientUtil {
     public static String post(String url, Map<String, String> paramMap) throws ClientProtocolException, IOException {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
+        //设置请求和传输超时时间
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        httpPost.setConfig(requestConfig);
+        List<NameValuePair> formParams = setHttpParams(paramMap);
+        UrlEncodedFormEntity param = new UrlEncodedFormEntity(formParams, "UTF-8");
+        httpPost.setEntity(param);
+        HttpResponse response = httpClient.execute(httpPost);
+//        log.info("************{}", response);
+        String httpEntityContent = getHttpEntityContent(response);
+//        log.info("************{}", httpEntityContent);
+        httpPost.abort();
+//        log.info("************{}", httpEntityContent);
+        return httpEntityContent;
+
+    }
+
+    /**
+     * 封装HTTP POST方法
+     *
+     * @param
+     * @param
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    public static String post(String ip ,String port, String path, Map<String, String> paramMap) throws ClientProtocolException, IOException {
+        HttpClient httpClient = HttpClients.createDefault();
+        StringBuffer sb = new StringBuffer(HTTP_TITLE);
+        sb.append(ip);
+        sb.append(DataConstants.KEY_SPLIT);
+        sb.append(port);
+        sb.append(DataConstants.KEY_SLASH);
+        sb.append(path);
+        HttpPost httpPost = new HttpPost(sb.toString());
         //设置请求和传输超时时间
         RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
         httpPost.setConfig(requestConfig);

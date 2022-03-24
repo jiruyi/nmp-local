@@ -24,9 +24,11 @@ import com.matrictime.network.response.QueryConfigByPagesResp;
 import com.matrictime.network.response.ResetDefaultConfigResp;
 import com.matrictime.network.response.SyncConfigResp;
 import com.matrictime.network.service.ConfigService;
+import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.HttpClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,7 +62,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     @Override
     public Result<QueryConfigByPagesResp> queryConfigByPages(QueryConfigByPagesReq req) {
         Result result;
+
         try {
+            QueryConfigByPagesResp resp = new QueryConfigByPagesResp();
             PageInfo<NmplConfig> pageInfo = PageHelper.startPage(req.getPageNo(), req.getPageSize()).doSelectPageInfo(new ISelect() {
                 @Override
                 public void doSelect() {
@@ -73,7 +77,6 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 }
             });
 
-            QueryConfigByPagesResp resp = new QueryConfigByPagesResp();
             resp.setPageInfo(pageInfo);
             result = buildResult(resp);
         }catch (Exception e){
@@ -88,7 +91,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     @Transactional
     public Result<EditConfigResp> editConfig(EditConfigReq req) {
         Result result;
+
         try {
+            EditConfigResp resp = null;
             // check param is legal
             checkEditConfigParam(req);
             switch (req.getEditType()){
@@ -118,7 +123,6 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                     throw new SystemException(ErrorCode.PARAM_EXCEPTION, "editType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
 
-            EditConfigResp resp = new EditConfigResp();
             result = buildResult(resp);
         }catch (SystemException e){
             log.error("ConfigServiceImpl.editConfig SystemException:{}",e.getMessage());
@@ -134,7 +138,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     @Override
     public Result<ResetDefaultConfigResp> resetDefaultConfig(ResetDefaultConfigReq req) {
         Result result;
+
         try {
+            ResetDefaultConfigResp resp = new ResetDefaultConfigResp();
             checkResetDefaultConfigParam(req);
             List<Long> successIds = new ArrayList<>();
             List<Long> failIds = new ArrayList<>();
@@ -160,15 +166,21 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                     List<NmplConfig> nmplConfigs = nmplConfigMapper.selectByExample(example);
                     if (!CollectionUtils.isEmpty(nmplConfigs)){
                         for (NmplConfig dto : nmplConfigs){
-                            if (StringUtils.isNotEmpty(dto.getDefaultValue()) && !dto.getDefaultValue().equals(dto.getConfigValue())){
-                                NmplConfig nmplConfig = new NmplConfig();
-                                nmplConfig.setId(dto.getId());
-                                nmplConfig.setConfigValue(dto.getDefaultValue());
-                                int flag = nmplConfigMapper.updateByPrimaryKeySelective(nmplConfig);
-                                if(flag > 0){
+                            if (StringUtils.isNotEmpty(dto.getDefaultValue())){
+                                if (!dto.getDefaultValue().equals(dto.getConfigValue())){
+                                    NmplConfig nmplConfig = new NmplConfig();
+                                    nmplConfig.setId(dto.getId());
+                                    nmplConfig.setConfigValue(dto.getDefaultValue());
+                                    int flag = nmplConfigMapper.updateByPrimaryKeySelective(nmplConfig);
+                                    if(flag > 0){
+                                        successIds.add(dto.getId());
+                                        continue;
+                                    }
+                                }else {
                                     successIds.add(dto.getId());
                                     continue;
                                 }
+
                             }
                             failIds.add(dto.getId());
                         }
@@ -177,7 +189,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 default:
                     throw new SystemException(ErrorCode.PARAM_EXCEPTION, "editRange"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-            ResetDefaultConfigResp resp = new ResetDefaultConfigResp();
+
             resp.setSuccessIds(successIds);
             resp.setFailIds(failIds);
             result = buildResult(resp);
@@ -195,7 +207,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     @Override
     public Result<SyncConfigResp> syncConfig(SyncConfigReq req) {
         Result result;
+
         try {
+            SyncConfigResp resp = new SyncConfigResp();
             checkSyncConfigParam(req);
             List<String> successIds = new ArrayList<>();
             List<String> failIds = new ArrayList<>();
@@ -216,8 +230,8 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                 List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bExample);
                                 if (!CollectionUtils.isEmpty(stationInfos)){
                                     NmplBaseStationInfo info = stationInfos.get(0);
-                                    httpParam.put("ip",info.getPublicNetworkIp());
-                                    httpParam.put("port",info.getPublicNetworkPort());
+                                    httpParam.put("ip",info.getLanIp());
+                                    httpParam.put("port",info.getLanPort());
                                 }
                                 break;
                             case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_2:
@@ -228,8 +242,8 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                 List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dExample);
                                 if (!CollectionUtils.isEmpty(deviceInfos)){
                                     NmplDeviceInfo info = deviceInfos.get(0);
-                                    httpParam.put("ip",info.getPublicNetworkIp());
-                                    httpParam.put("port",info.getPublicNetworkPort());
+                                    httpParam.put("ip",info.getLanIp());
+                                    httpParam.put("port",info.getLanPort());
                                 }
                                 break;
                             default:
@@ -301,7 +315,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 default:
                     throw new SystemException(ErrorCode.PARAM_EXCEPTION, "editRange"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-            SyncConfigResp resp = new SyncConfigResp();
+
             resp.setSuccessIds(successIds);
             resp.setFailIds(failIds);
             result = buildResult(resp);
@@ -320,6 +334,11 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     public Result httpSyncConfig(Map<String,String> map) {
         Result result;
         try {
+            Map<String ,String> httpParam = new HashMap<>(4);
+            httpParam.put("configCode",map.get("configCode"));
+            httpParam.put("configValue",map.get("configValue"));
+            httpParam.put("unit",map.get("unit"));
+            HttpClientUtil.post(map.get("ip"),map.get("port"),"path",httpParam);
             result = buildResult(null);
         }catch (Exception e){
             log.warn("ConfigServiceImpl.httpSyncConfig Exception:{}",e.getMessage());

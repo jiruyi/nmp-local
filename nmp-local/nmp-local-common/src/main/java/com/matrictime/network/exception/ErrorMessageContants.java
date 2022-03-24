@@ -62,4 +62,6 @@ public class ErrorMessageContants {
 
 	public static final String DEVICE_IS_ON_TRACK = "启动追踪失败，已有设备在追踪中:";
 
+	public static final String GET_FILE_ISEXIST_FAIL_MSG = "文件查询是否存在有误:";
+
 }
