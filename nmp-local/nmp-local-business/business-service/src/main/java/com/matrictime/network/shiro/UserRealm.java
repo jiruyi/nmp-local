@@ -3,6 +3,7 @@ package com.matrictime.network.shiro;
 
 
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.mapper.NmplMenuMapper;
 import com.matrictime.network.dao.mapper.NmplUserMapper;
 import com.matrictime.network.dao.model.NmplMenu;
@@ -38,7 +39,8 @@ public class UserRealm extends AuthorizingRealm {
      */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		NmplUser user = (NmplUser)principals.getPrimaryPrincipal();
+		NmplUser user = RequestContext.getUser();
+		//NmplUser user = (NmplUser)principals.getPrimaryPrincipal();
 		String roleId = user.getRoleId();
 		
 		List<String> permsList=null;
