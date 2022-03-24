@@ -35,7 +35,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         Result<PageInfo> result = null;
         try {
             //多条件查询
-            PageInfo<DataCollectVo> pageResult =  new PageInfo<>();
+            PageInfo<DataCollectVo> pageResult = new PageInfo<>();
             pageResult = dataCollectDomainService.queryByConditions(dataCollectReq);
             result = buildResult(pageResult);
         }catch (Exception e){
@@ -95,6 +95,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                             cacheSecretKey+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
                         break;
+                    default:
                 }
             }
             MonitorResp monitorResp = new MonitorResp

@@ -46,20 +46,28 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
 
     @Override
     public Integer save(CompanyInfoRequest companyInfoRequest) {
-        if (companyInfoRequest.getTelephone()!=null){
-            if(!isMobile(companyInfoRequest.getTelephone())){
-                throw new SystemException("电话格式异常");
+        //电话有座机手机号 此处不做校验
+//        if (companyInfoRequest.getTelephone()!=null){
+//            if(!isMobile(companyInfoRequest.getTelephone())){
+//                throw new SystemException("电话格式异常");
+//            }
+//        }
+        NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
+        NmplCompanyInfoExample.Criteria criteria = nmplCompanyInfoExample.createCriteria();
+        if(companyInfoRequest.getCompanyCode()!=null){
+            criteria.andCompanyCodeEqualTo(companyInfoRequest.getCompanyCode());
+            List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
+            if(!CollectionUtils.isEmpty(infos)){
+                throw new SystemException("编码重复");
             }
         }
         if (companyInfoRequest.getParentCode()!=null){
-            NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
-            nmplCompanyInfoExample.createCriteria().andCompanyCodeEqualTo(companyInfoRequest.getParentCode()).andIsExistEqualTo(true);
+            criteria.andCompanyCodeEqualTo(companyInfoRequest.getParentCode()).andIsExistEqualTo(true);
             List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
             if (CollectionUtils.isEmpty(infos)){
                 throw new SystemException("无父单位信息");
             }
         }
-
         NmplCompanyInfo nmplCompanyInfo = new NmplCompanyInfo();
         BeanUtils.copyProperties(companyInfoRequest,nmplCompanyInfo);
         nmplCompanyInfo.setCreateTime(new Date());
@@ -83,6 +91,7 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         nmplCompanyInfo.setCompanyId(companyInfoRequest.getCompanyId());
         nmplCompanyInfo.setIsExist(false);
         nmplCompanyInfo.setUpdateTime(new Date());
+        nmplCompanyInfo.setUpdateUser(companyInfoRequest.getUpdateUser());
         return nmplCompanyInfoMapper.updateByPrimaryKeySelective(nmplCompanyInfo);
     }
 
@@ -103,6 +112,7 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         NmplCompanyInfo nmplCompanyInfo = new NmplCompanyInfo();
         BeanUtils.copyProperties(companyInfoRequest,nmplCompanyInfo);
         nmplCompanyInfo.setUpdateTime(new Date());
+        nmplCompanyInfo.setUpdateUser(companyInfoRequest.getUpdateUser());
         return nmplCompanyInfoMapper.updateByPrimaryKeySelective(nmplCompanyInfo);
     }
 
@@ -146,5 +156,23 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         pageResult.setCount((int) page.getTotal());
         pageResult.setPages(page.getPages());
         return pageResult;
+    }
+
+
+    @Override
+    public String getPreBID(String companyCode) {
+        List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(null);
+        Map<String,NmplCompanyInfo> map = new HashMap<>();
+        for (NmplCompanyInfo info : infos) {
+            map.put(info.getCompanyCode(),info);
+        }
+        if(map.get(companyCode)!=null){
+            NmplCompanyInfo village = map.get(companyCode);
+            NmplCompanyInfo region = map.get(village.getParentCode());
+            NmplCompanyInfo operator = map.get(region.getParentCode());
+            return operator.getCountryCode()+"-"+operator.getCompanyCode()+"-"+region.getCompanyCode()+"-"+village.getCompanyCode();
+        } else {
+            return "";
+        }
     }
 }

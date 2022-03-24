@@ -6,5 +6,10 @@
   "coverOld": true,
   "style":"xt256",
   "createDebugPage": true,
-  "md5EncryptedHtmlName": false
+  "md5EncryptedHtmlName": false,
+  "appToken": "49e93fcd11214fbfb68d4945f43cbe37",
+  "openUrl": "http://192.168.72.14:7700/api",
+  "debugEnvName":"测试环境",
+  "replace": true,
+  "debugEnvUrl":"http://127.0.0.1:8002/nmp-local-business"
 }

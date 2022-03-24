@@ -2,8 +2,12 @@ package com.matrictime.network.request;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class MonitorReq {
+public class MonitorReq extends BaseRequest implements Serializable {
+
+    private static final long serialVersionUID = -2642651810900130015L;
     /**
      * 小区id
      */

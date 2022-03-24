@@ -9,6 +9,8 @@ import java.util.List;
 
 @Data
 public class DataCollectReq extends BaseRequest implements Serializable {
+
+    private static final long serialVersionUID = -7806871783203989939L;
     /**
      * 主键
      */
@@ -71,4 +73,13 @@ public class DataCollectReq extends BaseRequest implements Serializable {
 
     private List<DataCollectVo> dataCollectVoList;
 
+    /**
+     * 开始时间
+     */
+    private String startTime;
+
+    /**
+     * 结束时间
+     */
+    private String endTime;
 }

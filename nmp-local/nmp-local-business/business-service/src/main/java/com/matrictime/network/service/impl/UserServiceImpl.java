@@ -16,6 +16,7 @@ import com.matrictime.network.request.UserInfo;
 import com.matrictime.network.request.UserRequest;
 import com.matrictime.network.response.LoginResponse;
 import com.matrictime.network.response.PageInfo;
+import com.matrictime.network.response.UserInfoResp;
 import com.matrictime.network.service.UserService;
 import com.matrictime.network.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -359,5 +360,20 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             log.error("insetLoginDetail exception:{}",e.getMessage());
         }
 
+    }
+
+
+    @Override
+    public Result<UserInfoResp> getUserInfo(UserRequest userRequest) {
+        try {
+            NmplUser user = userDomainService.getUserById(Long.valueOf(userRequest.getUserId()));
+            //参数转换
+            UserInfoResp userInfoResp = new UserInfoResp();
+            BeanUtils.copyProperties(user,userInfoResp);
+            return buildResult(userInfoResp);
+        }catch (Exception e){
+            log.error("selectUserList exception :{}",e.getMessage());
+            return  failResult(e);
+        }
     }
 }

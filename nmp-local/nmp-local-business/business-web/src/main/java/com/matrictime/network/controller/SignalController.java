@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.NmplSignalVo;
@@ -8,6 +9,7 @@ import com.matrictime.network.response.*;
 import com.matrictime.network.service.SignalService;
 import com.matrictime.network.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,11 +42,13 @@ public class SignalController {
      * @return
      */
     @RequestMapping (value = "/signalIo",method = RequestMethod.POST)
+    @SystemLog(opermodul = "信令模块",operDesc = "信令启停",operType = "操作")
+//    @RequiresPermissions("sys:sign:track")
     public Result<SignalIoResp> signalIo(@RequestBody SignalIoReq req){
         try {
-            return  signalService.signalIo(req);
+            return signalService.signalIo(req);
         }catch (Exception e){
-            log.error("signalIo exception:{}",e.getMessage());
+            log.error("SignalController.signalIo exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
@@ -55,16 +59,12 @@ public class SignalController {
      * @return
      */
     @RequestMapping (value = "/addSignal",method = RequestMethod.POST)
+    @SystemLog(opermodul = "信令模块",operDesc = "信令上报",operType = "操作")
     public Result addSignal(@RequestBody NmplSignalVo req){
         try {
-            EditSignalReq signalReq = new EditSignalReq();
-            List<NmplSignalVo> vos = new ArrayList<>(1);
-            vos.add(req);
-            signalReq.setEditType(DataConstants.EDIT_TYPE_ADD);
-            signalReq.setNmplSignalVos(vos);
-            return  signalService.editSignal(signalReq);
+            return  signalService.addSignal(req);
         }catch (Exception e){
-            log.error("addSignal exception:{}",e.getMessage());
+            log.error("SignalController.addSignal exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
@@ -75,26 +75,30 @@ public class SignalController {
      * @return
      */
     @RequestMapping (value = "/cleanSignal",method = RequestMethod.POST)
+    @SystemLog(opermodul = "信令模块",operDesc = "信令清空",operType = "操作")
+//    @RequiresPermissions("sys:sign:clear")
     public Result<CleanSignalResp> cleanSignal(@RequestBody CleanSignalReq req){
         try {
             return  signalService.cleanSignal(req);
         }catch (Exception e){
-            log.error("cleanSignal exception:{}",e.getMessage());
+            log.error("SignalController.cleanSignal exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
 
     /**
-     * 信令分页查询
+     * 信令轮询分页查询
      * @param req
      * @return
      */
     @RequestMapping (value = "/querySignalByPage",method = RequestMethod.POST)
+    @SystemLog(opermodul = "信令模块",operDesc = "信令轮询分页查询",operType = "查询")
+//    @RequiresPermissions("sys:sign:query")
     public Result<QuerySignalByPageResp> querySignalByPage(@RequestBody QuerySignalByPageReq req){
         try {
             return  signalService.querySignalByPage(req);
         }catch (Exception e){
-            log.error("querySignalByPage exception:{}",e.getMessage());
+            log.error("SignalController.querySignalByPage exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
@@ -105,6 +109,8 @@ public class SignalController {
      * @return
      */
     @RequestMapping (value = "/exportSignal",method = RequestMethod.POST)
+    @SystemLog(opermodul = "信令模块",operDesc = "信令导出",operType = "操作")
+//    @RequiresPermissions("sys:sign:export")
     public Result<ExportSignalResp> exportSignal(@RequestBody ExportSignalReq req, HttpServletResponse response){
         try {
             String fileName = DateUtils.dateToString(new Date())+DataConstants.FILE_TYPE_CSV;
@@ -114,7 +120,7 @@ public class SignalController {
             }
             return result;
         }catch (Exception e){
-            log.error("exportSignal exception:{}",e.getMessage());
+            log.error("SignalController.exportSignal exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
@@ -137,7 +143,7 @@ public class SignalController {
             outputStream.write(bytes);
             outputStream.flush();
         } catch (IOException e) {
-            log.error("iostream error:{}", e.getMessage(), e);
+            log.error("SignalController.iostream IOException:{}", e.getMessage());
         }
     }
 }
