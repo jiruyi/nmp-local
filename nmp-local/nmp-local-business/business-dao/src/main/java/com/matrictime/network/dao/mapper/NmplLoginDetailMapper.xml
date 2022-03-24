@@ -95,13 +95,13 @@
     <include refid="Base_Column_List" />
     from nmpl_login_detail
     <where>
-      <if test="loginAccount != null">
+      <if test="loginAccount != null and loginAccount != '' ">
         login_account = #{loginAccount}
       </if>
-      <if test="isSuccess != null">
+      <if test="isSuccess != null  and isSuccess != '' ">
         and is_success = #{isSuccess}
       </if>
-      <if test="loginTime != null">
+      <if test="loginTime != null and loginTime != '' ">
         and date(create_time) = #{loginTime}
       </if>
     </where>
