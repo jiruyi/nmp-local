@@ -13,6 +13,7 @@ import com.matrictime.network.response.SignalIoResp;
 import com.matrictime.network.response.TotalLoadChangeResp;
 import com.matrictime.network.service.MonitorService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,6 +54,7 @@ public class MonitorController {
      */
     @RequestMapping (value = "/queryMonitor",method = RequestMethod.POST)
     @SystemLog(opermodul = "监控模块",operDesc = "监控轮询展示查询",operType = "查询")
+//    @RequiresPermissions("sys:monitor:query")
     public Result<QueryMonitorResp> queryMonitor(@RequestBody QueryMonitorReq req){
         try {
             return  monitorService.queryMonitor(req);
@@ -69,6 +71,7 @@ public class MonitorController {
      */
     @RequestMapping (value = "/totalLoadChange",method = RequestMethod.POST)
     @SystemLog(opermodul = "监控模块",operDesc = "总带宽负载变化查询",operType = "查询")
+//    @RequiresPermissions("sys:monitor:totalload")
     public Result<TotalLoadChangeResp> totalLoadChange(@RequestBody TotalLoadChangeReq req){
         try {
             return  monitorService.totalLoadChange(req);

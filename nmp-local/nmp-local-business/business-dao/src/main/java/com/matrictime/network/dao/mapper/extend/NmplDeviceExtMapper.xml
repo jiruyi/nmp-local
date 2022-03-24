@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplDeviceExtMapper">
+  <resultMap id="DeviceInfoMap" type="com.matrictime.network.dao.model.NmplDeviceInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_type" jdbcType="CHAR" property="deviceType" />
+    <result column="other_type" jdbcType="CHAR" property="otherType" />
+    <result column="enter_network_time" jdbcType="TIMESTAMP" property="enterNetworkTime" />
+    <result column="device_admain" jdbcType="VARCHAR" property="deviceAdmain" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="public_network_ip" jdbcType="VARCHAR" property="publicNetworkIp" />
+    <result column="public_network_port" jdbcType="VARCHAR" property="publicNetworkPort" />
+    <result column="lan_ip" jdbcType="VARCHAR" property="lanIp" />
+    <result column="lan_port" jdbcType="VARCHAR" property="lanPort" />
+    <result column="station_status" jdbcType="CHAR" property="stationStatus" />
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+    <result column="station_random_seed" jdbcType="VARCHAR" property="stationRandomSeed" />
+    <result column="relation_operator_id" jdbcType="VARCHAR" property="relationOperatorId" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+  </resultMap>
+
+  <resultMap id="BaseStationInfoMap" type="com.matrictime.network.dao.model.NmplBaseStationInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="station_type" jdbcType="CHAR" property="stationType" />
+    <result column="enter_network_time" jdbcType="TIMESTAMP" property="enterNetworkTime" />
+    <result column="station_admain" jdbcType="VARCHAR" property="stationAdmain" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="public_network_ip" jdbcType="VARCHAR" property="publicNetworkIp" />
+    <result column="public_network_port" jdbcType="VARCHAR" property="publicNetworkPort" />
+    <result column="lan_ip" jdbcType="VARCHAR" property="lanIp" />
+    <result column="lan_port" jdbcType="VARCHAR" property="lanPort" />
+    <result column="station_status" jdbcType="CHAR" property="stationStatus" />
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+    <result column="station_random_seed" jdbcType="VARCHAR" property="stationRandomSeed" />
+    <result column="relation_operator_id" jdbcType="VARCHAR" property="relationOperatorId" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+  </resultMap>
+
+  <sql id="Device_Info_List">
+    ndi.id,
+    ndi.device_id,
+    ndi.device_name,
+    ndi.device_type,
+    ndi.other_type,
+    ndi.enter_network_time,
+    ndi.device_admain,
+    ndi.remark,
+    ndi.public_network_ip,
+    ndi.public_network_port,
+    ndi.lan_ip,
+    ndi.lan_port,
+    ndi.station_status,
+    ndi.station_network_id,
+    ndi.station_random_seed,
+    ndi.relation_operator_id
+  </sql>
+
+  <sql id="Base_Station_List">
+    nbsi.id,
+    nbsi.station_id,
+    nbsi.station_name,
+    nbsi.station_type,
+    nbsi.enter_network_time,
+    nbsi.station_admain,
+    nbsi.remark,
+    nbsi.public_network_ip,
+    nbsi.public_network_port,
+    nbsi.lan_ip,
+    nbsi.lan_port,
+    nbsi.station_status,
+    nbsi.station_network_id,
+    nbsi.station_random_seed,
+    nbsi.relation_operator_id
+  </sql>
+
+
+  <select id="selectDeviceListByMainDeviceId" parameterType="java.lang.String" resultMap="BaseStationInfoMap">
+    select
+        <include refid="Device_Info_List" />
+    from
+        nmpl_link_relation nlr
+    left join
+        nmpl_device_info ndi
+    on
+        nlr.follow_device_id = ndi.device_id
+    where
+        nlr.main_device_id = #{deviceId,jdbcType=VARCHAR}
+    and ndi.relation_operator_id = #{operatorId,jdbcType=VARCHAR}
+    and nlr.is_exist = '1'
+    and ndi.is_exist = '1'
+  </select>
+
+  <select id="selectBaseStationListByMainDeviceId" parameterType="java.lang.String" resultMap="DeviceInfoMap">
+    select
+        <include refid="Base_Station_List" />
+    from
+        nmpl_link_relation nlr
+    left join
+        nmpl_base_station_info nbsi
+    on
+        nlr.follow_device_id = nbsi.station_id
+    where
+        nlr.main_device_id = #{deviceId,jdbcType=VARCHAR}
+    and nbsi.relation_operator_id = #{operatorId,jdbcType=VARCHAR}
+    and nlr.is_exist = '1'
+    and nbsi.is_exist = '1'
+  </select>
+
+</mapper>

@@ -1,6 +1,6 @@
 package com.matrictime.network.util;
 
-import lombok.extern.slf4j.Slf4j;
+import com.matrictime.network.constant.DataConstants;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -13,7 +13,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -25,15 +28,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Slf4j
 public class HttpClientUtil {
 
     private static final Integer TIME_OUT = 60000;
+
+    private static final String HTTP_TITLE = "http://";
 
     private HttpClientUtil() {
     }
 
     public static void main(String[] args) {
+        try {
+            postForm("http://127.0.0.1:8002/nmp-local-business/test/uploadTest","E:/1oiewrq蝴蝶欧文.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -55,11 +64,45 @@ public class HttpClientUtil {
         UrlEncodedFormEntity param = new UrlEncodedFormEntity(formParams, "UTF-8");
         httpPost.setEntity(param);
         HttpResponse response = httpClient.execute(httpPost);
-        log.info("************{}", response);
+//        log.info("************{}", response);
         String httpEntityContent = getHttpEntityContent(response);
-        log.info("************{}", httpEntityContent);
+//        log.info("************{}", httpEntityContent);
         httpPost.abort();
-        log.info("************{}", httpEntityContent);
+//        log.info("************{}", httpEntityContent);
+        return httpEntityContent;
+
+    }
+
+    /**
+     * 封装HTTP POST方法
+     *
+     * @param
+     * @param
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    public static String post(String ip ,String port, String path, Map<String, String> paramMap) throws ClientProtocolException, IOException {
+        HttpClient httpClient = HttpClients.createDefault();
+        StringBuffer sb = new StringBuffer(HTTP_TITLE);
+        sb.append(ip);
+        sb.append(DataConstants.KEY_SPLIT);
+        sb.append(port);
+        sb.append(DataConstants.KEY_SLASH);
+        sb.append(path);
+        HttpPost httpPost = new HttpPost(sb.toString());
+        //设置请求和传输超时时间
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        httpPost.setConfig(requestConfig);
+        List<NameValuePair> formParams = setHttpParams(paramMap);
+        UrlEncodedFormEntity param = new UrlEncodedFormEntity(formParams, "UTF-8");
+        httpPost.setEntity(param);
+        HttpResponse response = httpClient.execute(httpPost);
+//        log.info("************{}", response);
+        String httpEntityContent = getHttpEntityContent(response);
+//        log.info("************{}", httpEntityContent);
+        httpPost.abort();
+//        log.info("************{}", httpEntityContent);
         return httpEntityContent;
 
     }
@@ -81,6 +124,31 @@ public class HttpClientUtil {
         httpPost.setConfig(requestConfig);
         httpPost.setHeader("Content-Type", "text/json; charset=utf-8");
         httpPost.setEntity(new StringEntity(URLEncoder.encode(data, "UTF-8")));
+        HttpResponse response = httpClient.execute(httpPost);
+        String httpEntityContent = getHttpEntityContent(response);
+        httpPost.abort();
+        return httpEntityContent;
+    }
+
+    /**
+     * 封装HTTP POST方法
+     * 传输表单的post方法
+     * @param
+     * @param url,data
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    public static String postForm(String url, String filePath) throws ClientProtocolException, IOException {
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(url);
+        //设置请求和传输超时时间
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        multipartEntityBuilder.addBinaryBody("file",new File(filePath));
+        HttpEntity httpEntity = multipartEntityBuilder.build();
+        httpPost.setEntity(httpEntity);
+        httpPost.setConfig(requestConfig);
         HttpResponse response = httpClient.execute(httpPost);
         String httpEntityContent = getHttpEntityContent(response);
         httpPost.abort();
@@ -240,6 +308,7 @@ public class HttpClientUtil {
         }
         return "";
     }
+
 
 
 }
