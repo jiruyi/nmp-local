@@ -29,6 +29,10 @@ public class LogRequest extends BaseRequest {
      */
     private String operDate;
 
+    private Boolean isSuccess;
+
+    private Boolean operLevel;
+
 
 
 }
