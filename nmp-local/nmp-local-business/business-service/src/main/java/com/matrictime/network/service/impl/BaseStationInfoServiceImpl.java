@@ -2,18 +2,17 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
-import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.LinkRelationVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BaseStationInfoService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import org.springframework.stereotype.Service;
+import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -23,8 +22,11 @@ import java.util.List;
 @Slf4j
 public class BaseStationInfoServiceImpl implements BaseStationInfoService {
 
-    @Autowired
+    @Resource
     private BaseStationInfoDomainService baseStationInfoDomainService;
+
+    @Resource
+    private CompanyInfoDomainService companyInfoDomainService;
 
     @Override
     public Result<Integer> insertBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
@@ -34,6 +36,11 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         try {
             baseStationInfoRequest.setCreateTime(getFormatDate(date));
             baseStationInfoRequest.setStationId(SnowFlake.nextId_String());
+            //判断小区是否正确
+
+            String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
+            String stationRandomSeed = preBID + "-" + baseStationInfoRequest.getStationRandomSeed();
+            baseStationInfoRequest.setStationRandomSeed(stationRandomSeed);
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);

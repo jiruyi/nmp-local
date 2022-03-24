@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.util.SnowFlake;
+import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.StationVo;
@@ -22,6 +23,9 @@ public class DeviceServiceImpl implements DeviceService {
     @Resource
     private DeviceDomainService deviceDomainService;
 
+    @Resource
+    private CompanyInfoDomainService companyInfoDomainService;
+
     @Override
     public Result<Integer> insertDevice(DeviceInfoRequest deviceInfoRequest) {
         Result<Integer> result = new Result<>();
@@ -30,6 +34,11 @@ public class DeviceServiceImpl implements DeviceService {
         try {
             deviceInfoRequest.setCreateTime(getFormatDate(date));
             deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
+            //判断小区是否正确
+
+            String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
+            String stationRandomSeed = preBID + "-" + deviceInfoRequest.getStationRandomSeed();
+            deviceInfoRequest.setStationRandomSeed(stationRandomSeed);
             insertFlag = deviceDomainService.insertDevice(deviceInfoRequest);
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);
