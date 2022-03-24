@@ -16,7 +16,7 @@ public class NmplVersionVo implements Serializable {
     private Long id;
 
     /**
-     * 系统标识
+     * 系统标识(00:基站 01:分发机 02:生成机)
      */
     private String systemId;
 

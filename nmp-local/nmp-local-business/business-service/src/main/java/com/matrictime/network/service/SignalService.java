@@ -1,13 +1,14 @@
 package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.NmplSignalVo;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
 
 public interface SignalService {
 
     /**
-     * 配置编辑
+     * 信令编辑
      * @param req
      * @return
      */
@@ -19,6 +20,14 @@ public interface SignalService {
      * @return
      */
     Result<SignalIoResp> signalIo(SignalIoReq req);
+
+
+    /**
+     * 信令上报
+     * @param req
+     * @return
+     */
+    Result addSignal(NmplSignalVo req);
 
     /**
      * 信令清空
