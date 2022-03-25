@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.StationVo;
@@ -29,6 +30,7 @@ public class BaseStationController {
     @Resource
     private DeviceService deviceService;
 
+    @SystemLog(opermodul = "基站管理模块",operDesc = "基站插入",operType = "基站插入")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     @ApiOperation(value = "基站接口",notes = "基站信息插入")
     public Result<Integer> insertBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
@@ -43,6 +45,7 @@ public class BaseStationController {
         return result;
     }
 
+    @SystemLog(opermodul = "基站管理模块",operDesc = "基站更新",operType = "基站更新")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     @ApiOperation(value = "基站接口",notes = "基站信息更新")
     public Result<Integer> updateBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
@@ -57,6 +60,7 @@ public class BaseStationController {
         return result;
     }
 
+    @SystemLog(opermodul = "基站管理模块",operDesc = "基站删除",operType = "基站删除")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @ApiOperation(value = "基站接口",notes = "基站信息删除")
     public Result<Integer> deleteBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
@@ -71,6 +75,7 @@ public class BaseStationController {
         return result;
     }
 
+    @SystemLog(opermodul = "基站管理模块",operDesc = "根据条件基站信息查询",operType = "根据条件基站信息查询")
     @RequestMapping(value = "/select",method = RequestMethod.POST)
     @ApiOperation(value = "基站接口",notes = "根据条件基站信息查询")
     public Result<PageInfo> selectBaseStationInfo(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
@@ -85,8 +90,8 @@ public class BaseStationController {
         return result;
     }
 
+    @SystemLog(opermodul = "基站管理模块",operDesc = "根据ip获取设备Id",operType = "根据ip获取设备Id")
     @RequestMapping(value = "/selectDeviceId",method = RequestMethod.POST)
-    @ApiOperation(value = "基站接口",notes = "根据条件基站信息查询")
     public Result<StationVo> selectDeviceId(@RequestBody DeviceInfoRequest deviceInfoRequest){
         Result<StationVo> result = new Result<>();
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();

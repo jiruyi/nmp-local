@@ -5,12 +5,8 @@ import com.matrictime.network.request.EditConfigReq;
 import com.matrictime.network.request.QueryConfigByPagesReq;
 import com.matrictime.network.request.ResetDefaultConfigReq;
 import com.matrictime.network.request.SyncConfigReq;
-import com.matrictime.network.response.EditConfigResp;
-import com.matrictime.network.response.QueryConfigByPagesResp;
-import com.matrictime.network.response.ResetDefaultConfigResp;
-import com.matrictime.network.response.SyncConfigResp;
+import com.matrictime.network.response.*;
 
-import java.util.List;
 import java.util.Map;
 
 public interface ConfigService {
@@ -20,7 +16,7 @@ public interface ConfigService {
      * @param req
      * @return
      */
-    Result<QueryConfigByPagesResp> queryConfigByPages(QueryConfigByPagesReq req);
+    Result<PageInfo> queryConfigByPages(QueryConfigByPagesReq req);
 
     /**
      * 配置编辑

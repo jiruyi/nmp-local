@@ -1,6 +1,7 @@
 package com.matrictime.network.controller;
 
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
@@ -34,6 +35,7 @@ public class RouteController {
     @Resource
     private BaseStationInfoService baseStationInfoService;
 
+    @SystemLog(opermodul = "路由管理模块",operDesc = "路由查询边界基站设备",operType = "路由查询边界基站设备")
     @RequestMapping(value = "/selectBaseStation",method = RequestMethod.POST)
     public Result<BaseStationInfoResponse> selectBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         Result<BaseStationInfoResponse> result = new Result<>();
@@ -41,13 +43,14 @@ public class RouteController {
             baseStationInfoRequest.setStationType(StationTypeEnum.BOUNDARY.getCode());
             result = baseStationInfoService.selectLinkBaseStationInfo(baseStationInfoRequest);
         }catch (Exception e){
-            log.info("链路查询基站设备异常:selectBaseStation{}",e.getMessage());
+            log.info("路由查询边界基站设备异常:selectBaseStation{}",e.getMessage());
             result.setSuccess(false);
-            result.setErrorMsg("链路查询基站设备异常");
+            result.setErrorMsg("路由查询边界基站设备异常");
         }
         return result;
     }
 
+    @SystemLog(opermodul = "路由管理模块",operDesc = "新增路由",operType = "新增路由")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     public Result<Integer> insertRoute(@RequestBody RouteRequest routeRequest){
         Result<Integer> result = new Result<>();
@@ -61,6 +64,7 @@ public class RouteController {
         return result;
     }
 
+    @SystemLog(opermodul = "路由管理模块",operDesc = "删除路由",operType = "删除路由")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     public Result<Integer> deleteRoute(@RequestBody RouteRequest routeRequest){
         Result<Integer> result = new Result<>();
@@ -74,6 +78,7 @@ public class RouteController {
         return result;
     }
 
+    @SystemLog(opermodul = "路由管理模块",operDesc = "更新路由",operType = "更新路由")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     public Result<Integer> updateRoute(@RequestBody RouteRequest routeRequest){
         Result<Integer> result = new Result<>();
@@ -87,6 +92,7 @@ public class RouteController {
         return result;
     }
 
+    @SystemLog(opermodul = "路由管理模块",operDesc = "查询路由",operType = "查询路由")
     @RequestMapping(value = "/select",method = RequestMethod.POST)
     public Result<PageInfo<RouteVo>> selectRoute(@RequestBody RouteRequest routeRequest){
         Result<PageInfo<RouteVo>> resultRoute = new Result<>();

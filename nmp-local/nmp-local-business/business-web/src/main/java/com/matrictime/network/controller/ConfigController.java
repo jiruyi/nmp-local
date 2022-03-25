@@ -6,13 +6,9 @@ import com.matrictime.network.request.EditConfigReq;
 import com.matrictime.network.request.QueryConfigByPagesReq;
 import com.matrictime.network.request.ResetDefaultConfigReq;
 import com.matrictime.network.request.SyncConfigReq;
-import com.matrictime.network.response.EditConfigResp;
-import com.matrictime.network.response.QueryConfigByPagesResp;
-import com.matrictime.network.response.ResetDefaultConfigResp;
-import com.matrictime.network.response.SyncConfigResp;
+import com.matrictime.network.response.*;
 import com.matrictime.network.service.ConfigService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +53,7 @@ public class ConfigController {
     @RequestMapping (value = "/queryConfigByPages",method = RequestMethod.POST)
     @SystemLog(opermodul = "配置模块",operDesc = "查询接口（支持分页查询）记录",operType = "查询")
 //    @RequiresPermissions("sys:parm:query")
-    public Result<QueryConfigByPagesResp> queryConfigByPages(@RequestBody QueryConfigByPagesReq req){
+    public Result<PageInfo> queryConfigByPages(@RequestBody QueryConfigByPagesReq req){
         try {
             return  configService.queryConfigByPages(req);
         }catch (Exception e){

@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
@@ -40,6 +41,7 @@ public class LinkRelationController {
     @Resource
     private LinkRelationService linkRelationService;
 
+    @SystemLog(opermodul = "链路管理模块",operDesc = "链路查询基站设备",operType = "链路查询基站设备")
     @RequestMapping(value = "/selectBaseStation",method = RequestMethod.POST)
     public Result<BaseStationInfoResponse> selectBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         Result<BaseStationInfoResponse> result = new Result<>();
@@ -53,6 +55,7 @@ public class LinkRelationController {
         return result;
     }
 
+    @SystemLog(opermodul = "链路管理模块",operDesc = "链路查询设备",operType = "链路查询设备")
     @RequestMapping(value = "/selectDevice",method = RequestMethod.POST)
     public Result<DeviceResponse> selectDevice(@RequestBody DeviceInfoRequest deviceInfoRequest){
         Result<DeviceResponse> result = new Result<>();
@@ -66,6 +69,7 @@ public class LinkRelationController {
         return result;
     }
 
+    @SystemLog(opermodul = "链路管理模块",operDesc = "插入链路信息",operType = "插入链路信息")
     @RequestMapping(value = "/insertLinkRelation",method = RequestMethod.POST)
     public Result<Integer> insertLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
         Result<Integer> result = new Result<>();
@@ -79,6 +83,7 @@ public class LinkRelationController {
         return result;
     }
 
+    @SystemLog(opermodul = "链路管理模块",operDesc = "删除链路信息",operType = "删除链路信息")
     @RequestMapping(value = "/deleteLinkRelation",method = RequestMethod.POST)
     public Result<Integer> deleteLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
         Result<Integer> result = new Result<>();
@@ -92,6 +97,7 @@ public class LinkRelationController {
         return result;
     }
 
+    @SystemLog(opermodul = "链路管理模块",operDesc = "更新链路信息",operType = "更新链路信息")
     @RequestMapping(value = "/updateLinkRelation",method = RequestMethod.POST)
     public Result<Integer> updateLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
         Result<Integer> result = new Result<>();
@@ -105,6 +111,7 @@ public class LinkRelationController {
         return result;
     }
 
+    @SystemLog(opermodul = "链路管理模块",operDesc = "查询链路信息",operType = "查询链路信息")
     @RequestMapping(value = "/selectLinkRelation",method = RequestMethod.POST)
     public Result<PageInfo<LinkRelationVo>> selectLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
         Result<PageInfo<LinkRelationVo>> result = new Result<>();
