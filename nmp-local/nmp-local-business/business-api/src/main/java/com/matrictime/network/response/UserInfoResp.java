@@ -2,8 +2,13 @@ package com.matrictime.network.response;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class UserInfoResp {
+public class UserInfoResp implements Serializable {
+
+    private static final long serialVersionUID = 4145301980766203906L;
+
     private Long userId;
 
     private String villageId;

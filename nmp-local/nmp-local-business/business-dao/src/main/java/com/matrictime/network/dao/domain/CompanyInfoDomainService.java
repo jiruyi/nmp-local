@@ -5,6 +5,8 @@ import com.matrictime.network.modelVo.NmplCompanyInfoVo;
 import com.matrictime.network.request.CompanyInfoRequest;
 import com.matrictime.network.response.PageInfo;
 
+import java.util.List;
+
 public interface CompanyInfoDomainService {
     public Integer save(CompanyInfoRequest companyInfoRequest);
 
@@ -17,4 +19,6 @@ public interface CompanyInfoDomainService {
 //    public RoleResponse queryOne(CompanyInfoRequest roleRequest);
 
     public String getPreBID(String companyCode);
+
+    public List<NmplCompanyInfoVo> queryCompanyList(CompanyInfoRequest companyInfoRequest);
 }

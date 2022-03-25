@@ -189,4 +189,17 @@ public class CompanyController {
     }
 
 
+
+    /**
+     * 查询所有大区小区接口
+     * @param companyInfoRequest
+     * @return
+     */
+    @ApiOperation(value = "区域查询接口",notes = "小区查询")
+    @RequestMapping(value = "/queryCompanyList",method = RequestMethod.POST)
+    public Result queryCompanyList(@RequestBody  CompanyInfoRequest companyInfoRequest){
+        return companyService.queryCompanyList(companyInfoRequest);
+    }
+
+
 }

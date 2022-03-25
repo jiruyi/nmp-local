@@ -175,4 +175,27 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
             return "";
         }
     }
+
+    @Override
+    public List<NmplCompanyInfoVo> queryCompanyList(CompanyInfoRequest companyInfoRequest) {
+        NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
+        NmplCompanyInfoExample.Criteria criteria = nmplCompanyInfoExample.createCriteria();
+
+        if (companyInfoRequest.getCompanyType()!=null){
+            criteria.andCompanyTypeEqualTo(companyInfoRequest.getCompanyType());
+        }
+        criteria.andIsExistEqualTo(true);
+
+        List<NmplCompanyInfo> nmplCompanyInfoList = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
+
+        List<NmplCompanyInfoVo> nmplCompanyInfos = new ArrayList<>();
+        for (NmplCompanyInfo nmplCompanyInfo : nmplCompanyInfoList) {
+            NmplCompanyInfoVo companyInfo = new NmplCompanyInfoVo();
+            BeanUtils.copyProperties(nmplCompanyInfo,companyInfo);
+            nmplCompanyInfos.add(companyInfo);
+        }
+        return nmplCompanyInfos;
+
+    }
+
 }

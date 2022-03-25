@@ -9,6 +9,7 @@ import com.matrictime.network.dao.mapper.NmplUserMapper;
 import com.matrictime.network.dao.model.NmplMenu;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.dao.model.NmplUserExample;
+import com.matrictime.network.response.UserInfoResp;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -18,6 +19,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +42,7 @@ public class UserRealm extends AuthorizingRealm {
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		NmplUser user = RequestContext.getUser();
+
 		//NmplUser user = (NmplUser)principals.getPrimaryPrincipal();
 		String roleId = user.getRoleId();
 		
@@ -96,8 +99,10 @@ public class UserRealm extends AuthorizingRealm {
 		if(user.getStatus() == false){
 			throw new LockedAccountException("账号已被锁定,请联系管理员");
 		}
+		UserInfoResp userInfo = new UserInfoResp();
+		BeanUtils.copyProperties(user,userInfo);
 
-		SimpleAuthenticationInfo info = new SimpleAuthenticationInfo( user, user.getPassword(),getName());
+		SimpleAuthenticationInfo info = new SimpleAuthenticationInfo( userInfo, userInfo.getPassword(),getName());
 		return info;
 	}
 
