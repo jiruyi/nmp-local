@@ -14,6 +14,7 @@ import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.service.RouteService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,6 +51,7 @@ public class RouteController {
         return result;
     }
 
+    @RequiresPermissions("sys:route:save")
     @SystemLog(opermodul = "路由管理模块",operDesc = "新增路由",operType = "新增路由")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     public Result<Integer> insertRoute(@RequestBody RouteRequest routeRequest){
@@ -64,6 +66,7 @@ public class RouteController {
         return result;
     }
 
+    @RequiresPermissions("sys:route:delete")
     @SystemLog(opermodul = "路由管理模块",operDesc = "删除路由",operType = "删除路由")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     public Result<Integer> deleteRoute(@RequestBody RouteRequest routeRequest){
@@ -78,6 +81,7 @@ public class RouteController {
         return result;
     }
 
+    @RequiresPermissions("sys:route:update")
     @SystemLog(opermodul = "路由管理模块",operDesc = "更新路由",operType = "更新路由")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     public Result<Integer> updateRoute(@RequestBody RouteRequest routeRequest){
@@ -92,6 +96,7 @@ public class RouteController {
         return result;
     }
 
+    @RequiresPermissions("sys:route:query")
     @SystemLog(opermodul = "路由管理模块",operDesc = "查询路由",operType = "查询路由")
     @RequestMapping(value = "/select",method = RequestMethod.POST)
     public Result<PageInfo<RouteVo>> selectRoute(@RequestBody RouteRequest routeRequest){

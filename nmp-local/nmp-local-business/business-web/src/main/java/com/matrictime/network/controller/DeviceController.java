@@ -10,6 +10,7 @@ import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +26,7 @@ public class DeviceController {
     @Resource
     private DeviceService deviceService;
 
+    @RequiresPermissions("sys:dispenser:save")
     @SystemLog(opermodul = "分发机管理模块",operDesc = "分发机信息插入",operType = "分发机信息插入")
     @RequestMapping(value = "/insertDispenser",method = RequestMethod.POST)
     @ApiOperation(value = "分发机接口",notes = "分发机信息插入")
@@ -41,6 +43,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:dispenser:delete")
     @SystemLog(opermodul = "分发机管理模块",operDesc = "删除分发机信息",operType = "删除分发机信息")
     @RequestMapping(value = "/deleteDispenser",method = RequestMethod.POST)
     @ApiOperation(value = "分发机接口",notes = "删除分发机信息")
@@ -56,6 +59,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:dispenser:update")
     @SystemLog(opermodul = "分发机管理模块",operDesc = "更新分发机信息",operType = "更新分发机信息")
     @RequestMapping(value = "/updateDispenser",method = RequestMethod.POST)
     @ApiOperation(value = "更新分发机接口",notes = "更新分发机信息")
@@ -71,6 +75,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:dispenser:query")
     @SystemLog(opermodul = "分发机管理模块",operDesc = "查询分发机信息",operType = "查询分发机信息")
     @RequestMapping(value = "/selectDispenser",method = RequestMethod.POST)
     @ApiOperation(value = "查询分发机接口",notes = "查询分发机信息")
@@ -87,6 +92,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:generator:save")
     @SystemLog(opermodul = "生成机管理模块",operDesc = "生成机信息插入",operType = "生成机信息插入")
     @RequestMapping(value = "/insertGenerator",method = RequestMethod.POST)
     @ApiOperation(value = "生成机接口",notes = "生成机信息插入")
@@ -103,6 +109,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:generator:delete")
     @SystemLog(opermodul = "生成机管理模块",operDesc = "删除生成机信息",operType = "删除生成机信息")
     @RequestMapping(value = "/deleteGenerator",method = RequestMethod.POST)
     @ApiOperation(value = "生成机接口",notes = "删除生成机信息")
@@ -118,6 +125,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:generator:update")
     @SystemLog(opermodul = "生成机管理模块",operDesc = "更新生成机信息",operType = "更新生成机信息")
     @RequestMapping(value = "/updateGenerator",method = RequestMethod.POST)
     @ApiOperation(value = "更新生成机接口",notes = "更新生成机信息")
@@ -133,6 +141,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:generator:query")
     @SystemLog(opermodul = "生成机管理模块",operDesc = "查询生成机信息",operType = "查询生成机信息")
     @RequestMapping(value = "/selectGenerator",method = RequestMethod.POST)
     @ApiOperation(value = "查询生成机接口",notes = "查询生成机信息")
@@ -149,6 +158,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:cache:save")
     @SystemLog(opermodul = "缓存机管理模块",operDesc = "缓存机信息插入",operType = "缓存机信息插入")
     @RequestMapping(value = "/insertCache",method = RequestMethod.POST)
     @ApiOperation(value = "缓存机接口",notes = "缓存机信息插入")
@@ -165,6 +175,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:cache:delete")
     @SystemLog(opermodul = "缓存机管理模块",operDesc = "删除缓存机信息",operType = "删除缓存机信息")
     @RequestMapping(value = "/deleteCache",method = RequestMethod.POST)
     @ApiOperation(value = "缓存机接口",notes = "删除缓存机信息")
@@ -180,6 +191,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:cache:update")
     @SystemLog(opermodul = "缓存机管理模块",operDesc = "更新缓存机信息",operType = "更新缓存机信息")
     @RequestMapping(value = "/updateCache",method = RequestMethod.POST)
     @ApiOperation(value = "更新缓存机接口",notes = "更新缓存机信息")
@@ -195,6 +207,7 @@ public class DeviceController {
         return result;
     }
 
+    @RequiresPermissions("sys:cache:query")
     @SystemLog(opermodul = "缓存机管理模块",operDesc = "查询缓存机信息",operType = "查询缓存机信息")
     @RequestMapping(value = "/selectCache",method = RequestMethod.POST)
     @ApiOperation(value = "查询缓存机接口",notes = "查询缓存机信息")
