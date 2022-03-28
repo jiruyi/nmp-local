@@ -1,5 +1,6 @@
 package com.matrictime.network.interceptor;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.UserDomainService;
@@ -73,6 +74,14 @@ public class SessionHandlerInterceptor extends HandlerInterceptorAdapter {
             response.getWriter().print("登录已经失效，请重新登录");
             return false;
         }
+        String sessionId = request.getSession().getId();
+        if(!redisTemplate.hasKey("shiro_redis_session:"+sessionId)){
+            response.setStatus(403);
+            response.setCharacterEncoding("Utf-8");
+            response.getWriter().print("登录已经失效，请重新登录");
+            return false;
+        }
+
         RequestContext.setUser(user);
         return true;
     }
