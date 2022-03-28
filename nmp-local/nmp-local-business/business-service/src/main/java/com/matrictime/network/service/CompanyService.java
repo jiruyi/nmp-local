@@ -3,6 +3,7 @@ package com.matrictime.network.service;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.CompanyInfoRequest;
 import com.matrictime.network.request.RoleRequest;
+import com.matrictime.network.response.CompanyResp;
 import com.matrictime.network.response.PageInfo;
 
 public interface CompanyService {
@@ -14,5 +15,5 @@ public interface CompanyService {
 
     Result<PageInfo>queryByConditon(CompanyInfoRequest companyInfoRequest);
 
-
+    Result<CompanyResp> queryCompanyList(CompanyInfoRequest companyInfoRequest);
 }

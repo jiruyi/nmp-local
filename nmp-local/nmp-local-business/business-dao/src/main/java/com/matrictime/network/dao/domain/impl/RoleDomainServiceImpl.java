@@ -102,7 +102,9 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             nmplRoleExample.or().andRoleNameEqualTo(roleRequest.getRoleName());
             List<NmplRole>nmplRoles = nmplRoleMapper.selectByExample(nmplRoleExample);
             if (!CollectionUtils.isEmpty(nmplRoles)){
-                throw new SystemException("存在相同角色名称或角色编码");
+                if(!nmplRoles.get(0).getRoleId().equals(roleRequest.getRoleId())){
+                    throw new SystemException("存在相同角色名称或角色编码");
+                }
             }
         }
         nmplRole.setUpdateTime(new Date());
