@@ -6,9 +6,13 @@ import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.AesEncryptUtil;
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.convert.UserConvert;
+import com.matrictime.network.dao.domain.RoleDomainService;
 import com.matrictime.network.dao.domain.UserDomainService;
+import com.matrictime.network.dao.mapper.NmplRoleMapper;
 import com.matrictime.network.dao.model.NmplLoginDetail;
+import com.matrictime.network.dao.model.NmplRole;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LoginRequest;
@@ -30,13 +34,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author jiruyi
@@ -60,6 +64,9 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
 
     @Autowired
     private UserConvert userConvert;
+
+    @Autowired
+    private NmplRoleMapper roleMapper;
 
     @Override
     public Result<LoginResponse> login(LoginRequest loginRequest) {
@@ -123,7 +130,7 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             if(!CollectionUtils.isEmpty(listUser)){
                 throw new SystemException(ErrorMessageContants.LOGINACCOUNT_EXIST_ERROR_MSG);
             }
-            // userRequest.setCreateUser(String.valueOf(RequestContext.getUser().getUserId()));
+            userRequest.setCreateUser(String.valueOf(RequestContext.getUser().getUserId()));
             int count = userDomainService.insertUser(userRequest);
             result = buildResult(count);
         }catch (Exception e){
@@ -152,7 +159,7 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
                     !userRequest.getUserId().equals(listUser.get(0).getUserId().toString())){
                 throw new SystemException(ErrorMessageContants.PHONE_EXIST_ERROR_MSG);
             }
-            //userRequest.setUpdateUser(String.valueOf(RequestContext.getUser().getUserId()));
+            userRequest.setUpdateUser(String.valueOf(RequestContext.getUser().getUserId()));
             int count = userDomainService.updateUser(userRequest);
             result = buildResult(count);
         }catch (Exception e){
@@ -197,6 +204,19 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             PageInfo pageInfo = userDomainService.selectUserList(userRequest);
             //参数转换
             List<UserRequest> list =  userConvert.to(pageInfo.getList());
+            //角色转换
+            if(!CollectionUtils.isEmpty(list)){
+                for(UserRequest user: list){
+                    String roleId = user.getRoleId();
+                    List<String> roleIds = Arrays.asList(roleId.split(","));
+                    String roleName = "";
+                    for(String  id : roleIds){
+                        NmplRole role= roleMapper.selectByPrimaryKey(Long.valueOf(id));
+                        roleName+=role.getRoleName()+",";
+                    }
+                    user.setRoleName(roleName);
+                }
+            }
             pageInfo.setList(list);
             return buildResult(pageInfo);
         }catch (Exception e){
@@ -206,13 +226,13 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
     }
 
     /**
-      * @title passwordReset
-      * @param [userInfo]
-      * @return com.matrictime.network.model.Result<java.lang.Integer>
-      * @description 密码重置
-      * @author jiruyi
-      * @create 2022/3/2 0002 9:32
-      */
+     * @title passwordReset
+     * @param [userInfo]
+     * @return com.matrictime.network.model.Result<java.lang.Integer>
+     * @description 密码重置
+     * @author jiruyi
+     * @create 2022/3/2 0002 9:32
+     */
     @Override
     public Result<Integer> passwordReset(UserInfo userInfo) {
         try {

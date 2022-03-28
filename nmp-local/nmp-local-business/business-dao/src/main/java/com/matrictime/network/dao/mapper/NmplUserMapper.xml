@@ -101,9 +101,9 @@
     select
     <include refid="Base_Column_List" />
     from nmpl_user
-    <where>
+    where is_exist = 1
       <if test="loginAccount != null">
-        login_account = #{loginAccount}
+        and login_account = #{loginAccount}
       </if>
       <if test="roleId != null">
         and role_id = #{roleId}
@@ -114,7 +114,6 @@
       <if test="createTime != null">
         and date(create_time) = #{createTime}
       </if>
-  </where>
     ORDER BY user_id DESC
   </select>
 

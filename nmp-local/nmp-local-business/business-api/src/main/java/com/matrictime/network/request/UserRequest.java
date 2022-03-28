@@ -38,6 +38,8 @@ public class UserRequest extends BaseRequest {
 
     private String roleId;
 
+    private String roleName;
+
     private Boolean status;
 
     private Boolean isExist;
