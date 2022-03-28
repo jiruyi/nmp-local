@@ -11,7 +11,7 @@ public class SyncConfigReq implements Serializable {
     private static final long serialVersionUID = -6423188845541784864L;
 
     /**
-     * 操作数据范围（1：非全量 3：全量）
+     * 操作数据范围（1：非全量 2：全量）
      */
     private String editRange;
 

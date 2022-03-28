@@ -5,6 +5,28 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="station_id" jdbcType="VARCHAR" property="deviceId" />
   </resultMap>
+  <resultMap id="BaseOriResultMap" type="com.matrictime.network.dao.model.NmplBaseStationInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="station_type" jdbcType="CHAR" property="stationType" />
+    <result column="enter_network_time" jdbcType="TIMESTAMP" property="enterNetworkTime" />
+    <result column="station_admain" jdbcType="VARCHAR" property="stationAdmain" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="public_network_ip" jdbcType="VARCHAR" property="publicNetworkIp" />
+    <result column="public_network_port" jdbcType="VARCHAR" property="publicNetworkPort" />
+    <result column="lan_ip" jdbcType="VARCHAR" property="lanIp" />
+    <result column="lan_port" jdbcType="VARCHAR" property="lanPort" />
+    <result column="station_status" jdbcType="CHAR" property="stationStatus" />
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+    <result column="station_random_seed" jdbcType="VARCHAR" property="stationRandomSeed" />
+    <result column="relation_operator_id" jdbcType="VARCHAR" property="relationOperatorId" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+  </resultMap>
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -69,7 +91,7 @@
     station_random_seed, relation_operator_id, create_user, create_time, update_user, 
     update_time, is_exist
   </sql>
-  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfoExample" resultMap="BaseOriResultMap">
     select
     <if test="distinct">
       distinct

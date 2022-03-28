@@ -11,16 +11,21 @@ import com.matrictime.network.dao.model.NmplBaseStationInfo;
 import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
 import com.matrictime.network.dao.model.NmplDeviceInfo;
 import com.matrictime.network.dao.model.NmplDeviceInfoExample;
+import com.matrictime.network.model.Result;
+import com.matrictime.network.request.VoiceCallRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -43,8 +48,17 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
     @Autowired(required = false)
     private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
 
-//    @Autowired
-//    private VoiceService voiceService;
+    @Autowired
+    RestTemplate restTemplate;
+
+    @LoadBalanced
+    @Bean
+    public RestTemplate rest() {
+        return new RestTemplate();
+    }
+
+    @Value("${voice.url}")
+    private String url;
 
     @Value("${voice.code.down}")
     private String voiceCode;
@@ -72,16 +86,17 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
                 log.info("过期心跳的设备id是:{}",deviceId);
                 // 更新设备状态
                 int count = updateDeviceStatus(deviceId);
+
                 //语音呼叫
-//                NetworkDeviceInfoExt infoExt = deviceInfoDomainService.getInfoByDeviceId(deviceId);
-//
-//                JSONObject ttsParam = new JSONObject();
-//                //模板参数
-//                ttsParam.put("deviceId",deviceId);
-//                VoiceCallRequest voiceCallRequest =  VoiceCallRequest.builder()
-//                        .ttsCode(voiceCode)
-//                        .ttsParam(ttsParam.toJSONString()).build();
-//                voiceService.voiceCallBactch(voiceCallRequest);
+                JSONObject ttsParam = new JSONObject();
+                //模板参数
+                ttsParam.put("deviceId",deviceId);
+                VoiceCallRequest voiceCallRequest =  VoiceCallRequest.builder()
+                        .ttsCode(voiceCode)
+                        .ttsParam(ttsParam.toJSONString()).build();
+
+                restTemplate.postForEntity(url,voiceCallRequest,Result.class);
+
 
                 log.info("修改过期设备：{},影响的行数：{}",deviceId,count);
             }

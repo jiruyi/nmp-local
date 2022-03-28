@@ -40,11 +40,11 @@
     else ''
     end ) as device_type_name
     from nmpl_config
-    <where>
+    where
+        is_exist = '1'
       <if test="configName != null and configName !=''">
-        config_name like #{configName,jdbcType=VARCHAR}
+        and config_name like #{configName,jdbcType=VARCHAR}
       </if>
-    </where>
     order by update_time desc
   </select>
 
