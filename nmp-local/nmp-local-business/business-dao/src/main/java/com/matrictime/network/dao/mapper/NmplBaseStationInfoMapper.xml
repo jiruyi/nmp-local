@@ -493,10 +493,10 @@
     select id,station_id, station_name, station_type,
            remark, public_network_ip,public_network_port,
            lan_ip, station_network_id,lan_port,
-           relation_operator_id, create_user
-    from nmpl_base_station_info
+           relation_operator_id, nmpl_base_station_info.create_user,company_name
+    from nmpl_base_station_info,nmpl_company_info
     <where>
-      is_exist = 1 and station_status = 2
+      nmpl_base_station_info.is_exist = 1 and station_status = 2
       <if test="stationId != null and stationId != ''">
         and station_id = #{stationId,jdbcType=VARCHAR}
       </if>
@@ -515,6 +515,7 @@
       <if test="lanIp != null and lanIp != ''">
         and lan_ip = #{lanIp,jdbcType=CHAR}
       </if>
+        and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
     </where>
   </select>
   <select id="selectBaseStationBatch" parameterType="list" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">

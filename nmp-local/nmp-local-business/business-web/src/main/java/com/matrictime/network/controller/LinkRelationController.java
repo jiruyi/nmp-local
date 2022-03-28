@@ -17,6 +17,7 @@ import com.matrictime.network.service.DeviceService;
 import com.matrictime.network.service.LinkRelationService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,6 +41,7 @@ public class LinkRelationController {
 
     @Resource
     private LinkRelationService linkRelationService;
+
 
     @SystemLog(opermodul = "链路管理模块",operDesc = "链路查询基站设备",operType = "链路查询基站设备")
     @RequestMapping(value = "/selectBaseStation",method = RequestMethod.POST)
@@ -69,6 +71,7 @@ public class LinkRelationController {
         return result;
     }
 
+    @RequiresPermissions("sys:link:save")
     @SystemLog(opermodul = "链路管理模块",operDesc = "插入链路信息",operType = "插入链路信息")
     @RequestMapping(value = "/insertLinkRelation",method = RequestMethod.POST)
     public Result<Integer> insertLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
@@ -83,6 +86,7 @@ public class LinkRelationController {
         return result;
     }
 
+    @RequiresPermissions("sys:link:delete")
     @SystemLog(opermodul = "链路管理模块",operDesc = "删除链路信息",operType = "删除链路信息")
     @RequestMapping(value = "/deleteLinkRelation",method = RequestMethod.POST)
     public Result<Integer> deleteLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
@@ -97,6 +101,7 @@ public class LinkRelationController {
         return result;
     }
 
+    @RequiresPermissions("sys:link:update")
     @SystemLog(opermodul = "链路管理模块",operDesc = "更新链路信息",operType = "更新链路信息")
     @RequestMapping(value = "/updateLinkRelation",method = RequestMethod.POST)
     public Result<Integer> updateLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
@@ -111,6 +116,7 @@ public class LinkRelationController {
         return result;
     }
 
+    @RequiresPermissions("sys:link::query")
     @SystemLog(opermodul = "链路管理模块",operDesc = "查询链路信息",operType = "查询链路信息")
     @RequestMapping(value = "/selectLinkRelation",method = RequestMethod.POST)
     public Result<PageInfo<LinkRelationVo>> selectLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
