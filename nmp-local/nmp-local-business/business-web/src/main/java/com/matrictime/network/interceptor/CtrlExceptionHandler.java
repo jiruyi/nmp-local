@@ -41,4 +41,16 @@ public class CtrlExceptionHandler {
         return JSON.toJSONString(result);
     }
 
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AuthorizationException.class)
+    @ResponseBody
+    public String handleException2(AuthorizationException e) {
+        logger.debug(e.getMessage());
+        Result result =new Result();
+        result.setSuccess(false);
+        result.setErrorMsg("该用户无权限进行此项操作");
+        result.setErrorCode("403");
+        return JSON.toJSONString(result);
+    }
+
 }

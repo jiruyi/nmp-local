@@ -3,6 +3,7 @@ package com.matrictime.network.shiro;
 
 import com.matrictime.network.base.exception.IllegalModelFormatException;
 import com.matrictime.network.dao.model.NmplUser;
+import com.matrictime.network.response.UserInfoResp;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.session.Session;
@@ -30,8 +31,8 @@ public class ShiroUtils {
 		return SecurityUtils.getSubject();
 	}
 
-	public static NmplUser getUserEntity() {
-		return (NmplUser)SecurityUtils.getSubject().getPrincipal();
+	public static UserInfoResp getUserEntity() {
+		return (UserInfoResp)SecurityUtils.getSubject().getPrincipal();
 	}
 
 	public static Long getUserId() {
