@@ -3,6 +3,7 @@ package com.matrictime.network.service.impl;
 import com.matrictime.network.base.SystemBaseService;
 
 import com.matrictime.network.base.exception.ErrorCode;
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
@@ -40,7 +41,7 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
     public Result save(CompanyInfoRequest companyInfoRequest) {
         Result<Integer> result;
         try {
-            NmplUser nmplUser = ShiroUtils.getUserEntity();
+            NmplUser nmplUser = RequestContext.getUser();;
             companyInfoRequest.setCreateUser(nmplUser.getNickName());
             result = buildResult(companyInfoDomainService.save(companyInfoRequest));
         }catch (Exception e){
@@ -54,7 +55,7 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
     public Result modify(CompanyInfoRequest companyInfoRequest) {
         Result<Integer> result;
         try {
-            NmplUser nmplUser = ShiroUtils.getUserEntity();
+            NmplUser nmplUser = RequestContext.getUser();;
             companyInfoRequest.setUpdateUser(nmplUser.getNickName());
             result = buildResult(companyInfoDomainService.modify(companyInfoRequest));
         }catch (Exception e){
@@ -68,7 +69,7 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
     public Result delete(CompanyInfoRequest companyInfoRequest) {
         Result<Integer> result;
         try {
-            NmplUser nmplUser = ShiroUtils.getUserEntity();
+            NmplUser nmplUser = RequestContext.getUser();
             companyInfoRequest.setUpdateUser(nmplUser.getNickName());
             result = buildResult(companyInfoDomainService.delete(companyInfoRequest));
         }catch (Exception e){

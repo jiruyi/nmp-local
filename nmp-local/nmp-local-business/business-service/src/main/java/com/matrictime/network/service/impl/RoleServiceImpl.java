@@ -3,6 +3,7 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.exception.ErrorCode;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.RoleDomainService;
 import com.matrictime.network.dao.mapper.NmplRoleMenuRelationMapper;
 import com.matrictime.network.dao.model.NmplUser;
@@ -30,7 +31,7 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
     @Override
     public Result<PageInfo> queryByConditon(RoleRequest roleRequest) {
         Result<PageInfo> result = null;
-        NmplUser user = ShiroUtils.getUserEntity();
+        NmplUser user = RequestContext.getUser();
         try {
             //如果不是管理员用户则将管理员过滤
             if (user!=null&&Long.parseLong(user.getRoleId())== DataConstants.SUPER_ADMIN){
@@ -52,7 +53,7 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
     public Result save(RoleRequest roleRequest) {
         Result<Integer> result;
         try {
-            NmplUser nmplUser = ShiroUtils.getUserEntity();
+            NmplUser nmplUser = RequestContext.getUser();
             roleRequest.setCreateUser(nmplUser.getNickName());
             result = buildResult(roleDomainService.save(roleRequest));
         }catch (Exception e){
@@ -66,7 +67,7 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
     public Result modify(RoleRequest roleRequest) {
         Result<Integer> result = null;
         try {
-            NmplUser nmplUser = ShiroUtils.getUserEntity();
+            NmplUser nmplUser = RequestContext.getUser();
             roleRequest.setUpdateUser(nmplUser.getNickName());
             //除管理员用户，其他用户只能编辑自己创建的角色
             if (Long.parseLong(nmplUser.getRoleId())!=DataConstants.SUPER_ADMIN && roleRequest.getCreateUser()!=nmplUser.getNickName()){
@@ -90,11 +91,11 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
         //只能删除自己创建的且无关联用户的角色
         Result<Integer> result = null;
         try {
-            NmplUser nmplUser = ShiroUtils.getUserEntity();
+            NmplUser nmplUser = RequestContext.getUser();
 
             roleRequest.setUpdateUser(nmplUser.getNickName());
             //除管理员用户，其他用户只能删除自己创建的角色
-            if (Long.parseLong(nmplUser.getRoleId()) != DataConstants.SUPER_ADMIN && roleRequest.getCreateUser() != nmplUser.getNickName()) {
+            if (Long.parseLong(nmplUser.getRoleId()) != DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getNickName())) {
                 result = failResult(ErrorCode.SYSTEM_ERROR, "非该角色的创建者，无编辑该角色的权限");
                 return result;
             }
@@ -117,7 +118,7 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
 
         Result<RoleResponse> result = null;
         try {
-            NmplUser nmplUser = ShiroUtils.getUserEntity();
+            NmplUser nmplUser = RequestContext.getUser();
             //普通用户无法获取超级管理员信息
             if (Long.parseLong(nmplUser.getRoleId())!=DataConstants.SUPER_ADMIN && roleRequest.getRoleId()==DataConstants.SUPER_ADMIN){
                 result = failResult(ErrorCode.SYSTEM_ERROR, "无权限查看");
