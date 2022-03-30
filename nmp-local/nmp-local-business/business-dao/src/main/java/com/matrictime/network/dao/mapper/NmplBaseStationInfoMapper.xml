@@ -468,7 +468,7 @@
             #{lanIp,jdbcType=VARCHAR}, #{lanPort,jdbcType=VARCHAR}, #{stationStatus,jdbcType=CHAR},
             #{stationNetworkId,jdbcType=VARCHAR}, #{stationRandomSeed,jdbcType=VARCHAR}, #{relationOperatorId,jdbcType=VARCHAR},
             #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR},
-            #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}
+            #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=VARCHAR}
         )
   </insert>
   <update id="updateBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest">
@@ -478,7 +478,6 @@
       remark = #{remark,jdbcType=VARCHAR},
       public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
       lan_ip = #{lanIp,jdbcType=VARCHAR},
-      station_status = #{stationStatus,jdbcType=CHAR},
       relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},
       update_user = #{updateUser,jdbcType=VARCHAR},
@@ -496,7 +495,7 @@
            relation_operator_id, nmpl_base_station_info.create_user,company_name
     from nmpl_base_station_info,nmpl_company_info
     <where>
-      nmpl_base_station_info.is_exist = 1 and station_status = 2
+      nmpl_base_station_info.is_exist = 1 and station_status in(2,3,4)
       <if test="stationId != null and stationId != ''">
         and station_id = #{stationId,jdbcType=VARCHAR}
       </if>

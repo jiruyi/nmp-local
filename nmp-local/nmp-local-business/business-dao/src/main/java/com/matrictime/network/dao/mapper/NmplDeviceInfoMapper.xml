@@ -499,7 +499,7 @@
            relation_operator_id,remark,nmpl_device_info.create_user,lan_ip,lan_port
     from nmpl_device_info,nmpl_company_info
     <where>
-      nmpl_device_info.is_exist = 1 and station_status = 2
+      nmpl_device_info.is_exist = 1 and station_status in(2,3,4)
       <if test="deviceId != null and deviceId != ''">
         and device_id = #{deviceId,jdbcType=VARCHAR}
       </if>

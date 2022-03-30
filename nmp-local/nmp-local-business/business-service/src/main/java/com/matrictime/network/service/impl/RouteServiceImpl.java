@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.config.RestTemplateContextConfig;
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.RouteDomainService;
 import com.matrictime.network.model.Result;
@@ -45,6 +46,7 @@ public class RouteServiceImpl implements RouteService {
         Date date = new Date();
         try {
             routeRequest.setCreateTime(getFormatDate(date));
+            routeRequest.setCreateUser(RequestContext.getUser().getNickName());
             Integer insetFlag = routeDomainService.insertRoute(routeRequest);
             //List<Future<List<Result>>> futures = collectResult(routeRequest);
             result.setResultObj(insetFlag);

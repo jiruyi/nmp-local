@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.LinkRelationDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
@@ -34,6 +35,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         Date date = new Date();
         try {
             linkRelationRequest.setCreateTime(getFormatDate(date));
+            linkRelationRequest.setCreateUser(RequestContext.getUser().getNickName());
             result.setResultObj(linkRelationDomainService.insertLinkRelation(linkRelationRequest));
             result.setSuccess(true);
         }catch (Exception e){

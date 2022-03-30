@@ -9,12 +9,11 @@ package com.matrictime.network.base.enums;
  */
 public enum DeviceStatusEnum {
 
-    NORMAL("1","审核通过"),
-    DISABLE("2","禁用"),
-    OFFLINE("3","下线"),
-    NOAUDIT("4","待审核"),
-    ACTIVE("5","激活"),
-    REJECT("6","审核拒绝");
+    NORMAL("01","静态"),
+    ACTIVE("02","激活"),
+    NOAUDIT("03","禁用"),
+    OFFLINE("04","下线"),
+    REJECT("05","审核拒绝");
     private String code;
     private String conditionDesc;
     public String getCode() {
