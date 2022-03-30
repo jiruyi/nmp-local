@@ -12,6 +12,7 @@ import com.matrictime.network.dao.mapper.NmplSignalIoMapper;
 import com.matrictime.network.dao.mapper.NmplSignalMapper;
 import com.matrictime.network.dao.mapper.extend.NmplSignalExtMapper;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
@@ -205,7 +206,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
                 example.createCriteria().andDeviceIdEqualTo(id).andStatusEqualTo(com.matrictime.network.base.constant.DataConstants.IOTYPE_I).andIsExistEqualTo(DataConstants.IS_EXIST);
                 List<NmplSignalIo> signalIos = nmplSignalIoMapper.selectByExample(example);
                 if (!CollectionUtils.isEmpty(signalIos)){
-                    throw new SystemException(ErrorMessageContants.DEVICE_IS_ON_TRACK+signalIos.get(0).getDeviceId());
+                    throw new SystemException(ErrorMessageContants.CLEAN_SIGNAL_FAIL+signalIos.get(0).getDeviceId());
                 }
             }
             NmplSignal signal = new NmplSignal();
@@ -294,6 +295,29 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             result = buildResult(resp);
         }catch (Exception e){
             log.error("SignalServiceImpl.exportSignal Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    @Override
+    public Result<SelectDevicesForSignalResp> selectDevicesForSignal() {
+        Result result;
+        try {
+            SelectDevicesForSignalResp resp = new SelectDevicesForSignalResp();
+            List<NmplDeviceInfoExt> infoExts = nmplSignalExtMapper.selectDevices();
+            if (!CollectionUtils.isEmpty(infoExts)){
+                List<NmplDeviceVo> vos = new ArrayList<>(infoExts.size());
+                for (NmplDeviceInfoExt ext: infoExts){
+                    NmplDeviceVo vo = new NmplDeviceVo();
+                    BeanUtils.copyProperties(ext,vo);
+                    vos.add(vo);
+                }
+                resp.setVos(vos);
+            }
+            result = buildResult(resp);
+        }catch (Exception e){
+            log.error("SignalServiceImpl.selectDevicesForSignal Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;

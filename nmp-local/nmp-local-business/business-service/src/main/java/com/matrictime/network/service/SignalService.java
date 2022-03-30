@@ -59,4 +59,7 @@ public interface SignalService {
     Result<ExportSignalResp> exportSignal(ExportSignalReq req);
 
 
+    Result<SelectDevicesForSignalResp> selectDevicesForSignal();
+
+
 }

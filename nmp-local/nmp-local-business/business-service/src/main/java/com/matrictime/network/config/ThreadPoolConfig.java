@@ -25,7 +25,7 @@ public class ThreadPoolConfig {
     @Value("${thread.queueCapacity}")
     private Integer queueCapacity;
 
-    @Bean
+    @Bean("taskExecutor")
     public Executor asyncServiceExecutor() {
         logger.info("start asyncServiceExecutor");
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

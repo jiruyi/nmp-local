@@ -15,6 +15,11 @@ public class NmplDeviceVo implements Serializable {
     private String deviceId;
 
     /**
+     * 设备名称
+     */
+    private String deviceName;
+
+    /**
      * 设备大类（0：基站 1：其他机）
      */
     private String deviceBigType;

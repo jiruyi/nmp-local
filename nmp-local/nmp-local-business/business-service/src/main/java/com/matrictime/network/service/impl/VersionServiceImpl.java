@@ -199,16 +199,16 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         Result result;
 
         try {
-            QueryVersionFileResp resp = null;
+            QueryVersionFileResp resp = new QueryVersionFileResp();;
             // check param is legal
             checkQueryVersionFileParam(req);
 
             NmplVersionExample example = new NmplVersionExample();
             example.createCriteria().andSystemIdEqualTo(req.getSystemId()).andIsDeleteEqualTo(true);
             List<NmplVersion> versions = nmplVersionMapper.selectByExample(example);
+
             if (!CollectionUtils.isEmpty(versions)){
                 List<NmplVersionVo> vvos = new ArrayList<>(versions.size());
-
                 for(NmplVersion version : versions){
                     NmplVersionVo vo = new NmplVersionVo();
                     BeanUtils.copyProperties(version,vo);
@@ -225,11 +225,14 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                             vfos.add(versionFileVo);
                         }
                         vo.setNmplVersionFileVos(vfos);
+                    }else {
+                        vo.setNmplVersionFileVos(new ArrayList<>(1));
                     }
                     vvos.add(vo);
                 }
-                resp = new QueryVersionFileResp();
                 resp.setVersionVos(vvos);
+            }else {
+                resp.setVersionVos(new ArrayList<>(1));
             }
 
 
@@ -290,6 +293,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                     break;
                 case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_1:
                 case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_2:
+                case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_3:
                     NmplDeviceInfoExample example1 = new NmplDeviceInfoExample();
                     example1.createCriteria().andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
                     List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(example1);
@@ -419,6 +423,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                                 break;
                             case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_1:
                             case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_2:
+                            case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_3:
                                 for (NmplFileDeviceRel rel : rels){
                                     String deviceId = rel.getDeviceId();
                                     NmplDeviceInfoExample dexample = new NmplDeviceInfoExample();
