@@ -41,7 +41,7 @@ public class BaseStationInfoRequest extends BaseRequest{
 
     private String updateTime;
 
-    private Boolean isExist;
+    private String isExist;
 
     public String getId() {
         return id;
@@ -195,11 +195,11 @@ public class BaseStationInfoRequest extends BaseRequest{
         this.updateTime = updateTime;
     }
 
-    public Boolean getExist() {
+    public String getIsExist() {
         return isExist;
     }
 
-    public void setExist(Boolean exist) {
-        isExist = exist;
+    public void setIsExist(String isExist) {
+        this.isExist = isExist;
     }
 }

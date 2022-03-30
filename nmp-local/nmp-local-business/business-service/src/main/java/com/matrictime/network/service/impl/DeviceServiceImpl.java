@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.util.SnowFlake;
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.model.Result;
@@ -34,6 +35,7 @@ public class DeviceServiceImpl implements DeviceService {
         try {
             deviceInfoRequest.setCreateTime(getFormatDate(date));
             deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
+            deviceInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
             //判断小区是否正确
 
             String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
@@ -75,6 +77,7 @@ public class DeviceServiceImpl implements DeviceService {
         Date date = new Date();
         try {
             deviceInfoRequest.setUpdateTime(getFormatDate(date));
+            deviceInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
             updateFlag = deviceDomainService.updateDevice(deviceInfoRequest);
             if(updateFlag == 1){
                 result.setResultObj(updateFlag);

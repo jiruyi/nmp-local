@@ -1,6 +1,9 @@
 package com.matrictime.network.service.impl;
 
+import com.matrictime.network.base.enums.DeviceStatusEnum;
+import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.base.util.SnowFlake;
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.model.Result;
@@ -36,6 +39,9 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         try {
             baseStationInfoRequest.setCreateTime(getFormatDate(date));
             baseStationInfoRequest.setStationId(SnowFlake.nextId_String());
+            baseStationInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
+            baseStationInfoRequest.setIsExist("1");
+            baseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
             //判断小区是否正确
 
             String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
@@ -64,6 +70,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         Integer updateFlag = null;
         try {
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
+            baseStationInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
             updateFlag = baseStationInfoDomainService.updateBaseStationInfo(baseStationInfoRequest);
             if(updateFlag == 1){
                 result.setSuccess(true);
