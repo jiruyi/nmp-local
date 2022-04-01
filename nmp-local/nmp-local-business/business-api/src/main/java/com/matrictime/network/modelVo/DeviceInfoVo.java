@@ -42,6 +42,8 @@ public class DeviceInfoVo {
 
     private String updateTime;
 
+    private String companyName;
+
     private Boolean isExist;
 
     public String getId() {
@@ -210,5 +212,13 @@ public class DeviceInfoVo {
 
     public void setExist(Boolean exist) {
         isExist = exist;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 }
