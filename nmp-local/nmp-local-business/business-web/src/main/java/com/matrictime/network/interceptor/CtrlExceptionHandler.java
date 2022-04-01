@@ -37,7 +37,7 @@ public class CtrlExceptionHandler {
         Result result =new Result();
         result.setSuccess(false);
         result.setErrorMsg("该用户无权限进行此项操作");
-        result.setErrorCode("403");
+        result.setErrorCode("401");
         return JSON.toJSONString(result);
     }
 
@@ -49,7 +49,7 @@ public class CtrlExceptionHandler {
         Result result =new Result();
         result.setSuccess(false);
         result.setErrorMsg("该用户无权限进行此项操作");
-        result.setErrorCode("403");
+        result.setErrorCode("401");
         return JSON.toJSONString(result);
     }
 

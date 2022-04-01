@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.NmplBillVo;
 import com.matrictime.network.request.BillRequest;
@@ -41,6 +42,7 @@ public class BillController {
     @ApiOperation(value = "话单多条件查询接口",notes = "话单多条件查询接口")
     @RequestMapping(value = "/queryByCondition",method = RequestMethod.POST)
     @RequiresPermissions("sys:bill:query")
+    @SystemLog(opermodul = "话单管理模块",operDesc = "查询话单",operType = "查询")
     public Result<PageInfo> queryBillByConditon(@RequestBody BillRequest billRequest){
         return billService.queryByConditon(billRequest);
     }
