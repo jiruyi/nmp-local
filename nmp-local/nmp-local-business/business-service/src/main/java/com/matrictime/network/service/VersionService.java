@@ -34,6 +34,13 @@ public interface VersionService {
      */
     Result<QueryVersionFileResp> queryVersionFile(QueryVersionFileReq req);
 
+
+    /**
+     * 根据系统查询版本列表
+     * @return
+     */
+    Result<QueryVersionResp> queryVersion();
+
     /**
      * 查询推送设备/详情
      * @param req

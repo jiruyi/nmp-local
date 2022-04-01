@@ -30,7 +30,8 @@ import java.util.Set;
 
 public class HttpClientUtil {
 
-    private static final Integer TIME_OUT = 60000;
+    // TODO: 2022/4/1 上线需确认超时时间 
+    private static final Integer TIME_OUT = 50;
 
     private static final String HTTP_TITLE = "http://";
 
@@ -307,6 +308,23 @@ public class HttpClientUtil {
             return sb.toString();
         }
         return "";
+    }
+
+    /**
+     * trun ip,port,path to url
+     * @param ip
+     * @param port
+     * @param path
+     * @return
+     */
+    public static String getUrl(String ip,String port,String path){
+        StringBuffer sb = new StringBuffer(HTTP_TITLE);
+        sb.append(ip);
+        sb.append(DataConstants.KEY_SPLIT);
+        sb.append(port);
+        sb.append(DataConstants.KEY_SLASH);
+        sb.append(path);
+        return sb.toString();
     }
 
 

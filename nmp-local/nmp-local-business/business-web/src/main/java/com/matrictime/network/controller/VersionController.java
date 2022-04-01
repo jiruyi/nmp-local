@@ -30,7 +30,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/editVersion",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "编辑版本信息",operType = "操作")
-//    @RequiresPermissions("sys:version:save")
+    @RequiresPermissions("sys:version:save")
     public Result<EditVersionResp> editVersion(@RequestBody EditVersionReq req){
         try {
             return  versionService.editVersion(req);
@@ -47,7 +47,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/uploadVersionFile",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "上传版本文件",operType = "上传")
-//    @RequiresPermissions("sys:version:import")
+    @RequiresPermissions("sys:version:import")
     public Result<UploadVersionFileResp> uploadVersionFile(UploadVersionFileReq req){
         try {
             return  versionService.uploadVersionFile(req);
@@ -64,7 +64,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/deleteVersionFile",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "删除版本文件",operType = "删除")
-//    @RequiresPermissions("sys:version:delete")
+    @RequiresPermissions("sys:version:deleteFile")
     public Result<DeleteVersionFileResp> deleteVersionFile(@RequestBody DeleteVersionFileReq req){
         try {
             return  versionService.deleteVersionFile(req);
@@ -81,12 +81,28 @@ public class VersionController {
      */
     @RequestMapping (value = "/queryVersionFile",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "根据系统查询版本文件列表",operType = "查询")
-//    @RequiresPermissions("sys:version:list")
+    @RequiresPermissions("sys:version:fileList")
     public Result<QueryVersionFileResp> queryVersionFile(@RequestBody QueryVersionFileReq req){
         try {
             return  versionService.queryVersionFile(req);
         }catch (Exception e){
             log.error("VersionController.queryVersionFile exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 根据系统查询版本列表
+     * @return
+     */
+    @RequestMapping (value = "/queryVersion",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "根据系统查询版本列表",operType = "查询")
+    @RequiresPermissions("sys:version:list")
+    public Result<QueryVersionResp> queryVersion(){
+        try {
+            return  versionService.queryVersion();
+        }catch (Exception e){
+            log.error("VersionController.queryVersion exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
@@ -98,7 +114,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/queryVersionFileDetail",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "查询推送设备/详情",operType = "查询")
-//    @RequiresPermissions("sys:version:detail")
+    @RequiresPermissions("sys:version:detail")
     public Result<QueryVersionFileDetailResp> queryVersionFileDetail(@RequestBody QueryVersionFileDetailReq req){
         try {
             return  versionService.queryVersionFileDetail(req);
@@ -115,7 +131,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/pushVersionFile",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "推送设备",operType = "推送")
-//    @RequiresPermissions("sys:version:push")
+    @RequiresPermissions("sys:version:push")
     public Result<PushVersionFileResp> pushVersionFile(@RequestBody PushVersionFileReq req){
         try {
             return  versionService.pushVersionFile(req);
@@ -132,7 +148,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/startVersionFile",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "启动版本文件",operType = "操作")
-//    @RequiresPermissions("sys:version:start")
+    @RequiresPermissions("sys:version:start")
     public Result<StartVersionFileResp> startVersionFile(@RequestBody StartVersionFileReq req){
         try {
             return  versionService.startVersionFile(req);

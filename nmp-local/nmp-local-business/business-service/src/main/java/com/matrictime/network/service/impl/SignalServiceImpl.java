@@ -36,6 +36,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Future;
+
+import static com.matrictime.network.base.constant.DataConstants.*;
 
 @Slf4j
 @Service
@@ -60,8 +63,18 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private AsyncService asyncService;
+
     @Value("${signal.tableHeaderArr}")
     private String[] tableHeaderArr;
+
+    @Value("${thread.maxPoolSize}")
+    private Integer maxPoolSize;
+
+    // TODO: 2022/4/1 上线前需要确定等待时间
+    @Value("${signal.io.time.out}")
+    private int signalIoTimeOut;
 
     @Override
     public Result<EditSignalResp> editSignal(EditSignalReq req) {
@@ -118,15 +131,12 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             List<NmplDeviceVo> vos = req.getDeviceVos();
             List<String> successIds = new ArrayList<>(vos.size());
             List<String> failIds = new ArrayList<>();
+            List<Map<String,String>> httpList = new ArrayList<>();
             switch (req.getIoType()){
                 case com.matrictime.network.base.constant.DataConstants.IOTYPE_O:
                     for(NmplDeviceVo vo : vos){
-                        boolean flag = sendSignalByBigType(req.getUserId(), vo, req.getIoType());
-                        if (flag){
-                            successIds.add(vo.getDeviceId());
-                        }else {
-                            failIds.add(vo.getDeviceId());
-                        }
+                        Map<String, String> map = sendSignalByBigType(req.getUserId(), vo, req.getIoType());
+                        httpList.add(map);
                     }
                     break;
                 case com.matrictime.network.base.constant.DataConstants.IOTYPE_I:
@@ -140,17 +150,59 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
                         }
                     }
                     for(NmplDeviceVo vo : vos){
-                        boolean flag = sendSignalByBigType(req.getUserId(),vo,req.getIoType());
-                        if (flag){
-                            successIds.add(vo.getDeviceId());
-                        }else {
-                            failIds.add(vo.getDeviceId());
-                        }
+                        Map<String, String> map = sendSignalByBigType(req.getUserId(), vo, req.getIoType());
+                        httpList.add(map);
                     }
                     break;
                 default:
                     throw new SystemException(ErrorCode.PARAM_EXCEPTION, "ioType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
+
+            if (!CollectionUtils.isEmpty(httpList)){
+                List<Future> futures = new ArrayList<>();
+                if (httpList.size()>maxPoolSize){
+                    List<List<Map<String, String>>> splitList = splitList(httpList);
+                    for (List<Map<String, String>> tmpList : splitList){
+                        Future<Map<String, List<String>>> mapFuture = asyncService.httpSignalIo(tmpList);
+                        futures.add(mapFuture);
+                    }
+                }else {
+                    Future<Map<String, List<String>>> mapFuture = asyncService.httpSignalIo(httpList);
+                    futures.add(mapFuture);
+                }
+
+                Date timeout = DateUtils.addMinuteForDate(new Date(), signalIoTimeOut);
+                while (true) {
+                    if (!CollectionUtils.isEmpty(futures)) {
+                        boolean isAllDone = true;
+                        for (Future future : futures) {
+                            if (null == future || !future.isDone()) {
+                                isAllDone = false;
+                            }else {
+                                try {
+                                    Map<String, List<String>> msg =  (Map<String, List<String>>) future.get();
+                                    if (!CollectionUtils.isEmpty(msg)) {
+                                        if (!CollectionUtils.isEmpty(msg.get(KEY_SUCCESS_IDS))){
+                                            successIds.addAll(msg.get(KEY_SUCCESS_IDS));
+                                        }
+                                        if (!CollectionUtils.isEmpty(msg.get(KEY_FAIL_IDS))){
+                                            failIds.addAll(msg.get(KEY_FAIL_IDS));
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    log.info("启停追踪线程池处理单个批次配置出错！error:{}",e.getMessage());
+                                }
+                            }
+                        }
+                        if (isAllDone || new Date().after(timeout)) {
+                            break;
+                        }
+                    }else {
+                        break;
+                    }
+                }
+            }
+
             resp.setSuccessIds(successIds);
             resp.setFailIds(failIds);
             result = buildResult(resp);
@@ -353,7 +405,6 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
 
         NmplSignalIo io = new NmplSignalIo();
 
-
         if (!CollectionUtils.isEmpty(nmplSignalIos)){
             io = nmplSignalIos.get(0);
             io.setStatus(status);
@@ -367,14 +418,10 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
         }
     }
 
-    private boolean sendSignalByBigType(String userId,NmplDeviceVo vo, String ioType) throws IOException{
+    private Map<String, String> sendSignalByBigType(String userId,NmplDeviceVo vo, String ioType){
+        Map<String,String> map = new HashMap<>(4);
         String id = vo.getDeviceId();
         String bigType = vo.getDeviceBigType();
-        boolean io = false;
-
-        // 测试挡板，联调上线需要修改
-        io = true;
-        if(!io){
 
         if (com.matrictime.network.base.constant.DataConstants.DEVICE_BIG_TYPE_0.equals(bigType)){
             NmplBaseStationInfoExample example = new NmplBaseStationInfoExample();
@@ -382,11 +429,10 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(example);
             if (!CollectionUtils.isEmpty(nmplBaseStationInfos)){
                 NmplBaseStationInfo info = nmplBaseStationInfos.get(0);
-                String ip = info.getLanIp();
-                String port = info.getLanPort();
-                Map<String,String> map = new HashMap<>(2);
-                map.put("opType",ioType);
-                io = sendSignalIo(ip, port, map);
+                map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                map.put(KEY_IO_TYPE,ioType);
+                map.put(KEY_USER_ID,userId);
+                map.put(KEY_DEVICE_ID,id);
             }
         }else if (com.matrictime.network.base.constant.DataConstants.DEVICE_BIG_TYPE_1.equals(bigType)){
             NmplDeviceInfoExample example = new NmplDeviceInfoExample();
@@ -394,22 +440,13 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(example);
             if (!CollectionUtils.isEmpty(nmplDeviceInfos)){
                 NmplDeviceInfo info = nmplDeviceInfos.get(0);
-                String ip = info.getLanIp();
-                String port = info.getLanPort();
-                Map<String,String> map = new HashMap<>(2);
-                map.put("opType",ioType);
-                io = sendSignalIo(ip, port, map);
+                map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                map.put(KEY_IO_TYPE,ioType);
+                map.put(KEY_USER_ID,userId);
+                map.put(KEY_DEVICE_ID,id);
             }
         }
-
-        }
-
-
-        // 调用站点接口成功则进行记录
-        if (io){
-            addSignalIo(userId,id,ioType);
-        }
-        return io;
+        return map;
     }
 
     private boolean checkUserIsOn(String deviceId){
@@ -464,6 +501,25 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             return nmplDeviceVos;
         }
         return null;
+    }
+
+
+    private List<List<Map<String,String>>> splitList(List<Map<String,String>> list){
+        int length = list.size();
+        /**
+         * num 可以分成的组数
+         **/
+        int num = ( length + maxPoolSize - 1 )/maxPoolSize ;
+        //用于存放最后结果
+        List<List<Map<String,String>>> resultList = new ArrayList<>(num);
+        for (int i = 0; i < num; i++) {
+            // 开始位置
+            int fromIndex = i * maxPoolSize;
+            // 结束位置
+            int toIndex = (i+1) * maxPoolSize < length ? ( i+1 ) * maxPoolSize : length ;
+            resultList.add(list.subList(fromIndex,toIndex)) ;
+        }
+        return resultList;
     }
 
     private void checkEditSignalParam(EditSignalReq req) {

@@ -78,4 +78,19 @@ public class DataConstants {
      */
     public static final String HEART_CHECK_DEVICE_ID = "heart_check_device_id:";
 
+    /**
+     * map key
+     */
+    public static final String KEY_DEVICE_ID = "deviceId";
+    public static final String KEY_FILE_ID = "fileId";
+    public static final String KEY_CONFIG_CODE = "configCode";
+    public static final String KEY_CONFIG_VALUE = "configValue";
+    public static final String KEY_UNIT = "unit";
+    public static final String KEY_SUCCESS_IDS = "successIds";
+    public static final String KEY_FAIL_IDS = "failIds";
+    public static final String KEY_IO_TYPE = "ioType";
+    public static final String KEY_IS_SUCCESS = "isSuccess";
+    public static final String KEY_URL = "url";
+    public static final String KEY_USER_ID = "userId";
+    public static final String KEY_FILE_PATH = "filePath";
 }

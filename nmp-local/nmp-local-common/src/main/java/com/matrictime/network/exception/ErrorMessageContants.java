@@ -66,4 +66,6 @@ public class ErrorMessageContants {
 
 	public static final String GET_FILE_ISEXIST_FAIL_MSG = "文件查询是否存在有误:";
 
+	public static final String FILE_IS_TOO_BIG_MSG = "文件大小超过阈值,文件需小于:";
+
 }

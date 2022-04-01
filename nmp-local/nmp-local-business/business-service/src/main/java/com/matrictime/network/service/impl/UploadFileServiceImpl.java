@@ -25,6 +25,7 @@ import java.io.File;
 @PropertySource(value = "classpath:/businessConfig.properties",encoding = "UTF-8")
 public class UploadFileServiceImpl extends SystemBaseService implements UploadFileService {
 
+    // TODO: 2022/4/1 上线前需要确定路径
     @Value("${upload.base.path}")
     private String uploadBasePath;
 

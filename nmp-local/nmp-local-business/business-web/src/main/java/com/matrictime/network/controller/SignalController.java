@@ -40,7 +40,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/signalIo",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令启停",operType = "操作")
-//    @RequiresPermissions("sys:sign:track")
+    @RequiresPermissions("sys:sign:track")
     public Result<SignalIoResp> signalIo(@RequestBody SignalIoReq req){
         try {
             return signalService.signalIo(req);
@@ -73,7 +73,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/cleanSignal",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令清空",operType = "操作")
-//    @RequiresPermissions("sys:sign:clear")
+    @RequiresPermissions("sys:sign:clear")
     public Result<CleanSignalResp> cleanSignal(@RequestBody CleanSignalReq req){
         try {
             return  signalService.cleanSignal(req);
@@ -90,7 +90,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/querySignalByPage",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令轮询分页查询",operType = "查询")
-//    @RequiresPermissions("sys:sign:query")
+    @RequiresPermissions("sys:sign:query")
     public Result<PageInfo> querySignalByPage(@RequestBody QuerySignalByPageReq req){
         try {
             return  signalService.querySignalByPage(req);
@@ -107,7 +107,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/querySignalSelectDeviceIds",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "根据用户id查询已选设备列表",operType = "查询")
-//    @RequiresPermissions("sys:sign:query")
+    @RequiresPermissions("sys:sign:selectDeviceIds")
     public Result<QuerySignalSelectDeviceIdsResp> querySignalSelectDeviceIds(@RequestBody QuerySignalSelectDeviceIdsReq req){
         try {
             return  signalService.querySignalSelectDeviceIds(req);
@@ -125,7 +125,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/exportSignal",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令导出",operType = "操作")
-//    @RequiresPermissions("sys:sign:export")
+    @RequiresPermissions("sys:sign:export")
     public void exportSignal(@RequestBody ExportSignalReq req, HttpServletResponse response){
         try {
             String fileName = DateUtils.dateToString(new Date())+DataConstants.FILE_TYPE_CSV;
@@ -138,9 +138,13 @@ public class SignalController {
         }
     }
 
+    /**
+     * 查询信令设备列表
+     * @return
+     */
     @RequestMapping (value = "/devicesForSignal",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "查询信令设备列表",operType = "查询")
-//    @RequiresPermissions("sys:sign:export")
+    @RequiresPermissions("sys:sign:deviceIds")
     public Result<SelectDevicesForSignalResp> selectDevicesForSignal(){
         try {
             return signalService.selectDevicesForSignal();

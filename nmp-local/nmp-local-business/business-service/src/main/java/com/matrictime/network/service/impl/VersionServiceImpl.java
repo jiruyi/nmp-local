@@ -16,6 +16,8 @@ import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
 import com.matrictime.network.service.UploadFileService;
 import com.matrictime.network.service.VersionService;
+import com.matrictime.network.util.DateUtils;
+import com.matrictime.network.util.FileUtils;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +29,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.concurrent.Future;
 
+import static com.matrictime.network.base.constant.DataConstants.*;
+import static com.matrictime.network.base.constant.DataConstants.KEY_FAIL_IDS;
 import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.exception.ErrorMessageContants.FILE_IS_TOO_BIG_MSG;
 
 @Slf4j
 @Service
@@ -54,6 +60,22 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
 
     @Autowired
     private UploadFileService uploadFileService;
+
+    @Autowired
+    private AsyncService asyncService;
+
+    @Value("${upload.versionFile.maxSize}")
+    private Integer fileMaxSize;
+
+    @Value("${upload.versionFile.maxSize.type}")
+    private String fileMaxSizeType;
+
+    @Value("${thread.maxPoolSize}")
+    private Integer maxPoolSize;
+
+    // TODO: 2022/4/1 上线前需要确定等待时间
+    @Value("${version.start.file.time.out}")
+    private int versionStartFileTimeOut;
 
     @Override
     public Result<EditVersionResp> editVersion(EditVersionReq req) {
@@ -115,6 +137,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             //获取文件名
             String originalFilename = req.getFile().getOriginalFilename();
             String suffix = originalFilename.substring(originalFilename.lastIndexOf(DataConstants.KEY_POINT));
+
             String fileName = originalFilename.substring(0,originalFilename.lastIndexOf(DataConstants.KEY_POINT));
 
             FileIsExistReq existReq = new FileIsExistReq();
@@ -249,6 +272,49 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
     }
 
     @Override
+    public Result<QueryVersionResp> queryVersion() {
+        Result result;
+
+        try {
+            QueryVersionResp resp = new QueryVersionResp();;
+            // check param is legal
+//            checkQueryVersionParam(req);
+
+            NmplVersionExample example = new NmplVersionExample();
+            example.createCriteria().andIsDeleteEqualTo(true);
+            List<NmplVersion> versions = nmplVersionMapper.selectByExample(example);
+            Map<String,List<NmplVersionVo>> versionMap = new HashMap<>(4);
+            versionMap.put(com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_0,new ArrayList<>(1));
+            versionMap.put(com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_1,new ArrayList<>(1));
+            versionMap.put(com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_2,new ArrayList<>(1));
+            versionMap.put(com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_3,new ArrayList<>(1));
+
+            if (!CollectionUtils.isEmpty(versions)){
+                for(NmplVersion version : versions){
+                    NmplVersionVo vo = new NmplVersionVo();
+                    BeanUtils.copyProperties(version,vo);
+                    String systemId = vo.getSystemId();
+                    if (versionMap.containsKey(systemId)){
+                        List<NmplVersionVo> tempList = versionMap.get(systemId);
+                        tempList.add(vo);
+                        versionMap.put(systemId,tempList);
+                    }
+                }
+            }
+            resp.setVersionMap(versionMap);
+            result = buildResult(resp);
+        }catch (SystemException e){
+            log.error("VersionServiceImpl.queryVersion SystemException:{}",e.getMessage());
+            result = failResult(e.getCode(),e.getMessage());
+        }catch (Exception e){
+            log.error("VersionServiceImpl.queryVersion Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+
+        return result;
+    }
+
+    @Override
     public Result<QueryVersionFileDetailResp> queryVersionFileDetail(QueryVersionFileDetailReq req) {
         Result result;
         try {
@@ -338,10 +404,21 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             // check param is legal
             checkPushVersionFileParam(req);
             for (String deviceId : req.getDeviceIds()){
-                NmplFileDeviceRel nmplFileDeviceRel = new NmplFileDeviceRel();
-                nmplFileDeviceRel.setFileId(req.getFileId());
-                nmplFileDeviceRel.setDeviceId(deviceId);
-                nmplFileDeviceRelMapper.insertSelective(nmplFileDeviceRel);
+                NmplFileDeviceRelExample example = new NmplFileDeviceRelExample();
+                example.createCriteria().andDeviceIdEqualTo(deviceId).andFileIdEqualTo(req.getFileId());
+                List<NmplFileDeviceRel> rels = nmplFileDeviceRelMapper.selectByExample(example);
+                if (CollectionUtils.isEmpty(rels)){
+                    NmplFileDeviceRel nmplFileDeviceRel = new NmplFileDeviceRel();
+                    nmplFileDeviceRel.setFileId(req.getFileId());
+                    nmplFileDeviceRel.setDeviceId(deviceId);
+                    nmplFileDeviceRelMapper.insertSelective(nmplFileDeviceRel);
+                }else if (!rels.get(0).getIsDelete()){
+                    NmplFileDeviceRel nmplFileDeviceRel = new NmplFileDeviceRel();
+                    nmplFileDeviceRel.setId(rels.get(0).getId());
+                    nmplFileDeviceRel.setIsDelete(IS_EXIST);
+                    nmplFileDeviceRelMapper.updateByPrimaryKeySelective(nmplFileDeviceRel);
+                }
+
 
                 NmplVersionFile versionFile = new NmplVersionFile();
                 versionFile.setId(req.getFileId());
@@ -382,6 +459,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                     if (version!=null){
                         List<String> successIds = new ArrayList<>();
                         List<String> failIds = new ArrayList<>();
+                        List<Map<String,String>> httpList = new ArrayList<>();
                         switch (version.getSystemId()){
                             case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_0:
                                 for (NmplFileDeviceRel rel : rels){
@@ -391,35 +469,15 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                                     List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bexample);
                                     if (!CollectionUtils.isEmpty(stationInfos)){
                                         for (NmplBaseStationInfo info : stationInfos){
-                                            StringBuffer sb = new StringBuffer();
-                                            sb.append(info.getLanIp());
-                                            sb.append(DataConstants.KEY_SPLIT);
-                                            sb.append(info.getLanPort());
-                                            try {
-//                                                String httpResp = HttpClientUtil.postForm(sb.toString(), versionFile.getFilePath() + versionFile.getFileName());
-                                                String httpResp = "{\"isSuccess\":true}";
-                                                JSONObject jsonObject = JSONObject.parseObject(httpResp);
-                                                Object success = jsonObject.get("isSuccess");
-                                                if (success != null && success instanceof Boolean){
-                                                    if ((Boolean)success){
-                                                        successIds.add(info.getStationId());
-                                                    }else {
-                                                        failIds.add(info.getStationId());
-                                                    }
-                                                }
-                                                log.info("VersionServiceImpl.startVersionFile http httpResp:{},deviceId:{}",httpResp,info.getStationId());
-                                            }catch (Exception e){
-                                                failIds.add(info.getStationId());
-                                                log.warn("VersionServiceImpl.startVersionFile http Exception:{},deviceId:{}",e.getMessage(),info.getStationId());
-                                            }
+                                            Map<String,String> map = new HashMap<>();
+                                            map.put(KEY_DEVICE_ID,deviceId);
+                                            map.put(KEY_FILE_ID,String.valueOf(fileId));
+                                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                                            map.put(KEY_FILE_PATH,versionFile.getFilePath() + versionFile.getFileName());
+                                            httpList.add(map);
                                         }
                                     }
                                 }
-
-                                NmplVersionFile versionFile1 = new NmplVersionFile();
-                                versionFile1.setId(fileId);
-                                versionFile1.setIsStarted(com.matrictime.network.base.constant.DataConstants.VERSION_FILE_IS_STARTED);
-                                nmplVersionFileMapper.updateByPrimaryKeySelective(versionFile1);
                                 break;
                             case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_1:
                             case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_2:
@@ -431,39 +489,69 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                                     List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dexample);
                                     if (!CollectionUtils.isEmpty(deviceInfos)){
                                         for (NmplDeviceInfo info : deviceInfos){
-                                            StringBuffer sb = new StringBuffer();
-                                            sb.append(info.getLanIp());
-                                            sb.append(DataConstants.KEY_SPLIT);
-                                            sb.append(info.getLanPort());
-                                            try {
-//                                                String httpResp = HttpClientUtil.postForm(sb.toString(), versionFile.getFilePath() + versionFile.getFileName());
-                                                String httpResp = "{\"isSuccess\":true}";
-                                                JSONObject jsonObject = JSONObject.parseObject(httpResp);
-                                                if (jsonObject != null){
-                                                    Object success = jsonObject.get("isSuccess");
-                                                    if (success != null && success instanceof Boolean){
-                                                        if ((Boolean)success){
-                                                            successIds.add(info.getDeviceId());
-                                                        }else {
-                                                            failIds.add(info.getDeviceId());
-                                                        }
-                                                    }
-                                                }
-                                                log.info("VersionServiceImpl.startVersionFile http httpResp:{},deviceId:{}",httpResp,info.getDeviceId());
-                                            }catch (Exception e){
-                                                failIds.add(info.getDeviceId());
-                                                log.warn("VersionServiceImpl.startVersionFile http Exception:{},deviceId:{}",e.getMessage(),info.getDeviceId());
-                                            }
+                                            Map<String,String> map = new HashMap<>();
+                                            map.put(KEY_DEVICE_ID,deviceId);
+                                            map.put(KEY_FILE_ID,String.valueOf(fileId));
+                                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                                            map.put(KEY_FILE_PATH,versionFile.getFilePath() + versionFile.getFileName());
+                                            httpList.add(map);
                                         }
                                     }
                                 }
-                                NmplVersionFile versionFile2 = new NmplVersionFile();
-                                versionFile2.setId(fileId);
-                                versionFile2.setIsStarted(com.matrictime.network.base.constant.DataConstants.VERSION_FILE_IS_STARTED);
-                                nmplVersionFileMapper.updateByPrimaryKeySelective(versionFile2);
                                 break;
                             default:
                                 break;
+                        }
+
+                        if (!CollectionUtils.isEmpty(httpList)){
+                            List<Future> futures = new ArrayList<>();
+                            if (httpList.size()>maxPoolSize){
+                                List<List<Map<String, String>>> splitList = splitList(httpList);
+                                for (List<Map<String, String>> tmpList : splitList){
+                                    Future<Map<String, List<String>>> mapFuture = asyncService.httpStartFile(tmpList);
+                                    futures.add(mapFuture);
+                                }
+                            }else {
+                                Future<Map<String, List<String>>> mapFuture = asyncService.httpStartFile(httpList);
+                                futures.add(mapFuture);
+                            }
+
+                            Date timeout = DateUtils.addMinuteForDate(new Date(), versionStartFileTimeOut);
+                            while (true) {
+                                if (!CollectionUtils.isEmpty(futures)) {
+                                    boolean isAllDone = true;
+                                    for (Future future : futures) {
+                                        if (null == future || !future.isDone()) {
+                                            isAllDone = false;
+                                        }else {
+                                            try {
+                                                Map<String, List<String>> msg =  (Map<String, List<String>>) future.get();
+                                                if (!CollectionUtils.isEmpty(msg)) {
+                                                    if (!CollectionUtils.isEmpty(msg.get(KEY_SUCCESS_IDS))){
+                                                        successIds.addAll(msg.get(KEY_SUCCESS_IDS));
+                                                    }
+                                                    if (!CollectionUtils.isEmpty(msg.get(KEY_FAIL_IDS))){
+                                                        failIds.addAll(msg.get(KEY_FAIL_IDS));
+                                                    }
+                                                }
+                                            } catch (Exception e) {
+                                                log.info("版本文件启动线程池处理单个批次配置出错！error:{}",e.getMessage());
+                                            }
+                                        }
+                                    }
+                                    if (isAllDone || new Date().after(timeout)) {
+                                        break;
+                                    }
+                                }else {
+                                    break;
+                                }
+                            }
+                            if (successIds.size()>0){
+                                NmplVersionFile updateFile = new NmplVersionFile();
+                                updateFile.setId(fileId);
+                                updateFile.setIsStarted(com.matrictime.network.base.constant.DataConstants.VERSION_FILE_IS_STARTED);
+                                nmplVersionFileMapper.updateByPrimaryKeySelective(updateFile);
+                            }
                         }
                         resp = new StartVersionFileResp();
                         resp.setFailIds(failIds);
@@ -481,6 +569,24 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         }
 
         return result;
+    }
+
+    private List<List<Map<String,String>>> splitList(List<Map<String,String>> list){
+        int length = list.size();
+        /**
+         * num 可以分成的组数
+         **/
+        int num = ( length + maxPoolSize - 1 )/maxPoolSize ;
+        //用于存放最后结果
+        List<List<Map<String,String>>> resultList = new ArrayList<>(num);
+        for (int i = 0; i < num; i++) {
+            // 开始位置
+            int fromIndex = i * maxPoolSize;
+            // 结束位置
+            int toIndex = (i+1) * maxPoolSize < length ? ( i+1 ) * maxPoolSize : length ;
+            resultList.add(list.subList(fromIndex,toIndex)) ;
+        }
+        return resultList;
     }
 
     private void checkEditVersionParam(EditVersionReq req) {
@@ -507,6 +613,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         if (req.getVersionId() == null){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "versionId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
+        if (!FileUtils.checkFileSize(req.getFile().getSize(),fileMaxSize,fileMaxSizeType)){
+            throw new SystemException(FILE_IS_TOO_BIG_MSG+fileMaxSize+fileMaxSizeType);
+        }
     }
 
     private void checkDeleteVersionFileParam(DeleteVersionFileReq req){
@@ -516,6 +625,12 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
     }
 
     private void checkQueryVersionFileParam(QueryVersionFileReq req){
+        if (ParamCheckUtil.checkVoStrBlank(req.getSystemId())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "systemId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+    private void checkQueryVersionParam(QueryVersionReq req){
         if (ParamCheckUtil.checkVoStrBlank(req.getSystemId())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "systemId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
