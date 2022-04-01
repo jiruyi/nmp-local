@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.request.BillRequest;
@@ -42,6 +43,7 @@ public class DataController {
     @ApiOperation(value = "基站数据多条件查询接口",notes = "话单多条件查询接口")
     @RequestMapping(value = "/queryStationDataByConditon",method = RequestMethod.POST)
     @RequiresPermissions("sys:stationData:query")
+    @SystemLog(opermodul = "统计管理模块",operDesc = "查询基站数据",operType = "查询")
     public Result<PageInfo> queryStationDataByConditon(@RequestBody DataCollectReq dataCollectReq){
         dataCollectReq.setDeviceType("01");
         return dataCollectService.queryByConditon(dataCollectReq);
@@ -55,6 +57,7 @@ public class DataController {
     @ApiOperation(value = "分发机数据多条件查询接口",notes = "话单多条件查询接口")
     @RequestMapping(value = "/queryDispenserDataByConditon",method = RequestMethod.POST)
     @RequiresPermissions("sys:dispenserData:query")
+    @SystemLog(opermodul = "统计管理模块",operDesc = "查询分发机数据",operType = "查询")
     public Result<PageInfo> queryDispenserDataByConditon(@RequestBody DataCollectReq dataCollectReq){
         dataCollectReq.setDeviceType("02");
         return dataCollectService.queryByConditon(dataCollectReq);
@@ -68,6 +71,7 @@ public class DataController {
     @ApiOperation(value = "生成机数据多条件查询接口",notes = "话单多条件查询接口")
     @RequestMapping(value = "/queryGeneratorDataByConditon",method = RequestMethod.POST)
     @RequiresPermissions("sys:generatorData:query")
+    @SystemLog(opermodul = "统计管理模块",operDesc = "查询生成机数据",operType = "查询")
     public Result<PageInfo> queryGeneratorDataByConditon(@RequestBody DataCollectReq dataCollectReq){
         dataCollectReq.setDeviceType("03");
         return dataCollectService.queryByConditon(dataCollectReq);
@@ -81,6 +85,7 @@ public class DataController {
     @ApiOperation(value = "缓存机数据多条件查询接口",notes = "话单多条件查询接口")
     @RequestMapping(value = "/queryCacheDataByConditon",method = RequestMethod.POST)
     @RequiresPermissions("sys:cacheData:query")
+    @SystemLog(opermodul = "统计管理模块",operDesc = "查询缓存机数据",operType = "查询")
     public Result<PageInfo> queryCacheDataByConditon(@RequestBody DataCollectReq dataCollectReq){
         dataCollectReq.setDeviceType("04");
         return dataCollectService.queryByConditon(dataCollectReq);

@@ -41,10 +41,10 @@
 <!--            and a.upload_time = #{uploadTime,jdbcType=TIMESTAMP}-->
 <!--        </if>-->
         <if test="startTime != null">
-            and a.create_time  &gt;= #{startTime,jdbcType=TIMESTAMP}
+            and a.upload_time  &gt;= #{startTime,jdbcType=VARCHAR}
         </if>
         <if test="endTime != null">
-            and a.create_time &lt;= #{endTime,jdbcType=VARCHAR}
+            and a.upload_time &lt;= #{endTime,jdbcType=VARCHAR}
         </if>
 <!--        <if test="updateTime != null">-->
 <!--            and a.update_time = #{updateTime,jdbcType=TIMESTAMP}-->
@@ -83,10 +83,10 @@
 <!--            and a.upload_time = #{uploadTime,jdbcType=TIMESTAMP}-->
 <!--        </if>-->
         <if test="startTime != null">
-            and a.create_time  &gt;= #{startTime,jdbcType=TIMESTAMP}
+            and a.upload_time  &gt;= #{startTime,jdbcType=VARCHAR}
         </if>
         <if test="endTime != null">
-            and a.create_time &lt;= #{endTime,jdbcType=VARCHAR}
+            and a.upload_time &lt;= #{endTime,jdbcType=VARCHAR}
         </if>
 <!--        <if test="updateTime != null">-->
 <!--            and a.update_time = #{updateTime,jdbcType=TIMESTAMP}-->

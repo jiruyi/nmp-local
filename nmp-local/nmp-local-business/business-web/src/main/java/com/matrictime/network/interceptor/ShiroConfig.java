@@ -10,6 +10,7 @@ import org.crazycake.shiro.RedisCacheManager;
 import org.crazycake.shiro.RedisManager;
 import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -48,14 +49,14 @@ public class ShiroConfig {
 
 
     @Bean
-    public SecurityManager securityManager(UserRealm userRealm) {
+    public SecurityManager securityManager(UserRealm userRealm,RedisCacheManager cacheManager, DefaultWebSessionManager sessionManager) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         // 设置realm.
         securityManager.setRealm(userRealm);
         // 自定义缓存实现 使用redis
-        securityManager.setCacheManager(cacheManager());
+        securityManager.setCacheManager(cacheManager);
         // 自定义session管理 使用redis
-        securityManager.setSessionManager(sessionManager());
+        securityManager.setSessionManager(sessionManager);
         return securityManager;
     }
 
@@ -65,9 +66,10 @@ public class ShiroConfig {
      *
      * @return
      */
-    public RedisCacheManager cacheManager() {
+    @Bean
+    public RedisCacheManager cacheManager(RedisManager redisManager) {
         RedisCacheManager redisCacheManager = new RedisCacheManager();
-        redisCacheManager.setRedisManager(redisManager());
+        redisCacheManager.setRedisManager(redisManager);
         return redisCacheManager;
     }
 
@@ -77,12 +79,13 @@ public class ShiroConfig {
      *
      * @return
      */
-    public RedisManager redisManager() {
+    @Bean
+    public RedisManager redisManager(@Value("${spring.redis.host}")String host, @Value("${spring.redis.port}") Integer port, @Value("${spring.redis.password}")String password ) {
         RedisManager redisManager = new RedisManager();
-        redisManager.setHost("192.168.72.230");
-        redisManager.setPort(6379);
+        redisManager.setHost(host);
+        redisManager.setPort(port);
         redisManager.setExpire(3600*12);// 配置缓存过期时间
-        redisManager.setPassword("123456");
+        redisManager.setPassword(password);
         redisManager.setTimeout(0);
         // redisManager.setPassword(password);
         return redisManager;
@@ -93,9 +96,9 @@ public class ShiroConfig {
      * 使用的是shiro-redis开源插件
      */
     @Bean
-    public DefaultWebSessionManager sessionManager() {
+    public DefaultWebSessionManager sessionManager(RedisSessionDAO redisSessionDAO) {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
-        sessionManager.setSessionDAO(redisSessionDAO());
+        sessionManager.setSessionDAO(redisSessionDAO);
         return sessionManager;
     }
 
@@ -104,9 +107,9 @@ public class ShiroConfig {
      * 使用的是shiro-redis开源插件
      */
     @Bean
-    public RedisSessionDAO redisSessionDAO() {
+    public RedisSessionDAO redisSessionDAO(RedisManager redisManager) {
         RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
-        redisSessionDAO.setRedisManager(redisManager());
+        redisSessionDAO.setRedisManager(redisManager);
         return redisSessionDAO;
     }
 
