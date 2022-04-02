@@ -3,6 +3,7 @@ package com.matrictime.network.request;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class MonitorReq extends BaseRequest implements Serializable {
@@ -11,11 +12,11 @@ public class MonitorReq extends BaseRequest implements Serializable {
     /**
      * 小区id
      */
-    private String companyId;
+    private String companyCode;
     /**
      * 当前时间
      */
-    private String currentTime;
+    private Date currentTime;
     /**
      * 统计项名
      */
