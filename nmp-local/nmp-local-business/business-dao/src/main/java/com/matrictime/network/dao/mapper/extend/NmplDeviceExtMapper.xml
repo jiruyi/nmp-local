@@ -53,7 +53,6 @@
     ndi.device_id,
     ndi.device_name,
     ndi.device_type,
-    ndi.other_type,
     ndi.enter_network_time,
     ndi.device_admain,
     ndi.remark,
@@ -69,11 +68,11 @@
 
   <sql id="Base_Station_List">
     nbsi.id,
-    nbsi.station_id,
-    nbsi.station_name,
-    nbsi.station_type,
+    nbsi.station_id as device_id,
+    nbsi.station_name as device_name,
+    nbsi.station_type as device_type,
     nbsi.enter_network_time,
-    nbsi.station_admain,
+    nbsi.station_admain as device_admain,
     nbsi.remark,
     nbsi.public_network_ip,
     nbsi.public_network_port,
@@ -86,7 +85,7 @@
   </sql>
 
 
-  <select id="selectDeviceListByMainDeviceId" parameterType="java.lang.String" resultMap="BaseStationInfoMap">
+  <select id="selectDeviceListByMainDeviceId" parameterType="java.lang.String" resultMap="DeviceInfoMap">
     select
         <include refid="Device_Info_List" />
     from

@@ -18,17 +18,17 @@ public class DeviceInfoRelVo implements Serializable {
     /**
      * 设备id
      */
-    private String stationId;
+    private String deviceId;
 
     /**
      * 设备名称
      */
-    private String stationName;
+    private String deviceName;
 
     /**
-     * 设备类型 01:小区内基站 02:小区边界基站
+     * 设备类型 1:基站 2 分发机 3 生成机 4 缓存机
      */
-    private String stationType;
+    private String deviceType;
 
     /**
      * 接入网时间

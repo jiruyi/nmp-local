@@ -4,13 +4,11 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
 import com.matrictime.network.dao.mapper.extend.NmplDeviceExtMapper;
-import com.matrictime.network.dao.model.NmplBaseStationInfo;
-import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
-import com.matrictime.network.dao.model.NmplDeviceInfo;
-import com.matrictime.network.dao.model.NmplDeviceInfoExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
@@ -64,6 +62,17 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     @Autowired(required = false)
     private NmplDataCollectExtMapper nmplDataCollectExtMapper;
 
+    @Autowired(required = false)
+    private NmplDataCollectMapper nmplDataCollectMapper;
+
+    // TODO: 2022/4/2 上线前需要确认配置信息
+    private static final String USER_COUNT_CODE = "userNumber";
+    private static final String TOTAL_BAND_WIDTH_CODE = "bandwidth";
+
+    // TODO: 2022/4/2 上线前需要确认配置信息
+    private static final int USER_COUNT_TIME = -15;
+    private static final int TOTAL_BAND_WIDTH_TIME = -15;
+
     @Override
     public Result<CheckHeartResp> checkHeart(CheckHeartReq req) {
         Result result;
@@ -114,59 +123,103 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         Result result;
 
         try {
-            QueryMonitorResp resp = null;
+            QueryMonitorResp resp = new QueryMonitorResp();
             queryMonitorParam(req);
             String roId = req.getRoId();
             NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
             baseStationInfoExample.createCriteria().andIsExistEqualTo(DataConstants.IS_EXIST).andRelationOperatorIdEqualTo(roId);
             List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
-            // 基站层信息查询
+
+            NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
+            deviceInfoExample.createCriteria().andIsExistEqualTo(DataConstants.IS_EXIST).andRelationOperatorIdEqualTo(roId);
+            List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(deviceInfoExample);
+
+            Map<Integer, List<DeviceInfoRelVo>> deviceInfoMap = new HashMap<>();
+            Long userCount = 0L;
+            Long totalBandwidth = 0L;
+
             if (!CollectionUtils.isEmpty(baseStationInfos)){
-                List<DeviceInfoRelVo> baseInfos = new ArrayList<>(baseStationInfos.size());
+                List<DeviceInfoRelVo> levelThree = new ArrayList<>();
                 for (NmplBaseStationInfo baseStationInfo : baseStationInfos){
                     DeviceInfoRelVo baseInfo = new DeviceInfoRelVo();
                     BeanUtils.copyProperties(baseStationInfo,baseInfo);
-
-                    // 分发机/缓存机层信息查询
-                    List<NmplDeviceInfo> deviceInfos = nmplDeviceExtMapper.selectDeviceListByMainDeviceId(baseStationInfo.getStationId(), roId);
-                    if (!CollectionUtils.isEmpty(deviceInfos)){
-                        List<DeviceInfoRelVo> middleInfos = new ArrayList<>(deviceInfos.size());
-                        for (NmplDeviceInfo deviceInfo : deviceInfos){
-                            DeviceInfoRelVo middleInfo = new DeviceInfoRelVo();
-                            BeanUtils.copyProperties(deviceInfo,middleInfo);
-
-                            // 生成机层信息查询
-                            List<NmplDeviceInfo> deviceInfos1 = nmplDeviceExtMapper.selectDeviceListByMainDeviceId(deviceInfo.getDeviceId(), roId);
-                            if(!CollectionUtils.isEmpty(deviceInfos1)){
-                                List<DeviceInfoRelVo> topInfos = new ArrayList<>(deviceInfos1.size());
-                                for (NmplDeviceInfo deviceInfo1 : deviceInfos1){
-                                    DeviceInfoRelVo topInfo = new DeviceInfoRelVo();
-                                    BeanUtils.copyProperties(deviceInfo1,topInfo);
-                                    topInfos.add(topInfo);
-                                }
-                                middleInfo.setChildrenDevices(topInfos);
-                            }
-                            middleInfos.add(middleInfo);
-                        }
-                        baseInfo.setChildrenDevices(middleInfos);
-                    }
-
-                    // 查询同级关联
-                    List<NmplBaseStationInfo> baseStationRelList = nmplDeviceExtMapper.selectBaseStationListByMainDeviceId(baseStationInfo.getStationId(), roId);
-                    if (!CollectionUtils.isEmpty(baseStationRelList)){
-                        List<DeviceInfoRelVo> relDevices = new ArrayList<>(baseStationRelList.size());
-                        for (NmplBaseStationInfo baseStationRel : baseStationRelList){
-                            DeviceInfoRelVo relDevice = new DeviceInfoRelVo();
-                            BeanUtils.copyProperties(baseStationRel,relDevice);
-                            relDevices.add(relDevice);
-                        }
-                        baseInfo.setRelDevices(relDevices);
-                    }
+                    baseInfo.setDeviceId(baseStationInfo.getStationId());
+                    baseInfo.setDeviceName(baseStationInfo.getStationName());
+                    baseInfo.setDeviceType(CONFIG_DEVICE_TYPE_1);
+                    levelThree.add(baseInfo);
+                    userCount = addUserCount(userCount, baseStationInfo.getStationId());
+                    totalBandwidth = addTotalBandwidth(totalBandwidth, baseStationInfo.getStationId());
                 }
-                resp = new QueryMonitorResp();
-                resp.setDeviceInfoRelVos(baseInfos);
+                deviceInfoMap.put(LEVEL_3,levelThree);
             }
 
+            if (!CollectionUtils.isEmpty(deviceInfos)){
+                List<DeviceInfoRelVo> levelOne = new ArrayList<>();
+                List<DeviceInfoRelVo> levelTwo = new ArrayList<>();
+                for (NmplDeviceInfo deviceInfo : deviceInfos){
+                    DeviceInfoRelVo deviceInfoRelVo = new DeviceInfoRelVo();
+                    BeanUtils.copyProperties(deviceInfo,deviceInfoRelVo);
+                    switch (deviceInfo.getDeviceType()){
+                        case SYSTEM_ID_1:
+                            deviceInfoRelVo.setDeviceType(CONFIG_DEVICE_TYPE_2);
+                            levelTwo.add(deviceInfoRelVo);
+                            break;
+                        case SYSTEM_ID_2:
+                            deviceInfoRelVo.setDeviceType(CONFIG_DEVICE_TYPE_3);
+                            levelOne.add(deviceInfoRelVo);
+                            break;
+                        case SYSTEM_ID_3:
+                            deviceInfoRelVo.setDeviceType(CONFIG_DEVICE_TYPE_4);
+                            levelTwo.add(deviceInfoRelVo);
+                            break;
+                        default:
+                            deviceInfoRelVo.setDeviceType(null);
+                            break;
+                    }
+                    userCount = addUserCount(userCount, deviceInfo.getDeviceId());
+                    totalBandwidth = addTotalBandwidth(totalBandwidth, deviceInfo.getDeviceId());
+                }
+                deviceInfoMap.put(LEVEL_1,levelOne);
+                deviceInfoMap.put(LEVEL_2,levelTwo);
+            }
+
+
+            if (!CollectionUtils.isEmpty(deviceInfoMap)){
+                for (Map.Entry<Integer, List<DeviceInfoRelVo>> entry : deviceInfoMap.entrySet()){
+                    List<DeviceInfoRelVo> baseInfos = entry.getValue();
+                    if (!CollectionUtils.isEmpty(baseInfos)){
+                        // 找同级设备
+                        for (DeviceInfoRelVo baseInfo : baseInfos){
+                            List<NmplDeviceInfo> sameLevelInfo = nmplDeviceExtMapper.selectBaseStationListByMainDeviceId(baseInfo.getDeviceId(), roId);
+                            if (!CollectionUtils.isEmpty(sameLevelInfo)){
+                                List<DeviceInfoRelVo> sameLevelInfos = new ArrayList<>(sameLevelInfo.size());
+                                for (NmplDeviceInfo deviceInfo : sameLevelInfo){
+                                    DeviceInfoRelVo deviceInfoRelVo = new DeviceInfoRelVo();
+                                    BeanUtils.copyProperties(deviceInfo,deviceInfoRelVo);
+                                    sameLevelInfos.add(deviceInfoRelVo);
+                                }
+                                baseInfo.setRelDevices(sameLevelInfos);
+                            }
+                        }
+
+                        // 找子级设备
+                        for (DeviceInfoRelVo baseInfo : baseInfos){
+                            List<NmplDeviceInfo> childLevelInfo = nmplDeviceExtMapper.selectDeviceListByMainDeviceId(baseInfo.getDeviceId(), roId);
+                            if (!CollectionUtils.isEmpty(childLevelInfo)){
+                                List<DeviceInfoRelVo> childLevelInfos = new ArrayList<>(childLevelInfo.size());
+                                for (NmplDeviceInfo deviceInfo : childLevelInfo){
+                                    DeviceInfoRelVo deviceInfoRelVo = new DeviceInfoRelVo();
+                                    BeanUtils.copyProperties(deviceInfo,deviceInfoRelVo);
+                                    childLevelInfos.add(deviceInfoRelVo);
+                                }
+                                baseInfo.setChildrenDevices(childLevelInfos);
+                            }
+                        }
+                    }
+                }
+            }
+
+            resp.setDeviceInfoMap(deviceInfoMap);
             result = buildResult(resp);
         }catch (Exception e){
             log.error("MonitorServiceImpl.queryMonitor Exception:{}",e.getMessage());
@@ -289,6 +342,30 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         }
 
         return resultMap;
+    }
+
+    private Long addUserCount(Long userCount,String deviceId){
+        NmplDataCollectExample example = new NmplDataCollectExample();
+        example.setOrderByClause("upload_time desc");
+        example.createCriteria().andDeviceIdEqualTo(deviceId).andDataItemCodeEqualTo(USER_COUNT_CODE).andUploadTimeGreaterThan(DateUtils.addMinuteForDate(new Date(),USER_COUNT_TIME));
+        List<NmplDataCollect> dataCollects = nmplDataCollectMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(dataCollects)){
+            String dataItemValue = dataCollects.get(0).getDataItemValue();
+            userCount = userCount + Long.valueOf(dataItemValue);
+        }
+        return userCount;
+    }
+
+    private Long addTotalBandwidth(Long totalBandwidth,String deviceId){
+        NmplDataCollectExample example = new NmplDataCollectExample();
+        example.setOrderByClause("upload_time desc");
+        example.createCriteria().andDeviceIdEqualTo(deviceId).andDataItemCodeEqualTo(TOTAL_BAND_WIDTH_CODE).andUploadTimeGreaterThan(DateUtils.addMinuteForDate(new Date(),TOTAL_BAND_WIDTH_TIME));
+        List<NmplDataCollect> dataCollects = nmplDataCollectMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(dataCollects)){
+            String dataItemValue = dataCollects.get(0).getDataItemValue();
+            totalBandwidth = totalBandwidth + Long.valueOf(dataItemValue);
+        }
+        return totalBandwidth;
     }
 
     private void checkHeartParam(CheckHeartReq req) {

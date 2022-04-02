@@ -73,6 +73,10 @@ public class DataConstants {
 
     public static final Boolean VERSION_FILE_IS_STARTED = true;
 
+    public static final Integer LEVEL_1 = 1;
+    public static final Integer LEVEL_2 = 2;
+    public static final Integer LEVEL_3 = 3;
+
     /**
      * redis key
      */

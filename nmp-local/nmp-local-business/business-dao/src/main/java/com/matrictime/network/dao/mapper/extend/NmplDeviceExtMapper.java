@@ -10,6 +10,6 @@ public interface NmplDeviceExtMapper {
 
     List<NmplDeviceInfo> selectDeviceListByMainDeviceId(@Param("deviceId") String deviceId, @Param("operatorId") String operatorId);
 
-    List<NmplBaseStationInfo> selectBaseStationListByMainDeviceId(@Param("deviceId") String deviceId, @Param("operatorId") String operatorId);
+    List<NmplDeviceInfo> selectBaseStationListByMainDeviceId(@Param("deviceId") String deviceId, @Param("operatorId") String operatorId);
 
 }
