@@ -39,6 +39,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/**/swagger-ui/**")
                 .excludePathPatterns("/**/sms/send")
                 .excludePathPatterns("/**/device/selectDevice/**")
-                .excludePathPatterns("/**/druid/**");
+                .excludePathPatterns("/**/druid/**")
+                .excludePathPatterns("/**/data/saveData/save/**")
+                .excludePathPatterns("/**/bill/saveBill/save/**");
     }
 }
