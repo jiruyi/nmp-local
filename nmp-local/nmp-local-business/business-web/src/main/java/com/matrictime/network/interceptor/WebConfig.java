@@ -40,7 +40,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/**/sms/send")
                 .excludePathPatterns("/**/device/selectDevice/**")
                 .excludePathPatterns("/**/druid/**")
-                .excludePathPatterns("/**/data/saveData/save/**")
-                .excludePathPatterns("/**/bill/saveBill/save/**");
+                .excludePathPatterns("/**/data/saveData/**")
+                .excludePathPatterns("/**/bill/saveBill/**");
     }
 }

@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 
 public class PropertiesUtil {
-    public  final static  Map<String,String> paramMap=PropertiesUtil.getMap("E:\\nmp_local\\nmp-local\\nmp-local-business\\business-service\\src\\main\\resources\\data.properties");
+    public  final static  Map<String,String> paramMap=PropertiesUtil.getMap(System.getProperty("user.dir")+"\\nmp-local-business\\business-service\\src\\main\\resources\\data.properties");
 
     public static Map<String, String> getMap(String path) {
         Properties properties = new Properties();

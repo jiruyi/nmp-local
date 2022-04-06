@@ -1,22 +1,14 @@
 package com.matrictime.network.api.response;
 
+import com.matrictime.network.api.modelVo.GroupVo;
+import com.matrictime.network.api.modelVo.UserGroupVo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 public class UserGroupResp implements Serializable {
-
-    private static final long serialVersionUID = 7470179248525359847L;
-
-    private Long userId;
-
-    private Long groupId;
-
-    private Boolean isExist;
-
-    private String nickName;
-
-    private String loginStatus;
-
-
+   List<UserGroupVo> userGroupVos = new ArrayList<>();
 }

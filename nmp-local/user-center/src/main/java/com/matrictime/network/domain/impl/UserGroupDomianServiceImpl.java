@@ -1,5 +1,6 @@
 package com.matrictime.network.domain.impl;
 
+import com.matrictime.network.api.modelVo.UserGroupVo;
 import com.matrictime.network.api.request.UserGroupReq;
 import com.matrictime.network.api.response.UserGroupResp;
 import com.matrictime.network.dao.mapper.UserGroupMapper;
@@ -22,27 +23,26 @@ public class UserGroupDomianServiceImpl implements UserGroupDomianService {
     UserGroupMapper userGroupMapper;
 
     @Override
-    public Integer createGroup(UserGroupReq userGroupReq) {
+    public Integer createUserGroup(UserGroupReq userGroupReq) {
         UserGroup userGroup = new UserGroup();
         BeanUtils.copyProperties(userGroupReq,userGroup);
         return userGroupMapper.insert(userGroup);
     }
 
     @Override
-    public Integer deleteGroup(UserGroupReq userGroupReq)
+    public Integer deleteUserGroup(UserGroupReq userGroupReq)
     {
         userGroupReq.setIsExist(false);
         return userGroupExtMapper.updateByUserIdAndGroupId(userGroupReq);
     }
 
     @Override
-    public Integer modifyGroup(UserGroupReq userGroupReq) {
-
+    public Integer modifyUserGroup(UserGroupReq userGroupReq) {
         return userGroupExtMapper.updateByUserIdAndGroupId(userGroupReq);
     }
 
     @Override
-    public List<UserGroupResp>  queryGroup(UserGroupReq userGroupReq) {
+    public List<UserGroupVo>  queryUserGroup(UserGroupReq userGroupReq) {
         return userGroupExtMapper.selectByCondition(userGroupReq);
     }
 }
