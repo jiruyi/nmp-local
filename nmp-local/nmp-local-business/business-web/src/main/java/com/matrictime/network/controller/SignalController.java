@@ -11,10 +11,7 @@ import com.matrictime.network.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -43,7 +40,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/signalIo",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令启停",operType = "操作")
-//    @RequiresPermissions("sys:sign:track")
+    @RequiresPermissions("sys:sign:track")
     public Result<SignalIoResp> signalIo(@RequestBody SignalIoReq req){
         try {
             return signalService.signalIo(req);
@@ -76,7 +73,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/cleanSignal",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令清空",operType = "操作")
-//    @RequiresPermissions("sys:sign:clear")
+    @RequiresPermissions("sys:sign:clear")
     public Result<CleanSignalResp> cleanSignal(@RequestBody CleanSignalReq req){
         try {
             return  signalService.cleanSignal(req);
@@ -93,7 +90,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/querySignalByPage",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令轮询分页查询",operType = "查询")
-//    @RequiresPermissions("sys:sign:query")
+    @RequiresPermissions("sys:sign:query")
     public Result<PageInfo> querySignalByPage(@RequestBody QuerySignalByPageReq req){
         try {
             return  signalService.querySignalByPage(req);
@@ -110,7 +107,7 @@ public class SignalController {
      */
     @RequestMapping (value = "/querySignalSelectDeviceIds",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "根据用户id查询已选设备列表",operType = "查询")
-//    @RequiresPermissions("sys:sign:query")
+    @RequiresPermissions("sys:sign:selectDeviceIds")
     public Result<QuerySignalSelectDeviceIdsResp> querySignalSelectDeviceIds(@RequestBody QuerySignalSelectDeviceIdsReq req){
         try {
             return  signalService.querySignalSelectDeviceIds(req);
@@ -128,17 +125,31 @@ public class SignalController {
      */
     @RequestMapping (value = "/exportSignal",method = RequestMethod.POST)
     @SystemLog(opermodul = "信令模块",operDesc = "信令导出",operType = "操作")
-//    @RequiresPermissions("sys:sign:export")
-    public Result<ExportSignalResp> exportSignal(@RequestBody ExportSignalReq req, HttpServletResponse response){
+    @RequiresPermissions("sys:sign:export")
+    public void exportSignal(@RequestBody ExportSignalReq req, HttpServletResponse response){
         try {
             String fileName = DateUtils.dateToString(new Date())+DataConstants.FILE_TYPE_CSV;
             Result<ExportSignalResp> result = signalService.exportSignal(req);
             if (result!=null && result.isSuccess()){
                 responseSetProperties(fileName,result.getResultObj().getBytes(), response);
             }
-            return result;
         }catch (Exception e){
             log.error("SignalController.exportSignal exception:{}",e.getMessage());
+        }
+    }
+
+    /**
+     * 查询信令设备列表
+     * @return
+     */
+    @RequestMapping (value = "/devicesForSignal",method = RequestMethod.POST)
+    @SystemLog(opermodul = "信令模块",operDesc = "查询信令设备列表",operType = "查询")
+    @RequiresPermissions("sys:sign:deviceIds")
+    public Result<SelectDevicesForSignalResp> selectDevicesForSignal(){
+        try {
+            return signalService.selectDevicesForSignal();
+        }catch (Exception e){
+            log.error("SignalController.selectDevicesForSignal exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

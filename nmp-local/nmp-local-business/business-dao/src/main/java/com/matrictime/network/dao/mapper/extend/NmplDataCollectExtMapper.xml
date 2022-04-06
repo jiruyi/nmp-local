@@ -100,18 +100,18 @@
 
 
     <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.DataCollectVo">
-        insert into nmpl_data_collect (id, device_id, device_name,
+        insert into nmpl_data_collect ( device_id, device_name,
         device_type, data_item_name, data_item_code,
         data_item_value, unit) values
         <foreach collection ="list" item="data" separator =",">
-            (#{data.id}, #{data.deviceId},#{data.deviceName}, #{data.deviceType}, #{data.dataItemName}, #{data.dataItemCode},
+            ( #{data.deviceId},#{data.deviceName}, #{data.deviceType}, #{data.dataItemName}, #{data.dataItemCode},
             #{data.dataItemValue}, #{data.unit})
         </foreach >
     </insert>
 
     <select id="selectTopTen" resultType="com.matrictime.network.modelVo.DataCollectVo">
         SELECT a.* from nmpl_data_collect a,
-        (SELECT max(upload_time) as q,device_id from nmpl_data_collect group by device_id) as b
+        (SELECT max(upload_time) as q,device_id,data_item_code from nmpl_data_collect group by device_id,data_item_code) as b
         where a.device_id = b.device_id and a.upload_time = b.q
         <if test="uploadTime != null">
             and a.upload_time &gt;= #{uploadTime,jdbcType=VARCHAR}

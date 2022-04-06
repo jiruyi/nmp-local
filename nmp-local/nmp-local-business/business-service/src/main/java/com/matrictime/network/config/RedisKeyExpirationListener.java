@@ -29,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+import static com.matrictime.network.base.constant.DataConstants.KEY_DEVICE_ID;
 import static com.matrictime.network.base.exception.ErrorMessageContants.DEVICE_NOT_EXIST_MSG;
 
 /**
@@ -90,7 +91,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
                 //语音呼叫
                 JSONObject ttsParam = new JSONObject();
                 //模板参数
-                ttsParam.put("deviceId",deviceId);
+                ttsParam.put(KEY_DEVICE_ID,deviceId);
                 VoiceCallRequest voiceCallRequest =  VoiceCallRequest.builder()
                         .ttsCode(voiceCode)
                         .ttsParam(ttsParam.toJSONString()).build();

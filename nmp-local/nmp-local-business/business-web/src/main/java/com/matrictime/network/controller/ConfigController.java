@@ -9,6 +9,7 @@ import com.matrictime.network.request.SyncConfigReq;
 import com.matrictime.network.response.*;
 import com.matrictime.network.service.ConfigService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +35,7 @@ public class ConfigController {
      */
     @RequestMapping (value = "/editConfig",method = RequestMethod.POST)
     @SystemLog(opermodul = "配置模块",operDesc = "编辑配置记录",operType = "编辑")
-//    @RequiresPermissions("sys:parm:update")
+    @RequiresPermissions("sys:parm:update")
     public Result<EditConfigResp> editConfig(@RequestBody EditConfigReq req){
         try {
             return  configService.editConfig(req);
@@ -52,7 +53,7 @@ public class ConfigController {
      */
     @RequestMapping (value = "/queryConfigByPages",method = RequestMethod.POST)
     @SystemLog(opermodul = "配置模块",operDesc = "查询接口（支持分页查询）记录",operType = "查询")
-//    @RequiresPermissions("sys:parm:query")
+    @RequiresPermissions("sys:parm:query")
     public Result<PageInfo> queryConfigByPages(@RequestBody QueryConfigByPagesReq req){
         try {
             return  configService.queryConfigByPages(req);
@@ -70,7 +71,7 @@ public class ConfigController {
      */
     @RequestMapping (value = "/resetDefaultConfig",method = RequestMethod.POST)
     @SystemLog(opermodul = "配置模块",operDesc = "恢复默认接口记录",operType = "恢复默认")
-//    @RequiresPermissions("sys:parm:reset")
+    @RequiresPermissions("sys:parm:reset")
     public Result<ResetDefaultConfigResp> resetDefaultConfig(@RequestBody ResetDefaultConfigReq req){
         try {
             return  configService.resetDefaultConfig(req);
@@ -88,7 +89,7 @@ public class ConfigController {
      */
     @RequestMapping (value = "/syncConfig",method = RequestMethod.POST)
     @SystemLog(opermodul = "配置模块",operDesc = "同步配置接口（支持全量同步）记录",operType = "同步配置")
-//    @RequiresPermissions("sys:parm:synchro")
+    @RequiresPermissions("sys:parm:synchro")
     public Result<SyncConfigResp> syncConfig(@RequestBody SyncConfigReq req){
         try {
             return  configService.syncConfig(req);

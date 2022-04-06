@@ -84,4 +84,25 @@ public class NmplCompanyInfoVo {
      * 父单位名称
      */
     private String parentName;
+
+    /**
+     * 运营商名称
+     */
+    private String operatorName;
+
+    /**
+     * 运营商ID
+     */
+    private Long operatorId;
+
+
+    /**
+     * 大区名称
+     */
+    private String regionName;
+
+    /**
+     * 大区ID
+     */
+    private Long regionId;
 }

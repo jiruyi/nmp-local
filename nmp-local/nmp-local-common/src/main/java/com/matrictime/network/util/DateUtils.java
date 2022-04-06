@@ -241,7 +241,7 @@ public class DateUtils {
     }
 
     /**
-     * 指定日期 +/- N天
+     * 指定日期 +/- N分钟
      *
      * @param n
      * @return
@@ -250,6 +250,19 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.MINUTE, n);
+        return calendar.getTime();
+    }
+
+    /**
+     * 指定日期 +/- N秒钟
+     *
+     * @param n
+     * @return
+     */
+    public static Date addSecondsForDate(Date date, int n) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.SECOND, n);
         return calendar.getTime();
     }
 

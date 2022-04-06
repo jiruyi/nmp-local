@@ -54,7 +54,7 @@ public class MonitorController {
      */
     @RequestMapping (value = "/queryMonitor",method = RequestMethod.POST)
     @SystemLog(opermodul = "监控模块",operDesc = "监控轮询展示查询",operType = "查询")
-//    @RequiresPermissions("sys:monitor:query")
+    @RequiresPermissions("sys:monitor:query")
     public Result<QueryMonitorResp> queryMonitor(@RequestBody QueryMonitorReq req){
         try {
             return  monitorService.queryMonitor(req);
@@ -71,7 +71,7 @@ public class MonitorController {
      */
     @RequestMapping (value = "/totalLoadChange",method = RequestMethod.POST)
     @SystemLog(opermodul = "监控模块",operDesc = "总带宽负载变化查询",operType = "查询")
-//    @RequiresPermissions("sys:monitor:totalload")
+    @RequiresPermissions("sys:monitor:totalload")
     public Result<TotalLoadChangeResp> totalLoadChange(@RequestBody TotalLoadChangeReq req){
         try {
             return  monitorService.totalLoadChange(req);

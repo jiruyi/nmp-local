@@ -23,13 +23,15 @@
     select
         <include refid="Base_Column_List" />
     from
-        nmpl_signal_io io
-    left join
         nmpl_signal s
+    left join
+        nmpl_signal_io io
     on
         io.device_id = s.device_id
     where
         io.update_user = #{userId,jdbcType=VARCHAR}
+    and
+        s.is_exist = '1'
     order by
         s.create_time desc
   </select>
@@ -46,4 +48,54 @@
     and
         status = '1'
   </select>
+
+    <resultMap id="DeviceBaseResultMap" type="com.matrictime.network.dao.model.extend.NmplDeviceInfoExt">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+        <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+        <result column="device_type" jdbcType="CHAR" property="deviceType" />
+        <result column="other_type" jdbcType="CHAR" property="otherType" />
+        <result column="enter_network_time" jdbcType="TIMESTAMP" property="enterNetworkTime" />
+        <result column="device_admain" jdbcType="VARCHAR" property="deviceAdmain" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="public_network_ip" jdbcType="VARCHAR" property="publicNetworkIp" />
+        <result column="public_network_port" jdbcType="VARCHAR" property="publicNetworkPort" />
+        <result column="lan_ip" jdbcType="VARCHAR" property="lanIp" />
+        <result column="lan_port" jdbcType="VARCHAR" property="lanPort" />
+        <result column="station_status" jdbcType="CHAR" property="stationStatus" />
+        <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+        <result column="station_random_seed" jdbcType="VARCHAR" property="stationRandomSeed" />
+        <result column="relation_operator_id" jdbcType="VARCHAR" property="relationOperatorId" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="is_exist" jdbcType="BIT" property="isExist" />
+        <result column="device_big_type" jdbcType="VARCHAR" property="deviceBigType" />
+    </resultMap>
+
+
+    <select id="selectDevices" resultMap="DeviceBaseResultMap">
+        select
+            device_id,
+            device_name,
+            '0' as device_big_type
+        from
+            nmpl_device_info
+        where
+            station_status = '02'
+          and
+            is_exist = '1'
+        union all
+        select
+            station_id as device_id,
+            station_name as device_name,
+            '1' as device_big_type
+        from
+            nmpl_base_station_info
+        where
+            station_status = '02'
+          and
+            is_exist = '1'
+    </select>
 </mapper>
