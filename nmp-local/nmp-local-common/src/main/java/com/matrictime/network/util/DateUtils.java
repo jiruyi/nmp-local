@@ -67,6 +67,8 @@ public class DateUtils {
 
     public static final String MINUTE_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
+    public static final String MINUTE_TIME_FORMAT = "HH:mm";
+
 
 
     /**

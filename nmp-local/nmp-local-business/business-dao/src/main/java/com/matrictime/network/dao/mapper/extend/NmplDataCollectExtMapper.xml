@@ -129,11 +129,13 @@
 
     <select id="countLoad" resultType="java.math.BigDecimal">
         select
-            sum(data_item_value)
+            ifnull(sum(data_item_value),0)
+        FROM
+            nmpl_data_collect
         where
-            create_time <![CDATA[ >= ]]> #{beginTime,jdbcType=TIMESTAMP}
-        and create_time <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP}
-        and data_item_code = '临时值'
+            upload_time <![CDATA[ >= ]]> #{beginTime,jdbcType=TIMESTAMP}
+        and upload_time <![CDATA[ < ]]> #{endTime,jdbcType=TIMESTAMP}
+        and data_item_code = #{dataItemCode,jdbcType=VARCHAR}
         and device_id = #{deviceId,jdbcType=VARCHAR}
     </select>
 

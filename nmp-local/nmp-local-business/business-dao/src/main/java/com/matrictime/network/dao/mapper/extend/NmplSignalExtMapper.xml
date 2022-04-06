@@ -79,7 +79,8 @@
         select
             device_id,
             device_name,
-            '0' as device_big_type
+            '0' as device_big_type,
+            station_network_id
         from
             nmpl_device_info
         where
@@ -90,7 +91,8 @@
         select
             station_id as device_id,
             station_name as device_name,
-            '1' as device_big_type
+            '1' as device_big_type,
+            station_network_id
         from
             nmpl_base_station_info
         where
