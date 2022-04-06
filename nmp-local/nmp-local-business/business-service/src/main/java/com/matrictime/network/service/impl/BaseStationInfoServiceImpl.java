@@ -45,8 +45,8 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             //判断小区是否正确
 
             String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
-            String stationRandomSeed = preBID + "-" + baseStationInfoRequest.getStationRandomSeed();
-            baseStationInfoRequest.setStationRandomSeed(stationRandomSeed);
+            String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
+            baseStationInfoRequest.setStationNetworkId(networkId);
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);

@@ -45,7 +45,7 @@ public class BillServiceImpl extends SystemBaseService implements BillService {
         return result;
     }
 
-    @Async("asyncServiceExecutor")
+    @Async("taskExecutor")
     @Override
     public Future<Result> save(BillRequest billRequest) {
         Result<Integer> result;

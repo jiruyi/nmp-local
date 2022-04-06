@@ -39,8 +39,8 @@ public class DeviceServiceImpl implements DeviceService {
             //判断小区是否正确
 
             String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
-            String stationRandomSeed = preBID + "-" + deviceInfoRequest.getStationRandomSeed();
-            deviceInfoRequest.setStationRandomSeed(stationRandomSeed);
+            String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
+            deviceInfoRequest.setStationRandomSeed(NetworkId);
             insertFlag = deviceDomainService.insertDevice(deviceInfoRequest);
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);

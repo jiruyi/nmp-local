@@ -11,7 +11,11 @@ public class LinkRelationVo {
 
     private String mainDeviceId;
 
+    private String mainDeviceName;
+
     private String followDeviceId;
+
+    private String followDeviceName;
 
     private String mainPublicNetworkIp;
 
@@ -181,5 +185,21 @@ public class LinkRelationVo {
 
     public void setIsExist(String isExist) {
         this.isExist = isExist;
+    }
+
+    public String getMainDeviceName() {
+        return mainDeviceName;
+    }
+
+    public void setMainDeviceName(String mainDeviceName) {
+        this.mainDeviceName = mainDeviceName;
+    }
+
+    public String getFollowDeviceName() {
+        return followDeviceName;
+    }
+
+    public void setFollowDeviceName(String followDeviceName) {
+        this.followDeviceName = followDeviceName;
     }
 }

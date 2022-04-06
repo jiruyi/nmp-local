@@ -14,7 +14,7 @@ public class LinkRelationRequest extends BaseRequest{
 
     private String stationType;
 
-    private String device_type;
+    private String deviceType;
 
     private String createUser;
 
@@ -114,11 +114,11 @@ public class LinkRelationRequest extends BaseRequest{
         this.stationType = stationType;
     }
 
-    public String getDevice_type() {
-        return device_type;
+    public String getDeviceType() {
+        return deviceType;
     }
 
-    public void setDevice_type(String device_type) {
-        this.device_type = device_type;
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 }

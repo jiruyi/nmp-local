@@ -178,6 +178,13 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
 
     @Override
     public List<NmplCompanyInfoVo> queryCompanyList(CompanyInfoRequest companyInfoRequest) {
+        Map<String,NmplCompanyInfo>map = new HashMap<>();
+        if(companyInfoRequest.getCompanyType().equals("02")){
+            List<NmplCompanyInfo> allCompanyInfo = nmplCompanyInfoMapper.selectByExample(null);
+            for (NmplCompanyInfo nmplCompanyInfo : allCompanyInfo) {
+                map.put(nmplCompanyInfo.getCompanyCode(),nmplCompanyInfo);
+            }
+        }
         NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
         NmplCompanyInfoExample.Criteria criteria = nmplCompanyInfoExample.createCriteria();
 
@@ -187,11 +194,19 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         criteria.andIsExistEqualTo(true);
 
         List<NmplCompanyInfo> nmplCompanyInfoList = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
-
         List<NmplCompanyInfoVo> nmplCompanyInfos = new ArrayList<>();
         for (NmplCompanyInfo nmplCompanyInfo : nmplCompanyInfoList) {
             NmplCompanyInfoVo companyInfo = new NmplCompanyInfoVo();
             BeanUtils.copyProperties(nmplCompanyInfo,companyInfo);
+            if(companyInfo.getCompanyType().equals("02")){
+                //通过map找到大区id 大区名称
+                companyInfo.setRegionId(map.get(companyInfo.getParentCode()).getCompanyId());
+                companyInfo.setRegionName(map.get(companyInfo.getParentCode()).getCompanyName());
+
+                //找到运营商id,运营商名称
+                companyInfo.setOperatorId(map.get(map.get(companyInfo.getParentCode()).getParentCode()).getCompanyId());
+                companyInfo.setOperatorName(map.get(map.get(companyInfo.getParentCode()).getParentCode()).getCompanyName());
+            }
             nmplCompanyInfos.add(companyInfo);
         }
         return nmplCompanyInfos;

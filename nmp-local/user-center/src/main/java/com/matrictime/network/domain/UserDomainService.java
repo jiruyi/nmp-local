@@ -1,5 +1,7 @@
 package com.matrictime.network.domain;
 
+import com.matrictime.network.api.request.UserRequest;
+
 /**
  * @author jiruyi
  * @copyright www.matrictime.com
@@ -7,5 +9,7 @@ package com.matrictime.network.domain;
  * @date 2022/3/31 0031 16:23
  * @desc
  */
-public interface DemoDomainService {
+public interface UserDomainService {
+
+    int modifyUserInfo(UserRequest userRequest);
 }
