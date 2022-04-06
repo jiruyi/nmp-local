@@ -307,11 +307,10 @@
       link_type = #{linkType,jdbcType=VARCHAR},
       main_device_id = #{mainDeviceId,jdbcType=VARCHAR},
       follow_device_id = #{followDeviceId,jdbcType=VARCHAR}
-    where main_device_id = #{mainDeviceId,jdbcType=VARCHAR}
-    and follow_device_id = #{followDeviceId,jdbcType=VARCHAR}
+    where id = #{id}
   </update>
   <select id="selectLinkRelation" parameterType="com.matrictime.network.request.LinkRelationRequest" resultType="com.matrictime.network.modelVo.LinkRelationVo">
-    select id link_name,link_type,main_device_id,follow_device_id,create_user from nmpl_link_relation
+    select id, link_name,link_type,main_device_id,follow_device_id,create_user from nmpl_link_relation
     <where>
       is_exist = 1
       <if test="linkName != null and linkName != ''">

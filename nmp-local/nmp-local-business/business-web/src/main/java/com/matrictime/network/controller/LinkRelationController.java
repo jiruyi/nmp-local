@@ -116,7 +116,7 @@ public class LinkRelationController {
         return result;
     }
 
-    @RequiresPermissions("sys:link::query")
+    @RequiresPermissions("sys:link:query")
     @SystemLog(opermodul = "链路管理模块",operDesc = "查询链路信息",operType = "查询链路信息")
     @RequestMapping(value = "/selectLinkRelation",method = RequestMethod.POST)
     public Result<PageInfo<LinkRelationVo>> selectLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
@@ -180,24 +180,28 @@ public class LinkRelationController {
                 linkRelationVo.setMainPublicNetworkPort(mainDeviceInfoVo.getPublicNetworkPort());
                 linkRelationVo.setMainLanIp(mainDeviceInfoVo.getLanIp());
                 linkRelationVo.setMainLanPort(mainDeviceInfoVo.getLanPort());
+                linkRelationVo.setMainDeviceName(mainDeviceInfoVo.getDeviceName());
             }
             if(followDeviceInfoVo != null){
                 linkRelationVo.setFollowPublicNetworkIp(followDeviceInfoVo.getPublicNetworkIp());
                 linkRelationVo.setFollowPublicNetworkPort(followDeviceInfoVo.getPublicNetworkPort());
                 linkRelationVo.setFollowLanPort(followDeviceInfoVo.getLanPort());
                 linkRelationVo.setFollowLanIp(followDeviceInfoVo.getLanIp());
+                linkRelationVo.setFollowDeviceName(followDeviceInfoVo.getDeviceName());
             }
             if(mainBaseStationInfoVo != null){
                 linkRelationVo.setMainPublicNetworkIp(mainBaseStationInfoVo.getPublicNetworkIp());
                 linkRelationVo.setMainPublicNetworkPort(mainBaseStationInfoVo.getPublicNetworkPort());
                 linkRelationVo.setMainLanIp(mainBaseStationInfoVo.getLanIp());
                 linkRelationVo.setMainLanPort(mainBaseStationInfoVo.getLanPort());
+                linkRelationVo.setMainDeviceName(mainBaseStationInfoVo.getStationName());
             }
             if(followBaseStationInfoVo != null){
                 linkRelationVo.setFollowPublicNetworkIp(followBaseStationInfoVo.getPublicNetworkIp());
                 linkRelationVo.setFollowPublicNetworkPort(followBaseStationInfoVo.getPublicNetworkPort());
                 linkRelationVo.setFollowLanPort(followBaseStationInfoVo.getLanPort());
                 linkRelationVo.setFollowLanIp(followBaseStationInfoVo.getLanIp());
+                linkRelationVo.setFollowDeviceName(followBaseStationInfoVo.getStationName());
             }
             linkRelationVos.add(linkRelationVo);
         }

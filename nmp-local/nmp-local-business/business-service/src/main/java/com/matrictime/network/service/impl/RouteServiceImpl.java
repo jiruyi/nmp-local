@@ -77,6 +77,7 @@ public class RouteServiceImpl implements RouteService {
         Date date = new Date();
         try {
             routeRequest.setUpdateTime(getFormatDate(date));
+            routeRequest.setCreateUser(RequestContext.getUser().getNickName());
             Integer updateFlag = routeDomainService.updateRoute(routeRequest);
             //List<Future<List<Result>>> futures = collectResult(routeRequest);
             result.setResultObj(updateFlag);
