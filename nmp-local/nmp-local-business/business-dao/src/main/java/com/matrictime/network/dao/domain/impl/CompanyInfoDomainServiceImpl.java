@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -46,24 +47,21 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
 
     @Override
     public Integer save(CompanyInfoRequest companyInfoRequest) {
-        //电话有座机手机号 此处不做校验
-//        if (companyInfoRequest.getTelephone()!=null){
-//            if(!isMobile(companyInfoRequest.getTelephone())){
-//                throw new SystemException("电话格式异常");
-//            }
-//        }
-        NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
-        NmplCompanyInfoExample.Criteria criteria = nmplCompanyInfoExample.createCriteria();
+
         if(companyInfoRequest.getCompanyCode()!=null){
-            criteria.andCompanyCodeEqualTo(companyInfoRequest.getCompanyCode());
-            List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
+            NmplCompanyInfoExample nmplCompanyInfoExample1 = new NmplCompanyInfoExample();
+            NmplCompanyInfoExample.Criteria criteria1 = nmplCompanyInfoExample1.createCriteria();
+            criteria1.andCompanyCodeEqualTo(companyInfoRequest.getCompanyCode());
+            List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample1);
             if(!CollectionUtils.isEmpty(infos)){
                 throw new SystemException("编码重复");
             }
         }
         if (companyInfoRequest.getParentCode()!=null){
-            criteria.andCompanyCodeEqualTo(companyInfoRequest.getParentCode()).andIsExistEqualTo(true);
-            List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
+            NmplCompanyInfoExample nmplCompanyInfoExample2 = new NmplCompanyInfoExample();
+            NmplCompanyInfoExample.Criteria criteria2 = nmplCompanyInfoExample2.createCriteria();
+            criteria2.andCompanyCodeEqualTo(companyInfoRequest.getParentCode()).andIsExistEqualTo(true);
+            List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample2);
             if (CollectionUtils.isEmpty(infos)){
                 throw new SystemException("无父单位信息");
             }
@@ -104,11 +102,7 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         if (!info.getCompanyType().equals(companyInfoRequest.getCompanyType())){
             throw new SystemException("修改区域类型不一致");
         }
-        if (companyInfoRequest.getTelephone()!=null){
-            if(!isMobile(companyInfoRequest.getTelephone())){
-                throw new SystemException("电话格式异常");
-            }
-        }
+
         NmplCompanyInfo nmplCompanyInfo = new NmplCompanyInfo();
         BeanUtils.copyProperties(companyInfoRequest,nmplCompanyInfo);
         nmplCompanyInfo.setUpdateTime(new Date());
@@ -152,6 +146,9 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
             nmplCompanyInfos.add(companyInfo);
         }
 
+        nmplCompanyInfos = nmplCompanyInfos.stream()
+                        .sorted(Comparator.comparing(NmplCompanyInfoVo::getCompanyId).reversed())
+                        .collect(Collectors.toList());
         pageResult.setList(nmplCompanyInfos);
         pageResult.setCount((int) page.getTotal());
         pageResult.setPages(page.getPages());

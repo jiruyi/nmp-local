@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 
  * @author   hexu
- * @date   2022-03-02
+ * @date   2022-04-07
  */
 @Data
 public class NmplCompanyInfo {
@@ -19,6 +19,11 @@ public class NmplCompanyInfo {
      * 单位名称
      */
     private String companyName;
+
+    /**
+     * 单位名称
+     */
+    private String unitName;
 
     /**
      * 国家码
@@ -99,6 +104,14 @@ public class NmplCompanyInfo {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName == null ? null : companyName.trim();
+    }
+
+    public String getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName == null ? null : unitName.trim();
     }
 
     public String getCountryCode() {
