@@ -70,10 +70,12 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     private static final String TOTAL_BAND_WIDTH_CODE = "bandwidth";
     private static final String INTRANET_BROADBAND_LOAD_CODE = "intranetBroadbandLoad";
     private static final String INTERNET_BROADBAND_LOAD_CODE = "internetBroadbandLoad";
+    private static final String TIMER_SHAFT = "timerShaft";
 
     // TODO: 2022/4/2 上线前需要确认配置信息
-    private static final int USER_COUNT_TIME = -15;
-    private static final int TOTAL_BAND_WIDTH_TIME = -15;
+    private static final int USER_COUNT_TIME = 15;
+    private static final int TOTAL_BAND_WIDTH_TIME = 15;
+    private static final int SPLIT_TIME = 15;
 
     @Override
     public Result<CheckHeartResp> checkHeart(CheckHeartReq req) {
@@ -244,17 +246,16 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                     bexample.createCriteria().andStationTypeEqualTo(req.getDeviceType()).andRelationOperatorIdEqualTo(req.getRoId()).andIsExistEqualTo(DataConstants.IS_EXIST);
                     List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bexample);
                     if (!CollectionUtils.isEmpty(stationInfos)){
-                        Map<String, List<TotalLoadVo>> dataMap = new HashMap<>();
-                        List<TotalLoadVo> inTotalLoadVos = new ArrayList<>(24*60/15);
-                        List<TotalLoadVo> outTotalLoadVos = new ArrayList<>(24*60/15);
+                        Map<String, List> dataMap = new HashMap<>();
+                        List<Long> inTotalLoadVos = new ArrayList<>(24*60/15);
+                        List<Long> outTotalLoadVos = new ArrayList<>(24*60/15);
+                        List<String> timeString = new ArrayList<>(24*60/15);
 
-                        Date startTime = DateUtils.getStartForDay(new Date());
-                        for (int i=15; i<24*60 ; i=i+15){
-                            TotalLoadVo inTotalLoadVo = new TotalLoadVo();
-                            TotalLoadVo outTotalLoadVo = new TotalLoadVo();
+                        Date startTime = DateUtils.addMinuteForDate(DateUtils.getStartForDay(new Date()), -SPLIT_TIME);
+                        for (int i=0; i<24*60/SPLIT_TIME ; i++){
                             BigDecimal inTotalLoad = BigDecimal.ZERO;
                             BigDecimal outTotalLoad = BigDecimal.ZERO;
-                            Date endTime = DateUtils.addMinuteForDate(startTime, i);
+                            Date endTime = DateUtils.addMinuteForDate(startTime, SPLIT_TIME);
                             for (NmplBaseStationInfo stationInfo : stationInfos){
                                 // 查询设备的内网总带宽
                                 BigDecimal decimal1 = nmplDataCollectExtMapper.countLoad(stationInfo.getStationId(), INTRANET_BROADBAND_LOAD_CODE, startTime, endTime);
@@ -263,43 +264,19 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                                 }
 
                                 // 查询设备的外网总带宽
-                                BigDecimal decimal2 = nmplDataCollectExtMapper.countLoad(stationInfo.getStationId(), INTRANET_BROADBAND_LOAD_CODE, startTime, endTime);
+                                BigDecimal decimal2 = nmplDataCollectExtMapper.countLoad(stationInfo.getStationId(), INTERNET_BROADBAND_LOAD_CODE, startTime, endTime);
                                 if (decimal2 != null){
                                     outTotalLoad = outTotalLoad.add(decimal2);
                                 }
                             }
-                            inTotalLoadVo.setTime(endTime);
-                            inTotalLoadVo.setData(inTotalLoad.longValueExact());
-                            outTotalLoadVo.setTime(endTime);
-                            outTotalLoadVo.setData(outTotalLoad.longValueExact());
-                            inTotalLoadVos.add(inTotalLoadVo);
-                            outTotalLoadVos.add(outTotalLoadVo);
+                            inTotalLoadVos.add(inTotalLoad.longValueExact());
+                            outTotalLoadVos.add(outTotalLoad.longValueExact());
+                            timeString.add(DateUtils.dateToString(endTime, DateUtils.MINUTE_TIME_FORMAT));
+                            startTime = endTime;
                         }
-//                        for (NmplBaseStationInfo stationInfo : stationInfos){
-//                            List<TotalLoadVo> inTotalLoadVos = new ArrayList<>(24*60/15);
-//                            List<TotalLoadVo> outTotalLoadVos = new ArrayList<>(24*60/15);
-//                            Date startTime = DateUtils.getStartForDay(new Date());
-//                            for (int i=15; i<24*60 ; i=i+15){
-//                                TotalLoadVo intotalLoadVo = new TotalLoadVo();
-//                                TotalLoadVo outtotalLoadVo = new TotalLoadVo();
-//                                Date endTime = DateUtils.addMinuteForDate(startTime, i);
-//                                // 查询设备的内网总带宽
-//                                BigDecimal intotalLoad = nmplDataCollectExtMapper.countLoad(stationInfo.getStationId(), INTRANET_BROADBAND_LOAD_CODE, startTime, endTime);
-//                                intotalLoadVo.setTime(endTime);
-//                                intotalLoadVo.setData(intotalLoad.longValueExact());
-//                                inTotalLoadVos.add(intotalLoadVo);
-//
-//                                // 查询设备的外网总带宽
-//                                BigDecimal outtotalLoad = nmplDataCollectExtMapper.countLoad(stationInfo.getStationId(), INTRANET_BROADBAND_LOAD_CODE, startTime, endTime);
-//                                outtotalLoadVo.setTime(endTime);
-//                                outtotalLoadVo.setData(outtotalLoad.longValueExact());
-//                                outTotalLoadVos.add(outtotalLoadVo);
-//                                startTime = endTime;
-//                            }
-//                            dataMap.put(stationInfo.getStationId(),totalLoadVos);
-//                        }
                         dataMap.put(INTRANET_BROADBAND_LOAD_CODE,inTotalLoadVos);
                         dataMap.put(INTERNET_BROADBAND_LOAD_CODE,outTotalLoadVos);
+                        dataMap.put(TIMER_SHAFT,timeString);
                         resp = new TotalLoadChangeResp();
                         resp.setDataMap(dataMap);
                     }
@@ -309,17 +286,18 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                     dexample.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andRelationOperatorIdEqualTo(req.getRoId()).andIsExistEqualTo(DataConstants.IS_EXIST);
                     List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dexample);
                     if (!CollectionUtils.isEmpty(deviceInfos)){
-                        Map<String, List<TotalLoadVo>> dataMap = new HashMap<>(deviceInfos.size());
-                        List<TotalLoadVo> inTotalLoadVos = new ArrayList<>(24*60/15);
-                        List<TotalLoadVo> outTotalLoadVos = new ArrayList<>(24*60/15);
+                        Map<String, List> dataMap = new HashMap<>();
+                        List<Long> inTotalLoadVos = new ArrayList<>(24*60/15);
+                        List<Long> outTotalLoadVos = new ArrayList<>(24*60/15);
+                        List<String> timeString = new ArrayList<>(24*60/15);
 
                         Date startTime = DateUtils.getStartForDay(new Date());
-                        for (int i=15; i<24*60 ; i=i+15){
+                        for (int i=0; i<24*60/SPLIT_TIME; i++){
                             TotalLoadVo inTotalLoadVo = new TotalLoadVo();
                             TotalLoadVo outTotalLoadVo = new TotalLoadVo();
                             BigDecimal inTotalLoad = BigDecimal.ZERO;
                             BigDecimal outTotalLoad = BigDecimal.ZERO;
-                            Date endTime = DateUtils.addMinuteForDate(startTime, i);
+                            Date endTime = DateUtils.addMinuteForDate(startTime, SPLIT_TIME);
                             for (NmplDeviceInfo deviceInfo : deviceInfos){
                                 // 查询设备的内网总带宽
                                 BigDecimal decimal1 = nmplDataCollectExtMapper.countLoad(deviceInfo.getDeviceId(), INTRANET_BROADBAND_LOAD_CODE, startTime, endTime);
@@ -328,20 +306,19 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                                 }
 
                                 // 查询设备的外网总带宽
-                                BigDecimal decimal2 = nmplDataCollectExtMapper.countLoad(deviceInfo.getDeviceId(), INTRANET_BROADBAND_LOAD_CODE, startTime, endTime);
+                                BigDecimal decimal2 = nmplDataCollectExtMapper.countLoad(deviceInfo.getDeviceId(), INTERNET_BROADBAND_LOAD_CODE, startTime, endTime);
                                 if (decimal2 != null){
                                     outTotalLoad = outTotalLoad.add(decimal2);
                                 }
                             }
-                            inTotalLoadVo.setTime(endTime);
-                            inTotalLoadVo.setData(inTotalLoad.longValueExact());
-                            outTotalLoadVo.setTime(endTime);
-                            outTotalLoadVo.setData(outTotalLoad.longValueExact());
-                            inTotalLoadVos.add(inTotalLoadVo);
-                            outTotalLoadVos.add(outTotalLoadVo);
+                            inTotalLoadVos.add(inTotalLoad.longValueExact());
+                            outTotalLoadVos.add(outTotalLoad.longValueExact());
+                            timeString.add(DateUtils.dateToString(endTime, DateUtils.MINUTE_TIME_FORMAT));
+                            startTime = endTime;
                         }
                         dataMap.put(INTRANET_BROADBAND_LOAD_CODE,inTotalLoadVos);
                         dataMap.put(INTERNET_BROADBAND_LOAD_CODE,outTotalLoadVos);
+                        dataMap.put(TIMER_SHAFT,timeString);
                         resp = new TotalLoadChangeResp();
                         resp.setDataMap(dataMap);
                     }
@@ -410,9 +387,9 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     private Long addUserCount(Long userCount,String deviceId){
         NmplDataCollectExample example = new NmplDataCollectExample();
         example.setOrderByClause("upload_time desc");
-        example.createCriteria().andDeviceIdEqualTo(deviceId).andDataItemCodeEqualTo(USER_COUNT_CODE).andUploadTimeGreaterThan(DateUtils.addMinuteForDate(new Date(),USER_COUNT_TIME));
+        example.createCriteria().andDeviceIdEqualTo(deviceId).andDataItemCodeEqualTo(USER_COUNT_CODE).andUploadTimeGreaterThan(DateUtils.addMinuteForDate(new Date(),-USER_COUNT_TIME));
         List<NmplDataCollect> dataCollects = nmplDataCollectMapper.selectByExample(example);
-        if (CollectionUtils.isEmpty(dataCollects)){
+        if (!CollectionUtils.isEmpty(dataCollects)){
             String dataItemValue = dataCollects.get(0).getDataItemValue();
             userCount = userCount + Long.valueOf(dataItemValue);
         }
@@ -422,9 +399,9 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     private Long addTotalBandwidth(Long totalBandwidth,String deviceId){
         NmplDataCollectExample example = new NmplDataCollectExample();
         example.setOrderByClause("upload_time desc");
-        example.createCriteria().andDeviceIdEqualTo(deviceId).andDataItemCodeEqualTo(TOTAL_BAND_WIDTH_CODE).andUploadTimeGreaterThan(DateUtils.addMinuteForDate(new Date(),TOTAL_BAND_WIDTH_TIME));
+        example.createCriteria().andDeviceIdEqualTo(deviceId).andDataItemCodeEqualTo(TOTAL_BAND_WIDTH_CODE).andUploadTimeGreaterThan(DateUtils.addMinuteForDate(new Date(),-TOTAL_BAND_WIDTH_TIME));
         List<NmplDataCollect> dataCollects = nmplDataCollectMapper.selectByExample(example);
-        if (CollectionUtils.isEmpty(dataCollects)){
+        if (!CollectionUtils.isEmpty(dataCollects)){
             String dataItemValue = dataCollects.get(0).getDataItemValue();
             totalBandwidth = totalBandwidth + Long.valueOf(dataItemValue);
         }
