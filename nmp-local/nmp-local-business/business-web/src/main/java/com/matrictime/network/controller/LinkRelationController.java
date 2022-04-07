@@ -181,6 +181,7 @@ public class LinkRelationController {
                 linkRelationVo.setMainLanIp(mainDeviceInfoVo.getLanIp());
                 linkRelationVo.setMainLanPort(mainDeviceInfoVo.getLanPort());
                 linkRelationVo.setMainDeviceName(mainDeviceInfoVo.getDeviceName());
+                linkRelationVos.add(linkRelationVo);
             }
             if(followDeviceInfoVo != null){
                 linkRelationVo.setFollowPublicNetworkIp(followDeviceInfoVo.getPublicNetworkIp());
@@ -188,6 +189,7 @@ public class LinkRelationController {
                 linkRelationVo.setFollowLanPort(followDeviceInfoVo.getLanPort());
                 linkRelationVo.setFollowLanIp(followDeviceInfoVo.getLanIp());
                 linkRelationVo.setFollowDeviceName(followDeviceInfoVo.getDeviceName());
+                linkRelationVos.add(linkRelationVo);
             }
             if(mainBaseStationInfoVo != null){
                 linkRelationVo.setMainPublicNetworkIp(mainBaseStationInfoVo.getPublicNetworkIp());
@@ -195,6 +197,7 @@ public class LinkRelationController {
                 linkRelationVo.setMainLanIp(mainBaseStationInfoVo.getLanIp());
                 linkRelationVo.setMainLanPort(mainBaseStationInfoVo.getLanPort());
                 linkRelationVo.setMainDeviceName(mainBaseStationInfoVo.getStationName());
+                linkRelationVos.add(linkRelationVo);
             }
             if(followBaseStationInfoVo != null){
                 linkRelationVo.setFollowPublicNetworkIp(followBaseStationInfoVo.getPublicNetworkIp());
@@ -202,8 +205,8 @@ public class LinkRelationController {
                 linkRelationVo.setFollowLanPort(followBaseStationInfoVo.getLanPort());
                 linkRelationVo.setFollowLanIp(followBaseStationInfoVo.getLanIp());
                 linkRelationVo.setFollowDeviceName(followBaseStationInfoVo.getStationName());
+                linkRelationVos.add(linkRelationVo);
             }
-            linkRelationVos.add(linkRelationVo);
         }
         pageInfo.setList(linkRelationVos);
         return pageInfo;
