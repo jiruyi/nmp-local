@@ -4,6 +4,7 @@ import com.matrictime.network.config.RestTemplateContextConfig;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.RouteDomainService;
+import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.RouteVo;
@@ -77,7 +78,7 @@ public class RouteServiceImpl implements RouteService {
         Date date = new Date();
         try {
             routeRequest.setUpdateTime(getFormatDate(date));
-            routeRequest.setCreateUser(RequestContext.getUser().getNickName());
+            routeRequest.setUpdateUser(RequestContext.getUser().getNickName());
             Integer updateFlag = routeDomainService.updateRoute(routeRequest);
             //List<Future<List<Result>>> futures = collectResult(routeRequest);
             result.setResultObj(updateFlag);
@@ -100,6 +101,13 @@ public class RouteServiceImpl implements RouteService {
             result.setErrorMsg(e.getMessage());
         }
         return result;
+    }
+
+    @Override
+    public List<NmplDeviceInfoExt> selectDevices() {
+        List<NmplDeviceInfoExt> deviceInfoExtList;
+        deviceInfoExtList = routeDomainService.selectDevices();
+        return deviceInfoExtList;
     }
 
     /*
