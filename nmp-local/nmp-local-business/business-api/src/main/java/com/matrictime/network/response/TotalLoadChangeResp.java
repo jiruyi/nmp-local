@@ -14,5 +14,5 @@ public class TotalLoadChangeResp implements Serializable {
     /**
      * 数据列表
      */
-    private Map<String,List<TotalLoadVo>> dataMap;
+    private Map<String,List> dataMap;
 }
