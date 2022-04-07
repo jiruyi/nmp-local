@@ -4,6 +4,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.dao.domain.RouteDomainService;
 import com.matrictime.network.dao.mapper.NmplRouteMapper;
+import com.matrictime.network.dao.mapper.extend.NmplSignalExtMapper;
+import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.modelVo.LinkRelationVo;
 import com.matrictime.network.modelVo.RouteVo;
 import com.matrictime.network.request.RouteRequest;
@@ -20,6 +22,9 @@ public class RouteDomainServiceImpl implements RouteDomainService {
 
     @Resource
     private NmplRouteMapper nmplRouteMapper;
+
+    @Resource
+    NmplSignalExtMapper nmplSignalExtMapper;
 
     @Override
     public int insertRoute(RouteRequest routeRequest) {
@@ -45,5 +50,10 @@ public class RouteDomainServiceImpl implements RouteDomainService {
         pageResult.setCount((int) page.getTotal());
         pageResult.setPages(page.getPages());
         return  pageResult;
+    }
+
+    @Override
+    public List<NmplDeviceInfoExt> selectDevices() {
+        return nmplSignalExtMapper.selectDevices();
     }
 }

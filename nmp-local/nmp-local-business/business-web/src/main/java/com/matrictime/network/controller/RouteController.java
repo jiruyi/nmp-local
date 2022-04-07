@@ -3,6 +3,7 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.base.enums.StationTypeEnum;
+import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.RouteVo;
@@ -49,6 +50,14 @@ public class RouteController {
             result.setErrorMsg("路由查询边界基站设备异常");
         }
         return result;
+    }
+
+    @SystemLog(opermodul = "路由管理模块",operDesc = "路由查询边界基站设备",operType = "路由查询边界基站设备")
+    @RequestMapping(value = "/selectDevice",method = RequestMethod.POST)
+    public List<NmplDeviceInfoExt> selectDevice(){
+        List<NmplDeviceInfoExt> deviceInfoExtList;
+        deviceInfoExtList = routeService.selectDevices();
+        return deviceInfoExtList;
     }
 
     @RequiresPermissions("sys:route:save")
@@ -150,18 +159,19 @@ public class RouteController {
     * */
     private PageInfo<RouteVo> routeVoPageInfo(Map<String,BaseStationInfoVo> baseStationInfoVoMap,List<RouteVo> routeVoList){
         PageInfo<RouteVo> pageInfo = new PageInfo<>();
+        List<RouteVo> routeResult = new ArrayList<>();
         for(int resultIndex = 0;resultIndex < routeVoList.size();resultIndex++){
             BaseStationInfoVo baseStationInfoVo = baseStationInfoVoMap.get(routeVoList.get(resultIndex).getBoundaryDeviceId());
-            if(baseStationInfoVo!= null){
+            if(baseStationInfoVo!= null) {
                 routeVoList.get(resultIndex).setBoundaryDevicePublicIp(baseStationInfoVo.getPublicNetworkIp());
                 routeVoList.get(resultIndex).setBoundaryDevicePublicPort(baseStationInfoVo.getPublicNetworkPort());
                 routeVoList.get(resultIndex).setBoundaryDeviceLanIp(baseStationInfoVo.getLanIp());
                 routeVoList.get(resultIndex).setBoundaryDeviceLanPort(baseStationInfoVo.getLanPort());
-            }else {
-                return null;
+                routeVoList.get(resultIndex).setStationName(baseStationInfoVo.getStationName());
+                routeResult.add(routeVoList.get(resultIndex));
             }
         }
-        pageInfo.setList(routeVoList);
+        pageInfo.setList(routeResult);
         return pageInfo;
     }
 

@@ -502,9 +502,6 @@
       <if test="stationName != null and stationName != ''">
         and station_name = #{stationName,jdbcType=VARCHAR}
       </if>
-      <if test="stationType != null and stationType != ''">
-        and station_type = #{stationType,jdbcType=CHAR}
-      </if>
       <if test="relationOperatorId != null and relationOperatorId != ''">
         and relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
       </if>
