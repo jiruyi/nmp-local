@@ -21,8 +21,8 @@
         group_id = #{groupId,jdbcType=BIGINT}
     </update>
 
-    <select id="selectByCondition" resultType="com.matrictime.network.api.response.UserGroupResp">
-        select * from user_group a,user b where a.user_id=b.user_id
+    <select id="selectByCondition" resultType="com.matrictime.network.api.modelVo.UserGroupVo">
+        select a.*,b.login_status,b.nick_name from user_group a,user b where a.user_id=b.user_id
         <trim prefix="(" suffix=")" suffixOverrides="and">
             <if test="groupId != null">
                 and  group_id = #{targetGroupId,jdbcType=BIGINT}
