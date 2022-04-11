@@ -1,6 +1,7 @@
 package com.matrictime.network.controller;
 
 import com.matrictime.network.annotation.SystemLog;
+import com.matrictime.network.dao.mapper.NmplVersionFileMapper;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
@@ -10,6 +11,8 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RequestMapping(value = "/version")
 @RestController
@@ -21,6 +24,9 @@ public class VersionController {
 
     @Autowired
     private VersionService versionService;
+
+    @Autowired(required = false)
+    private NmplVersionFileMapper nmplVersionFileMapper;
 
 
     /**
@@ -138,6 +144,20 @@ public class VersionController {
         }catch (Exception e){
             log.error("VersionController.pushVersionFile exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 获取版本文件
+     * @param fileId
+     * @param resp
+     */
+    @RequestMapping (value = "/getVersionFile",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "获取版本文件",operType = "取文件")
+    public void getVersionFile(@RequestParam("fileId") String fileId,HttpServletResponse resp){
+        try {
+        }catch (Exception e){
+            log.error("VersionController.getVersionFile exception:{}",e.getMessage());
         }
     }
 

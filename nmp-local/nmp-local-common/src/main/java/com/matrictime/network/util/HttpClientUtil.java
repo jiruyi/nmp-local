@@ -1,6 +1,7 @@
 package com.matrictime.network.util;
 
 import com.matrictime.network.constant.DataConstants;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -31,7 +32,7 @@ import java.util.Set;
 public class HttpClientUtil {
 
     // TODO: 2022/4/1 上线需确认超时时间 
-    private static final Integer TIME_OUT = 50;
+    private static final Integer TIME_OUT = 6000;
 
     private static final String HTTP_TITLE = "http://";
 
@@ -123,8 +124,8 @@ public class HttpClientUtil {
         //设置请求和传输超时时间
         RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
         httpPost.setConfig(requestConfig);
-        httpPost.setHeader("Content-Type", "text/json; charset=utf-8");
-        httpPost.setEntity(new StringEntity(URLEncoder.encode(data, "UTF-8")));
+        httpPost.setHeader("Content-Type", "application/json; charset=utf-8");
+        httpPost.setEntity(new StringEntity(data, "UTF-8"));
         HttpResponse response = httpClient.execute(httpPost);
         String httpEntityContent = getHttpEntityContent(response);
         httpPost.abort();
