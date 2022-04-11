@@ -105,4 +105,9 @@ public class NmplCompanyInfoVo {
      * 大区ID
      */
     private Long regionId;
+
+    /**
+     * 单位名称
+     */
+    private String unitName;
 }
