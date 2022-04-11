@@ -7,6 +7,16 @@ public class StationVo implements Serializable {
 
     private String deviceId;
 
+    private String stationNetworkId;
+
+    public String getStationNetworkId() {
+        return stationNetworkId;
+    }
+
+    public void setStationNetworkId(String stationNetworkId) {
+        this.stationNetworkId = stationNetworkId;
+    }
+
     public String getDeviceId() {
         return deviceId;
     }

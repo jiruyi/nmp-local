@@ -96,9 +96,9 @@ public class BaseStationController {
         return result;
     }
 
-    @SystemLog(opermodul = "基站管理模块",operDesc = "根据ip获取设备Id",operType = "根据ip获取设备Id")
-    @RequestMapping(value = "/selectDeviceId",method = RequestMethod.POST)
-    public Result<StationVo> selectDeviceId(@RequestBody DeviceInfoRequest deviceInfoRequest){
+    @SystemLog(opermodul = "基站管理模块",operDesc = "根据ip获取设备Id",operType = "根据ip获取设备信息")
+    @RequestMapping(value = "/selectDevice",method = RequestMethod.POST)
+    public Result<StationVo> selectDevice(@RequestBody DeviceInfoRequest deviceInfoRequest){
         Result<StationVo> result = new Result<>();
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         try {
