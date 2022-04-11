@@ -97,4 +97,5 @@ public class DataConstants {
     public static final String KEY_URL = "url";
     public static final String KEY_USER_ID = "userId";
     public static final String KEY_FILE_PATH = "filePath";
+    public static final String KEY_FILE_NAME = "fileName";
 }

@@ -400,7 +400,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
     public Result<PushVersionFileResp> pushVersionFile(PushVersionFileReq req) {
         Result result;
         try {
-            PushVersionFileResp resp = null;
+            PushVersionFileResp resp = new PushVersionFileResp();
             // check param is legal
             checkPushVersionFileParam(req);
 
@@ -417,6 +417,8 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                 Map<String,String> map = new HashMap<>();
                 map.put(KEY_DEVICE_ID,deviceId);
                 map.put(KEY_FILE_ID,String.valueOf(file.getId()));
+                map.put(KEY_FILE_PATH,file.getFilePath());
+                map.put(KEY_FILE_NAME,file.getFileName());
                 switch (req.getSystemId()){
                     case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_0:
                         NmplBaseStationInfoExample bexample = new NmplBaseStationInfoExample();
@@ -426,7 +428,6 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                             NmplBaseStationInfo info = stationInfos.get(0);
                             // TODO: 2022/4/7 path需要提供
                             map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
-                            map.put(KEY_FILE_PATH,file.getFilePath() + file.getFileName());
                             httpList.add(map);
                         }
                         break;
@@ -440,63 +441,62 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                             NmplDeviceInfo info = deviceInfos.get(0);
                             // TODO: 2022/4/7 path需要提供
                             map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
-                            map.put(KEY_FILE_PATH,file.getFilePath() + file.getFileName());
                             httpList.add(map);
                         }
                         break;
                     default:
                         break;
                 }
+            }
 
-                if (!CollectionUtils.isEmpty(httpList)){
-                    List<Future> futures = new ArrayList<>();
-                    if (httpList.size()>maxPoolSize){
-                        List<List<Map<String, String>>> splitList = splitList(httpList);
-                        for (List<Map<String, String>> tmpList : splitList){
-                            Future<Map<String, List<String>>> mapFuture = asyncService.httpPushFile(tmpList);
-                            futures.add(mapFuture);
-                        }
-                    }else {
-                        Future<Map<String, List<String>>> mapFuture = asyncService.httpPushFile(httpList);
+            if (!CollectionUtils.isEmpty(httpList)){
+                List<Future> futures = new ArrayList<>();
+                if (httpList.size()>maxPoolSize){
+                    List<List<Map<String, String>>> splitList = splitList(httpList);
+                    for (List<Map<String, String>> tmpList : splitList){
+                        Future<Map<String, List<String>>> mapFuture = asyncService.httpPushFile(tmpList);
                         futures.add(mapFuture);
                     }
+                }else {
+                    Future<Map<String, List<String>>> mapFuture = asyncService.httpPushFile(httpList);
+                    futures.add(mapFuture);
+                }
 
-                    Date timeout = DateUtils.addMinuteForDate(new Date(), versionStartFileTimeOut);
-                    while (true) {
-                        if (!CollectionUtils.isEmpty(futures)) {
-                            boolean isAllDone = true;
-                            for (Future future : futures) {
-                                if (null == future || !future.isDone()) {
-                                    isAllDone = false;
-                                }else {
-                                    try {
-                                        Map<String, List<String>> msg =  (Map<String, List<String>>) future.get();
-                                        if (!CollectionUtils.isEmpty(msg)) {
-                                            if (!CollectionUtils.isEmpty(msg.get(KEY_SUCCESS_IDS))){
-                                                successIds.addAll(msg.get(KEY_SUCCESS_IDS));
-                                            }
-                                            if (!CollectionUtils.isEmpty(msg.get(KEY_FAIL_IDS))){
-                                                failIds.addAll(msg.get(KEY_FAIL_IDS));
-                                            }
+                Date timeout = DateUtils.addMinuteForDate(new Date(), versionStartFileTimeOut);
+                while (true) {
+                    if (!CollectionUtils.isEmpty(futures)) {
+                        boolean isAllDone = true;
+                        for (Future future : futures) {
+                            if (null == future || !future.isDone()) {
+                                isAllDone = false;
+                            }else {
+                                try {
+                                    Map<String, List<String>> msg =  (Map<String, List<String>>) future.get();
+                                    if (!CollectionUtils.isEmpty(msg)) {
+                                        if (!CollectionUtils.isEmpty(msg.get(KEY_SUCCESS_IDS))){
+                                            successIds.addAll(msg.get(KEY_SUCCESS_IDS));
                                         }
-                                    } catch (Exception e) {
-                                        log.info("版本文件启动线程池处理单个批次配置出错！error:{}",e.getMessage());
+                                        if (!CollectionUtils.isEmpty(msg.get(KEY_FAIL_IDS))){
+                                            failIds.addAll(msg.get(KEY_FAIL_IDS));
+                                        }
                                     }
+                                } catch (Exception e) {
+                                    log.info("版本文件启动线程池处理单个批次配置出错！error:{}",e.getMessage());
                                 }
                             }
-                            if (isAllDone || new Date().after(timeout)) {
-                                break;
-                            }
-                        }else {
+                        }
+                        if (isAllDone || new Date().after(timeout)) {
                             break;
                         }
+                    }else {
+                        break;
                     }
-                    if (successIds.size()>0){
-                        NmplVersionFile versionFile = new NmplVersionFile();
-                        versionFile.setId(req.getFileId());
-                        versionFile.setIsPush(com.matrictime.network.base.constant.DataConstants.VERSION_FILE_IS_PUSHED);
-                        nmplVersionFileMapper.updateByPrimaryKeySelective(versionFile);
-                    }
+                }
+                if (successIds.size()>0){
+                    NmplVersionFile versionFile = new NmplVersionFile();
+                    versionFile.setId(req.getFileId());
+                    versionFile.setIsPush(com.matrictime.network.base.constant.DataConstants.VERSION_FILE_IS_PUSHED);
+                    nmplVersionFileMapper.updateByPrimaryKeySelective(versionFile);
                 }
             }
 
@@ -519,6 +519,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         Result result;
 
         try {
+
             StartVersionFileResp resp = null;
             // check param is legal
             checkStartVersionFileParam(req);
@@ -544,15 +545,13 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                                     bexample.createCriteria().andStationIdEqualTo(deviceId).andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
                                     List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bexample);
                                     if (!CollectionUtils.isEmpty(stationInfos)){
-                                        for (NmplBaseStationInfo info : stationInfos){
-                                            Map<String,String> map = new HashMap<>();
-                                            map.put(KEY_DEVICE_ID,deviceId);
-                                            map.put(KEY_FILE_ID,String.valueOf(fileId));
-                                            // TODO: 2022/4/7 path需要提供
-                                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
-                                            map.put(KEY_FILE_PATH,versionFile.getFilePath() + versionFile.getFileName());
-                                            httpList.add(map);
-                                        }
+                                        NmplBaseStationInfo info = stationInfos.get(0);
+                                        Map<String,String> map = new HashMap<>();
+                                        map.put(KEY_DEVICE_ID,deviceId);
+                                        map.put(KEY_FILE_ID,String.valueOf(fileId));
+                                        // TODO: 2022/4/7 path需要提供
+                                        map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                                        httpList.add(map);
                                     }
                                 }
                                 break;
@@ -565,15 +564,14 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                                     dexample.createCriteria().andDeviceIdEqualTo(deviceId).andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
                                     List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dexample);
                                     if (!CollectionUtils.isEmpty(deviceInfos)){
-                                        for (NmplDeviceInfo info : deviceInfos){
-                                            Map<String,String> map = new HashMap<>();
-                                            map.put(KEY_DEVICE_ID,deviceId);
-                                            map.put(KEY_FILE_ID,String.valueOf(fileId));
-                                            // TODO: 2022/4/7 path需要提供
-                                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
-                                            map.put(KEY_FILE_PATH,versionFile.getFilePath() + versionFile.getFileName());
-                                            httpList.add(map);
-                                        }
+                                        NmplDeviceInfo info = deviceInfos.get(0);
+                                        Map<String,String> map = new HashMap<>();
+                                        map.put(KEY_DEVICE_ID,deviceId);
+                                        map.put(KEY_FILE_ID,String.valueOf(fileId));
+                                        // TODO: 2022/4/7 path需要提供
+                                        map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                                        map.put(KEY_FILE_PATH,versionFile.getFilePath() + versionFile.getFileName());
+                                        httpList.add(map);
                                     }
                                 }
                                 break;
@@ -730,9 +728,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         if (req.getFileId() == null){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "fileId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-//        if (ParamCheckUtil.checkVoStrBlank(req.getSystemId())){
-//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "systemId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-//        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getSystemId())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "systemId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
         if (CollectionUtils.isEmpty(req.getDeviceIds())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "deviceIds"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }

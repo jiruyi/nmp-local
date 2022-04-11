@@ -5,7 +5,6 @@ import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.RegisterReq;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.LoginService;
-import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

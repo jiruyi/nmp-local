@@ -4,4 +4,7 @@ public class DataConfig {
 
     public static final String LOGIN_TYPE_USER = "0";
     public static final String LOGIN_TYPE_ACCOUNT = "1";
+
+    public static final String LOGIN_STATUS_IN = "1";
+    public static final String LOGIN_STATUS_OUT = "0";
 }

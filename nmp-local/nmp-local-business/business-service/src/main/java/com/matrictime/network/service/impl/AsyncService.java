@@ -16,10 +16,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Future;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
@@ -157,15 +154,17 @@ public class AsyncService{
                 String fileId = map.get(KEY_FILE_ID);
                 String url = map.get(KEY_URL);
                 String filePath = map.get(KEY_FILE_PATH);
+                String fileName = map.get(KEY_FILE_NAME);
 
                 JSONObject jsonReq = new JSONObject();
                 jsonReq.put(KEY_FILE_ID,fileId);
                 jsonReq.put(KEY_FILE_PATH,filePath);
+                jsonReq.put(KEY_FILE_NAME,fileName);
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
-//                    String postResp = "{\"isSuccess\":true}";
+//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
+                    String postResp = "{\"isSuccess\":true}";
                     log.info("AsyncService.httpPushFile result deviceId:{},fileId:{},postResp:{}",deviceId,fileId,postResp);
                     JSONObject jsonObject = JSONObject.parseObject(postResp);
                     if (jsonObject != null){
@@ -185,6 +184,7 @@ public class AsyncService{
                                     NmplFileDeviceRel nmplFileDeviceRel = new NmplFileDeviceRel();
                                     nmplFileDeviceRel.setId(rels.get(0).getId());
                                     nmplFileDeviceRel.setIsDelete(IS_EXIST);
+                                    nmplFileDeviceRel.setUpdateTime(new Date());
                                     nmplFileDeviceRelMapper.updateByPrimaryKeySelective(nmplFileDeviceRel);
                                 }
                             }
@@ -220,11 +220,13 @@ public class AsyncService{
                 String deviceId = map.get(KEY_DEVICE_ID);
                 String fileId = map.get(KEY_FILE_ID);
                 String url = map.get(KEY_URL);
-                String filePath = map.get(KEY_FILE_PATH);
+
+                JSONObject jsonReq = new JSONObject();
+                jsonReq.put(KEY_FILE_ID,fileId);
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-//                    String postResp = HttpClientUtil.postForm(url, filePath);
+//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
                     String postResp = "{\"isSuccess\":true}";
                     log.info("AsyncService.httpStartFile result deviceId:{},fileId:{},postResp:{}",deviceId,fileId,postResp);
                     JSONObject jsonObject = JSONObject.parseObject(postResp);

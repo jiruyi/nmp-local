@@ -3,6 +3,8 @@ package com.matrictime.network.service;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.RegisterReq;
+import com.matrictime.network.api.response.LoginResp;
+import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.model.Result;
 
 public interface LoginService {
@@ -11,14 +13,14 @@ public interface LoginService {
      * @param registerReq
      * @return
      */
-    Result register(RegisterReq registerReq);
+    Result<RegisterResp> register(RegisterReq registerReq);
 
     /**
      * 登录
      * @param loginReq
      * @return
      */
-    Result login(LoginReq loginReq);
+    Result<LoginResp> login(LoginReq loginReq);
 
     /**
      * 登出

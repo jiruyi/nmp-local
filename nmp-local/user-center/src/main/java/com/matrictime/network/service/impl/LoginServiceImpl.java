@@ -24,6 +24,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+import static com.matrictime.network.config.DataConfig.LOGIN_STATUS_IN;
+
 @Service
 @Slf4j
 public class LoginServiceImpl extends SystemBaseService implements LoginService {
@@ -66,7 +68,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     @Override
-    public Result login(LoginReq req) {
+    public Result<LoginResp> login(LoginReq req) {
         Result result;
         try {
             LoginResp resp = new LoginResp();
@@ -89,6 +91,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
             }else {
                 User user = users.get(0);
+                user.setDeviceId(req.getDeviceId());
+                user.setDeviceIp(req.getDeviceIp());
+                user.setLoginStatus(LOGIN_STATUS_IN);
+                user.setLoginAppCode(req.getLoginAppCode());
+                userMapper.updateByPrimaryKeySelective(user);
+                resp.setUserInfo(user.toString());
             }
 
             result = buildResult(resp);

@@ -68,8 +68,8 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     // TODO: 2022/4/2 上线前需要确认配置信息
     private static final String USER_COUNT_CODE = "userNumber";
     private static final String TOTAL_BAND_WIDTH_CODE = "bandwidth";
-    private static final String INTRANET_BROADBAND_LOAD_CODE = "intranetBroadbandLoad";
-    private static final String INTERNET_BROADBAND_LOAD_CODE = "internetBroadbandLoad";
+    private static final String INTRANET_BROADBAND_LOAD_CODE = "10004";
+    private static final String INTERNET_BROADBAND_LOAD_CODE = "10005";
     private static final String TIMER_SHAFT = "timerShaft";
 
     // TODO: 2022/4/2 上线前需要确认配置信息
