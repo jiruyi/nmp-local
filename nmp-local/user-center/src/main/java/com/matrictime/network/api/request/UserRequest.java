@@ -1,7 +1,10 @@
 package com.matrictime.network.api.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -12,8 +15,11 @@ import java.util.Date;
  * @desc
  */
 @Data
-public class UserRequest {
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserRequest implements Serializable {
 
+    private static final long serialVersionUID = 8195635114781810672L;
     /**
       * 主键id
       */

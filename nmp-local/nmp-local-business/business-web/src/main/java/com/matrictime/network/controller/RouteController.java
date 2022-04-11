@@ -114,11 +114,13 @@ public class RouteController {
         Map<String,BaseStationInfoVo> baseStationInfoVoMap;
         List<String> list;
         try {
-            if(routeService.selectRoute(routeRequest) == null){
-                return null;
-            }
             List<RouteVo> routeVoList = routeService.selectRoute(routeRequest).getResultObj().getList();
             list = getStationIdList(routeVoList);
+            if(list.size() <= 0){
+                resultRoute.setResultObj(new PageInfo<>());
+                resultRoute.setSuccess(true);
+                return resultRoute;
+            }
             baseStationInfoResponseResult = baseStationInfoService.selectBaseStationBatch(list);
             List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponseResult.getResultObj().getBaseStationInfoList();
             baseStationInfoVoMap = getBaseStationMap(baseStationInfoList);

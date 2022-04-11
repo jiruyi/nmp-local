@@ -29,7 +29,7 @@ public class CtrlExceptionHandler {
     private static Logger logger = LoggerFactory.getLogger(CtrlExceptionHandler.class);
 
     //拦截未授权页面
-    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseBody
     public String handleException(UnauthorizedException e) {
@@ -48,8 +48,8 @@ public class CtrlExceptionHandler {
         logger.debug(e.getMessage());
         Result result =new Result();
         result.setSuccess(false);
-        result.setErrorMsg("该用户无权限进行此项操作");
-        result.setErrorCode("401");
+        result.setErrorMsg("登录已经失效，请重新登录");
+        result.setErrorCode("403");
         return JSON.toJSONString(result);
     }
 

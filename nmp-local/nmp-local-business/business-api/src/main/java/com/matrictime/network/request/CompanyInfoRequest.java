@@ -84,4 +84,9 @@ public class CompanyInfoRequest extends BaseRequest implements Serializable {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * 单位名称
+     */
+    private String unitName;
 }

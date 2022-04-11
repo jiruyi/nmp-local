@@ -31,7 +31,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
       * @return com.matrictime.network.model.Result
       * @description 
       * @author jiruyi
-      * @create 2022/4/6 0006 10:29
+      * @create 2022/4/7 0007 17:39
       */
     @Override
     public Result modifyUserInfo(UserRequest userRequest) {

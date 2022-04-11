@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2022/3/29 0029 10:12
  * @desc
  */
-@RequestMapping(value = "/info")
 @Api(value = "用户中心",tags = "用户中心相关接口")
 @RestController
 @Slf4j
@@ -31,17 +31,17 @@ public class UserController {
     private UserService userService;
 
     /**
-      * 用户信息修改
-      * @title modifyUserInfok
-      * @param [userRequest]
-      * @return com.matrictime.network.model.Result
-      * @description
-      * @author jiruyi
-      * @create 2022/4/6 0006 9:39
-      */
+     * 用户信息修改
+     * @title modifyUserInfok
+     * @param [userRequest]
+     * @return com.matrictime.network.model.Result
+     * @description
+     * @author jiruyi
+     * @create 2022/4/6 0006 9:39
+     */
     @ApiOperation(value = "用户信息修改",notes = "用户信息")
-    @RequestMapping (value = "/modify",method = RequestMethod.POST)
-    public Result modifyUserInfok(@RequestBody UserRequest userRequest){
+    @RequestMapping (value = "/modifyUserInfo",method = RequestMethod.POST)
+    public Result modifyUserInfo(@RequestBody UserRequest userRequest){
         try {
             /**1.0 参数校验**/
             if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
@@ -52,6 +52,30 @@ public class UserController {
             log.error("modifyUserInfo exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
+    }
+
+    /**
+     * @title deleteFriend
+     * @param [deleteFriendReq]
+     * @return com.matrictime.network.model.Result
+     * @description  删除好友
+     * @author jiruyi
+     * @create 2022/4/8 0008 9:19
+     */
+    @ApiOperation(value = "删除好友",notes = "删除好友")
+    @RequestMapping (value = "/deleteFriend",method = RequestMethod.POST)
+    public Result deleteFriend(@RequestBody DeleteFriendReq deleteFriendReq){
+        try {
+            /**1.0 参数校验**/
+            if(ObjectUtils.isEmpty(deleteFriendReq) || ObjectUtils.isEmpty(deleteFriendReq.getUserId())
+                    || ObjectUtils.isEmpty(deleteFriendReq.getFriendUserId())){
+                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+        }catch (Exception e){
+            log.error("modifyUserInfo exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+        return  null;
     }
 
 }

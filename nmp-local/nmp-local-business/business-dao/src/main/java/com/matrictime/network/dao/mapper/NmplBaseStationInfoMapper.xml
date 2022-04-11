@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.StationVo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="station_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
   </resultMap>
   <resultMap id="BaseOriResultMap" type="com.matrictime.network.dao.model.NmplBaseStationInfo">
     <id column="id" jdbcType="BIGINT" property="id" />
@@ -510,6 +511,9 @@
       </if>
       <if test="lanIp != null and lanIp != ''">
         and lan_ip = #{lanIp,jdbcType=CHAR}
+      </if>
+      <if test="stationNetworkId != null and stationNetworkId != ''">
+        and station_network_id = #{stationNetworkId,jdbcType=CHAR}
       </if>
         and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
     </where>

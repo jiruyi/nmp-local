@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplCompanyInfo">
     <id column="company_id" jdbcType="BIGINT" property="companyId" />
     <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
     <result column="country_code" jdbcType="VARCHAR" property="countryCode" />
     <result column="company_code" jdbcType="VARCHAR" property="companyCode" />
     <result column="company_type" jdbcType="CHAR" property="companyType" />
@@ -77,8 +78,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    company_id, company_name, country_code, company_code, company_type, telephone, email, 
-    status, addr, parent_code, create_user, create_time, update_user, update_time, is_exist
+    company_id, company_name, unit_name, country_code, company_code, company_type, telephone, 
+    email, status, addr, parent_code, create_user, create_time, update_user, update_time, 
+    is_exist
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplCompanyInfoExample" resultMap="BaseResultMap">
     select
@@ -112,16 +114,18 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplCompanyInfo">
-    insert into nmpl_company_info (company_id, company_name, country_code, 
-      company_code, company_type, telephone, 
-      email, status, addr, parent_code, 
-      create_user, create_time, update_user, 
-      update_time, is_exist)
-    values (#{companyId,jdbcType=BIGINT}, #{companyName,jdbcType=VARCHAR}, #{countryCode,jdbcType=VARCHAR}, 
-      #{companyCode,jdbcType=VARCHAR}, #{companyType,jdbcType=CHAR}, #{telephone,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, #{addr,jdbcType=VARCHAR}, #{parentCode,jdbcType=VARCHAR}, 
-      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT})
+    insert into nmpl_company_info (company_id, company_name, unit_name, 
+      country_code, company_code, company_type, 
+      telephone, email, status, 
+      addr, parent_code, create_user, 
+      create_time, update_user, update_time, 
+      is_exist)
+    values (#{companyId,jdbcType=BIGINT}, #{companyName,jdbcType=VARCHAR}, #{unitName,jdbcType=VARCHAR}, 
+      #{countryCode,jdbcType=VARCHAR}, #{companyCode,jdbcType=VARCHAR}, #{companyType,jdbcType=CHAR}, 
+      #{telephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, 
+      #{addr,jdbcType=VARCHAR}, #{parentCode,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{isExist,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplCompanyInfo">
     insert into nmpl_company_info
@@ -131,6 +135,9 @@
       </if>
       <if test="companyName != null">
         company_name,
+      </if>
+      <if test="unitName != null">
+        unit_name,
       </if>
       <if test="countryCode != null">
         country_code,
@@ -178,6 +185,9 @@
       </if>
       <if test="companyName != null">
         #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitName != null">
+        #{unitName,jdbcType=VARCHAR},
       </if>
       <if test="countryCode != null">
         #{countryCode,jdbcType=VARCHAR},
@@ -235,6 +245,9 @@
       <if test="record.companyName != null">
         company_name = #{record.companyName,jdbcType=VARCHAR},
       </if>
+      <if test="record.unitName != null">
+        unit_name = #{record.unitName,jdbcType=VARCHAR},
+      </if>
       <if test="record.countryCode != null">
         country_code = #{record.countryCode,jdbcType=VARCHAR},
       </if>
@@ -283,6 +296,7 @@
     update nmpl_company_info
     set company_id = #{record.companyId,jdbcType=BIGINT},
       company_name = #{record.companyName,jdbcType=VARCHAR},
+      unit_name = #{record.unitName,jdbcType=VARCHAR},
       country_code = #{record.countryCode,jdbcType=VARCHAR},
       company_code = #{record.companyCode,jdbcType=VARCHAR},
       company_type = #{record.companyType,jdbcType=CHAR},
@@ -305,6 +319,9 @@
     <set>
       <if test="companyName != null">
         company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitName != null">
+        unit_name = #{unitName,jdbcType=VARCHAR},
       </if>
       <if test="countryCode != null">
         country_code = #{countryCode,jdbcType=VARCHAR},
@@ -351,6 +368,7 @@
   <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplCompanyInfo">
     update nmpl_company_info
     set company_name = #{companyName,jdbcType=VARCHAR},
+      unit_name = #{unitName,jdbcType=VARCHAR},
       country_code = #{countryCode,jdbcType=VARCHAR},
       company_code = #{companyCode,jdbcType=VARCHAR},
       company_type = #{companyType,jdbcType=CHAR},

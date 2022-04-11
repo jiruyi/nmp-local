@@ -113,8 +113,7 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
     }
 
     @Override
-    public Result<RoleResponse>
-    queryOne(RoleRequest roleRequest) {
+    public Result<RoleResponse> queryOne(RoleRequest roleRequest) {
 
         Result<RoleResponse> result = null;
         try {
