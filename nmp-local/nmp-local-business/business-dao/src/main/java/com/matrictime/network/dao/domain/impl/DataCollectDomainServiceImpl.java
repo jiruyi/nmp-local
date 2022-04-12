@@ -93,7 +93,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         }
 
         NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
-        nmplDataCollectExample.createCriteria().andDeviceIdIn(ids).andCreateTimeGreaterThan(monitorReq.getCurrentTime());
+        nmplDataCollectExample.createCriteria().andDeviceIdIn(ids).andUploadTimeGreaterThan(monitorReq.getCurrentTime());
         return nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
     }
 

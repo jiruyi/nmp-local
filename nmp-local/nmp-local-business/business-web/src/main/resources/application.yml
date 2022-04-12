@@ -62,6 +62,7 @@ spring:
         dashboard: 192.168.72.230:8090
   jackson:
     time-zone: "GMT+8"
+    date-format: "yyyy-MM-dd HH:mm:ss"
 eureka:
   client: #客户端注册进eureka服务列表内
     service-url:

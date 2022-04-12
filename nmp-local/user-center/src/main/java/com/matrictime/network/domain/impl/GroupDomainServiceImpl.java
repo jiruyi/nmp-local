@@ -61,6 +61,7 @@ public class GroupDomainServiceImpl implements GroupDomainService {
         if(groupReq.getGroupName()!=null){
             criteria.andGroupNameEqualTo(groupReq.getGroupName());
         }
+        criteria.andIsExistEqualTo(true);
         List<Group> groups = groupMapper.selectByExample(groupExample);
         List<GroupVo> groupVos = new ArrayList<>();
         for (Group group : groups) {

@@ -30,11 +30,8 @@
             <if test="userId != null">
                 and user_id = #{userId,jdbcType=BIGINT}
             </if>
-            <if test="isExist != null">
-                and is_exist = #{isExist,jdbcType=BIT}
-            </if>
         </trim>
-
+        and is_exist ='1'
     </select>
 
 
