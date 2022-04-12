@@ -1,26 +1,43 @@
 package com.matrictime.network.dao.model;
 
+import lombok.Data;
+
+/**
+ * 
+ * @author   hexu
+ * @date   2022-04-12
+ */
+@Data
 public class UserGroup {
-    private Long userId;
+    /**
+     * 用户id
+     */
+    private String userId;
 
-    private Long groupId;
+    /**
+     * 组id
+     */
+    private String groupId;
 
+    /**
+     * 0 删除  1 正常
+     */
     private Boolean isExist;
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserId(String userId) {
+        this.userId = userId == null ? null : userId.trim();
     }
 
-    public Long getGroupId() {
+    public String getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId == null ? null : groupId.trim();
     }
 
     public Boolean getIsExist() {

@@ -7,7 +7,6 @@ import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.config.DataConfig;
-import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
 import com.matrictime.network.dao.model.UserExample;
@@ -101,7 +100,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
             result = buildResult(resp);
         }catch (Exception e){
-            log.error("LoginServiceImpl.register Exception:{}",e.getMessage());
+            log.error("LoginServiceImpl.login Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -109,7 +108,17 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     @Override
     public Result logout(LogoutReq req) {
-        return null;
+        Result result;
+        try {
+            checkLogoutParam(req);
+
+
+            result = buildResult(null);
+        }catch (Exception e){
+            log.error("LoginServiceImpl.logout Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
     }
 
     private boolean checkUserExist(RegisterReq req){
@@ -130,6 +139,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             return false;
         }
         return true;
+    }
+
+    private void checkLogoutParam(LogoutReq req){
+        if(ParamCheckUtil.checkVoStrBlank(req.getUserId())){
+            throw new SystemException("userId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
     }
 
     private void checkLoginParam(LoginReq req){
