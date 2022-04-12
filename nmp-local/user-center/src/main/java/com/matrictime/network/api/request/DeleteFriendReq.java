@@ -28,4 +28,8 @@ public class DeleteFriendReq implements Serializable {
      * 好友id
      */
     private String  friendUserId;
+    /**
+     * 群组id
+     */
+    private String groupId;
 }

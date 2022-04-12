@@ -1,6 +1,9 @@
 package com.matrictime.network.dao.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -8,6 +11,9 @@ import lombok.Data;
  * @date   2022-04-12
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserGroup {
     /**
      * 用户id

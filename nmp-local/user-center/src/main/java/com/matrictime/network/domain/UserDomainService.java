@@ -1,5 +1,6 @@
 package com.matrictime.network.domain;
 
+import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 
 /**
@@ -12,4 +13,6 @@ import com.matrictime.network.api.request.UserRequest;
 public interface UserDomainService {
 
     int modifyUserInfo(UserRequest userRequest);
+
+    int deleteFriend(DeleteFriendReq deleteFriendReq);
 }

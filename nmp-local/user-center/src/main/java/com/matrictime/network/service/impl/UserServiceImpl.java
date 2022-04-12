@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.domain.UserDomainService;
@@ -37,6 +38,25 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     public Result modifyUserInfo(UserRequest userRequest) {
         try {
             int n = userDomainService.modifyUserInfo(userRequest);
+            return  buildResult(n);
+        }catch (Exception e){
+            log.error("modifyUserInfo exception:{}",e.getMessage());
+            return  failResult(e);
+        }
+    }
+
+    /**
+      * @title deleteFriend
+      * @param [deleteFriendReq]
+      * @return com.matrictime.network.model.Result
+      * @description
+      * @author jiruyi
+      * @create 2022/4/12 0012 13:56
+      */
+    @Override
+    public Result deleteFriend(DeleteFriendReq deleteFriendReq) {
+        try {
+            int n = userDomainService.deleteFriend(deleteFriendReq);
             return  buildResult(n);
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
