@@ -3,6 +3,8 @@ package com.matrictime.network.dao.domain.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
@@ -91,7 +93,9 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
             ids.add(nmplDeviceInfo.getDeviceId());
         }
-
+        if(CollectionUtils.isEmpty(ids)){
+            throw new SystemException("该区域下无设备");
+        }
         NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
         nmplDataCollectExample.createCriteria().andDeviceIdIn(ids).andUploadTimeGreaterThan(monitorReq.getCurrentTime());
         return nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
@@ -112,6 +116,9 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
         for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
             ids.add(nmplDeviceInfo.getDeviceId());
+        }
+        if(CollectionUtils.isEmpty(ids)){
+            throw new SystemException("该区域下无设备");
         }
         return nmplDataCollectExtMapper.selectTopTen(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
     }

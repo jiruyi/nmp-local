@@ -83,34 +83,34 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             for (NmplDataCollect nmplDataCollect : dataCollectList) {
                 switch (nmplDataCollect.getDeviceType()){
                     case "01":
-                        if(nmplDataCollect.getDataItemCode().equals("userNumber")){
+                        if(nmplDataCollect.getDataItemCode().equals("10000")){
                             userNumber+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
-                        if(nmplDataCollect.getDataItemCode().equals("bandwidth")){
+                        if(nmplDataCollect.getDataItemCode().equals("10006")){
                             totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
                         break;
                     case "02":
-                        if(nmplDataCollect.getDataItemCode().equals("secretKeysRemainder")){
+                        if(nmplDataCollect.getDataItemCode().equals("10007")){
                             dispenserSecretKey+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
-                        if(nmplDataCollect.getDataItemCode().equals("bandwidth")){
+                        if(nmplDataCollect.getDataItemCode().equals("10006")){
                             totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
                         break;
                     case "03":
-                        if(nmplDataCollect.getDataItemCode().equals("secretKeysRemainder")){
+                        if(nmplDataCollect.getDataItemCode().equals("10007")){
                             generatorSecretKey+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
-                        if(nmplDataCollect.getDataItemCode().equals("bandwidth")){
+                        if(nmplDataCollect.getDataItemCode().equals("10006")){
                             totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
                         break;
                     case "04":
-                        if(nmplDataCollect.getDataItemCode().equals("secretKeysRemainder")){
+                        if(nmplDataCollect.getDataItemCode().equals("10007")){
                             cacheSecretKey+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
-                        if(nmplDataCollect.getDataItemCode().equals("bandwidth")){
+                        if(nmplDataCollect.getDataItemCode().equals("10006")){
                             totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
                         break;
