@@ -1,14 +1,13 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.dao.mapper.NmplFileDeviceRelMapper;
 import com.matrictime.network.dao.mapper.NmplSignalIoMapper;
-import com.matrictime.network.dao.mapper.NmplVersionFileMapper;
+import com.matrictime.network.dao.model.NmplFileDeviceRel;
+import com.matrictime.network.dao.model.NmplFileDeviceRelExample;
 import com.matrictime.network.dao.model.NmplSignalIo;
 import com.matrictime.network.dao.model.NmplSignalIoExample;
-import com.matrictime.network.model.Result;
-import com.matrictime.network.service.SignalService;
 import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +16,11 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Future;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
 @Service
 @Slf4j
@@ -31,6 +28,9 @@ public class AsyncService{
 
     @Autowired(required = false)
     private NmplSignalIoMapper nmplSignalIoMapper;
+
+    @Autowired(required = false)
+    private NmplFileDeviceRelMapper nmplFileDeviceRelMapper;
 
 
     @Async("taskExecutor")
@@ -42,16 +42,16 @@ public class AsyncService{
         String deviceId = "";
         try {
             for (Map<String,String> map : list){
-                Map<String ,String> httpParam = new HashMap<>(8);
                 deviceId = map.get(KEY_DEVICE_ID);
                 String configCode = map.get(KEY_CONFIG_CODE);
-                httpParam.put(KEY_CONFIG_CODE,configCode);
-                httpParam.put(KEY_CONFIG_VALUE,map.get(KEY_CONFIG_VALUE));
-                httpParam.put(KEY_UNIT,map.get(KEY_UNIT));
+                JSONObject jsonReq = new JSONObject();
+                jsonReq.put(KEY_CONFIG_CODE,configCode);
+                jsonReq.put(KEY_CONFIG_VALUE,map.get(KEY_CONFIG_VALUE));
+                jsonReq.put(KEY_UNIT,map.get(KEY_UNIT));
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-//                    String post = HttpClientUtil.post(map.get(KEY_URL), httpParam);
+//                    String post = HttpClientUtil.post(map.get(KEY_URL), jsonReq.toJSONString());
                     String post = "{\"isSuccess\":false}";
                     log.info("AsyncService.httpSyncConfig result deviceId:{},configCode:{},post:{}",deviceId,configCode,post);
                     JSONObject jsonObject = JSONObject.parseObject(post);
@@ -85,16 +85,16 @@ public class AsyncService{
         String deviceId = "";
         try {
             for (Map<String,String> map : list){
-                Map<String ,String> httpParam = new HashMap<>(2);
                 deviceId = map.get(KEY_DEVICE_ID);
                 String userId = map.get(KEY_USER_ID);
                 String ioType = map.get(KEY_IO_TYPE);
                 String url = map.get(KEY_URL);
-                httpParam.put(KEY_IO_TYPE,ioType);
+                JSONObject jsonReq = new JSONObject();
+                jsonReq.put(KEY_IO_TYPE,ioType);
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-//                    String postResp = HttpClientUtil.post(url, httpParam);
+//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
                     String postResp = "{\"isSuccess\":true}";
                     log.info("AsyncService.httpSignalIo result deviceId:{},userId:{},postResp:{}",deviceId,userId,postResp);
                     JSONObject jsonObject = JSONObject.parseObject(postResp);
@@ -142,6 +142,72 @@ public class AsyncService{
         return new AsyncResult<>(result);
     }
 
+    @Async("taskExecutor")
+    public Future<Map<String,List<String>>> httpPushFile(List<Map<String, String>> list) {
+
+        Map<String,List<String>> result = new HashMap<>();
+        List<String> successIds = new ArrayList<>(list.size());
+        List<String> failIds = new ArrayList<>();
+        try {
+            for (Map<String,String> map : list){
+                String deviceId = map.get(KEY_DEVICE_ID);
+                String fileId = map.get(KEY_FILE_ID);
+                String url = map.get(KEY_URL);
+                String filePath = map.get(KEY_FILE_PATH);
+                String fileName = map.get(KEY_FILE_NAME);
+
+                JSONObject jsonReq = new JSONObject();
+                jsonReq.put(KEY_FILE_ID,fileId);
+                jsonReq.put(KEY_FILE_PATH,filePath);
+                jsonReq.put(KEY_FILE_NAME,fileName);
+                boolean flag = false;
+                try{
+                    // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
+//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
+                    String postResp = "{\"isSuccess\":true}";
+                    log.info("AsyncService.httpPushFile result deviceId:{},fileId:{},postResp:{}",deviceId,fileId,postResp);
+                    JSONObject jsonObject = JSONObject.parseObject(postResp);
+                    if (jsonObject != null){
+                        Object success = jsonObject.get(KEY_IS_SUCCESS);
+                        if (success != null && success instanceof Boolean){
+                            if ((Boolean)success){
+                                flag = true;
+                                NmplFileDeviceRelExample example = new NmplFileDeviceRelExample();
+                                example.createCriteria().andDeviceIdEqualTo(deviceId).andFileIdEqualTo(Long.parseLong(map.get(KEY_FILE_ID)));
+                                List<NmplFileDeviceRel> rels = nmplFileDeviceRelMapper.selectByExample(example);
+                                if (CollectionUtils.isEmpty(rels)){
+                                    NmplFileDeviceRel nmplFileDeviceRel = new NmplFileDeviceRel();
+                                    nmplFileDeviceRel.setFileId(Long.parseLong(map.get(KEY_FILE_ID)));
+                                    nmplFileDeviceRel.setDeviceId(deviceId);
+                                    nmplFileDeviceRelMapper.insertSelective(nmplFileDeviceRel);
+                                }else if (!rels.get(0).getIsDelete()){
+                                    NmplFileDeviceRel nmplFileDeviceRel = new NmplFileDeviceRel();
+                                    nmplFileDeviceRel.setId(rels.get(0).getId());
+                                    nmplFileDeviceRel.setIsDelete(IS_EXIST);
+                                    nmplFileDeviceRel.setUpdateTime(new Date());
+                                    nmplFileDeviceRelMapper.updateByPrimaryKeySelective(nmplFileDeviceRel);
+                                }
+                            }
+                        }
+                    }
+                }catch (Exception e){
+                    log.warn("httpPushFile.HttpClientUtil Exception:{},deviceId:{},fileId:{}",e.getMessage(),deviceId,fileId);
+                }
+                if (flag){
+                    successIds.add(deviceId);
+                }else {
+                    failIds.add(deviceId);
+                }
+
+            }
+        }catch (Exception e){
+            log.warn("AsyncService.httpPushFile Exception:{}",e.getMessage());
+        }
+        result.put(KEY_SUCCESS_IDS,successIds);
+        result.put(KEY_FAIL_IDS,failIds);
+        return new AsyncResult<>(result);
+    }
+
 
     @Async("taskExecutor")
     public Future<Map<String,List<String>>> httpStartFile(List<Map<String, String>> list) {
@@ -154,13 +220,15 @@ public class AsyncService{
                 String deviceId = map.get(KEY_DEVICE_ID);
                 String fileId = map.get(KEY_FILE_ID);
                 String url = map.get(KEY_URL);
-                String filePath = map.get(KEY_FILE_PATH);
+
+                JSONObject jsonReq = new JSONObject();
+                jsonReq.put(KEY_FILE_ID,fileId);
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-//                    String postResp = HttpClientUtil.postForm(url, filePath);
+//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
                     String postResp = "{\"isSuccess\":true}";
-                    log.info("AsyncService.httpSignalIo result deviceId:{},fileId:{},postResp:{}",deviceId,fileId,postResp);
+                    log.info("AsyncService.httpStartFile result deviceId:{},fileId:{},postResp:{}",deviceId,fileId,postResp);
                     JSONObject jsonObject = JSONObject.parseObject(postResp);
                     if (jsonObject != null){
                         Object success = jsonObject.get(KEY_IS_SUCCESS);

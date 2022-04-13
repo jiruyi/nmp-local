@@ -234,6 +234,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                 List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bExample);
                                 if (!CollectionUtils.isEmpty(stationInfos)){
                                     NmplBaseStationInfo info = stationInfos.get(0);
+                                    // TODO: 2022/4/7 path需要提供
                                     httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
                                 }
                                 break;
@@ -245,6 +246,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                 List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dExample);
                                 if (!CollectionUtils.isEmpty(deviceInfos)){
                                     NmplDeviceInfo info = deviceInfos.get(0);
+                                    // TODO: 2022/4/7 path需要提供
                                     httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
                                 }
                                 break;
@@ -273,6 +275,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                     if (!CollectionUtils.isEmpty(stationInfos)){
                                         for (NmplBaseStationInfo info : stationInfos){
                                             httpParam.put(KEY_DEVICE_ID,info.getStationId());
+                                            // TODO: 2022/4/7 path需要提供
                                             httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
                                             httpList.add(httpParam);
                                         }
@@ -287,6 +290,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                     if (!CollectionUtils.isEmpty(deviceInfos)){
                                         for (NmplDeviceInfo info : deviceInfos){
                                             httpParam.put(KEY_DEVICE_ID,info.getDeviceId());
+                                            // TODO: 2022/4/7 path需要提供
                                             httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
                                             httpList.add(httpParam);
                                         }

@@ -1,14 +1,19 @@
 package com.matrictime.network.domain.impl;
 
+import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.dao.mapper.UserFriendMapper;
+import com.matrictime.network.dao.mapper.UserGroupMapper;
 import com.matrictime.network.dao.mapper.UserMapper;
-import com.matrictime.network.dao.model.User;
-import com.matrictime.network.dao.model.UserExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.domain.UserDomainService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author jiruyi
@@ -23,6 +28,11 @@ public class UserDomainServiceImpl implements UserDomainService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserFriendMapper userFriendMapper;
+    @Autowired
+    private UserGroupMapper userGroupMapper;
+
 
     /**
       * @title modifyUserInfo
@@ -39,5 +49,35 @@ public class UserDomainServiceImpl implements UserDomainService {
         UserExample example =  new UserExample();
         example.createCriteria().andUserIdEqualTo(userRequest.getUserId());
         return  userMapper.updateByExampleSelective(user,example);
+    }
+
+    /**
+      * @title deleteFriend
+      * @param [deleteFriendReq]
+      * @return int
+      * @description
+      * @author jiruyi
+      * @create 2022/4/12 0012 14:00
+      */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public int deleteFriend(DeleteFriendReq deleteFriendReq) {
+        UserFriendExample userFriendExample = new UserFriendExample();
+        userFriendExample.createCriteria().andUserIdEqualTo(deleteFriendReq.getUserId())
+                .andFriendUserIdEqualTo(deleteFriendReq.getFriendUserId());
+        //1.0删除用户好友
+        UserFriend userFriend = UserFriend.builder().isExist(false).build();
+       int n =  userFriendMapper.updateByExampleSelective(userFriend,userFriendExample);
+        //2.0删除好友群组
+       UserGroupExample userGroupExample = new UserGroupExample();
+        userGroupExample.createCriteria().andUserIdEqualTo(deleteFriendReq.getUserId())
+                .andGroupIdEqualTo(deleteFriendReq.getGroupId());
+        UserGroup userGroup = UserGroup.builder().isExist(false).build();
+        int m = userGroupMapper.updateByExampleSelective(userGroup,userGroupExample);
+        if(n>0 && m > 0){
+            return NumberUtils.INTEGER_ONE;
+        }else {
+            return NumberUtils.INTEGER_ZERO;
+        }
     }
 }

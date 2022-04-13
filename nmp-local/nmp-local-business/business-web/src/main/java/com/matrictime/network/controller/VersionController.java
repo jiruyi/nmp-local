@@ -1,15 +1,26 @@
 package com.matrictime.network.controller;
 
 import com.matrictime.network.annotation.SystemLog;
+import com.matrictime.network.dao.mapper.NmplVersionFileMapper;
+import com.matrictime.network.dao.model.NmplVersionFile;
+import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
 import com.matrictime.network.service.VersionService;
+import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 @RequestMapping(value = "/version")
 @RestController
@@ -21,6 +32,9 @@ public class VersionController {
 
     @Autowired
     private VersionService versionService;
+
+    @Autowired(required = false)
+    private NmplVersionFileMapper nmplVersionFileMapper;
 
 
     /**
@@ -138,6 +152,56 @@ public class VersionController {
         }catch (Exception e){
             log.error("VersionController.pushVersionFile exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 获取版本文件
+     * @param fileId
+     * @param resp
+     */
+    @RequestMapping (value = "/getVersionFile",method = RequestMethod.GET)
+    @SystemLog(opermodul = "版本模块",operDesc = "获取版本文件",operType = "取文件")
+    public void getVersionFile(@RequestParam("fileId") String fileId,HttpServletResponse resp){
+        try {
+            if (ParamCheckUtil.checkVoStrBlank(fileId)){
+                throw new Exception("fileId不能为空");
+            }
+            NmplVersionFile file = nmplVersionFileMapper.selectByPrimaryKey(Long.parseLong(fileId));
+            if (file == null){
+                throw new Exception("版本文件不存在");
+            }
+            File tempFile = new File(file.getFilePath()+file.getFileName());
+            if (!tempFile.exists()){
+                throw new Exception("本地版本文件不存在");
+            }
+            resp.setContentType("text/html; charset=UTF-8");
+            FileInputStream fis = null;
+            OutputStream os = resp.getOutputStream();
+            try {
+                fis = new FileInputStream(tempFile);
+                IOUtils.copy(fis, os);
+                resp.flushBuffer();
+            }catch (IOException e){
+                log.error(e.getMessage());
+            }finally {
+                if (fis != null){
+                    try {
+                        fis.close();
+                    }catch (IOException e){
+                        log.error("输入流关闭失败:"+e.getMessage());
+                    }
+                }
+                if (os != null){
+                    try {
+                        os.close();
+                    }catch (IOException e){
+                        log.error("输出流关闭失败:"+e.getMessage());
+                    }
+                }
+            }
+        }catch (Exception e){
+            log.error("VersionController.getVersionFile exception:{}",e.getMessage());
         }
     }
 

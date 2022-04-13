@@ -30,11 +30,11 @@
 
         <javaClientGenerator targetPackage="com.matrictime.network.dao.mapper"
                              targetProject="src/main/java" type="XMLMAPPER">
-            <property name="enableSubPackages" value="true"/>k
+            <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
 
-        <table tableName="user" domainObjectName="User"
+        <table tableName="user_friend" domainObjectName="UserFriend"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">

@@ -53,7 +53,10 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             if(dataCollectReq.getDataCollectVoList()!=null){
                 Map<String,String> map = PropertiesUtil.paramMap;
                 for (DataCollectVo dataCollectVo : dataCollectReq.getDataCollectVoList()) {
-                    dataCollectVo.setDataItemName(map.get(dataCollectVo.getDataItemCode()));
+                    String name = "data."+dataCollectVo.getDataItemCode()+".name";
+                    String unit = "data."+dataCollectVo.getDataItemCode()+".unit";
+                    dataCollectVo.setDataItemName(map.get(name));
+                    dataCollectVo.setUnit(map.get(unit));
                 }
             }
             result = buildResult(dataCollectDomainService.save(dataCollectReq));
@@ -91,15 +94,24 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                         if(nmplDataCollect.getDataItemCode().equals("secretKeysRemainder")){
                             dispenserSecretKey+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
+                        if(nmplDataCollect.getDataItemCode().equals("bandwidth")){
+                            totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+                        }
                         break;
                     case "03":
                         if(nmplDataCollect.getDataItemCode().equals("secretKeysRemainder")){
                             generatorSecretKey+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
+                        if(nmplDataCollect.getDataItemCode().equals("bandwidth")){
+                            totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+                        }
                         break;
                     case "04":
                         if(nmplDataCollect.getDataItemCode().equals("secretKeysRemainder")){
                             cacheSecretKey+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+                        }
+                        if(nmplDataCollect.getDataItemCode().equals("bandwidth")){
+                            totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
                         break;
                     default:
