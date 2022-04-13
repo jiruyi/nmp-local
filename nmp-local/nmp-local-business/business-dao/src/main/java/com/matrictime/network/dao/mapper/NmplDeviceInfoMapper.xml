@@ -519,6 +519,6 @@
     </where>
   </select>
   <select id="selectDeviceId" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.StationVo">
-    select device_id from nmpl_device_info where lan_ip = #{lanIp,jdbcType=CHAR}
+    select device_id,station_network_id from nmpl_device_info where lan_ip = #{lanIp,jdbcType=CHAR}
   </select>
 </mapper>

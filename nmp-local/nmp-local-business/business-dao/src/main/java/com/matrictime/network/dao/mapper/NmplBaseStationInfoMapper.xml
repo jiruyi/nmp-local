@@ -529,6 +529,6 @@
     </foreach>
   </select>
   <select id="selectDeviceId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseResultMap">
-    select station_id from nmpl_base_station_info where lan_ip = #{lanIp,jdbcType=VARCHAR}
+    select station_id,station_network_id from nmpl_base_station_info where lan_ip = #{lanIp,jdbcType=VARCHAR}
   </select>
 </mapper>

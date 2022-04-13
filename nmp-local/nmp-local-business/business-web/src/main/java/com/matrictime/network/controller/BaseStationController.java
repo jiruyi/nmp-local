@@ -117,7 +117,7 @@ public class BaseStationController {
                 return new Result<>(false,"dataBase中没有该数据");
             }
         }catch (Exception e){
-            log.info("根据条件查询基站异常:selectBaseStationInfo{}",e.getMessage());
+            log.info("根据条件查询基站异常:selectDevice{}",e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg("根据条件查询基站异常");
         }
