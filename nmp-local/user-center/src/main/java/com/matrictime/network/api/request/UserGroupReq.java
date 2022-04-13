@@ -7,15 +7,15 @@ import java.io.Serializable;
 public class UserGroupReq implements Serializable {
     private static final long serialVersionUID = -4435912094417233661L;
 
-    private Long userId;
+    private String userId;
     /**
      * 组id
      */
-    private Long groupId;
+    private String groupId;
     /**
      *  目标组id
      */
-    private Long targetGroupId;
+    private String targetGroupId;
 
     private Boolean isExist;
 
