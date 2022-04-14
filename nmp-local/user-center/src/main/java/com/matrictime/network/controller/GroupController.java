@@ -73,11 +73,11 @@ public class GroupController {
         return userGroupService.modifyUserGroup(userGroupReq);
     }
 
-    @ApiOperation(value = "查询组内用户",notes = "查询")
-    @RequestMapping (value = "/queryUserGroup",method = RequestMethod.POST)
-    public Result queryUserGroup(@RequestBody UserGroupReq userGroupReq){
-        return userGroupService.queryUserGroup(userGroupReq);
-    }
+//    @ApiOperation(value = "查询组内用户",notes = "查询")
+//    @RequestMapping (value = "/queryUserGroup",method = RequestMethod.POST)
+//    public Result queryUserGroup(@RequestBody UserGroupReq userGroupReq){
+//        return userGroupService.queryUserGroup(userGroupReq);
+//    }
 
 
 }
