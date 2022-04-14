@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.ext.AddUserRequestExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.api.modelVo.AddUserRequestVo">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="request_id" jdbcType="VARCHAR" property="requestId" />
+        <result column="user_id" jdbcType="VARCHAR" property="userId" />
+        <result column="add_user_id" jdbcType="VARCHAR" property="addUserId" />
+        <result column="status" jdbcType="CHAR" property="status" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <insert id="addFriends" parameterType="com.matrictime.network.api.request.AddUserRequestReq">
+        insert into add_user_request (request_id, user_id,
+                                      add_user_id)
+        values (#{requestId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
+                #{addUserId,jdbcType=VARCHAR})
+    </insert>
+</mapper>

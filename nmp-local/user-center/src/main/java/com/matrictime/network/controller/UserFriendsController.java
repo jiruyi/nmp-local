@@ -1,9 +1,11 @@
 package com.matrictime.network.controller;
 
 
+import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.response.UserFriendResp;
+import com.matrictime.network.config.RestTemplateContextConfig;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
 import com.matrictime.network.service.UserService;
@@ -29,6 +31,10 @@ public class UserFriendsController {
     @Resource
     private UserFriendsService userFriendsService;
 
+    @Resource
+    private RestTemplateContextConfig restTemplateContextConfig;
+
+
     @ApiOperation(value = "注销用户",notes = "注销用户")
     @RequestMapping (value = "/cancelUser",method = RequestMethod.POST)
     public Result<Integer> createGroup(@RequestBody UserRequest userRequest){
@@ -49,6 +55,20 @@ public class UserFriendsController {
             log.error("selectUserFriend exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
+    }
+
+    @ApiOperation(value = "查询用户好友列表",notes = "查询用户好友列表")
+    @RequestMapping (value = "/addFriends",method = RequestMethod.POST)
+    public Result<Integer> addFriends(@RequestBody AddUserRequestReq addUserRequestReq){
+        Result<Integer> result = new Result<>();
+        try {
+            result = userFriendsService.addFriends(addUserRequestReq);
+            return result;
+        }catch (Exception e){
+            log.error("addFriends exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+
     }
 
 }

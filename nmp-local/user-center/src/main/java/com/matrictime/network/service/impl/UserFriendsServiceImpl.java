@@ -2,6 +2,7 @@ package com.matrictime.network.service.impl;
 
 
 import com.matrictime.network.api.modelVo.UserFriendVo;
+import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.response.UserFriendResp;
 import com.matrictime.network.domain.UserFriendsDomainService;
@@ -28,6 +29,18 @@ public class UserFriendsServiceImpl implements UserFriendsService {
             List<UserFriendVo> userFriendVos = userFriendsDomainService.selectUserFriend(userFriendReq);
             userFriendResp.setList(userFriendVos);
             result.setResultObj(userFriendResp);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public Result<Integer> addFriends(AddUserRequestReq addUserRequestReq) {
+        Result<Integer> result = new Result<>();
+        try {
+            result.setResultObj(userFriendsDomainService.addFriends(addUserRequestReq));
         }catch (Exception e){
             result.setSuccess(false);
             result.setErrorMsg(e.getMessage());
