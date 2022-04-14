@@ -68,7 +68,7 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
         Result<Integer> result = null;
         try {
             NmplUser nmplUser = RequestContext.getUser();
-            roleRequest.setUpdateUser(nmplUser.getNickName());
+            roleRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             //除管理员用户，其他用户只能编辑自己创建的角色
             if (Long.parseLong(nmplUser.getRoleId())!=DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getUserId())){
                 result = failResult(ErrorCode.SYSTEM_ERROR, "非该角色的创建者，无编辑该角色的权限");
@@ -93,7 +93,7 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
         try {
             NmplUser nmplUser = RequestContext.getUser();
 
-            roleRequest.setUpdateUser(nmplUser.getNickName());
+            roleRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             //除管理员用户，其他用户只能删除自己创建的角色
             if (Long.parseLong(nmplUser.getRoleId()) != DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getUserId())) {
                 result = failResult(ErrorCode.SYSTEM_ERROR, "非该角色的创建者，无编辑该角色的权限");
