@@ -92,10 +92,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.UserFriend">
-    insert into user_friend (user_id, friend_user_id, remark_name, 
+    insert into user_friend (user_id, friend_user_id, remark_name,
       is_exist, create_time, update_time
       )
-    values (#{userId,jdbcType=VARCHAR}, #{friendUserId,jdbcType=VARCHAR}, #{remarkName,jdbcType=VARCHAR}, 
+    values (#{userId,jdbcType=VARCHAR}, #{friendUserId,jdbcType=VARCHAR}, #{remarkName,jdbcType=VARCHAR},
       #{isExist,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
