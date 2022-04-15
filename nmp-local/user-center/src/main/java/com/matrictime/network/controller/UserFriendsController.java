@@ -1,10 +1,14 @@
 package com.matrictime.network.controller;
 
 
-import com.matrictime.network.api.request.GroupReq;
+import com.matrictime.network.api.request.AddUserRequestReq;
+import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.api.response.UserFriendResp;
+
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
+import com.matrictime.network.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -22,20 +26,71 @@ import javax.annotation.Resource;
 public class UserFriendsController {
 
     @Resource
+    private UserService userService;
+
+    @Resource
     private UserFriendsService userFriendsService;
+
 
     @ApiOperation(value = "注销用户",notes = "注销用户")
     @RequestMapping (value = "/cancelUser",method = RequestMethod.POST)
     public Result<Integer> createGroup(@RequestBody UserRequest userRequest){
-        Result<Integer> result = new Result<>();
         try {
-            result = userFriendsService.cancelUser(userRequest);
+            return  userService.modifyUserInfo(userRequest);
         }catch (Exception e){
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
             log.error("cancelUser exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
         }
-        return result;
+    }
+
+    @ApiOperation(value = "查询用户好友列表",notes = "查询用户好友列表")
+    @RequestMapping (value = "/selectUserFriend",method = RequestMethod.POST)
+    public Result<UserFriendResp> selectUserFriend(@RequestBody UserFriendReq userFriendReq){
+        try {
+            return userFriendsService.selectUserFriend(userFriendReq);
+        }catch (Exception e){
+            log.error("selectUserFriend exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "添加好友",notes = "添加好友")
+    @RequestMapping (value = "/addFriends",method = RequestMethod.POST)
+    public Result<Integer> addFriends(@RequestBody AddUserRequestReq addUserRequestReq){
+        Result<Integer> result;
+        try {
+            result = userFriendsService.addFriends(addUserRequestReq);
+            return result;
+        }catch (Exception e){
+            log.error("addFriends exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

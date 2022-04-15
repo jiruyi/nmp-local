@@ -1,14 +1,12 @@
-package com.matrictime.network.domain;
-
+package com.matrictime.network.dao.mapper.ext;
 
 import com.matrictime.network.api.modelVo.UserFriendVo;
-import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.UserFriendReq;
 
 import java.util.List;
 
-public interface UserFriendsDomainService {
+public interface UserFriendExtMapper {
     List<UserFriendVo> selectUserFriend(UserFriendReq userFriendReq);
 
-    int addFriends(AddUserRequestReq addUserRequestReq);
+    int addFriends(UserFriendReq userFriendReq);
 }

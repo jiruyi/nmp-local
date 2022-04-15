@@ -1,23 +1,64 @@
 package com.matrictime.network.domain.impl;
 
 
-import com.matrictime.network.api.request.UserRequest;
-import com.matrictime.network.dao.mapper.UserFriendsMapper;
+import com.matrictime.network.api.modelVo.UserFriendVo;
+import com.matrictime.network.api.request.AddUserRequestReq;
+import com.matrictime.network.api.request.UserFriendReq;
+import com.matrictime.network.dao.mapper.ext.AddUserRequestExtMapper;
+import com.matrictime.network.dao.mapper.ext.UserFriendExtMapper;
 import com.matrictime.network.domain.UserFriendsDomainService;
+import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 @Slf4j
 public class UserFriendsDomainServiceImpl implements UserFriendsDomainService {
 
     @Resource
-    private UserFriendsMapper userFriendsMapper;
+    private UserFriendExtMapper userFriendExtMapper;
+
+    @Resource
+    private AddUserRequestExtMapper addUserRequestExtMapper;
 
     @Override
-    public int cancelUser(UserRequest userRequest) {
-        return userFriendsMapper.cancelUser(userRequest);
+    public List<UserFriendVo> selectUserFriend(UserFriendReq userFriendReq) {
+        return userFriendExtMapper.selectUserFriend(userFriendReq);
+    }
+
+    @Override
+    public int addFriends(AddUserRequestReq addUserRequestReq) {
+        addUserRequestReq.setRequestId(SnowFlake.nextId_String());
+        return addUserRequestExtMapper.addFriends(addUserRequestReq);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class GroupExample {
+public class GroupInfoExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public GroupExample() {
+    public GroupInfoExample() {
         oredCriteria = new ArrayList<>();
     }
 
@@ -305,52 +305,62 @@ public class GroupExample {
             return (Criteria) this;
         }
 
-        public Criteria andOwnerEqualTo(Long value) {
+        public Criteria andOwnerEqualTo(String value) {
             addCriterion("owner =", value, "owner");
             return (Criteria) this;
         }
 
-        public Criteria andOwnerNotEqualTo(Long value) {
+        public Criteria andOwnerNotEqualTo(String value) {
             addCriterion("owner <>", value, "owner");
             return (Criteria) this;
         }
 
-        public Criteria andOwnerGreaterThan(Long value) {
+        public Criteria andOwnerGreaterThan(String value) {
             addCriterion("owner >", value, "owner");
             return (Criteria) this;
         }
 
-        public Criteria andOwnerGreaterThanOrEqualTo(Long value) {
+        public Criteria andOwnerGreaterThanOrEqualTo(String value) {
             addCriterion("owner >=", value, "owner");
             return (Criteria) this;
         }
 
-        public Criteria andOwnerLessThan(Long value) {
+        public Criteria andOwnerLessThan(String value) {
             addCriterion("owner <", value, "owner");
             return (Criteria) this;
         }
 
-        public Criteria andOwnerLessThanOrEqualTo(Long value) {
+        public Criteria andOwnerLessThanOrEqualTo(String value) {
             addCriterion("owner <=", value, "owner");
             return (Criteria) this;
         }
 
-        public Criteria andOwnerIn(List<Long> values) {
+        public Criteria andOwnerLike(String value) {
+            addCriterion("owner like", value, "owner");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnerNotLike(String value) {
+            addCriterion("owner not like", value, "owner");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnerIn(List<String> values) {
             addCriterion("owner in", values, "owner");
             return (Criteria) this;
         }
 
-        public Criteria andOwnerNotIn(List<Long> values) {
+        public Criteria andOwnerNotIn(List<String> values) {
             addCriterion("owner not in", values, "owner");
             return (Criteria) this;
         }
 
-        public Criteria andOwnerBetween(Long value1, Long value2) {
+        public Criteria andOwnerBetween(String value1, String value2) {
             addCriterion("owner between", value1, value2, "owner");
             return (Criteria) this;
         }
 
-        public Criteria andOwnerNotBetween(Long value1, Long value2) {
+        public Criteria andOwnerNotBetween(String value1, String value2) {
             addCriterion("owner not between", value1, value2, "owner");
             return (Criteria) this;
         }

@@ -1,11 +1,13 @@
 package com.matrictime.network.service;
 
-import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.api.request.AddUserRequestReq;
+import com.matrictime.network.api.request.UserFriendReq;
+import com.matrictime.network.api.response.UserFriendResp;
 import com.matrictime.network.model.Result;
-import org.springframework.stereotype.Service;
 
 
 public interface UserFriendsService {
+    Result<UserFriendResp> selectUserFriend(UserFriendReq userFriendReq);
 
-    Result<Integer> cancelUser(UserRequest userRequest);
+    Result<Integer> addFriends(AddUserRequestReq addUserRequestReq);
 }
