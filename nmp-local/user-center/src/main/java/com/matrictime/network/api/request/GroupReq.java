@@ -8,12 +8,24 @@ public class GroupReq implements Serializable {
 
     private static final long serialVersionUID = -6634266583253019235L;
 
+    /**
+     * 主键 组id
+     */
     private Long groupId;
 
+    /**
+     * 组名称
+     */
     private String groupName;
 
+    /**
+     *  0 删除  1 存在
+     */
     private Boolean isExist;
 
-    private Long owner;
+    /**
+     * 组所属人
+     */
+    private String owner;
 
 }

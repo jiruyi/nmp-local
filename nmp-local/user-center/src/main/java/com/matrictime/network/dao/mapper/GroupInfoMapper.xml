@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.matrictime.network.dao.mapper.GroupMapper">
-  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.Group">
+<mapper namespace="com.matrictime.network.dao.mapper.GroupInfoMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.GroupInfo">
     <id column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="group_name" jdbcType="VARCHAR" property="groupName" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
-    <result column="owner" jdbcType="BIGINT" property="owner" />
+    <result column="owner" jdbcType="VARCHAR" property="owner" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -69,14 +69,14 @@
   <sql id="Base_Column_List">
     group_id, group_name, is_exist, owner, create_time
   </sql>
-  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.GroupExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.GroupInfoExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from group
+    from group_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -87,27 +87,27 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from group
+    from group_info
     where group_id = #{groupId,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from group
+    delete from group_info
     where group_id = #{groupId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.GroupExample">
-    delete from group
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.GroupInfoExample">
+    delete from group_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.matrictime.network.dao.model.Group">
-    insert into group (group_id, group_name, is_exist, 
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.GroupInfo">
+    insert into group_info (group_id, group_name, is_exist, 
       owner, create_time)
     values (#{groupId,jdbcType=BIGINT}, #{groupName,jdbcType=VARCHAR}, #{isExist,jdbcType=BIT}, 
-      #{owner,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP})
+      #{owner,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.Group">
-    insert into group
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.GroupInfo">
+    insert into group_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="groupId != null">
         group_id,
@@ -136,21 +136,21 @@
         #{isExist,jdbcType=BIT},
       </if>
       <if test="owner != null">
-        #{owner,jdbcType=BIGINT},
+        #{owner,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.matrictime.network.dao.model.GroupExample" resultType="java.lang.Long">
-    select count(*) from group
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.GroupInfoExample" resultType="java.lang.Long">
+    select count(*) from group_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update group
+    update group_info
     <set>
       <if test="record.groupId != null">
         group_id = #{record.groupId,jdbcType=BIGINT},
@@ -162,7 +162,7 @@
         is_exist = #{record.isExist,jdbcType=BIT},
       </if>
       <if test="record.owner != null">
-        owner = #{record.owner,jdbcType=BIGINT},
+        owner = #{record.owner,jdbcType=VARCHAR},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -173,18 +173,18 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update group
+    update group_info
     set group_id = #{record.groupId,jdbcType=BIGINT},
       group_name = #{record.groupName,jdbcType=VARCHAR},
       is_exist = #{record.isExist,jdbcType=BIT},
-      owner = #{record.owner,jdbcType=BIGINT},
+      owner = #{record.owner,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.Group">
-    update group
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.GroupInfo">
+    update group_info
     <set>
       <if test="groupName != null">
         group_name = #{groupName,jdbcType=VARCHAR},
@@ -193,7 +193,7 @@
         is_exist = #{isExist,jdbcType=BIT},
       </if>
       <if test="owner != null">
-        owner = #{owner,jdbcType=BIGINT},
+        owner = #{owner,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -201,11 +201,11 @@
     </set>
     where group_id = #{groupId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.Group">
-    update group
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.GroupInfo">
+    update group_info
     set group_name = #{groupName,jdbcType=VARCHAR},
       is_exist = #{isExist,jdbcType=BIT},
-      owner = #{owner,jdbcType=BIGINT},
+      owner = #{owner,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where group_id = #{groupId,jdbcType=BIGINT}
   </update>
