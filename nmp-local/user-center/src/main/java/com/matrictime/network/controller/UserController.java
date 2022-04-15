@@ -71,11 +71,11 @@ public class UserController {
                     || ObjectUtils.isEmpty(deleteFriendReq.getFriendUserId())){
                 return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
+            return  userService.deleteFriend(deleteFriendReq);
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
-        return  null;
     }
 
 }
