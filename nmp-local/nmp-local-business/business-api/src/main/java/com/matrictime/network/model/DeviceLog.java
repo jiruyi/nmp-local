@@ -26,7 +26,7 @@ public class DeviceLog  extends BaseRequest {
     /**
      * 设备名称
      */
-    private String deviceName;
+    private String devcieName;
     /**
      * 设备IP
      */

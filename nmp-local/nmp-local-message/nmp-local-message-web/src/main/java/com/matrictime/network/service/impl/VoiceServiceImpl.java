@@ -104,12 +104,7 @@ public class VoiceServiceImpl extends SystemBaseService implements VoiceService 
     public Result voiceCallBactch(VoiceCallRequest voiceCallRequest) {
         Result result =  new Result();
         try {
-            List<NmplUser> userList  = userDomainService.getAllUserInfo();
-            if(CollectionUtils.isEmpty(userList)){
-                return result;
-            }
-            List<String> phoneList = userList.stream().filter(item -> item.getRoleId().equals("1") || item.getRoleId().equals(2))
-                    .map(NmplUser::getPhoneNumber).collect(Collectors.toList());
+            List<String> phoneList = voiceCallRequest.getCalledNumberList();
             if(CollectionUtils.isEmpty(phoneList)){
                 return result;
             }
