@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.api.request.ChangePasswdReq;
 import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.exception.ErrorMessageContants;
@@ -77,5 +78,38 @@ public class UserController {
         }
         return  null;
     }
+
+    @ApiOperation(value = "修改密码",notes = "修改密码")
+    @RequestMapping (value = "/changePasswd",method = RequestMethod.POST)
+    public Result changePasswd(@RequestBody ChangePasswdReq changePasswdReq){
+        try {
+            /**1.0 参数校验**/
+            if(ObjectUtils.isEmpty(changePasswdReq) || ObjectUtils.isEmpty(changePasswdReq.getNewPassword())
+                    || ObjectUtils.isEmpty(changePasswdReq.getRepeatPassword())||
+                    ObjectUtils.isEmpty(changePasswdReq.getPhoneNumber())){
+                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            return userService.changePasswd(changePasswdReq);
+        }catch (Exception e){
+            log.error("changePasswd exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "查询单个用户",notes = "查询单个用户")
+    @RequestMapping (value = "/queryUserInfo",method = RequestMethod.POST)
+    public Result queryUserInfo(@RequestBody UserRequest userRequest){
+        try {
+            /**1.0 参数校验**/
+            if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getQueryParam())){
+                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            return userService.queryUser(userRequest);
+        }catch (Exception e){
+            log.error("changePasswd exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
 
 }
