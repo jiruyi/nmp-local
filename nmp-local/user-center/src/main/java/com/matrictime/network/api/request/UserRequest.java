@@ -88,4 +88,6 @@ public class UserRequest implements Serializable {
     private Date updateTime;
 
     private String remark;
+
+    private String queryParam;
 }

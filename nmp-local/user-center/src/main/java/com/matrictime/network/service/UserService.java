@@ -1,5 +1,6 @@
 package com.matrictime.network.service;
 
+import com.matrictime.network.api.request.ChangePasswdReq;
 import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.model.Result;
@@ -34,5 +35,9 @@ public interface UserService {
       */
     Result deleteFriend(DeleteFriendReq deleteFriendReq);
 
+
+    Result changePasswd(ChangePasswdReq changePasswdReq);
+
+    Result queryUser(UserRequest userRequest);
 
 }
