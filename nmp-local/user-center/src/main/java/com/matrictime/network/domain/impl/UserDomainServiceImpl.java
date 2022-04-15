@@ -12,6 +12,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Circle;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,5 +80,22 @@ public class UserDomainServiceImpl implements UserDomainService {
         } else {
             return NumberUtils.INTEGER_ZERO;
         }
+    }
+
+    @Override
+    public User selectByCondition(UserRequest userRequest) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        if(userRequest.getPhoneNumber()!=null){
+            criteria.andPhoneNumberEqualTo(userRequest.getPhoneNumber());
+        }
+        if(userRequest.getUserId()!=null){
+            criteria.andUserIdEqualTo(userRequest.getUserId());
+        }
+        if(userRequest.getLoginAccount()!=null){
+            criteria.andLoginAccountEqualTo(userRequest.getLoginAccount());
+        }
+        criteria.andIsExistEqualTo(true);
+        return userMapper.selectByExample(userExample).get(0);
     }
 }
