@@ -51,7 +51,7 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         if(companyInfoRequest.getCompanyCode()!=null){
             NmplCompanyInfoExample nmplCompanyInfoExample1 = new NmplCompanyInfoExample();
             NmplCompanyInfoExample.Criteria criteria1 = nmplCompanyInfoExample1.createCriteria();
-            criteria1.andCompanyCodeEqualTo(companyInfoRequest.getCompanyCode());
+            criteria1.andCompanyCodeEqualTo(companyInfoRequest.getCompanyCode()).andIsExistEqualTo(true);
             List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample1);
             if(!CollectionUtils.isEmpty(infos)){
                 throw new SystemException("编码重复");

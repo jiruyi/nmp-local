@@ -44,10 +44,10 @@
                     upload_time = #{uploadTime,jdbcType=TIMESTAMP} and
                 </if>
                 <if test="startTime != null">
-                    start_time &gt;= #{startTime,jdbcType=VARCHAR} and
+                    start_time &lt;= #{startTime,jdbcType=VARCHAR} and
                 </if>
                 <if test="endTime != null">
-                    end_time &lt;= #{endTime,jdbcType=VARCHAR}
+                    end_time &gt;= #{endTime,jdbcType=VARCHAR}
                 </if>
             </trim>
         </where>
