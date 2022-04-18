@@ -609,15 +609,15 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
         if (ParamCheckUtil.checkVoStrBlank(req.getDeviceId())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "DeviceId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if (ParamCheckUtil.checkVoStrBlank(req.getSignalName())){
-            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SignalName"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (ParamCheckUtil.checkVoStrBlank(req.getSendIp())){
-            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SendIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (ParamCheckUtil.checkVoStrBlank(req.getReceiveIp())){
-            throw new SystemException(ErrorCode.PARAM_IS_NULL, "ReceiveIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
+//        if (ParamCheckUtil.checkVoStrBlank(req.getSignalName())){
+//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SignalName"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//        }
+//        if (ParamCheckUtil.checkVoStrBlank(req.getSendIp())){
+//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SendIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//        }
+//        if (ParamCheckUtil.checkVoStrBlank(req.getReceiveIp())){
+//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "ReceiveIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//        }
         if (ParamCheckUtil.checkVoStrBlank(req.getSignalContent())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "SignalContent"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }

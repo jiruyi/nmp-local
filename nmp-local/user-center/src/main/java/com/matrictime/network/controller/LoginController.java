@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.RegisterReq;
@@ -60,6 +61,19 @@ public class LoginController {
             return loginService.logout(req);
         }catch (Exception e){
             log.error("LoginController.logout exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 绑定用户
+     */
+    @RequestMapping(value = "/bind")
+    public Result bind(@RequestBody BindReq req){
+        try {
+            return loginService.bind(req);
+        }catch (Exception e){
+            log.error("LoginController.bind exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

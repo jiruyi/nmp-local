@@ -4,10 +4,12 @@
   <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.User">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="l_id" jdbcType="VARCHAR" property="lId" />
     <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
     <result column="device_ip" jdbcType="VARCHAR" property="deviceIp" />
     <result column="login_account" jdbcType="VARCHAR" property="loginAccount" />
     <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="sex" jdbcType="BIT" property="sex" />
     <result column="user_type" jdbcType="CHAR" property="userType" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
@@ -17,6 +19,7 @@
     <result column="login_status" jdbcType="CHAR" property="loginStatus" />
     <result column="login_app_code" jdbcType="VARCHAR" property="loginAppCode" />
     <result column="logout_app_code" jdbcType="VARCHAR" property="logoutAppCode" />
+    <result column="agree_friend" jdbcType="TINYINT" property="agreeFriend" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
@@ -84,9 +87,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_id, device_id, device_ip, login_account, nick_name, user_type, email, phone_number, 
-    id_type, id_no, password, login_status, login_app_code, logout_app_code, status, 
-    is_exist, create_user, create_time, update_user, update_time, remark
+    id, user_id, l_id, device_id, device_ip, login_account, nick_name, sex, user_type, 
+    email, phone_number, id_type, id_no, password, login_status, login_app_code, logout_app_code, 
+    agree_friend, status, is_exist, create_user, create_time, update_user, update_time, 
+    remark
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.UserExample" resultMap="BaseResultMap">
     select
@@ -120,22 +124,24 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.User">
-    insert into user (id, user_id, device_id, 
-      device_ip, login_account, nick_name, 
-      user_type, email, phone_number, 
-      id_type, id_no, password, 
-      login_status, login_app_code, logout_app_code, 
-      status, is_exist, create_user, 
-      create_time, update_user, update_time, 
-      remark)
-    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, 
-      #{deviceIp,jdbcType=VARCHAR}, #{loginAccount,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, 
-      #{userType,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, 
-      #{idType,jdbcType=CHAR}, #{idNo,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{loginStatus,jdbcType=CHAR}, #{loginAppCode,jdbcType=VARCHAR}, #{logoutAppCode,jdbcType=VARCHAR}, 
-      #{status,jdbcType=BIT}, #{isExist,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{remark,jdbcType=VARCHAR})
+    insert into user (id, user_id, l_id, 
+      device_id, device_ip, login_account, 
+      nick_name, sex, user_type, email, 
+      phone_number, id_type, id_no, 
+      password, login_status, login_app_code, 
+      logout_app_code, agree_friend, status, 
+      is_exist, create_user, create_time, 
+      update_user, update_time, remark
+      )
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{lId,jdbcType=VARCHAR}, 
+      #{deviceId,jdbcType=VARCHAR}, #{deviceIp,jdbcType=VARCHAR}, #{loginAccount,jdbcType=VARCHAR}, 
+      #{nickName,jdbcType=VARCHAR}, #{sex,jdbcType=BIT}, #{userType,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, 
+      #{phoneNumber,jdbcType=VARCHAR}, #{idType,jdbcType=CHAR}, #{idNo,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{loginStatus,jdbcType=CHAR}, #{loginAppCode,jdbcType=VARCHAR}, 
+      #{logoutAppCode,jdbcType=VARCHAR}, #{agreeFriend,jdbcType=TINYINT}, #{status,jdbcType=BIT}, 
+      #{isExist,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.User">
     insert into user
@@ -145,6 +151,9 @@
       </if>
       <if test="userId != null">
         user_id,
+      </if>
+      <if test="lId != null">
+        l_id,
       </if>
       <if test="deviceId != null">
         device_id,
@@ -157,6 +166,9 @@
       </if>
       <if test="nickName != null">
         nick_name,
+      </if>
+      <if test="sex != null">
+        sex,
       </if>
       <if test="userType != null">
         user_type,
@@ -184,6 +196,9 @@
       </if>
       <if test="logoutAppCode != null">
         logout_app_code,
+      </if>
+      <if test="agreeFriend != null">
+        agree_friend,
       </if>
       <if test="status != null">
         status,
@@ -214,6 +229,9 @@
       <if test="userId != null">
         #{userId,jdbcType=VARCHAR},
       </if>
+      <if test="lId != null">
+        #{lId,jdbcType=VARCHAR},
+      </if>
       <if test="deviceId != null">
         #{deviceId,jdbcType=VARCHAR},
       </if>
@@ -225,6 +243,9 @@
       </if>
       <if test="nickName != null">
         #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=BIT},
       </if>
       <if test="userType != null">
         #{userType,jdbcType=CHAR},
@@ -252,6 +273,9 @@
       </if>
       <if test="logoutAppCode != null">
         #{logoutAppCode,jdbcType=VARCHAR},
+      </if>
+      <if test="agreeFriend != null">
+        #{agreeFriend,jdbcType=TINYINT},
       </if>
       <if test="status != null">
         #{status,jdbcType=BIT},
@@ -291,6 +315,9 @@
       <if test="record.userId != null">
         user_id = #{record.userId,jdbcType=VARCHAR},
       </if>
+      <if test="record.lId != null">
+        l_id = #{record.lId,jdbcType=VARCHAR},
+      </if>
       <if test="record.deviceId != null">
         device_id = #{record.deviceId,jdbcType=VARCHAR},
       </if>
@@ -302,6 +329,9 @@
       </if>
       <if test="record.nickName != null">
         nick_name = #{record.nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sex != null">
+        sex = #{record.sex,jdbcType=BIT},
       </if>
       <if test="record.userType != null">
         user_type = #{record.userType,jdbcType=CHAR},
@@ -329,6 +359,9 @@
       </if>
       <if test="record.logoutAppCode != null">
         logout_app_code = #{record.logoutAppCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.agreeFriend != null">
+        agree_friend = #{record.agreeFriend,jdbcType=TINYINT},
       </if>
       <if test="record.status != null">
         status = #{record.status,jdbcType=BIT},
@@ -360,10 +393,12 @@
     update user
     set id = #{record.id,jdbcType=BIGINT},
       user_id = #{record.userId,jdbcType=VARCHAR},
+      l_id = #{record.lId,jdbcType=VARCHAR},
       device_id = #{record.deviceId,jdbcType=VARCHAR},
       device_ip = #{record.deviceIp,jdbcType=VARCHAR},
       login_account = #{record.loginAccount,jdbcType=VARCHAR},
       nick_name = #{record.nickName,jdbcType=VARCHAR},
+      sex = #{record.sex,jdbcType=BIT},
       user_type = #{record.userType,jdbcType=CHAR},
       email = #{record.email,jdbcType=VARCHAR},
       phone_number = #{record.phoneNumber,jdbcType=VARCHAR},
@@ -373,6 +408,7 @@
       login_status = #{record.loginStatus,jdbcType=CHAR},
       login_app_code = #{record.loginAppCode,jdbcType=VARCHAR},
       logout_app_code = #{record.logoutAppCode,jdbcType=VARCHAR},
+      agree_friend = #{record.agreeFriend,jdbcType=TINYINT},
       status = #{record.status,jdbcType=BIT},
       is_exist = #{record.isExist,jdbcType=BIT},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -390,6 +426,9 @@
       <if test="userId != null">
         user_id = #{userId,jdbcType=VARCHAR},
       </if>
+      <if test="lId != null">
+        l_id = #{lId,jdbcType=VARCHAR},
+      </if>
       <if test="deviceId != null">
         device_id = #{deviceId,jdbcType=VARCHAR},
       </if>
@@ -401,6 +440,9 @@
       </if>
       <if test="nickName != null">
         nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=BIT},
       </if>
       <if test="userType != null">
         user_type = #{userType,jdbcType=CHAR},
@@ -429,6 +471,9 @@
       <if test="logoutAppCode != null">
         logout_app_code = #{logoutAppCode,jdbcType=VARCHAR},
       </if>
+      <if test="agreeFriend != null">
+        agree_friend = #{agreeFriend,jdbcType=TINYINT},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=BIT},
       </if>
@@ -456,10 +501,12 @@
   <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.User">
     update user
     set user_id = #{userId,jdbcType=VARCHAR},
+      l_id = #{lId,jdbcType=VARCHAR},
       device_id = #{deviceId,jdbcType=VARCHAR},
       device_ip = #{deviceIp,jdbcType=VARCHAR},
       login_account = #{loginAccount,jdbcType=VARCHAR},
       nick_name = #{nickName,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=BIT},
       user_type = #{userType,jdbcType=CHAR},
       email = #{email,jdbcType=VARCHAR},
       phone_number = #{phoneNumber,jdbcType=VARCHAR},
@@ -469,6 +516,7 @@
       login_status = #{loginStatus,jdbcType=CHAR},
       login_app_code = #{loginAppCode,jdbcType=VARCHAR},
       logout_app_code = #{logoutAppCode,jdbcType=VARCHAR},
+      agree_friend = #{agreeFriend,jdbcType=TINYINT},
       status = #{status,jdbcType=BIT},
       is_exist = #{isExist,jdbcType=BIT},
       create_user = #{createUser,jdbcType=VARCHAR},
