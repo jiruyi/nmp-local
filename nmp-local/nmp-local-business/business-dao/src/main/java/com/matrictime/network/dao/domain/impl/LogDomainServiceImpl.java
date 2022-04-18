@@ -98,6 +98,7 @@ public class LogDomainServiceImpl extends SystemBaseService implements LogDomain
     public int saveDeviceLog(DeviceLog deviceLog) {
         NmplDeviceLog nmplDeviceLog = new NmplDeviceLog();
         BeanUtils.copyProperties(deviceLog,nmplDeviceLog);
+        nmplDeviceLog.setDevcieName(deviceLog.getDeviceName());
         return  deviceLogMapper.insertSelective(nmplDeviceLog);
     }
 
