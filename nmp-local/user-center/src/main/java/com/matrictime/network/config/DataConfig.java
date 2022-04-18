@@ -7,4 +7,7 @@ public class DataConfig {
 
     public static final String LOGIN_STATUS_IN = "1";
     public static final String LOGIN_STATUS_OUT = "0";
+
+    public static final String OPR_TYPE_BIND = "bind";
+    public static final String OPR_TYPE_UNBIND = "unbind";
 }
