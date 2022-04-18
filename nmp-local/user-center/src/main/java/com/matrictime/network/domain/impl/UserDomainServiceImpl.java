@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Circle;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 /**
  * @author jiruyi
@@ -96,6 +99,11 @@ public class UserDomainServiceImpl implements UserDomainService {
             criteria.andLoginAccountEqualTo(userRequest.getLoginAccount());
         }
         criteria.andIsExistEqualTo(true);
-        return userMapper.selectByExample(userExample).get(0);
+        List<User> userList = userMapper.selectByExample(userExample);
+        if(!CollectionUtils.isEmpty(userList)){
+            return userList.get(0);
+        }else {
+            return null;
+        }
     }
 }
