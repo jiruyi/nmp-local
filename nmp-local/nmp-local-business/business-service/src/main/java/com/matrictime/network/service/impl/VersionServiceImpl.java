@@ -77,6 +77,12 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
     @Value("${version.start.file.time.out}")
     private int versionStartFileTimeOut;
 
+    @Value("${device.path.startfile}")
+    private String startPath;
+
+    @Value("${device.path.pushfile}")
+    private String pushPath;
+
     @Override
     public Result<EditVersionResp> editVersion(EditVersionReq req) {
         Result result;
@@ -427,7 +433,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                         if (!CollectionUtils.isEmpty(stationInfos)){
                             NmplBaseStationInfo info = stationInfos.get(0);
                             // TODO: 2022/4/7 path需要提供
-                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),pushPath));
                             httpList.add(map);
                         }
                         break;
@@ -440,7 +446,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                         if (!CollectionUtils.isEmpty(deviceInfos)){
                             NmplDeviceInfo info = deviceInfos.get(0);
                             // TODO: 2022/4/7 path需要提供
-                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),pushPath));
                             httpList.add(map);
                         }
                         break;
@@ -550,7 +556,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                                         map.put(KEY_DEVICE_ID,deviceId);
                                         map.put(KEY_FILE_ID,String.valueOf(fileId));
                                         // TODO: 2022/4/7 path需要提供
-                                        map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                                        map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),startPath));
                                         httpList.add(map);
                                     }
                                 }
@@ -569,7 +575,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                                         map.put(KEY_DEVICE_ID,deviceId);
                                         map.put(KEY_FILE_ID,String.valueOf(fileId));
                                         // TODO: 2022/4/7 path需要提供
-                                        map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                                        map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),startPath));
                                         map.put(KEY_FILE_PATH,versionFile.getFilePath() + versionFile.getFileName());
                                         httpList.add(map);
                                     }
