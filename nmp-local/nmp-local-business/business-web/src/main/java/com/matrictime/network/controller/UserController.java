@@ -184,7 +184,7 @@ public class UserController {
                     || ObjectUtils.isEmpty(userRequest.getRoleId())){
                 return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
-            //2. 插入
+            //2. 编辑
             return  userService.updateUser(userRequest);
         }catch (Exception e){
             log.error("用户:{}插入发生异常：{}", userRequest,e.getMessage());

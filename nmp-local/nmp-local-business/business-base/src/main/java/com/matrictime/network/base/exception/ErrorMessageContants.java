@@ -19,6 +19,8 @@ public class ErrorMessageContants {
 
 	public static final String PHONE_EXIST_ERROR_MSG = "手机号已存在";
 
+	public static final String NO_ADMIN_ERROR_MSG = "您不是超管,无权修改";
+
 	public static final String USER_NO_EXIST_ERROR_MSG = "用户不存在";
 
 	public static final String OLD_PASSWORD_ERROR_MSG = "初始密码不正确";
