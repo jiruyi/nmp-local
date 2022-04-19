@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.Future;
@@ -76,42 +77,45 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             List<NmplDataCollect> dataCollectList = dataCollectDomainService.queryMonitorData(monitorReq);
             //2.根据设备类型分组
             Integer userNumber = 0;
-            Integer totalBandwidth=0;
-            Integer dispenserSecretKey=0;
-            Integer generatorSecretKey=0;
-            Integer cacheSecretKey=0;
+            double totalBandwidth=0.0;
+            double dispenserSecretKey=0.0;
+            double generatorSecretKey=0.0;
+            double cacheSecretKey=0.0;
+
             for (NmplDataCollect nmplDataCollect : dataCollectList) {
+                BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
+                double value = bigDecimal.divide(new BigDecimal(1024*1024)).doubleValue();
                 switch (nmplDataCollect.getDeviceType()){
                     case "01":
                         if(nmplDataCollect.getDataItemCode().equals("10000")){
                             userNumber+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
                         if(nmplDataCollect.getDataItemCode().equals("10006")){
-                            totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+                            totalBandwidth+=value;
                         }
                         break;
                     case "02":
                         if(nmplDataCollect.getDataItemCode().equals("10007")){
-                            dispenserSecretKey+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+                            dispenserSecretKey+=value;
                         }
                         if(nmplDataCollect.getDataItemCode().equals("10006")){
-                            totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+                            totalBandwidth+=value;
                         }
                         break;
                     case "03":
                         if(nmplDataCollect.getDataItemCode().equals("10007")){
-                            generatorSecretKey+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+                            generatorSecretKey+=value;
                         }
                         if(nmplDataCollect.getDataItemCode().equals("10006")){
-                            totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+                            totalBandwidth+=value;
                         }
                         break;
                     case "04":
                         if(nmplDataCollect.getDataItemCode().equals("10007")){
-                            cacheSecretKey+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+                            cacheSecretKey+=value;
                         }
                         if(nmplDataCollect.getDataItemCode().equals("10006")){
-                            totalBandwidth+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+                            totalBandwidth+=value;
                         }
                         break;
                     default:

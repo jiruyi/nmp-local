@@ -235,6 +235,76 @@ public class UserExample {
             return (Criteria) this;
         }
 
+        public Criteria andLIdIsNull() {
+            addCriterion("l_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdIsNotNull() {
+            addCriterion("l_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdEqualTo(String value) {
+            addCriterion("l_id =", value, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdNotEqualTo(String value) {
+            addCriterion("l_id <>", value, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdGreaterThan(String value) {
+            addCriterion("l_id >", value, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdGreaterThanOrEqualTo(String value) {
+            addCriterion("l_id >=", value, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdLessThan(String value) {
+            addCriterion("l_id <", value, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdLessThanOrEqualTo(String value) {
+            addCriterion("l_id <=", value, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdLike(String value) {
+            addCriterion("l_id like", value, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdNotLike(String value) {
+            addCriterion("l_id not like", value, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdIn(List<String> values) {
+            addCriterion("l_id in", values, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdNotIn(List<String> values) {
+            addCriterion("l_id not in", values, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdBetween(String value1, String value2) {
+            addCriterion("l_id between", value1, value2, "lId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLIdNotBetween(String value1, String value2) {
+            addCriterion("l_id not between", value1, value2, "lId");
+            return (Criteria) this;
+        }
+
         public Criteria andDeviceIdIsNull() {
             addCriterion("device_id is null");
             return (Criteria) this;
@@ -512,6 +582,66 @@ public class UserExample {
 
         public Criteria andNickNameNotBetween(String value1, String value2) {
             addCriterion("nick_name not between", value1, value2, "nickName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexIsNull() {
+            addCriterion("sex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexIsNotNull() {
+            addCriterion("sex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexEqualTo(Boolean value) {
+            addCriterion("sex =", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexNotEqualTo(Boolean value) {
+            addCriterion("sex <>", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexGreaterThan(Boolean value) {
+            addCriterion("sex >", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("sex >=", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexLessThan(Boolean value) {
+            addCriterion("sex <", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexLessThanOrEqualTo(Boolean value) {
+            addCriterion("sex <=", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexIn(List<Boolean> values) {
+            addCriterion("sex in", values, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexNotIn(List<Boolean> values) {
+            addCriterion("sex not in", values, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexBetween(Boolean value1, Boolean value2) {
+            addCriterion("sex between", value1, value2, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("sex not between", value1, value2, "sex");
             return (Criteria) this;
         }
 
@@ -1142,6 +1272,66 @@ public class UserExample {
 
         public Criteria andLogoutAppCodeNotBetween(String value1, String value2) {
             addCriterion("logout_app_code not between", value1, value2, "logoutAppCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendIsNull() {
+            addCriterion("agree_friend is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendIsNotNull() {
+            addCriterion("agree_friend is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendEqualTo(Byte value) {
+            addCriterion("agree_friend =", value, "agreeFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendNotEqualTo(Byte value) {
+            addCriterion("agree_friend <>", value, "agreeFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendGreaterThan(Byte value) {
+            addCriterion("agree_friend >", value, "agreeFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendGreaterThanOrEqualTo(Byte value) {
+            addCriterion("agree_friend >=", value, "agreeFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendLessThan(Byte value) {
+            addCriterion("agree_friend <", value, "agreeFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendLessThanOrEqualTo(Byte value) {
+            addCriterion("agree_friend <=", value, "agreeFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendIn(List<Byte> values) {
+            addCriterion("agree_friend in", values, "agreeFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendNotIn(List<Byte> values) {
+            addCriterion("agree_friend not in", values, "agreeFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendBetween(Byte value1, Byte value2) {
+            addCriterion("agree_friend between", value1, value2, "agreeFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgreeFriendNotBetween(Byte value1, Byte value2) {
+            addCriterion("agree_friend not between", value1, value2, "agreeFriend");
             return (Criteria) this;
         }
 

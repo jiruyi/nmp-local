@@ -1,5 +1,6 @@
 package com.matrictime.network.service;
 
+import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.RegisterReq;
@@ -28,4 +29,11 @@ public interface LoginService {
      * @return
      */
     Result logout(LogoutReq logoutReq);
+
+    /**
+     * 绑定
+     * @param bindReq
+     * @return
+     */
+    Result bind(BindReq bindReq);
 }

@@ -76,6 +76,9 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     @Value("${signal.io.time.out}")
     private int signalIoTimeOut;
 
+    @Value("${device.path.signal}")
+    private String signalPath;
+
     @Override
     public Result<EditSignalResp> editSignal(EditSignalReq req) {
         Result result;
@@ -430,7 +433,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             if (!CollectionUtils.isEmpty(nmplBaseStationInfos)){
                 NmplBaseStationInfo info = nmplBaseStationInfos.get(0);
                 // TODO: 2022/4/7 path需要提供
-                map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),signalPath));
                 map.put(KEY_IO_TYPE,ioType);
                 map.put(KEY_USER_ID,userId);
                 map.put(KEY_DEVICE_ID,id);
@@ -442,7 +445,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             if (!CollectionUtils.isEmpty(nmplDeviceInfos)){
                 NmplDeviceInfo info = nmplDeviceInfos.get(0);
                 // TODO: 2022/4/7 path需要提供
-                map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),signalPath));
                 map.put(KEY_IO_TYPE,ioType);
                 map.put(KEY_USER_ID,userId);
                 map.put(KEY_DEVICE_ID,id);
@@ -609,15 +612,15 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
         if (ParamCheckUtil.checkVoStrBlank(req.getDeviceId())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "DeviceId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if (ParamCheckUtil.checkVoStrBlank(req.getSignalName())){
-            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SignalName"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (ParamCheckUtil.checkVoStrBlank(req.getSendIp())){
-            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SendIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (ParamCheckUtil.checkVoStrBlank(req.getReceiveIp())){
-            throw new SystemException(ErrorCode.PARAM_IS_NULL, "ReceiveIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
+//        if (ParamCheckUtil.checkVoStrBlank(req.getSignalName())){
+//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SignalName"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//        }
+//        if (ParamCheckUtil.checkVoStrBlank(req.getSendIp())){
+//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "SendIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//        }
+//        if (ParamCheckUtil.checkVoStrBlank(req.getReceiveIp())){
+//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "ReceiveIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//        }
         if (ParamCheckUtil.checkVoStrBlank(req.getSignalContent())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "SignalContent"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }

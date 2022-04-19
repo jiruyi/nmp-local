@@ -390,6 +390,8 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             //参数转换
             UserInfoResp userInfoResp = new UserInfoResp();
             BeanUtils.copyProperties(user,userInfoResp);
+            NmplRole role = roleMapper.selectByPrimaryKey(Long.valueOf(user.getRoleId()));
+            userInfoResp.setRoleName(role.getRoleName());
             return buildResult(userInfoResp);
         }catch (Exception e){
             log.error("selectUserList exception :{}",e.getMessage());

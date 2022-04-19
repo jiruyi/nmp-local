@@ -92,7 +92,7 @@ public class DataConstants {
     public static final String KEY_UNIT = "unit";
     public static final String KEY_SUCCESS_IDS = "successIds";
     public static final String KEY_FAIL_IDS = "failIds";
-    public static final String KEY_IO_TYPE = "ioType";
+    public static final String KEY_IO_TYPE = "opType";
     public static final String KEY_IS_SUCCESS = "isSuccess";
     public static final String KEY_URL = "url";
     public static final String KEY_USER_ID = "userId";

@@ -40,4 +40,6 @@ public class UserInfoResp implements Serializable {
     private String updateTime;
 
     private String remark;
+
+    private String roleName;
 }

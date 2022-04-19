@@ -7,10 +7,15 @@ import java.util.Date;
 
 @Data
 public class UserVo implements Serializable {
+<<<<<<< HEAD
     /**
      * ID
      */
     private Long id;
+=======
+
+    private static final long serialVersionUID = 3453857524589581175L;
+>>>>>>> origin/dev_01
 
     /**
      * 用户id
@@ -18,6 +23,7 @@ public class UserVo implements Serializable {
     private String userId;
 
     /**
+<<<<<<< HEAD
      * 一体机设备ID
      */
     private String deviceId;
@@ -33,11 +39,14 @@ public class UserVo implements Serializable {
     private String loginAccount;
 
     /**
+=======
+>>>>>>> origin/dev_01
      * 用户昵称
      */
     private String nickName;
 
     /**
+<<<<<<< HEAD
      * 用户类型（00系统用户 01注册用户）
      */
     private String userType;
@@ -48,10 +57,13 @@ public class UserVo implements Serializable {
     private String email;
 
     /**
+=======
+>>>>>>> origin/dev_01
      * 手机号码
      */
     private String phoneNumber;
 
+<<<<<<< HEAD
     /**
      * 证件类型
      */
@@ -118,4 +130,6 @@ public class UserVo implements Serializable {
     private String remark;
 
     private Byte agreeFriend;
+=======
+>>>>>>> origin/dev_01
 }

@@ -1,16 +1,38 @@
 package com.matrictime.network.dao.model;
 
 import java.util.Date;
+import lombok.Data;
 
-public class Group {
+/**
+ * 
+ * @author   hexu
+ * @date   2022-04-14
+ */
+@Data
+public class GroupInfo {
+    /**
+     * 主键 组id
+     */
     private Long groupId;
 
+    /**
+     * 组名称
+     */
     private String groupName;
 
+    /**
+     *  0 删除  1 存在
+     */
     private Boolean isExist;
 
-    private Long owner;
+    /**
+     * 组所属人
+     */
+    private String owner;
 
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
     public Long getGroupId() {
@@ -37,12 +59,12 @@ public class Group {
         this.isExist = isExist;
     }
 
-    public Long getOwner() {
+    public String getOwner() {
         return owner;
     }
 
-    public void setOwner(Long owner) {
-        this.owner = owner;
+    public void setOwner(String owner) {
+        this.owner = owner == null ? null : owner.trim();
     }
 
     public Date getCreateTime() {

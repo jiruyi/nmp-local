@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 用户信息表
  * @author   hexu
- * @date   2022-04-06
+ * @date   2022-04-19
  */
 @Data
 public class User {
@@ -19,6 +19,11 @@ public class User {
      * 用户id
      */
     private String userId;
+
+    /**
+     * 绑定本地用户id
+     */
+    private String lId;
 
     /**
      * 一体机设备ID
@@ -39,6 +44,11 @@ public class User {
      * 用户昵称
      */
     private String nickName;
+
+    /**
+     * 性别（1：男 0：女）
+     */
+    private Boolean sex;
 
     /**
      * 用户类型（00系统用户 01注册用户）
@@ -84,6 +94,11 @@ public class User {
      * 当前退出系统
      */
     private String logoutAppCode;
+
+    /**
+     * 添加好友条件（0：直接添加 1：需要询问）
+     */
+    private Byte agreeFriend;
 
     /**
      * 帐号状态（1正常 0停用注销）
@@ -136,6 +151,14 @@ public class User {
         this.userId = userId == null ? null : userId.trim();
     }
 
+    public String getlId() {
+        return lId;
+    }
+
+    public void setlId(String lId) {
+        this.lId = lId == null ? null : lId.trim();
+    }
+
     public String getDeviceId() {
         return deviceId;
     }
@@ -166,6 +189,14 @@ public class User {
 
     public void setNickName(String nickName) {
         this.nickName = nickName == null ? null : nickName.trim();
+    }
+
+    public Boolean getSex() {
+        return sex;
+    }
+
+    public void setSex(Boolean sex) {
+        this.sex = sex;
     }
 
     public String getUserType() {
@@ -238,6 +269,14 @@ public class User {
 
     public void setLogoutAppCode(String logoutAppCode) {
         this.logoutAppCode = logoutAppCode == null ? null : logoutAppCode.trim();
+    }
+
+    public Byte getAgreeFriend() {
+        return agreeFriend;
+    }
+
+    public void setAgreeFriend(Byte agreeFriend) {
+        this.agreeFriend = agreeFriend;
     }
 
     public Boolean getStatus() {

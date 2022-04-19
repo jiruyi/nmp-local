@@ -4,6 +4,7 @@ import com.matrictime.network.api.modelVo.UserGroupVo;
 import com.matrictime.network.api.request.UserGroupReq;
 import com.matrictime.network.api.response.UserGroupResp;
 import com.matrictime.network.dao.model.UserGroup;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -11,4 +12,6 @@ public interface UserGroupExtMapper {
     Integer updateByUserIdAndGroupId(UserGroupReq userGroupReq);
 
     List<UserGroupVo> selectByCondition(UserGroupReq userGroupReq);
+
+    List<UserGroupVo> selectByGroupIds(@Param("list") List<String>list);
 }

@@ -2,6 +2,7 @@ package com.matrictime.network.domain;
 
 import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.dao.model.User;
 
 /**
  * @author jiruyi
@@ -15,4 +16,7 @@ public interface UserDomainService {
     int modifyUserInfo(UserRequest userRequest);
 
     int deleteFriend(DeleteFriendReq deleteFriendReq);
+
+    User selectByCondition(UserRequest userRequest);
+
 }

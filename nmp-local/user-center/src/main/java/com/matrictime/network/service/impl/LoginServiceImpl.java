@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.RegisterReq;
@@ -7,6 +8,7 @@ import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.config.DataConfig;
+import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
 import com.matrictime.network.dao.model.UserExample;
@@ -112,6 +114,10 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         try {
             checkLogoutParam(req);
 
+            User user = new User();
+            user.setUserId(req.getUserId());
+            user.setLoginStatus(DataConfig.LOGIN_STATUS_OUT);
+            userMapper.updateByPrimaryKeySelective(user);
 
             result = buildResult(null);
         }catch (Exception e){
@@ -119,6 +125,56 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             result = failResult(e);
         }
         return result;
+    }
+
+    @Override
+    public Result bind(BindReq req) {
+        Result result;
+        try {
+            checkBindParam(req);
+
+            switch (req.getOprType()){
+                case DataConfig.OPR_TYPE_BIND:
+
+                    break;
+                case DataConfig.OPR_TYPE_UNBIND:
+                    break;
+                default:
+                    throw new SystemException("OprType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+
+            result = buildResult(null);
+        }catch (Exception e){
+            log.error("LoginServiceImpl.bind Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    private boolean checkUserForBind(BindReq req){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andUserIdEqualTo(req.getUserId()).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<User> users = userMapper.selectByExample(userExample);
+        if(CollectionUtils.isEmpty(users)){
+            throw new SystemException(ErrorMessageContants.USER_NO_EXIST_MSG);
+        }
+        User user = users.get(0);
+        if(!ParamCheckUtil.checkVoStrBlank(user.getlId())){
+            throw new SystemException(ErrorMessageContants.USER_BIND_MSG);
+        }
+        return false;
+    }
+
+    private void checkBindParam(BindReq req){
+        if(ParamCheckUtil.checkVoStrBlank(req.getUserId())){
+            throw new SystemException("userId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getOprType())){
+            throw new SystemException("oprType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getLid())){
+            throw new SystemException("lid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
     }
 
     private boolean checkUserExist(RegisterReq req){
