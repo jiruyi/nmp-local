@@ -159,6 +159,15 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
                     !userRequest.getUserId().equals(listUser.get(0).getUserId().toString())){
                 throw new SystemException(ErrorMessageContants.PHONE_EXIST_ERROR_MSG);
             }
+            //2.权限检验
+            //被修改人
+            NmplUser nmplUser =  userDomainService.getUserById(Long.valueOf(userRequest.getUserId()));
+            //超级管理员
+            if(Long.valueOf(nmplUser.getRoleId()) == DataConstants.SUPER_ADMIN){
+                if(DataConstants.SUPER_ADMIN  !=  Long.valueOf(RequestContext.getUser().getRoleId())){
+                    throw new SystemException(ErrorMessageContants.NO_ADMIN_ERROR_MSG);
+                }
+            }
             userRequest.setUpdateUser(String.valueOf(RequestContext.getUser().getUserId()));
             int count = userDomainService.updateUser(userRequest);
             result = buildResult(count);
