@@ -60,12 +60,15 @@ public class UserFriendsController {
         Result<Integer> result;
         try {
             result = userFriendsService.addFriends(addUserRequestReq);
-            return result;
+            if(result.getResultObj() == 1){
+                return result;
+            }else {
+                return new Result<>(true,"等待好友验证");
+            }
         }catch (Exception e){
             log.error("addFriends exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
-
     }
 
 }

@@ -298,10 +298,10 @@
             #{createTime,jdbcType=VARCHAR}, #{updateUser,jdbcType=VARCHAR},
             #{updateTime,jdbcType=VARCHAR})
   </insert>
-  <delete id="deleteLinkRelation" parameterType="com.matrictime.network.request.LinkRelationRequest">
-    delete from nmpl_link_relation where main_device_id = #{mainDeviceId,jdbcType=VARCHAR}
+  <update id="deleteLinkRelation" parameterType="com.matrictime.network.request.LinkRelationRequest">
+    update nmpl_link_relation set is_exist = 0 where main_device_id = #{mainDeviceId,jdbcType=VARCHAR}
            and follow_device_id = #{followDeviceId,jdbcType=VARCHAR}
-  </delete>
+  </update>
   <update id="updateLinkRelation" parameterType="com.matrictime.network.request.LinkRelationRequest">
     update nmpl_link_relation set link_name = #{linkName,jdbcType=VARCHAR},
       link_type = #{linkType,jdbcType=VARCHAR},

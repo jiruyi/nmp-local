@@ -482,9 +482,9 @@
       #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}
       )
   </insert>
-  <delete id="deleteDevice" parameterType="com.matrictime.network.request.DeviceInfoRequest">
-    delete from nmpl_device_info where device_id = #{deviceId,jdbcType=VARCHAR}
-  </delete>
+  <update id="deleteDevice" parameterType="com.matrictime.network.request.DeviceInfoRequest">
+    update nmpl_device_info set is_exist = 0 where device_id = #{deviceId,jdbcType=VARCHAR}
+  </update>
   <update id="updateDevice" parameterType="com.matrictime.network.request.DeviceInfoRequest">
     update nmpl_device_info
     set device_name = #{deviceName,jdbcType=VARCHAR},

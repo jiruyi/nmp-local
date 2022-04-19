@@ -2,8 +2,10 @@ package com.matrictime.network.domain.impl;
 
 
 import com.matrictime.network.api.modelVo.UserFriendVo;
+import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.UserFriendReq;
+import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.dao.mapper.ext.AddUserRequestExtMapper;
 import com.matrictime.network.dao.mapper.ext.UserFriendExtMapper;
 import com.matrictime.network.domain.UserFriendsDomainService;
@@ -33,6 +35,16 @@ public class UserFriendsDomainServiceImpl implements UserFriendsDomainService {
     public int addFriends(AddUserRequestReq addUserRequestReq) {
         addUserRequestReq.setRequestId(SnowFlake.nextId_String());
         return addUserRequestExtMapper.addFriends(addUserRequestReq);
+    }
+
+    @Override
+    public int insertFriend(UserFriendReq userFriendReq) {
+        return userFriendExtMapper.insertFriend(userFriendReq);
+    }
+
+    @Override
+    public UserVo selectUserInfo(UserRequest userRequest) {
+        return userFriendExtMapper.selectUserInfo(userRequest);
     }
 }
 

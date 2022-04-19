@@ -15,9 +15,9 @@
             #{updateTime,jdbcType=VARCHAR}
         )
     </insert>
-    <delete id="deleteRoute" parameterType="com.matrictime.network.request.RouteRequest">
-        delete from nmpl_route where id = #{id,jdbcType=VARCHAR}
-    </delete>
+    <update id="deleteRoute" parameterType="com.matrictime.network.request.RouteRequest">
+        delete nmpl_route set is_exist = 0 where id = #{id,jdbcType=VARCHAR}
+    </update>
     <update id="updateRoute" parameterType="com.matrictime.network.request.RouteRequest">
         update nmpl_route set boundary_device_id = #{boundaryDeviceId,jdbcType=VARCHAR},
         update_user = #{updateUser,jdbcType=VARCHAR},
@@ -28,8 +28,9 @@
         select id,access_device_id,boundary_device_id,create_user,update_user,create_time,update_time,is_exist
         from nmpl_route
         <where>
+            is_exist = 1
             <if test="accessDeviceId != null and accessDeviceId != ''">
-                access_device_id = #{accessDeviceId,jdbcType=VARCHAR}
+                and access_device_id = #{accessDeviceId,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

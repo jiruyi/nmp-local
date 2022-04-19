@@ -7,8 +7,18 @@
         <result column="remark_name" jdbcType="VARCHAR" property="remarkName" />
         <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
     </resultMap>
+    <resultMap id="UserResultMap" type="com.matrictime.network.api.modelVo.UserVo">
+        <result column="agree_friend" jdbcType="BIT" property="agreeFriend" />
+    </resultMap>
     <select id="selectUserFriend" parameterType="com.matrictime.network.api.request.UserFriendReq" resultMap="BaseResultMap">
         select f.user_id,friend_user_id,remark_name,nick_name from user_friend f,user u
         where f.friend_user_id = u.user_id and f.user_id = #{userId,jdbcType=VARCHAR}
+    </select>
+    <insert id="insertFriend" parameterType="com.matrictime.network.api.request.UserFriendReq">
+        insert into user_friend (user_id, friend_user_id, remark_name)
+        values (#{userId,jdbcType=VARCHAR}, #{friendUserId,jdbcType=VARCHAR}, #{remarkName,jdbcType=VARCHAR})
+    </insert>
+    <select id="selectUserInfo" parameterType="com.matrictime.network.api.request.UserRequest" resultMap="UserResultMap">
+        select agree_friend from user where user_id = #{userId,jdbcType=VARCHAR}
     </select>
 </mapper>

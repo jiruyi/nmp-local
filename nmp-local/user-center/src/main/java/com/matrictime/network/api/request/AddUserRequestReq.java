@@ -14,6 +14,8 @@ public class AddUserRequestReq implements Serializable {
 
     private String addUserId;
 
+    private String remarkName;
+
     private String status;
 
     private Date createTime;

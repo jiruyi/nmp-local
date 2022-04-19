@@ -11,9 +11,9 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
     <insert id="addFriends" parameterType="com.matrictime.network.api.request.AddUserRequestReq">
-        insert into add_user_request (request_id, user_id,
+        insert into add_user_request (request_id, user_id, status,
                                       add_user_id)
         values (#{requestId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
-                #{addUserId,jdbcType=VARCHAR})
+                #{status,jdbcType=CHAR},#{addUserId,jdbcType=VARCHAR})
     </insert>
 </mapper>

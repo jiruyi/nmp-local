@@ -485,10 +485,10 @@
       update_time = #{updateTime,jdbcType=VARCHAR}
     where station_id = #{stationId,jdbcType=VARCHAR}
   </update>
-  <delete id="deleteBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest">
-    delete from nmpl_base_station_info
+  <update id="deleteBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest">
+    update nmpl_base_station_info set is_exist = 0
     where station_id = #{stationId,jdbcType=VARCHAR}
-  </delete>
+  </update>
   <select id="selectBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
     select id,station_id, station_name, station_type,
            remark, public_network_ip,public_network_port,
