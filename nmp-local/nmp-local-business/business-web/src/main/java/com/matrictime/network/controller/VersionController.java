@@ -175,7 +175,7 @@ public class VersionController {
             if (!tempFile.exists()){
                 throw new Exception("本地版本文件不存在");
             }
-            resp.setContentType("text/html; charset=UTF-8");
+            resp.setContentType("text/html; charset=gb2312");
             FileInputStream fis = null;
             OutputStream os = resp.getOutputStream();
             try {

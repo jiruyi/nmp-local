@@ -66,6 +66,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     @Value("${config.async.time.out}")
     private int asyncTimeOut;
 
+    @Value("${device.path.config}")
+    private String configPath;
+
     @Override
     public Result<PageInfo> queryConfigByPages(QueryConfigByPagesReq req) {
         Result result;
@@ -235,7 +238,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                 if (!CollectionUtils.isEmpty(stationInfos)){
                                     NmplBaseStationInfo info = stationInfos.get(0);
                                     // TODO: 2022/4/7 path需要提供
-                                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),configPath));
                                 }
                                 break;
                             case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_2:
@@ -247,7 +250,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                 if (!CollectionUtils.isEmpty(deviceInfos)){
                                     NmplDeviceInfo info = deviceInfos.get(0);
                                     // TODO: 2022/4/7 path需要提供
-                                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),configPath));
                                 }
                                 break;
                             default:
