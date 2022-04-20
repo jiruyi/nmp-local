@@ -30,6 +30,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -67,6 +68,9 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
 
     @Autowired
     private NmplRoleMapper roleMapper;
+
+    @Value("${token.timeOut}")
+    private Integer timeOut;
 
     @Override
     public Result<LoginResponse> login(LoginRequest loginRequest) {
@@ -351,7 +355,7 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
      */
     public String buildToken(NmplUser user){
         String token = JwtUtils.createToken(user);
-        redisTemplate.opsForValue().set(user.getUserId()+DataConstants.USER_LOGIN_JWT_TOKEN,token,1, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(user.getUserId()+DataConstants.USER_LOGIN_JWT_TOKEN,token,timeOut, TimeUnit.HOURS);
         return token;
     }
 

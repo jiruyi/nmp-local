@@ -76,7 +76,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         //判断该用户是否有关联用户
         List<NmplUser> users = new ArrayList<>();
         NmplUserExample nmplUserExample = new NmplUserExample();
-        nmplUserExample.createCriteria().andRoleIdEqualTo(String.valueOf(roleRequest.getRoleId()));
+        nmplUserExample.createCriteria().andRoleIdEqualTo(String.valueOf(roleRequest.getRoleId())).andIsExistEqualTo(true);
         users = nmplUserMapper.selectByExample(nmplUserExample);
         if (!CollectionUtils.isEmpty(users)){
             throw  new SystemException("该角色有关联用户，无法删除");

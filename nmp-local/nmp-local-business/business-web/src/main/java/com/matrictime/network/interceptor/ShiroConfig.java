@@ -1,4 +1,5 @@
 package com.matrictime.network.interceptor;
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.shiro.UserRealm;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -81,11 +82,12 @@ public class ShiroConfig {
      * @return
      */
     @Bean
-    public RedisManager redisManager(@Value("${spring.redis.host}")String host, @Value("${spring.redis.port}") Integer port, @Value("${spring.redis.password}")String password ) {
+    public RedisManager redisManager(@Value("${spring.redis.host}")String host, @Value("${spring.redis.port}") Integer port,
+                                     @Value("${spring.redis.password}")String password,@Value("${token.timeOut}")Integer timeOut ) {
         RedisManager redisManager = new RedisManager();
         redisManager.setHost(host);
         redisManager.setPort(port);
-        redisManager.setExpire(3600*12);// 配置缓存过期时间
+        redisManager.setExpire(3600* timeOut);// 配置缓存过期时间
         redisManager.setPassword(password);
         redisManager.setTimeout(0);
         // redisManager.setPassword(password);
