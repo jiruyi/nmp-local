@@ -496,7 +496,9 @@
            relation_operator_id, nmpl_base_station_info.create_user,company_name
     from nmpl_base_station_info,nmpl_company_info
     <where>
-      nmpl_base_station_info.is_exist = 1 and station_status in(2,3,4)
+        nmpl_base_station_info.is_exist = 1
+        and nmpl_company_info.is_exist = 1
+        and station_status in(2,3,4)
       <if test="stationId != null and stationId != ''">
         and station_id = #{stationId,jdbcType=VARCHAR}
       </if>

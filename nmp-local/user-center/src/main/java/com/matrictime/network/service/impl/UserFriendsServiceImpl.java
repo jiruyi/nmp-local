@@ -7,6 +7,7 @@ import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.response.UserFriendResp;
+import com.matrictime.network.base.enums.AddUserRequestEnum;
 import com.matrictime.network.domain.UserFriendsDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
@@ -48,12 +49,12 @@ public class UserFriendsServiceImpl implements UserFriendsService {
         userRequest.setUserId(addUserRequestReq.getAddUserId());
         UserVo userVo = userFriendsDomainService.selectUserInfo(userRequest);
         if(userVo.getAgreeFriend() == 0){
-            addUserRequestReq.setStatus("2");
+            addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
             userFriendsDomainService.addFriends(addUserRequestReq);
             userFriendsDomainService.insertFriend(userFriendReq);
             result.setResultObj(1);
         }else {
-            addUserRequestReq.setStatus("1");
+            addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
             userFriendsDomainService.insertFriend(userFriendReq);
             result.setResultObj(0);
         }
