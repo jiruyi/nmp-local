@@ -31,7 +31,7 @@ public class WebSocketServer {
     /**接收用户id*/
     private String userId = "";
 
-    public ConcurrentHashMap<String,WebSocketServer> getWebSocketMap() {
+    public static ConcurrentHashMap<String,WebSocketServer> getWebSocketMap() {
         return webSocketMap;
     }
 
