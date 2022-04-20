@@ -40,7 +40,7 @@ public class DeviceServiceImpl implements DeviceService {
 
             String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
             String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
-            deviceInfoRequest.setStationRandomSeed(NetworkId);
+            deviceInfoRequest.setStationNetworkId(NetworkId);
             insertFlag = deviceDomainService.insertDevice(deviceInfoRequest);
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);
