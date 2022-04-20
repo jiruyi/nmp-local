@@ -31,6 +31,10 @@ public class WebSocketServer {
     /**接收用户id*/
     private String userId = "";
 
+    public ConcurrentHashMap<String,WebSocketServer> getWebSocketMap() {
+        return webSocketMap;
+    }
+
     /**
      * 连接建立成
      * 功调用的方法
