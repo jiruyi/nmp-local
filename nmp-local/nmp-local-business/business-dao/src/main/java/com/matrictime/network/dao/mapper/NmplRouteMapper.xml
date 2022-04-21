@@ -33,5 +33,6 @@
                 and access_device_id = #{accessDeviceId,jdbcType=VARCHAR}
             </if>
         </where>
+            order by update_time desc
     </select>
 </mapper>

@@ -34,6 +34,7 @@ public class DeviceServiceImpl implements DeviceService {
         Date date = new Date();
         try {
             deviceInfoRequest.setCreateTime(getFormatDate(date));
+            deviceInfoRequest.setUpdateTime(getFormatDate(date));
             deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
             deviceInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
             //判断小区是否正确
@@ -56,7 +57,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Result<Integer> deleteDevice(DeviceInfoRequest deviceInfoRequest) {
         Result<Integer> result = new Result<>();
-        Integer deleteFlag = null;
+        Integer deleteFlag;
         try {
             deleteFlag = deviceDomainService.deleteDevice(deviceInfoRequest);
             if(deleteFlag == 1){
@@ -73,10 +74,8 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Result<Integer> updateDevice(DeviceInfoRequest deviceInfoRequest) {
         Result<Integer> result = new Result<>();
-        Integer updateFlag = null;
-        Date date = new Date();
+        Integer updateFlag;
         try {
-            deviceInfoRequest.setUpdateTime(getFormatDate(date));
             deviceInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
             updateFlag = deviceDomainService.updateDevice(deviceInfoRequest);
             if(updateFlag == 1){

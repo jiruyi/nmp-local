@@ -43,12 +43,18 @@ public class RouteDomainServiceImpl implements RouteDomainService {
 
     @Override
     public PageInfo<RouteVo> selectRoute(RouteRequest routeRequest) {
-        Page page = PageHelper.startPage(routeRequest.getPageNo(),routeRequest.getPageSize());
-        List<RouteVo> routeVoList = nmplRouteMapper.selectRoute(routeRequest);
         PageInfo<RouteVo> pageResult =  new PageInfo<>();
+        List<RouteVo> routeVoList;
+        //网管前端查询数据进行分页
+        if(routeRequest.getConditionType() == 1){
+            Page page = PageHelper.startPage(routeRequest.getPageNo(),routeRequest.getPageSize());
+            routeVoList = nmplRouteMapper.selectRoute(routeRequest);
+            pageResult.setCount((int) page.getTotal());
+            pageResult.setPages(page.getPages());
+        }else {
+            routeVoList = nmplRouteMapper.selectRoute(routeRequest);
+        }
         pageResult.setList(routeVoList);
-        pageResult.setCount((int) page.getTotal());
-        pageResult.setPages(page.getPages());
         return  pageResult;
     }
 

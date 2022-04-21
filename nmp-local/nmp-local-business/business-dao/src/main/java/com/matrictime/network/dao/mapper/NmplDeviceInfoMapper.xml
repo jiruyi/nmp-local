@@ -491,11 +491,14 @@
         remark = #{remark,jdbcType=VARCHAR},
         public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
         lan_ip = #{lanIp,jdbcType=VARCHAR},
+        lan_port = #{lanPort,jdbcType=VARCHAR},
+        public_network_port = #{publicNetworkPort,jdbcType=VARCHAR},
+        update_user = #{updateUser,jdbcType=VARCHAR},
         relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
     where device_id = #{deviceId,jdbcType=VARCHAR}
   </update>
   <select id="selectDevice" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.DeviceInfoVo">
-    select device_id,device_name,public_network_ip,public_network_port,
+    select device_id,device_name,public_network_ip,public_network_port,station_status,
            relation_operator_id,remark,nmpl_device_info.create_user,lan_ip,lan_port,company_name,station_network_id
     from nmpl_device_info,nmpl_company_info
     <where>
@@ -522,6 +525,7 @@
       </if>
         and nmpl_device_info.relation_operator_id = nmpl_company_info.company_code
     </where>
+        order by update_time desc
   </select>
   <select id="selectDeviceId" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.StationVo">
     select device_id,station_network_id from nmpl_device_info where lan_ip = #{lanIp,jdbcType=CHAR}

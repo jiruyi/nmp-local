@@ -38,6 +38,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         Integer insertFlag = null;
         try {
             baseStationInfoRequest.setCreateTime(getFormatDate(date));
+            baseStationInfoRequest.setUpdateTime(getFormatDate(date));
             baseStationInfoRequest.setStationId(SnowFlake.nextId_String());
             baseStationInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
             baseStationInfoRequest.setIsExist("1");
