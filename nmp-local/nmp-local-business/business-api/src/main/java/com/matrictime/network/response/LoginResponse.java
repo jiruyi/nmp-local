@@ -15,5 +15,4 @@ import lombok.Data;
 public class LoginResponse extends BaseResponse{
 
     private String token;
-
 }
