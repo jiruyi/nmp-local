@@ -135,9 +135,18 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
             switch (req.getOprType()){
                 case DataConfig.OPR_TYPE_BIND:
-
+                    Long bindId = checkUserForBind(req);
+                    User user = new User();
+                    user.setId(bindId);
+                    user.setlId(req.getLid());
+                    userMapper.updateByPrimaryKeySelective(user);
                     break;
                 case DataConfig.OPR_TYPE_UNBIND:
+                    Long unBindId = checkUserForUnBind(req);
+                    User unUser = new User();
+                    unUser.setId(unBindId);
+                    unUser.setlId("");
+                    userMapper.updateByPrimaryKeySelective(unUser);
                     break;
                 default:
                     throw new SystemException("OprType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
@@ -151,7 +160,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         return result;
     }
 
-    private boolean checkUserForBind(BindReq req){
+    private Long checkUserForBind(BindReq req){
         UserExample userExample = new UserExample();
         userExample.createCriteria().andUserIdEqualTo(req.getUserId()).andIsExistEqualTo(DataConstants.IS_EXIST);
         List<User> users = userMapper.selectByExample(userExample);
@@ -162,7 +171,24 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         if(!ParamCheckUtil.checkVoStrBlank(user.getlId())){
             throw new SystemException(ErrorMessageContants.USER_BIND_MSG);
         }
-        return false;
+        return user.getId();
+    }
+
+    private Long checkUserForUnBind(BindReq req){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andUserIdEqualTo(req.getUserId()).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<User> users = userMapper.selectByExample(userExample);
+        if(CollectionUtils.isEmpty(users)){
+            throw new SystemException(ErrorMessageContants.USER_NO_EXIST_MSG);
+        }
+        User user = users.get(0);
+        if(!ParamCheckUtil.checkVoStrBlank(user.getlId())){
+            throw new SystemException(ErrorMessageContants.USER_BIND_MSG);
+        }
+        if (!user.getlId().equals(req.getLid())){
+            throw new SystemException("本地用户不是当前绑定用户，无法解绑");
+        }
+        return user.getId();
     }
 
     private void checkBindParam(BindReq req){

@@ -64,4 +64,6 @@ public class DataConstants {
 
     public static final String FILE_TYPE_CSV = ".csv";
 
+    public static final String MAP_KEY_URL = "url";
+
 }
