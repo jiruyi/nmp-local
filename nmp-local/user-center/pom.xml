@@ -115,7 +115,29 @@
             <version>1.2.76</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.jzsg</groupId>
+            <artifactId>bussiness</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>jzsg</id>
+            <name>jzsg</name>
+            <url>http://maven.matric.com/repository/maven-public/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
 
     <build>

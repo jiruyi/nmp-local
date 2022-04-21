@@ -9,6 +9,7 @@
         <result column="status" jdbcType="CHAR" property="status" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
     </resultMap>
     <insert id="addFriends" parameterType="com.matrictime.network.api.request.AddUserRequestReq">
         insert into add_user_request (request_id, user_id, status,
@@ -16,4 +17,16 @@
         values (#{requestId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
                 #{status,jdbcType=CHAR},#{addUserId,jdbcType=VARCHAR})
     </insert>
+
+
+    <select id="getAddUserInfo" parameterType="com.matrictime.network.api.request.AddUserRequestReq" resultMap="BaseResultMap">
+        select a.*,b.nickName from add_user_request a ,user b
+            where a.user_id = b.user_id and a.is_exist = '1' and b.is_exist ='1'
+            <if test="addUserId != null">
+                and add_user_id = #{addUserId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=CHAR}
+            </if>
+    </select>
 </mapper>

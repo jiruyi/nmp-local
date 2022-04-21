@@ -1,9 +1,7 @@
 server:
-  port: 8006
+  port: 8007
 
 spring:
-  profiles:
-    active: devout
   redis:
     database: 0
     host: 192.168.72.230
@@ -36,3 +34,9 @@ logging:
     path: ./logs
   level:
     com.jzsg: info
+
+app:
+  name: matricUC
+  id: UC002
+  port: 9098
+  timeout: 5000

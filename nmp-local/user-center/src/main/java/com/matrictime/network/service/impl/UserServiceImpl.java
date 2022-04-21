@@ -4,17 +4,26 @@ import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.ChangePasswdReq;
 import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.api.request.VerifyReq;
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
+import com.matrictime.network.dao.model.UserExample;
 import com.matrictime.network.domain.UserDomainService;
+import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserService;
+import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.sql.ResultSet;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -30,6 +39,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Autowired
     private UserDomainService userDomainService;
+
+    @Autowired(required = false)
+    private UserMapper userMapper;
 
     /**
      * 正则表达式：验证手机号
@@ -48,7 +60,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     /**
       * @title modifyUserInfo
-      * @param [userRequest]
+      * @param userRequest
       * @return com.matrictime.network.model.Result
       * @description 
       * @author jiruyi
@@ -67,7 +79,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     /**
       * @title deleteFriend
-      * @param [deleteFriendReq]
+      * @param deleteFriendReq
       * @return com.matrictime.network.model.Result
       * @description
       * @author jiruyi
@@ -117,5 +129,44 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
        UserVo userVo =new UserVo();
        BeanUtils.copyProperties(user,userVo);
        return buildResult(userVo);
+    }
+
+    @Override
+    public Result verify(VerifyReq req) {
+        Result result;
+        try {
+            checkVerifyParam(req);
+            UserExample example = new UserExample();
+            example.createCriteria().andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
+            List<User> users = userMapper.selectByExample(example);
+            if(CollectionUtils.isEmpty(users)){
+                throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
+            }
+            User user = users.get(0);
+            judgeAfterSix(req.getAfterSix(),user.getIdNo());
+            result = buildResult(null);
+        }catch (Exception e){
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    private void checkVerifyParam(VerifyReq verifyReq){
+        if (ParamCheckUtil.checkVoStrBlank(verifyReq.getPhoneNumber())) {
+            throw new SystemException("PhoneNumber"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(verifyReq.getAfterSix())) {
+            throw new SystemException("AfterSix"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+    private void judgeAfterSix(String afterSix,String source){
+        if(source.length()>=6){
+            if(source.substring(source.length()-6,source.length()).equals(afterSix)){
+               return;
+            }
+        }
+        throw new SystemException("身份验证错误");
     }
 }

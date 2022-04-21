@@ -1,12 +1,14 @@
 package com.matrictime.network.service.impl;
 
 
+import com.matrictime.network.api.modelVo.AddUserRequestVo;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.matrictime.network.api.modelVo.UserFriendVo;
 import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.api.response.AddUserRequestResp;
 import com.matrictime.network.api.response.UserFriendResp;
 import com.matrictime.network.base.enums.AddUserRequestEnum;
 import com.matrictime.network.controller.WebSocketServer;
@@ -90,6 +92,21 @@ public class UserFriendsServiceImpl implements UserFriendsService {
         return userFriendReq;
     }
 
+
+    @Override
+    public Result<AddUserRequestResp> getAddUserInfo(AddUserRequestReq addUserRequestReq) {
+        Result<AddUserRequestResp> result = new Result<>();
+        AddUserRequestResp addUserRequestResp = new AddUserRequestResp();
+        try {
+            List<AddUserRequestVo> addUserRequestVos = userFriendsDomainService.getAddUserInfo(addUserRequestReq);
+            addUserRequestResp.setList(addUserRequestVos);
+            result.setResultObj(addUserRequestResp);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
 }
 
 
