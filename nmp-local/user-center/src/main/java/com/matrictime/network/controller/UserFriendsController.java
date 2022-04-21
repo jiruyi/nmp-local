@@ -4,6 +4,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.api.response.AddUserRequestResp;
 import com.matrictime.network.api.response.UserFriendResp;
 
 import com.matrictime.network.model.Result;
@@ -70,6 +71,21 @@ public class UserFriendsController {
             return new Result(false,e.getMessage());
         }
     }
+
+    @ApiOperation(value = "获取待认证请求信息",notes = "获取待认证请求信息")
+    @RequestMapping (value = "/getAddUserInfo",method = RequestMethod.POST)
+    public Result<AddUserRequestResp> getAddUserInfo(@RequestBody AddUserRequestReq addUserRequestReq){
+        Result<AddUserRequestResp> result;
+        try {
+            result = userFriendsService.getAddUserInfo(addUserRequestReq);
+            return result;
+        }catch (Exception e){
+            log.error("addFriends exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+
+    }
+
 
 }
 

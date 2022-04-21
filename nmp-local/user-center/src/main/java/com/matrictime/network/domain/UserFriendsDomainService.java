@@ -1,6 +1,7 @@
 package com.matrictime.network.domain;
 
 
+import com.matrictime.network.api.modelVo.AddUserRequestVo;
 import com.matrictime.network.api.modelVo.UserFriendVo;
 import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.AddUserRequestReq;
@@ -17,4 +18,7 @@ public interface UserFriendsDomainService {
     int insertFriend(UserFriendReq userFriendReq);
 
     UserVo selectUserInfo(UserRequest userRequest);
+
+
+    List<AddUserRequestVo> getAddUserInfo(AddUserRequestReq addUserRequestReq);
 }
