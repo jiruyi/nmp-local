@@ -20,4 +20,6 @@ public class AddUserRequestVo implements Serializable {
     private Date createTime;
 
     private Date updateTime;
+
+    private String nickName;
 }
