@@ -1,11 +1,13 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.jzsg.bussiness.JServiceImpl;
+import com.jzsg.bussiness.model.ReqModel;
+import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.UserVo;
-import com.matrictime.network.api.request.ChangePasswdReq;
-import com.matrictime.network.api.request.DeleteFriendReq;
-import com.matrictime.network.api.request.UserRequest;
-import com.matrictime.network.api.request.VerifyReq;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
@@ -19,6 +21,7 @@ import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -42,6 +45,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Autowired(required = false)
     private UserMapper userMapper;
+
+    @Value("${app.innerUrl}")
+    private String url;
 
     /**
      * 正则表达式：验证手机号
@@ -136,20 +142,52 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         Result result;
         try {
             checkVerifyParam(req);
-            UserExample example = new UserExample();
-            example.createCriteria().andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
-            List<User> users = userMapper.selectByExample(example);
-            if(CollectionUtils.isEmpty(users)){
-                throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
+
+            switch (req.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    commonVerify(req);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    req.setUrl(url+UcConstants.URL_VERIFY);
+                    String param = JSONObject.toJSONString(req);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    return buildResult(null);
+
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+
+                    VerifyReq desReq = new VerifyReq();
+                    commonVerify(desReq);
+                    // 返回值加密
+
+                    return buildResult(null);
+                default:
+                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+
             }
-            User user = users.get(0);
-            judgeAfterSix(req.getAfterSix(),user.getIdNo());
+
             result = buildResult(null);
         }catch (Exception e){
             log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
+    }
+
+    private void commonVerify(VerifyReq req){
+        UserExample example = new UserExample();
+        example.createCriteria().andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<User> users = userMapper.selectByExample(example);
+        if(CollectionUtils.isEmpty(users)){
+            throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
+        }
+        User user = users.get(0);
+        judgeAfterSix(req.getAfterSix(),user.getIdNo());
     }
 
     private void checkVerifyParam(VerifyReq verifyReq){

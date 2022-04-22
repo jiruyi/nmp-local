@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class VerifyReq implements Serializable {
+public class VerifyReq extends BaseReq implements Serializable {
     private static final long serialVersionUID = 4055666536286048869L;
 
     private String phoneNumber;

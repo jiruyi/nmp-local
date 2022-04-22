@@ -1,5 +1,6 @@
 package com.matrictime.network.api.response;
 
+import com.matrictime.network.api.modelVo.UserVo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,5 +9,5 @@ import java.io.Serializable;
 public class LoginResp implements Serializable {
     private static final long serialVersionUID = 4752492437076704960L;
 
-    private String userInfo;
+    private UserVo user;
 }

@@ -3,6 +3,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.api.request.ChangePasswdReq;
 import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.api.request.VerifyReq;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserService;
@@ -107,6 +108,16 @@ public class UserController {
             return userService.queryUser(userRequest);
         }catch (Exception e){
             log.error("changePasswd exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    @RequestMapping (value = "/verify",method = RequestMethod.POST)
+    public Result verify(@RequestBody VerifyReq req){
+        try {
+            return userService.verify(req);
+        }catch (Exception e){
+            log.error("UserController.verify exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

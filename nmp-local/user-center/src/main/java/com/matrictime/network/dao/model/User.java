@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 用户信息表
  * @author   hexu
- * @date   2022-04-19
+ * @date   2022-04-22
  */
 @Data
 public class User {

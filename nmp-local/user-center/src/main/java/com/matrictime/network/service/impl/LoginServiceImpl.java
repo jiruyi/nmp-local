@@ -1,5 +1,10 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.jzsg.bussiness.JServiceImpl;
+import com.jzsg.bussiness.model.ReqModel;
+import com.jzsg.bussiness.model.ResModel;
+import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
@@ -7,6 +12,8 @@ import com.matrictime.network.api.request.RegisterReq;
 import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.UcConstants;
+import com.matrictime.network.base.util.CheckUtil;
 import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
@@ -19,7 +26,9 @@ import com.matrictime.network.service.LoginService;
 import com.matrictime.network.util.ParamCheckUtil;
 import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -33,6 +42,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     @Autowired(required = false)
     private UserMapper userMapper;
+
+    @Value("${app.innerUrl}")
+    private String url;
 
     @Override
     public Result<RegisterResp> register(RegisterReq req) {
@@ -73,39 +85,73 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         Result result;
         try {
             LoginResp resp = new LoginResp();
+            CheckUtil.checkParam(req);
             checkLoginParam(req);
 
-            UserExample userExample = new UserExample();
-            switch (req.getLoginType()){
-                case DataConfig.LOGIN_TYPE_USER:
-                    userExample.createCriteria().andUserIdEqualTo(req.getUserId());
+            switch (req.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    resp =commonLogin(req);
                     break;
-                case DataConfig.LOGIN_TYPE_ACCOUNT:
-                    userExample.createCriteria().andLoginAccountEqualTo(req.getLoginAccount());
-                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    req.setUrl(url+UcConstants.URL_LOGIN);
+                    String param = JSONObject.toJSONString(req);
+                    reqModel.setParam(param);
+                    reqModel.setUuid(req.getUuid());
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    return buildResult(null);
+
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+
+                    LoginReq desReq = new LoginReq();
+                    resp = commonLogin(desReq);
+                    // 返回值加密
+
+                    JServiceImpl.asynSendMsg(resp);
+                    return buildResult(resp);
                 default:
-                    throw new SystemException("LoginType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-            }
+                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
-            List<User> users = userMapper.selectByExample(userExample);
-            if(CollectionUtils.isEmpty(users)){
-                throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
-            }else {
-                User user = users.get(0);
-                user.setDeviceId(req.getDeviceId());
-                user.setDeviceIp(req.getDeviceIp());
-                user.setLoginStatus(LOGIN_STATUS_IN);
-                user.setLoginAppCode(req.getLoginAppCode());
-                userMapper.updateByPrimaryKeySelective(user);
-                resp.setUserInfo(user.toString());
             }
-
             result = buildResult(resp);
         }catch (Exception e){
             log.error("LoginServiceImpl.login Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
+    }
+
+    private LoginResp commonLogin(LoginReq req){
+        LoginResp resp = new LoginResp();
+        UserExample userExample = new UserExample();
+        switch (req.getLoginType()){
+            case DataConfig.LOGIN_TYPE_USER:
+                userExample.createCriteria().andUserIdEqualTo(req.getUserId());
+                break;
+            case DataConfig.LOGIN_TYPE_ACCOUNT:
+                userExample.createCriteria().andLoginAccountEqualTo(req.getLoginAccount());
+                break;
+            default:
+                throw new SystemException("LoginType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+        }
+
+        List<User> users = userMapper.selectByExample(userExample);
+        if(CollectionUtils.isEmpty(users)){
+            throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
+        }else {
+            User user = users.get(0);
+            user.setDeviceId(req.getDeviceId());
+            user.setDeviceIp(req.getDeviceIp());
+            user.setLoginStatus(LOGIN_STATUS_IN);
+            user.setLoginAppCode(req.getLoginAppCode());
+            userMapper.updateByPrimaryKeySelective(user);
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(user,userVo);
+            resp.setUser(userVo);
+        }
+        return resp;
     }
 
     @Override

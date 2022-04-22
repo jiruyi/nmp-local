@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class RegisterReq implements Serializable {
+public class RegisterReq extends BaseReq implements Serializable {
     private static final long serialVersionUID = 4714567565357599548L;
     /**
      * 一体机设备ID

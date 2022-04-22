@@ -1,8 +1,12 @@
 package com.matrictime.network.base;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jzsg.bussiness.JServiceImpl;
+import com.jzsg.bussiness.model.ReqModel;
+import com.jzsg.bussiness.util.EdException;
 import com.jzsg.bussiness.ws.ComOptApi;
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.model.Result;
 import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,16 +17,26 @@ public class ComOptApiImpl implements ComOptApi {
 
     @Override
     public void optImpl(Object paramObject) {
-        if (paramObject != null && paramObject instanceof String) {
-            JSONObject jsonObject = JSONObject.parseObject((String) paramObject);
-            log.info("ComOptApiImpl.optImpl paramObject:{}", jsonObject.toJSONString());
+        if (paramObject != null) {
+            ReqModel reqModel = JSONObject.parseObject(paramObject.toString(), ReqModel.class);
+            log.info("密区接收信息ComOptApiImpl.optImpl paramObject:{}", JSONObject.toJSONString(reqModel));
 
-            String url = jsonObject.getString(DataConstants.MAP_KEY_URL);
-            jsonObject.remove(DataConstants.MAP_KEY_URL);
-            try {
-                HttpClientUtil.post(url, jsonObject.toJSONString());
-            } catch (IOException e) {
-                e.printStackTrace();
+            Object param = reqModel.getParam();
+            if (param != null && param instanceof String) {
+                JSONObject jsonObject = JSONObject.parseObject((String) param);
+                String url = jsonObject.getString(DataConstants.MAP_KEY_URL);
+                jsonObject.put(DataConstants.MAP_KEY_UUID, reqModel.getUuid());
+                jsonObject.remove(DataConstants.MAP_KEY_URL);
+                try {
+                    log.info("密区处理接收信息HttpClientUtil.post url:{},paramObject:{}",url, jsonObject.toJSONString());
+                    String post = HttpClientUtil.post(url, jsonObject.toJSONString());
+                    log.info("密区处理接收信息结果HttpClientUtil.post post:{}",post);
+                    JServiceImpl.asynSendMsg(JSONObject.parseObject(post, Result.class));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (EdException e) {
+                    e.printStackTrace();
+                }
             }
         }else {
             log.error("ComOptApiImpl paramObject is null or not String");

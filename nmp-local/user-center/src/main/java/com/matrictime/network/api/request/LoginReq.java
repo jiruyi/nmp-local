@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class LoginReq implements Serializable {
+public class LoginReq extends BaseReq implements Serializable {
     private static final long serialVersionUID = 4888849892596509215L;
 
     /**
