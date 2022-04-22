@@ -2,6 +2,7 @@ package com.matrictime.network.service.impl;
 
 
 import com.matrictime.network.api.modelVo.AddUserRequestVo;
+import com.alibaba.druid.support.json.JSONUtils;
 import com.matrictime.network.api.modelVo.UserFriendVo;
 import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.AddUserRequestReq;
@@ -10,6 +11,7 @@ import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.response.AddUserRequestResp;
 import com.matrictime.network.api.response.UserFriendResp;
 import com.matrictime.network.base.enums.AddUserRequestEnum;
+import com.matrictime.network.controller.WebSocketServer;
 import com.matrictime.network.domain.UserFriendsDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
@@ -18,7 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
@@ -58,9 +63,25 @@ public class UserFriendsServiceImpl implements UserFriendsService {
         }else {
             addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
             userFriendsDomainService.insertFriend(userFriendReq);
+            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(addUserRequestReq.getAddUserId());
+            if(webSocketServer != null){
+                webSocketServer.sendMessage(JSONUtils.toJSONString(messageText(addUserRequestReq)));
+            }
             result.setResultObj(0);
         }
         return result;
+    }
+
+    /*
+      构建信息json字符串
+    * */
+    private Map messageText(AddUserRequestReq addUserRequestReq){
+        Map<String,String> messageMap = new HashMap<>();
+        messageMap.put("fromUserId",addUserRequestReq.getUserId());
+        messageMap.put("toUserId",addUserRequestReq.getAddUserId());
+        messageMap.put("message","好友请求");
+        messageMap.put("messageCode","100");
+        return messageMap;
     }
 
     private UserFriendReq setUserFriendReq(AddUserRequestReq addUserRequestReq){

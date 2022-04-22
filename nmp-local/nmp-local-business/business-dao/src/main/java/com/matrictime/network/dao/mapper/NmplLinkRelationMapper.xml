@@ -320,6 +320,7 @@
         and link_type = #{linkType,jdbcType=VARCHAR}
       </if>
     </where>
+        order by update_time desc
   </select>
   <select id="selectLinkRelationStation" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
     select station_id,station_name,public_network_ip,public_network_port,lan_ip,lan_port

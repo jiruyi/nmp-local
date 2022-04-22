@@ -8,6 +8,8 @@ public class RouteRequest extends BaseRequest{
 
     private String boundaryDeviceId;
 
+    private int conditionType;
+
     private String createUser;
 
     private String createTime;
@@ -80,5 +82,13 @@ public class RouteRequest extends BaseRequest{
 
     public void setIsExist(Byte isExist) {
         this.isExist = isExist;
+    }
+
+    public int getConditionType() {
+        return conditionType;
+    }
+
+    public void setConditionType(int conditionType) {
+        this.conditionType = conditionType;
     }
 }

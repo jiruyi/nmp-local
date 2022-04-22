@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.NumberUtils;
 import org.springframework.util.ObjectUtils;
@@ -29,6 +30,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 用户信息相关
@@ -51,6 +56,9 @@ public class UserController {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Value("${token.timeOut}")
+    private Integer timeOut;
+
     /**
      * 登录接口
      * @title login
@@ -61,7 +69,7 @@ public class UserController {
      */
     @ApiOperation(value = "登录接口",notes = "用户名密码登录方式1 短信验证码2")
     @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public Result<LoginResponse> login(@RequestBody LoginRequest loginRequest){
+    public Result<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request){
         try {
 
             /**1.0 参数校验**/
@@ -82,6 +90,7 @@ public class UserController {
                 return new Result(false, ErrorMessageContants.LoginType_IS_ERROR_MSG);
             }
             /**4 后端service**/
+            request.getSession().setMaxInactiveInterval(timeOut*3600);
             return  userService.login(loginRequest);
         }catch (Exception e){
             log.error("login发生异常：{}",e.getMessage());

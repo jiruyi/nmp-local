@@ -479,6 +479,8 @@
       remark = #{remark,jdbcType=VARCHAR},
       public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
       lan_ip = #{lanIp,jdbcType=VARCHAR},
+      lan_port = #{lanPort,jdbcType=VARCHAR},
+      public_network_port = #{publicNetworkPort,jdbcType=VARCHAR},
       relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},
       update_user = #{updateUser,jdbcType=VARCHAR},
@@ -490,7 +492,7 @@
     where station_id = #{stationId,jdbcType=VARCHAR}
   </update>
   <select id="selectBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
-    select id,station_id, station_name, station_type,
+    select id,station_id, station_name, station_type,station_status,
            remark, public_network_ip,public_network_port,
            lan_ip, station_network_id,lan_port,
            relation_operator_id, nmpl_base_station_info.create_user,company_name
@@ -519,6 +521,7 @@
       </if>
         and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
     </where>
+        order by update_time desc
   </select>
   <select id="selectBaseStationBatch" parameterType="list" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
     select id,station_id, station_name, station_type,
