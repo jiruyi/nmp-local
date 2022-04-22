@@ -521,7 +521,7 @@
       </if>
         and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
     </where>
-        order by update_time desc
+        order by nmpl_base_station_info.update_time desc
   </select>
   <select id="selectBaseStationBatch" parameterType="list" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
     select id,station_id, station_name, station_type,
