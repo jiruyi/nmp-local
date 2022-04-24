@@ -32,7 +32,9 @@ import java.util.Set;
 public class HttpClientUtil {
 
     // TODO: 2022/4/1 上线需确认超时时间 
-    private static final Integer TIME_OUT = 6000;
+    private static final Integer SOCKET_TIME_OUT = 6000;
+
+    private static final Integer CONNECT_TIME_OUT = 1000;
 
     private static final String HTTP_TITLE = "http://";
 
@@ -60,7 +62,7 @@ public class HttpClientUtil {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
         //设置请求和传输超时时间
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
         httpPost.setConfig(requestConfig);
         List<NameValuePair> formParams = setHttpParams(paramMap);
         UrlEncodedFormEntity param = new UrlEncodedFormEntity(formParams, "UTF-8");
@@ -94,7 +96,7 @@ public class HttpClientUtil {
         sb.append(path);
         HttpPost httpPost = new HttpPost(sb.toString());
         //设置请求和传输超时时间
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
         httpPost.setConfig(requestConfig);
         List<NameValuePair> formParams = setHttpParams(paramMap);
         UrlEncodedFormEntity param = new UrlEncodedFormEntity(formParams, "UTF-8");
@@ -122,7 +124,7 @@ public class HttpClientUtil {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
         //设置请求和传输超时时间
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
         httpPost.setConfig(requestConfig);
         httpPost.setHeader("Content-Type", "application/json; charset=utf-8");
         httpPost.setEntity(new StringEntity(data, "UTF-8"));
@@ -145,7 +147,7 @@ public class HttpClientUtil {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
         //设置请求和传输超时时间
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         multipartEntityBuilder.addBinaryBody("file",new File(filePath));
         HttpEntity httpEntity = multipartEntityBuilder.build();
@@ -169,7 +171,7 @@ public class HttpClientUtil {
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet();
         //设置请求和传输超时时间
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
         httpGet.setConfig(requestConfig);
         httpGet.setURI(URI.create(url));
         HttpResponse response = httpClient.execute(httpGet);
@@ -191,7 +193,7 @@ public class HttpClientUtil {
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet();
         //设置请求和传输超时时间
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
         httpGet.setConfig(requestConfig);
         List<NameValuePair> formparams = setHttpParams(paramMap);
         String param = URLEncodedUtils.format(formparams, "UTF-8");
@@ -215,7 +217,7 @@ public class HttpClientUtil {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPut httpPut = new HttpPut(url);
         //设置请求和传输超时时间
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
         httpPut.setConfig(requestConfig);
         List<NameValuePair> formparams = setHttpParams(paramMap);
         UrlEncodedFormEntity param = new UrlEncodedFormEntity(formparams, "UTF-8");
@@ -238,7 +240,7 @@ public class HttpClientUtil {
         HttpClient httpClient = HttpClients.createDefault();
         HttpDelete httpDelete = new HttpDelete();
         //设置请求和传输超时时间
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
         httpDelete.setConfig(requestConfig);
         httpDelete.setURI(URI.create(url));
         HttpResponse response = httpClient.execute(httpDelete);
@@ -260,7 +262,7 @@ public class HttpClientUtil {
         HttpClient httpClient = HttpClients.createDefault();
         HttpDelete httpDelete = new HttpDelete();
         //设置请求和传输超时时间
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
         httpDelete.setConfig(requestConfig);
         List<NameValuePair> formparams = setHttpParams(paramMap);
         String param = URLEncodedUtils.format(formparams, "UTF-8");

@@ -63,6 +63,9 @@ spring:
   jackson:
     time-zone: "GMT+8"
     date-format: "yyyy-MM-dd HH:mm:ss"
+  mvc:
+    async:
+      request-timeout: 60000
 eureka:
   client: #客户端注册进eureka服务列表内
     service-url:

@@ -17,7 +17,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequest implements Serializable {
+public class UserRequest extends BaseReq implements Serializable {
 
     private static final long serialVersionUID = 8195635114781810672L;
     /**

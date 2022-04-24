@@ -94,7 +94,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
 
                 // 查询设备创建人
                 String userId = "";
-                List<String> phoneNumbers = new ArrayList<>();
+                String phoneNumber = "";
                 NmplBaseStationInfoExample example = new NmplBaseStationInfoExample();
                 example.createCriteria().andStationIdEqualTo(deviceId).andIsExistEqualTo(IS_EXIST);
                 List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(example);
@@ -115,8 +115,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
                 }else{
                     NmplUser nmplUser = nmplUserMapper.selectByPrimaryKey(Long.parseLong(userId));
                     if(!ObjectUtils.isEmpty(nmplUser)){
-                        String phoneNumber = nmplUser.getPhoneNumber();
-                        phoneNumbers.add(phoneNumber);
+                        phoneNumber = nmplUser.getPhoneNumber();
                     }else {
                         log.info("设备创建人不存在");
                         return;
@@ -131,7 +130,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
                 VoiceCallRequest voiceCallRequest =  VoiceCallRequest.builder()
                         .ttsCode(voiceCode)
                         .ttsParam(ttsParam.toJSONString())
-                        .calledNumberList(phoneNumbers).build();
+                        .calledNumber(phoneNumber).build();
 
                 restTemplate.postForEntity(url,voiceCallRequest,Result.class);
 

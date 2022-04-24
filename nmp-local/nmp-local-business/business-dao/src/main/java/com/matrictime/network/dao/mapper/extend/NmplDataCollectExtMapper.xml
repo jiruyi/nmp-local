@@ -112,7 +112,7 @@
     <select id="selectTopTen" resultType="com.matrictime.network.modelVo.DataCollectVo">
         SELECT a.* from nmpl_data_collect a,
         (SELECT max(upload_time) as q,device_id,data_item_code from nmpl_data_collect group by device_id,data_item_code) as b
-        where a.device_id = b.device_id and a.upload_time = b.q
+        where a.device_id = b.device_id and a.upload_time = b.q and a.data_item_code = b.data_item_code
         <if test="uploadTime != null">
             and a.upload_time &gt;= #{uploadTime,jdbcType=VARCHAR}
         </if>
