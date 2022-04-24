@@ -42,7 +42,7 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
         Result<Integer> result;
         try {
             NmplUser nmplUser = RequestContext.getUser();;
-            companyInfoRequest.setCreateUser(nmplUser.getNickName());
+            companyInfoRequest.setCreateUser(String.valueOf(nmplUser.getUserId()));
             result = buildResult(companyInfoDomainService.save(companyInfoRequest));
         }catch (Exception e){
             log.info(map.get(companyInfoRequest.getCompanyType())+"创建异常",e.getMessage());
@@ -56,7 +56,7 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
         Result<Integer> result;
         try {
             NmplUser nmplUser = RequestContext.getUser();;
-            companyInfoRequest.setUpdateUser(nmplUser.getNickName());
+            companyInfoRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             result = buildResult(companyInfoDomainService.modify(companyInfoRequest));
         }catch (Exception e){
             log.info(map.get(companyInfoRequest.getCompanyType())+"修改异常",e.getMessage());
@@ -70,7 +70,7 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
         Result<Integer> result;
         try {
             NmplUser nmplUser = RequestContext.getUser();
-            companyInfoRequest.setUpdateUser(nmplUser.getNickName());
+            companyInfoRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             result = buildResult(companyInfoDomainService.delete(companyInfoRequest));
         }catch (Exception e){
             log.info(map.get(companyInfoRequest.getCompanyType())+"删除异常",e.getMessage());
