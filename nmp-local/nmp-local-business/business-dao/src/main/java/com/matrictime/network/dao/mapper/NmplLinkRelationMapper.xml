@@ -310,17 +310,18 @@
     where id = #{id}
   </update>
   <select id="selectLinkRelation" parameterType="com.matrictime.network.request.LinkRelationRequest" resultType="com.matrictime.network.modelVo.LinkRelationVo">
-    select id, link_name,link_type,main_device_id,follow_device_id,create_user from nmpl_link_relation
+    select id, link_name,link_type,main_device_id,follow_device_id,nick_name from nmpl_link_relation,nmpl_user
     <where>
-      is_exist = 1
+      nmpl_link_relation.is_exist = 1 and nmpl_user.is_exist = 1
       <if test="linkName != null and linkName != ''">
         and link_name = #{linkName,jdbcType=VARCHAR}
       </if>
       <if test="linkType != null and linkType != ''">
         and link_type = #{linkType,jdbcType=VARCHAR}
       </if>
+        and nmpl_user.user_id = nmpl_link_relation.create_user
     </where>
-        order by update_time desc
+        order by nmpl_link_relation.update_time desc
   </select>
   <select id="selectLinkRelationStation" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
     select station_id,station_name,public_network_ip,public_network_port,lan_ip,lan_port

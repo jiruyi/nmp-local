@@ -48,7 +48,7 @@ public class RouteServiceImpl implements RouteService {
         try {
             routeRequest.setCreateTime(getFormatDate(date));
             routeRequest.setUpdateTime(getFormatDate(date));
-            routeRequest.setCreateUser(RequestContext.getUser().getNickName());
+            routeRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             Integer insetFlag = routeDomainService.insertRoute(routeRequest);
             //List<Future<List<Result>>> futures = collectResult(routeRequest);
             result.setResultObj(insetFlag);
@@ -79,7 +79,7 @@ public class RouteServiceImpl implements RouteService {
         Date date = new Date();
         try {
             routeRequest.setUpdateTime(getFormatDate(date));
-            routeRequest.setUpdateUser(RequestContext.getUser().getNickName());
+            routeRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             Integer updateFlag = routeDomainService.updateRoute(routeRequest);
             //List<Future<List<Result>>> futures = collectResult(routeRequest);
             result.setResultObj(updateFlag);

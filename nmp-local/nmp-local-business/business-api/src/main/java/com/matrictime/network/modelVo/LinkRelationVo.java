@@ -41,6 +41,8 @@ public class LinkRelationVo {
 
     private Date updateTime;
 
+    private String nickName;
+
     private String isExist;
 
     public String getId() {
@@ -201,5 +203,13 @@ public class LinkRelationVo {
 
     public void setFollowDeviceName(String followDeviceName) {
         this.followDeviceName = followDeviceName;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 }

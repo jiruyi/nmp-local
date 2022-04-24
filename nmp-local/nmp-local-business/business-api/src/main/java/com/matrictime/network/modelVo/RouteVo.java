@@ -27,6 +27,8 @@ public class RouteVo {
 
     private Byte isExist;
 
+    private String nickName;
+
     public String getId() {
         return id;
     }
@@ -129,5 +131,13 @@ public class RouteVo {
 
     public void setStationName(String stationName) {
         this.stationName = stationName;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 }

@@ -40,6 +40,8 @@ public class DeviceInfoVo {
 
     private String updateUser;
 
+    private String nickName;
+
     private String updateTime;
 
     private String companyName;
@@ -220,5 +222,13 @@ public class DeviceInfoVo {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 }
