@@ -84,7 +84,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
 
             for (NmplDataCollect nmplDataCollect : dataCollectList) {
                 BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
-                double value = bigDecimal.divide(new BigDecimal(1024*1024)).doubleValue();
+                double value = bigDecimal.divide(new BigDecimal(1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue();
                 switch (nmplDataCollect.getDeviceType()){
                     case "01":
                         if(nmplDataCollect.getDataItemCode().equals("10000")){

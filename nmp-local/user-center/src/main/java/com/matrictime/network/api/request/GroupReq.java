@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 @Data
-public class GroupReq implements Serializable {
+public class GroupReq  extends BaseReq implements Serializable  {
 
     private static final long serialVersionUID = -6634266583253019235L;
 
