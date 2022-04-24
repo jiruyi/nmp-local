@@ -36,7 +36,8 @@ logging:
     com.jzsg: info
 
 app:
-  name: matricUC
-  id: UC002
-  port: 9098
+  name: userCenter
+  id: UC010
+  port: 9100
   timeout: 5000
+  innerUrl: http://192.168.72.248:8006
