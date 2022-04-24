@@ -525,7 +525,7 @@
       </if>
         and nmpl_device_info.relation_operator_id = nmpl_company_info.company_code
     </where>
-        order by update_time desc
+        order by nmpl_device_info.update_time desc
   </select>
   <select id="selectDeviceId" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.StationVo">
     select device_id,station_network_id from nmpl_device_info where lan_ip = #{lanIp,jdbcType=CHAR}
