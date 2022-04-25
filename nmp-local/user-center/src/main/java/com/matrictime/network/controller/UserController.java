@@ -45,10 +45,6 @@ public class UserController {
     @RequestMapping (value = "/modifyUserInfo",method = RequestMethod.POST)
     public Result modifyUserInfo(@RequestBody UserRequest userRequest){
         try {
-            /**1.0 参数校验**/
-            if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
-                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
             return  userService.modifyUserInfo(userRequest);
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
@@ -68,11 +64,6 @@ public class UserController {
     @RequestMapping (value = "/deleteFriend",method = RequestMethod.POST)
     public Result deleteFriend(@RequestBody DeleteFriendReq deleteFriendReq){
         try {
-            /**1.0 参数校验**/
-            if(ObjectUtils.isEmpty(deleteFriendReq) || ObjectUtils.isEmpty(deleteFriendReq.getUserId())
-                    || ObjectUtils.isEmpty(deleteFriendReq.getFriendUserId())){
-                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
             return  userService.deleteFriend(deleteFriendReq);
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
@@ -84,12 +75,6 @@ public class UserController {
     @RequestMapping (value = "/changePasswd",method = RequestMethod.POST)
     public Result changePasswd(@RequestBody ChangePasswdReq changePasswdReq){
         try {
-            /**1.0 参数校验**/
-            if(ObjectUtils.isEmpty(changePasswdReq) || ObjectUtils.isEmpty(changePasswdReq.getNewPassword())
-                    || ObjectUtils.isEmpty(changePasswdReq.getRepeatPassword())||
-                    ObjectUtils.isEmpty(changePasswdReq.getPhoneNumber())){
-                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
             return userService.changePasswd(changePasswdReq);
         }catch (Exception e){
             log.error("changePasswd exception:{}",e.getMessage());
@@ -102,9 +87,6 @@ public class UserController {
     public Result queryUserInfo(@RequestBody UserRequest userRequest){
         try {
             /**1.0 参数校验**/
-            if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getQueryParam())){
-                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
             return userService.queryUser(userRequest);
         }catch (Exception e){
             log.error("changePasswd exception:{}",e.getMessage());

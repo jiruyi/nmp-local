@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 @Data
-public class AddUserRequestReq implements Serializable {
+public class AddUserRequestReq extends BaseReq implements Serializable {
     private Long id;
 
     private String requestId;

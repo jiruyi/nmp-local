@@ -1,6 +1,10 @@
 package com.matrictime.network.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
+import com.jzsg.bussiness.JServiceImpl;
+import com.jzsg.bussiness.model.ReqModel;
+import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.AddUserRequestVo;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.matrictime.network.api.modelVo.UserFriendVo;
@@ -10,12 +14,17 @@ import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.response.AddUserRequestResp;
 import com.matrictime.network.api.response.UserFriendResp;
+import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.enums.AddUserRequestEnum;
 import com.matrictime.network.controller.WebSocketServer;
 import com.matrictime.network.domain.UserFriendsDomainService;
+import com.matrictime.network.exception.ErrorMessageContants;
+import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +36,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
-public class UserFriendsServiceImpl implements UserFriendsService {
+public class UserFriendsServiceImpl extends SystemBaseService implements UserFriendsService {
 
     @Resource
     private UserFriendsDomainService userFriendsDomainService;
+
+    @Value("${app.innerUrl}")
+    private String url;
 
     @Override
     public Result<UserFriendResp> selectUserFriend(UserFriendReq userFriendReq) {
@@ -95,6 +107,40 @@ public class UserFriendsServiceImpl implements UserFriendsService {
 
     @Override
     public Result<AddUserRequestResp> getAddUserInfo(AddUserRequestReq addUserRequestReq) {
+        Result result;
+        try {
+            switch (addUserRequestReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonGetAddUserInfo(addUserRequestReq);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    addUserRequestReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    addUserRequestReq.setUrl(url+UcConstants.URL_GETADDUSERINFO);
+                    String param = JSONObject.toJSONString(addUserRequestReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result =(Result) resModel.getReturnValue();
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+                    result = commonGetAddUserInfo(addUserRequestReq);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+        }catch (Exception e){
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+
+    private Result<AddUserRequestResp> commonGetAddUserInfo(AddUserRequestReq addUserRequestReq) {
         Result<AddUserRequestResp> result = new Result<>();
         AddUserRequestResp addUserRequestResp = new AddUserRequestResp();
         try {
@@ -107,6 +153,7 @@ public class UserFriendsServiceImpl implements UserFriendsService {
         }
         return result;
     }
+
 }
 
 
