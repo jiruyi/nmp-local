@@ -309,7 +309,10 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             throw new SystemException("无此用户");
         }
         UserVo userVo =new UserVo();
-        BeanUtils.copyProperties(user,userVo);
+        userVo.setUserId(user.getUserId());
+        userVo.setPhoneNumber(user.getPhoneNumber());
+        userVo.setNickName(user.getNickName());
+//        BeanUtils.copyProperties(user,userVo);
         return buildResult(userVo);
     }
 
@@ -321,7 +324,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 ObjectUtils.isEmpty(changePasswdReq.getPhoneNumber())){
             return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if(changePasswdReq.getRepeatPassword().equals(changePasswdReq.getNewPassword())){
+        if(!changePasswdReq.getRepeatPassword().equals(changePasswdReq.getNewPassword())){
             throw new SystemException("两次输入密码不一致");
         }
 
