@@ -172,7 +172,10 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             }
 
             result = buildResult(null);
-        }catch (Exception e){
+        }catch (SystemException e){
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
+        } catch (Exception e){
             log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
             result = failResult(e);
         }

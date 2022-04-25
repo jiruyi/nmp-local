@@ -25,9 +25,17 @@ public class MyStartupRunner implements CommandLineRunner {
 
     private ComOptApiImpl comOptApi = new ComOptApiImpl();
 
+    @Value("${app.flowtype}")
+    private Integer FlowType;
+
+    @Value("${app.handleType}")
+    private Integer handleType;
+
     @Override
     public void run(String... args) throws Exception {
         log.info("SpringBoot run appName:{},appId:{},appPort:{}", appName, appId, appPort);
+            JServiceImpl.FlowType = FlowType;
+            JServiceImpl.handleType = handleType;
             JServiceImpl.start(appName, appId, appPort, comOptApi);
     }
 
