@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class DeleteFriendReq implements Serializable {
+public class DeleteFriendReq extends BaseReq implements Serializable {
 
     private static final long serialVersionUID = -8160436091947711566L;
     /**

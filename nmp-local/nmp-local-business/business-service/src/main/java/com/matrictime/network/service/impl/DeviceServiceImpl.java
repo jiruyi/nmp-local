@@ -36,7 +36,7 @@ public class DeviceServiceImpl implements DeviceService {
             deviceInfoRequest.setCreateTime(getFormatDate(date));
             deviceInfoRequest.setUpdateTime(getFormatDate(date));
             deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
-            deviceInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
+            deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             //判断小区是否正确
 
             String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
@@ -76,7 +76,7 @@ public class DeviceServiceImpl implements DeviceService {
         Result<Integer> result = new Result<>();
         Integer updateFlag;
         try {
-            deviceInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
+            deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             updateFlag = deviceDomainService.updateDevice(deviceInfoRequest);
             if(updateFlag == 1){
                 result.setResultObj(updateFlag);

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -74,13 +75,37 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
       */
     @Override
     public Result modifyUserInfo(UserRequest userRequest) {
+        Result result;
         try {
-            int n = userDomainService.modifyUserInfo(userRequest);
-            return  buildResult(n);
+            switch (userRequest.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonModifyUserInfo(userRequest);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    userRequest.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userRequest.setUrl(url+UcConstants.URL_MODIFYUSERINFO);
+                    String param = JSONObject.toJSONString(userRequest);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result =(Result) resModel.getReturnValue();
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+
+                    result = commonModifyUserInfo(userRequest);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
         }catch (Exception e){
-            log.error("modifyUserInfo exception:{}",e.getMessage());
-            return  failResult(e);
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
         }
+        return result;
     }
 
     /**
@@ -93,48 +118,108 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
       */
     @Override
     public Result deleteFriend(DeleteFriendReq deleteFriendReq) {
+        Result result;
         try {
-            int n = userDomainService.deleteFriend(deleteFriendReq);
-            return  buildResult(n);
+            switch (deleteFriendReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonDeleteFriend(deleteFriendReq);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    deleteFriendReq.setDestination(UcConstants.URL_DELETEFRIEND);
+                    deleteFriendReq.setUrl(url+UcConstants.URL_CHANGEPASSWD);
+                    String param = JSONObject.toJSONString(deleteFriendReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result =(Result) resModel.getReturnValue();
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+
+                    result = commonDeleteFriend(deleteFriendReq);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
         }catch (Exception e){
-            log.error("modifyUserInfo exception:{}",e.getMessage());
-            return  failResult(e);
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
         }
+        return result;
     }
 
 
     @Override
     public Result changePasswd(ChangePasswdReq changePasswdReq) {
-        if(changePasswdReq.getRepeatPassword().equals(changePasswdReq.getNewPassword())){
-            throw new SystemException("两次输入密码不一致");
+        Result result;
+        try {
+            switch (changePasswdReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonChangePasswd(changePasswdReq);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    changePasswdReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    changePasswdReq.setUrl(url+UcConstants.URL_CHANGEPASSWD);
+                    String param = JSONObject.toJSONString(changePasswdReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result =(Result) resModel.getReturnValue();
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+
+                    result = commonChangePasswd(changePasswdReq);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+        }catch (Exception e){
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
         }
-        UserRequest request = new UserRequest();
-        request.setPhoneNumber(changePasswdReq.getPhoneNumber());
-        User user = userDomainService.selectByCondition(request);
-        if(user==null){
-            throw new SystemException("无用户与此电话号绑定");
-        }
-        UserRequest userRequest = new UserRequest();
-        userRequest.setUserId(user.getUserId());
-        userRequest.setPassword(changePasswdReq.getNewPassword());
-        return buildResult(userDomainService.modifyUserInfo(userRequest));
+        return result;
     }
 
     @Override
     public Result queryUser(UserRequest userRequest) {
-       String queryParam = userRequest.getQueryParam();
-       if(isMobile(queryParam)){
-           userRequest.setPhoneNumber(queryParam);
-       }else {
-           userRequest.setLoginAccount(queryParam);
-       }
-       User user = userDomainService.selectByCondition(userRequest);
-       if(user==null){
-            throw new SystemException("无此用户");
-       }
-       UserVo userVo =new UserVo();
-       BeanUtils.copyProperties(user,userVo);
-       return buildResult(userVo);
+        Result result;
+        try {
+            switch (userRequest.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonQueryUser(userRequest);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    userRequest.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userRequest.setUrl(url+UcConstants.URL_QUERYUSERINFO);
+                    String param = JSONObject.toJSONString(userRequest);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result =(Result) resModel.getReturnValue();
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+
+                    result = commonQueryUser(userRequest);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+        }catch (Exception e){
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
     }
 
     @Override
@@ -210,4 +295,80 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         }
         throw new SystemException("身份验证错误");
     }
+
+
+    private  Result commonQueryUser(UserRequest userRequest) {
+        if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getQueryParam())){
+            return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        String queryParam = userRequest.getQueryParam();
+        if(isMobile(queryParam)){
+            userRequest.setPhoneNumber(queryParam);
+        }else {
+            userRequest.setLoginAccount(queryParam);
+        }
+        User user = userDomainService.selectByCondition(userRequest);
+        if(user==null){
+            throw new SystemException("无此用户");
+        }
+        UserVo userVo =new UserVo();
+        BeanUtils.copyProperties(user,userVo);
+        return buildResult(userVo);
+    }
+
+
+    private Result commonChangePasswd(ChangePasswdReq changePasswdReq) {
+        /**1.0 参数校验**/
+        if(ObjectUtils.isEmpty(changePasswdReq) || ObjectUtils.isEmpty(changePasswdReq.getNewPassword())
+                || ObjectUtils.isEmpty(changePasswdReq.getRepeatPassword())||
+                ObjectUtils.isEmpty(changePasswdReq.getPhoneNumber())){
+            return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if(changePasswdReq.getRepeatPassword().equals(changePasswdReq.getNewPassword())){
+            throw new SystemException("两次输入密码不一致");
+        }
+
+        UserRequest request = new UserRequest();
+        request.setPhoneNumber(changePasswdReq.getPhoneNumber());
+        User user = userDomainService.selectByCondition(request);
+        if(user==null){
+            throw new SystemException("无用户与此电话号绑定");
+        }
+        UserRequest userRequest = new UserRequest();
+        userRequest.setUserId(user.getUserId());
+        userRequest.setPassword(changePasswdReq.getNewPassword());
+        return buildResult(userDomainService.modifyUserInfo(userRequest));
+    }
+
+
+
+    private Result commonModifyUserInfo(UserRequest userRequest) {
+        try {
+            if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
+                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            int n = userDomainService.modifyUserInfo(userRequest);
+            return  buildResult(n);
+        }catch (Exception e){
+            log.error("modifyUserInfo exception:{}",e.getMessage());
+            return  failResult(e);
+        }
+    }
+
+
+    private Result commonDeleteFriend(DeleteFriendReq deleteFriendReq) {
+        try {
+            /**1.0 参数校验**/
+            if(ObjectUtils.isEmpty(deleteFriendReq) || ObjectUtils.isEmpty(deleteFriendReq.getUserId())
+                    || ObjectUtils.isEmpty(deleteFriendReq.getFriendUserId())){
+                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            int n = userDomainService.deleteFriend(deleteFriendReq);
+            return  buildResult(n);
+        }catch (Exception e){
+            log.error("modifyUserInfo exception:{}",e.getMessage());
+            return  failResult(e);
+        }
+    }
+
 }

@@ -36,7 +36,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         try {
             linkRelationRequest.setCreateTime(getFormatDate(date));
             linkRelationRequest.setUpdateTime(getFormatDate(date));
-            linkRelationRequest.setCreateUser(RequestContext.getUser().getNickName());
+            linkRelationRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             result.setResultObj(linkRelationDomainService.insertLinkRelation(linkRelationRequest));
             result.setSuccess(true);
         }catch (Exception e){
@@ -64,7 +64,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         Result<Integer> result = new Result<>();
         Date date = new Date();
         try {
-            linkRelationRequest.setCreateUser(RequestContext.getUser().getNickName());
+            linkRelationRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             result.setResultObj(linkRelationDomainService.updateLinkRelation(linkRelationRequest));
             result.setSuccess(true);
         }catch (Exception e){

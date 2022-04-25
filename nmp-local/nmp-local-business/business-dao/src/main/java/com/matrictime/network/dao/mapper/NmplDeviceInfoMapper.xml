@@ -499,11 +499,12 @@
   </update>
   <select id="selectDevice" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.DeviceInfoVo">
     select device_id,device_name,public_network_ip,public_network_port,station_status,
-           relation_operator_id,remark,nmpl_device_info.create_user,lan_ip,lan_port,company_name,station_network_id
-    from nmpl_device_info,nmpl_company_info
+           relation_operator_id,nmpl_device_info.remark,nick_name,lan_ip,lan_port,company_name,station_network_id
+    from nmpl_device_info,nmpl_company_info,nmpl_user
     <where>
       nmpl_device_info.is_exist = 1
       and nmpl_company_info.is_exist = 1
+      and nmpl_user.is_exist = 1
       and station_status in(2,3,4)
       <if test="deviceId != null and deviceId != ''">
         and device_id = #{deviceId,jdbcType=VARCHAR}
@@ -524,6 +525,7 @@
         and station_network_id = #{stationNetworkId,jdbcType=CHAR}
       </if>
         and nmpl_device_info.relation_operator_id = nmpl_company_info.company_code
+        and nmpl_user.user_id = nmpl_device_info.create_user
     </where>
         order by nmpl_device_info.update_time desc
   </select>

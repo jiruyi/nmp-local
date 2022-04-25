@@ -40,7 +40,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             baseStationInfoRequest.setCreateTime(getFormatDate(date));
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
             baseStationInfoRequest.setStationId(SnowFlake.nextId_String());
-            baseStationInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
+            baseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             baseStationInfoRequest.setIsExist("1");
             baseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
             //判断小区是否正确
@@ -68,10 +68,10 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
     public Result<Integer> updateBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
         Result<Integer> result = new Result<>();
         Date date = new Date();
-        Integer updateFlag = null;
+        Integer updateFlag;
         try {
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
-            baseStationInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
+            baseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             updateFlag = baseStationInfoDomainService.updateBaseStationInfo(baseStationInfoRequest);
             if(updateFlag == 1){
                 result.setSuccess(true);
@@ -87,7 +87,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
     @Override
     public Result<Integer> deleteBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
         Result<Integer> result = new Result<>();
-        Integer deleteFlag = null;
+        Integer deleteFlag;
         try {
             deleteFlag = baseStationInfoDomainService.deleteBaseStationInfo(baseStationInfoRequest);
             if(deleteFlag == 1){

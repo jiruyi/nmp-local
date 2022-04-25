@@ -27,17 +27,14 @@ import javax.annotation.Resource;
 public class UserFriendsController {
 
     @Resource
-    private UserService userService;
-
-    @Resource
     private UserFriendsService userFriendsService;
 
 
     @ApiOperation(value = "注销用户",notes = "注销用户")
     @RequestMapping (value = "/cancelUser",method = RequestMethod.POST)
-    public Result<Integer> createGroup(@RequestBody UserRequest userRequest){
+    public Result<Integer> cancelUser(@RequestBody UserRequest userRequest){
         try {
-            return  userService.modifyUserInfo(userRequest);
+            return  userFriendsService.modifyUserInfo(userRequest);
         }catch (Exception e){
             log.error("cancelUser exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
