@@ -15,6 +15,7 @@ import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.response.AddUserRequestResp;
 import com.matrictime.network.api.response.UserFriendResp;
+import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.enums.AddUserRequestEnum;
 import com.matrictime.network.controller.WebSocketServer;
@@ -36,7 +37,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
-public class UserFriendsServiceImpl implements UserFriendsService {
+public class UserFriendsServiceImpl extends SystemBaseService implements UserFriendsService {
 
     @Resource
     private UserFriendsDomainService userFriendsDomainService;
@@ -89,15 +90,34 @@ public class UserFriendsServiceImpl implements UserFriendsService {
 
     @Override
     public Result<AddUserRequestResp> getAddUserInfo(AddUserRequestReq addUserRequestReq) {
-        Result<AddUserRequestResp> result = new Result<>();
-        AddUserRequestResp addUserRequestResp = new AddUserRequestResp();
+        Result result;
         try {
-            List<AddUserRequestVo> addUserRequestVos = userFriendsDomainService.getAddUserInfo(addUserRequestReq);
-            addUserRequestResp.setList(addUserRequestVos);
-            result.setResultObj(addUserRequestResp);
+            switch (addUserRequestReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonGetAddUserInfo(addUserRequestReq);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    addUserRequestReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    addUserRequestReq.setUrl(url+UcConstants.URL_GETADDUSERINFO);
+                    String param = JSONObject.toJSONString(addUserRequestReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result =(Result) resModel.getReturnValue();
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+                    result = commonGetAddUserInfo(addUserRequestReq);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
         }catch (Exception e){
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
         }
         return result;
     }
@@ -166,6 +186,20 @@ public class UserFriendsServiceImpl implements UserFriendsService {
         userFriendReq.setFriendUserId(addUserRequestReq.getAddUserId());
         userFriendReq.setRemarkName(addUserRequestReq.getRemarkName());
         return userFriendReq;
+    }
+
+    private Result<AddUserRequestResp> commonGetAddUserInfo(AddUserRequestReq addUserRequestReq) {
+        Result<AddUserRequestResp> result = new Result<>();
+        AddUserRequestResp addUserRequestResp = new AddUserRequestResp();
+        try {
+            List<AddUserRequestVo> addUserRequestVos = userFriendsDomainService.getAddUserInfo(addUserRequestReq);
+            addUserRequestResp.setList(addUserRequestVos);
+            result.setResultObj(addUserRequestResp);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
     }
 }
 
