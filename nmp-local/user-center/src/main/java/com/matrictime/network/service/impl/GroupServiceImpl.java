@@ -1,17 +1,26 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.jzsg.bussiness.JServiceImpl;
+import com.jzsg.bussiness.model.ReqModel;
+import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.GroupVo;
 import com.matrictime.network.api.modelVo.UserGroupVo;
 import com.matrictime.network.api.request.GroupReq;
 import com.matrictime.network.api.request.UserGroupReq;
+import com.matrictime.network.api.request.VerifyReq;
 import com.matrictime.network.api.response.GroupResp;
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.domain.GroupDomainService;
 import com.matrictime.network.domain.UserGroupDomianService;
+import com.matrictime.network.exception.ErrorMessageContants;
+import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.GroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,8 +35,153 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
     @Autowired
     UserGroupDomianService userGroupDomianService;
 
+    @Value("${app.innerUrl}")
+    private String url;
+
+
     @Override
     public Result<Integer> createGroup(GroupReq groupReq) {
+        Result result;
+        try {
+            switch (groupReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonCreateGroup(groupReq);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    groupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    groupReq.setUrl(url+UcConstants.URL_CREATEGROUP);
+                    String param = JSONObject.toJSONString(groupReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result = (Result)resModel.getReturnValue();
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+
+                    result = commonCreateGroup(groupReq);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+        }catch (Exception e){
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+
+    @Override
+    public Result<Integer> modifyGroup(GroupReq groupReq) {
+        Result result;
+        try {
+            switch (groupReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonModifyGroup(groupReq);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    groupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    groupReq.setUrl(url+UcConstants.URL_MODIFYGROUP);
+                    String param = JSONObject.toJSONString(groupReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result = (Result)resModel.getReturnValue();
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+
+                    result = commonModifyGroup(groupReq);
+                    // 返回值加密
+
+                    break;
+                default:
+                    throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+        }catch (Exception e){
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    @Override
+    public Result<Integer> deleteGroup(GroupReq groupReq) {
+        Result result;
+        try {
+            switch (groupReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonDeleteGroup(groupReq);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    groupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    groupReq.setUrl(url+UcConstants.URL_DELETEGROUP);
+                    String param = JSONObject.toJSONString(groupReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result = (Result)resModel.getReturnValue();
+                    break;
+
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+
+                    result = commonDeleteGroup(groupReq);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+        }catch (Exception e){
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    @Override
+    public Result<GroupResp> queryGroup(GroupReq groupReq) {
+        Result result;
+        try {
+            switch (groupReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonQueryGroup(groupReq);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    groupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    groupReq.setUrl(url+UcConstants.URL_QUERYGROUP);
+                    String param = JSONObject.toJSONString(groupReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    result  = (Result) resModel.getReturnValue();
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+                    result = commonQueryGroup(groupReq);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+        }catch (Exception e){
+            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    private Result<Integer> commonCreateGroup(GroupReq groupReq){
         Result<Integer> result;
         try {
             result = buildResult(groupDomainService.createGroup(groupReq));
@@ -38,9 +192,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
         return result;
     }
 
-
-    @Override
-    public Result<Integer> modifyGroup(GroupReq groupReq) {
+    private Result<Integer> commonModifyGroup(GroupReq groupReq) {
         Result<Integer> result;
         try {
             result = buildResult(groupDomainService.modifyGroup(groupReq));
@@ -50,9 +202,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
         }
         return result;
     }
-
-    @Override
-    public Result<Integer> deleteGroup(GroupReq groupReq) {
+    public Result<Integer> commonDeleteGroup(GroupReq groupReq) {
         Result<Integer> result;
         try {
             result = buildResult(groupDomainService.deleteGroup(groupReq));
@@ -63,8 +213,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
         return result;
     }
 
-    @Override
-    public Result<GroupResp> queryGroup(GroupReq groupReq) {
+    public Result<GroupResp> commonQueryGroup(GroupReq groupReq) {
         Result<GroupResp> result;
         try {
             List<GroupVo> groupVoList = new ArrayList<>();
@@ -86,5 +235,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
         }
         return result;
     }
+
+
+
 
 }
