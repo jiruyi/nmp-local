@@ -114,7 +114,8 @@ public class RouteController {
         Map<String,BaseStationInfoVo> baseStationInfoVoMap;
         List<String> list;
         try {
-            List<RouteVo> routeVoList = routeService.selectRoute(routeRequest).getResultObj().getList();
+            Result<PageInfo<RouteVo>> pageInfoResult = routeService.selectRoute(routeRequest);
+            List<RouteVo> routeVoList = pageInfoResult.getResultObj().getList();
             list = getStationIdList(routeVoList);
             if(list.size() <= 0){
                 resultRoute.setResultObj(new PageInfo<>());
@@ -124,7 +125,10 @@ public class RouteController {
             baseStationInfoResponseResult = baseStationInfoService.selectBaseStationBatch(list);
             List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponseResult.getResultObj().getBaseStationInfoList();
             baseStationInfoVoMap = getBaseStationMap(baseStationInfoList);
-            resultRoute.setResultObj(routeVoPageInfo(baseStationInfoVoMap,routeVoList));
+            PageInfo<RouteVo> routeVoPageInfo = routeVoPageInfo(baseStationInfoVoMap, routeVoList);
+            routeVoPageInfo.setCount(pageInfoResult.getResultObj().getCount());
+            routeVoPageInfo.setPages(pageInfoResult.getResultObj().getPages());
+            resultRoute.setResultObj(routeVoPageInfo);
             resultRoute.setSuccess(true);
         }catch (Exception e){
             log.info("查询路由异常:selectRoute{}",e.getMessage());
