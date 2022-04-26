@@ -36,6 +36,8 @@ logging:
     com.jzsg: info
 
 app:
+  handleType: 0
+  flowtype: 1
   name: userCenter
   id: UC010
   port: 9100

@@ -36,7 +36,7 @@ public class UserGroupDomianServiceImpl implements UserGroupDomianService {
         }
         UserGroup userGroup = new UserGroup();
         BeanUtils.copyProperties(userGroupReq,userGroup);
-        return userGroupMapper.insert(userGroup);
+        return userGroupMapper.insertSelective(userGroup);
     }
 
     @Override

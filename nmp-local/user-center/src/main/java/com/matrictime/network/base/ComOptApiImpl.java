@@ -36,7 +36,7 @@ public class ComOptApiImpl implements ComOptApi {
                     ResModel resModel = new ResModel();
                     resModel.setUuid(reqModel.getUuid());
                     resModel.setReturnValue(result);
-                    JServiceImpl.asynSendMsg(resModel);
+                    JServiceImpl.asynSendMsg(JSONObject.toJSONString(resModel));
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (EdException e) {

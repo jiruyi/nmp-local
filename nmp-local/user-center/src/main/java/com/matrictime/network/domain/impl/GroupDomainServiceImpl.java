@@ -22,7 +22,7 @@ public class GroupDomainServiceImpl implements GroupDomainService {
 
     @Override
     public Integer createGroup(GroupReq groupReq) {
-        if(groupReq.getGroupId()==null||groupReq.getOwner()==null){
+        if(groupReq.getOwner()==null){
             throw new SystemException("缺少参数");
         }
         GroupInfo group = new GroupInfo();

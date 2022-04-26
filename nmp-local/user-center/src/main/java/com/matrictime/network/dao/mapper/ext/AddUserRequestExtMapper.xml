@@ -20,7 +20,7 @@
 
 
     <select id="getAddUserInfo" parameterType="com.matrictime.network.api.request.AddUserRequestReq" resultMap="BaseResultMap">
-        select a.*,b.nickName from add_user_request a ,user b
+        select a.*,b.nick_name from add_user_request a ,user b
             where a.user_id = b.user_id and a.is_exist = '1' and b.is_exist ='1'
             <if test="addUserId != null">
                 and add_user_id = #{addUserId,jdbcType=VARCHAR}
