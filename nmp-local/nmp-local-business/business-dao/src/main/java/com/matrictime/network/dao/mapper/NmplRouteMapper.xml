@@ -16,7 +16,7 @@
         )
     </insert>
     <update id="deleteRoute" parameterType="com.matrictime.network.request.RouteRequest">
-        delete nmpl_route set is_exist = 0 where id = #{id,jdbcType=VARCHAR}
+        update nmpl_route set is_exist = 0 where id = #{id,jdbcType=VARCHAR}
     </update>
     <update id="updateRoute" parameterType="com.matrictime.network.request.RouteRequest">
         update nmpl_route set boundary_device_id = #{boundaryDeviceId,jdbcType=VARCHAR},

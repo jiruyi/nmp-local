@@ -9,7 +9,7 @@
     <result column="follow_device_id" jdbcType="VARCHAR" property="followDeviceId" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_user" jdbcType="TIMESTAMP" property="updateUser" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="CHAR" property="isExist" />
   </resultMap>
@@ -113,7 +113,7 @@
       is_exist)
     values (#{id,jdbcType=BIGINT}, #{linkName,jdbcType=VARCHAR}, #{linkType,jdbcType=VARCHAR}, 
       #{mainDeviceId,jdbcType=VARCHAR}, #{followDeviceId,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP},
       #{isExist,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplLinkRelation">

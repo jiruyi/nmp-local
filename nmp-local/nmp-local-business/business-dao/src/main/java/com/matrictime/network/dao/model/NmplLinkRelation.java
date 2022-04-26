@@ -17,7 +17,7 @@ public class NmplLinkRelation {
 
     private Date createTime;
 
-    private Date updateUser;
+    private String updateUser;
 
     private Date updateTime;
 
@@ -79,11 +79,11 @@ public class NmplLinkRelation {
         this.createTime = createTime;
     }
 
-    public Date getUpdateUser() {
+    public String getUpdateUser() {
         return updateUser;
     }
 
-    public void setUpdateUser(Date updateUser) {
+    public void setUpdateUser(String updateUser) {
         this.updateUser = updateUser;
     }
 
