@@ -102,7 +102,16 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         if (!info.getCompanyType().equals(companyInfoRequest.getCompanyType())){
             throw new SystemException("修改区域类型不一致");
         }
-
+        if(companyInfoRequest.getCompanyCode()!=null){
+            NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
+            nmplCompanyInfoExample.createCriteria().andCompanyCodeEqualTo(companyInfoRequest.getCompanyCode()).andIsExistEqualTo(true);
+            List<NmplCompanyInfo> nmplCompanyInfoList = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
+            if(!CollectionUtils.isEmpty(nmplCompanyInfoList)){
+                if(!nmplCompanyInfoList.get(0).getCompanyId().equals(companyInfoRequest.getCompanyId())){
+                    throw new SystemException("无父单位信息");
+                }
+            }
+        }
         NmplCompanyInfo nmplCompanyInfo = new NmplCompanyInfo();
         BeanUtils.copyProperties(companyInfoRequest,nmplCompanyInfo);
         nmplCompanyInfo.setUpdateTime(new Date());
