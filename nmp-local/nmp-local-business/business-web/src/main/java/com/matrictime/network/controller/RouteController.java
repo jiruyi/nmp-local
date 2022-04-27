@@ -114,6 +114,10 @@ public class RouteController {
         Map<String,BaseStationInfoVo> baseStationInfoVoMap;
         List<String> list;
         try {
+            BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
+            baseStationInfoRequest.setStationNetworkId(routeRequest.getStationNetworkId());
+            BaseStationInfoVo baseStationInfoVo = baseStationInfoService.selectByNetworkId(baseStationInfoRequest);
+            routeRequest.setBoundaryDeviceId(baseStationInfoVo.getStationId());
             Result<PageInfo<RouteVo>> pageInfoResult = routeService.selectRoute(routeRequest);
             List<RouteVo> routeVoList = pageInfoResult.getResultObj().getList();
             list = getStationIdList(routeVoList);
@@ -125,7 +129,7 @@ public class RouteController {
             baseStationInfoResponseResult = baseStationInfoService.selectBaseStationBatch(list);
             List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponseResult.getResultObj().getBaseStationInfoList();
             baseStationInfoVoMap = getBaseStationMap(baseStationInfoList);
-            PageInfo<RouteVo> routeVoPageInfo = routeVoPageInfo(baseStationInfoVoMap, routeVoList);
+            PageInfo<RouteVo> routeVoPageInfo = routeVoPageInfo(routeRequest,baseStationInfoVoMap, routeVoList);
             routeVoPageInfo.setCount(pageInfoResult.getResultObj().getCount());
             routeVoPageInfo.setPages(pageInfoResult.getResultObj().getPages());
             resultRoute.setResultObj(routeVoPageInfo);
@@ -163,12 +167,18 @@ public class RouteController {
     /*
     * 生成最终RouteVo结果
     * */
-    private PageInfo<RouteVo> routeVoPageInfo(Map<String,BaseStationInfoVo> baseStationInfoVoMap,List<RouteVo> routeVoList){
+    private PageInfo<RouteVo> routeVoPageInfo(RouteRequest routeRequest,Map<String,BaseStationInfoVo> baseStationInfoVoMap,List<RouteVo> routeVoList){
         PageInfo<RouteVo> pageInfo = new PageInfo<>();
         List<RouteVo> routeResult = new ArrayList<>();
         for(int resultIndex = 0;resultIndex < routeVoList.size();resultIndex++){
             BaseStationInfoVo baseStationInfoVo = baseStationInfoVoMap.get(routeVoList.get(resultIndex).getBoundaryDeviceId());
             if(baseStationInfoVo!= null) {
+                if(routeRequest.getConditionType() == 1){
+                    String[] split = baseStationInfoVo.getStationNetworkId().split("-");
+                    routeVoList.get(resultIndex).setStationNetworkId(split[split.length-1]);
+                }else {
+                    routeVoList.get(resultIndex).setStationNetworkId(baseStationInfoVo.getStationNetworkId());
+                }
                 routeVoList.get(resultIndex).setBoundaryDevicePublicIp(baseStationInfoVo.getPublicNetworkIp());
                 routeVoList.get(resultIndex).setBoundaryDevicePublicPort(baseStationInfoVo.getPublicNetworkPort());
                 routeVoList.get(resultIndex).setBoundaryDeviceLanIp(baseStationInfoVo.getLanIp());

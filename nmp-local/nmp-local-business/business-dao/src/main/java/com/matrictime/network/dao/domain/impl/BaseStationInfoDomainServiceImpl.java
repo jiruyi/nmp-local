@@ -62,4 +62,9 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         return nmplBaseStationInfoMapper.selectDeviceId(baseStationInfoRequest);
     }
 
+    @Override
+    public BaseStationInfoVo selectByNetworkId(BaseStationInfoRequest baseStationInfoRequest) {
+        return nmplBaseStationInfoMapper.selectByNetworkId(baseStationInfoRequest);
+    }
+
 }

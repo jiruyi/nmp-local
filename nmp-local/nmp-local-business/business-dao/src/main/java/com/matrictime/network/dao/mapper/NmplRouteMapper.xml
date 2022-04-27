@@ -29,8 +29,8 @@
         from nmpl_route,nmpl_user
         <where>
             nmpl_route.is_exist = 1 and nmpl_user.is_exist = 1
-            <if test="accessDeviceId != null and accessDeviceId != ''">
-                and access_device_id = #{accessDeviceId,jdbcType=VARCHAR}
+            <if test="boundaryDeviceId != null and boundaryDeviceId != ''">
+                and boundary_device_id = #{boundaryDeviceId,jdbcType=VARCHAR}
             </if>
                 and nmpl_user.user_id = nmpl_route.create_user
         </where>

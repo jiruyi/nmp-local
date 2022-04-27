@@ -15,6 +15,8 @@ public class RouteVo {
 
     private String boundaryDeviceLanPort;
 
+    private String stationNetworkId;
+
     private String stationName;
 
     private String createUser;
@@ -139,5 +141,13 @@ public class RouteVo {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public String getStationNetworkId() {
+        return stationNetworkId;
+    }
+
+    public void setStationNetworkId(String stationNetworkId) {
+        this.stationNetworkId = stationNetworkId;
     }
 }

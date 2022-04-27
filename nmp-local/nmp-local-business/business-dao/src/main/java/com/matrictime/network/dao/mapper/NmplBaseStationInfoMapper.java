@@ -44,4 +44,6 @@ public interface NmplBaseStationInfoMapper {
 
     StationVo selectDeviceId(BaseStationInfoRequest baseStationInfoRequest);
 
+    BaseStationInfoVo selectByNetworkId(BaseStationInfoRequest baseStationInfoRequest);
+
 }
