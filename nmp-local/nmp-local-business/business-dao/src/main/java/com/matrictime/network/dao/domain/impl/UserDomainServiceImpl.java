@@ -55,11 +55,11 @@ public class UserDomainServiceImpl implements UserDomainService {
         NmplUserExample userExample = new NmplUserExample();
         //用户名查询
         if (loginRequest.getType().equals(LoginTypeEnum.PASSWORD.getCode())){
-            userExample.createCriteria().andLoginAccountEqualTo(loginRequest.getLoginAccount());
+            userExample.createCriteria().andLoginAccountEqualTo(loginRequest.getLoginAccount()).andIsExistEqualTo(true);
         }
         //手机号查询
         if (loginRequest.getType().equals(LoginTypeEnum.MOBILEPHONE.getCode())){
-            userExample.createCriteria().andPhoneNumberEqualTo(loginRequest.getPhone());
+            userExample.createCriteria().andPhoneNumberEqualTo(loginRequest.getPhone()).andIsExistEqualTo(true);
         }
         List<NmplUser> userList =  userMapper.selectByExample(userExample);
         log.info("UserDomainService.getUserByParamter() result is :{}",userList);

@@ -60,7 +60,7 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
             }
 
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("createUserGroup Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -95,7 +95,7 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
             }
 
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("modifyUserGroup Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -130,7 +130,7 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
             }
 
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("deleteUserGroup Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
