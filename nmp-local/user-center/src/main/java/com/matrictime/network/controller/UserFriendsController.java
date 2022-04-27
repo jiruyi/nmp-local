@@ -77,7 +77,7 @@ public class UserFriendsController {
             result = userFriendsService.getAddUserInfo(addUserRequestReq);
             return result;
         }catch (Exception e){
-            log.error("addFriends exception:{}",e.getMessage());
+            log.error("getAddUserInfo exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
 

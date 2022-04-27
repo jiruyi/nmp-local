@@ -68,7 +68,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("createGroup Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -105,7 +105,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("modifyGroup Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -141,7 +141,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("deleteGroup Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -175,7 +175,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("queryGroup Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;

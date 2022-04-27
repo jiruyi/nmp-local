@@ -116,7 +116,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("getAddUserInfo Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
