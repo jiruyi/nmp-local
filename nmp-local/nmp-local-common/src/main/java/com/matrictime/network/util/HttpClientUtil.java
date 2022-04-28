@@ -43,7 +43,7 @@ public class HttpClientUtil {
 
     public static void main(String[] args) {
         try {
-            postForm("http://127.0.0.1:8002/nmp-local-business/test/uploadTest","E:/1oiewrq蝴蝶欧文.txt");
+            post("http://127.0.0.1:8006/verify","{\"afterSix\":\"123123\",\"phoneNumber\":\"12345678904\",\"destination\":\"2\",\"uuid\":1}");
         } catch (IOException e) {
             e.printStackTrace();
         }

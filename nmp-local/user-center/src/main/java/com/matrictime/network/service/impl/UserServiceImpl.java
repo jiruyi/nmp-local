@@ -6,8 +6,10 @@ import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.*;
+import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
+import com.matrictime.network.base.util.CheckUtil;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
@@ -226,6 +228,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     public Result verify(VerifyReq req) {
         Result result;
         try {
+            CheckUtil.checkParam(req);
             checkVerifyParam(req);
 
             switch (req.getDestination()){
@@ -240,13 +243,21 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     log.info("非密区向密区发送请求参数param:{}",param);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    return buildResult(null);
+
+                    log.info("非密区接收返回值UserServiceImpl.verify resModel:{}",JSONObject.toJSONString(resModel));
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        Result returnRes = JSONObject.parseObject((String) returnValue, Result.class);
+                        return returnRes;
+                    }else {
+                        throw new SystemException("UserServiceImpl.verify"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
 
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
 
                     VerifyReq desReq = new VerifyReq();
+                    BeanUtils.copyProperties(req,desReq);
                     commonVerify(desReq);
                     // 返回值加密
 
