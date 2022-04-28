@@ -289,7 +289,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         example.createCriteria().andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
         List<User> users = userMapper.selectByExample(example);
         if(CollectionUtils.isEmpty(users)){
-            throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
+            throw new SystemException(ErrorMessageContants.USER_NO_EXIST_MSG);
         }
         User user = users.get(0);
         judgeAfterSix(req.getAfterSix(),user.getIdNo());
