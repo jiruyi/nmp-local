@@ -6,6 +6,10 @@
     <result column="station_id" jdbcType="VARCHAR" property="deviceId" />
     <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
   </resultMap>
+  <resultMap id="BaseStationMap" type="com.matrictime.network.modelVo.BaseStationInfoVo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+  </resultMap>
   <resultMap id="BaseOriResultMap" type="com.matrictime.network.dao.model.NmplBaseStationInfo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="station_id" jdbcType="VARCHAR" property="stationId" />
@@ -538,7 +542,9 @@
   <select id="selectDeviceId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseResultMap">
     select station_id,station_network_id from nmpl_base_station_info where lan_ip = #{lanIp,jdbcType=VARCHAR}
   </select>
-  <select id="selectByNetworkId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
+  <select id="selectByNetworkId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseStationMap">
     select station_id from nmpl_base_station_info where station_network_id like "%" #{stationNetworkId,jdbcType=CHAR} "%"
+    union
+    select device_id as station_id from nmpl_device_info where station_network_id like "%" #{stationNetworkId,jdbcType=CHAR} "%"
   </select>
 </mapper>

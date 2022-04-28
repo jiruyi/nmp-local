@@ -116,8 +116,11 @@ public class RouteController {
         try {
             BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
             baseStationInfoRequest.setStationNetworkId(routeRequest.getStationNetworkId());
+            List<NmplDeviceInfoExt> deviceInfoExtList;
+            deviceInfoExtList = routeService.selectDevices();
+            Map<String, NmplDeviceInfoExt> deviceStationMap = getDeviceStationMap(deviceInfoExtList);
             BaseStationInfoVo baseStationInfoVo = baseStationInfoService.selectByNetworkId(baseStationInfoRequest);
-            routeRequest.setBoundaryDeviceId(baseStationInfoVo.getStationId());
+            routeRequest.setAccessDeviceId(baseStationInfoVo.getStationId());
             Result<PageInfo<RouteVo>> pageInfoResult = routeService.selectRoute(routeRequest);
             List<RouteVo> routeVoList = pageInfoResult.getResultObj().getList();
             list = getStationIdList(routeVoList);
@@ -129,7 +132,8 @@ public class RouteController {
             baseStationInfoResponseResult = baseStationInfoService.selectBaseStationBatch(list);
             List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponseResult.getResultObj().getBaseStationInfoList();
             baseStationInfoVoMap = getBaseStationMap(baseStationInfoList);
-            PageInfo<RouteVo> routeVoPageInfo = routeVoPageInfo(routeRequest,baseStationInfoVoMap, routeVoList);
+
+            PageInfo<RouteVo> routeVoPageInfo = routeVoPageInfo(routeRequest,baseStationInfoVoMap,deviceStationMap, routeVoList);
             routeVoPageInfo.setCount(pageInfoResult.getResultObj().getCount());
             routeVoPageInfo.setPages(pageInfoResult.getResultObj().getPages());
             resultRoute.setResultObj(routeVoPageInfo);
@@ -165,19 +169,32 @@ public class RouteController {
     }
 
     /*
+     * 获取deviceStationId映射的实体类
+     * */
+    private Map<String,NmplDeviceInfoExt> getDeviceStationMap(List<NmplDeviceInfoExt> deviceInfoExtList){
+        Map<String,NmplDeviceInfoExt> map = new HashMap<>();
+        for(int baseStationIndex = 0;baseStationIndex < deviceInfoExtList.size();baseStationIndex++){
+            map.put(deviceInfoExtList.get(baseStationIndex).getDeviceId(),deviceInfoExtList.get(baseStationIndex));
+        }
+        return map;
+    }
+
+    /*
     * 生成最终RouteVo结果
     * */
-    private PageInfo<RouteVo> routeVoPageInfo(RouteRequest routeRequest,Map<String,BaseStationInfoVo> baseStationInfoVoMap,List<RouteVo> routeVoList){
+    private PageInfo<RouteVo> routeVoPageInfo(RouteRequest routeRequest,Map<String,BaseStationInfoVo> baseStationInfoVoMap,Map<String,
+            NmplDeviceInfoExt> deviceStationMap, List<RouteVo> routeVoList){
         PageInfo<RouteVo> pageInfo = new PageInfo<>();
         List<RouteVo> routeResult = new ArrayList<>();
         for(int resultIndex = 0;resultIndex < routeVoList.size();resultIndex++){
             BaseStationInfoVo baseStationInfoVo = baseStationInfoVoMap.get(routeVoList.get(resultIndex).getBoundaryDeviceId());
-            if(baseStationInfoVo!= null) {
+            NmplDeviceInfoExt nmplDeviceInfoExt = deviceStationMap.get(routeVoList.get(resultIndex).getAccessDeviceId());
+            if(baseStationInfoVo!= null && nmplDeviceInfoExt!= null) {
                 if(routeRequest.getConditionType() == 1){
-                    String[] split = baseStationInfoVo.getStationNetworkId().split("-");
+                    String[] split = nmplDeviceInfoExt.getStationNetworkId().split("-");
                     routeVoList.get(resultIndex).setStationNetworkId(split[split.length-1]);
                 }else {
-                    routeVoList.get(resultIndex).setStationNetworkId(baseStationInfoVo.getStationNetworkId());
+                    routeVoList.get(resultIndex).setStationNetworkId(nmplDeviceInfoExt.getStationNetworkId());
                 }
                 routeVoList.get(resultIndex).setBoundaryDevicePublicIp(baseStationInfoVo.getPublicNetworkIp());
                 routeVoList.get(resultIndex).setBoundaryDevicePublicPort(baseStationInfoVo.getPublicNetworkPort());
