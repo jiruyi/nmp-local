@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
@@ -7,6 +8,7 @@ import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.RegisterResp;
+import com.matrictime.network.api.response.UserResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.CheckUtil;
@@ -92,7 +94,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result =(Result) resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -135,7 +138,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result =(Result) resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -171,7 +175,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result =(Result) resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -206,7 +211,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result =(Result) resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -322,12 +328,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         if(user==null){
             throw new SystemException("无此用户");
         }
-        UserVo userVo =new UserVo();
-        userVo.setUserId(user.getUserId());
-        userVo.setPhoneNumber(user.getPhoneNumber());
-        userVo.setNickName(user.getNickName());
-//        BeanUtils.copyProperties(user,userVo);
-        return buildResult(userVo);
+        UserResp userResp =new UserResp();
+        BeanUtils.copyProperties(user,userResp);
+        return buildResult(userResp);
     }
 
 

@@ -51,7 +51,7 @@ public class UserGroupDomianServiceImpl implements UserGroupDomianService {
 
     @Override
     public Integer modifyUserGroup(UserGroupReq userGroupReq) {
-        if(userGroupReq.getGroupId()==null||userGroupReq.getUserId()==null){
+        if(userGroupReq.getGroupId()==null||userGroupReq.getUserId()==null||userGroupReq.getTargetGroupId()==null){
             throw new SystemException("缺少参数");
         }
         return userGroupExtMapper.updateByUserIdAndGroupId(userGroupReq);

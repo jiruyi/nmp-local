@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
@@ -48,7 +49,8 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = (Result) resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -83,7 +85,8 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = (Result) resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -118,7 +121,8 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = (Result) resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密

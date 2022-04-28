@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
@@ -56,7 +57,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = (Result)resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -92,7 +94,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = (Result)resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -128,7 +131,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = (Result)resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     break;
 
                 case UcConstants.DESTINATION_OUT_TO_IN:
@@ -163,7 +167,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     log.info("非密区向密区发送请求参数param:{}",param);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    result  = (Result) resModel.getReturnValue();
+                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
+                    //result = (Result)resModel.getReturnValue();
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
