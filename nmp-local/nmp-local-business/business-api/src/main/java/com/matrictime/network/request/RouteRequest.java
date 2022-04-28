@@ -10,6 +10,8 @@ public class RouteRequest extends BaseRequest{
 
     private int conditionType;
 
+    private String stationNetworkId;
+
     private String createUser;
 
     private String createTime;
@@ -90,5 +92,13 @@ public class RouteRequest extends BaseRequest{
 
     public void setConditionType(int conditionType) {
         this.conditionType = conditionType;
+    }
+
+    public String getStationNetworkId() {
+        return stationNetworkId;
+    }
+
+    public void setStationNetworkId(String stationNetworkId) {
+        this.stationNetworkId = stationNetworkId;
     }
 }

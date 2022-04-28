@@ -89,7 +89,7 @@ public class UserController {
             /**1.0 参数校验**/
             return userService.queryUser(userRequest);
         }catch (Exception e){
-            log.error("changePasswd exception:{}",e.getMessage());
+            log.error("queryUserInfo exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

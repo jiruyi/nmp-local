@@ -51,6 +51,40 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     @Override
     public Result<UserFriendResp> selectUserFriend(UserFriendReq userFriendReq) {
         Result<UserFriendResp> result = new Result<>();
+        try {
+            switch (userFriendReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonSelectUserFriend(userFriendReq);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    userFriendReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userFriendReq.setUrl(url+UcConstants.URL_SELECT_USER_FRIEND);
+                    String param = JSONObject.toJSONString(userFriendReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result =(Result) resModel.getReturnValue();
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+                    result = commonSelectUserFriend(userFriendReq);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
+    //查询好友列表逻辑请求
+    private Result<UserFriendResp> commonSelectUserFriend(UserFriendReq userFriendReq) {
+        Result<UserFriendResp> result = new Result<>();
         UserFriendResp userFriendResp = new UserFriendResp();
         try {
             List<UserFriendVo> userFriendVos = userFriendsDomainService.selectUserFriend(userFriendReq);
@@ -116,7 +150,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("getAddUserInfo Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;

@@ -94,7 +94,8 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             ids.add(nmplDeviceInfo.getDeviceId());
         }
         if(CollectionUtils.isEmpty(ids)){
-            throw new SystemException("该区域下无设备");
+            log.info("该区域下无设备");
+            return new ArrayList<>();
         }
         NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
         nmplDataCollectExample.createCriteria().andDeviceIdIn(ids).andUploadTimeGreaterThan(monitorReq.getCurrentTime());
@@ -118,7 +119,8 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             ids.add(nmplDeviceInfo.getDeviceId());
         }
         if(CollectionUtils.isEmpty(ids)){
-            throw new SystemException("该区域下无设备");
+            log.info("该区域下无设备");
+            return new ArrayList<>();
         }
         return nmplDataCollectExtMapper.selectTopTen(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
     }

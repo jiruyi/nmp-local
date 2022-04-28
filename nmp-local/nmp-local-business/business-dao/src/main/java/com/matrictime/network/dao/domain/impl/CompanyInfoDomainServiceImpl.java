@@ -108,7 +108,7 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
             List<NmplCompanyInfo> nmplCompanyInfoList = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
             if(!CollectionUtils.isEmpty(nmplCompanyInfoList)){
                 if(!nmplCompanyInfoList.get(0).getCompanyId().equals(companyInfoRequest.getCompanyId())){
-                    throw new SystemException("无父单位信息");
+                    throw new SystemException("编码重复");
                 }
             }
         }

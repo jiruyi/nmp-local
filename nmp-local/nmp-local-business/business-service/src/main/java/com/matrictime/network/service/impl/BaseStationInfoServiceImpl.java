@@ -7,6 +7,7 @@ import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
@@ -159,6 +160,17 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
             result.setSuccess(false);
+        }
+        return result;
+    }
+
+    @Override
+    public BaseStationInfoVo selectByNetworkId(BaseStationInfoRequest baseStationInfoRequest) {
+        BaseStationInfoVo result = new BaseStationInfoVo();
+        try {
+            result = baseStationInfoDomainService.selectByNetworkId(baseStationInfoRequest);
+        }catch (Exception e){
+            log.info("selectByNetworkId{} 查询异常");
         }
         return result;
     }

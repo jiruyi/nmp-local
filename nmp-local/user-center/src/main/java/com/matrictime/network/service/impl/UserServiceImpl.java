@@ -104,7 +104,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("modifyUserInfo Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -147,7 +147,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("deleteFriend Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -183,7 +183,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("changePasswd Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -218,7 +218,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (Exception e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("queryUser Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;

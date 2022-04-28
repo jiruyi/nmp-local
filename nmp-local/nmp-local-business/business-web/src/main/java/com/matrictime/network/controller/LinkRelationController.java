@@ -120,7 +120,7 @@ public class LinkRelationController {
     @SystemLog(opermodul = "链路管理模块",operDesc = "查询链路信息",operType = "查询链路信息")
     @RequestMapping(value = "/selectLinkRelation",method = RequestMethod.POST)
     public Result<PageInfo<LinkRelationVo>> selectLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
-        Result<PageInfo<LinkRelationVo>> result = new Result<>();
+        Result<PageInfo<LinkRelationVo>> result;
         Result<PageInfo<LinkRelationVo>> linkRelationResult = new Result<>();
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         DeviceInfoRequest deviceInfoRequest = new DeviceInfoRequest();
@@ -131,12 +131,14 @@ public class LinkRelationController {
             Map<String, DeviceInfoVo> deviceMap = getDeviceMap(deviceResponseResult.getResultObj().getDeviceInfoVos());
             Map<String, BaseStationInfoVo> stationMap = getStationMap(baseStationInfoResponseResult.getResultObj().getBaseStationInfoList());
             PageInfo<LinkRelationVo> linkRelation = getLinkRelation(result, deviceMap, stationMap);
+            linkRelation.setCount(result.getResultObj().getCount());
+            linkRelation.setPages(result.getResultObj().getPages());
             linkRelationResult.setResultObj(linkRelation);
             linkRelationResult.setSuccess(true);
         }catch (Exception e){
             log.info("查询链路信息异常:selectLinkRelation{}",e.getMessage());
-            result.setSuccess(false);
-            result.setErrorMsg("查询链路信息异常");
+            linkRelationResult.setSuccess(false);
+            linkRelationResult.setErrorMsg("查询链路信息异常");
         }
         return linkRelationResult;
     }
