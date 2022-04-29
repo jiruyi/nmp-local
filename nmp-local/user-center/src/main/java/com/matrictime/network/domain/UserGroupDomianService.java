@@ -20,6 +20,6 @@ public interface UserGroupDomianService {
     public List<UserGroupVo> queryUserGroup(UserGroupReq userGroupReq);
 
 
-    public Map<String,List<UserGroupVo>> queryUserGroupByGroupIds(List<String>groupIds);
+    public Map<String,List<UserGroupVo>> queryUserGroupByGroupIds(List<String>groupIds,String owner);
 
 }
