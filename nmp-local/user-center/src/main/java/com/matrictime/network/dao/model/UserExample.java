@@ -595,52 +595,62 @@ public class UserExample {
             return (Criteria) this;
         }
 
-        public Criteria andSexEqualTo(Boolean value) {
+        public Criteria andSexEqualTo(String value) {
             addCriterion("sex =", value, "sex");
             return (Criteria) this;
         }
 
-        public Criteria andSexNotEqualTo(Boolean value) {
+        public Criteria andSexNotEqualTo(String value) {
             addCriterion("sex <>", value, "sex");
             return (Criteria) this;
         }
 
-        public Criteria andSexGreaterThan(Boolean value) {
+        public Criteria andSexGreaterThan(String value) {
             addCriterion("sex >", value, "sex");
             return (Criteria) this;
         }
 
-        public Criteria andSexGreaterThanOrEqualTo(Boolean value) {
+        public Criteria andSexGreaterThanOrEqualTo(String value) {
             addCriterion("sex >=", value, "sex");
             return (Criteria) this;
         }
 
-        public Criteria andSexLessThan(Boolean value) {
+        public Criteria andSexLessThan(String value) {
             addCriterion("sex <", value, "sex");
             return (Criteria) this;
         }
 
-        public Criteria andSexLessThanOrEqualTo(Boolean value) {
+        public Criteria andSexLessThanOrEqualTo(String value) {
             addCriterion("sex <=", value, "sex");
             return (Criteria) this;
         }
 
-        public Criteria andSexIn(List<Boolean> values) {
+        public Criteria andSexLike(String value) {
+            addCriterion("sex like", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexNotLike(String value) {
+            addCriterion("sex not like", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexIn(List<String> values) {
             addCriterion("sex in", values, "sex");
             return (Criteria) this;
         }
 
-        public Criteria andSexNotIn(List<Boolean> values) {
+        public Criteria andSexNotIn(List<String> values) {
             addCriterion("sex not in", values, "sex");
             return (Criteria) this;
         }
 
-        public Criteria andSexBetween(Boolean value1, Boolean value2) {
+        public Criteria andSexBetween(String value1, String value2) {
             addCriterion("sex between", value1, value2, "sex");
             return (Criteria) this;
         }
 
-        public Criteria andSexNotBetween(Boolean value1, Boolean value2) {
+        public Criteria andSexNotBetween(String value1, String value2) {
             addCriterion("sex not between", value1, value2, "sex");
             return (Criteria) this;
         }
@@ -1285,52 +1295,52 @@ public class UserExample {
             return (Criteria) this;
         }
 
-        public Criteria andAgreeFriendEqualTo(Byte value) {
+        public Criteria andAgreeFriendEqualTo(Boolean value) {
             addCriterion("agree_friend =", value, "agreeFriend");
             return (Criteria) this;
         }
 
-        public Criteria andAgreeFriendNotEqualTo(Byte value) {
+        public Criteria andAgreeFriendNotEqualTo(Boolean value) {
             addCriterion("agree_friend <>", value, "agreeFriend");
             return (Criteria) this;
         }
 
-        public Criteria andAgreeFriendGreaterThan(Byte value) {
+        public Criteria andAgreeFriendGreaterThan(Boolean value) {
             addCriterion("agree_friend >", value, "agreeFriend");
             return (Criteria) this;
         }
 
-        public Criteria andAgreeFriendGreaterThanOrEqualTo(Byte value) {
+        public Criteria andAgreeFriendGreaterThanOrEqualTo(Boolean value) {
             addCriterion("agree_friend >=", value, "agreeFriend");
             return (Criteria) this;
         }
 
-        public Criteria andAgreeFriendLessThan(Byte value) {
+        public Criteria andAgreeFriendLessThan(Boolean value) {
             addCriterion("agree_friend <", value, "agreeFriend");
             return (Criteria) this;
         }
 
-        public Criteria andAgreeFriendLessThanOrEqualTo(Byte value) {
+        public Criteria andAgreeFriendLessThanOrEqualTo(Boolean value) {
             addCriterion("agree_friend <=", value, "agreeFriend");
             return (Criteria) this;
         }
 
-        public Criteria andAgreeFriendIn(List<Byte> values) {
+        public Criteria andAgreeFriendIn(List<Boolean> values) {
             addCriterion("agree_friend in", values, "agreeFriend");
             return (Criteria) this;
         }
 
-        public Criteria andAgreeFriendNotIn(List<Byte> values) {
+        public Criteria andAgreeFriendNotIn(List<Boolean> values) {
             addCriterion("agree_friend not in", values, "agreeFriend");
             return (Criteria) this;
         }
 
-        public Criteria andAgreeFriendBetween(Byte value1, Byte value2) {
+        public Criteria andAgreeFriendBetween(Boolean value1, Boolean value2) {
             addCriterion("agree_friend between", value1, value2, "agreeFriend");
             return (Criteria) this;
         }
 
-        public Criteria andAgreeFriendNotBetween(Byte value1, Byte value2) {
+        public Criteria andAgreeFriendNotBetween(Boolean value1, Boolean value2) {
             addCriterion("agree_friend not between", value1, value2, "agreeFriend");
             return (Criteria) this;
         }

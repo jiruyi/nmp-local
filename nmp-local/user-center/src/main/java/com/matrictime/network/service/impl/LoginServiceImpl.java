@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
@@ -19,6 +20,7 @@ import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
 import com.matrictime.network.dao.model.UserExample;
+import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
@@ -50,28 +52,52 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     public Result<RegisterResp> register(RegisterReq req) {
         Result result;
         try {
-            RegisterResp resp = new RegisterResp();
+            RegisterResp resp;
             CheckUtil.checkParam(req);
             checkRegisterParam(req);
+            req.setUserId(SnowFlake.nextId_String());
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
-                    resp =commonRegister(req);
-                    break;
-                case UcConstants.DESTINATION_IN:
-                    ReqModel reqModel = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    // 非密区生成用户
+                    commonRegister(req);
+
+                    // 密区同步用户
+                    ReqModel reqModelF = new ReqModel();
+                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN_SYN);
                     req.setUrl(url+UcConstants.URL_REGISTER);
-                    String param = JSONObject.toJSONString(req);
-                    reqModel.setParam(param);
-                    reqModel.setUuid(req.getUuid());
-                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+
+                    String paramF = JSONObject.toJSONString(req);
+                    reqModelF.setParam(paramF);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModelF);
 
                     log.info("非密区接收返回值LoginServiceImpl.register resModel:{}",JSONObject.toJSONString(resModel));
                     Object returnValue = resModel.getReturnValue();
                     if(returnValue != null && returnValue instanceof String){
-                        Result returnRes = JSONObject.parseObject((String) returnValue, Result.class);
-                        return returnRes;
+                        result = JSONObject.parseObject((String) returnValue, Result.class);
+                        return result;
+                    }else {
+                        throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModelM = new ReqModel();
+                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    req.setUrl(url+UcConstants.URL_REGISTER);
+                    String paramM = JSONObject.toJSONString(req);
+                    reqModelM.setParam(paramM);
+                    ResModel resModelM = JServiceImpl.syncSendMsg(reqModelM);
+
+                    log.info("非密区接收返回值LoginServiceImpl.register resModel:{}",JSONObject.toJSONString(resModelM));
+                    Object returnValueM = resModelM.getReturnValue();
+                    if(returnValueM != null && returnValueM instanceof String){
+                        Result returnRes = JSONObject.parseObject((String) returnValueM, Result.class);
+                        if(returnRes.isSuccess()){
+                            // 非密区同步用户
+                            RegisterResp resultObj = (RegisterResp) returnRes.getResultObj();
+                            commonRegister(resultObj.getRegisterReq());
+                            resultObj.setRegisterReq(null);
+                            return buildResult(resultObj);
+                        }
                     }else {
                         throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
@@ -82,17 +108,27 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     RegisterReq desReq = new RegisterReq();
                     BeanUtils.copyProperties(req,desReq);
                     resp = commonRegister(desReq);
+                    resp.setRegisterReq(desReq);
                     // 返回值加密
 
+                    return buildResult(resp);
+
+                case UcConstants.DESTINATION_OUT_TO_IN_SYN:
+                    RegisterReq desReq2 = new RegisterReq();
+                    BeanUtils.copyProperties(req,desReq2);
+                    resp = commonRegister(desReq2);
                     return buildResult(resp);
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
             }
-
-            result = buildResult(resp);
         }catch (Exception e){
             log.error("LoginServiceImpl.register Exception:{}",e.getMessage());
+
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andUserIdEqualTo(req.getUserId());
+            userMapper.deleteByExample(userExample);
+
             result = failResult(e);
         }
         return result;
@@ -106,20 +142,22 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             throw new SystemException(ErrorMessageContants.USER_IS_EXIST_MSG);
         }
 
-        RegisterResp resp = new RegisterResp();
         User user = new User();
-        String userId = SnowFlake.nextId_String();
-        user.setUserId(userId);
+        user.setUserId(req.getUserId());
         user.setLoginAccount(req.getLoginAccount());
+        user.setNickName(req.getNickName());
         user.setPassword(req.getPassword());
         user.setEmail(req.getEmail());
         user.setPhoneNumber(req.getPhoneNumber());
         user.setUserType(req.getUserType());
         user.setIdType(req.getIdType());
         user.setIdNo(req.getIdNo());
+        user.setLoginAppCode(req.getLoginAppCode());
+        user.setSex(req.getSex());
         userMapper.insertSelective(user);
+        RegisterResp resp = new RegisterResp();
+        resp.setUserId(user.getUserId());
 
-        resp.setUserId(userId);
         return resp;
     }
 
@@ -141,13 +179,13 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     req.setUrl(url+UcConstants.URL_LOGIN);
                     String param = JSONObject.toJSONString(req);
                     reqModel.setParam(param);
-                    reqModel.setUuid(req.getUuid());
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收返回值LoginServiceImpl.login resModel:{}",JSONObject.toJSONString(resModel));
 
                     Object returnValue = resModel.getReturnValue();
                     if(returnValue != null && returnValue instanceof String){
                         Result returnRes = JSONObject.parseObject((String) returnValue, Result.class);
+                        log.info("非密区接收返回值LoginServiceImpl.login returnRes:{}",(String) returnValue);
                         return returnRes;
                     }else {
                         throw new SystemException("LoginServiceImpl.login"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
@@ -222,7 +260,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     req.setUrl(url+UcConstants.URL_LOGOUT);
                     String param = JSONObject.toJSONString(req);
                     reqModel.setParam(param);
-                    reqModel.setUuid(req.getUuid());
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收返回值LoginServiceImpl.logout resModel:{}",JSONObject.toJSONString(resModel));
 
@@ -281,7 +318,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     req.setUrl(url+UcConstants.URL_BIND);
                     String param = JSONObject.toJSONString(req);
                     reqModel.setParam(param);
-                    reqModel.setUuid(req.getUuid());
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收返回值LoginServiceImpl.bind resModel:{}",JSONObject.toJSONString(resModel));
 
@@ -409,7 +445,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         if(null == req){
             throw new SystemException("req"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount()) || ParamCheckUtil.checkVoStrBlank(req.getUserId())){
+        if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount()) && ParamCheckUtil.checkVoStrBlank(req.getUserId())){
             throw new SystemException("LoginAccount/UserId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if(ParamCheckUtil.checkVoStrBlank(req.getPassword())){

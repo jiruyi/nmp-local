@@ -34,9 +34,9 @@ public class MyStartupRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("SpringBoot run appName:{},appId:{},appPort:{}", appName, appId, appPort);
-            JServiceImpl.FlowType = FlowType;
-            JServiceImpl.handleType = handleType;
-            JServiceImpl.start(appName, appId, appPort, comOptApi);
+        JServiceImpl.FlowType = FlowType;
+        JServiceImpl.handleType = handleType;
+        JServiceImpl.start(appName, appId, appPort, comOptApi);
     }
 
     @PreDestroy
