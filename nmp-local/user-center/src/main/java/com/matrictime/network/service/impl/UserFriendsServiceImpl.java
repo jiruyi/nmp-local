@@ -28,7 +28,6 @@ import com.matrictime.network.service.UserFriendsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -97,13 +96,47 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         return result;
     }
 
-    @Transactional(rollbackFor=Exception.class)
     @Override
     public Result<Integer> addFriends(AddUserRequestReq addUserRequestReq) {
         Result<Integer> result = new Result<>();
         UserFriendReq userFriendReq = setUserFriendReq(addUserRequestReq);
         UserRequest userRequest = new UserRequest();
         userRequest.setUserId(addUserRequestReq.getAddUserId());
+        try {
+            switch (addUserRequestReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    addUserRequestReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    addUserRequestReq.setUrl(url+UcConstants.URL_ADD_FRIENDS);
+                    String param = JSONObject.toJSONString(addUserRequestReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    result =(Result) resModel.getReturnValue();
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+                    result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
+    //添加好友信息逻辑
+    private Result<Integer> commonAddFriends(UserFriendReq userFriendReq,AddUserRequestReq addUserRequestReq,
+                                             UserRequest userRequest) {
+        Result<Integer> result = new Result<>();
         UserVo userVo = userFriendsDomainService.selectUserInfo(userRequest);
         if(userVo.getAgreeFriend() == 0){
             addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
@@ -113,10 +146,6 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         }else {
             addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
             userFriendsDomainService.insertFriend(userFriendReq);
-            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(addUserRequestReq.getAddUserId());
-            if(webSocketServer != null){
-                webSocketServer.sendMessage(JSONUtils.toJSONString(messageText(addUserRequestReq)));
-            }
             result.setResultObj(0);
         }
         return result;
@@ -199,19 +228,6 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         return n;
     }
 
-
-
-    /*
-  构建信息json字符串
-* */
-    private Map messageText(AddUserRequestReq addUserRequestReq){
-        Map<String,String> messageMap = new HashMap<>();
-        messageMap.put("fromUserId",addUserRequestReq.getUserId());
-        messageMap.put("toUserId",addUserRequestReq.getAddUserId());
-        messageMap.put("message","好友请求");
-        messageMap.put("messageCode","100");
-        return messageMap;
-    }
 
     //构建添加好友信息请求体
     private UserFriendReq setUserFriendReq(AddUserRequestReq addUserRequestReq){

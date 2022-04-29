@@ -14,6 +14,8 @@ public class UcConstants {
 
     public static final String URL_SELECT_USER_FRIEND = "/userFriends/selectUserFriend";
 
+    public static final String URL_ADD_FRIENDS = "/userFriends/selectUserFriend";
+
     public static final String URL_CREATEGROUP="/group/createGroup";
 
     public static final String URL_DELETEGROUP="/group/deleteGroup";

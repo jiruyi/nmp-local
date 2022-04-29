@@ -1,6 +1,7 @@
 package com.matrictime.network.controller;
 
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequestMapping(value = "/userFriends")
 @Api(value = "用户好友",tags = "用户好友接口")
@@ -61,6 +64,10 @@ public class UserFriendsController {
             if(result.getResultObj() == 1){
                 return result;
             }else {
+                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(addUserRequestReq.getAddUserId());
+                if(webSocketServer != null){
+                    webSocketServer.sendMessage(JSONUtils.toJSONString(messageText(addUserRequestReq)));
+                }
                 return new Result<>(true,"等待好友验证");
             }
         }catch (Exception e){
@@ -81,6 +88,24 @@ public class UserFriendsController {
             return new Result(false,e.getMessage());
         }
 
+    }
+
+    /*
+构建信息json字符串
+* */
+    private Map messageText(AddUserRequestReq addUserRequestReq){
+        Map<String,String> messageMap = new HashMap<>();
+        if("1".equals(addUserRequestReq.getDestination())){
+            messageMap.put("destination","1");
+        }else {
+            messageMap.put("destination","0");
+
+        }
+        messageMap.put("fromUserId",addUserRequestReq.getUserId());
+        messageMap.put("toUserId",addUserRequestReq.getAddUserId());
+        messageMap.put("message","好友请求");
+        messageMap.put("messageCode","100");
+        return messageMap;
     }
 
 
