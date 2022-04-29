@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class BindReq implements Serializable {
+public class BindReq extends BaseReq implements Serializable {
     private static final long serialVersionUID = -2336467512723505925L;
 
     /**

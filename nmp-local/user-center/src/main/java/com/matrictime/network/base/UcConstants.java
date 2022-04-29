@@ -8,6 +8,12 @@ public class UcConstants {
 
     public static final String URL_LOGIN = "/user/login";
 
+    public static final String URL_LOGOUT = "/user/logout";
+
+    public static final String URL_REGISTER = "/user/register";
+
+    public static final String URL_BIND = "/user/bind";
+
     public static final String URL_VERIFY = "/verify";
 
     public static final String URL_CANCEL_USER = "/userFriends/cancelUser";

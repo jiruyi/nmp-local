@@ -76,4 +76,6 @@ public class ErrorMessageContants {
 
 	public static final String FILE_NOT_EXIST = "文件不存在";
 
+	public static final String RPC_RETURN_ERROR_MSG = "RPC返回错误";
+
 }
