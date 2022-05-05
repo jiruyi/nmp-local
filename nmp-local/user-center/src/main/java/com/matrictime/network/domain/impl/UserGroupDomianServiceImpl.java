@@ -3,11 +3,10 @@ package com.matrictime.network.domain.impl;
 import com.matrictime.network.api.modelVo.UserGroupVo;
 import com.matrictime.network.api.request.UserGroupReq;
 import com.matrictime.network.api.response.UserGroupResp;
+import com.matrictime.network.dao.mapper.UserFriendMapper;
 import com.matrictime.network.dao.mapper.UserGroupMapper;
 import com.matrictime.network.dao.mapper.ext.UserGroupExtMapper;
-import com.matrictime.network.dao.model.GroupInfo;
-import com.matrictime.network.dao.model.UserGroup;
-import com.matrictime.network.dao.model.UserGroupExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.domain.UserGroupDomianService;
 import com.matrictime.network.exception.SystemException;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +27,8 @@ public class UserGroupDomianServiceImpl implements UserGroupDomianService {
     UserGroupExtMapper userGroupExtMapper;
     @Resource
     UserGroupMapper userGroupMapper;
-
+    @Resource
+    UserFriendMapper userFriendMapper;
     @Override
     public Integer createUserGroup(UserGroupReq userGroupReq) {
         if(userGroupReq.getGroupId()==null||userGroupReq.getUserId()==null){
@@ -66,14 +66,26 @@ public class UserGroupDomianServiceImpl implements UserGroupDomianService {
     }
 
     @Override
-    public Map<String, List<UserGroupVo>> queryUserGroupByGroupIds(List<String>groupIds) {
-        if(CollectionUtils.isEmpty(groupIds)){
+    public Map<String, List<UserGroupVo>> queryUserGroupByGroupIds(List<String>groupIds,String owner) {
+        /**
+         * 入参校验
+         */
+        if(CollectionUtils.isEmpty(groupIds)||owner==null){
             return new HashMap<>();
+        }
+        UserFriendExample userFriendExample = new UserFriendExample();
+        userFriendExample.createCriteria().andUserIdEqualTo(owner).andIsExistEqualTo(true);
+        List<UserFriend> userFriendList = userFriendMapper.selectByExample(userFriendExample);
+        Map<String,UserFriend> userFriendMap = new HashMap<>();
+        for (UserFriend userFriend : userFriendList) {
+            userFriendMap.put(userFriend.getFriendUserId(),userFriend);
         }
         List<UserGroupVo> userGroupVos = userGroupExtMapper.selectByGroupIds(groupIds);
         Map<String, List<UserGroupVo>> result = new HashMap<>();
         for (UserGroupVo userGroupVo : userGroupVos) {
-
+            if(userFriendMap.get(userGroupVo.getUserId())!=null){
+                userGroupVo.setRemarkName(userFriendMap.get(userGroupVo.getUserId()).getRemarkName());
+            }
             if(result.get(userGroupVo.getGroupId())==null){
                 result.put(userGroupVo.getGroupId(),new ArrayList<>());
             }
