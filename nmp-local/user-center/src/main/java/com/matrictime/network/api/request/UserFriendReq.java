@@ -12,4 +12,8 @@ public class UserFriendReq extends BaseReq implements Serializable {
     private String userId;
 
     private String friendUserId;
+
+    private String sex;
+
+    private String phoneNumber;
 }

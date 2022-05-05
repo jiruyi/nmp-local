@@ -3,14 +3,15 @@ package com.matrictime.network.controller;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.matrictime.network.api.request.AddUserRequestReq;
+import com.matrictime.network.api.request.RecallRequest;
 import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.response.AddUserRequestResp;
+import com.matrictime.network.api.response.RecallResp;
 import com.matrictime.network.api.response.UserFriendResp;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
-import com.matrictime.network.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -90,6 +91,27 @@ public class UserFriendsController {
 
     }
 
+    @ApiOperation(value = "获取好友添加返回信息",notes = "获取好友添加返回信息")
+    @RequestMapping (value = "/getRecall",method = RequestMethod.POST)
+    public Result getRecall(@RequestBody RecallRequest request){
+        RecallResp recallResp = new RecallResp();
+        try {
+            if(request.getAgree() != null){
+                recallResp.setAgree(request.getAgree());
+            }else {
+                recallResp.setRefuse(request.getAgree());
+            }
+            recallResp.setUserId(request.getUserId());
+            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
+            if(webSocketServer != null){
+                webSocketServer.sendMessage(JSONUtils.toJSONString(recallResp));
+            }
+            return new Result(true,"消息发送成功");
+        }catch (Exception e){
+           return new Result(false,e.getMessage());
+        }
+    }
+
     /*
 构建信息json字符串
 * */
@@ -99,7 +121,6 @@ public class UserFriendsController {
             messageMap.put("destination","1");
         }else {
             messageMap.put("destination","0");
-
         }
         messageMap.put("fromUserId",addUserRequestReq.getUserId());
         messageMap.put("toUserId",addUserRequestReq.getAddUserId());

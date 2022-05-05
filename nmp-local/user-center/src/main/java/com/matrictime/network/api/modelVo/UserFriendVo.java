@@ -13,4 +13,8 @@ public class UserFriendVo  implements Serializable {
 
     private String friendUserId;
 
+    private String sex;
+
+    private String phoneNumber;
+
 }
