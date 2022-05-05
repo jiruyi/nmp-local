@@ -1,5 +1,6 @@
 package com.matrictime.network.base;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
@@ -35,7 +36,7 @@ public class ComOptApiImpl implements ComOptApi {
                     Result result = JSONObject.parseObject(post, Result.class);
                     ResModel resModel = new ResModel();
                     resModel.setUuid(reqModel.getUuid());
-                    resModel.setReturnValue(result);
+                    resModel.setReturnValue(post);
                     JServiceImpl.asynSendMsg(JSONObject.toJSONString(resModel));
                 } catch (IOException e) {
                     e.printStackTrace();

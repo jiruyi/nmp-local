@@ -28,7 +28,7 @@ public class LoginController {
      * @return
      */
     @RequestMapping(value = "/login")
-    public Result login(LoginReq req){
+    public Result login(@RequestBody LoginReq req){
         try {
             return loginService.login(req);
         }catch (Exception e){

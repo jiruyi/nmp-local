@@ -6,6 +6,8 @@
         <result column="group_id" jdbcType="VARCHAR" property="groupId" />
         <result column="is_exist" jdbcType="BIT" property="isExist" />
         <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+        <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
+        <result column="sex" jdbcType="VARCHAR" property="sex" />
         <result column="login_status" jdbcType="VARCHAR" property="loginStatus" />
     </resultMap>
 
@@ -26,7 +28,7 @@
     </update>
 
     <select id="selectByCondition" resultMap="BaseResultMap">
-        select a.*,b.login_status,b.nick_name from user_group a,user b where a.user_id=b.user_id
+        select a.*,b.login_status,b.nick_name,b.sex,b.phone_number from user_group a,user b where a.user_id=b.user_id
         <trim prefix="(" suffix=")" suffixOverrides="and">
             <if test="groupId != null">
                 and  group_id = #{targetGroupId,jdbcType=VARCHAR}
@@ -40,7 +42,8 @@
 
 
     <select id="selectByGroupIds" resultMap="BaseResultMap">
-        select a.*,b.login_status,b.nick_name from user_group a,user b where a.user_id=b.user_id
+        select a.*,b.login_status,b.nick_name,b.sex,b.phone_number from user_group a,user b
+        where a.user_id=b.user_id
         and a.group_id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
             #{item}

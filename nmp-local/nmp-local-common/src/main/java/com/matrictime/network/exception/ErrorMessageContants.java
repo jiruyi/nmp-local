@@ -27,7 +27,11 @@ public class ErrorMessageContants {
 
 	public static final String USER_IS_EXIST_MSG = "用户已存在";
 
+	public static final String REGISTER_FAIL_MSG = "注册失败";
+
 	public static final String USER_BIND_MSG = "用户已绑定";
+
+	public static final String USER_UNBIND_MSG = "用户未绑定";
 
 	public static final String SMS_CODE_NO_EXIST_MSG = "验证码已过期";
 

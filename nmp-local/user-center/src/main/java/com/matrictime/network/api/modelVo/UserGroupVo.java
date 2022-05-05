@@ -25,5 +25,11 @@ public class UserGroupVo implements Serializable {
 
     private String nickName;
 
+    private String phoneNumber;
+
+    private String sex;
+
+    private String remarkName;
+
     private String loginStatus;
 }

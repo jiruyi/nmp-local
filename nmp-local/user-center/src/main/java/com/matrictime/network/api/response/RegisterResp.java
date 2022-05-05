@@ -1,5 +1,6 @@
 package com.matrictime.network.api.response;
 
+import com.matrictime.network.api.request.RegisterReq;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,4 +13,6 @@ public class RegisterResp implements Serializable {
      * 用户id
      */
     private String userId;
+
+    private RegisterReq registerReq;
 }

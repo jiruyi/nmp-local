@@ -7,6 +7,12 @@ import java.io.Serializable;
 @Data
 public class RegisterReq extends BaseReq implements Serializable {
     private static final long serialVersionUID = 4714567565357599548L;
+
+    /**
+     * 用户id
+     */
+    private String userId;
+
     /**
      * 一体机设备ID
      */
@@ -21,6 +27,11 @@ public class RegisterReq extends BaseReq implements Serializable {
      * 用户昵称
      */
     private String nickName;
+
+    /**
+     * 性别（1：男 0：女）
+     */
+    private String sex;
 
     /**
      * 用户类型（00系统用户 01注册用户）

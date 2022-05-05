@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 用户信息表
  * @author   hexu
- * @date   2022-04-22
+ * @date   2022-04-28
  */
 @Data
 public class User {
@@ -48,7 +48,7 @@ public class User {
     /**
      * 性别（1：男 0：女）
      */
-    private Boolean sex;
+    private String sex;
 
     /**
      * 用户类型（00系统用户 01注册用户）
@@ -81,7 +81,7 @@ public class User {
     private String password;
 
     /**
-     * 当前登录状态
+     * 当前登录状态(0:未登录 1:已登录)
      */
     private String loginStatus;
 
@@ -98,7 +98,7 @@ public class User {
     /**
      * 添加好友条件（0：直接添加 1：需要询问）
      */
-    private Byte agreeFriend;
+    private Boolean agreeFriend;
 
     /**
      * 帐号状态（1正常 0停用注销）
@@ -191,12 +191,12 @@ public class User {
         this.nickName = nickName == null ? null : nickName.trim();
     }
 
-    public Boolean getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(Boolean sex) {
-        this.sex = sex;
+    public void setSex(String sex) {
+        this.sex = sex == null ? null : sex.trim();
     }
 
     public String getUserType() {
@@ -271,11 +271,11 @@ public class User {
         this.logoutAppCode = logoutAppCode == null ? null : logoutAppCode.trim();
     }
 
-    public Byte getAgreeFriend() {
+    public Boolean getAgreeFriend() {
         return agreeFriend;
     }
 
-    public void setAgreeFriend(Byte agreeFriend) {
+    public void setAgreeFriend(Boolean agreeFriend) {
         this.agreeFriend = agreeFriend;
     }
 
