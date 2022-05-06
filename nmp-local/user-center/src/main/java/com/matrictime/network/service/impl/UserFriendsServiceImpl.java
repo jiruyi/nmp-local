@@ -170,7 +170,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             result.setResultObj(1);
         }else {
             addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
-            userFriendsDomainService.insertFriend(userFriendReq);
+            userFriendsDomainService.addFriends(addUserRequestReq);
             result.setResultObj(0);
         }
         return result;
