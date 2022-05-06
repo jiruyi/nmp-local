@@ -93,11 +93,13 @@ public class UserFriendsController {
 
     @ApiOperation(value = "获取好友添加返回信息",notes = "获取好友添加返回信息")
     @RequestMapping (value = "/getRecall",method = RequestMethod.POST)
-    public Result getRecall(@RequestBody RecallRequest request){
+    public Result<Integer> getRecall(@RequestBody RecallRequest request){
+        Result<Integer> result = new Result();
         RecallResp recallResp = new RecallResp();
         try {
             if(request.getAgree() != null){
                 recallResp.setAgree(request.getAgree());
+                result = userFriendsService.agreeAddFriedns(request);
             }else {
                 recallResp.setRefuse(request.getAgree());
             }
@@ -106,9 +108,15 @@ public class UserFriendsController {
             if(webSocketServer != null){
                 webSocketServer.sendMessage(JSONUtils.toJSONString(recallResp));
             }
-            return new Result(true,"消息发送成功");
+            if(result.getResultObj() == 2){
+                return result;
+            }else {
+                result.setSuccess(false);
+                result.setErrorMsg("添加失败");
+                return result;
+            }
         }catch (Exception e){
-           return new Result(false,e.getMessage());
+            return new Result(false,e.getMessage());
         }
     }
 

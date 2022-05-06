@@ -11,6 +11,7 @@ import com.matrictime.network.api.modelVo.AddUserRequestVo;
 import com.matrictime.network.api.modelVo.UserFriendVo;
 import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.AddUserRequestReq;
+import com.matrictime.network.api.request.RecallRequest;
 import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.response.AddUserRequestResp;
@@ -26,7 +27,6 @@ import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -158,6 +158,60 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         return result;
     }
 
+    @Override
+    public Result<Integer> agreeAddFriedns(RecallRequest recallRequest) {
+        Result<Integer> result = new Result<>();
+        AddUserRequestReq addUserRequestReq = new AddUserRequestReq();
+        addUserRequestReq.setUserId(recallRequest.getUserId());
+        addUserRequestReq.setAddUserId(recallRequest.getAddUserId());
+        addUserRequestReq.setRemarkName(recallRequest.getRemarkName());
+        UserFriendReq userFriendReq = setUserFriendReq(addUserRequestReq);
+        UserRequest userRequest = new UserRequest();
+        userRequest.setUserId(addUserRequestReq.getAddUserId());
+        try {
+            switch (addUserRequestReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    addUserRequestReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    addUserRequestReq.setUrl(url+UcConstants.URL_ADD_FRIENDS);
+                    String param = JSONObject.toJSONString(addUserRequestReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    Object returnValueM = resModel.getReturnValue();
+                    if(returnValueM != null && returnValueM instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
+                        Result<Integer> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<Integer>>(){});
+                        if(returnRes.isSuccess()){
+                            result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
+                            return result;
+                        }
+                    }else {
+                        throw new SystemException("UserFriendsServiceImpl.addFriends"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+
+                    return commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
+                // 返回值加密
+                case UcConstants.DESTINATION_OUT_TO_IN_SYN:
+
+                    return commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
+                default:
+                    throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
     //添加好友信息逻辑
     private Result<Integer> commonAddFriends(UserFriendReq userFriendReq,AddUserRequestReq addUserRequestReq,
                                              UserRequest userRequest) {
@@ -168,10 +222,15 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             userFriendsDomainService.addFriends(addUserRequestReq);
             userFriendsDomainService.insertFriend(userFriendReq);
             result.setResultObj(1);
-        }else {
+        }else if(userVo.getAgreeFriend() == 1) {
             addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
             userFriendsDomainService.addFriends(addUserRequestReq);
             result.setResultObj(0);
+        }else {
+            addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
+            userFriendsDomainService.addFriends(addUserRequestReq);
+            userFriendsDomainService.insertFriend(userFriendReq);
+            result.setResultObj(2);
         }
         return result;
     }

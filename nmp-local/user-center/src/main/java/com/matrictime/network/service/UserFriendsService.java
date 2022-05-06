@@ -1,6 +1,7 @@
 package com.matrictime.network.service;
 
 import com.matrictime.network.api.request.AddUserRequestReq;
+import com.matrictime.network.api.request.RecallRequest;
 import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.response.AddUserRequestResp;
@@ -12,6 +13,8 @@ public interface UserFriendsService {
     Result<UserFriendResp> selectUserFriend(UserFriendReq userFriendReq);
 
     Result<Integer> addFriends(AddUserRequestReq addUserRequestReq);
+
+    Result<Integer> agreeAddFriedns(RecallRequest recallRequest);
 
     Result<AddUserRequestResp> getAddUserInfo(AddUserRequestReq addUserRequestReq);
 
