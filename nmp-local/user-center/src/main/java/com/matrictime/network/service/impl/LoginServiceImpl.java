@@ -124,6 +124,14 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
             }
+        }catch (SystemException e){
+            log.error("LoginServiceImpl.register SystemException:{}",e.getMessage());
+
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andUserIdEqualTo(req.getUserId());
+            userMapper.deleteByExample(userExample);
+
+            result = failResult(e);
         }catch (Exception e){
             log.error("LoginServiceImpl.register Exception:{}",e.getMessage());
 
@@ -208,6 +216,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
             }
             result = buildResult(resp);
+        }catch (SystemException e){
+            log.error("LoginServiceImpl.login SystemException:{}",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
             log.error("LoginServiceImpl.login Exception:{}",e.getMessage());
             result = failResult(e);
@@ -234,6 +245,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
         }else {
             User user = users.get(0);
+            if(!user.getPassword().equals(req.getPassword())){
+                throw new SystemException(ErrorMessageContants.PASSWORD_ERROR_MSG);
+            }
             user.setDeviceId(req.getDeviceId());
             user.setDeviceIp(req.getDeviceIp());
             user.setLoginStatus(LOGIN_STATUS_IN);
@@ -241,6 +255,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             userMapper.updateByPrimaryKeySelective(user);
             UserVo userVo = new UserVo();
             BeanUtils.copyProperties(user,userVo);
+            userVo.setPassword(null);
             resp.setUser(userVo);
         }
         return resp;
@@ -291,6 +306,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
 
             result = buildResult(null);
+        }catch (SystemException e){
+            log.error("LoginServiceImpl.logout SystemException:{}",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
             log.error("LoginServiceImpl.logout Exception:{}",e.getMessage());
             result = failResult(e);
@@ -350,6 +368,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             }
 
             result = buildResult(null);
+        }catch (SystemException e){
+            log.error("LoginServiceImpl.bind SystemException:{}",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
             log.error("LoginServiceImpl.bind Exception:{}",e.getMessage());
             result = failResult(e);
@@ -425,9 +446,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria1 = userExample.createCriteria();
         criteria1.andLoginAccountEqualTo(req.getLoginAccount());
-        UserExample.Criteria criteria2 = userExample.createCriteria();
-        criteria2.andEmailEqualTo(req.getEmail());
-        userExample.or(criteria2);
+//        UserExample.Criteria criteria2 = userExample.createCriteria();
+//        criteria2.andEmailEqualTo(req.getEmail());
+//        userExample.or(criteria2);
         UserExample.Criteria criteria3 = userExample.createCriteria();
         criteria3.andPhoneNumberEqualTo(req.getPhoneNumber());
         userExample.or(criteria3);

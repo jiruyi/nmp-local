@@ -2,11 +2,13 @@ package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.*;
+import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.api.response.UserResp;
 import com.matrictime.network.base.SystemBaseService;
@@ -93,10 +95,15 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     log.info("非密区向密区发送请求参数param:{}",param);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
-                    //result = (Result)resModel.getReturnValue();
-                    break;
+                    Object returnValue = resModel.getReturnValue();
+                    log.info("非密区接收密区返回值ResModel:{}",returnValue);
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result>(){});
+                        return returnRes;
+                    }else {
+                        throw new SystemException("UserServiceImpl.modifyUserInfo"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
 
@@ -106,8 +113,11 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
+        }catch (SystemException e){
+            log.error("UserServiceImpl.modifyUserInfo SystemException:{}",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            log.error("modifyUserInfo Exception:{}",e.getMessage());
+            log.error("UserServiceImpl.modifyUserInfo Exception:{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -137,10 +147,15 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     log.info("非密区向密区发送请求参数param:{}",param);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
-                    //result = (Result)resModel.getReturnValue();
-                    break;
+                    Object returnValue = resModel.getReturnValue();
+                    log.info("非密区接收密区返回值ResModel:{}",returnValue);
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result>(){});
+                        return returnRes;
+                    }else {
+                        throw new SystemException("UserServiceImpl.deleteFriend"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
 
@@ -150,6 +165,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
+        }catch (SystemException e){
+            log.error("deleteFriend SystemException:{}",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
             log.error("deleteFriend Exception:{}",e.getMessage());
             result = failResult(e);
@@ -175,8 +193,14 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
-                    //result = (Result)resModel.getReturnValue();
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
+                        //result = JSONObject.parseObject((String) returnValue, Result.class);
+                    }else {
+                        throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -211,8 +235,14 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
-                    //result = (Result)resModel.getReturnValue();
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
+                        //result = JSONObject.parseObject((String) returnValue, Result.class);
+                    }else {
+                        throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -253,7 +283,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     log.info("非密区接收返回值UserServiceImpl.verify resModel:{}",JSONObject.toJSONString(resModel));
                     Object returnValue = resModel.getReturnValue();
                     if(returnValue != null && returnValue instanceof String){
-                        Result returnRes = JSONObject.parseObject((String) returnValue, Result.class);
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result>(){});
                         return returnRes;
                     }else {
                         throw new SystemException("UserServiceImpl.verify"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
@@ -275,7 +306,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
             result = buildResult(null);
         }catch (SystemException e){
-            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+            log.error("UserServiceImpl.verify SystemException:{}",e.getMessage());
             result = failResult(e);
         } catch (Exception e){
             log.error("UserServiceImpl.verify Exception:{}",e.getMessage());

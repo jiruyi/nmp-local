@@ -2,6 +2,8 @@ package com.matrictime.network.domain.impl;
 
 import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.dao.mapper.GroupInfoMapper;
 import com.matrictime.network.dao.mapper.UserFriendMapper;
 import com.matrictime.network.dao.mapper.UserGroupMapper;
 import com.matrictime.network.dao.mapper.UserMapper;
@@ -36,6 +38,8 @@ public class UserDomainServiceImpl implements UserDomainService {
     private UserFriendMapper userFriendMapper;
     @Autowired
     private UserGroupMapper userGroupMapper;
+    @Autowired
+    private GroupInfoMapper groupInfoMapper;
 
 
     /**
@@ -72,13 +76,20 @@ public class UserDomainServiceImpl implements UserDomainService {
         //1.0删除用户好友
         UserFriend userFriend = UserFriend.builder().isExist(false).build();
         int n = userFriendMapper.updateByExampleSelective(userFriend, userFriendExample);
-        //2.0删除好友群组
-        UserGroupExample userGroupExample = new UserGroupExample();
-        userGroupExample.createCriteria().andUserIdEqualTo(deleteFriendReq.getUserId())
-                .andGroupIdEqualTo(deleteFriendReq.getGroupId());
-        UserGroup userGroup = UserGroup.builder().isExist(false).build();
-        int m = userGroupMapper.updateByExampleSelective(userGroup, userGroupExample);
-        if (n > 0 && m > 0) {
+        //2.0删除用户好友群组中该好友
+        GroupInfoExample groupInfoExample = new GroupInfoExample();
+        groupInfoExample.createCriteria().andOwnerEqualTo(deleteFriendReq.getUserId()).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<GroupInfo> groupInfos = groupInfoMapper.selectByExample(groupInfoExample);
+        if (!CollectionUtils.isEmpty(groupInfos)) {
+            for (GroupInfo groupInfo : groupInfos) {
+                UserGroupExample userGroupExample = new UserGroupExample();
+                userGroupExample.createCriteria().andUserIdEqualTo(deleteFriendReq.getUserId())
+                        .andGroupIdEqualTo(String.valueOf(groupInfo.getGroupId())).andIsExistEqualTo(DataConstants.IS_EXIST);
+                UserGroup userGroup = UserGroup.builder().isExist(false).build();
+                userGroupMapper.updateByExampleSelective(userGroup, userGroupExample);
+            }
+        }
+        if (n > 0) {
             return NumberUtils.INTEGER_ONE;
         } else {
             return NumberUtils.INTEGER_ZERO;

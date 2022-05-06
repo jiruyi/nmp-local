@@ -17,6 +17,8 @@ public class ErrorMessageContants {
 
 	public static final String USERNAME_IS_NULL_MSG = "用户名或者密码为空";
 
+	public static final String PASSWORD_ERROR_MSG = "密码有误";
+
 	public static final String LoginType_IS_ERROR_MSG = "登录方式不存在";
 
 	public static final String PHONE_CODE_IS_NULL_MSG = "手机号或者短信验证码为空";

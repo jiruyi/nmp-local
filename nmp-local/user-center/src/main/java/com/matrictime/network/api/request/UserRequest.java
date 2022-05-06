@@ -44,6 +44,12 @@ public class UserRequest extends BaseReq implements Serializable {
      * 昵称
      */
     private String nickName;
+
+    /**
+     * 性别（1：男 0：女）
+     */
+    private String sex;
+
     /**
      * 用户类型
      */
@@ -74,6 +80,11 @@ public class UserRequest extends BaseReq implements Serializable {
     private String loginAppCode;
 
     private String logoutAppCode;
+
+    /**
+     * 添加好友条件（0：直接添加 1：需要询问）
+     */
+    private Boolean agreeFriend;
 
     private Boolean status;
 
