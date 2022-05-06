@@ -135,6 +135,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     public Result deleteFriend(DeleteFriendReq deleteFriendReq) {
         Result result;
         try {
+            CheckUtil.checkParam(deleteFriendReq);
             switch (deleteFriendReq.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     result = commonDeleteFriend(deleteFriendReq);

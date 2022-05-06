@@ -445,16 +445,17 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     private boolean checkUserExist(RegisterReq req){
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria1 = userExample.createCriteria();
-        criteria1.andLoginAccountEqualTo(req.getLoginAccount());
+        criteria1.andLoginAccountEqualTo(req.getLoginAccount()).andIsExistEqualTo(DataConstants.IS_EXIST);
 //        UserExample.Criteria criteria2 = userExample.createCriteria();
 //        criteria2.andEmailEqualTo(req.getEmail());
 //        userExample.or(criteria2);
         UserExample.Criteria criteria3 = userExample.createCriteria();
-        criteria3.andPhoneNumberEqualTo(req.getPhoneNumber());
+        criteria3.andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
         userExample.or(criteria3);
         UserExample.Criteria criteria4 = userExample.createCriteria();
-        criteria4.andIdTypeEqualTo(req.getIdType()).andIdNoEqualTo(req.getIdNo());
+        criteria4.andIdTypeEqualTo(req.getIdType()).andIdNoEqualTo(req.getIdNo()).andIsExistEqualTo(DataConstants.IS_EXIST);
         userExample.or(criteria4);
+
         List<User> userList = userMapper.selectByExample(userExample);
         if(CollectionUtils.isEmpty(userList)){
             return false;
