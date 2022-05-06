@@ -108,13 +108,11 @@ public class UserFriendsController {
             if(webSocketServer != null){
                 webSocketServer.sendMessage(JSONUtils.toJSONString(recallResp));
             }
-            if(result.getResultObj() == 2){
-                return result;
-            }else {
+            if (result.getResultObj() != 2) {
                 result.setSuccess(false);
                 result.setErrorMsg("添加失败");
-                return result;
             }
+            return result;
         }catch (Exception e){
             return new Result(false,e.getMessage());
         }
