@@ -223,7 +223,6 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     userRequest.setUrl(url+UcConstants.URL_CANCEL_USER);
                     String param = JSONObject.toJSONString(userRequest);
                     reqModel.setParam(param);
-                    reqModel.setUuid(userRequest.getUuid());
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     Object returnValueM = resModel.getReturnValue();
                     if(returnValueM != null && returnValueM instanceof String){
