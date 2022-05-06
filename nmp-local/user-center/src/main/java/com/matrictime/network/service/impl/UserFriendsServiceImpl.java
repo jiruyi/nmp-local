@@ -62,6 +62,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     log.info("非密区向密区发送请求参数param:{}",param);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
                     Object returnValueM = resModel.getReturnValue();
                     if(returnValueM != null && returnValueM instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
@@ -126,6 +127,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     log.info("非密区向密区发送请求参数param:{}",param);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
                     Object returnValueM = resModel.getReturnValue();
                     if(returnValueM != null && returnValueM instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
@@ -230,6 +232,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     String param = JSONObject.toJSONString(userRequest);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
                     Object returnValueM = resModel.getReturnValue();
                     if(returnValueM != null && returnValueM instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
