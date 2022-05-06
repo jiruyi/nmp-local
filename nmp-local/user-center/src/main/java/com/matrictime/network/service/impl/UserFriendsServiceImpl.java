@@ -191,8 +191,14 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
-                    //result = (Result)resModel.getReturnValue();
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
+                        //result = JSONObject.parseObject((String) returnValue, Result.class);
+                    }else {
+                        throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密

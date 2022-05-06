@@ -41,7 +41,7 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
     public Result save(CompanyInfoRequest companyInfoRequest) {
         Result<Integer> result;
         try {
-            NmplUser nmplUser = RequestContext.getUser();;
+            NmplUser nmplUser = RequestContext.getUser();
             companyInfoRequest.setCreateUser(String.valueOf(nmplUser.getUserId()));
             result = buildResult(companyInfoDomainService.save(companyInfoRequest));
         }catch (Exception e){
@@ -55,7 +55,7 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
     public Result modify(CompanyInfoRequest companyInfoRequest) {
         Result<Integer> result;
         try {
-            NmplUser nmplUser = RequestContext.getUser();;
+            NmplUser nmplUser = RequestContext.getUser();
             companyInfoRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             result = buildResult(companyInfoDomainService.modify(companyInfoRequest));
         }catch (Exception e){

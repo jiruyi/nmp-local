@@ -18,5 +18,7 @@ public class UserResp {
      */
     private String phoneNumber;
 
+    private String sex;
+
 
 }

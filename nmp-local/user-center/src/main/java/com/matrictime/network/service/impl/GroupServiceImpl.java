@@ -2,6 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
@@ -11,6 +12,7 @@ import com.matrictime.network.api.request.GroupReq;
 import com.matrictime.network.api.request.UserGroupReq;
 import com.matrictime.network.api.request.VerifyReq;
 import com.matrictime.network.api.response.GroupResp;
+import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.domain.GroupDomainService;
@@ -57,8 +59,13 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
-                    //result = (Result)resModel.getReturnValue();
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
+                    }else {
+                        throw new SystemException("createGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -94,8 +101,14 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
-                    //result = (Result)resModel.getReturnValue();
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
+                        //result = JSONObject.parseObject((String) returnValue, Result.class);
+                    }else {
+                        throw new SystemException("modifyGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
@@ -131,8 +144,14 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
-                    //result = (Result)resModel.getReturnValue();
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
+                        //result = JSONObject.parseObject((String) returnValue, Result.class);
+                    }else {
+                        throw new SystemException("deleteGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
                     break;
 
                 case UcConstants.DESTINATION_OUT_TO_IN:
@@ -167,8 +186,14 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     log.info("非密区向密区发送请求参数param:{}",param);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    result = JSONObject.parseObject(JSON.toJSONString(resModel.getReturnValue()),Result.class);
-                    //result = (Result)resModel.getReturnValue();
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
+                        //result = JSONObject.parseObject((String) returnValue, Result.class);
+                    }else {
+                        throw new SystemException("queryGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
