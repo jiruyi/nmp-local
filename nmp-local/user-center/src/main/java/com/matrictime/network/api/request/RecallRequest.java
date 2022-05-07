@@ -9,6 +9,36 @@ public class RecallRequest extends BaseReq implements Serializable {
 
     private String userId;
 
+    private String requestId;
+
+    private String addUserId;
+
+    private String remarkName;
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getAddUserId() {
+        return addUserId;
+    }
+
+    public void setAddUserId(String addUserId) {
+        this.addUserId = addUserId;
+    }
+
+    public String getRemarkName() {
+        return remarkName;
+    }
+
+    public void setRemarkName(String remarkName) {
+        this.remarkName = remarkName;
+    }
+
     public String getAgree() {
         return agree;
     }

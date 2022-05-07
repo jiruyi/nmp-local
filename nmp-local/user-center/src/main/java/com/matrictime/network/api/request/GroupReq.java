@@ -28,4 +28,7 @@ public class GroupReq  extends BaseReq implements Serializable  {
      */
     private String owner;
 
+
+    private String userId;
+
 }
