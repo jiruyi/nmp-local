@@ -13,9 +13,9 @@
     </resultMap>
     <insert id="addFriends" parameterType="com.matrictime.network.api.request.AddUserRequestReq">
         insert into add_user_request (request_id, user_id, status,
-                                      add_user_id)
+                                      add_user_id,remark)
         values (#{requestId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
-                #{status,jdbcType=CHAR},#{addUserId,jdbcType=VARCHAR})
+                #{status,jdbcType=CHAR},#{addUserId,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR})
     </insert>
 
 

@@ -34,7 +34,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="user_friend" domainObjectName="UserFriend"
+        <table tableName="add_user_request" domainObjectName="AddUserRequest"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
