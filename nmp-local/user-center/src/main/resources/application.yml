@@ -36,3 +36,7 @@ logging:
     path: ./logs
   level:
     com.jzsg: info
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

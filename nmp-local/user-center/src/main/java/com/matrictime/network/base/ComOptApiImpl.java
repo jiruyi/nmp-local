@@ -1,6 +1,5 @@
 package com.matrictime.network.base;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
@@ -8,7 +7,6 @@ import com.jzsg.bussiness.model.ResModel;
 import com.jzsg.bussiness.util.EdException;
 import com.jzsg.bussiness.ws.ComOptApi;
 import com.matrictime.network.constant.DataConstants;
-import com.matrictime.network.model.Result;
 import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +31,6 @@ public class ComOptApiImpl implements ComOptApi {
                     log.info("密区处理接收信息HttpClientUtil.post url:{},paramObject:{}",url, jsonObject.toJSONString());
                     String post = HttpClientUtil.post(url, jsonObject.toJSONString());
                     log.info("密区处理接收信息结果HttpClientUtil.post post:{}",post);
-                    Result result = JSONObject.parseObject(post, Result.class);
                     ResModel resModel = new ResModel();
                     resModel.setUuid(reqModel.getUuid());
                     resModel.setReturnValue(post);
