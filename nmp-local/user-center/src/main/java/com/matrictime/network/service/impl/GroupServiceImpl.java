@@ -214,6 +214,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
     private Result<Integer> commonCreateGroup(GroupReq groupReq){
         Result<Integer> result;
         try {
+            groupReq.setOwner(groupReq.getUserId());
             result = buildResult(groupDomainService.createGroup(groupReq));
         }catch (Exception e){
             log.info("组创建异常",e.getMessage());
@@ -225,6 +226,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
     private Result<Integer> commonModifyGroup(GroupReq groupReq) {
         Result<Integer> result;
         try {
+            groupReq.setOwner(groupReq.getUserId());
             result = buildResult(groupDomainService.modifyGroup(groupReq));
         }catch (Exception e){
             log.info("组修改异常",e.getMessage());
@@ -235,6 +237,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
     public Result<Integer> commonDeleteGroup(GroupReq groupReq) {
         Result<Integer> result;
         try {
+            groupReq.setOwner(groupReq.getUserId());
             result = buildResult(groupDomainService.deleteGroup(groupReq));
         }catch (Exception e){
             log.info("组删除异常",e.getMessage());
@@ -246,6 +249,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
     public Result<GroupResp> commonQueryGroup(GroupReq groupReq) {
         Result<GroupResp> result;
         try {
+            groupReq.setOwner(groupReq.getUserId());
             List<GroupVo> groupVoList = new ArrayList<>();
             groupVoList = groupDomainService.queryGroup(groupReq);
             List<String>groupIds = new ArrayList<>();
