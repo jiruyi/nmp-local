@@ -106,7 +106,7 @@
     values (#{groupId,jdbcType=BIGINT}, #{groupName,jdbcType=VARCHAR}, #{isExist,jdbcType=BIT}, 
       #{owner,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.GroupInfo">
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.GroupInfo" useGeneratedKeys="true" keyProperty="groupId">
     insert into group_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="groupId != null">

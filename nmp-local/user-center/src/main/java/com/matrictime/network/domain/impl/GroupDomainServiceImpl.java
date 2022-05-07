@@ -27,7 +27,8 @@ public class GroupDomainServiceImpl implements GroupDomainService {
         }
         GroupInfo group = new GroupInfo();
         BeanUtils.copyProperties(groupReq,group);
-        return groupMapper.insertSelective(group);
+        groupMapper.insertSelective(group);
+        return group.getGroupId().intValue();
     }
 
     @Override
