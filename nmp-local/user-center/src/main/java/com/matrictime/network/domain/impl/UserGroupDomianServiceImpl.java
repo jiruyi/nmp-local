@@ -34,6 +34,12 @@ public class UserGroupDomianServiceImpl implements UserGroupDomianService {
         if(userGroupReq.getGroupId()==null||userGroupReq.getUserId()==null){
             throw new SystemException("缺少参数");
         }
+        UserGroupExample userGroupExample = new UserGroupExample();
+        userGroupExample.createCriteria().andUserIdEqualTo(userGroupReq.getUserId()).andGroupIdEqualTo(userGroupReq.getGroupId()).andIsExistEqualTo(true);
+        List<UserGroup> userGroupList = userGroupMapper.selectByExample(userGroupExample);
+        if(!CollectionUtils.isEmpty(userGroupList)){
+            throw new SystemException("该好友已在该分组");
+        }
         UserGroup userGroup = new UserGroup();
         BeanUtils.copyProperties(userGroupReq,userGroup);
         return userGroupMapper.insertSelective(userGroup);
@@ -54,6 +60,13 @@ public class UserGroupDomianServiceImpl implements UserGroupDomianService {
         if(userGroupReq.getGroupId()==null||userGroupReq.getUserId()==null||userGroupReq.getTargetGroupId()==null){
             throw new SystemException("缺少参数");
         }
+        UserGroupExample userGroupExample = new UserGroupExample();
+        userGroupExample.createCriteria().andUserIdEqualTo(userGroupReq.getUserId()).andGroupIdEqualTo(userGroupReq.getTargetGroupId()).andIsExistEqualTo(true);
+        List<UserGroup> userGroupList = userGroupMapper.selectByExample(userGroupExample);
+        if(!CollectionUtils.isEmpty(userGroupList)){
+            throw new SystemException("该好友已在该分组");
+        }
+
         return userGroupExtMapper.updateByUserIdAndGroupId(userGroupReq);
     }
 

@@ -424,6 +424,66 @@ public class GroupInfoExample {
             addCriterion("create_time not between", value1, value2, "createTime");
             return (Criteria) this;
         }
+
+        public Criteria andDefaultGroupIsNull() {
+            addCriterion("default_group is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupIsNotNull() {
+            addCriterion("default_group is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupEqualTo(Boolean value) {
+            addCriterion("default_group =", value, "defaultGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupNotEqualTo(Boolean value) {
+            addCriterion("default_group <>", value, "defaultGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupGreaterThan(Boolean value) {
+            addCriterion("default_group >", value, "defaultGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("default_group >=", value, "defaultGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupLessThan(Boolean value) {
+            addCriterion("default_group <", value, "defaultGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupLessThanOrEqualTo(Boolean value) {
+            addCriterion("default_group <=", value, "defaultGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupIn(List<Boolean> values) {
+            addCriterion("default_group in", values, "defaultGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupNotIn(List<Boolean> values) {
+            addCriterion("default_group not in", values, "defaultGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupBetween(Boolean value1, Boolean value2) {
+            addCriterion("default_group between", value1, value2, "defaultGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andDefaultGroupNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("default_group not between", value1, value2, "defaultGroup");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
