@@ -165,19 +165,20 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         addUserRequestReq.setUserId(recallRequest.getUserId());
         addUserRequestReq.setAddUserId(recallRequest.getAddUserId());
         addUserRequestReq.setRemarkName(recallRequest.getRemarkName());
+        addUserRequestReq.setAgree(recallRequest.getAgree());
         UserFriendReq userFriendReq = setUserFriendReq(addUserRequestReq);
         UserRequest userRequest = new UserRequest();
         userRequest.setUserId(addUserRequestReq.getAddUserId());
         try {
-            switch (addUserRequestReq.getDestination()){
+            switch (recallRequest.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    addUserRequestReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                    addUserRequestReq.setUrl(url+UcConstants.URL_ADD_FRIENDS);
-                    String param = JSONObject.toJSONString(addUserRequestReq);
+                    recallRequest.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    recallRequest.setUrl(url+UcConstants.URL_ADD_FRIENDS);
+                    String param = JSONObject.toJSONString(recallRequest);
                     log.info("非密区向密区发送请求参数param:{}",param);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
@@ -217,21 +218,21 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                                              UserRequest userRequest) {
         Result<Integer> result = new Result<>();
         UserVo userVo = userFriendsDomainService.selectUserInfo(userRequest);
-        if(userVo.getAgreeFriend() == 0){
+        if(userVo.getAgreeFriend() == 0 || addUserRequestReq.getAgree() != null){
             addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
             userFriendsDomainService.addFriends(addUserRequestReq);
             userFriendsDomainService.insertFriend(userFriendReq);
+            userFriendReq.setUserId(addUserRequestReq.getAddUserId());
+            userFriendReq.setFriendUserId(addUserRequestReq.getUserId());
+            userFriendsDomainService.insertFriend(userFriendReq);
             result.setResultObj(1);
-        }else if(userVo.getAgreeFriend() == 1) {
+        }
+        if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getAgree() == null) {
             addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
             userFriendsDomainService.addFriends(addUserRequestReq);
             result.setResultObj(0);
-        }else {
-            addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
-            userFriendsDomainService.addFriends(addUserRequestReq);
-            userFriendsDomainService.insertFriend(userFriendReq);
-            result.setResultObj(2);
         }
+
         return result;
     }
 
@@ -338,7 +339,6 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         UserFriendReq userFriendReq = new UserFriendReq();
         userFriendReq.setUserId(addUserRequestReq.getUserId());
         userFriendReq.setFriendUserId(addUserRequestReq.getAddUserId());
-        userFriendReq.setRemarkName(addUserRequestReq.getRemarkName());
         return userFriendReq;
     }
 

@@ -17,6 +17,10 @@ public class AddUserRequest {
 
     private Date updateTime;
 
+    private Boolean isExist;
+
+    private String remark;
+
     public Long getId() {
         return id;
     }
@@ -71,5 +75,21 @@ public class AddUserRequest {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Boolean getIsExist() {
+        return isExist;
+    }
+
+    public void setIsExist(Boolean isExist) {
+        this.isExist = isExist;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 }

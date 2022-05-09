@@ -16,7 +16,11 @@ public class AddUserRequestReq extends BaseReq implements Serializable {
 
     private String remarkName;
 
+    private String remark;
+
     private String status;
+
+    private String agree;
 
     private Date createTime;
 

@@ -100,15 +100,20 @@ public class UserFriendsController {
             if(request.getAgree() != null){
                 recallResp.setAgree(request.getAgree());
                 result = userFriendsService.agreeAddFriedns(request);
-            }else {
-                recallResp.setRefuse(request.getAgree());
+                System.out.println(JSONUtils.toJSONString(messageAgreeText(request)));
+                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
+                if(webSocketServer != null){
+                    webSocketServer.sendMessage(JSONUtils.toJSONString(messageAgreeText(request)));
+                }
             }
-            recallResp.setUserId(request.getUserId());
-            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
-            if(webSocketServer != null){
-                webSocketServer.sendMessage(JSONUtils.toJSONString(recallResp));
+            if(request.getRefuse() != null) {
+                result.setErrorMsg("已经拒绝");
+                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
+                if(webSocketServer != null){
+                    webSocketServer.sendMessage(JSONUtils.toJSONString(messageRefuseText(request)));
+                }
             }
-            if (result.getResultObj() != 2) {
+            if (result.getResultObj() != 1) {
                 result.setSuccess(false);
                 result.setErrorMsg("添加失败");
             }
@@ -119,21 +124,62 @@ public class UserFriendsController {
     }
 
     /*
-构建信息json字符串
-* */
+     构建添加好友推送信息json字符串
+    */
     private Map messageText(AddUserRequestReq addUserRequestReq){
-        Map<String,String> messageMap = new HashMap<>();
+        Map<String,Object> messageMap = new HashMap<>();
+        Map<String,String> dataMap = new HashMap<>();
         if("1".equals(addUserRequestReq.getDestination())){
             messageMap.put("destination","1");
         }else {
             messageMap.put("destination","0");
         }
-        messageMap.put("fromUserId",addUserRequestReq.getUserId());
-        messageMap.put("toUserId",addUserRequestReq.getAddUserId());
-        messageMap.put("message","好友请求");
-        messageMap.put("messageCode","100");
+        messageMap.put("from","uc");
+        messageMap.put("businessCode","7");
+        dataMap.put("friendUserId",addUserRequestReq.getUserId());
+        dataMap.put("localUserId",addUserRequestReq.getAddUserId());
+        messageMap.put("data",dataMap);
         return messageMap;
     }
+
+    /*
+     构建同意添加好友推送信息json字符串
+   */
+    private Map messageAgreeText(RecallRequest recallRequest){
+        Map<String,Object> messageMap = new HashMap<>();
+        Map<String,String> dataMap = new HashMap<>();
+        if("1".equals(recallRequest.getDestination())){
+            messageMap.put("destination","1");
+        }else {
+            messageMap.put("destination","0");
+        }
+        messageMap.put("from","uc");
+        messageMap.put("businessCode","10");
+        dataMap.put("friendUserId",recallRequest.getUserId());
+        dataMap.put("localUserId",recallRequest.getAddUserId());
+        messageMap.put("data",dataMap);
+        return messageMap;
+    }
+
+    /*
+      构建拒绝添加好友推送信息json字符串
+    */
+    private Map messageRefuseText(RecallRequest recallRequest){
+        Map<String,Object> messageMap = new HashMap<>();
+        Map<String,String> dataMap = new HashMap<>();
+        if("1".equals(recallRequest.getDestination())){
+            messageMap.put("destination","1");
+        }else {
+            messageMap.put("destination","0");
+        }
+        messageMap.put("from","uc");
+        messageMap.put("businessCode","12");
+        dataMap.put("friendUserId",recallRequest.getUserId());
+        dataMap.put("localUserId",recallRequest.getAddUserId());
+        messageMap.put("data",dataMap);
+        return messageMap;
+    }
+
 
 
 }

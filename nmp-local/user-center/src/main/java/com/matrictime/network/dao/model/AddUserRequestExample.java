@@ -564,6 +564,136 @@ public class AddUserRequestExample {
             addCriterion("update_time not between", value1, value2, "updateTime");
             return (Criteria) this;
         }
+
+        public Criteria andIsExistIsNull() {
+            addCriterion("is_exist is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistIsNotNull() {
+            addCriterion("is_exist is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistEqualTo(Boolean value) {
+            addCriterion("is_exist =", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistNotEqualTo(Boolean value) {
+            addCriterion("is_exist <>", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistGreaterThan(Boolean value) {
+            addCriterion("is_exist >", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("is_exist >=", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistLessThan(Boolean value) {
+            addCriterion("is_exist <", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistLessThanOrEqualTo(Boolean value) {
+            addCriterion("is_exist <=", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistIn(List<Boolean> values) {
+            addCriterion("is_exist in", values, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistNotIn(List<Boolean> values) {
+            addCriterion("is_exist not in", values, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistBetween(Boolean value1, Boolean value2) {
+            addCriterion("is_exist between", value1, value2, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("is_exist not between", value1, value2, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkIsNull() {
+            addCriterion("remark is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkIsNotNull() {
+            addCriterion("remark is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkEqualTo(String value) {
+            addCriterion("remark =", value, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkNotEqualTo(String value) {
+            addCriterion("remark <>", value, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkGreaterThan(String value) {
+            addCriterion("remark >", value, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkGreaterThanOrEqualTo(String value) {
+            addCriterion("remark >=", value, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkLessThan(String value) {
+            addCriterion("remark <", value, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkLessThanOrEqualTo(String value) {
+            addCriterion("remark <=", value, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkLike(String value) {
+            addCriterion("remark like", value, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkNotLike(String value) {
+            addCriterion("remark not like", value, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkIn(List<String> values) {
+            addCriterion("remark in", values, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkNotIn(List<String> values) {
+            addCriterion("remark not in", values, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkBetween(String value1, String value2) {
+            addCriterion("remark between", value1, value2, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemarkNotBetween(String value1, String value2) {
+            addCriterion("remark not between", value1, value2, "remark");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
