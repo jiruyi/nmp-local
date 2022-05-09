@@ -3,6 +3,8 @@ package com.matrictime.network.api.request;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
+
 @Data
 public class GroupReq  extends BaseReq implements Serializable  {
 
@@ -30,5 +32,7 @@ public class GroupReq  extends BaseReq implements Serializable  {
 
 
     private String userId;
+
+    private List <String> userIdList;
 
 }

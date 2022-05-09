@@ -7,19 +7,22 @@ import java.util.Date;
 
 @Data
 public class AddUserRequestVo implements Serializable {
-    private Long id;
 
     private String requestId;
 
     private String userId;
 
+    private String status;
+
     private String addUserId;
 
-    private String status;
+    private String nickName;
+
+    private String remark;
 
     private Date createTime;
 
-    private Date updateTime;
+    private String sex;
 
-    private String nickName;
+    private String phone;
 }
