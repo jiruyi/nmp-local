@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 
  * @author   hexu
- * @date   2022-04-14
+ * @date   2022-05-09
  */
 @Data
 public class GroupInfo {
@@ -34,6 +34,11 @@ public class GroupInfo {
      * 创建时间
      */
     private Date createTime;
+
+    /**
+     * 0非默认 1默认
+     */
+    private Boolean defaultGroup;
 
     public Long getGroupId() {
         return groupId;
@@ -73,5 +78,13 @@ public class GroupInfo {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Boolean getDefaultGroup() {
+        return defaultGroup;
+    }
+
+    public void setDefaultGroup(Boolean defaultGroup) {
+        this.defaultGroup = defaultGroup;
     }
 }

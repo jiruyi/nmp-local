@@ -16,4 +16,8 @@ public class BaseReq implements Serializable {
     private Integer uuid;
 
     private String url;
+
+    private String encryptParam;
+
+    private String commonParam;
 }

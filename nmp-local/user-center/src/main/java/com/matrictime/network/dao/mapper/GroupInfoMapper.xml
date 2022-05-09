@@ -7,6 +7,7 @@
     <result column="is_exist" jdbcType="BIT" property="isExist" />
     <result column="owner" jdbcType="VARCHAR" property="owner" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="default_group" jdbcType="BIT" property="defaultGroup" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -67,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    group_id, group_name, is_exist, owner, create_time
+    group_id, group_name, is_exist, owner, create_time, default_group
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.GroupInfoExample" resultMap="BaseResultMap">
     select
@@ -102,11 +103,13 @@
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.GroupInfo">
     insert into group_info (group_id, group_name, is_exist, 
-      owner, create_time)
+      owner, create_time, default_group
+      )
     values (#{groupId,jdbcType=BIGINT}, #{groupName,jdbcType=VARCHAR}, #{isExist,jdbcType=BIT}, 
-      #{owner,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+      #{owner,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{defaultGroup,jdbcType=BIT}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.GroupInfo" useGeneratedKeys="true" keyProperty="groupId">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="groupId" parameterType="com.matrictime.network.dao.model.GroupInfo" >
     insert into group_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="groupId != null">
@@ -124,6 +127,9 @@
       <if test="createTime != null">
         create_time,
       </if>
+      <if test="defaultGroup != null">
+        default_group,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="groupId != null">
@@ -140,6 +146,9 @@
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="defaultGroup != null">
+        #{defaultGroup,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -167,6 +176,9 @@
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.defaultGroup != null">
+        default_group = #{record.defaultGroup,jdbcType=BIT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -178,7 +190,8 @@
       group_name = #{record.groupName,jdbcType=VARCHAR},
       is_exist = #{record.isExist,jdbcType=BIT},
       owner = #{record.owner,jdbcType=VARCHAR},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP}
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      default_group = #{record.defaultGroup,jdbcType=BIT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -198,6 +211,9 @@
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="defaultGroup != null">
+        default_group = #{defaultGroup,jdbcType=BIT},
+      </if>
     </set>
     where group_id = #{groupId,jdbcType=BIGINT}
   </update>
@@ -206,7 +222,8 @@
     set group_name = #{groupName,jdbcType=VARCHAR},
       is_exist = #{isExist,jdbcType=BIT},
       owner = #{owner,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      default_group = #{defaultGroup,jdbcType=BIT}
     where group_id = #{groupId,jdbcType=BIGINT}
   </update>
 </mapper>
