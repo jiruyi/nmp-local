@@ -6,7 +6,9 @@ import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.DeviceExtraVo;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceExtraInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -63,6 +65,19 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
         }
         return result;
     }
+
+    @Override
+    public Result<PageInfo> select(DeviceExtraInfoRequest deviceExtraInfoRequest) {
+        Result<PageInfo> result;
+        try {
+            result = buildResult(deviceExtraInfoDomainService.selectByCondition(deviceExtraInfoRequest));
+        }catch (Exception e){
+            result = failResult(e);
+        }
+        return result;
+    }
+
+
 }
 
 
