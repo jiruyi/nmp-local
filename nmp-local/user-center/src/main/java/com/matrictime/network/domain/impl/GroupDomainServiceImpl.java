@@ -25,6 +25,9 @@ public class GroupDomainServiceImpl implements GroupDomainService {
         if(groupReq.getOwner()==null){
             throw new SystemException("缺少参数");
         }
+        if(groupReq.getGroupName()==null||groupReq.getGroupName().equals("")){
+            throw new SystemException("组名为空");
+        }
         GroupInfo group = new GroupInfo();
         BeanUtils.copyProperties(groupReq,group);
         groupMapper.insertSelective(group);
