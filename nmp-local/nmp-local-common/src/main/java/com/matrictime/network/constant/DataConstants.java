@@ -67,4 +67,9 @@ public class DataConstants {
     public static final String MAP_KEY_URL = "url";
     public static final String MAP_KEY_UUID = "uuid";
 
+    public static final String KEY_USER_ID = "userId";
+    public static final String KEY_DESTINATION = "destination";
+    public static final String KEY_COMMONPARAM = "commonParam";
+    public static final String KEY_ENCRYPTPARAM = "encryptParam";
+
 }
