@@ -11,6 +11,7 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="group_id" jdbcType="VARCHAR" property="groupId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>

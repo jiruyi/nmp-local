@@ -13,4 +13,6 @@ public interface DeviceExtraInfoDomainService {
     int update(NmplDeviceExtraInfo nmplDeviceExtraInfo);
 
     int delete(NmplDeviceExtraInfo nmplDeviceExtraInfo);
+
+
 }

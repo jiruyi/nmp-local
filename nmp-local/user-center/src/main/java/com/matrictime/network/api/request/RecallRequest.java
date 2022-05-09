@@ -13,6 +13,10 @@ public class RecallRequest extends BaseReq implements Serializable {
 
     private String addUserId;
 
+    private String sex;
+
+    private String nickName;
+
     private String remarkName;
 
     public String getRequestId() {
@@ -61,5 +65,21 @@ public class RecallRequest extends BaseReq implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 }

@@ -21,6 +21,8 @@ public class AddUserRequest {
 
     private String remark;
 
+    private String groupId;
+
     public Long getId() {
         return id;
     }
@@ -91,5 +93,13 @@ public class AddUserRequest {
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId == null ? null : groupId.trim();
     }
 }

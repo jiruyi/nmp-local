@@ -9,11 +9,9 @@ import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.AddUserRequestVo;
 import com.matrictime.network.api.modelVo.UserFriendVo;
+import com.matrictime.network.api.modelVo.UserGroupVo;
 import com.matrictime.network.api.modelVo.UserVo;
-import com.matrictime.network.api.request.AddUserRequestReq;
-import com.matrictime.network.api.request.RecallRequest;
-import com.matrictime.network.api.request.UserFriendReq;
-import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.AddUserRequestResp;
 import com.matrictime.network.api.response.UserFriendResp;
 import com.matrictime.network.api.response.UserResp;
@@ -22,6 +20,7 @@ import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.enums.AddUserRequestEnum;
 import com.matrictime.network.domain.UserDomainService;
 import com.matrictime.network.domain.UserFriendsDomainService;
+import com.matrictime.network.domain.UserGroupDomianService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
@@ -29,8 +28,10 @@ import com.matrictime.network.service.UserFriendsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -42,6 +43,9 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
 
     @Resource
     private UserDomainService userDomainService;
+
+    @Resource
+    private UserGroupDomianService userGroupDomianService;
 
     @Value("${app.innerUrl}")
     private String url;
@@ -220,11 +224,40 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         UserVo userVo = userFriendsDomainService.selectUserInfo(userRequest);
         if(userVo.getAgreeFriend() == 0 || addUserRequestReq.getAgree() != null){
             addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
-            userFriendsDomainService.addFriends(addUserRequestReq);
-            userFriendsDomainService.insertFriend(userFriendReq);
+
+            if(addUserRequestReq.getAgree() == null){
+                userFriendsDomainService.addFriends(addUserRequestReq);
+            }
+            //判断user_friend表中是否有该好友
+            List<UserFriendVo> userFriendVos = userFriendsDomainService.selectUserFriend(userFriendReq);
+            if(CollectionUtils.isEmpty(userFriendVos)){
+                userFriendsDomainService.insertFriend(userFriendReq);
+            }
+            String groupIdArray = addUserRequestReq.getGroupId();
+            String[] groupId = groupIdArray.split(",");
+            for (int groupIdIndex = 0;groupIdIndex < groupId.length;groupIdIndex++){
+                UserGroupReq userGroupReq = new UserGroupReq();
+                userGroupReq.setUserId(addUserRequestReq.getUserId());
+                userGroupReq.setGroupId(addUserRequestReq.getGroupId());
+                //判断user_group是否有该数据
+                List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
+                if(CollectionUtils.isEmpty(userGroupVos)){
+                    userGroupDomianService.createUserGroup(userGroupReq);
+                }
+            }
             userFriendReq.setUserId(addUserRequestReq.getAddUserId());
             userFriendReq.setFriendUserId(addUserRequestReq.getUserId());
             userFriendsDomainService.insertFriend(userFriendReq);
+            //判断user_group是否有该数据
+            UserGroupReq userGroupReq = new UserGroupReq();
+            userGroupReq.setUserId(addUserRequestReq.getAddUserId());
+
+            userGroupReq.setGroupId("");
+            List<UserGroupVo> friendUserGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
+            if(CollectionUtils.isEmpty(friendUserGroupVos)){
+                userGroupDomianService.createUserGroup(userGroupReq);
+            }
+
             result.setResultObj(1);
         }
         if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getAgree() == null) {
@@ -339,6 +372,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         UserFriendReq userFriendReq = new UserFriendReq();
         userFriendReq.setUserId(addUserRequestReq.getUserId());
         userFriendReq.setFriendUserId(addUserRequestReq.getAddUserId());
+        userFriendReq.setRemarkName(addUserRequestReq.getRemarkName());
         return userFriendReq;
     }
 

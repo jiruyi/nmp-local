@@ -13,7 +13,7 @@
         <result column="agree_friend" jdbcType="BIT" property="agreeFriend" />
     </resultMap>
     <select id="selectUserFriend" parameterType="com.matrictime.network.api.request.UserFriendReq" resultMap="BaseResultMap">
-        select f.user_id,friend_user_id,remark_name,nick_name ,u.sex,u.phone_number from user_friend f,user u
+        select friend_user_id,remark_name,nick_name ,u.sex,u.phone_number from user_friend f,user u
         where f.friend_user_id = u.user_id and f.is_exist = 1 and u.is_exist = 1 and f.user_id = #{userId,jdbcType=VARCHAR}
     </select>
     <insert id="insertFriend" parameterType="com.matrictime.network.api.request.UserFriendReq">
