@@ -211,7 +211,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
         return result;
     }
 
-    private Result<Integer> commonCreateGroup(GroupReq groupReq){
+    public Result<Integer> commonCreateGroup(GroupReq groupReq){
         Result<Integer> result;
         try {
             groupReq.setOwner(groupReq.getUserId());

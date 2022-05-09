@@ -10,4 +10,6 @@ public class DataConfig {
 
     public static final String OPR_TYPE_BIND = "bind";
     public static final String OPR_TYPE_UNBIND = "unbind";
+
+    public static final String DEFAULT_GROUP_NAME = "默认分组";
 }

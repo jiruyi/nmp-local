@@ -68,4 +68,9 @@ public class LoginReq extends BaseReq implements Serializable {
      */
     private String loginAppCode;
 
+    /**
+     * sid
+     */
+    private String sid;
+
 }
