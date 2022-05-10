@@ -100,13 +100,15 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
         if(outlinePcReq.getId()==null){
             throw new SystemException("id缺失");
         }
+
         if(outlinePcReq.getDeviceId()!=null){
+            NmplOutlinePcInfo info = nmplOutlinePcInfoMapper.selectByPrimaryKey(outlinePcReq.getId());
             NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
             nmplOutlinePcInfoExample.createCriteria()
                     .andDeviceIdEqualTo(outlinePcReq.getDeviceId()).andIsExistEqualTo(true);
             List<NmplOutlinePcInfo> nmplOutlinePcInfos = nmplOutlinePcInfoMapper.selectByExample(nmplOutlinePcInfoExample);
             if(!CollectionUtils.isEmpty(nmplOutlinePcInfos)){
-                if(!nmplOutlinePcInfos.get(0).getDeviceId().equals(outlinePcReq.getDeviceId())){
+                if(!nmplOutlinePcInfos.get(0).getDeviceId().equals(info.getDeviceId())){
                     throw new SystemException("设备id重复");
                 }
             }
