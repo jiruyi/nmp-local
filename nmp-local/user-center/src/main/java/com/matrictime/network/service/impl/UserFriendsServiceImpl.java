@@ -281,7 +281,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() != null){
                 userFriendsDomainService.update(addUserRequestReq);
             }
-            result.setResultObj(0);
+            result.setResultObj(2);
         }
 
         return result;
