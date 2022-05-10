@@ -1,6 +1,5 @@
 package com.matrictime.network.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.jzsg.bussiness.JServiceImpl;
@@ -36,6 +35,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 import static com.matrictime.network.config.DataConfig.LOGIN_STATUS_IN;
+import static com.matrictime.network.exception.ErrorMessageContants.GET_KEY_FAIL_MSG;
 
 @Service
 @Slf4j
@@ -332,11 +332,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Override
     public Result bind(BindReq req) {
         Result result;
+        Boolean bindFlag;
         try {
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
-                    commonBind(req);
+                    bindFlag = commonBind(req);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
@@ -359,26 +360,21 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case UcConstants.DESTINATION_OUT_TO_IN:
 
                     // 入参解密
-                    try {
-                        ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
-                        BindReq desReq = jsonUtil.decryJsonToReq(req);
-                        commonBind(desReq);
-                    } catch (SystemException e){
-                        log.error("LoginServiceImpl.bind SystemException:{}",e.getMessage());
-                        result = failResult(e);
-                    }catch (Exception e){
-                        log.error("LoginServiceImpl.bind Exception:{}",e.getMessage());
-                        result = failResult(e);
-                    }
+                    ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
+                    BindReq desReq = jsonUtil.decryJsonToReq(req);
+                    bindFlag = commonBind(desReq);
                     // 返回值加密
 
-                    return buildResult(null);
+                    ReqUtil resUtil = new ReqUtil();
+                    String resultObj = resUtil.encryJsonToReq(bindFlag, getSidByUserId(req.getUserId()));
+
+                    return buildResult(resultObj);
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
             }
 
-            result = buildResult(null);
+            result = buildResult(bindFlag);
         }catch (SystemException e){
             log.error("LoginServiceImpl.bind SystemException:{}",e.getMessage());
             result = failResult(e);
@@ -389,7 +385,21 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         return result;
     }
 
-    private void commonBind(BindReq req){
+    @Override
+    public String getSidByUserId(String userId) {
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<User> users = userMapper.selectByExample(userExample);
+        if (!CollectionUtils.isEmpty(users)){
+            String sid = users.get(0).getSid();
+            if (!ParamCheckUtil.checkVoStrBlank(sid)){
+                return sid;
+            }
+        }
+        throw new SystemException(GET_KEY_FAIL_MSG);
+    }
+
+    private Boolean commonBind(BindReq req){
         checkBindParam(req);
         switch (req.getOprType()){
             case DataConfig.OPR_TYPE_BIND:
@@ -409,6 +419,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             default:
                 throw new SystemException("OprType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
         }
+        return true;
     }
 
     private Long checkUserForBind(BindReq req){

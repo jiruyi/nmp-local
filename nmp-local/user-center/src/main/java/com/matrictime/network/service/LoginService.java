@@ -36,4 +36,6 @@ public interface LoginService {
      * @return
      */
     Result bind(BindReq bindReq);
+
+    String getSidByUserId(String userId);
 }
