@@ -114,10 +114,6 @@ public class UserFriendsController {
                     webSocketServer.sendMessage(JSONUtils.toJSONString(messageRefuseText(request)));
                 }
             }
-            if (result.getResultObj() != 1) {
-                result.setSuccess(false);
-                result.setErrorMsg("添加失败");
-            }
             return result;
         }catch (Exception e){
             return new Result(false,e.getMessage());
