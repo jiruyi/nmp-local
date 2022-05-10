@@ -3,6 +3,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceExtraInfoService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,22 @@ public class DeviceExtraInfoController {
         Result<Integer> result = new Result<>();
         try {
             result = deviceExtraInfoService.delete(deviceExtraInfoRequest);
+        }catch (Exception e){
+            log.info("备用设备删除异常:updateDeviceExtra{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("备用设备删除异常");
+        }
+        return result;
+    }
+
+    @RequiresPermissions("sys:station:query")
+    @SystemLog(opermodul = "主备管理",operDesc = "备用设备查询",operType = "备用设备查询")
+    @RequestMapping(value = "/select",method = RequestMethod.POST)
+    @ApiOperation(value = "备用设备删除",notes = "备用设备查询")
+    public Result<PageInfo> selectDeviceExtra(@RequestBody DeviceExtraInfoRequest deviceExtraInfoRequest){
+        Result<PageInfo> result = new Result<>();
+        try {
+            result = deviceExtraInfoService.select(deviceExtraInfoRequest);
         }catch (Exception e){
             log.info("备用设备删除异常:updateDeviceExtra{}",e.getMessage());
             result.setSuccess(false);

@@ -7,6 +7,7 @@ import com.matrictime.network.dao.mapper.NmplLinkRelationMapper;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.LinkRelationVo;
+import com.matrictime.network.modelVo.RouteVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.request.LinkRelationRequest;
@@ -41,12 +42,18 @@ public class LinkRelationDomainServiceImpl implements LinkRelationDomainService 
 
     @Override
     public PageInfo<LinkRelationVo> selectLinkRelation(LinkRelationRequest linkRelationRequest) {
-        Page page = PageHelper.startPage(linkRelationRequest.getPageNo(),linkRelationRequest.getPageSize());
-        List<LinkRelationVo> linkRelationVos = nmplLinkRelationMapper.selectLinkRelation(linkRelationRequest);
         PageInfo<LinkRelationVo> pageResult =  new PageInfo<>();
+        List<LinkRelationVo> linkRelationVos;
+        //网管前端查询数据进行分页
+        if(linkRelationRequest.getConditionType() == 1){
+            Page page = PageHelper.startPage(linkRelationRequest.getPageNo(),linkRelationRequest.getPageSize());
+            linkRelationVos = nmplLinkRelationMapper.selectLinkRelation(linkRelationRequest);
+            pageResult.setCount((int) page.getTotal());
+            pageResult.setPages(page.getPages());
+        }else {
+            linkRelationVos = nmplLinkRelationMapper.selectLinkRelation(linkRelationRequest);
+        }
         pageResult.setList(linkRelationVos);
-        pageResult.setCount((int) page.getTotal());
-        pageResult.setPages(page.getPages());
         return  pageResult;
     }
 

@@ -12,9 +12,20 @@
     <resultMap id="UserResultMap" type="com.matrictime.network.api.modelVo.UserVo">
         <result column="agree_friend" jdbcType="BIT" property="agreeFriend" />
     </resultMap>
+    <resultMap id="GroupResultMap" type="com.matrictime.network.api.modelVo.GroupVo">
+        <result column="group_id" jdbcType="VARCHAR" property="groupId" />
+    </resultMap>
     <select id="selectUserFriend" parameterType="com.matrictime.network.api.request.UserFriendReq" resultMap="BaseResultMap">
-        select f.user_id,friend_user_id,remark_name,nick_name ,u.sex,u.phone_number from user_friend f,user u
-        where f.friend_user_id = u.user_id and f.is_exist = 1 and u.is_exist = 1 and f.user_id = #{userId,jdbcType=VARCHAR}
+        select friend_user_id,remark_name,nick_name ,u.sex,u.phone_number from user_friend f,user u
+        <where>
+            f.friend_user_id = u.user_id and f.is_exist = 1 and u.is_exist = 1
+            <if test="userId != null">
+                and f.user_id = #{userId,jdbcType=VARCHAR}
+            </if>
+            <if test="friendUserId != null">
+                and f.friend_user_id = #{friendUserId,jdbcType=VARCHAR}
+            </if>
+        </where>
     </select>
     <insert id="insertFriend" parameterType="com.matrictime.network.api.request.UserFriendReq">
         insert into user_friend (user_id, friend_user_id, remark_name)
@@ -22,5 +33,8 @@
     </insert>
     <select id="selectUserInfo" parameterType="com.matrictime.network.api.request.UserRequest" resultMap="UserResultMap">
         select agree_friend from user where user_id = #{userId,jdbcType=VARCHAR}
+    </select>
+    <select id="selectGroupInfo" parameterType="com.matrictime.network.api.request.GroupReq" resultMap="GroupResultMap">
+        select group_id from group_info where owner = #{owner,jdbcType=VARCHAR} and default_group = 1
     </select>
 </mapper>

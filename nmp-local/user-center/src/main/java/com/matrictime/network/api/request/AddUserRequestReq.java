@@ -22,7 +22,15 @@ public class AddUserRequestReq extends BaseReq implements Serializable {
 
     private String agree;
 
+    private String sex;
+
+    private String nickName;
+
+    private String groupId;
+
     private Date createTime;
 
     private Date updateTime;
+
+    private String refuse;
 }

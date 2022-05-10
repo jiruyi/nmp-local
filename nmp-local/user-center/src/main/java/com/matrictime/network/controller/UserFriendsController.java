@@ -108,6 +108,7 @@ public class UserFriendsController {
             }
             if(request.getRefuse() != null) {
                 result.setErrorMsg("已经拒绝");
+                result = userFriendsService.agreeAddFriedns(request);
                 WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
                 if(webSocketServer != null){
                     webSocketServer.sendMessage(JSONUtils.toJSONString(messageRefuseText(request)));
@@ -136,8 +137,10 @@ public class UserFriendsController {
         }
         messageMap.put("from","uc");
         messageMap.put("businessCode","7");
-        dataMap.put("friendUserId",addUserRequestReq.getUserId());
-        dataMap.put("localUserId",addUserRequestReq.getAddUserId());
+        dataMap.put("userId",addUserRequestReq.getUserId());
+        dataMap.put("addUserId",addUserRequestReq.getAddUserId());
+        dataMap.put("sex",addUserRequestReq.getSex());
+        dataMap.put("nickName",addUserRequestReq.getNickName());
         messageMap.put("data",dataMap);
         return messageMap;
     }
@@ -155,8 +158,10 @@ public class UserFriendsController {
         }
         messageMap.put("from","uc");
         messageMap.put("businessCode","10");
-        dataMap.put("friendUserId",recallRequest.getUserId());
-        dataMap.put("localUserId",recallRequest.getAddUserId());
+        dataMap.put("userId",recallRequest.getUserId());
+        dataMap.put("addUserId",recallRequest.getAddUserId());
+        dataMap.put("sex",recallRequest.getSex());
+        dataMap.put("nickName",recallRequest.getNickName());
         messageMap.put("data",dataMap);
         return messageMap;
     }
@@ -174,8 +179,8 @@ public class UserFriendsController {
         }
         messageMap.put("from","uc");
         messageMap.put("businessCode","12");
-        dataMap.put("friendUserId",recallRequest.getUserId());
-        dataMap.put("localUserId",recallRequest.getAddUserId());
+        dataMap.put("userId",recallRequest.getUserId());
+        dataMap.put("addUserId",recallRequest.getAddUserId());
         messageMap.put("data",dataMap);
         return messageMap;
     }

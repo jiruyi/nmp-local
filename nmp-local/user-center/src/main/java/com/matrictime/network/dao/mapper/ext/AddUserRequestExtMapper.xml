@@ -14,10 +14,17 @@
     </resultMap>
     <insert id="addFriends" parameterType="com.matrictime.network.api.request.AddUserRequestReq">
         insert into add_user_request (request_id, user_id, status,
-                                      add_user_id,remark)
+                                      add_user_id,remark,group_id)
         values (#{requestId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
-                #{status,jdbcType=CHAR},#{addUserId,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR})
+                #{status,jdbcType=CHAR},#{addUserId,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{groupId,jdbcType=VARCHAR})
     </insert>
+
+    <update id="update" parameterType="com.matrictime.network.dao.model.AddUserRequest">
+        update add_user_request
+        set status = #{status,jdbcType=CHAR}
+        where request_id = #{requestId,jdbcType=VARCHAR}
+    </update>
+
 
 
     <select id="getAddUserInfo" parameterType="com.matrictime.network.api.request.AddUserRequestReq" resultMap="BaseResultMap">

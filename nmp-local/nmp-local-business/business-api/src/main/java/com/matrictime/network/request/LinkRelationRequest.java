@@ -24,6 +24,8 @@ public class LinkRelationRequest extends BaseRequest{
 
     private String updateTime;
 
+    private Integer conditionType;
+
     private String isExist;
 
     public String getId() {
@@ -120,5 +122,13 @@ public class LinkRelationRequest extends BaseRequest{
 
     public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
+    }
+
+    public Integer getConditionType() {
+        return conditionType;
+    }
+
+    public void setConditionType(Integer conditionType) {
+        this.conditionType = conditionType;
     }
 }
