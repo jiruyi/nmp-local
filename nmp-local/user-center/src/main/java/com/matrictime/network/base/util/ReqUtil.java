@@ -12,6 +12,10 @@ public class ReqUtil<T> {
 
     private T dto;
 
+    public ReqUtil(){
+
+    }
+
     public ReqUtil(T dto) {
         this.dto = dto;
     }
@@ -53,5 +57,12 @@ public class ReqUtil<T> {
         decJson.putAll(commonJson);
 
         return decJson.toJavaObject((Class<T>) this.dto.getClass());
+    }
+
+    public String encryJsonToReq(T resp, String sid) throws Exception {
+        String encryptMsg = JServiceImpl.encryptMsg(JSONObject.toJSONString(resp),sid);
+        String jsonString = JSONObject.toJSONString(encryptMsg);
+
+        return jsonString;
     }
 }
