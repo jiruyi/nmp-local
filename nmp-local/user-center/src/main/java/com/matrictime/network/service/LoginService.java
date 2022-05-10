@@ -37,5 +37,5 @@ public interface LoginService {
      */
     Result bind(BindReq bindReq);
 
-    String getSidByUserId(String userId);
+    String getSidByUserId(String userId) throws Exception;
 }

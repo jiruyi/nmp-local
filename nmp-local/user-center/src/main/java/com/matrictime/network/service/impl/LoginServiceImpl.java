@@ -335,6 +335,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         Boolean bindFlag;
         try {
 
+            ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
+
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     bindFlag = commonBind(req);
@@ -360,15 +363,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case UcConstants.DESTINATION_OUT_TO_IN:
 
                     // 入参解密
-                    ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
-                    BindReq desReq = jsonUtil.decryJsonToReq(req);
+                    ReqUtil<BindReq> reqUtil = new ReqUtil<>(req);
+                    BindReq desReq = reqUtil.decryJsonToReq(req);
                     bindFlag = commonBind(desReq);
                     // 返回值加密
 
-                    ReqUtil resUtil = new ReqUtil();
-                    String resultObj = resUtil.encryJsonToReq(bindFlag, getSidByUserId(req.getUserId()));
-
-                    return buildResult(resultObj);
+                    return buildResult(bindFlag);
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
@@ -386,7 +386,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     @Override
-    public String getSidByUserId(String userId) {
+    public String getSidByUserId(String userId) throws Exception {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
         List<User> users = userMapper.selectByExample(userExample);
@@ -396,7 +396,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 return sid;
             }
         }
-        throw new SystemException(GET_KEY_FAIL_MSG);
+        throw new Exception(GET_KEY_FAIL_MSG);
     }
 
     private Boolean commonBind(BindReq req){

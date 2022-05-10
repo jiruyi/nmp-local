@@ -4,7 +4,9 @@ import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.RegisterReq;
+import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.ReqUtil;
+import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
@@ -78,9 +80,13 @@ public class LoginController {
     @RequestMapping(value = "/bind")
     public Result bind(@RequestBody BindReq req){
         try {
-            ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-            return loginService.bind(req);
+            Result bind = loginService.bind(req);
+            if(UcConstants.DESTINATION_OUT_TO_IN.equals(req.getDestination())){
+                ReqUtil resUtil = new ReqUtil();
+                String resultObj = resUtil.encryJsonToReq(bind, loginService.getSidByUserId(req.getUserId()));
+                bind.setResultObj(resultObj);
+            }
+            return bind;
         }catch (Exception e){
             log.error("LoginController.bind exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
