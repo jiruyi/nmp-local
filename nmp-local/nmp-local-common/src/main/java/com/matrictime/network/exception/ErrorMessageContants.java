@@ -84,4 +84,6 @@ public class ErrorMessageContants {
 
 	public static final String RPC_RETURN_ERROR_MSG = "RPC返回错误";
 
+	public static final String GET_KEY_FAIL_MSG = "获取密钥失败";
+
 }
