@@ -86,6 +86,11 @@ public class UserRequest extends BaseReq implements Serializable {
      */
     private Boolean agreeFriend;
 
+    /**
+     * 删除好友是否通知（0：不通知 1：通知）
+     */
+    private Boolean deleteFriend;
+
     private Boolean status;
 
     private Boolean isExist;

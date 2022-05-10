@@ -59,8 +59,7 @@ public class ReqUtil<T> {
 
     public String encryJsonToReq(T resp, String sid) throws Exception {
         String encryptMsg = JServiceImpl.encryptMsg(JSONObject.toJSONString(resp),sid);
-        String jsonString = JSONObject.toJSONString(encryptMsg);
 
-        return jsonString;
+        return encryptMsg;
     }
 }

@@ -1415,6 +1415,66 @@ public class UserExample {
             return (Criteria) this;
         }
 
+        public Criteria andDeleteFriendIsNull() {
+            addCriterion("delete_friend is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendIsNotNull() {
+            addCriterion("delete_friend is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendEqualTo(Boolean value) {
+            addCriterion("delete_friend =", value, "deleteFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendNotEqualTo(Boolean value) {
+            addCriterion("delete_friend <>", value, "deleteFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendGreaterThan(Boolean value) {
+            addCriterion("delete_friend >", value, "deleteFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("delete_friend >=", value, "deleteFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendLessThan(Boolean value) {
+            addCriterion("delete_friend <", value, "deleteFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendLessThanOrEqualTo(Boolean value) {
+            addCriterion("delete_friend <=", value, "deleteFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendIn(List<Boolean> values) {
+            addCriterion("delete_friend in", values, "deleteFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendNotIn(List<Boolean> values) {
+            addCriterion("delete_friend not in", values, "deleteFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendBetween(Boolean value1, Boolean value2) {
+            addCriterion("delete_friend between", value1, value2, "deleteFriend");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFriendNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("delete_friend not between", value1, value2, "deleteFriend");
+            return (Criteria) this;
+        }
+
         public Criteria andStatusIsNull() {
             addCriterion("status is null");
             return (Criteria) this;
