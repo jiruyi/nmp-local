@@ -14,6 +14,11 @@ public class RegisterReq extends BaseReq implements Serializable {
     private String userId;
 
     /**
+     * sid
+     */
+    private String sid;
+
+    /**
      * 一体机设备ID
      */
     private String deviceId;

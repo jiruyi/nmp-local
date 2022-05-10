@@ -23,6 +23,7 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.LoginService;
+import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
@@ -49,12 +50,19 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Value("${app.innerUrl}")
     private String url;
 
+    @Value("${app.outerUrl}")
+    private String outUrl;
+
     @Override
     public Result<RegisterResp> register(RegisterReq req) {
         Result result;
+        RegisterResp resp;
         try {
-            RegisterResp resp;
-            checkRegisterParam(req);
+
+            ReqUtil<RegisterReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
+
+
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
@@ -80,7 +88,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                         throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                 case UcConstants.DESTINATION_IN:
-                    req.setUserId(SnowFlake.nextId_String());
                     ReqModel reqModelM = new ReqModel();
                     req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
                     req.setUrl(url+UcConstants.URL_REGISTER);
@@ -94,11 +101,13 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                         ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
                         Result<RegisterResp> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<RegisterResp>>(){});
                         if(returnRes.isSuccess()){
-                            // 非密区同步用户
+                            // 密区/非密区同步用户
                             RegisterResp resultObj = returnRes.getResultObj();
-                            commonRegister(resultObj.getRegisterReq());
-                            resultObj.setRegisterReq(null);
-                            return buildResult(resultObj);
+                            RegisterReq req1 = resultObj.getRegisterReq();
+                            req1.setDestination(UcConstants.DESTINATION_OUT);
+                            String post = HttpClientUtil.post(outUrl + UcConstants.URL_REGISTER, JSONObject.toJSONString(req1));
+                            log.info("非密区接收密区/非密区同步返回值LoginServiceImpl.register post:{}",post);
+                            return JSONObject.parseObject(post,Result.class);
                         }
                     }else {
                         throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
@@ -107,9 +116,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
 
-                    RegisterReq desReq = new RegisterReq();
-                    BeanUtils.copyProperties(req,desReq);
-                    resp = commonRegister(desReq);
+                    ReqUtil<RegisterReq> reqUtil = new ReqUtil<>(req);
+                    RegisterReq desReq = reqUtil.decryJsonToReq(req);
+                    resp = new RegisterResp();
                     resp.setRegisterReq(desReq);
                     // 返回值加密
 
@@ -146,6 +155,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     private RegisterResp commonRegister(RegisterReq req){
 
+        checkRegisterParam(req);
+
         // 判断用户是否存在
         boolean userExist = checkUserExist(req);
         if(userExist){
@@ -154,6 +165,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
         User user = new User();
         user.setUserId(req.getUserId());
+        user.setSid(req.getSid());
         user.setLoginAccount(req.getLoginAccount());
         user.setNickName(req.getNickName());
         user.setPassword(req.getPassword());
@@ -171,6 +183,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         GroupReq groupReq = new GroupReq();
         groupReq.setOwner(req.getUserId());
         groupReq.setGroupName(DataConfig.DEFAULT_GROUP_NAME);
+        groupReq.setDefaultGroup(true);
         Integer group = groupDomainService.createGroup(groupReq);
 
         return resp;
@@ -492,6 +505,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     private void checkRegisterParam(RegisterReq req) {
         if (req == null){
             throw new SystemException("RegisterReq"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (req.getUserId() == null || req.getUserId().isEmpty()){
+            throw new SystemException("UserId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (req.getLoginAccount() == null || req.getLoginAccount().isEmpty()){
             throw new SystemException("LoginAccount"+ErrorMessageContants.PARAM_IS_NULL_MSG);
