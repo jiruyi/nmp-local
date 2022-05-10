@@ -224,8 +224,16 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                                              UserRequest userRequest) {
         Result<Integer> result = new Result<>();
         UserVo userVo = userFriendsDomainService.selectUserInfo(userRequest);
+        AddRequestVo addRequestVo = userFriendsDomainService.selectGroupId(addUserRequestReq);
         if(userVo.getAgreeFriend() == 0 || addUserRequestReq.getAgree() != null){
             if(addUserRequestReq.getAgree() == null && userVo.getAgreeFriend() == 0){
+                if(addRequestVo != null){
+                    if("2".equals(addRequestVo.getStatus())){
+                        result.setErrorMsg("该用户已经被添加");
+                        result.setSuccess(false);
+                        return result;
+                    }
+                }
                 addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
                 userFriendsDomainService.addFriends(addUserRequestReq);
             }
@@ -237,19 +245,19 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             if(CollectionUtils.isEmpty(userFriendVos)){
                 userFriendsDomainService.insertFriend(userFriendReq);
             }
-
-            AddRequestVo addRequestVo = userFriendsDomainService.selectGroupId(addUserRequestReq);
-            if(addRequestVo.getGroupId() != null){
-                String groupIdArray = addRequestVo.getGroupId();
-                String[] groupId = groupIdArray.split(",");
-                for (int groupIdIndex = 0;groupIdIndex < groupId.length;groupIdIndex++){
-                    UserGroupReq userGroupReq = new UserGroupReq();
-                    userGroupReq.setUserId(addUserRequestReq.getUserId());
-                    userGroupReq.setGroupId(groupId[groupIdIndex]);
-                    //判断user_group是否有该数据
-                    List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
-                    if(CollectionUtils.isEmpty(userGroupVos)){
-                        userGroupDomianService.createUserGroup(userGroupReq);
+            if(addRequestVo != null){
+                if(addRequestVo.getGroupId() != null){
+                    String groupIdArray = addRequestVo.getGroupId();
+                    String[] groupId = groupIdArray.split(",");
+                    for (int groupIdIndex = 0;groupIdIndex < groupId.length;groupIdIndex++){
+                        UserGroupReq userGroupReq = new UserGroupReq();
+                        userGroupReq.setUserId(addUserRequestReq.getUserId());
+                        userGroupReq.setGroupId(groupId[groupIdIndex]);
+                        //判断user_group是否有该数据
+                        List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
+                        if(CollectionUtils.isEmpty(userGroupVos)){
+                            userGroupDomianService.createUserGroup(userGroupReq);
+                        }
                     }
                 }
             }
@@ -296,11 +304,11 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             result.setResultObj(1);
         }
         if(userVo.getAgreeFriend() == 1 || addUserRequestReq.getRefuse() != null) {
-            if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() == null){
+            if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() == null && addUserRequestReq.getAgree() == null){
                 addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
                 userFriendsDomainService.addFriends(addUserRequestReq);
             }
-            if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() != null){
+            if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() != null && addUserRequestReq.getAgree() == null){
                 userFriendsDomainService.update(addUserRequestReq);
             }
             result.setResultObj(2);

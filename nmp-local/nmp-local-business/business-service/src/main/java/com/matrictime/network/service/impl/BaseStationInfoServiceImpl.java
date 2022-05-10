@@ -175,6 +175,21 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         return result;
     }
 
+    @Override
+    public Result<BaseStationInfoResponse> selectByOperatorId(BaseStationInfoRequest baseStationInfoRequest) {
+        Result<BaseStationInfoResponse> result = new Result<>();
+        BaseStationInfoResponse baseStationInfoResponse = new BaseStationInfoResponse();
+        try {
+            baseStationInfoResponse.setBaseStationInfoList(baseStationInfoDomainService.selectByOperatorId(baseStationInfoRequest));
+            result.setResultObj(baseStationInfoResponse);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
 
     private String getFormatDate(Date date){
         String creatDate = "yyyy-MM-dd HH:mm:ss";
