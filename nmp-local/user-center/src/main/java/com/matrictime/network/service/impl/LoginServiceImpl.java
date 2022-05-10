@@ -81,7 +81,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     log.info("非密区接收返回值LoginServiceImpl.register resModel:{}",JSONObject.toJSONString(resModel));
                     Object returnValue = resModel.getReturnValue();
                     if(returnValue != null && returnValue instanceof String){
-                        result = JSONObject.parseObject((String) returnValue,Result.class);
+                        ResModel ResModelX = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        result = JSONObject.parseObject(ResModelX.getReturnValue().toString(),new TypeReference<Result<RegisterResp>>(){});
                         return result;
                     }else {
                         throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
