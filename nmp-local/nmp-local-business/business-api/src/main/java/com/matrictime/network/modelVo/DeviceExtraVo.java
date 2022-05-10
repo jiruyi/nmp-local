@@ -12,6 +12,11 @@ public class DeviceExtraVo {
     private Long id;
 
     /**
+     * 备用设备id
+     */
+    private String deviceId;
+
+    /**
      * 关联主设备id
      */
     private String relDeviceId;
