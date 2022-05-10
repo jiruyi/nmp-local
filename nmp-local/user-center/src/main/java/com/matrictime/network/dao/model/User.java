@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 用户信息表
  * @author   hexu
- * @date   2022-04-28
+ * @date   2022-05-09
  */
 @Data
 public class User {
@@ -24,6 +24,11 @@ public class User {
      * 绑定本地用户id
      */
     private String lId;
+
+    /**
+     * sid
+     */
+    private String sid;
 
     /**
      * 一体机设备ID
@@ -157,6 +162,14 @@ public class User {
 
     public void setlId(String lId) {
         this.lId = lId == null ? null : lId.trim();
+    }
+
+    public String getSid() {
+        return sid;
+    }
+
+    public void setSid(String sid) {
+        this.sid = sid == null ? null : sid.trim();
     }
 
     public String getDeviceId() {

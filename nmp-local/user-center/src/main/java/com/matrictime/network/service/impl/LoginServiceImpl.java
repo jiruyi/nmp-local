@@ -7,20 +7,19 @@ import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.UserVo;
-import com.matrictime.network.api.request.BindReq;
-import com.matrictime.network.api.request.LoginReq;
-import com.matrictime.network.api.request.LogoutReq;
-import com.matrictime.network.api.request.RegisterReq;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.CheckUtil;
+import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
 import com.matrictime.network.dao.model.UserExample;
+import com.matrictime.network.domain.GroupDomainService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
@@ -42,6 +41,9 @@ import static com.matrictime.network.config.DataConfig.LOGIN_STATUS_IN;
 @Slf4j
 public class LoginServiceImpl extends SystemBaseService implements LoginService {
 
+    @Autowired
+    private GroupDomainService groupDomainService;
+
     @Autowired(required = false)
     private UserMapper userMapper;
 
@@ -53,7 +55,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         Result result;
         try {
             RegisterResp resp;
-            CheckUtil.checkParam(req);
             checkRegisterParam(req);
 
             switch (req.getDestination()){
@@ -168,6 +169,11 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         RegisterResp resp = new RegisterResp();
         resp.setUserId(user.getUserId());
 
+        GroupReq groupReq = new GroupReq();
+        groupReq.setOwner(req.getUserId());
+        groupReq.setGroupName(DataConfig.DEFAULT_GROUP_NAME);
+        Integer group = groupDomainService.createGroup(groupReq);
+
         return resp;
     }
 
@@ -176,7 +182,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         Result result;
         try {
             LoginResp resp = new LoginResp();
-            CheckUtil.checkParam(req);
             checkLoginParam(req);
 
             switch (req.getDestination()){
@@ -328,8 +333,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     public Result bind(BindReq req) {
         Result result;
         try {
-            CheckUtil.checkParam(req);
-            checkBindParam(req);
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
@@ -354,11 +357,19 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     }
 
                 case UcConstants.DESTINATION_OUT_TO_IN:
-                    // 入参解密
 
-                    BindReq desReq = new BindReq();
-                    BeanUtils.copyProperties(req,desReq);
-                    commonBind(desReq);
+                    // 入参解密
+                    try {
+                        ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
+                        BindReq desReq = jsonUtil.decryJsonToReq(req);
+                        commonBind(desReq);
+                    } catch (SystemException e){
+                        log.error("LoginServiceImpl.bind SystemException:{}",e.getMessage());
+                        result = failResult(e);
+                    }catch (Exception e){
+                        log.error("LoginServiceImpl.bind Exception:{}",e.getMessage());
+                        result = failResult(e);
+                    }
                     // 返回值加密
 
                     return buildResult(null);
@@ -379,6 +390,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     private void commonBind(BindReq req){
+        checkBindParam(req);
         switch (req.getOprType()){
             case DataConfig.OPR_TYPE_BIND:
                 Long bindId = checkUserForBind(req);

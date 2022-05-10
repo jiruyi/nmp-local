@@ -1,6 +1,8 @@
 package com.matrictime.network.base.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jzsg.bussiness.JServiceImpl;
+import com.jzsg.bussiness.util.EdException;
 import com.matrictime.network.api.request.BaseReq;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.constant.DataConstants;
@@ -40,7 +42,16 @@ public class ReqUtil<T> {
             dtoObj.put(DataConstants.KEY_DESTINATION, UcConstants.DESTINATION_OUT);
         }
 
-
         return dtoObj.toJavaObject((Class<T>) this.dto.getClass());
+    }
+
+    public T decryJsonToReq(BaseReq req) throws EdException {
+        String decryptMsg = JServiceImpl.decryptMsg(req.getEncryptParam());
+        String commonParam = req.getCommonParam();
+        JSONObject decJson = JSONObject.parseObject(decryptMsg);
+        JSONObject commonJson = JSONObject.parseObject(commonParam);
+        decJson.putAll(commonJson);
+
+        return decJson.toJavaObject((Class<T>) this.dto.getClass());
     }
 }

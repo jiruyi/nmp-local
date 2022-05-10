@@ -4,6 +4,7 @@ import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.RegisterReq;
+import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,8 @@ public class LoginController {
     @RequestMapping(value = "/login")
     public Result login(@RequestBody LoginReq req){
         try {
+            ReqUtil<LoginReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
             return loginService.login(req);
         }catch (Exception e){
             log.error("LoginController.login exception:{}",e.getMessage());
@@ -44,6 +47,8 @@ public class LoginController {
     @RequestMapping(value = "/register")
     public Result register(@RequestBody RegisterReq req){
         try {
+            ReqUtil<RegisterReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
             return loginService.register(req);
         }catch (Exception e){
             log.error("LoginController.register exception:{}",e.getMessage());
@@ -58,6 +63,8 @@ public class LoginController {
     @RequestMapping(value = "/logout")
     public Result logout(@RequestBody LogoutReq req){
         try {
+            ReqUtil<LogoutReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
             return loginService.logout(req);
         }catch (Exception e){
             log.error("LoginController.logout exception:{}",e.getMessage());
@@ -71,6 +78,8 @@ public class LoginController {
     @RequestMapping(value = "/bind")
     public Result bind(@RequestBody BindReq req){
         try {
+            ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
             return loginService.bind(req);
         }catch (Exception e){
             log.error("LoginController.bind exception:{}",e.getMessage());
