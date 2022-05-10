@@ -4,7 +4,10 @@ import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.RegisterReq;
+import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.ReqUtil;
+import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,9 @@ public class LoginController {
 
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private CommonService commonService;
 
     /**
      * 登录
@@ -78,9 +84,9 @@ public class LoginController {
     @RequestMapping(value = "/bind")
     public Result bind(@RequestBody BindReq req){
         try {
-            ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-            return loginService.bind(req);
+            Result result  = loginService.bind(req);
+            result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
+            return result;
         }catch (Exception e){
             log.error("LoginController.bind exception:{}",e.getMessage());
             return new Result(false,e.getMessage());

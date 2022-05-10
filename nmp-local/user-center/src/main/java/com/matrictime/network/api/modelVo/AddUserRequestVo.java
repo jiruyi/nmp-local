@@ -25,4 +25,5 @@ public class AddUserRequestVo implements Serializable {
     private String sex;
 
     private String phone;
+
 }
