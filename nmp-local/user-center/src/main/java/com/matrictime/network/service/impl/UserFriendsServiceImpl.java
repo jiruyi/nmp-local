@@ -248,22 +248,29 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     userGroupDomianService.createUserGroup(userGroupReq);
                 }
             }
-            userFriendReq.setUserId(addUserRequestReq.getAddUserId());
-            userFriendReq.setFriendUserId(addUserRequestReq.getUserId());
-            userFriendsDomainService.insertFriend(userFriendReq);
             //判断user_group是否有该数据
             UserGroupReq userGroupReq = new UserGroupReq();
             userGroupReq.setUserId(addUserRequestReq.getAddUserId());
             GroupReq groupReq = new GroupReq();
             groupReq.setOwner(addUserRequestReq.getAddUserId());
+            UserFriendReq friendReq = new UserFriendReq();
             //查找被添加用户的默认组
             GroupVo groupVo = userFriendsDomainService.selectGroupInfo(groupReq);
             userGroupReq.setGroupId(groupVo.getGroupId().toString());
             List<UserGroupVo> friendUserGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
             if(CollectionUtils.isEmpty(friendUserGroupVos)){
                 userGroupDomianService.createUserGroup(userGroupReq);
+                friendReq.setUserId(addUserRequestReq.getAddUserId());
+                friendReq.setFriendUserId(addUserRequestReq.getUserId());
+                userFriendsDomainService.insertFriend(friendReq);
+            }else {
+                friendReq.setUserId(addUserRequestReq.getAddUserId());
+                friendReq.setFriendUserId(addUserRequestReq.getUserId());
+                List<UserFriendVo> userFriendVo = userFriendsDomainService.selectUserFriend(friendReq);
+                if(CollectionUtils.isEmpty(userFriendVo)){
+                    userFriendsDomainService.insertFriend(friendReq);
+                }
             }
-
             result.setResultObj(1);
         }
         if(userVo.getAgreeFriend() == 1 || addUserRequestReq.getRefuse() != null) {

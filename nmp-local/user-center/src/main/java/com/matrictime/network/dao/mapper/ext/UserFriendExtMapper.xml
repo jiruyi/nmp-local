@@ -17,7 +17,15 @@
     </resultMap>
     <select id="selectUserFriend" parameterType="com.matrictime.network.api.request.UserFriendReq" resultMap="BaseResultMap">
         select friend_user_id,remark_name,nick_name ,u.sex,u.phone_number from user_friend f,user u
-        where f.friend_user_id = u.user_id and f.is_exist = 1 and u.is_exist = 1 and f.user_id = #{userId,jdbcType=VARCHAR}
+        <where>
+            f.friend_user_id = u.user_id and f.is_exist = 1 and u.is_exist = 1
+            <if test="userId != null">
+                and f.user_id = #{userId,jdbcType=VARCHAR}
+            </if>
+            <if test="friendUserId != null">
+                and f.friend_user_id = #{friendUserId,jdbcType=VARCHAR}
+            </if>
+        </where>
     </select>
     <insert id="insertFriend" parameterType="com.matrictime.network.api.request.UserFriendReq">
         insert into user_friend (user_id, friend_user_id, remark_name)
