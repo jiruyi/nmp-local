@@ -1,10 +1,7 @@
 package com.matrictime.network.domain;
 
 
-import com.matrictime.network.api.modelVo.AddUserRequestVo;
-import com.matrictime.network.api.modelVo.GroupVo;
-import com.matrictime.network.api.modelVo.UserFriendVo;
-import com.matrictime.network.api.modelVo.UserVo;
+import com.matrictime.network.api.modelVo.*;
 import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.GroupReq;
 import com.matrictime.network.api.request.UserFriendReq;
@@ -27,4 +24,6 @@ public interface UserFriendsDomainService {
     GroupVo selectGroupInfo(GroupReq groupReq);
 
     int update(AddUserRequestReq addUserRequestReq);
+
+    AddRequestVo selectGroupId(AddUserRequestReq addUserRequestReq);
 }

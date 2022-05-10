@@ -1,10 +1,7 @@
 package com.matrictime.network.domain.impl;
 
 
-import com.matrictime.network.api.modelVo.AddUserRequestVo;
-import com.matrictime.network.api.modelVo.GroupVo;
-import com.matrictime.network.api.modelVo.UserFriendVo;
-import com.matrictime.network.api.modelVo.UserVo;
+import com.matrictime.network.api.modelVo.*;
 import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.GroupReq;
 import com.matrictime.network.api.request.UserFriendReq;
@@ -63,6 +60,11 @@ public class UserFriendsDomainServiceImpl implements UserFriendsDomainService {
     @Override
     public int update(AddUserRequestReq addUserRequestReq) {
         return addUserRequestExtMapper.update(addUserRequestReq);
+    }
+
+    @Override
+    public AddRequestVo selectGroupId(AddUserRequestReq addUserRequestReq) {
+        return addUserRequestExtMapper.selectGroupId(addUserRequestReq);
     }
 }
 

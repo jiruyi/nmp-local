@@ -258,7 +258,11 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
             }
             Map<String, List<UserGroupVo>> map = userGroupDomianService.queryUserGroupByGroupIds(groupIds,groupReq.getOwner());
             for (GroupVo groupVo : groupVoList) {
-                groupVo.setUserGroupVoList(map.get(String.valueOf(groupVo.getGroupId())));
+                if(map.get(String.valueOf(groupVo.getGroupId()))==null){
+                    groupVo.setUserGroupVoList(new ArrayList<>());
+                }else {
+                    groupVo.setUserGroupVoList(map.get(String.valueOf(groupVo.getGroupId())));
+                }
             }
             GroupResp groupResp = new GroupResp();
             groupResp.setGroupVoList(groupVoList);

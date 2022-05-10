@@ -46,7 +46,7 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
         }
         outlineSorterReq.setId(SnowFlake.nextId());
         NmplOutlineSorterInfo nmplOutlineSorterInfo = new NmplOutlineSorterInfo();
-        BeanUtils.copyProperties(nmplOutlineSorterInfo,outlineSorterReq);
+        BeanUtils.copyProperties(outlineSorterReq,nmplOutlineSorterInfo);
         return  nmplOutlineSorterInfoMapper.insertSelective(nmplOutlineSorterInfo);
     }
 
