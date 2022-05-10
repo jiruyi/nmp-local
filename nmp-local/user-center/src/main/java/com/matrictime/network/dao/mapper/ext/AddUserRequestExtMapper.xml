@@ -11,6 +11,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="sex" jdbcType="CHAR" property="sex" />
         <result column="phone_number" jdbcType="VARCHAR" property="phone" />
+        <result column="group_id" jdbcType="VARCHAR" property="groupId" />
     </resultMap>
     <insert id="addFriends" parameterType="com.matrictime.network.api.request.AddUserRequestReq">
         insert into add_user_request (request_id, user_id, status,
