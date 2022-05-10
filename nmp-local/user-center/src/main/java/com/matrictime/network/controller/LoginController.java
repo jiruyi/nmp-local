@@ -80,12 +80,8 @@ public class LoginController {
     @RequestMapping(value = "/bind")
     public Result bind(@RequestBody BindReq req){
         try {
-            Result bind = loginService.bind(req);
-            if(UcConstants.DESTINATION_OUT_TO_IN.equals(req.getDestination())){
-                ReqUtil resUtil = new ReqUtil();
-                String resultObj = resUtil.encryJsonToReq(bind, loginService.getSidByUserId(req.getUserId()));
-                bind.setResultObj(resultObj);
-            }
+            Result bind  = loginService.bind(req);
+
             return bind;
         }catch (Exception e){
             log.error("LoginController.bind exception:{}",e.getMessage());

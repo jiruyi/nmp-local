@@ -35,7 +35,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 import static com.matrictime.network.config.DataConfig.LOGIN_STATUS_IN;
-import static com.matrictime.network.exception.ErrorMessageContants.GET_KEY_FAIL_MSG;
 
 @Service
 @Slf4j
@@ -383,20 +382,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             result = failResult(e);
         }
         return result;
-    }
-
-    @Override
-    public String getSidByUserId(String userId) throws Exception {
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
-        List<User> users = userMapper.selectByExample(userExample);
-        if (!CollectionUtils.isEmpty(users)){
-            String sid = users.get(0).getSid();
-            if (!ParamCheckUtil.checkVoStrBlank(sid)){
-                return sid;
-            }
-        }
-        throw new Exception(GET_KEY_FAIL_MSG);
     }
 
     private Boolean commonBind(BindReq req){
