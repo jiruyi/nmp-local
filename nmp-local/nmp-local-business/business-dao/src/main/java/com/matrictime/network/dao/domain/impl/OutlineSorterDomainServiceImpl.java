@@ -99,13 +99,14 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
         if(outlineSorterReq.getId()==null){
             throw new SystemException("id缺失");
         }
+        NmplOutlineSorterInfo info = nmplOutlineSorterInfoMapper.selectByPrimaryKey(outlineSorterReq.getId());
         if(outlineSorterReq.getDeviceId()!=null){
             NmplOutlineSorterInfoExample nmplOutlineSorterInfoExample = new NmplOutlineSorterInfoExample();
             nmplOutlineSorterInfoExample.createCriteria()
                     .andDeviceIdEqualTo(outlineSorterReq.getDeviceId()).andIsExistEqualTo(true);
             List<NmplOutlineSorterInfo> nmplOutlineSorterInfoList = nmplOutlineSorterInfoMapper.selectByExample(nmplOutlineSorterInfoExample);
             if(!CollectionUtils.isEmpty(nmplOutlineSorterInfoList)){
-                if(!nmplOutlineSorterInfoList.get(0).getDeviceId().equals(outlineSorterReq.getDeviceId())){
+                if(!nmplOutlineSorterInfoList.get(0).getDeviceId().equals(info.getDeviceId())){
                     throw new SystemException("设备id重复");
                 }
             }
