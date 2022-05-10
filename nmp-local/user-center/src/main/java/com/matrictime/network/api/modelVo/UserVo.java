@@ -126,4 +126,9 @@ public class UserVo implements Serializable {
     private String remark;
 
     private Byte agreeFriend;
+
+    /**
+     * 删除好友是否通知（0：不通知 1：通知）
+     */
+    private Boolean deleteFriend;
 }

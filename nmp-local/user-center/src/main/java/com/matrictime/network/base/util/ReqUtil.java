@@ -28,12 +28,10 @@ public class ReqUtil<T> {
         JSONObject dtoObj = new JSONObject();
         String commonParam = req.getCommonParam();
         String encryptParam = req.getEncryptParam();
-        if (!ParamCheckUtil.checkVoStrBlank(req.getCommonParam())) {
-            JSONObject jsonObject = JSONObject.parseObject(commonParam);
+        if (!ParamCheckUtil.checkVoStrBlank(commonParam)) {
             dtoObj = JSONObject.parseObject(commonParam);
-            if (jsonObject.containsKey(DataConstants.KEY_COMMONPARAM)){
-                dtoObj.put(DataConstants.KEY_COMMONPARAM,jsonObject.getString(DataConstants.KEY_COMMONPARAM));
-            }
+            dtoObj.put(DataConstants.KEY_COMMONPARAM,commonParam);
+
         }
 
         if (!ParamCheckUtil.checkVoStrBlank(encryptParam)) {
@@ -61,8 +59,7 @@ public class ReqUtil<T> {
 
     public String encryJsonToReq(T resp, String sid) throws Exception {
         String encryptMsg = JServiceImpl.encryptMsg(JSONObject.toJSONString(resp),sid);
-        String jsonString = JSONObject.toJSONString(encryptMsg);
 
-        return jsonString;
+        return encryptMsg;
     }
 }

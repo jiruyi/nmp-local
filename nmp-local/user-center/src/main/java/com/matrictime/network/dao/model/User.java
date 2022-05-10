@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 用户信息表
  * @author   hexu
- * @date   2022-05-09
+ * @date   2022-05-10
  */
 @Data
 public class User {
@@ -104,6 +104,11 @@ public class User {
      * 添加好友条件（0：直接添加 1：需要询问）
      */
     private Boolean agreeFriend;
+
+    /**
+     * 删除好友是否通知（0：不通知 1：通知）
+     */
+    private Boolean deleteFriend;
 
     /**
      * 帐号状态（1正常 0停用注销）
@@ -290,6 +295,14 @@ public class User {
 
     public void setAgreeFriend(Boolean agreeFriend) {
         this.agreeFriend = agreeFriend;
+    }
+
+    public Boolean getDeleteFriend() {
+        return deleteFriend;
+    }
+
+    public void setDeleteFriend(Boolean deleteFriend) {
+        this.deleteFriend = deleteFriend;
     }
 
     public Boolean getStatus() {

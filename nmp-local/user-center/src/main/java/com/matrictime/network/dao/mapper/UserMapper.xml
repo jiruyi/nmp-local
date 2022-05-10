@@ -21,6 +21,7 @@
     <result column="login_app_code" jdbcType="VARCHAR" property="loginAppCode" />
     <result column="logout_app_code" jdbcType="VARCHAR" property="logoutAppCode" />
     <result column="agree_friend" jdbcType="BIT" property="agreeFriend" />
+    <result column="delete_friend" jdbcType="BIT" property="deleteFriend" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
@@ -90,8 +91,8 @@
   <sql id="Base_Column_List">
     id, user_id, l_id, sid, device_id, device_ip, login_account, nick_name, sex, user_type, 
     email, phone_number, id_type, id_no, password, login_status, login_app_code, logout_app_code, 
-    agree_friend, status, is_exist, create_user, create_time, update_user, update_time, 
-    remark
+    agree_friend, delete_friend, status, is_exist, create_user, create_time, update_user, 
+    update_time, remark
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.UserExample" resultMap="BaseResultMap">
     select
@@ -131,18 +132,20 @@
       user_type, email, phone_number, 
       id_type, id_no, password, 
       login_status, login_app_code, logout_app_code, 
-      agree_friend, status, is_exist, create_user, 
-      create_time, update_user, update_time, 
-      remark)
+      agree_friend, delete_friend, status, 
+      is_exist, create_user, create_time, 
+      update_user, update_time, remark
+      )
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{lId,jdbcType=VARCHAR}, 
       #{sid,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, #{deviceIp,jdbcType=VARCHAR}, 
       #{loginAccount,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, 
       #{userType,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, 
       #{idType,jdbcType=CHAR}, #{idNo,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{loginStatus,jdbcType=CHAR}, #{loginAppCode,jdbcType=VARCHAR}, #{logoutAppCode,jdbcType=VARCHAR}, 
-      #{agreeFriend,jdbcType=BIT}, #{status,jdbcType=BIT}, #{isExist,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{remark,jdbcType=VARCHAR})
+      #{agreeFriend,jdbcType=BIT}, #{deleteFriend,jdbcType=BIT}, #{status,jdbcType=BIT}, 
+      #{isExist,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.User">
     insert into user
@@ -203,6 +206,9 @@
       </if>
       <if test="agreeFriend != null">
         agree_friend,
+      </if>
+      <if test="deleteFriend != null">
+        delete_friend,
       </if>
       <if test="status != null">
         status,
@@ -283,6 +289,9 @@
       </if>
       <if test="agreeFriend != null">
         #{agreeFriend,jdbcType=BIT},
+      </if>
+      <if test="deleteFriend != null">
+        #{deleteFriend,jdbcType=BIT},
       </if>
       <if test="status != null">
         #{status,jdbcType=BIT},
@@ -373,6 +382,9 @@
       <if test="record.agreeFriend != null">
         agree_friend = #{record.agreeFriend,jdbcType=BIT},
       </if>
+      <if test="record.deleteFriend != null">
+        delete_friend = #{record.deleteFriend,jdbcType=BIT},
+      </if>
       <if test="record.status != null">
         status = #{record.status,jdbcType=BIT},
       </if>
@@ -420,6 +432,7 @@
       login_app_code = #{record.loginAppCode,jdbcType=VARCHAR},
       logout_app_code = #{record.logoutAppCode,jdbcType=VARCHAR},
       agree_friend = #{record.agreeFriend,jdbcType=BIT},
+      delete_friend = #{record.deleteFriend,jdbcType=BIT},
       status = #{record.status,jdbcType=BIT},
       is_exist = #{record.isExist,jdbcType=BIT},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -488,6 +501,9 @@
       <if test="agreeFriend != null">
         agree_friend = #{agreeFriend,jdbcType=BIT},
       </if>
+      <if test="deleteFriend != null">
+        delete_friend = #{deleteFriend,jdbcType=BIT},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=BIT},
       </if>
@@ -532,6 +548,7 @@
       login_app_code = #{loginAppCode,jdbcType=VARCHAR},
       logout_app_code = #{logoutAppCode,jdbcType=VARCHAR},
       agree_friend = #{agreeFriend,jdbcType=BIT},
+      delete_friend = #{deleteFriend,jdbcType=BIT},
       status = #{status,jdbcType=BIT},
       is_exist = #{isExist,jdbcType=BIT},
       create_user = #{createUser,jdbcType=VARCHAR},
