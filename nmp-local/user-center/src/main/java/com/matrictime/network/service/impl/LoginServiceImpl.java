@@ -62,10 +62,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             ReqUtil<RegisterReq> jsonUtil = new ReqUtil<>(req);
             req = jsonUtil.jsonReqToDto(req);
 
-
-
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
+                case UcConstants.DESTINATION_OUT_TO_IN:
                     req.setUserId(SnowFlake.nextId_String());
                     // 非密区生成用户
                     commonRegister(req);
@@ -89,7 +88,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     }
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModelM = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    req.setDestination(UcConstants.DESTINATION_FOR_DES);
                     req.setUrl(url+UcConstants.URL_REGISTER);
                     String paramM = JSONObject.toJSONString(req);
                     reqModelM.setParam(paramM);
@@ -100,11 +99,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     if(returnValueM != null && returnValueM instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
                         Result<RegisterResp> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<RegisterResp>>(){});
+                        log.info("非密区接收返回值LoginServiceImpl.register returnRes:{}",returnRes.toString());
                         if(returnRes.isSuccess()){
                             // 密区/非密区同步用户
                             RegisterResp resultObj = returnRes.getResultObj();
                             RegisterReq req1 = resultObj.getRegisterReq();
-                            req1.setDestination(UcConstants.DESTINATION_OUT);
+                            req1.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
                             String post = HttpClientUtil.post(outUrl + UcConstants.URL_REGISTER, JSONObject.toJSONString(req1));
                             log.info("非密区接收密区/非密区同步返回值LoginServiceImpl.register post:{}",post);
                             return JSONObject.parseObject(post,Result.class);
@@ -113,21 +113,22 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                         throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
 
-                case UcConstants.DESTINATION_OUT_TO_IN:
-                    // 入参解密
-
-                    ReqUtil<RegisterReq> reqUtil = new ReqUtil<>(req);
-                    RegisterReq desReq = reqUtil.decryJsonToReq(req);
-                    resp = new RegisterResp();
-                    resp.setRegisterReq(desReq);
-                    // 返回值加密
-
-                    return buildResult(resp);
-
                 case UcConstants.DESTINATION_OUT_TO_IN_SYN:
                     RegisterReq desReq2 = new RegisterReq();
                     BeanUtils.copyProperties(req,desReq2);
                     resp = commonRegister(desReq2);
+                    return buildResult(resp);
+
+                case UcConstants.DESTINATION_FOR_DES:
+                    // 入参解密
+
+                    ReqUtil<RegisterReq> reqUtil = new ReqUtil<>(req);
+                    RegisterReq desReq = reqUtil.decryJsonToReq(req);
+                    log.info("密区解密结果desReq:{}",JSONObject.toJSONString(desReq));
+                    resp = new RegisterResp();
+                    resp.setRegisterReq(desReq);
+                    // 返回值加密
+
                     return buildResult(resp);
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
