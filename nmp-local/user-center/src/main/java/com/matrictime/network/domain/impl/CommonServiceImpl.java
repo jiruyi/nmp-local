@@ -34,6 +34,8 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
             String resultObj = resUtil.encryJsonToReq(res, getSidByUserId(userId));
             res.setSuccess(true);
             res.setResultObj(resultObj);
+            res.setErrorMsg(null);
+            res.setErrorCode(null);
         }
         return res;
     }
