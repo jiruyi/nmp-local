@@ -531,6 +531,15 @@
         order by nmpl_device_info.update_time desc
   </select>
   <select id="selectDeviceId" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.StationVo">
-    select device_id,station_network_id from nmpl_device_info where lan_ip = #{lanIp,jdbcType=CHAR}
+    select device_id,station_network_id from nmpl_device_info
+    <where>
+      is_exist = 1 and station_status in(2,3,4)
+      <if test="lanIp != null">
+        and lan_ip = #{lanIp,jdbcType=CHAR}
+      </if>
+      <if test="deviceType != null and deviceType != ''">
+        and device_type = #{deviceType,jdbcType=CHAR}
+      </if>
+    </where>
   </select>
 </mapper>

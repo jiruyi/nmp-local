@@ -111,6 +111,15 @@ public class BaseStationController {
                 baseStationInfoRequest.setLanIp(deviceInfoRequest.getLanIp());
                 result = baseStationInfoService.selectDeviceId(baseStationInfoRequest);
             }else {
+                if("04".equals(deviceInfoRequest)){
+                    deviceInfoRequest.setDeviceType("01");
+                }
+                if("05".equals(deviceInfoRequest)){
+                    deviceInfoRequest.setDeviceType("02");
+                }
+                if("06".equals(deviceInfoRequest)){
+                    deviceInfoRequest.setDeviceType("03");
+                }
                 result = deviceService.selectDeviceId(deviceInfoRequest);
             }
             if(result.getResultObj() == null){

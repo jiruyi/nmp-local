@@ -236,16 +236,18 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             if(CollectionUtils.isEmpty(userFriendVos)){
                 userFriendsDomainService.insertFriend(userFriendReq);
             }
-            String groupIdArray = addUserRequestReq.getGroupId();
-            String[] groupId = groupIdArray.split(",");
-            for (int groupIdIndex = 0;groupIdIndex < groupId.length;groupIdIndex++){
-                UserGroupReq userGroupReq = new UserGroupReq();
-                userGroupReq.setUserId(addUserRequestReq.getUserId());
-                userGroupReq.setGroupId(addUserRequestReq.getGroupId());
-                //判断user_group是否有该数据
-                List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
-                if(CollectionUtils.isEmpty(userGroupVos)){
-                    userGroupDomianService.createUserGroup(userGroupReq);
+            if(addUserRequestReq.getGroupId() != null){
+                String groupIdArray = addUserRequestReq.getGroupId();
+                String[] groupId = groupIdArray.split(",");
+                for (int groupIdIndex = 0;groupIdIndex < groupId.length;groupIdIndex++){
+                    UserGroupReq userGroupReq = new UserGroupReq();
+                    userGroupReq.setUserId(addUserRequestReq.getUserId());
+                    userGroupReq.setGroupId(addUserRequestReq.getGroupId());
+                    //判断user_group是否有该数据
+                    List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
+                    if(CollectionUtils.isEmpty(userGroupVos)){
+                        userGroupDomianService.createUserGroup(userGroupReq);
+                    }
                 }
             }
             //判断user_group是否有该数据
@@ -256,19 +258,21 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             UserFriendReq friendReq = new UserFriendReq();
             //查找被添加用户的默认组
             GroupVo groupVo = userFriendsDomainService.selectGroupInfo(groupReq);
-            userGroupReq.setGroupId(groupVo.getGroupId().toString());
-            List<UserGroupVo> friendUserGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
-            if(CollectionUtils.isEmpty(friendUserGroupVos)){
-                userGroupDomianService.createUserGroup(userGroupReq);
-                friendReq.setUserId(addUserRequestReq.getAddUserId());
-                friendReq.setFriendUserId(addUserRequestReq.getUserId());
-                userFriendsDomainService.insertFriend(friendReq);
-            }else {
-                friendReq.setUserId(addUserRequestReq.getAddUserId());
-                friendReq.setFriendUserId(addUserRequestReq.getUserId());
-                List<UserFriendVo> userFriendVo = userFriendsDomainService.selectUserFriend(friendReq);
-                if(CollectionUtils.isEmpty(userFriendVo)){
+            if(groupVo != null){
+                userGroupReq.setGroupId(groupVo.getGroupId().toString());
+                List<UserGroupVo> friendUserGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
+                if(CollectionUtils.isEmpty(friendUserGroupVos)){
+                    userGroupDomianService.createUserGroup(userGroupReq);
+                    friendReq.setUserId(addUserRequestReq.getAddUserId());
+                    friendReq.setFriendUserId(addUserRequestReq.getUserId());
                     userFriendsDomainService.insertFriend(friendReq);
+                }else {
+                    friendReq.setUserId(addUserRequestReq.getAddUserId());
+                    friendReq.setFriendUserId(addUserRequestReq.getUserId());
+                    List<UserFriendVo> userFriendVo = userFriendsDomainService.selectUserFriend(friendReq);
+                    if(CollectionUtils.isEmpty(userFriendVo)){
+                        userFriendsDomainService.insertFriend(friendReq);
+                    }
                 }
             }
             result.setResultObj(1);
@@ -283,7 +287,6 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             }
             result.setResultObj(2);
         }
-
         return result;
     }
 
