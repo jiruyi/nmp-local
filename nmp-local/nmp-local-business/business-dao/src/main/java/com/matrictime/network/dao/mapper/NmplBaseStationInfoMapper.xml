@@ -547,4 +547,12 @@
     union
     select device_id as station_id from nmpl_device_info where station_network_id like "%" #{stationNetworkId,jdbcType=CHAR} "%"
   </select>
+  <select id="selectByOperatorId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
+    select id,station_id, station_name, station_type,station_status,
+           nmpl_base_station_info.remark, public_network_ip,public_network_port,
+           lan_ip, SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id,lan_port,
+           relation_operator_id from nmpl_base_station_info where
+    relation_operator_id = (select relation_operator_id from nmpl_base_station_info where station_id = #{stationId,jdbcType=VARCHAR})
+    and nmpl_base_station_info.is_exist = 1 and station_status in(1,2,3)
+  </select>
 </mapper>
