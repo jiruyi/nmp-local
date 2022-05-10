@@ -171,6 +171,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         addUserRequestReq.setStatus(recallRequest.getStatus());
         addUserRequestReq.setRequestId(recallRequest.getRequestId());
         addUserRequestReq.setGroupId(recallRequest.getGroupId());
+        addUserRequestReq.setAddGroupId(recallRequest.getAddGroupId());
         UserFriendReq userFriendReq = setUserFriendReq(addUserRequestReq);
         UserRequest userRequest = new UserRequest();
         userRequest.setUserId(addUserRequestReq.getAddUserId());
@@ -236,13 +237,15 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             if(CollectionUtils.isEmpty(userFriendVos)){
                 userFriendsDomainService.insertFriend(userFriendReq);
             }
-            if(addUserRequestReq.getGroupId() != null){
-                String groupIdArray = addUserRequestReq.getGroupId();
+
+            AddRequestVo addRequestVo = userFriendsDomainService.selectGroupId(addUserRequestReq);
+            if(addRequestVo.getGroupId() != null){
+                String groupIdArray = addRequestVo.getGroupId();
                 String[] groupId = groupIdArray.split(",");
                 for (int groupIdIndex = 0;groupIdIndex < groupId.length;groupIdIndex++){
                     UserGroupReq userGroupReq = new UserGroupReq();
                     userGroupReq.setUserId(addUserRequestReq.getUserId());
-                    userGroupReq.setGroupId(addUserRequestReq.getGroupId());
+                    userGroupReq.setGroupId(groupId[groupIdIndex]);
                     //判断user_group是否有该数据
                     List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
                     if(CollectionUtils.isEmpty(userGroupVos)){
@@ -256,9 +259,24 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             GroupReq groupReq = new GroupReq();
             groupReq.setOwner(addUserRequestReq.getAddUserId());
             UserFriendReq friendReq = new UserFriendReq();
+            //被添加好友把好友添加到组
+            if(addUserRequestReq.getAddGroupId() != null){
+                String addGroupIdArray = addUserRequestReq.getAddGroupId();
+                String[] groupId = addGroupIdArray.split(",");
+                for (int addGroupIdIndex = 0;addGroupIdIndex < groupId.length;addGroupIdIndex++){
+                    UserGroupReq req = new UserGroupReq();
+                    req.setUserId(addUserRequestReq.getAddUserId());
+                    req.setGroupId(groupId[addGroupIdIndex]);
+                    //判断user_group是否有该数据
+                    List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(req);
+                    if(CollectionUtils.isEmpty(userGroupVos)){
+                        userGroupDomianService.createUserGroup(req);
+                    }
+                }
+            }
             //查找被添加用户的默认组
             GroupVo groupVo = userFriendsDomainService.selectGroupInfo(groupReq);
-            if(groupVo != null){
+            if(groupVo != null && addUserRequestReq.getAddGroupId() == null){
                 userGroupReq.setGroupId(groupVo.getGroupId().toString());
                 List<UserGroupVo> friendUserGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
                 if(CollectionUtils.isEmpty(friendUserGroupVos)){

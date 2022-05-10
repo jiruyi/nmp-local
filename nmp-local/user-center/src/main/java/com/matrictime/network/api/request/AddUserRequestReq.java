@@ -28,6 +28,8 @@ public class AddUserRequestReq extends BaseReq implements Serializable {
 
     private String groupId;
 
+    private String addGroupId;
+
     private Date createTime;
 
     private Date updateTime;
