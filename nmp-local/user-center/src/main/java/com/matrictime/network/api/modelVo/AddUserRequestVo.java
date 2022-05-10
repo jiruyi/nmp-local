@@ -26,5 +26,4 @@ public class AddUserRequestVo implements Serializable {
 
     private String phone;
 
-    private String groupId;
 }
