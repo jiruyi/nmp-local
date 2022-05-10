@@ -29,14 +29,12 @@
 
     <select id="selectByCondition" resultMap="BaseResultMap">
         select a.*,b.login_status,b.nick_name,b.sex,b.phone_number from user_group a,`user` b where a.user_id=b.user_id
-        <trim prefix="(" suffix=")" suffixOverrides="and">
-            <if test="groupId != null">
-                and  a.group_id = #{groupId,jdbcType=VARCHAR}
-            </if>
-            <if test="userId != null">
-                and a.user_id = #{userId,jdbcType=VARCHAR}
-            </if>
-        </trim>
+        <if test="groupId != null">
+            and  a.group_id = #{groupId,jdbcType=VARCHAR}
+        </if>
+        <if test="userId != null">
+            and a.user_id = #{userId,jdbcType=VARCHAR}
+        </if>
         and a.is_exist ='1'
     </select>
 
