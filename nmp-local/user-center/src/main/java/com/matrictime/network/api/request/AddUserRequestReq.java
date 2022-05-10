@@ -31,4 +31,6 @@ public class AddUserRequestReq extends BaseReq implements Serializable {
     private Date createTime;
 
     private Date updateTime;
+
+    private String refuse;
 }

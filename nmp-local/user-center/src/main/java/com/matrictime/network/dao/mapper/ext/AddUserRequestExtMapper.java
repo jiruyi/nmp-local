@@ -9,4 +9,6 @@ public interface AddUserRequestExtMapper {
     int addFriends(AddUserRequestReq addUserRequestReq);
 
     List<AddUserRequestVo> getAddUserInfo(AddUserRequestReq addUserRequestReq);
+
+    int update(AddUserRequestReq addUserRequestReq);
 }

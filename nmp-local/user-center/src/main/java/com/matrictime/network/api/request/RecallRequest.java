@@ -19,6 +19,10 @@ public class RecallRequest extends BaseReq implements Serializable {
 
     private String remarkName;
 
+    private String status;
+
+    private String groupId;
+
     public String getRequestId() {
         return requestId;
     }
@@ -81,5 +85,21 @@ public class RecallRequest extends BaseReq implements Serializable {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 }

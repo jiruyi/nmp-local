@@ -19,6 +19,12 @@
                 #{status,jdbcType=CHAR},#{addUserId,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{groupId,jdbcType=VARCHAR})
     </insert>
 
+    <update id="update" parameterType="com.matrictime.network.dao.model.AddUserRequest">
+        update add_user_request
+        set status = #{status,jdbcType=CHAR}
+        where request_id = #{requestId,jdbcType=VARCHAR}
+    </update>
+
 
 
     <select id="getAddUserInfo" parameterType="com.matrictime.network.api.request.AddUserRequestReq" resultMap="BaseResultMap">

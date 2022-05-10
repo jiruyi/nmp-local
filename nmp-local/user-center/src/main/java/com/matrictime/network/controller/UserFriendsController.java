@@ -108,6 +108,7 @@ public class UserFriendsController {
             }
             if(request.getRefuse() != null) {
                 result.setErrorMsg("已经拒绝");
+                result = userFriendsService.agreeAddFriedns(request);
                 WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
                 if(webSocketServer != null){
                     webSocketServer.sendMessage(JSONUtils.toJSONString(messageRefuseText(request)));
