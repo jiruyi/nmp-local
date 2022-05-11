@@ -6,6 +6,7 @@ public class UcConstants {
     public static final String DESTINATION_IN = "1";
     public static final String DESTINATION_OUT_TO_IN = "2";
     public static final String DESTINATION_OUT_TO_IN_SYN = "3";
+    public static final String DESTINATION_FOR_DES = "4";
 
     public static final String URL_LOGIN = "/user/login";
 

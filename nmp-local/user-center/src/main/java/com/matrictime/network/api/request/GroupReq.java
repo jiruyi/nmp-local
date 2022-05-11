@@ -35,4 +35,9 @@ public class GroupReq  extends BaseReq implements Serializable  {
 
     private List <String> userIdList;
 
+    /**
+     * 0非默认 1默认
+     */
+    private Boolean defaultGroup;
+
 }

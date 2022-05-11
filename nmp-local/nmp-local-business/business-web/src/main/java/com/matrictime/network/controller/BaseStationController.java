@@ -7,6 +7,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BaseStationInfoService;
@@ -96,6 +97,22 @@ public class BaseStationController {
         return result;
     }
 
+    //和基站进行路由交互
+    @SystemLog(opermodul = "基站管理模块",operDesc = "和基站进行路由交互",operType = "和基站进行路由交互")
+    @RequestMapping(value = "/selectByOperatorId",method = RequestMethod.POST)
+    @ApiOperation(value = "基站接口",notes = "根据条件基站信息查询")
+    public Result<BaseStationInfoResponse> selectByOperatorId(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
+        Result<BaseStationInfoResponse> result = new Result<>();
+        try {
+            result = baseStationInfoService.selectByOperatorId(baseStationInfoRequest);
+        }catch (Exception e){
+            log.info("和基站进行路由交互:selectByOperatorId{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("和基站进行路由交互");
+        }
+        return result;
+    }
+
     @SystemLog(opermodul = "基站管理模块",operDesc = "根据ip获取设备Id",operType = "根据ip获取设备信息")
     @RequestMapping(value = "/selectDevice",method = RequestMethod.POST)
     public Result<StationVo> selectDevice(@RequestBody DeviceInfoRequest deviceInfoRequest){
@@ -111,13 +128,13 @@ public class BaseStationController {
                 baseStationInfoRequest.setLanIp(deviceInfoRequest.getLanIp());
                 result = baseStationInfoService.selectDeviceId(baseStationInfoRequest);
             }else {
-                if("04".equals(deviceInfoRequest)){
+                if("04".equals(deviceInfoRequest.getDeviceType())){
                     deviceInfoRequest.setDeviceType("01");
                 }
-                if("05".equals(deviceInfoRequest)){
+                if("05".equals(deviceInfoRequest.getDeviceType())){
                     deviceInfoRequest.setDeviceType("02");
                 }
-                if("06".equals(deviceInfoRequest)){
+                if("06".equals(deviceInfoRequest.getDeviceType())){
                     deviceInfoRequest.setDeviceType("03");
                 }
                 result = deviceService.selectDeviceId(deviceInfoRequest);

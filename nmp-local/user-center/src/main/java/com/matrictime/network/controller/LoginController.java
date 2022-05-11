@@ -4,6 +4,7 @@ import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.RegisterReq;
+import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.constant.DataConstants;
@@ -53,9 +54,9 @@ public class LoginController {
     @RequestMapping(value = "/register")
     public Result register(@RequestBody RegisterReq req){
         try {
-            ReqUtil<RegisterReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-            return loginService.register(req);
+            Result<RegisterResp> result = loginService.register(req);
+            result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
+            return result;
         }catch (Exception e){
             log.error("LoginController.register exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -84,7 +85,7 @@ public class LoginController {
     @RequestMapping(value = "/bind")
     public Result bind(@RequestBody BindReq req){
         try {
-            Result result  = loginService.bind(req);
+            Result result = loginService.bind(req);
             result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
             return result;
         }catch (Exception e){

@@ -51,9 +51,10 @@ public class ReqUtil<T> {
         String decryptMsg = JServiceImpl.decryptMsg(req.getEncryptParam());
         String commonParam = req.getCommonParam();
         JSONObject decJson = JSONObject.parseObject(decryptMsg);
-        JSONObject commonJson = JSONObject.parseObject(commonParam);
-        decJson.putAll(commonJson);
-
+        if (!ParamCheckUtil.checkVoStrBlank(commonParam)) {
+            JSONObject commonJson = JSONObject.parseObject(commonParam);
+            decJson.putAll(commonJson);
+        }
         return decJson.toJavaObject((Class<T>) this.dto.getClass());
     }
 

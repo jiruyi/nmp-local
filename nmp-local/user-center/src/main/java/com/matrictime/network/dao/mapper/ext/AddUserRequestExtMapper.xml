@@ -14,6 +14,7 @@
     </resultMap>
     <resultMap id="ResultMap" type="com.matrictime.network.api.modelVo.AddRequestVo">
         <result column="group_id" jdbcType="VARCHAR" property="groupId" />
+        <result column="status" jdbcType="CHAR" property="status" />
     </resultMap>
     <insert id="addFriends" parameterType="com.matrictime.network.api.request.AddUserRequestReq">
         insert into add_user_request (request_id, user_id, status,
@@ -29,7 +30,7 @@
     </update>
 
     <select id="selectGroupId" parameterType="com.matrictime.network.api.request.AddUserRequestReq" resultMap="ResultMap">
-        select group_id from add_user_request where request_id = #{requestId,jdbcType=VARCHAR}
+        select group_id,status from add_user_request where request_id = #{requestId,jdbcType=VARCHAR}
     </select>
 
 

@@ -46,4 +46,6 @@ public interface NmplBaseStationInfoMapper {
 
     BaseStationInfoVo selectByNetworkId(BaseStationInfoRequest baseStationInfoRequest);
 
+    List<BaseStationInfoVo> selectByOperatorId(BaseStationInfoRequest baseStationInfoRequest);
+
 }
