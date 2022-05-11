@@ -3,6 +3,7 @@ package com.matrictime.network.dao.domain.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplDeviceExtraInfoMapper;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
@@ -10,6 +11,7 @@ import com.matrictime.network.dao.model.NmplDeviceExtraInfoExample;
 import com.matrictime.network.modelVo.DeviceExtraVo;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
 import com.matrictime.network.response.PageInfo;
+import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +28,9 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
     @Resource
     NmplDeviceExtraInfoMapper nmplDeviceExtraInfoMapper;
 
+    @Resource
+    private CompanyInfoDomainService companyInfoDomainService;
+
     @Override
     public int insert(NmplDeviceExtraInfo nmplDeviceExtraInfo) {
         //入参判断
@@ -41,6 +46,10 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
         }else {
             throw new SystemException("设备id为空");
         }
+//        nmplDeviceExtraInfo.setDeviceId(SnowFlake.nextId_String());
+//        String preBID = companyInfoDomainService.getPreBID(nmplDeviceExtraInfo.getRelationOperatorId());
+//        String networkId = preBID + "-" + nmplDeviceExtraInfo.getStationNetworkId();
+//        nmplDeviceExtraInfo.setStationNetworkId(networkId);
         return nmplDeviceExtraInfoMapper.insertSelective(nmplDeviceExtraInfo);
     }
 
@@ -56,6 +65,9 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
         }
         if(deviceExtraInfoRequest.getDeviceType() != null){
             criteria.andDeviceTypeEqualTo(deviceExtraInfoRequest.getDeviceType());
+        }
+        if(deviceExtraInfoRequest.getStationNetworkId() != null){
+            criteria.andStationNetworkIdEqualTo(deviceExtraInfoRequest.getStationNetworkId());
         }
         criteria.andIsExistEqualTo(true);
         Page page = PageHelper.startPage(deviceExtraInfoRequest.getPageNo(),deviceExtraInfoRequest.getPageSize());

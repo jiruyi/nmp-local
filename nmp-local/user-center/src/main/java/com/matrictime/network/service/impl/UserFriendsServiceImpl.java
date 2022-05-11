@@ -251,7 +251,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     String[] groupId = groupIdArray.split(",");
                     for (int groupIdIndex = 0;groupIdIndex < groupId.length;groupIdIndex++){
                         UserGroupReq userGroupReq = new UserGroupReq();
-                        userGroupReq.setUserId(addUserRequestReq.getUserId());
+                        userGroupReq.setUserId(addUserRequestReq.getAddUserId());
                         userGroupReq.setGroupId(groupId[groupIdIndex]);
                         //判断user_group是否有该数据
                         List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
@@ -273,7 +273,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 String[] groupId = addGroupIdArray.split(",");
                 for (int addGroupIdIndex = 0;addGroupIdIndex < groupId.length;addGroupIdIndex++){
                     UserGroupReq req = new UserGroupReq();
-                    req.setUserId(addUserRequestReq.getAddUserId());
+                    req.setUserId(addUserRequestReq.getUserId());
                     req.setGroupId(groupId[addGroupIdIndex]);
                     //判断user_group是否有该数据
                     List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(req);
@@ -282,23 +282,26 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     }
                 }
             }
+            //判断被添加用户是否有申请添加人的好友
+            friendReq.setUserId(addUserRequestReq.getAddUserId());
+            friendReq.setFriendUserId(addUserRequestReq.getUserId());
+            List<UserFriendVo> userFriendVo = userFriendsDomainService.selectUserFriend(friendReq);
             //查找被添加用户的默认组
             GroupVo groupVo = userFriendsDomainService.selectGroupInfo(groupReq);
             if(groupVo != null && addUserRequestReq.getAddGroupId() == null){
-                userGroupReq.setGroupId(groupVo.getGroupId().toString());
-                List<UserGroupVo> friendUserGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
+                UserGroupReq req1 = new UserGroupReq();
+                req1.setGroupId(groupVo.getGroupId().toString());
+                req1.setUserId(addUserRequestReq.getUserId());
+                List<UserGroupVo> friendUserGroupVos = userGroupDomianService.queryUserGroup(req1);
                 if(CollectionUtils.isEmpty(friendUserGroupVos)){
-                    userGroupDomianService.createUserGroup(userGroupReq);
-                    friendReq.setUserId(addUserRequestReq.getAddUserId());
-                    friendReq.setFriendUserId(addUserRequestReq.getUserId());
-                    userFriendsDomainService.insertFriend(friendReq);
-                }else {
-                    friendReq.setUserId(addUserRequestReq.getAddUserId());
-                    friendReq.setFriendUserId(addUserRequestReq.getUserId());
-                    List<UserFriendVo> userFriendVo = userFriendsDomainService.selectUserFriend(friendReq);
+                    userGroupDomianService.createUserGroup(req1);
                     if(CollectionUtils.isEmpty(userFriendVo)){
                         userFriendsDomainService.insertFriend(friendReq);
                     }
+                }
+            }else {
+                if(CollectionUtils.isEmpty(userFriendVo)){
+                    userFriendsDomainService.insertFriend(friendReq);
                 }
             }
             result.setResultObj(1);
