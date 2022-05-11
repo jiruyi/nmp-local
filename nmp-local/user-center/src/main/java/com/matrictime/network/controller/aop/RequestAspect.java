@@ -5,6 +5,7 @@ import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.base.util.ReqUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class RequestAspect {
      * @param joinPoint 连接点，就是被拦截点
      */
     @Before(value = "@annotation(com.matrictime.network.controller.aop.MonitorRequest)")
-    public void doBefore(JoinPoint joinPoint) {
+    public void doBefore(JoinPoint joinPoint) throws Throwable {
         //获取到请求的属性
         ServletRequestAttributes attributes =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -44,14 +45,11 @@ public class RequestAspect {
         log.info("参数=" + joinPoint.getArgs().toString());
 
         Object args = joinPoint.getArgs()[0];
-//        if (args instanceof BaseReq) {
-//            BaseReq baseReq = (BaseReq) args;
-//            ReqUtil<BaseReq> jsonUtil = new ReqUtil<>(baseReq);
-//            req = jsonUtil.jsonReqToDto(baseReq);
-//        }
-
-
-
+        if (args instanceof BaseReq) {
+            ReqUtil reqUtil = new ReqUtil(args);
+            Object o = reqUtil.jsonReqToDto((BaseReq) args);
+            joinPoint.getArgs()[0] = o;
+        }
 
     }
 

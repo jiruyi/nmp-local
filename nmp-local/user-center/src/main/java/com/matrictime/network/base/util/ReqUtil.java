@@ -47,6 +47,7 @@ public class ReqUtil<T> {
         return dtoObj.toJavaObject((Class<T>) this.dto.getClass());
     }
 
+
     public T decryJsonToReq(BaseReq req) throws EdException {
         String decryptMsg = JServiceImpl.decryptMsg(req.getEncryptParam());
         String commonParam = req.getCommonParam();

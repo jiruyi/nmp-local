@@ -1,14 +1,11 @@
 package com.matrictime.network.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.RegisterReq;
+import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
-import com.matrictime.network.base.UcConstants;
-import com.matrictime.network.base.util.ReqUtil;
-import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.controller.aop.MonitorRequest;
 import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.model.Result;
@@ -40,9 +37,9 @@ public class LoginController {
     @RequestMapping(value = "/login")
     public Result login(@RequestBody LoginReq req){
         try {
-            ReqUtil<LoginReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-            return loginService.login(req);
+            Result<LoginResp> result = loginService.login(req);
+            result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
+            return result;
         }catch (Exception e){
             log.error("LoginController.login exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -72,9 +69,9 @@ public class LoginController {
     @RequestMapping(value = "/logout")
     public Result logout(@RequestBody LogoutReq req){
         try {
-            ReqUtil<LogoutReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-            return loginService.logout(req);
+            Result result = loginService.logout(req);
+            result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
+            return result;
         }catch (Exception e){
             log.error("LoginController.logout exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -89,7 +86,6 @@ public class LoginController {
     public Result bind(@RequestBody BindReq req){
         try {
             Result result = loginService.bind(req);
-            log.info("LoginController.bind req:{},reqhashCode:{},des:{}", JSONObject.toJSONString(req),System.identityHashCode(req));
             result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
             return result;
         }catch (Exception e){

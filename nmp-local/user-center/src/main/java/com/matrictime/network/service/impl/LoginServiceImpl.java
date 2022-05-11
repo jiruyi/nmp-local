@@ -197,7 +197,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         Result result;
         try {
             LoginResp resp = new LoginResp();
-            checkLoginParam(req);
+
+            ReqUtil<LoginReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
@@ -247,6 +249,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     private LoginResp commonLogin(LoginReq req){
+        checkLoginParam(req);
         LoginResp resp = new LoginResp();
         UserExample userExample = new UserExample();
         switch (req.getLoginType()){
