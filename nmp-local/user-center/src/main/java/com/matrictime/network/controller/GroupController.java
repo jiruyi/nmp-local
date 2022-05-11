@@ -3,6 +3,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.api.request.GroupReq;
 import com.matrictime.network.api.request.UserGroupReq;
 import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.GroupService;
@@ -27,6 +28,8 @@ public class GroupController {
     GroupService groupService;
     @Autowired
     UserGroupService userGroupService;
+    @Autowired
+    private CommonService commonService;
 
 
     @ApiOperation(value = "创建组",notes = "创建")

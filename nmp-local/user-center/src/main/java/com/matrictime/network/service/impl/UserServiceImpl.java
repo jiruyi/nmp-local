@@ -14,6 +14,7 @@ import com.matrictime.network.api.response.UserResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.CheckUtil;
+import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
@@ -265,8 +266,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     public Result verify(VerifyReq req) {
         Result result;
         try {
-            CheckUtil.checkParam(req);
-            checkVerifyParam(req);
+            ReqUtil<VerifyReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
@@ -297,7 +298,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     VerifyReq desReq = new VerifyReq();
                     BeanUtils.copyProperties(req,desReq);
                     commonVerify(desReq);
-                    // 返回值加密
+
 
                     return buildResult(null);
                 default:
@@ -317,6 +318,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     }
 
     private void commonVerify(VerifyReq req){
+        checkVerifyParam(req);
         UserExample example = new UserExample();
         example.createCriteria().andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
         List<User> users = userMapper.selectByExample(example);
