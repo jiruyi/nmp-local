@@ -197,7 +197,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         Result result;
         try {
             LoginResp resp = new LoginResp();
-            checkLoginParam(req);
+
+            ReqUtil<LoginReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
@@ -225,8 +227,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
 
-                    LoginReq desReq = new LoginReq();
-                    BeanUtils.copyProperties(req,desReq);
+                    ReqUtil<LoginReq> reqUtil = new ReqUtil<>(req);
+                    LoginReq desReq = reqUtil.decryJsonToReq(req);
                     resp = commonLogin(desReq);
                     // 返回值加密
 
@@ -247,6 +249,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     private LoginResp commonLogin(LoginReq req){
+        checkLoginParam(req);
         LoginResp resp = new LoginResp();
         UserExample userExample = new UserExample();
         switch (req.getLoginType()){
@@ -286,7 +289,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         Result result;
         try {
             CheckUtil.checkParam(req);
-            checkLogoutParam(req);
+
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
@@ -313,8 +316,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
 
-                    LogoutReq desReq = new LogoutReq();
-                    BeanUtils.copyProperties(req,desReq);
+                    ReqUtil<LogoutReq> reqUtil = new ReqUtil<>(req);
+                    LogoutReq desReq = reqUtil.decryJsonToReq(req);
                     commonLogout(desReq);
                     // 返回值加密
 
@@ -337,6 +340,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     private void commonLogout(LogoutReq req){
+        checkLogoutParam(req);
         User user = new User();
         UserExample userExample = new UserExample();
         userExample.createCriteria().andUserIdEqualTo(req.getUserId());
@@ -347,7 +351,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Override
     public Result bind(BindReq req) {
         Result result;
-        Boolean bindFlag;
         try {
 
             ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
@@ -355,7 +358,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
-                    bindFlag = commonBind(req);
+                    commonBind(req);
+                    req.setDestination(UcConstants.DESTINATION_FOR_DES);
+                    log.info("非密区reqHashCode:{}",System.identityHashCode(req));
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
@@ -364,9 +369,10 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     String param = JSONObject.toJSONString(req);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    log.info("非密区接收返回值LoginServiceImpl.bind resModel:{}",JSONObject.toJSONString(resModel));
+                    log.info("非密区接收返回值LoginServiceImpl.bind resModel:{},reqHashCode:{}",JSONObject.toJSONString(resModel),System.identityHashCode(req));
 
                     Object returnValue = resModel.getReturnValue();
+
                     if(returnValue != null && returnValue instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
                         Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),Result.class);
@@ -380,16 +386,16 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     // 入参解密
                     ReqUtil<BindReq> reqUtil = new ReqUtil<>(req);
                     BindReq desReq = reqUtil.decryJsonToReq(req);
-                    bindFlag = commonBind(desReq);
+                    commonBind(desReq);
                     // 返回值加密
 
-                    return buildResult(bindFlag);
+                    return buildResult(null);
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
             }
 
-            result = buildResult(bindFlag);
+            result = buildResult(null);
         }catch (SystemException e){
             log.error("LoginServiceImpl.bind SystemException:{}",e.getMessage());
             result = failResult(e);
@@ -400,7 +406,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         return result;
     }
 
-    private Boolean commonBind(BindReq req){
+    private void commonBind(BindReq req){
         checkBindParam(req);
         switch (req.getOprType()){
             case DataConfig.OPR_TYPE_BIND:
@@ -420,7 +426,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             default:
                 throw new SystemException("OprType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
         }
-        return true;
     }
 
     private Long checkUserForBind(BindReq req){

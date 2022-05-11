@@ -14,6 +14,7 @@ import com.matrictime.network.api.response.UserResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.CheckUtil;
+import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
@@ -179,6 +180,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Override
     public Result changePasswd(ChangePasswdReq changePasswdReq) {
+        ReqUtil<ChangePasswdReq> jsonUtil = new ReqUtil<>(changePasswdReq);
+        changePasswdReq = jsonUtil.jsonReqToDto(changePasswdReq);
         Result result;
         try {
             switch (changePasswdReq.getDestination()){
@@ -205,8 +208,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    result = commonChangePasswd(changePasswdReq);
+                    ReqUtil<ChangePasswdReq> reqUtil = new ReqUtil<>(changePasswdReq);
+                    ChangePasswdReq changePasswdReq1 = reqUtil.decryJsonToReq(changePasswdReq);
+                    result = commonChangePasswd(changePasswdReq1);
                     // 返回值加密
                     break;
                 default:
@@ -221,6 +225,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Override
     public Result queryUser(UserRequest userRequest) {
+        ReqUtil<UserRequest> jsonUtil = new ReqUtil<>(userRequest);
+        userRequest = jsonUtil.jsonReqToDto(userRequest);
         Result result;
         try {
             switch (userRequest.getDestination()){
@@ -247,8 +253,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    result = commonQueryUser(userRequest);
+                    ReqUtil<UserRequest> reqUtil = new ReqUtil<>(userRequest);
+                    UserRequest userRequest1 = reqUtil.decryJsonToReq(userRequest);
+                    result = commonQueryUser(userRequest1);
                     // 返回值加密
                     break;
                 default:
@@ -265,8 +272,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     public Result verify(VerifyReq req) {
         Result result;
         try {
-            CheckUtil.checkParam(req);
-            checkVerifyParam(req);
+            ReqUtil<VerifyReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
@@ -297,7 +304,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     VerifyReq desReq = new VerifyReq();
                     BeanUtils.copyProperties(req,desReq);
                     commonVerify(desReq);
-                    // 返回值加密
+
 
                     return buildResult(null);
                 default:
@@ -317,6 +324,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     }
 
     private void commonVerify(VerifyReq req){
+        checkVerifyParam(req);
         UserExample example = new UserExample();
         example.createCriteria().andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
         List<User> users = userMapper.selectByExample(example);

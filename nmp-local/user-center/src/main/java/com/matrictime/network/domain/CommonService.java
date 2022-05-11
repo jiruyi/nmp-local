@@ -5,6 +5,4 @@ import com.matrictime.network.model.Result;
 
 public interface CommonService {
     Result encrypt(String userId,String destination, Result result) throws Exception;
-
-    String getSidByUserId(String userId) throws Exception;
 }

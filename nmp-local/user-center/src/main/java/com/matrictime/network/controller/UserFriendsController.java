@@ -15,6 +15,7 @@ import com.matrictime.network.service.UserFriendsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,6 +33,8 @@ public class UserFriendsController {
 
     @Resource
     private UserFriendsService userFriendsService;
+    @Autowired
+    private CommonService commonService;
 
     @Resource
     private CommonService commonService;
@@ -90,6 +93,7 @@ public class UserFriendsController {
         Result<AddUserRequestResp> result;
         try {
             result = userFriendsService.getAddUserInfo(addUserRequestReq);
+            result = commonService.encrypt(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("getAddUserInfo exception:{}",e.getMessage());

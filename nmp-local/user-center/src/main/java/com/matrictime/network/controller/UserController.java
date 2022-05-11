@@ -4,6 +4,8 @@ import com.matrictime.network.api.request.ChangePasswdReq;
 import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.request.VerifyReq;
+import com.matrictime.network.controller.aop.MonitorRequest;
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserService;
@@ -31,6 +33,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CommonService commonService;
 
     /**
      * 用户信息修改
@@ -75,7 +80,9 @@ public class UserController {
     @RequestMapping (value = "/changePasswd",method = RequestMethod.POST)
     public Result changePasswd(@RequestBody ChangePasswdReq changePasswdReq){
         try {
-            return userService.changePasswd(changePasswdReq);
+            Result result = userService.changePasswd(changePasswdReq);
+            result = commonService.encrypt(changePasswdReq.getCommonKey(), changePasswdReq.getDestination(), result);
+            return result;
         }catch (Exception e){
             log.error("changePasswd exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -87,7 +94,9 @@ public class UserController {
     public Result queryUserInfo(@RequestBody UserRequest userRequest){
         try {
             /**1.0 参数校验**/
-            return userService.queryUser(userRequest);
+            Result result = userService.queryUser(userRequest);
+            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
+            return result;
         }catch (Exception e){
             log.error("queryUserInfo exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -97,7 +106,9 @@ public class UserController {
     @RequestMapping (value = "/verify",method = RequestMethod.POST)
     public Result verify(@RequestBody VerifyReq req){
         try {
-            return userService.verify(req);
+            Result result = userService.verify(req);
+            result = commonService.encrypt(req.getPhoneNumber(), req.getDestination(), result);
+            return result;
         }catch (Exception e){
             log.error("UserController.verify exception:{}",e.getMessage());
             return new Result(false,e.getMessage());

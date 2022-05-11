@@ -20,4 +20,6 @@ public class BaseReq implements Serializable {
     private String encryptParam;
 
     private String commonParam;
+
+    private String commonKey;
 }

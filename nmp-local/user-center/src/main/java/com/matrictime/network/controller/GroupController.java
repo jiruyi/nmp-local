@@ -3,6 +3,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.api.request.GroupReq;
 import com.matrictime.network.api.request.UserGroupReq;
 import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.GroupService;
@@ -27,30 +28,56 @@ public class GroupController {
     GroupService groupService;
     @Autowired
     UserGroupService userGroupService;
+    @Autowired
+    private CommonService commonService;
 
 
     @ApiOperation(value = "创建组",notes = "创建")
     @RequestMapping (value = "/createGroup",method = RequestMethod.POST)
     public Result createGroup(@RequestBody GroupReq groupReq){
-        return groupService.createGroup(groupReq);
+        Result result = groupService.createGroup(groupReq);
+        try {
+            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @ApiOperation(value = "删除组",notes = "删除")
     @RequestMapping (value = "/deleteGroup",method = RequestMethod.POST)
     public Result deleteGroup(@RequestBody GroupReq groupReq){
-        return groupService.deleteGroup(groupReq);
+        Result result = groupService.deleteGroup(groupReq);
+        try {
+            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @ApiOperation(value = "修改组",notes = "修改")
     @RequestMapping (value = "/modifyGroup",method = RequestMethod.POST)
     public Result modifyGroup(@RequestBody GroupReq groupReq){
-        return groupService.modifyGroup(groupReq);
+        Result result = groupService.modifyGroup(groupReq);
+        try {
+            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @ApiOperation(value = "查询组",notes = "查询")
     @RequestMapping (value = "/queryGroup",method = RequestMethod.POST)
     public Result queryGroup(@RequestBody GroupReq groupReq){
-        return groupService.queryGroup(groupReq);
+        Result result = groupService.queryGroup(groupReq);
+        try {
+            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     //-----------------------------------------------------------------------
@@ -58,19 +85,37 @@ public class GroupController {
     @ApiOperation(value = "创建组内用户",notes = "创建")
     @RequestMapping (value = "/createUserGroup",method = RequestMethod.POST)
     public Result createUserGroup(@RequestBody UserGroupReq userGroupReq){
-        return userGroupService.createUserGroup(userGroupReq);
+        Result result = userGroupService.createUserGroup(userGroupReq);
+        try {
+            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @ApiOperation(value = "删除组内用户",notes = "删除")
     @RequestMapping (value = "/deleteUserGroup",method = RequestMethod.POST)
     public Result deleteUserGroup(@RequestBody UserGroupReq userGroupReq){
-        return userGroupService.deleteUserGroup(userGroupReq);
+        Result result = userGroupService.deleteUserGroup(userGroupReq);
+        try {
+            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @ApiOperation(value = "修改组内用户",notes = "修改")
     @RequestMapping (value = "/modifyUserGroup",method = RequestMethod.POST)
     public Result modifyUserGroup(@RequestBody UserGroupReq userGroupReq){
-        return userGroupService.modifyUserGroup(userGroupReq);
+        Result result = userGroupService.modifyUserGroup(userGroupReq);
+        try {
+            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 //    @ApiOperation(value = "查询组内用户",notes = "查询")

@@ -8,6 +8,7 @@ import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.GroupVo;
 import com.matrictime.network.api.modelVo.UserGroupVo;
+import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.GroupReq;
 import com.matrictime.network.api.request.UserGroupReq;
 import com.matrictime.network.api.request.VerifyReq;
@@ -15,6 +16,7 @@ import com.matrictime.network.api.response.GroupResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
+import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.domain.GroupDomainService;
 import com.matrictime.network.domain.UserGroupDomianService;
 import com.matrictime.network.exception.ErrorMessageContants;
@@ -44,6 +46,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
 
     @Override
     public Result<Integer> createGroup(GroupReq groupReq) {
+        ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
+        groupReq = jsonUtil.jsonReqToDto(groupReq);
         Result result;
         try {
             switch (groupReq.getDestination()){
@@ -69,8 +73,10 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
+                    ReqUtil<GroupReq> reqUtil = new ReqUtil<>(groupReq);
+                    GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
 
-                    result = commonCreateGroup(groupReq);
+                    result = commonCreateGroup(groupReq1);
                     // 返回值加密
                     break;
                 default:
@@ -86,6 +92,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
 
     @Override
     public Result<Integer> modifyGroup(GroupReq groupReq) {
+        ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
+        groupReq = jsonUtil.jsonReqToDto(groupReq);
         Result result;
         try {
             switch (groupReq.getDestination()){
@@ -112,8 +120,9 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    result = commonModifyGroup(groupReq);
+                    ReqUtil<GroupReq> reqUtil = new ReqUtil<>(groupReq);
+                    GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
+                    result = commonModifyGroup(groupReq1);
                     // 返回值加密
 
                     break;
@@ -129,6 +138,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
 
     @Override
     public Result<Integer> deleteGroup(GroupReq groupReq) {
+        ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
+        groupReq = jsonUtil.jsonReqToDto(groupReq);
         Result result;
         try {
             switch (groupReq.getDestination()){
@@ -156,8 +167,9 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
 
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    result = commonDeleteGroup(groupReq);
+                    ReqUtil<GroupReq> reqUtil = new ReqUtil<>(groupReq);
+                    GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
+                    result = commonDeleteGroup(groupReq1);
                     // 返回值加密
                     break;
                 default:
@@ -172,6 +184,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
 
     @Override
     public Result<GroupResp> queryGroup(GroupReq groupReq) {
+        ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
+        groupReq = jsonUtil.jsonReqToDto(groupReq);
         Result result;
         try {
             switch (groupReq.getDestination()){
@@ -198,7 +212,9 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-                    result = commonQueryGroup(groupReq);
+                    ReqUtil<GroupReq> reqUtil = new ReqUtil<>(groupReq);
+                    GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
+                    result = commonQueryGroup(groupReq1);
                     // 返回值加密
                     break;
                 default:

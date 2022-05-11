@@ -28,4 +28,5 @@ public class UserGroupReq extends BaseReq implements Serializable {
     private String targetGroupId;
 
 
+
 }

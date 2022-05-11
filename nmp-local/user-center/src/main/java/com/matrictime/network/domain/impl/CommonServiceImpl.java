@@ -28,10 +28,10 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     private UserMapper userMapper;
 
     @Override
-    public Result encrypt(String userId,String destination, Result res) throws Exception {
+    public Result encrypt(String condition,String destination, Result res) throws Exception {
         if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
             ReqUtil resUtil = new ReqUtil();
-            String resultObj = resUtil.encryJsonToReq(res, getSidByUserId(userId));
+            String resultObj = resUtil.encryJsonToReq(res, getSidByCondition(condition));
             res.setSuccess(true);
             res.setResultObj(resultObj);
             res.setErrorMsg(null);
@@ -40,17 +40,37 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
         return res;
     }
 
-    @Override
-    public String getSidByUserId(String userId) throws Exception {
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
-        List<User> users = userMapper.selectByExample(userExample);
-        if (!CollectionUtils.isEmpty(users)){
-            String sid = users.get(0).getSid();
+    public String getSidByCondition(String condition) throws Exception {
+        UserExample userExample1 = new UserExample();
+        userExample1.createCriteria().andUserIdEqualTo(condition).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<User> users1 = userMapper.selectByExample(userExample1);
+        if (!CollectionUtils.isEmpty(users1)){
+            String sid = users1.get(0).getSid();
             if (!ParamCheckUtil.checkVoStrBlank(sid)){
                 return sid;
             }
         }
+
+        UserExample userExample2 = new UserExample();
+        userExample2.createCriteria().andLoginAccountEqualTo(condition).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<User> users2 = userMapper.selectByExample(userExample2);
+        if (!CollectionUtils.isEmpty(users2)){
+            String sid = users2.get(0).getSid();
+            if (!ParamCheckUtil.checkVoStrBlank(sid)){
+                return sid;
+            }
+        }
+
+        UserExample userExample3 = new UserExample();
+        userExample3.createCriteria().andPhoneNumberEqualTo(condition).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<User> users3 = userMapper.selectByExample(userExample3);
+        if (!CollectionUtils.isEmpty(users3)){
+            String sid = users3.get(0).getSid();
+            if (!ParamCheckUtil.checkVoStrBlank(sid)){
+                return sid;
+            }
+        }
+
         throw new Exception(GET_KEY_FAIL_MSG);
     }
 }
