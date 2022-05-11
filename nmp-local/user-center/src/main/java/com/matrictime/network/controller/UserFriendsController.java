@@ -7,9 +7,9 @@ import com.matrictime.network.api.request.RecallRequest;
 import com.matrictime.network.api.request.UserFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.response.AddUserRequestResp;
-import com.matrictime.network.api.response.RecallResp;
 import com.matrictime.network.api.response.UserFriendResp;
 
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
 import io.swagger.annotations.Api;
@@ -33,12 +33,17 @@ public class UserFriendsController {
     @Resource
     private UserFriendsService userFriendsService;
 
+    @Resource
+    private CommonService commonService;
+
 
     @ApiOperation(value = "注销用户",notes = "注销用户")
     @RequestMapping (value = "/cancelUser",method = RequestMethod.POST)
     public Result<Integer> cancelUser(@RequestBody UserRequest userRequest){
         try {
-            return  userFriendsService.modifyUserInfo(userRequest);
+            Result result = userFriendsService.modifyUserInfo(userRequest);
+            result = commonService.encrypt(userRequest.getUserId(), userRequest.getDestination(), result);
+            return  result;
         }catch (Exception e){
             log.error("cancelUser exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -49,7 +54,9 @@ public class UserFriendsController {
     @RequestMapping (value = "/selectUserFriend",method = RequestMethod.POST)
     public Result<UserFriendResp> selectUserFriend(@RequestBody UserFriendReq userFriendReq){
         try {
-            return userFriendsService.selectUserFriend(userFriendReq);
+            Result result = userFriendsService.selectUserFriend(userFriendReq);
+            result = commonService.encrypt(userFriendReq.getUserId(), userFriendReq.getDestination(), result);
+            return  result;
         }catch (Exception e){
             log.error("selectUserFriend exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -59,10 +66,10 @@ public class UserFriendsController {
     @ApiOperation(value = "添加好友",notes = "添加好友")
     @RequestMapping (value = "/addFriends",method = RequestMethod.POST)
     public Result<Integer> addFriends(@RequestBody AddUserRequestReq addUserRequestReq){
-        Result<Integer> result;
         try {
-            result = userFriendsService.addFriends(addUserRequestReq);
-            if(result.getResultObj() == 1){
+            Result result = userFriendsService.addFriends(addUserRequestReq);
+            result = commonService.encrypt(addUserRequestReq.getUserId(), addUserRequestReq.getDestination(), result);
+            if(Integer.parseInt(result.getResultObj().toString()) == 1){
                 return result;
             }else {
                 WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(addUserRequestReq.getAddUserId());
@@ -94,21 +101,20 @@ public class UserFriendsController {
     @ApiOperation(value = "获取好友添加返回信息",notes = "获取好友添加返回信息")
     @RequestMapping (value = "/getRecall",method = RequestMethod.POST)
     public Result<Integer> getRecall(@RequestBody RecallRequest request){
-        Result<Integer> result = new Result();
-        RecallResp recallResp = new RecallResp();
+        Result result = new Result<>();
         try {
             if(request.getAgree() != null){
-                recallResp.setAgree(request.getAgree());
                 result = userFriendsService.agreeAddFriedns(request);
-                System.out.println(JSONUtils.toJSONString(messageAgreeText(request)));
+                result = commonService.encrypt(request.getAddUserId(), request.getDestination(), result);
                 WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
                 if(webSocketServer != null){
                     webSocketServer.sendMessage(JSONUtils.toJSONString(messageAgreeText(request)));
                 }
             }
             if(request.getRefuse() != null) {
-                result.setErrorMsg("已经拒绝");
                 result = userFriendsService.agreeAddFriedns(request);
+                result = commonService.encrypt(request.getAddUserId(), request.getDestination(), result);
+                result.setErrorMsg("已经拒绝");
                 WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
                 if(webSocketServer != null){
                     webSocketServer.sendMessage(JSONUtils.toJSONString(messageRefuseText(request)));

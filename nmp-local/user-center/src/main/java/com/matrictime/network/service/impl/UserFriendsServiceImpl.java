@@ -15,6 +15,7 @@ import com.matrictime.network.api.response.UserResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.enums.AddUserRequestEnum;
+import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.domain.UserDomainService;
 import com.matrictime.network.domain.UserFriendsDomainService;
 import com.matrictime.network.domain.UserGroupDomianService;
@@ -51,6 +52,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     public Result<UserFriendResp> selectUserFriend(UserFriendReq userFriendReq) {
         Result<UserFriendResp> result = new Result<>();
         try {
+            ReqUtil jsonUtil = new ReqUtil<>(userFriendReq);
+            userFriendReq = (UserFriendReq) jsonUtil.jsonReqToDto(userFriendReq);
             switch (userFriendReq.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     result = commonSelectUserFriend(userFriendReq);
@@ -78,7 +81,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
+                    ReqUtil reqUtil = new ReqUtil<>(userFriendReq);
+                    userFriendReq = (UserFriendReq)reqUtil.decryJsonToReq(userFriendReq);
                     return commonSelectUserFriend(userFriendReq);
                 // 返回值加密
                 case UcConstants.DESTINATION_OUT_TO_IN_SYN:
@@ -112,6 +116,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     @Override
     public Result<Integer> addFriends(AddUserRequestReq addUserRequestReq) {
         Result<Integer> result = new Result<>();
+        ReqUtil jsonUtil = new ReqUtil<>(addUserRequestReq);
+        addUserRequestReq = (AddUserRequestReq) jsonUtil.jsonReqToDto(addUserRequestReq);
         UserFriendReq userFriendReq = setUserFriendReq(addUserRequestReq);
         UserRequest userRequest = new UserRequest();
         userRequest.setUserId(addUserRequestReq.getAddUserId());
@@ -143,8 +149,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    return commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
+                    ReqUtil reqUtil = new ReqUtil<>(addUserRequestReq);
+                    addUserRequestReq = (AddUserRequestReq)reqUtil.decryJsonToReq(addUserRequestReq);
+                    UserFriendReq friendReq = setUserFriendReq(addUserRequestReq);
+                    UserRequest request = new UserRequest();
+                    request.setUserId(addUserRequestReq.getAddUserId());
+                    return commonAddFriends(friendReq,addUserRequestReq,request);
                 // 返回值加密
                 case UcConstants.DESTINATION_OUT_TO_IN_SYN:
 
@@ -162,16 +172,9 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     @Override
     public Result<Integer> agreeAddFriedns(RecallRequest recallRequest) {
         Result<Integer> result = new Result<>();
-        AddUserRequestReq addUserRequestReq = new AddUserRequestReq();
-        addUserRequestReq.setUserId(recallRequest.getUserId());
-        addUserRequestReq.setAddUserId(recallRequest.getAddUserId());
-        addUserRequestReq.setRemarkName(recallRequest.getRemarkName());
-        addUserRequestReq.setAgree(recallRequest.getAgree());
-        addUserRequestReq.setRefuse(recallRequest.getRefuse());
-        addUserRequestReq.setStatus(recallRequest.getStatus());
-        addUserRequestReq.setRequestId(recallRequest.getRequestId());
-        addUserRequestReq.setGroupId(recallRequest.getGroupId());
-        addUserRequestReq.setAddGroupId(recallRequest.getAddGroupId());
+        ReqUtil jsonUtil = new ReqUtil<>(recallRequest);
+        recallRequest = (RecallRequest) jsonUtil.jsonReqToDto(recallRequest);
+        AddUserRequestReq addUserRequestReq = setAddUserRequestReq(recallRequest);
         UserFriendReq userFriendReq = setUserFriendReq(addUserRequestReq);
         UserRequest userRequest = new UserRequest();
         userRequest.setUserId(addUserRequestReq.getAddUserId());
@@ -203,8 +206,13 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    return commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
+                    ReqUtil reqUtil = new ReqUtil<>(recallRequest);
+                    recallRequest = (RecallRequest)reqUtil.decryJsonToReq(recallRequest);
+                    AddUserRequestReq setAddUserRequestReq = setAddUserRequestReq(recallRequest);
+                    UserFriendReq friendReq = setUserFriendReq(addUserRequestReq);
+                    UserRequest request = new UserRequest();
+                    userRequest.setUserId(addUserRequestReq.getAddUserId());
+                    return commonAddFriends(friendReq,setAddUserRequestReq,request);
                 // 返回值加密
                 case UcConstants.DESTINATION_OUT_TO_IN_SYN:
 
@@ -408,6 +416,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     public Result modifyUserInfo(UserRequest userRequest) {
         Result result = new Result();
         try {
+            ReqUtil jsonUtil = new ReqUtil<>(userRequest);
+            userRequest = (UserRequest) jsonUtil.jsonReqToDto(userRequest);
             switch (userRequest.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     result.setResultObj(commonCancelUser(userRequest));
@@ -434,9 +444,10 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                     result.setResultObj(commonCancelUser(userRequest));
-                     return result;
+                    ReqUtil reqUtil = new ReqUtil<>(userRequest);
+                    userRequest = (UserRequest)reqUtil.decryJsonToReq(userRequest);
+                    result.setResultObj(commonCancelUser(userRequest));
+                    return result;
                     // 返回值加密
                 case UcConstants.DESTINATION_OUT_TO_IN_SYN:
                     result.setResultObj(commonCancelUser(userRequest));
@@ -482,6 +493,20 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             result.setErrorMsg(e.getMessage());
         }
         return result;
+    }
+
+    private AddUserRequestReq setAddUserRequestReq(RecallRequest recallRequest){
+        AddUserRequestReq addUserRequestReq = new AddUserRequestReq();
+        addUserRequestReq.setUserId(recallRequest.getUserId());
+        addUserRequestReq.setAddUserId(recallRequest.getAddUserId());
+        addUserRequestReq.setRemarkName(recallRequest.getRemarkName());
+        addUserRequestReq.setAgree(recallRequest.getAgree());
+        addUserRequestReq.setRefuse(recallRequest.getRefuse());
+        addUserRequestReq.setStatus(recallRequest.getStatus());
+        addUserRequestReq.setRequestId(recallRequest.getRequestId());
+        addUserRequestReq.setGroupId(recallRequest.getGroupId());
+        addUserRequestReq.setAddGroupId(recallRequest.getAddGroupId());
+        return addUserRequestReq;
     }
 }
 
