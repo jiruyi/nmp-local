@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
@@ -8,6 +9,7 @@ import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.controller.aop.MonitorRequest;
 import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.LoginService;
@@ -82,10 +84,12 @@ public class LoginController {
     /**
      * 绑定用户
      */
+    @MonitorRequest
     @RequestMapping(value = "/bind")
     public Result bind(@RequestBody BindReq req){
         try {
             Result result = loginService.bind(req);
+            log.info("LoginController.bind req:{},reqhashCode:{},des:{}", JSONObject.toJSONString(req),System.identityHashCode(req));
             result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
             return result;
         }catch (Exception e){

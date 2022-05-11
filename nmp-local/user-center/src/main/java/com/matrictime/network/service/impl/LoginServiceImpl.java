@@ -356,6 +356,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     commonBind(req);
+                    req.setDestination(UcConstants.DESTINATION_FOR_DES);
+                    log.info("非密区reqHashCode:{}",System.identityHashCode(req));
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
@@ -364,9 +366,10 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     String param = JSONObject.toJSONString(req);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    log.info("非密区接收返回值LoginServiceImpl.bind resModel:{}",JSONObject.toJSONString(resModel));
+                    log.info("非密区接收返回值LoginServiceImpl.bind resModel:{},reqHashCode:{}",JSONObject.toJSONString(resModel),System.identityHashCode(req));
 
                     Object returnValue = resModel.getReturnValue();
+
                     if(returnValue != null && returnValue instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
                         Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),Result.class);
