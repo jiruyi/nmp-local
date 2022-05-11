@@ -227,8 +227,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
 
-                    LoginReq desReq = new LoginReq();
-                    BeanUtils.copyProperties(req,desReq);
+                    ReqUtil<LoginReq> reqUtil = new ReqUtil<>(req);
+                    LoginReq desReq = reqUtil.decryJsonToReq(req);
                     resp = commonLogin(desReq);
                     // 返回值加密
 
@@ -316,8 +316,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
 
-                    LogoutReq desReq = new LogoutReq();
-                    BeanUtils.copyProperties(req,desReq);
+                    ReqUtil<LogoutReq> reqUtil = new ReqUtil<>(req);
+                    LogoutReq desReq = reqUtil.decryJsonToReq(req);
                     commonLogout(desReq);
                     // 返回值加密
 
