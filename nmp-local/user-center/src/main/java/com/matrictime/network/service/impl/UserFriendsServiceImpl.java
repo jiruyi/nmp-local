@@ -227,12 +227,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         AddRequestVo addRequestVo = userFriendsDomainService.selectGroupId(addUserRequestReq);
         if(userVo.getAgreeFriend() == 0 || addUserRequestReq.getAgree() != null){
             if(addUserRequestReq.getAgree() == null && userVo.getAgreeFriend() == 0){
-                if(addRequestVo != null){
-                    if("2".equals(addRequestVo.getStatus())){
-                        result.setErrorMsg("该用户已经被添加");
-                        result.setSuccess(false);
-                        return result;
-                    }
+                if(!AddRequestStatusFlag(addRequestVo).isSuccess()){
+                    return AddRequestStatusFlag(addRequestVo);
                 }
                 addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
                 userFriendsDomainService.addFriends(addUserRequestReq);
@@ -245,79 +241,127 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             if(CollectionUtils.isEmpty(userFriendVos)){
                 userFriendsDomainService.insertFriend(userFriendReq);
             }
-            if(addRequestVo != null){
-                if(addRequestVo.getGroupId() != null){
-                    String groupIdArray = addRequestVo.getGroupId();
-                    String[] groupId = groupIdArray.split(",");
-                    for (int groupIdIndex = 0;groupIdIndex < groupId.length;groupIdIndex++){
-                        UserGroupReq userGroupReq = new UserGroupReq();
-                        userGroupReq.setUserId(addUserRequestReq.getAddUserId());
-                        userGroupReq.setGroupId(groupId[groupIdIndex]);
-                        //判断user_group是否有该数据
-                        List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
-                        if(CollectionUtils.isEmpty(userGroupVos)){
-                            userGroupDomianService.createUserGroup(userGroupReq);
-                        }
-                    }
-                }
+            //直接添加好友并把好友分组到该分组中
+            if(addUserRequestReq.getGroupId() != null){
+                setFriendGroup(addUserRequestReq);
             }
-            //判断user_group是否有该数据
-            UserGroupReq userGroupReq = new UserGroupReq();
-            userGroupReq.setUserId(addUserRequestReq.getAddUserId());
+            //同意添加好友把好友进行分组
+            if(addRequestVo != null){
+                agreeSetFriendGroup(addRequestVo,addUserRequestReq);
+            }
+            //被添加好友把好友添加到组
+            setAgreeAddFriendGroup(addUserRequestReq);
+            //查找被添加用户的默认组
             GroupReq groupReq = new GroupReq();
             groupReq.setOwner(addUserRequestReq.getAddUserId());
-            UserFriendReq friendReq = new UserFriendReq();
-            //被添加好友把好友添加到组
-            if(addUserRequestReq.getAddGroupId() != null){
-                String addGroupIdArray = addUserRequestReq.getAddGroupId();
-                String[] groupId = addGroupIdArray.split(",");
-                for (int addGroupIdIndex = 0;addGroupIdIndex < groupId.length;addGroupIdIndex++){
-                    UserGroupReq req = new UserGroupReq();
-                    req.setUserId(addUserRequestReq.getUserId());
-                    req.setGroupId(groupId[addGroupIdIndex]);
-                    //判断user_group是否有该数据
-                    List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(req);
-                    if(CollectionUtils.isEmpty(userGroupVos)){
-                        userGroupDomianService.createUserGroup(req);
-                    }
-                }
-            }
-            //判断被添加用户是否有申请添加人的好友
-            friendReq.setUserId(addUserRequestReq.getAddUserId());
-            friendReq.setFriendUserId(addUserRequestReq.getUserId());
-            List<UserFriendVo> userFriendVo = userFriendsDomainService.selectUserFriend(friendReq);
-            //查找被添加用户的默认组
             GroupVo groupVo = userFriendsDomainService.selectGroupInfo(groupReq);
-            if(groupVo != null && addUserRequestReq.getAddGroupId() == null){
-                UserGroupReq req1 = new UserGroupReq();
-                req1.setGroupId(groupVo.getGroupId().toString());
-                req1.setUserId(addUserRequestReq.getUserId());
-                List<UserGroupVo> friendUserGroupVos = userGroupDomianService.queryUserGroup(req1);
-                if(CollectionUtils.isEmpty(friendUserGroupVos)){
-                    userGroupDomianService.createUserGroup(req1);
-                    if(CollectionUtils.isEmpty(userFriendVo)){
-                        userFriendsDomainService.insertFriend(friendReq);
-                    }
-                }
-            }else {
-                if(CollectionUtils.isEmpty(userFriendVo)){
-                    userFriendsDomainService.insertFriend(friendReq);
-                }
-            }
+            //添加到默认分组
+            setAddFriendGroup(groupVo,addUserRequestReq);
             result.setResultObj(1);
         }
+        //拒绝添加好友
         if(userVo.getAgreeFriend() == 1 || addUserRequestReq.getRefuse() != null) {
-            if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() == null && addUserRequestReq.getAgree() == null){
+            if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() == null
+                    && addUserRequestReq.getAgree() == null){
                 addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
                 userFriendsDomainService.addFriends(addUserRequestReq);
             }
-            if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() != null && addUserRequestReq.getAgree() == null){
+            if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() != null
+                    && addUserRequestReq.getAgree() == null){
                 userFriendsDomainService.update(addUserRequestReq);
             }
             result.setResultObj(2);
         }
         return result;
     }
+
+    //直接添加好友并把好友分组到该分组中
+    private void setFriendGroup(AddUserRequestReq addUserRequestReq){
+        String groupIdArray = addUserRequestReq.getGroupId();
+        String[] groupId = groupIdArray.split(",");
+        for (int groupIdIndex = 0;groupIdIndex < groupId.length;groupIdIndex++){
+            UserGroupReq userGroupReq = new UserGroupReq();
+            userGroupReq.setUserId(addUserRequestReq.getAddUserId());
+            userGroupReq.setGroupId(groupId[groupIdIndex]);
+            //判断user_group是否有该数据
+            List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
+            if(CollectionUtils.isEmpty(userGroupVos)){
+                userGroupDomianService.createUserGroup(userGroupReq);
+            }
+        }
+    }
+
+    private void agreeSetFriendGroup(AddRequestVo addRequestVo,AddUserRequestReq addUserRequestReq){
+        if(addRequestVo.getGroupId() != null){
+            String groupIdArray = addRequestVo.getGroupId();
+            String[] groupId = groupIdArray.split(",");
+            for (int groupIdIndex = 0;groupIdIndex < groupId.length;groupIdIndex++){
+                UserGroupReq userGroupReq = new UserGroupReq();
+                userGroupReq.setUserId(addUserRequestReq.getAddUserId());
+                userGroupReq.setGroupId(groupId[groupIdIndex]);
+                //判断user_group是否有该数据
+                List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
+                if(CollectionUtils.isEmpty(userGroupVos)){
+                    userGroupDomianService.createUserGroup(userGroupReq);
+                }
+            }
+        }
+    }
+
+    //被添加好友把好友添加到组
+    private void setAgreeAddFriendGroup(AddUserRequestReq addUserRequestReq){
+        if(addUserRequestReq.getAddGroupId() != null){
+            String addGroupIdArray = addUserRequestReq.getAddGroupId();
+            String[] groupId = addGroupIdArray.split(",");
+            for (int addGroupIdIndex = 0;addGroupIdIndex < groupId.length;addGroupIdIndex++){
+                UserGroupReq req = new UserGroupReq();
+                req.setUserId(addUserRequestReq.getUserId());
+                req.setGroupId(groupId[addGroupIdIndex]);
+                //判断user_group是否有该数据
+                List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(req);
+                if(CollectionUtils.isEmpty(userGroupVos)){
+                    userGroupDomianService.createUserGroup(req);
+                }
+            }
+        }
+    }
+
+    //查找被添加用户的默认组
+    private void setAddFriendGroup(GroupVo groupVo,AddUserRequestReq addUserRequestReq){
+        UserFriendReq friendReq = new UserFriendReq();
+        friendReq.setUserId(addUserRequestReq.getAddUserId());
+        friendReq.setFriendUserId(addUserRequestReq.getUserId());
+        List<UserFriendVo> userFriendVo = userFriendsDomainService.selectUserFriend(friendReq);
+        if(groupVo != null && addUserRequestReq.getAddGroupId() == null){
+            UserGroupReq req = new UserGroupReq();
+            req.setGroupId(groupVo.getGroupId().toString());
+            req.setUserId(addUserRequestReq.getUserId());
+            List<UserGroupVo> friendUserGroupVos = userGroupDomianService.queryUserGroup(req);
+            if(CollectionUtils.isEmpty(friendUserGroupVos)){
+                userGroupDomianService.createUserGroup(req);
+                if(CollectionUtils.isEmpty(userFriendVo)){
+                    userFriendsDomainService.insertFriend(friendReq);
+                }
+            }
+        }else {
+            if(CollectionUtils.isEmpty(userFriendVo)){
+                userFriendsDomainService.insertFriend(friendReq);
+            }
+        }
+    }
+
+    //判断是否已经添同意添加好友
+    private Result AddRequestStatusFlag(AddRequestVo addRequestVo){
+        Result result = new Result<>();
+        if(addRequestVo != null){
+            if("2".equals(addRequestVo.getStatus())){
+                result.setErrorMsg("该用户已经被添加");
+                result.setSuccess(false);
+            }
+        }
+        return result;
+    }
+
 
     @Override
     public Result<AddUserRequestResp> getAddUserInfo(AddUserRequestReq addUserRequestReq) {

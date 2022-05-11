@@ -3,6 +3,8 @@ package com.matrictime.network.dao.domain.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.enums.DeviceStatusEnum;
+import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplDeviceExtraInfoMapper;
@@ -57,6 +59,10 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
     public PageInfo<DeviceExtraVo> selectByCondition(DeviceExtraInfoRequest deviceExtraInfoRequest) {
         NmplDeviceExtraInfoExample deviceExtraInfoExample = new NmplDeviceExtraInfoExample();
         NmplDeviceExtraInfoExample.Criteria criteria = deviceExtraInfoExample.createCriteria();
+        List<String> deviceStatusList = new ArrayList<>();
+        deviceStatusList.add(DeviceStatusEnum.ACTIVE.getCode());
+        deviceStatusList.add(DeviceStatusEnum.NOAUDIT.getCode());
+        deviceStatusList.add(DeviceStatusEnum.OFFLINE.getCode());
         if(deviceExtraInfoRequest.getRelDeviceId() != null){
             criteria.andRelDeviceIdEqualTo(deviceExtraInfoRequest.getRelDeviceId());
         }
@@ -69,6 +75,7 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
         if(deviceExtraInfoRequest.getStationNetworkId() != null){
             criteria.andStationNetworkIdEqualTo(deviceExtraInfoRequest.getStationNetworkId());
         }
+        criteria.andStationStatusIn(deviceStatusList);
         criteria.andIsExistEqualTo(true);
         Page page = PageHelper.startPage(deviceExtraInfoRequest.getPageNo(),deviceExtraInfoRequest.getPageSize());
         List<NmplDeviceExtraInfo> nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(deviceExtraInfoExample);
