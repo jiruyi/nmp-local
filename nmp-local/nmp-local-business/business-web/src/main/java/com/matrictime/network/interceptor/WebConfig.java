@@ -45,6 +45,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/signal/addSignal")
                 .excludePathPatterns("/monitor/checkHeart")
                 .excludePathPatterns("/version/getVersionFile")
+                .excludePathPatterns("/linkRelation/selectDevice")
+                .excludePathPatterns("/baseStation/selectDevice")
+                .excludePathPatterns("/baseStation/selectByOperatorId")
                 .excludePathPatterns("/outlineSorter/auth");
     }
 }

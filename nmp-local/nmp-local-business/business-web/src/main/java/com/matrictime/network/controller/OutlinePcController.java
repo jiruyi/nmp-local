@@ -31,6 +31,7 @@ public class OutlinePcController {
     @ApiOperation(value = "一体机创建接口",notes = "一体机创建")
     @RequestMapping(value = "/saveOutlinePc",method = RequestMethod.POST)
     @SystemLog(opermodul = "一体机管理模块",operDesc = "创建一体机",operType = "创建")
+    @RequiresPermissions("sys:pc:insert")
     public Result saveOutlinePc(@RequestBody OutlinePcReq outlinePcReq){
         return outlinePcService.save(outlinePcReq);
     }
@@ -43,6 +44,7 @@ public class OutlinePcController {
     @ApiOperation(value = "一体机修改接口",notes = "一体机修改")
     @RequestMapping(value = "/modifyOutlinePc",method = RequestMethod.POST)
     @SystemLog(opermodul = "一体机管理模块",operDesc = "修改一体机",operType = "修改")
+    @RequiresPermissions("sys:pc:modify")
     public Result modifyOutlinePc(@RequestBody OutlinePcReq outlinePcReq){
         return outlinePcService.modify(outlinePcReq);
     }
@@ -55,6 +57,7 @@ public class OutlinePcController {
     @ApiOperation(value = "一体机删除接口",notes = "一体机删除")
     @RequestMapping(value = "/deleteOutlinePc",method = RequestMethod.POST)
     @SystemLog(opermodul = "一体机管理模块",operDesc = "删除一体机",operType = "删除")
+    @RequiresPermissions("sys:pc:delete")
     public Result deleteOutlinePc(@RequestBody OutlinePcReq outlinePcReq){
         return outlinePcService.delete(outlinePcReq);
     }
@@ -67,6 +70,7 @@ public class OutlinePcController {
     @ApiOperation(value = "一体机查询接口",notes = "一体机查询")
     @RequestMapping(value = "/queryOutlinePc",method = RequestMethod.POST)
     @SystemLog(opermodul = "一体机管理模块",operDesc = "查询一体机",operType = "查询")
+    @RequiresPermissions("sys:pc:query")
     public Result queryOutlinePc(@RequestBody OutlinePcReq outlinePcReq){
         return outlinePcService.queryByConditon(outlinePcReq);
     }
@@ -79,6 +83,7 @@ public class OutlinePcController {
     @ApiOperation(value = "一体机上传接口",notes = "一体机上传")
     @RequestMapping(value = "/uploadOutlinePc",method = RequestMethod.POST)
     @SystemLog(opermodul = "一体机上传模块",operDesc = "上传一体机",operType = "上传")
+    @RequiresPermissions("sys:pc:upload")
     public Result uploadOutlinePc(@RequestBody MultipartFile file){
         return outlinePcService.upload(file);
     }
