@@ -6,10 +6,12 @@ import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.UserGroupVo;
+import com.matrictime.network.api.request.GroupReq;
 import com.matrictime.network.api.request.UserGroupReq;
 import com.matrictime.network.api.response.UserGroupResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
+import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.domain.UserGroupDomianService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
@@ -34,6 +36,8 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
 
     @Override
     public Result<Integer> createUserGroup(UserGroupReq userGroupReq) {
+        ReqUtil<UserGroupReq> jsonUtil = new ReqUtil<>(userGroupReq);
+        userGroupReq = jsonUtil.jsonReqToDto(userGroupReq);
         Result result;
         try {
             switch (userGroupReq.getDestination()){
@@ -61,7 +65,9 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-                    result = commonCreateUserGroup(userGroupReq);
+                    ReqUtil<UserGroupReq> reqUtil = new ReqUtil<>(userGroupReq);
+                    UserGroupReq userGroupReq1 = reqUtil.decryJsonToReq(userGroupReq);
+                    result = commonCreateUserGroup(userGroupReq1);
                     // 返回值加密
                     break;
                 default:
@@ -77,6 +83,8 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
 
     @Override
     public Result<Integer> modifyUserGroup(UserGroupReq userGroupReq) {
+        ReqUtil<UserGroupReq> jsonUtil = new ReqUtil<>(userGroupReq);
+        userGroupReq = jsonUtil.jsonReqToDto(userGroupReq);
         Result result;
         try {
             switch (userGroupReq.getDestination()){
@@ -103,7 +111,9 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-                    result = commonModifyUserGroup(userGroupReq);
+                    ReqUtil<UserGroupReq> reqUtil = new ReqUtil<>(userGroupReq);
+                    UserGroupReq userGroupReq1 = reqUtil.decryJsonToReq(userGroupReq);
+                    result = commonModifyUserGroup(userGroupReq1);
                     // 返回值加密
                     break;
                 default:
@@ -119,6 +129,8 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
 
     @Override
     public Result<Integer> deleteUserGroup(UserGroupReq userGroupReq) {
+        ReqUtil<UserGroupReq> jsonUtil = new ReqUtil<>(userGroupReq);
+        userGroupReq = jsonUtil.jsonReqToDto(userGroupReq);
         Result result;
         try {
             switch (userGroupReq.getDestination()){
@@ -145,7 +157,9 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-                    result = commonDeleteUserGroup(userGroupReq);
+                    ReqUtil<UserGroupReq> reqUtil = new ReqUtil<>(userGroupReq);
+                    UserGroupReq userGroupReq1 = reqUtil.decryJsonToReq(userGroupReq);
+                    result = commonDeleteUserGroup(userGroupReq1);
                     // 返回值加密
                     break;
                 default:

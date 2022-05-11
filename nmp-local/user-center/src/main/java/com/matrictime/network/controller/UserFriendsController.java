@@ -87,6 +87,7 @@ public class UserFriendsController {
         Result<AddUserRequestResp> result;
         try {
             result = userFriendsService.getAddUserInfo(addUserRequestReq);
+            result = commonService.encrypt(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("getAddUserInfo exception:{}",e.getMessage());

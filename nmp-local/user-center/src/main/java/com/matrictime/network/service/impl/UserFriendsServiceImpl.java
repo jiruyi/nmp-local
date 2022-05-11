@@ -15,6 +15,7 @@ import com.matrictime.network.api.response.UserResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.enums.AddUserRequestEnum;
+import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.domain.UserDomainService;
 import com.matrictime.network.domain.UserFriendsDomainService;
 import com.matrictime.network.domain.UserGroupDomianService;
@@ -365,6 +366,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
 
     @Override
     public Result<AddUserRequestResp> getAddUserInfo(AddUserRequestReq addUserRequestReq) {
+        ReqUtil<AddUserRequestReq> jsonUtil = new ReqUtil<>(addUserRequestReq);
+        addUserRequestReq = jsonUtil.jsonReqToDto(addUserRequestReq);
         Result result;
         try {
             switch (addUserRequestReq.getDestination()){
@@ -391,7 +394,9 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-                    result = commonGetAddUserInfo(addUserRequestReq);
+                    ReqUtil<AddUserRequestReq> reqUtil = new ReqUtil<>(addUserRequestReq);
+                    AddUserRequestReq addUserRequestReq1 = reqUtil.decryJsonToReq(addUserRequestReq);
+                    result = commonGetAddUserInfo(addUserRequestReq1);
                     // 返回值加密
                     break;
                 default:

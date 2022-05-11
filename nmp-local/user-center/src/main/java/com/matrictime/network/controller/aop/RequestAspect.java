@@ -6,8 +6,10 @@ import com.matrictime.network.base.util.ReqUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -48,8 +50,16 @@ public class RequestAspect {
         if (args instanceof BaseReq) {
             ReqUtil reqUtil = new ReqUtil(args);
             Object o = reqUtil.jsonReqToDto((BaseReq) args);
-            joinPoint.getArgs()[0] = o;
+            System.out.println(o.hashCode());
+//            joinPoint.getArgs()[0] = o;
+            BeanUtils.copyProperties(o,args);
+            System.out.println(joinPoint.getArgs()[0].hashCode());
         }
+
+    }
+
+    @After(value = "@annotation(com.matrictime.network.controller.aop.MonitorRequest)")
+    public void doAfter(JoinPoint joinPoint) throws Throwable {
 
     }
 

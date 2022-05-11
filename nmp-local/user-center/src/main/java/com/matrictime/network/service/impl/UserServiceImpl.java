@@ -180,6 +180,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Override
     public Result changePasswd(ChangePasswdReq changePasswdReq) {
+        ReqUtil<ChangePasswdReq> jsonUtil = new ReqUtil<>(changePasswdReq);
+        changePasswdReq = jsonUtil.jsonReqToDto(changePasswdReq);
         Result result;
         try {
             switch (changePasswdReq.getDestination()){
@@ -206,8 +208,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    result = commonChangePasswd(changePasswdReq);
+                    ReqUtil<ChangePasswdReq> reqUtil = new ReqUtil<>(changePasswdReq);
+                    ChangePasswdReq changePasswdReq1 = reqUtil.decryJsonToReq(changePasswdReq);
+                    result = commonChangePasswd(changePasswdReq1);
                     // 返回值加密
                     break;
                 default:
@@ -222,6 +225,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Override
     public Result queryUser(UserRequest userRequest) {
+        ReqUtil<UserRequest> jsonUtil = new ReqUtil<>(userRequest);
+        userRequest = jsonUtil.jsonReqToDto(userRequest);
         Result result;
         try {
             switch (userRequest.getDestination()){
@@ -248,8 +253,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    result = commonQueryUser(userRequest);
+                    ReqUtil<UserRequest> reqUtil = new ReqUtil<>(userRequest);
+                    UserRequest userRequest1 = reqUtil.decryJsonToReq(userRequest);
+                    result = commonQueryUser(userRequest1);
                     // 返回值加密
                     break;
                 default:
