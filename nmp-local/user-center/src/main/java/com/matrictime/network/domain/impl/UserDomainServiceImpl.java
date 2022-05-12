@@ -43,7 +43,7 @@ public class UserDomainServiceImpl implements UserDomainService {
 
 
     /**
-     * @param [userRequest]
+     * @param userRequest
      * @return int
      * @title modifyUserInfo
      * @description
@@ -60,7 +60,7 @@ public class UserDomainServiceImpl implements UserDomainService {
     }
 
     /**
-     * @param [deleteFriendReq]
+     * @param deleteFriendReq
      * @return int
      * @title deleteFriend
      * @description

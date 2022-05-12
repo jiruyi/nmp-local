@@ -32,6 +32,11 @@ public class GroupVo implements Serializable {
 
     private Date createTime;
 
+    /**
+     * 0非默认 1默认
+     */
+    private Boolean defaultGroup;
+
     private List<UserGroupVo> userGroupVoList;
 
 }

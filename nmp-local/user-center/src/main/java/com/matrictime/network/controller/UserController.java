@@ -40,7 +40,7 @@ public class UserController {
     /**
      * 用户信息修改
      * @title modifyUserInfok
-     * @param [userRequest]
+     * @param userRequest
      * @return com.matrictime.network.model.Result
      * @description
      * @author jiruyi
@@ -50,7 +50,9 @@ public class UserController {
     @RequestMapping (value = "/modifyUserInfo",method = RequestMethod.POST)
     public Result modifyUserInfo(@RequestBody UserRequest userRequest){
         try {
-            return  userService.modifyUserInfo(userRequest);
+            Result result = userService.modifyUserInfo(userRequest);
+            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
+            return  result;
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -59,7 +61,7 @@ public class UserController {
 
     /**
      * @title deleteFriend
-     * @param [deleteFriendReq]
+     * @param deleteFriendReq
      * @return com.matrictime.network.model.Result
      * @description  删除好友
      * @author jiruyi
@@ -69,7 +71,9 @@ public class UserController {
     @RequestMapping (value = "/deleteFriend",method = RequestMethod.POST)
     public Result deleteFriend(@RequestBody DeleteFriendReq deleteFriendReq){
         try {
-            return  userService.deleteFriend(deleteFriendReq);
+            Result result = userService.deleteFriend(deleteFriendReq);
+            result = commonService.encrypt(deleteFriendReq.getCommonKey(), deleteFriendReq.getDestination(), result);
+            return  result;
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -107,7 +111,7 @@ public class UserController {
     public Result verify(@RequestBody VerifyReq req){
         try {
             Result result = userService.verify(req);
-            result = commonService.encrypt(req.getPhoneNumber(), req.getDestination(), result);
+            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("UserController.verify exception:{}",e.getMessage());
