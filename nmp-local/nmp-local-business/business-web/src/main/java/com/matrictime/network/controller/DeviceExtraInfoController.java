@@ -23,7 +23,7 @@ public class DeviceExtraInfoController {
     @Resource
     private DeviceExtraInfoService deviceExtraInfoService;
 
-    @RequiresPermissions("sys:station:save")
+    @RequiresPermissions("sys:deviceExtra:save")
     @SystemLog(opermodul = "主备管理",operDesc = "备用设备插入",operType = "备用设备插入")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     @ApiOperation(value = "主备管理接口",notes = "备用设备插入")
@@ -39,7 +39,7 @@ public class DeviceExtraInfoController {
         return result;
     }
 
-    @RequiresPermissions("sys:station:update")
+    @RequiresPermissions("sys:deviceExtra:update")
     @SystemLog(opermodul = "主备管理",operDesc = "备用设备更新",operType = "备用设备更新")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     @ApiOperation(value = "备用设备更新",notes = "备用设备更新")
@@ -55,7 +55,7 @@ public class DeviceExtraInfoController {
         return result;
     }
 
-    @RequiresPermissions("sys:station:delete")
+    @RequiresPermissions("sys:deviceExtra:delete")
     @SystemLog(opermodul = "主备管理",operDesc = "备用设备删除",operType = "备用设备删除")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @ApiOperation(value = "备用设备删除",notes = "备用设备删除")
@@ -71,7 +71,7 @@ public class DeviceExtraInfoController {
         return result;
     }
 
-    @RequiresPermissions("sys:station:query")
+    @RequiresPermissions("sys:deviceExtra:query")
     @SystemLog(opermodul = "主备管理",operDesc = "备用设备查询",operType = "备用设备查询")
     @RequestMapping(value = "/select",method = RequestMethod.POST)
     @ApiOperation(value = "备用设备删除",notes = "备用设备查询")
