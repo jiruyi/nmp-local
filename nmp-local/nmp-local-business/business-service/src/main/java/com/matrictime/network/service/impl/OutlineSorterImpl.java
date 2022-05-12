@@ -93,8 +93,9 @@ public class OutlineSorterImpl  extends SystemBaseService implements OutlineSort
     public Result upload(MultipartFile file) {
         Result result;
         try {
-            File tmp = new File(System.getProperty("user.dir")+"\\"+file.getName());
-            FileUtils.copyInputStreamToFile(file.getInputStream(), tmp);
+            File tmp = new File(System.getProperty("user.dir")+File.separator+file.getName()+".csv");
+            log.info(System.getProperty("user.dir")+File.separator+file.getName());
+            file.transferTo(tmp);
             List<NmplOutlineSorterInfo> nmplOutlineSorterInfoList = CsvUtils.readCsvToSorter(tmp);
             tmp.delete();
             result = buildResult(outlineSorterDomainService.batchInsert(nmplOutlineSorterInfoList));
