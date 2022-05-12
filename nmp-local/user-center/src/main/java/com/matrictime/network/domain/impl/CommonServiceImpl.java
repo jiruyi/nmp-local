@@ -43,13 +43,28 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     }
 
     @Override
-    public String encryptToString(String condition, String destination, Result res) throws Exception {
+    public String encryptToString(String condition, String destination, Object object) throws Exception {
         if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
             ReqUtil resUtil = new ReqUtil();
-            String resultObj = resUtil.encryJsonToReq(res, getSidByCondition(condition));
+            String resultObj = resUtil.encryJsonToReq(object, getSidByCondition(condition));
             return resultObj;
         }
         return null;
+    }
+
+    @Override
+    public Result encryptForWs(String condition, String destination, Result res) throws Exception {
+        if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
+            ReqUtil resUtil = new ReqUtil();
+            String errorMsg = res.getErrorMsg();
+            res.setErrorMsg(null);
+            String resultObj = resUtil.encryJsonToReq(res, getSidByCondition(condition));
+            res.setSuccess(true);
+            res.setResultObj(resultObj);
+            res.setErrorMsg(errorMsg);
+            res.setErrorCode(null);
+        }
+        return res;
     }
 
     @Override

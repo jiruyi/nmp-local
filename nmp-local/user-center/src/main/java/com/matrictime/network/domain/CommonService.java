@@ -7,7 +7,9 @@ import com.matrictime.network.model.Result;
 public interface CommonService {
     Result encrypt(String condition,String destination, Result result) throws Exception;
 
-    String encryptToString(String condition,String destination, Result result) throws Exception;
+    String encryptToString(String condition,String destination, Object o) throws Exception;
+
+    Result encryptForWs(String condition,String destination, Result result) throws Exception;
 
     Result encryptForLogin(LoginReq req, Result result) throws Exception;
 }

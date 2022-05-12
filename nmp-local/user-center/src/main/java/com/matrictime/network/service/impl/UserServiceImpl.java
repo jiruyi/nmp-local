@@ -7,6 +7,7 @@ import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.UserVo;
+import com.matrictime.network.api.modelVo.WsSendVo;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
@@ -429,7 +430,18 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             int n = userDomainService.deleteFriend(deleteFriendReq);
-            return  buildResult(n);
+
+            WsSendVo wsSendVo = new WsSendVo();
+            String userId = deleteFriendReq.getUserId();
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
+            List<User> users = userMapper.selectByExample(userExample);
+            if (!CollectionUtils.isEmpty(users)){
+                User user = users.get(0);
+                wsSendVo.setData(user);
+                wsSendVo.setSendObject(deleteFriendReq.getFriendUserId());
+            }
+            return  buildResult(n,null,JSONObject.toJSONString(wsSendVo));
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
             return  failResult(e);
