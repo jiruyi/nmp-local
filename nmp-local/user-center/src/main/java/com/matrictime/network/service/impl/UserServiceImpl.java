@@ -84,6 +84,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     public Result modifyUserInfo(UserRequest userRequest) {
         Result result;
         try {
+            ReqUtil<UserRequest> jsonUtil = new ReqUtil<>(userRequest);
+            userRequest = jsonUtil.jsonReqToDto(userRequest);
+
             switch (userRequest.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     result = commonModifyUserInfo(userRequest);
@@ -107,8 +110,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     }
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    result = commonModifyUserInfo(userRequest);
+                    ReqUtil<UserRequest> reqUtil = new ReqUtil<>(userRequest);
+                    UserRequest desReq = reqUtil.decryJsonToReq(userRequest);
+                    result = commonModifyUserInfo(desReq);
                     // 返回值加密
                     break;
                 default:
@@ -136,6 +140,10 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     public Result deleteFriend(DeleteFriendReq deleteFriendReq) {
         Result result;
         try {
+
+            ReqUtil<DeleteFriendReq> jsonUtil = new ReqUtil<>(deleteFriendReq);
+            deleteFriendReq = jsonUtil.jsonReqToDto(deleteFriendReq);
+
             switch (deleteFriendReq.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     result = commonDeleteFriend(deleteFriendReq);
@@ -159,8 +167,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     }
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    result = commonDeleteFriend(deleteFriendReq);
+                    ReqUtil<DeleteFriendReq> reqUtil = new ReqUtil<>(deleteFriendReq);
+                    DeleteFriendReq desReq = reqUtil.decryJsonToReq(deleteFriendReq);
+                    result = commonDeleteFriend(desReq);
                     // 返回值加密
                     break;
                 default:

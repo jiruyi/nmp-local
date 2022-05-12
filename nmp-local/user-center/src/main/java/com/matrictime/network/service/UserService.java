@@ -18,7 +18,7 @@ public interface UserService {
 
     /**
       * @title modify
-      * @param [userRequest]
+      * @param userRequest
       * @return com.matrictime.network.model.Result
       * @description
       * @author jiruyi
@@ -28,7 +28,7 @@ public interface UserService {
 
     /**
       * @title deleteFriend
-      * @param [deleteFriendReq]
+      * @param deleteFriendReq
       * @return com.matrictime.network.model.Result
       * @description 
       * @author jiruyi

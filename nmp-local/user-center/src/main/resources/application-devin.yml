@@ -42,5 +42,5 @@ app:
   id: UC010
   port: 9100
   timeout: 5000
-  innerUrl: http://192.168.72.230:8006
+  innerUrl: http://192.168.72.231:8006
   outerUrl: http://192.168.72.211:8007
