@@ -2,6 +2,8 @@ package com.matrictime.network.controller;
 
 
 import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSON;
+import com.matrictime.network.api.modelVo.WebSocketVo;
 import com.matrictime.network.api.request.AddUserRequestReq;
 import com.matrictime.network.api.request.RecallRequest;
 import com.matrictime.network.api.request.UserFriendReq;
@@ -65,16 +67,16 @@ public class UserFriendsController {
 
     @ApiOperation(value = "添加好友",notes = "添加好友")
     @RequestMapping (value = "/addFriends",method = RequestMethod.POST)
-    public Result<Integer> addFriends(@RequestBody AddUserRequestReq addUserRequestReq){
+    public Result<WebSocketVo> addFriends(@RequestBody AddUserRequestReq addUserRequestReq){
         try {
-            Result result = userFriendsService.addFriends(addUserRequestReq);
-            result = commonService.encrypt(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
-            if(Integer.parseInt(result.getResultObj().toString()) == 1){
+            Result<WebSocketVo> result = userFriendsService.addFriends(addUserRequestReq);
+            if("100".equals(result.getErrorCode())){
                 return result;
             }else {
-                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(addUserRequestReq.getAddUserId());
+                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(result.getResultObj().getAddUserId());
+                result = commonService.encrypt(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
                 if(webSocketServer != null){
-                    webSocketServer.sendMessage(JSONUtils.toJSONString(messageText(addUserRequestReq)));
+                    webSocketServer.sendMessage(webSocketMessage(result.getResultObj(),"10"));
                 }
                 return new Result<>(true,"等待好友验证");
             }
@@ -101,93 +103,50 @@ public class UserFriendsController {
 
     @ApiOperation(value = "获取好友添加返回信息",notes = "获取好友添加返回信息")
     @RequestMapping (value = "/getRecall",method = RequestMethod.POST)
-    public Result<Integer> getRecall(@RequestBody RecallRequest request){
-        Result result = new Result<>();
+    public Result<WebSocketVo> getRecall(@RequestBody RecallRequest request){
+        Result<WebSocketVo> result = new Result<>();
         try {
-            if(request.getAgree() != null){
+            if(request.getAgree() != null && request.getRefuse() == null){
                 result = userFriendsService.agreeAddFriedns(request);
+                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(result.getResultObj().getUserId());
                 result = commonService.encrypt(request.getCommonKey(), request.getDestination(), result);
-                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
                 if(webSocketServer != null){
-                    webSocketServer.sendMessage(JSONUtils.toJSONString(messageAgreeText(request)));
+                    webSocketServer.sendMessage(webSocketMessage(result.getResultObj(),"10"));
                 }
             }
-            if(request.getRefuse() != null) {
+            if(request.getRefuse() != null && request.getAgree() == null) {
                 result = userFriendsService.agreeAddFriedns(request);
-                result = commonService.encrypt(request.getCommonKey(), request.getDestination(), result);
                 result.setErrorMsg("已经拒绝");
-                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
+                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(result.getResultObj().getUserId());
+                result = commonService.encrypt(request.getCommonKey(), request.getDestination(), result);
                 if(webSocketServer != null){
-                    webSocketServer.sendMessage(JSONUtils.toJSONString(messageRefuseText(request)));
+                    webSocketServer.sendMessage(webSocketMessage(result.getResultObj(),"12"));
                 }
             }
             return result;
         }catch (Exception e){
+            log.error("getRecall exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
 
-    /*
-     构建添加好友推送信息json字符串
-    */
-    private Map messageText(AddUserRequestReq addUserRequestReq){
-        Map<String,Object> messageMap = new HashMap<>();
-        Map<String,String> dataMap = new HashMap<>();
-        if("1".equals(addUserRequestReq.getDestination())){
-            messageMap.put("destination","1");
-        }else {
-            messageMap.put("destination","0");
-        }
-        messageMap.put("from","uc");
-        messageMap.put("businessCode","7");
-        dataMap.put("userId",addUserRequestReq.getUserId());
-        dataMap.put("addUserId",addUserRequestReq.getAddUserId());
-        dataMap.put("sex",addUserRequestReq.getSex());
-        dataMap.put("nickName",addUserRequestReq.getNickName());
-        messageMap.put("data",dataMap);
-        return messageMap;
-    }
+
 
     /*
-     构建同意添加好友推送信息json字符串
-   */
-    private Map messageAgreeText(RecallRequest recallRequest){
-        Map<String,Object> messageMap = new HashMap<>();
-        Map<String,String> dataMap = new HashMap<>();
-        if("1".equals(recallRequest.getDestination())){
-            messageMap.put("destination","1");
+        构建WebSocket推送消息
+    * */
+    private String webSocketMessage(WebSocketVo webSocketVo,String businessCode){
+        Map<String,Object> resultMessage = new HashMap<>();
+        if(webSocketVo.getDestination().equals("1")){
+            resultMessage.put("destination","1");
         }else {
-            messageMap.put("destination","0");
+            resultMessage.put("destination","0");
         }
-        messageMap.put("from","uc");
-        messageMap.put("businessCode","10");
-        dataMap.put("userId",recallRequest.getUserId());
-        dataMap.put("addUserId",recallRequest.getAddUserId());
-        dataMap.put("sex",recallRequest.getSex());
-        dataMap.put("nickName",recallRequest.getNickName());
-        messageMap.put("data",dataMap);
-        return messageMap;
+        Map webSocketMap = JSON.parseObject(JSON.toJSONString(webSocketVo),Map.class);
+        resultMessage.put("businessCode",businessCode);
+        resultMessage.put("result",webSocketMap);
+        return JSONUtils.toJSONString(resultMessage);
     }
-
-    /*
-      构建拒绝添加好友推送信息json字符串
-    */
-    private Map messageRefuseText(RecallRequest recallRequest){
-        Map<String,Object> messageMap = new HashMap<>();
-        Map<String,String> dataMap = new HashMap<>();
-        if("1".equals(recallRequest.getDestination())){
-            messageMap.put("destination","1");
-        }else {
-            messageMap.put("destination","0");
-        }
-        messageMap.put("from","uc");
-        messageMap.put("businessCode","12");
-        dataMap.put("userId",recallRequest.getUserId());
-        dataMap.put("addUserId",recallRequest.getAddUserId());
-        messageMap.put("data",dataMap);
-        return messageMap;
-    }
-
 
 
 }

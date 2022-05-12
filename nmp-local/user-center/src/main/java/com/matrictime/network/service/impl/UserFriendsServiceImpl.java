@@ -23,6 +23,7 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
+import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -70,11 +71,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     Object returnValueM = resModel.getReturnValue();
                     if(returnValueM != null && returnValueM instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
-                        Result<UserFriendResp> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<UserFriendResp>>(){});
-                        if(returnRes.isSuccess()){
-                            result = commonSelectUserFriend(userFriendReq);
-                            return result;
-                        }
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
                     }else {
                         throw new SystemException("UserFriendsServiceImpl.selectUserFriend"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
@@ -83,11 +80,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     // 入参解密
                     ReqUtil reqUtil = new ReqUtil<>(userFriendReq);
                     userFriendReq = (UserFriendReq)reqUtil.decryJsonToReq(userFriendReq);
-                    return commonSelectUserFriend(userFriendReq);
-                // 返回值加密
-                case UcConstants.DESTINATION_OUT_TO_IN_SYN:
-
-                    return commonSelectUserFriend(userFriendReq);
+                    result =  commonSelectUserFriend(userFriendReq);
+                    break;
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
@@ -114,8 +108,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     }
 
     @Override
-    public Result<Integer> addFriends(AddUserRequestReq addUserRequestReq) {
-        Result<Integer> result = new Result<>();
+    public Result<WebSocketVo> addFriends(AddUserRequestReq addUserRequestReq) {
+        Result<WebSocketVo> result = new Result<>();
         ReqUtil jsonUtil = new ReqUtil<>(addUserRequestReq);
         addUserRequestReq = (AddUserRequestReq) jsonUtil.jsonReqToDto(addUserRequestReq);
         UserFriendReq userFriendReq = setUserFriendReq(addUserRequestReq);
@@ -124,6 +118,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         try {
             switch (addUserRequestReq.getDestination()){
                 case UcConstants.DESTINATION_OUT:
+                    addUserRequestReq.setDestination("0");
                     result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
                     break;
                 case UcConstants.DESTINATION_IN:
@@ -138,11 +133,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     Object returnValueM = resModel.getReturnValue();
                     if(returnValueM != null && returnValueM instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
-                        Result<Integer> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<Integer>>(){});
-                        if(returnRes.isSuccess()){
-                            result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
-                            return result;
-                        }
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
                     }else {
                         throw new SystemException("UserFriendsServiceImpl.addFriends"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
@@ -152,13 +143,11 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     ReqUtil reqUtil = new ReqUtil<>(addUserRequestReq);
                     addUserRequestReq = (AddUserRequestReq)reqUtil.decryJsonToReq(addUserRequestReq);
                     UserFriendReq friendReq = setUserFriendReq(addUserRequestReq);
+                    addUserRequestReq.setDestination("1");
                     UserRequest request = new UserRequest();
                     request.setUserId(addUserRequestReq.getAddUserId());
-                    return commonAddFriends(friendReq,addUserRequestReq,request);
-                // 返回值加密
-                case UcConstants.DESTINATION_OUT_TO_IN_SYN:
-
-                    return commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
+                    result = commonAddFriends(friendReq,addUserRequestReq,request);
+                    break;
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
@@ -170,8 +159,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     }
 
     @Override
-    public Result<Integer> agreeAddFriedns(RecallRequest recallRequest) {
-        Result<Integer> result = new Result<>();
+    public Result<WebSocketVo> agreeAddFriedns(RecallRequest recallRequest) {
+        Result<WebSocketVo> result = new Result<>();
         ReqUtil jsonUtil = new ReqUtil<>(recallRequest);
         recallRequest = (RecallRequest) jsonUtil.jsonReqToDto(recallRequest);
         AddUserRequestReq addUserRequestReq = setAddUserRequestReq(recallRequest);
@@ -181,6 +170,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         try {
             switch (recallRequest.getDestination()){
                 case UcConstants.DESTINATION_OUT:
+                    addUserRequestReq.setDestination("0");
                     result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
                     break;
                 case UcConstants.DESTINATION_IN:
@@ -195,11 +185,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     Object returnValueM = resModel.getReturnValue();
                     if(returnValueM != null && returnValueM instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
-                        Result<Integer> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<Integer>>(){});
-                        if(returnRes.isSuccess()){
-                            result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
-                            return result;
-                        }
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
+                        //Result<Integer> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<Integer>>(){});
                     }else {
                         throw new SystemException("UserFriendsServiceImpl.addFriends"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
@@ -209,14 +196,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     ReqUtil reqUtil = new ReqUtil<>(recallRequest);
                     recallRequest = (RecallRequest)reqUtil.decryJsonToReq(recallRequest);
                     AddUserRequestReq setAddUserRequestReq = setAddUserRequestReq(recallRequest);
+                    setAddUserRequestReq.setDestination("1");
                     UserFriendReq friendReq = setUserFriendReq(addUserRequestReq);
                     UserRequest request = new UserRequest();
                     userRequest.setUserId(addUserRequestReq.getAddUserId());
-                    return commonAddFriends(friendReq,setAddUserRequestReq,request);
-                // 返回值加密
-                case UcConstants.DESTINATION_OUT_TO_IN_SYN:
-
-                    return commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
+                    result = commonAddFriends(friendReq,setAddUserRequestReq,request);
+                    break;
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
@@ -228,17 +213,21 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     }
 
     //添加好友信息逻辑
-    private Result<Integer> commonAddFriends(UserFriendReq userFriendReq,AddUserRequestReq addUserRequestReq,
+    private Result<WebSocketVo> commonAddFriends(UserFriendReq userFriendReq,AddUserRequestReq addUserRequestReq,
                                              UserRequest userRequest) {
-        Result<Integer> result = new Result<>();
+        Result<WebSocketVo> result = new Result<>();
+        UserRequest request = new UserRequest();
+        request.setUserId(addUserRequestReq.getUserId());
         UserVo userVo = userFriendsDomainService.selectUserInfo(userRequest);
         AddRequestVo addRequestVo = userFriendsDomainService.selectGroupId(addUserRequestReq);
+        UserVo user = userFriendsDomainService.selectUserInfo(request);
         if(userVo.getAgreeFriend() == 0 || addUserRequestReq.getAgree() != null){
             if(addUserRequestReq.getAgree() == null && userVo.getAgreeFriend() == 0){
                 if(!AddRequestStatusFlag(addRequestVo).isSuccess()){
                     return AddRequestStatusFlag(addRequestVo);
                 }
                 addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
+                addUserRequestReq.setRequestId(SnowFlake.nextId_String());
                 userFriendsDomainService.addFriends(addUserRequestReq);
             }
             if(addUserRequestReq.getAgree() != null && userVo.getAgreeFriend() == 1){
@@ -265,22 +254,47 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             GroupVo groupVo = userFriendsDomainService.selectGroupInfo(groupReq);
             //添加到默认分组
             setAddFriendGroup(groupVo,addUserRequestReq);
-            result.setResultObj(1);
+            result.setErrorCode("100");
+            WebSocketVo webSocketVo = setWebSocketVo(addUserRequestReq,user);
+            result.setResultObj(webSocketVo);
         }
         //拒绝添加好友
         if(userVo.getAgreeFriend() == 1 || addUserRequestReq.getRefuse() != null) {
+            WebSocketVo webSocketVo = new WebSocketVo();
             if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() == null
                     && addUserRequestReq.getAgree() == null){
                 addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
+                addUserRequestReq.setRequestId(SnowFlake.nextId_String());
+                webSocketVo = setWebSocketVo(addUserRequestReq,user);
+                //等待好友确认添加
+                result.setErrorCode("101");
                 userFriendsDomainService.addFriends(addUserRequestReq);
             }
             if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() != null
                     && addUserRequestReq.getAgree() == null){
+                webSocketVo.setUserId(addUserRequestReq.getUserId());
+                webSocketVo.setRequestId(addUserRequestReq.getRequestId());
+                //拒绝添加
+                result.setErrorCode("102");
                 userFriendsDomainService.update(addUserRequestReq);
             }
-            result.setResultObj(2);
+            result.setResultObj(webSocketVo);
+
         }
         return result;
+    }
+
+    //构建推送返回体
+    private WebSocketVo setWebSocketVo(AddUserRequestReq addUserRequestReq,UserVo user){
+        WebSocketVo webSocketVo = new WebSocketVo();
+        webSocketVo.setAddUserId(addUserRequestReq.getAddUserId());
+        webSocketVo.setUserId(addUserRequestReq.getUserId());
+        webSocketVo.setNickName(user.getNickName());
+        webSocketVo.setPhoneNumber(user.getPhoneNumber());
+        webSocketVo.setSex(user.getSex());
+        webSocketVo.setRequestId(addUserRequestReq.getRequestId());
+        webSocketVo.setDestination(addUserRequestReq.getDestination());
+        return webSocketVo;
     }
 
     //直接添加好友并把好友分组到该分组中
@@ -437,11 +451,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     Object returnValueM = resModel.getReturnValue();
                     if(returnValueM != null && returnValueM instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
-                        Result<Integer> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<Integer>>(){});
-                        if(returnRes.isSuccess()){
-                            // 非密区同步用户
-                            return buildResult(commonCancelUser(userRequest));
-                        }
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
                     }else {
                         throw new SystemException("UserFriendsServiceImpl.modifyUserInfo"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
@@ -451,12 +461,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     ReqUtil reqUtil = new ReqUtil<>(userRequest);
                     userRequest = (UserRequest)reqUtil.decryJsonToReq(userRequest);
                     result.setResultObj(commonCancelUser(userRequest));
-                    return result;
-                    // 返回值加密
-                case UcConstants.DESTINATION_OUT_TO_IN_SYN:
-                    result.setResultObj(commonCancelUser(userRequest));
-                    return result;
-
+                    break;
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
