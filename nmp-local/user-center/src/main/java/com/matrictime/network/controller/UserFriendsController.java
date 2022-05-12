@@ -42,7 +42,7 @@ public class UserFriendsController {
     public Result<Integer> cancelUser(@RequestBody UserRequest userRequest){
         try {
             Result result = userFriendsService.modifyUserInfo(userRequest);
-            result = commonService.encrypt(userRequest.getUserId(), userRequest.getDestination(), result);
+            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
             return  result;
         }catch (Exception e){
             log.error("cancelUser exception:{}",e.getMessage());
@@ -55,7 +55,7 @@ public class UserFriendsController {
     public Result<UserFriendResp> selectUserFriend(@RequestBody UserFriendReq userFriendReq){
         try {
             Result result = userFriendsService.selectUserFriend(userFriendReq);
-            result = commonService.encrypt(userFriendReq.getUserId(), userFriendReq.getDestination(), result);
+            result = commonService.encrypt(userFriendReq.getCommonKey(), userFriendReq.getDestination(), result);
             return  result;
         }catch (Exception e){
             log.error("selectUserFriend exception:{}",e.getMessage());
@@ -68,7 +68,7 @@ public class UserFriendsController {
     public Result<Integer> addFriends(@RequestBody AddUserRequestReq addUserRequestReq){
         try {
             Result result = userFriendsService.addFriends(addUserRequestReq);
-            result = commonService.encrypt(addUserRequestReq.getUserId(), addUserRequestReq.getDestination(), result);
+            result = commonService.encrypt(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
             if(Integer.parseInt(result.getResultObj().toString()) == 1){
                 return result;
             }else {
@@ -106,7 +106,7 @@ public class UserFriendsController {
         try {
             if(request.getAgree() != null){
                 result = userFriendsService.agreeAddFriedns(request);
-                result = commonService.encrypt(request.getAddUserId(), request.getDestination(), result);
+                result = commonService.encrypt(request.getCommonKey(), request.getDestination(), result);
                 WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
                 if(webSocketServer != null){
                     webSocketServer.sendMessage(JSONUtils.toJSONString(messageAgreeText(request)));
@@ -114,7 +114,7 @@ public class UserFriendsController {
             }
             if(request.getRefuse() != null) {
                 result = userFriendsService.agreeAddFriedns(request);
-                result = commonService.encrypt(request.getAddUserId(), request.getDestination(), result);
+                result = commonService.encrypt(request.getCommonKey(), request.getDestination(), result);
                 result.setErrorMsg("已经拒绝");
                 WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(request.getUserId());
                 if(webSocketServer != null){
