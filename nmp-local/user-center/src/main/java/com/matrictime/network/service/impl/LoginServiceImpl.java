@@ -288,6 +288,10 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     public Result logout(LogoutReq req) {
         Result result;
         try {
+
+            ReqUtil<LogoutReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
+
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     commonLogout(req);
