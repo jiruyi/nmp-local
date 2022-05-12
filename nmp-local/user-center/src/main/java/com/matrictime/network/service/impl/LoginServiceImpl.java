@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
+import com.matrictime.network.api.modelVo.GroupVo;
 import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
@@ -15,7 +16,10 @@ import com.matrictime.network.base.util.CheckUtil;
 import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.dao.mapper.GroupInfoMapper;
 import com.matrictime.network.dao.mapper.UserMapper;
+import com.matrictime.network.dao.model.GroupInfo;
+import com.matrictime.network.dao.model.GroupInfoExample;
 import com.matrictime.network.dao.model.User;
 import com.matrictime.network.dao.model.UserExample;
 import com.matrictime.network.domain.GroupDomainService;
@@ -33,6 +37,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.matrictime.network.config.DataConfig.LOGIN_STATUS_IN;
@@ -52,6 +57,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     @Value("${app.outerUrl}")
     private String outUrl;
+
+    @Autowired(required = false)
+    private GroupInfoMapper groupInfoMapper;
 
     @Override
     public Result<RegisterResp> register(RegisterReq req) {
@@ -279,7 +287,19 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             UserVo userVo = new UserVo();
             BeanUtils.copyProperties(user,userVo);
             userVo.setPassword(null);
+
+            String userId = user.getUserId();
+            GroupInfoExample groupInfoExample = new GroupInfoExample();
+            groupInfoExample.createCriteria().andOwnerEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
+            List<GroupInfo> groupInfos = groupInfoMapper.selectByExample(groupInfoExample);
+            List<GroupVo> groupVos = new ArrayList<>(groupInfos.size());
+            for (GroupInfo groupInfo : groupInfos) {
+                GroupVo groupVo = new GroupVo();
+                BeanUtils.copyProperties(groupInfo,groupVo);
+                groupVos.add(groupVo);
+            }
             resp.setUser(userVo);
+            resp.setGroups(groupVos);
         }
         return resp;
     }
