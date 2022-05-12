@@ -218,7 +218,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     Object returnValue = resModel.getReturnValue();
                     if(returnValue != null && returnValue instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        Result<LoginResp> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<LoginResp>>(){});
+                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result>(){});
                         return returnRes;
                     }else {
                         throw new SystemException("LoginServiceImpl.login"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
@@ -232,7 +232,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     resp = commonLogin(desReq);
                     // 返回值加密
 
-                    return buildResult(resp);
+                    return buildResult(resp,null,resp.getUser().getUserId());
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 

@@ -107,7 +107,7 @@ public class UserController {
     public Result verify(@RequestBody VerifyReq req){
         try {
             Result result = userService.verify(req);
-            result = commonService.encrypt(req.getPhoneNumber(), req.getDestination(), result);
+            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("UserController.verify exception:{}",e.getMessage());

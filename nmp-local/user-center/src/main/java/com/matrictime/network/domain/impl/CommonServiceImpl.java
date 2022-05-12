@@ -45,19 +45,7 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     @Override
     public Result encryptForLogin(LoginReq req, Result res) throws Exception {
         if(UcConstants.DESTINATION_OUT_TO_IN.equals(req.getDestination())){
-            String userId = null;
-            UserExample userExample = new UserExample();
-
-            if (DataConfig.LOGIN_TYPE_USER.equals(req.getLoginType())){
-                userExample.createCriteria().andUserIdEqualTo(req.getUserId()).andIsExistEqualTo(DataConstants.IS_EXIST);
-            }
-            if (DataConfig.LOGIN_TYPE_ACCOUNT.equals(req.getLoginType())){
-                userExample.createCriteria().andLoginAccountEqualTo(req.getLoginAccount()).andIsExistEqualTo(DataConstants.IS_EXIST);;
-            }
-            List<User> users = userMapper.selectByExample(userExample);
-            if(!CollectionUtils.isEmpty(users)){
-                userId = users.get(0).getUserId();
-            }
+            String userId = res.getErrorMsg();
             ReqUtil resUtil = new ReqUtil();
             String resultObj = resUtil.encryJsonToReq(res, getSidByCondition(req.getCommonKey()));
             res.setSuccess(true);
