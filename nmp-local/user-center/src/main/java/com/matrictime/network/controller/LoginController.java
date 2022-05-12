@@ -38,7 +38,7 @@ public class LoginController {
     public Result login(@RequestBody LoginReq req){
         try {
             Result<LoginResp> result = loginService.login(req);
-            result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
+            result = commonService.encryptForLogin(req, result);
             return result;
         }catch (Exception e){
             log.error("LoginController.login exception:{}",e.getMessage());
@@ -70,7 +70,7 @@ public class LoginController {
     public Result logout(@RequestBody LogoutReq req){
         try {
             Result result = loginService.logout(req);
-            result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
+            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("LoginController.logout exception:{}",e.getMessage());
@@ -86,7 +86,7 @@ public class LoginController {
     public Result bind(@RequestBody BindReq req){
         try {
             Result result = loginService.bind(req);
-            result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
+            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("LoginController.bind exception:{}",e.getMessage());

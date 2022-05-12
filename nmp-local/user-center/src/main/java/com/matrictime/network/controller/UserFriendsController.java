@@ -36,9 +36,6 @@ public class UserFriendsController {
     @Autowired
     private CommonService commonService;
 
-    @Resource
-    private CommonService commonService;
-
 
     @ApiOperation(value = "注销用户",notes = "注销用户")
     @RequestMapping (value = "/cancelUser",method = RequestMethod.POST)

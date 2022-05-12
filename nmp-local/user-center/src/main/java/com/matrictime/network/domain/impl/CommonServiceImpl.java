@@ -1,9 +1,11 @@
 package com.matrictime.network.domain.impl;
 
 import com.matrictime.network.api.request.BaseReq;
+import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.ReqUtil;
+import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
@@ -35,6 +37,32 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
             res.setSuccess(true);
             res.setResultObj(resultObj);
             res.setErrorMsg(null);
+            res.setErrorCode(null);
+        }
+        return res;
+    }
+
+    @Override
+    public Result encryptForLogin(LoginReq req, Result res) throws Exception {
+        if(UcConstants.DESTINATION_OUT_TO_IN.equals(req.getDestination())){
+            String userId = null;
+            UserExample userExample = new UserExample();
+
+            if (DataConfig.LOGIN_TYPE_USER.equals(req.getLoginType())){
+                userExample.createCriteria().andUserIdEqualTo(req.getUserId()).andIsExistEqualTo(DataConstants.IS_EXIST);
+            }
+            if (DataConfig.LOGIN_TYPE_ACCOUNT.equals(req.getLoginType())){
+                userExample.createCriteria().andLoginAccountEqualTo(req.getLoginAccount()).andIsExistEqualTo(DataConstants.IS_EXIST);;
+            }
+            List<User> users = userMapper.selectByExample(userExample);
+            if(!CollectionUtils.isEmpty(users)){
+                userId = users.get(0).getUserId();
+            }
+            ReqUtil resUtil = new ReqUtil();
+            String resultObj = resUtil.encryJsonToReq(res, getSidByCondition(req.getCommonKey()));
+            res.setSuccess(true);
+            res.setResultObj(resultObj);
+            res.setErrorMsg(userId);
             res.setErrorCode(null);
         }
         return res;
