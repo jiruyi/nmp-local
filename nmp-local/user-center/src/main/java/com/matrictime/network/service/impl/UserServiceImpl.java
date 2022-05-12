@@ -301,8 +301,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
 
-                    VerifyReq desReq = new VerifyReq();
-                    BeanUtils.copyProperties(req,desReq);
+                    ReqUtil<VerifyReq> reqUtil = new ReqUtil<>(req);
+                    VerifyReq desReq = reqUtil.decryJsonToReq(req);
                     commonVerify(desReq);
 
 
