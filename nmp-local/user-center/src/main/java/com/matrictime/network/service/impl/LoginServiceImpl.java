@@ -288,9 +288,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     public Result logout(LogoutReq req) {
         Result result;
         try {
-            CheckUtil.checkParam(req);
-
-
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     commonLogout(req);
