@@ -7,6 +7,7 @@ import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.UserVo;
+import com.matrictime.network.api.modelVo.WsSendVo;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
@@ -84,6 +85,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     public Result modifyUserInfo(UserRequest userRequest) {
         Result result;
         try {
+            ReqUtil<UserRequest> jsonUtil = new ReqUtil<>(userRequest);
+            userRequest = jsonUtil.jsonReqToDto(userRequest);
+
             switch (userRequest.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     result = commonModifyUserInfo(userRequest);
@@ -107,8 +111,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     }
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    result = commonModifyUserInfo(userRequest);
+                    ReqUtil<UserRequest> reqUtil = new ReqUtil<>(userRequest);
+                    UserRequest desReq = reqUtil.decryJsonToReq(userRequest);
+                    result = commonModifyUserInfo(desReq);
                     // 返回值加密
                     break;
                 default:
@@ -136,7 +141,10 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     public Result deleteFriend(DeleteFriendReq deleteFriendReq) {
         Result result;
         try {
-            CheckUtil.checkParam(deleteFriendReq);
+
+            ReqUtil<DeleteFriendReq> jsonUtil = new ReqUtil<>(deleteFriendReq);
+            deleteFriendReq = jsonUtil.jsonReqToDto(deleteFriendReq);
+
             switch (deleteFriendReq.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     result = commonDeleteFriend(deleteFriendReq);
@@ -160,8 +168,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     }
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
-                    result = commonDeleteFriend(deleteFriendReq);
+                    ReqUtil<DeleteFriendReq> reqUtil = new ReqUtil<>(deleteFriendReq);
+                    DeleteFriendReq desReq = reqUtil.decryJsonToReq(deleteFriendReq);
+                    result = commonDeleteFriend(desReq);
                     // 返回值加密
                     break;
                 default:
@@ -301,8 +310,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
 
-                    VerifyReq desReq = new VerifyReq();
-                    BeanUtils.copyProperties(req,desReq);
+                    ReqUtil<VerifyReq> reqUtil = new ReqUtil<>(req);
+                    VerifyReq desReq = reqUtil.decryJsonToReq(req);
                     commonVerify(desReq);
 
 
@@ -421,7 +430,18 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             int n = userDomainService.deleteFriend(deleteFriendReq);
-            return  buildResult(n);
+
+            WsSendVo wsSendVo = new WsSendVo();
+            String userId = deleteFriendReq.getUserId();
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
+            List<User> users = userMapper.selectByExample(userExample);
+            if (!CollectionUtils.isEmpty(users)){
+                User user = users.get(0);
+                wsSendVo.setData(user);
+                wsSendVo.setSendObject(deleteFriendReq.getFriendUserId());
+            }
+            return  buildResult(n,null,JSONObject.toJSONString(wsSendVo));
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
             return  failResult(e);

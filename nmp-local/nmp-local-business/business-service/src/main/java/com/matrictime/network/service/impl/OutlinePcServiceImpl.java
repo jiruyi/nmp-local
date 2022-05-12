@@ -89,8 +89,9 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
     public Result upload(MultipartFile file) {
         Result result;
         try {
-            File tmp = new File(System.getProperty("user.dir")+"\\"+file.getName());
-            FileUtils.copyInputStreamToFile(file.getInputStream(), tmp);
+            File tmp = new File(System.getProperty("user.dir")+File.separator+file.getName()+".csv");
+            log.info(System.getProperty("user.dir")+File.separator+file.getName());
+            file.transferTo(tmp);
             List<NmplOutlinePcInfo> nmplOutlinePcInfoList = CsvUtils.readCsvToPc(tmp);
             tmp.delete();
             result = buildResult(outlinePcDomainService.batchInsert(nmplOutlinePcInfoList));
