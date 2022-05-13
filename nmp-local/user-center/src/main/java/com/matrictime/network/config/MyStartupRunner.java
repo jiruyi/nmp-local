@@ -36,12 +36,12 @@ public class MyStartupRunner implements CommandLineRunner {
         log.info("SpringBoot run appName:{},appId:{},appPort:{}", appName, appId, appPort);
         JServiceImpl.FlowType = FlowType;
         JServiceImpl.handleType = handleType;
-//        JServiceImpl.start(appName, appId, appPort, comOptApi);
+        JServiceImpl.start(appName, appId, appPort, comOptApi);
     }
 
     @PreDestroy
     public void destory() throws Exception{
-//        JServiceImpl.stop();
+        JServiceImpl.stop();
         log.info("在程序关闭后执行");
     }
 }
