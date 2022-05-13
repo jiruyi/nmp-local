@@ -112,30 +112,14 @@ public class UserFriendsController {
         }
     }
 
-
-    private void addFriendSendMsg(AddUserRequestReq addUserRequestReq,Result result){
+    private void agreeFriendSendMsg(RecallRequest request,Result result){
         WsResultVo wsResultVo = new WsResultVo();
-        WsSendVo wsSendVo;
         String sendObject = "";
-        if(StringUtils.isBlank(addUserRequestReq.getDestination())){
+        if(StringUtils.isBlank(request.getDestination())){
             if (result.isSuccess()){
-                wsSendVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsSendVo>() {});
-                sendObject = wsSendVo.getSendObject();
-                wsSendVo.setSendObject(null);
-
-                if (UcConstants.DESTINATION_OUT.equals(wsSendVo.getDestination())){
-                    wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
-                    wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
-                }else if (UcConstants.DESTINATION_OUT_TO_IN.equals(wsSendVo.getDestination())){
-                    try {
-                        String encrypt = commonService.encryptToString(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), wsSendVo);
-                        wsResultVo.setResult(encrypt);
-                        wsResultVo.setDestination(UcConstants.DESTINATION_IN);
-                    }catch (Exception e){
-                        sendObject = "";
-                        log.error("addFriendSendMsg exception:{}",e.getMessage());
-                    }
-                }
+                wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
+                sendObject = wsResultVo.getSendObject();
+                wsResultVo.setSendObject(null);
                 result.setErrorMsg(null);
             }
         }
@@ -148,29 +132,14 @@ public class UserFriendsController {
         }
     }
 
-    private void agreeFriendSendMsg(RecallRequest request,Result result){
+    private void addFriendSendMsg(AddUserRequestReq addUserRequestReq,Result result){
         WsResultVo wsResultVo = new WsResultVo();
-        WsSendVo wsSendVo;
         String sendObject = "";
-        if(StringUtils.isBlank(request.getDestination())){
+        if(StringUtils.isBlank(addUserRequestReq.getDestination())){
             if (result.isSuccess()){
-                wsSendVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsSendVo>() {});
-                sendObject = wsSendVo.getSendObject();
-                wsSendVo.setSendObject(null);
-
-                if (UcConstants.DESTINATION_OUT.equals(wsSendVo.getDestination())){
-                    wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
-                    wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
-                }else if (UcConstants.DESTINATION_OUT_TO_IN.equals(wsSendVo.getDestination())){
-                    try {
-                        String encrypt = commonService.encryptToString(request.getCommonKey(), request.getDestination(), wsSendVo);
-                        wsResultVo.setResult(encrypt);
-                        wsResultVo.setDestination(UcConstants.DESTINATION_IN);
-                    }catch (Exception e){
-                        sendObject = "";
-                        log.error("agreeFriendSendMsg exception:{}",e.getMessage());
-                    }
-                }
+                wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
+                sendObject = wsResultVo.getSendObject();
+                wsResultVo.setSendObject(null);
                 result.setErrorMsg(null);
             }
         }

@@ -224,6 +224,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         addUser.setUserId(addUserRequestReq.getAddUserId());
         UserVo addUserVo = userFriendsDomainService.selectUserInfo(addUser);
         if(userVo.getAgreeFriend() == 0 || addUserRequestReq.getAgree() != null){
+            WsResultVo wsResultVo = new WsResultVo();
             WsSendVo wsSendVo = new WsSendVo();
             if(addUserRequestReq.getAgree() == null && userVo.getAgreeFriend() == 0){
                 wsSendVo.setBusinessCode("10");
@@ -267,11 +268,13 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             //添加到默认分组
             setAddFriendGroup(groupVo,addUserRequestReq);
             wsSendVo.setFrom(SEND_WS_FROM);
-            wsSendVo.setSendObject(userId);
-            wsSendVo.setDestination(addUserRequestReq.getDestination());
-            result = buildResult(1,null,JSONObject.toJSONString(wsSendVo));
+            wsResultVo.setSendObject(userId);
+            wsResultVo.setDestination(addUserRequestReq.getDestination());
+            wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
+            result = buildResult(1,null,JSONObject.toJSONString(wsResultVo));
         }
         if(userVo.getAgreeFriend() == 1 || addUserRequestReq.getRefuse() != null) {
+            WsResultVo wsResultVo = new WsResultVo();
             WsSendVo wsSendVo = new WsSendVo();
             WebSocketVo webSocketVo;
             //等待好友认证
@@ -285,11 +288,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 wsSendVo.setBusinessCode("10");
                 wsSendVo.setFrom(SEND_WS_FROM);
                 wsSendVo.setData(webSocketVo);
-                wsSendVo.setSendObject(userId);
-                wsSendVo.setDestination(addUserRequestReq.getDestination());
+                wsResultVo.setSendObject(userId);
+                wsResultVo.setDestination(addUserRequestReq.getDestination());
+                wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
                 //等待好友确认添加
                 userFriendsDomainService.addFriends(addUserRequestReq);
-                result = buildResult(2,null,JSONObject.toJSONString(wsSendVo));
+                result = buildResult(2,null,JSONObject.toJSONString(wsResultVo));
             }
             //拒绝添加好友
             if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() != null
@@ -301,10 +305,11 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 wsSendVo.setBusinessCode("12");
                 wsSendVo.setFrom(SEND_WS_FROM);
                 wsSendVo.setData(webSocketVo);
-                wsSendVo.setDestination(addUserRequestReq.getDestination());
-                wsSendVo.setSendObject(userId);
+                wsResultVo.setSendObject(userId);
+                wsResultVo.setDestination(addUserRequestReq.getDestination());
+                wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
                 userFriendsDomainService.update(addUserRequestReq);
-                result = buildResult(3,null,JSONObject.toJSONString(wsSendVo));
+                result = buildResult(3,null,JSONObject.toJSONString(wsResultVo));
             }
         }
         return result;
