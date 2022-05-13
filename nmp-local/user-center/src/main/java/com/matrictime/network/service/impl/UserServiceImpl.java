@@ -7,6 +7,7 @@ import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.UserVo;
+import com.matrictime.network.api.modelVo.WsResultVo;
 import com.matrictime.network.api.modelVo.WsSendVo;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
@@ -433,6 +434,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             }
             int n = userDomainService.deleteFriend(deleteFriendReq);
 
+            WsResultVo wsResultVo = new WsResultVo();
             WsSendVo wsSendVo = new WsSendVo();
             String userId = deleteFriendReq.getUserId();
             UserExample userExample = new UserExample();
@@ -443,10 +445,11 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 wsSendVo.setData(user);
                 wsSendVo.setFrom(SEND_WS_FROM);
                 wsSendVo.setBusinessCode("13");
-                wsSendVo.setSendObject(deleteFriendReq.getFriendUserId());
-                wsSendVo.setDestination(deleteFriendReq.getDestination());
+                wsResultVo.setSendObject(deleteFriendReq.getFriendUserId());
+                wsResultVo.setDestination(deleteFriendReq.getDestination());
             }
-            return  buildResult(n,null,JSONObject.toJSONString(wsSendVo));
+            wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
+            return  buildResult(n,null,JSONObject.toJSONString(wsResultVo));
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
             return  failResult(e);

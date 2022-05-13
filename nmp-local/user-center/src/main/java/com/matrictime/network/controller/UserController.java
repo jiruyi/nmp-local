@@ -132,27 +132,12 @@ public class UserController {
 
     public void deleteFriendSendMsg(DeleteFriendReq deleteFriendReq,Result result){
         WsResultVo wsResultVo = new WsResultVo();
-        WsSendVo wsSendVo;
         String sendObject = "";
         if(StringUtils.isBlank(deleteFriendReq.getDestination())){
             if (result.isSuccess()){
-                wsSendVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsSendVo>() {});
-                sendObject = wsSendVo.getSendObject();
-                wsSendVo.setSendObject(null);
-
-                if (UcConstants.DESTINATION_OUT.equals(wsSendVo.getDestination())){
-                    wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
-                    wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
-                }else if (UcConstants.DESTINATION_OUT_TO_IN.equals(wsSendVo.getDestination())){
-                    try {
-                        String encrypt = commonService.encryptToString(JSONObject.parseObject(deleteFriendReq.getCommonParam()).getString(JSON_KEY_COMMON_KEY), deleteFriendReq.getDestination(), wsSendVo);
-                        wsResultVo.setResult(encrypt);
-                        wsResultVo.setDestination(UcConstants.DESTINATION_IN);
-                    }catch (Exception e){
-                        sendObject = "";
-                        log.error("deleteFriendSendMsg exception:{}",e.getMessage());
-                    }
-                }
+                wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
+                sendObject = wsResultVo.getSendObject();
+                wsResultVo.setSendObject(null);
                 result.setErrorMsg(null);
             }
         }

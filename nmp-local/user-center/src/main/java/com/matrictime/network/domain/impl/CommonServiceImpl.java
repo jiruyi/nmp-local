@@ -1,5 +1,9 @@
 package com.matrictime.network.domain.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.matrictime.network.api.modelVo.WsResultVo;
+import com.matrictime.network.api.modelVo.WsSendVo;
 import com.matrictime.network.api.request.BaseReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.base.SystemBaseService;
@@ -56,12 +60,15 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     public Result encryptForWs(String condition, String destination, Result res) throws Exception {
         if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
             ReqUtil resUtil = new ReqUtil();
-            String errorMsg = res.getErrorMsg();
-            res.setErrorMsg(null);
-            String resultObj = resUtil.encryJsonToReq(res, getSidByCondition(condition));
+            String sid = getSidByCondition(condition);
+            WsResultVo wsResultVo = JSONObject.parseObject(res.getErrorMsg(), new TypeReference<WsResultVo>() {});
+            String result = wsResultVo.getResult();
+            String encryJsonToReq = resUtil.encryJsonToReq(result, sid);
+            wsResultVo.setResult(encryJsonToReq);
+            String resultObj = resUtil.encryJsonToReq(res, sid);
             res.setSuccess(true);
             res.setResultObj(resultObj);
-            res.setErrorMsg(errorMsg);
+            res.setErrorMsg(JSONObject.toJSONString(wsResultVo));
             res.setErrorCode(null);
         }
         return res;

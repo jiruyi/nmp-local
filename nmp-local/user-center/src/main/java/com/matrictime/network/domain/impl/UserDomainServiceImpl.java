@@ -83,7 +83,7 @@ public class UserDomainServiceImpl implements UserDomainService {
         if (!CollectionUtils.isEmpty(groupInfos)) {
             for (GroupInfo groupInfo : groupInfos) {
                 UserGroupExample userGroupExample = new UserGroupExample();
-                userGroupExample.createCriteria().andUserIdEqualTo(deleteFriendReq.getUserId())
+                userGroupExample.createCriteria().andUserIdEqualTo(deleteFriendReq.getFriendUserId())
                         .andGroupIdEqualTo(String.valueOf(groupInfo.getGroupId())).andIsExistEqualTo(DataConstants.IS_EXIST);
                 UserGroup userGroup = UserGroup.builder().isExist(false).build();
                 userGroupMapper.updateByExampleSelective(userGroup, userGroupExample);

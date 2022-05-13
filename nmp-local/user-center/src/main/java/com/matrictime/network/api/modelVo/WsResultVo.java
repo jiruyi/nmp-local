@@ -11,4 +11,6 @@ public class WsResultVo implements Serializable {
     private String destination;
 
     private String result;
+
+    private String sendObject;
 }
