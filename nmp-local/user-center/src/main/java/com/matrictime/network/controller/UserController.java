@@ -10,6 +10,7 @@ import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.request.VerifyReq;
 import com.matrictime.network.base.UcConstants;
+import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.controller.aop.MonitorRequest;
 import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.exception.ErrorMessageContants;
@@ -81,7 +82,6 @@ public class UserController {
             Result result = userService.deleteFriend(deleteFriendReq);
             deleteFriendSendMsg(deleteFriendReq,result);
             result = commonService.encryptForWs(deleteFriendReq.getCommonKey(), deleteFriendReq.getDestination(), result);
-
             return  result;
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
@@ -130,34 +130,27 @@ public class UserController {
 
     public void deleteFriendSendMsg(DeleteFriendReq deleteFriendReq,Result result){
         WsResultVo wsResultVo = new WsResultVo();
-        WsSendVo wsSendVo = null;
+        WsSendVo wsSendVo;
         String sendObject = "";
-        if(UcConstants.DESTINATION_IN.equals(deleteFriendReq.getDestination())){
+        if(StringUtils.isBlank(deleteFriendReq.getDestination())){
             if (result.isSuccess()){
                 wsSendVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsSendVo>() {});
                 sendObject = wsSendVo.getSendObject();
                 wsSendVo.setSendObject(null);
-                wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
-                try {
-                    String encrypt = commonService.encryptToString(deleteFriendReq.getCommonKey(), deleteFriendReq.getDestination(), wsSendVo);
-                    wsResultVo.setResult(encrypt);
-                }catch (Exception e){
-                    sendObject = "";
-                    log.error("deleteFriendSendMsg exception:{}",e.getMessage());
+
+                if (UcConstants.DESTINATION_OUT.equals(wsSendVo.getDestination())){
+                    wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
+                    wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
+                }else if (UcConstants.DESTINATION_OUT_TO_IN.equals(wsSendVo.getDestination())){
+                    try {
+                        String encrypt = commonService.encryptToString(deleteFriendReq.getCommonKey(), deleteFriendReq.getDestination(), wsSendVo);
+                        wsResultVo.setResult(encrypt);
+                        wsResultVo.setDestination(UcConstants.DESTINATION_IN);
+                    }catch (Exception e){
+                        sendObject = "";
+                        log.error("deleteFriendSendMsg exception:{}",e.getMessage());
+                    }
                 }
-
-                result.setErrorMsg(null);
-
-
-            }
-        }
-        if (UcConstants.DESTINATION_OUT.equals(deleteFriendReq.getDestination())){
-            if (result.isSuccess()){
-                wsSendVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsSendVo>() {});
-                sendObject = wsSendVo.getSendObject();
-                wsSendVo.setSendObject(null);
-                wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
-                wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
                 result.setErrorMsg(null);
             }
         }
@@ -165,7 +158,7 @@ public class UserController {
         if (StringUtils.isNotBlank(sendObject)){
             WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendObject);
             if(webSocketServer != null){
-                webSocketServer.sendMessage(JSONUtils.toJSONString(wsResultVo));
+                webSocketServer.sendMessage(JSONObject.toJSONString(wsResultVo));
             }
         }
     }

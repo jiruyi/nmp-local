@@ -38,6 +38,8 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.matrictime.network.config.DataConfig.SEND_WS_FROM;
+
 /**
  * @author jiruyi
  * @copyright www.matrictime.com
@@ -439,7 +441,10 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             if (!CollectionUtils.isEmpty(users)){
                 User user = users.get(0);
                 wsSendVo.setData(user);
+                wsSendVo.setFrom(SEND_WS_FROM);
+                wsSendVo.setBusinessCode("13");
                 wsSendVo.setSendObject(deleteFriendReq.getFriendUserId());
+                wsSendVo.setDestination(deleteFriendReq.getDestination());
             }
             return  buildResult(n,null,JSONObject.toJSONString(wsSendVo));
         }catch (Exception e){

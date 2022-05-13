@@ -12,4 +12,6 @@ public class DataConfig {
     public static final String OPR_TYPE_UNBIND = "unbind";
 
     public static final String DEFAULT_GROUP_NAME = "默认分组";
+
+    public static final String SEND_WS_FROM = "uc";
 }
