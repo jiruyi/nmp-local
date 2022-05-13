@@ -15,4 +15,6 @@ public class WsSendVo implements Serializable {
     private Object data;
 
     private String sendObject;
+
+    private String destination;
 }
