@@ -11,6 +11,9 @@
     </resultMap>
     <resultMap id="UserResultMap" type="com.matrictime.network.api.modelVo.UserVo">
         <result column="agree_friend" jdbcType="BIT" property="agreeFriend" />
+        <result column="sex" jdbcType="CHAR" property="sex" />
+        <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
     </resultMap>
     <resultMap id="GroupResultMap" type="com.matrictime.network.api.modelVo.GroupVo">
         <result column="group_id" jdbcType="VARCHAR" property="groupId" />
@@ -32,7 +35,7 @@
         values (#{userId,jdbcType=VARCHAR}, #{friendUserId,jdbcType=VARCHAR}, #{remarkName,jdbcType=VARCHAR})
     </insert>
     <select id="selectUserInfo" parameterType="com.matrictime.network.api.request.UserRequest" resultMap="UserResultMap">
-        select agree_friend from user where user_id = #{userId,jdbcType=VARCHAR}
+        select agree_friend,sex,phone_number,nick_name from user where user_id = #{userId,jdbcType=VARCHAR}
     </select>
     <select id="selectGroupInfo" parameterType="com.matrictime.network.api.request.GroupReq" resultMap="GroupResultMap">
         select group_id from group_info where owner = #{owner,jdbcType=VARCHAR} and default_group = 1

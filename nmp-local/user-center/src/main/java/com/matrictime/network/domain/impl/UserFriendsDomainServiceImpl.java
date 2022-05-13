@@ -33,7 +33,6 @@ public class UserFriendsDomainServiceImpl implements UserFriendsDomainService {
 
     @Override
     public int addFriends(AddUserRequestReq addUserRequestReq) {
-        addUserRequestReq.setRequestId(SnowFlake.nextId_String());
         return addUserRequestExtMapper.addFriends(addUserRequestReq);
     }
 
