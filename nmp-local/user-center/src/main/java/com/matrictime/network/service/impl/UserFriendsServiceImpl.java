@@ -33,6 +33,8 @@ import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 
+import static com.matrictime.network.config.DataConfig.SEND_WS_FROM;
+
 @Service
 @Slf4j
 public class UserFriendsServiceImpl extends SystemBaseService implements UserFriendsService {
@@ -157,7 +159,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     }
 
     @Override
-    public Result<WebSocketVo> agreeAddFriedns(RecallRequest recallRequest) {
+    public Result agreeAddFriedns(RecallRequest recallRequest) {
         Result<WebSocketVo> result = new Result<>();
         ReqUtil jsonUtil = new ReqUtil<>(recallRequest);
         recallRequest = (RecallRequest) jsonUtil.jsonReqToDto(recallRequest);
@@ -225,7 +227,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     return AddRequestStatusFlag(addRequestVo);
                 }
                 userId = addUserRequestReq.getAddUserId();
-
+                wsSendVo.setBusinessCode("10");
                 addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
                 addUserRequestReq.setRequestId(SnowFlake.nextId_String());
                 userFriendsDomainService.addFriends(addUserRequestReq);
@@ -256,9 +258,10 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             //添加到默认分组
             setAddFriendGroup(groupVo,addUserRequestReq);
             WebSocketVo webSocketVo = setWebSocketVo(addUserRequestReq,user);
-
+            wsSendVo.setFrom(SEND_WS_FROM);
             wsSendVo.setData(webSocketVo);
             wsSendVo.setSendObject(userId);
+            wsSendVo.setDestination(addUserRequestReq.getDestination());
             buildResult(1,null,JSONObject.toJSONString(wsSendVo));
         }
         //拒绝添加好友
@@ -270,8 +273,11 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
                 addUserRequestReq.setRequestId(SnowFlake.nextId_String());
                 webSocketVo = setWebSocketVo(addUserRequestReq,user);
+                wsSendVo.setBusinessCode("10");
+                wsSendVo.setFrom(SEND_WS_FROM);
                 wsSendVo.setData(webSocketVo);
                 wsSendVo.setSendObject(userId);
+                wsSendVo.setDestination(addUserRequestReq.getDestination());
                 //等待好友确认添加
                 userFriendsDomainService.addFriends(addUserRequestReq);
                 buildResult(2,null,JSONObject.toJSONString(wsSendVo));
@@ -281,7 +287,10 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 webSocketVo.setUserId(addUserRequestReq.getUserId());
                 webSocketVo.setRequestId(addUserRequestReq.getRequestId());
                 //拒绝添加
+                wsSendVo.setBusinessCode("12");
+                wsSendVo.setFrom(SEND_WS_FROM);
                 wsSendVo.setData(webSocketVo);
+                wsSendVo.setDestination(addUserRequestReq.getDestination());
                 wsSendVo.setSendObject(userId);
                 userFriendsDomainService.update(addUserRequestReq);
                 buildResult(3,null,JSONObject.toJSONString(wsSendVo));
@@ -523,6 +532,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         addUserRequestReq.setRequestId(recallRequest.getRequestId());
         addUserRequestReq.setGroupId(recallRequest.getGroupId());
         addUserRequestReq.setAddGroupId(recallRequest.getAddGroupId());
+        addUserRequestReq.setDestination(recallRequest.getDestination());
         return addUserRequestReq;
     }
 }

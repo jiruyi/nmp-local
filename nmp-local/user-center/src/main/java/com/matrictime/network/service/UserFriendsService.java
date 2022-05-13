@@ -15,7 +15,7 @@ public interface UserFriendsService {
 
     Result addFriends(AddUserRequestReq addUserRequestReq);
 
-    Result<WebSocketVo> agreeAddFriedns(RecallRequest recallRequest);
+    Result agreeAddFriedns(RecallRequest recallRequest);
 
     Result<AddUserRequestResp> getAddUserInfo(AddUserRequestReq addUserRequestReq);
 

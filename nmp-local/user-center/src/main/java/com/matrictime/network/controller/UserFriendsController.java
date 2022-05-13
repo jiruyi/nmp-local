@@ -73,7 +73,7 @@ public class UserFriendsController {
     public Result<WebSocketVo> addFriends(@RequestBody AddUserRequestReq addUserRequestReq){
         try {
             Result result = userFriendsService.addFriends(addUserRequestReq);
-            webSocketSendMsg(addUserRequestReq,result);
+            addFriendSendMsg(addUserRequestReq,result);
             result = commonService.encryptForWs(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
             return result;
         }catch (Exception e){
@@ -99,26 +99,12 @@ public class UserFriendsController {
 
     @ApiOperation(value = "获取好友添加返回信息",notes = "获取好友添加返回信息")
     @RequestMapping (value = "/getRecall",method = RequestMethod.POST)
-    public Result<WebSocketVo> getRecall(@RequestBody RecallRequest request){
-        Result<WebSocketVo> result = new Result<>();
+    public Result getRecall(@RequestBody RecallRequest request){
+        Result result = new Result<>();
         try {
-            if(request.getAgree() != null && request.getRefuse() == null){
-                result = userFriendsService.agreeAddFriedns(request);
-                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(result.getResultObj().getUserId());
-                result = commonService.encrypt(request.getCommonKey(), request.getDestination(), result);
-                if(webSocketServer != null){
-                    webSocketServer.sendMessage(webSocketMessage(result.getResultObj(),"10"));
-                }
-            }
-            if(request.getRefuse() != null && request.getAgree() == null) {
-                result = userFriendsService.agreeAddFriedns(request);
-                result.setErrorMsg("已经拒绝");
-                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(result.getResultObj().getUserId());
-                result = commonService.encrypt(request.getCommonKey(), request.getDestination(), result);
-                if(webSocketServer != null){
-                    webSocketServer.sendMessage(webSocketMessage(result.getResultObj(),"12"));
-                }
-            }
+            result = userFriendsService.agreeAddFriedns(request);
+            agreeFriendSendMsg(request,result);
+            result = commonService.encryptForWs(request.getCommonKey(), request.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("getRecall exception:{}",e.getMessage());
@@ -127,53 +113,29 @@ public class UserFriendsController {
     }
 
 
-
-    /*
-        构建WebSocket推送消息
-    * */
-    private String webSocketMessage(WebSocketVo webSocketVo,String businessCode){
-        Map<String,Object> resultMessage = new HashMap<>();
-        if(webSocketVo.getDestination().equals("1")){
-            resultMessage.put("destination","1");
-        }else {
-            resultMessage.put("destination","0");
-        }
-        Map webSocketMap = JSON.parseObject(JSON.toJSONString(webSocketVo),Map.class);
-        resultMessage.put("businessCode",businessCode);
-        resultMessage.put("result",webSocketMap);
-        return JSONUtils.toJSONString(resultMessage);
-    }
-
-    private void webSocketSendMsg(AddUserRequestReq addUserRequestReq, Result result){
+    private void addFriendSendMsg(AddUserRequestReq addUserRequestReq,Result result){
         WsResultVo wsResultVo = new WsResultVo();
-        WsSendVo wsSendVo = null;
+        WsSendVo wsSendVo;
         String sendObject = "";
-        if(UcConstants.DESTINATION_IN.equals(addUserRequestReq.getDestination())){
+        if(StringUtils.isBlank(addUserRequestReq.getDestination())){
             if (result.isSuccess()){
                 wsSendVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsSendVo>() {});
                 sendObject = wsSendVo.getSendObject();
                 wsSendVo.setSendObject(null);
-                wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
-                try {
-                    String encrypt = commonService.encryptToString(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), wsSendVo);
-                    wsResultVo.setResult(encrypt);
-                }catch (Exception e){
-                    sendObject = "";
-                    log.error("webSocketSendMsg exception:{}",e.getMessage());
+
+                if (UcConstants.DESTINATION_OUT.equals(wsSendVo.getDestination())){
+                    wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
+                    wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
+                }else if (UcConstants.DESTINATION_OUT_TO_IN.equals(wsSendVo.getDestination())){
+                    try {
+                        String encrypt = commonService.encryptToString(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), wsSendVo);
+                        wsResultVo.setResult(encrypt);
+                        wsResultVo.setDestination(UcConstants.DESTINATION_IN);
+                    }catch (Exception e){
+                        sendObject = "";
+                        log.error("addFriendSendMsg exception:{}",e.getMessage());
+                    }
                 }
-
-                result.setErrorMsg(null);
-
-
-            }
-        }
-        if (UcConstants.DESTINATION_OUT.equals(addUserRequestReq.getDestination())){
-            if (result.isSuccess()){
-                wsSendVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsSendVo>() {});
-                sendObject = wsSendVo.getSendObject();
-                wsSendVo.setSendObject(null);
-                wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
-                wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
                 result.setErrorMsg(null);
             }
         }
@@ -181,7 +143,42 @@ public class UserFriendsController {
         if (StringUtils.isNotBlank(sendObject)){
             WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendObject);
             if(webSocketServer != null){
-                webSocketServer.sendMessage(JSONUtils.toJSONString(wsResultVo));
+                webSocketServer.sendMessage(JSONObject.toJSONString(wsResultVo));
+            }
+        }
+    }
+
+    private void agreeFriendSendMsg(RecallRequest request,Result result){
+        WsResultVo wsResultVo = new WsResultVo();
+        WsSendVo wsSendVo;
+        String sendObject = "";
+        if(StringUtils.isBlank(request.getDestination())){
+            if (result.isSuccess()){
+                wsSendVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsSendVo>() {});
+                sendObject = wsSendVo.getSendObject();
+                wsSendVo.setSendObject(null);
+
+                if (UcConstants.DESTINATION_OUT.equals(wsSendVo.getDestination())){
+                    wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
+                    wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
+                }else if (UcConstants.DESTINATION_OUT_TO_IN.equals(wsSendVo.getDestination())){
+                    try {
+                        String encrypt = commonService.encryptToString(request.getCommonKey(), request.getDestination(), wsSendVo);
+                        wsResultVo.setResult(encrypt);
+                        wsResultVo.setDestination(UcConstants.DESTINATION_IN);
+                    }catch (Exception e){
+                        sendObject = "";
+                        log.error("agreeFriendSendMsg exception:{}",e.getMessage());
+                    }
+                }
+                result.setErrorMsg(null);
+            }
+        }
+
+        if (StringUtils.isNotBlank(sendObject)){
+            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendObject);
+            if(webSocketServer != null){
+                webSocketServer.sendMessage(JSONObject.toJSONString(wsResultVo));
             }
         }
     }
