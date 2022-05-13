@@ -559,5 +559,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         if (req.getIdNo() == null || req.getIdNo().isEmpty()){
             throw new SystemException("IdNo"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
+        if (req.getSid() == null || req.getSid().isEmpty()){
+            throw new SystemException("Sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
     }
 }
