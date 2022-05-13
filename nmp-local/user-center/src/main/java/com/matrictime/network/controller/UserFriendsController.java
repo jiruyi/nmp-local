@@ -3,20 +3,23 @@ package com.matrictime.network.controller;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.matrictime.network.api.modelVo.WebSocketVo;
-import com.matrictime.network.api.request.AddUserRequestReq;
-import com.matrictime.network.api.request.RecallRequest;
-import com.matrictime.network.api.request.UserFriendReq;
-import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.api.modelVo.WsResultVo;
+import com.matrictime.network.api.modelVo.WsSendVo;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.AddUserRequestResp;
 import com.matrictime.network.api.response.UserFriendResp;
 
+import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,17 +72,10 @@ public class UserFriendsController {
     @RequestMapping (value = "/addFriends",method = RequestMethod.POST)
     public Result<WebSocketVo> addFriends(@RequestBody AddUserRequestReq addUserRequestReq){
         try {
-            Result<WebSocketVo> result = userFriendsService.addFriends(addUserRequestReq);
-            if("100".equals(result.getErrorCode())){
-                return result;
-            }else {
-                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(result.getResultObj().getAddUserId());
-                result = commonService.encrypt(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
-                if(webSocketServer != null){
-                    webSocketServer.sendMessage(webSocketMessage(result.getResultObj(),"10"));
-                }
-                return new Result<>(true,"等待好友验证");
-            }
+            Result result = userFriendsService.addFriends(addUserRequestReq);
+            webSocketSendMsg(addUserRequestReq,result);
+            result = commonService.encryptForWs(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
+            return result;
         }catch (Exception e){
             log.error("addFriends exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
@@ -146,6 +142,48 @@ public class UserFriendsController {
         resultMessage.put("businessCode",businessCode);
         resultMessage.put("result",webSocketMap);
         return JSONUtils.toJSONString(resultMessage);
+    }
+
+    private void webSocketSendMsg(AddUserRequestReq addUserRequestReq, Result result){
+        WsResultVo wsResultVo = new WsResultVo();
+        WsSendVo wsSendVo = null;
+        String sendObject = "";
+        if(UcConstants.DESTINATION_IN.equals(addUserRequestReq.getDestination())){
+            if (result.isSuccess()){
+                wsSendVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsSendVo>() {});
+                sendObject = wsSendVo.getSendObject();
+                wsSendVo.setSendObject(null);
+                wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
+                try {
+                    String encrypt = commonService.encryptToString(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), wsSendVo);
+                    wsResultVo.setResult(encrypt);
+                }catch (Exception e){
+                    sendObject = "";
+                    log.error("webSocketSendMsg exception:{}",e.getMessage());
+                }
+
+                result.setErrorMsg(null);
+
+
+            }
+        }
+        if (UcConstants.DESTINATION_OUT.equals(addUserRequestReq.getDestination())){
+            if (result.isSuccess()){
+                wsSendVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsSendVo>() {});
+                sendObject = wsSendVo.getSendObject();
+                wsSendVo.setSendObject(null);
+                wsResultVo.setDestination(UcConstants.DESTINATION_OUT);
+                wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
+                result.setErrorMsg(null);
+            }
+        }
+
+        if (StringUtils.isNotBlank(sendObject)){
+            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendObject);
+            if(webSocketServer != null){
+                webSocketServer.sendMessage(JSONUtils.toJSONString(wsResultVo));
+            }
+        }
     }
 
 

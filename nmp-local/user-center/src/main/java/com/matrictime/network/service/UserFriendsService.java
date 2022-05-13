@@ -13,7 +13,7 @@ import com.matrictime.network.model.Result;
 public interface UserFriendsService {
     Result<UserFriendResp> selectUserFriend(UserFriendReq userFriendReq);
 
-    Result<WebSocketVo> addFriends(AddUserRequestReq addUserRequestReq);
+    Result addFriends(AddUserRequestReq addUserRequestReq);
 
     Result<WebSocketVo> agreeAddFriedns(RecallRequest recallRequest);
 

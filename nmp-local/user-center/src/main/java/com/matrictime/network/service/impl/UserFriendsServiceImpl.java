@@ -108,8 +108,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     }
 
     @Override
-    public Result<WebSocketVo> addFriends(AddUserRequestReq addUserRequestReq) {
-        Result<WebSocketVo> result = new Result<>();
+    public Result addFriends(AddUserRequestReq addUserRequestReq) {
+        Result result = new Result<>();
         ReqUtil jsonUtil = new ReqUtil<>(addUserRequestReq);
         addUserRequestReq = (AddUserRequestReq) jsonUtil.jsonReqToDto(addUserRequestReq);
         UserFriendReq userFriendReq = setUserFriendReq(addUserRequestReq);
@@ -118,7 +118,6 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         try {
             switch (addUserRequestReq.getDestination()){
                 case UcConstants.DESTINATION_OUT:
-                    addUserRequestReq.setDestination("0");
                     result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
                     break;
                 case UcConstants.DESTINATION_IN:
@@ -143,7 +142,6 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     ReqUtil reqUtil = new ReqUtil<>(addUserRequestReq);
                     addUserRequestReq = (AddUserRequestReq)reqUtil.decryJsonToReq(addUserRequestReq);
                     UserFriendReq friendReq = setUserFriendReq(addUserRequestReq);
-                    addUserRequestReq.setDestination("1");
                     UserRequest request = new UserRequest();
                     request.setUserId(addUserRequestReq.getAddUserId());
                     result = commonAddFriends(friendReq,addUserRequestReq,request);
@@ -170,7 +168,6 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         try {
             switch (recallRequest.getDestination()){
                 case UcConstants.DESTINATION_OUT:
-                    addUserRequestReq.setDestination("0");
                     result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
                     break;
                 case UcConstants.DESTINATION_IN:
@@ -196,7 +193,6 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     ReqUtil reqUtil = new ReqUtil<>(recallRequest);
                     recallRequest = (RecallRequest)reqUtil.decryJsonToReq(recallRequest);
                     AddUserRequestReq setAddUserRequestReq = setAddUserRequestReq(recallRequest);
-                    setAddUserRequestReq.setDestination("1");
                     UserFriendReq friendReq = setUserFriendReq(addUserRequestReq);
                     UserRequest request = new UserRequest();
                     userRequest.setUserId(addUserRequestReq.getAddUserId());
@@ -213,24 +209,29 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     }
 
     //添加好友信息逻辑
-    private Result<WebSocketVo> commonAddFriends(UserFriendReq userFriendReq,AddUserRequestReq addUserRequestReq,
+    private Result commonAddFriends(UserFriendReq userFriendReq,AddUserRequestReq addUserRequestReq,
                                              UserRequest userRequest) {
         Result<WebSocketVo> result = new Result<>();
         UserRequest request = new UserRequest();
+        String userId = "";
         request.setUserId(addUserRequestReq.getUserId());
         UserVo userVo = userFriendsDomainService.selectUserInfo(userRequest);
         AddRequestVo addRequestVo = userFriendsDomainService.selectGroupId(addUserRequestReq);
         UserVo user = userFriendsDomainService.selectUserInfo(request);
         if(userVo.getAgreeFriend() == 0 || addUserRequestReq.getAgree() != null){
+            WsSendVo wsSendVo = new WsSendVo();
             if(addUserRequestReq.getAgree() == null && userVo.getAgreeFriend() == 0){
                 if(!AddRequestStatusFlag(addRequestVo).isSuccess()){
                     return AddRequestStatusFlag(addRequestVo);
                 }
+                userId = addUserRequestReq.getAddUserId();
+
                 addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
                 addUserRequestReq.setRequestId(SnowFlake.nextId_String());
                 userFriendsDomainService.addFriends(addUserRequestReq);
             }
             if(addUserRequestReq.getAgree() != null && userVo.getAgreeFriend() == 1){
+                userId = addUserRequestReq.getUserId();
                 userFriendsDomainService.update(addUserRequestReq);
             }
             //判断user_friend表中是否有该好友
@@ -254,29 +255,36 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             GroupVo groupVo = userFriendsDomainService.selectGroupInfo(groupReq);
             //添加到默认分组
             setAddFriendGroup(groupVo,addUserRequestReq);
-            result.setErrorCode("100");
             WebSocketVo webSocketVo = setWebSocketVo(addUserRequestReq,user);
-            result.setResultObj(webSocketVo);
+
+            wsSendVo.setData(webSocketVo);
+            wsSendVo.setSendObject(userId);
+            buildResult(1,null,JSONObject.toJSONString(wsSendVo));
         }
         //拒绝添加好友
         if(userVo.getAgreeFriend() == 1 || addUserRequestReq.getRefuse() != null) {
+            WsSendVo wsSendVo = new WsSendVo();
             WebSocketVo webSocketVo = new WebSocketVo();
             if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() == null
                     && addUserRequestReq.getAgree() == null){
                 addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
                 addUserRequestReq.setRequestId(SnowFlake.nextId_String());
                 webSocketVo = setWebSocketVo(addUserRequestReq,user);
+                wsSendVo.setData(webSocketVo);
+                wsSendVo.setSendObject(userId);
                 //等待好友确认添加
-                result.setErrorCode("101");
                 userFriendsDomainService.addFriends(addUserRequestReq);
+                buildResult(2,null,JSONObject.toJSONString(wsSendVo));
             }
             if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() != null
                     && addUserRequestReq.getAgree() == null){
                 webSocketVo.setUserId(addUserRequestReq.getUserId());
                 webSocketVo.setRequestId(addUserRequestReq.getRequestId());
                 //拒绝添加
-                result.setErrorCode("102");
+                wsSendVo.setData(webSocketVo);
+                wsSendVo.setSendObject(userId);
                 userFriendsDomainService.update(addUserRequestReq);
+                buildResult(3,null,JSONObject.toJSONString(wsSendVo));
             }
             result.setResultObj(webSocketVo);
 
