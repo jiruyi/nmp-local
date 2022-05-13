@@ -75,7 +75,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                         ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
                         result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
                     }else {
-                        throw new SystemException("UserFriendsServiceImpl.addFriends"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                        throw new SystemException("UserFriendsServiceImpl.selectUserFriend"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
                 case UcConstants.DESTINATION_OUT_TO_IN:
