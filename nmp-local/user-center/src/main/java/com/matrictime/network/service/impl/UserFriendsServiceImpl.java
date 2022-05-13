@@ -240,8 +240,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 userFriendsDomainService.addFriends(addUserRequestReq);
             }
             if(addUserRequestReq.getAgree() != null && userVo.getAgreeFriend() == 1){
-
                 WebSocketVo webSocketVo = setWebSocketVo(addUserRequestReq,addUserVo);
+                wsSendVo.setBusinessCode("10");
                 wsSendVo.setData(webSocketVo);
                 userId = addUserRequestReq.getUserId();
                 userFriendsDomainService.update(addUserRequestReq);
@@ -285,7 +285,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 userId = addUserRequestReq.getAddUserId();
                 addUserRequestReq.setRequestId(SnowFlake.nextId_String());
                 webSocketVo = setWebSocketVo(addUserRequestReq,user);
-                wsSendVo.setBusinessCode("10");
+                wsSendVo.setBusinessCode("7");
                 wsSendVo.setFrom(SEND_WS_FROM);
                 wsSendVo.setData(webSocketVo);
                 wsResultVo.setSendObject(userId);
