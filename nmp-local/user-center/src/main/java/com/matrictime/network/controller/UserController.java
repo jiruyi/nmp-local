@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.matrictime.network.config.DataConfig.JSON_KEY_COMMON_KEY;
+
 /**
  * @author jiruyi
  * @copyright www.matrictime.com
@@ -143,7 +145,7 @@ public class UserController {
                     wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
                 }else if (UcConstants.DESTINATION_OUT_TO_IN.equals(wsSendVo.getDestination())){
                     try {
-                        String encrypt = commonService.encryptToString(deleteFriendReq.getCommonKey(), deleteFriendReq.getDestination(), wsSendVo);
+                        String encrypt = commonService.encryptToString(JSONObject.parseObject(deleteFriendReq.getCommonParam()).getString(JSON_KEY_COMMON_KEY), deleteFriendReq.getDestination(), wsSendVo);
                         wsResultVo.setResult(encrypt);
                         wsResultVo.setDestination(UcConstants.DESTINATION_IN);
                     }catch (Exception e){

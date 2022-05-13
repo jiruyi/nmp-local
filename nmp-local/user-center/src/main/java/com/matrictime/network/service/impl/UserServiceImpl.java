@@ -153,8 +153,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    deleteFriendReq.setDestination(UcConstants.URL_DELETEFRIEND);
-                    deleteFriendReq.setUrl(url+UcConstants.URL_CHANGEPASSWD);
+                    deleteFriendReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    deleteFriendReq.setUrl(url+UcConstants.URL_DELETEFRIEND);
                     String param = JSONObject.toJSONString(deleteFriendReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
                     reqModel.setParam(param);

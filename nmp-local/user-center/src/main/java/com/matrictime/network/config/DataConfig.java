@@ -14,4 +14,5 @@ public class DataConfig {
     public static final String DEFAULT_GROUP_NAME = "默认分组";
 
     public static final String SEND_WS_FROM = "uc";
+    public static final String JSON_KEY_COMMON_KEY = "commonKey";
 }
