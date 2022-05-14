@@ -54,7 +54,7 @@ public class LoginController {
     public Result register(@RequestBody RegisterReq req){
         try {
             Result<RegisterResp> result = loginService.register(req);
-            result = commonService.encrypt(req.getUserId(), req.getDestination(), result);
+            result = commonService.encryptForRegister(req.getSid(), req.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("LoginController.register exception:{}",e.getMessage());

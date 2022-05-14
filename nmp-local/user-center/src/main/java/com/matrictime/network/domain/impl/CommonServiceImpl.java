@@ -88,6 +88,20 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
         return res;
     }
 
+    @Override
+    public Result encryptForRegister(String sid,String destination, Result res) throws Exception {
+        if(UcConstants.DESTINATION_OUT_TO_IN_SYN.equals(destination)){
+            ReqUtil resUtil = new ReqUtil();
+            String resultObj = resUtil.encryJsonToReq(res, sid);
+            res.setSuccess(true);
+            res.setResultObj(resultObj);
+            res.setErrorMsg(null);
+            res.setErrorCode(null);
+        }
+        return res;
+    }
+
+
     public String getSidByCondition(String condition) throws Exception {
         UserExample userExample1 = new UserExample();
         userExample1.createCriteria().andUserIdEqualTo(condition).andIsExistEqualTo(DataConstants.IS_EXIST);
