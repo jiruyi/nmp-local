@@ -283,6 +283,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             user.setDeviceIp(req.getDeviceIp());
             user.setLoginStatus(LOGIN_STATUS_IN);
             user.setLoginAppCode(req.getLoginAppCode());
+            user.setSid(req.getSid());
             userMapper.updateByPrimaryKeySelective(user);
             UserVo userVo = new UserVo();
             BeanUtils.copyProperties(user,userVo);
@@ -522,6 +523,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     private void checkLoginParam(LoginReq req){
         if(null == req){
             throw new SystemException("req"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if(ParamCheckUtil.checkVoStrBlank(req.getSid())){
+            throw new SystemException("sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount()) && ParamCheckUtil.checkVoStrBlank(req.getUserId())){
             throw new SystemException("LoginAccount/UserId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
