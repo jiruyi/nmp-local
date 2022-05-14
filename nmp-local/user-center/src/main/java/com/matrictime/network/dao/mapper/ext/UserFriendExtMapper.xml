@@ -7,6 +7,7 @@
         <result column="remark_name" jdbcType="VARCHAR" property="remarkName" />
         <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
         <result column="sex" jdbcType="CHAR" property="sex" />
+        <result column="sid" jdbcType="VARCHAR" property="sid" />
         <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
     </resultMap>
     <resultMap id="UserResultMap" type="com.matrictime.network.api.modelVo.UserVo">
@@ -19,7 +20,7 @@
         <result column="group_id" jdbcType="VARCHAR" property="groupId" />
     </resultMap>
     <select id="selectUserFriend" parameterType="com.matrictime.network.api.request.UserFriendReq" resultMap="BaseResultMap">
-        select friend_user_id,remark_name,nick_name ,u.sex,u.phone_number from user_friend f,user u
+        select friend_user_id,remark_name,nick_name ,u.sex,u.phone_number,u.sid from user_friend f,user u
         <where>
             f.friend_user_id = u.user_id and f.is_exist = 1 and u.is_exist = 1
             <if test="userId != null">
