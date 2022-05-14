@@ -63,6 +63,7 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
             String sid = getSidByCondition(condition);
             WsResultVo wsResultVo = JSONObject.parseObject(res.getErrorMsg(), new TypeReference<WsResultVo>() {});
             String result = wsResultVo.getResult();
+            wsResultVo.setDestination(UcConstants.DESTINATION_IN);
             String encryJsonToReq = resUtil.encryJsonToReq(result, sid);
             wsResultVo.setResult(encryJsonToReq);
             String resultObj = resUtil.encryJsonToReq(res, sid);
@@ -90,7 +91,7 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
 
     @Override
     public Result encryptForRegister(String sid,String destination, Result res) throws Exception {
-        if(UcConstants.DESTINATION_OUT_TO_IN_SYN.equals(destination)){
+        if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
             ReqUtil resUtil = new ReqUtil();
             String resultObj = resUtil.encryJsonToReq(res, sid);
             res.setSuccess(true);
