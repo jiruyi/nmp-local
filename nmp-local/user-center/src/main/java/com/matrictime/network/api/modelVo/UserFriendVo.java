@@ -17,4 +17,6 @@ public class UserFriendVo  implements Serializable {
 
     private String phoneNumber;
 
+    private String sid;
+
 }
