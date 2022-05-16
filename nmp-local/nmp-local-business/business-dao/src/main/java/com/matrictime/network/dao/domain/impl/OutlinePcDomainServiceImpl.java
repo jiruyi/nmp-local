@@ -32,10 +32,10 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
 
     @Override
     public Integer save(OutlinePcReq outlinePcReq) {
-        if(outlinePcReq.getDeviceId()!=null){
+        if(outlinePcReq.getStationNetworkId()!=null){
             NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
             nmplOutlinePcInfoExample.createCriteria()
-                    .andDeviceIdEqualTo(outlinePcReq.getDeviceId()).andIsExistEqualTo(true);
+                    .andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId()).andIsExistEqualTo(true);
             List<NmplOutlinePcInfo> nmplOutlinePcInfos = nmplOutlinePcInfoMapper.selectByExample(nmplOutlinePcInfoExample);
             if(!CollectionUtils.isEmpty(nmplOutlinePcInfos)){
                 throw new SystemException("设备id重复");
@@ -43,7 +43,7 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
         }else {
             throw new SystemException("缺失设备id");
         }
-        outlinePcReq.setId(SnowFlake.nextId());
+        outlinePcReq.setDeviceId(SnowFlake.nextId_String());
         NmplOutlinePcInfo nmplOutlinePcInfo = new NmplOutlinePcInfo();
         BeanUtils.copyProperties(outlinePcReq,nmplOutlinePcInfo);
         return  nmplOutlinePcInfoMapper.insertSelective(nmplOutlinePcInfo);
@@ -76,6 +76,9 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
         if(outlinePcReq.getEndTime()!=null){
             criteria.andCreateTimeLessThan(outlinePcReq.getEndTime());
         }
+        if(outlinePcReq.getStationNetworkId()!=null){
+            criteria.andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId());
+        }
         criteria.andIsExistEqualTo(true);
         Page page = PageHelper.startPage(outlinePcReq.getPageNo(),outlinePcReq.getPageSize());
         List<NmplOutlinePcInfo> nmplOutlinePcInfos = nmplOutlinePcInfoMapper.selectByExample(nmplOutlinePcInfoExample);
@@ -84,7 +87,6 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
         for (NmplOutlinePcInfo nmplOutlinePcInfo : nmplOutlinePcInfos) {
             NmplOutlinePcInfoVo infoVo = new NmplOutlinePcInfoVo();
             BeanUtils.copyProperties(nmplOutlinePcInfo,infoVo);
-            infoVo.setId(String.valueOf(nmplOutlinePcInfo.getId()));
             list.add(infoVo);
         }
 
@@ -101,14 +103,14 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
             throw new SystemException("id缺失");
         }
 
-        if(outlinePcReq.getDeviceId()!=null){
+        if(outlinePcReq.getStationNetworkId()!=null){
             NmplOutlinePcInfo info = nmplOutlinePcInfoMapper.selectByPrimaryKey(outlinePcReq.getId());
             NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
             nmplOutlinePcInfoExample.createCriteria()
-                    .andDeviceIdEqualTo(outlinePcReq.getDeviceId()).andIsExistEqualTo(true);
+                    .andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId()).andIsExistEqualTo(true);
             List<NmplOutlinePcInfo> nmplOutlinePcInfos = nmplOutlinePcInfoMapper.selectByExample(nmplOutlinePcInfoExample);
             if(!CollectionUtils.isEmpty(nmplOutlinePcInfos)){
-                if(!nmplOutlinePcInfos.get(0).getDeviceId().equals(info.getDeviceId())){
+                if(!nmplOutlinePcInfos.get(0).getStationNetworkId().equals(info.getStationNetworkId())){
                     throw new SystemException("设备id重复");
                 }
             }

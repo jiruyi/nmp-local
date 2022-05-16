@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 离线一体机
  * @author   hexu
- * @date   2022-05-05
+ * @date   2022-05-16
  */
 @Data
 public class NmplOutlinePcInfo {
@@ -24,6 +24,11 @@ public class NmplOutlinePcInfo {
      * 设备名称
      */
     private String deviceName;
+
+    /**
+     * 设备入网码
+     */
+    private String stationNetworkId;
 
     /**
      * 设备备注
@@ -77,6 +82,14 @@ public class NmplOutlinePcInfo {
 
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName == null ? null : deviceName.trim();
+    }
+
+    public String getStationNetworkId() {
+        return stationNetworkId;
+    }
+
+    public void setStationNetworkId(String stationNetworkId) {
+        this.stationNetworkId = stationNetworkId == null ? null : stationNetworkId.trim();
     }
 
     public String getRemark() {
