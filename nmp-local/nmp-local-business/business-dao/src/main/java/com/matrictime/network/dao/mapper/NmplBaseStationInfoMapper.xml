@@ -540,7 +540,7 @@
     </foreach>
   </select>
   <select id="selectDeviceId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseResultMap">
-    select station_id,station_network_id from nmpl_base_station_info where lan_ip = #{lanIp,jdbcType=VARCHAR}
+    select station_id,station_network_id from nmpl_base_station_info where lan_ip = #{lanIp,jdbcType=VARCHAR} and is_exist = 1
   </select>
   <select id="selectByNetworkId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseStationMap">
     select station_id from nmpl_base_station_info where station_network_id like "%" #{stationNetworkId,jdbcType=CHAR} "%"
