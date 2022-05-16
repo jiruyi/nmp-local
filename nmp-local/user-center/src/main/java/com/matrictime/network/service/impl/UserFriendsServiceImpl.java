@@ -234,7 +234,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 //推给被添加好友的用户
                 userId = addUserRequestReq.getAddUserId();
                 WebSocketVo webSocketVo = setWebSocketVo(addUserRequestReq,user);
-                wsSendVo.setData(webSocketVo);
+                wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
                 addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
                 addUserRequestReq.setRequestId(SnowFlake.nextId_String());
                 userFriendsDomainService.addFriends(addUserRequestReq);
@@ -242,7 +242,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             if(addUserRequestReq.getAgree() != null && userVo.getAgreeFriend() == 1){
                 WebSocketVo webSocketVo = setWebSocketVo(addUserRequestReq,addUserVo);
                 wsSendVo.setBusinessCode("10");
-                wsSendVo.setData(webSocketVo);
+                wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
                 userId = addUserRequestReq.getUserId();
                 userFriendsDomainService.update(addUserRequestReq);
             }
@@ -287,7 +287,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 webSocketVo = setWebSocketVo(addUserRequestReq,user);
                 wsSendVo.setBusinessCode("7");
                 wsSendVo.setFrom(SEND_WS_FROM);
-                wsSendVo.setData(webSocketVo);
+                wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
                 wsResultVo.setSendObject(userId);
                 wsResultVo.setDestination(addUserRequestReq.getDestination());
                 wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
@@ -304,7 +304,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 //拒绝添加
                 wsSendVo.setBusinessCode("12");
                 wsSendVo.setFrom(SEND_WS_FROM);
-                wsSendVo.setData(webSocketVo);
+                wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
                 wsResultVo.setSendObject(userId);
                 wsResultVo.setDestination(addUserRequestReq.getDestination());
                 wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
