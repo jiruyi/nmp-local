@@ -33,10 +33,10 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
 
     @Override
     public Integer save(OutlineSorterReq outlineSorterReq) {
-        if(outlineSorterReq.getDeviceId()!=null){
+        if(outlineSorterReq.getStationNetworkId()!=null){
             NmplOutlineSorterInfoExample nmplOutlineSorterInfoExample = new NmplOutlineSorterInfoExample();
             nmplOutlineSorterInfoExample.createCriteria()
-                    .andDeviceIdEqualTo(outlineSorterReq.getDeviceId()).andIsExistEqualTo(true);
+                    .andStationNetworkIdEqualTo(outlineSorterReq.getStationNetworkId()).andIsExistEqualTo(true);
             List<NmplOutlineSorterInfo> nmplOutlineSorterInfoList = nmplOutlineSorterInfoMapper.selectByExample(nmplOutlineSorterInfoExample);
             if(!CollectionUtils.isEmpty(nmplOutlineSorterInfoList)){
                 throw new SystemException("设备id重复");
@@ -44,7 +44,7 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
         }else {
             throw new SystemException("编码缺失");
         }
-        outlineSorterReq.setId(SnowFlake.nextId());
+        outlineSorterReq.setDeviceId(SnowFlake.nextId_String());
         NmplOutlineSorterInfo nmplOutlineSorterInfo = new NmplOutlineSorterInfo();
         BeanUtils.copyProperties(outlineSorterReq,nmplOutlineSorterInfo);
         return  nmplOutlineSorterInfoMapper.insertSelective(nmplOutlineSorterInfo);
@@ -68,6 +68,9 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
         if(outlineSorterReq.getDeviceId()!=null){
             criteria.andDeviceIdEqualTo(outlineSorterReq.getDeviceId());
         }
+        if(outlineSorterReq.getStationNetworkId()!=null){
+            criteria.andStationNetworkIdEqualTo(outlineSorterReq.getStationNetworkId());
+        }
         if(outlineSorterReq.getDeviceName()!=null){
             criteria.andDeviceNameEqualTo(outlineSorterReq.getDeviceName());
         }
@@ -84,7 +87,6 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
         for (NmplOutlineSorterInfo nmplOutlineSorterInfo : nmplOutlineSorterInfoList) {
             NmplOutlineSorterInfoVo infoVo = new NmplOutlineSorterInfoVo();
             BeanUtils.copyProperties(nmplOutlineSorterInfo,infoVo);
-            infoVo.setId(String.valueOf(nmplOutlineSorterInfo.getId()));
             list.add(infoVo);
         }
         PageInfo<NmplOutlineSorterInfoVo> pageResult =  new PageInfo<>();
@@ -100,13 +102,13 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
             throw new SystemException("id缺失");
         }
         NmplOutlineSorterInfo info = nmplOutlineSorterInfoMapper.selectByPrimaryKey(outlineSorterReq.getId());
-        if(outlineSorterReq.getDeviceId()!=null){
+        if(outlineSorterReq.getStationNetworkId()!=null){
             NmplOutlineSorterInfoExample nmplOutlineSorterInfoExample = new NmplOutlineSorterInfoExample();
             nmplOutlineSorterInfoExample.createCriteria()
-                    .andDeviceIdEqualTo(outlineSorterReq.getDeviceId()).andIsExistEqualTo(true);
+                    .andStationNetworkIdEqualTo(outlineSorterReq.getStationNetworkId()).andIsExistEqualTo(true);
             List<NmplOutlineSorterInfo> nmplOutlineSorterInfoList = nmplOutlineSorterInfoMapper.selectByExample(nmplOutlineSorterInfoExample);
             if(!CollectionUtils.isEmpty(nmplOutlineSorterInfoList)){
-                if(!nmplOutlineSorterInfoList.get(0).getDeviceId().equals(info.getDeviceId())){
+                if(!nmplOutlineSorterInfoList.get(0).getStationNetworkId().equals(info.getStationNetworkId())){
                     throw new SystemException("设备id重复");
                 }
             }
@@ -123,12 +125,12 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
 
     @Override
     public NmplOutlineSorterInfo auth(OutlineSorterReq outlineSorterReq) {
-        if(outlineSorterReq.getDeviceId()==null){
-            throw new SystemException("deviceId缺失");
+        if(outlineSorterReq.getStationNetworkId()==null){
+            throw new SystemException("stationNetworkId缺失");
         }
         NmplOutlineSorterInfoExample nmplOutlineSorterInfoExample = new NmplOutlineSorterInfoExample();
         nmplOutlineSorterInfoExample.createCriteria()
-                .andDeviceIdEqualTo(outlineSorterReq.getDeviceId()).andIsExistEqualTo(true);
+                .andStationNetworkIdEqualTo(outlineSorterReq.getStationNetworkId()).andIsExistEqualTo(true);
         List<NmplOutlineSorterInfo> nmplOutlineSorterInfoList = nmplOutlineSorterInfoMapper.selectByExample(nmplOutlineSorterInfoExample);
         if(CollectionUtils.isEmpty(nmplOutlineSorterInfoList)){
             throw new SystemException("无该设备id");

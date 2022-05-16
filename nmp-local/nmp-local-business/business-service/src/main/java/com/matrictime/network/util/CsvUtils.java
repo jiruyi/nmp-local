@@ -29,10 +29,10 @@ public class CsvUtils {
                 String[] row = line.split("\\|", -1);
                 String[] rows = row[0].split(",");
                 NmplOutlinePcInfo nmplOutlinePcInfo = new NmplOutlinePcInfo();
-                nmplOutlinePcInfo.setDeviceId(rows[0]);
+                nmplOutlinePcInfo.setStationNetworkId(rows[0]);
                 nmplOutlinePcInfo.setDeviceName(rows[1]);
                 nmplOutlinePcInfo.setRemark(rows[2]);
-                nmplOutlinePcInfo.setId(SnowFlake.nextId());
+                nmplOutlinePcInfo.setDeviceId(SnowFlake.nextId_String());
                 nmplOutlinePcInfo.setCreateUser(user.getNickName());
                 list.add(nmplOutlinePcInfo);
             }
@@ -61,10 +61,10 @@ public class CsvUtils {
                     System.out.println(s);
                 }
                 NmplOutlineSorterInfo nmplOutlineSorterInfo = new NmplOutlineSorterInfo();
-                nmplOutlineSorterInfo.setDeviceId(rows[0]);
+                nmplOutlineSorterInfo.setStationNetworkId(rows[0]);
                 nmplOutlineSorterInfo.setDeviceName(rows[1]);
                 nmplOutlineSorterInfo.setRemark(rows[2]);
-                nmplOutlineSorterInfo.setId(SnowFlake.nextId());
+                nmplOutlineSorterInfo.setDeviceId(SnowFlake.nextId_String());
                 nmplOutlineSorterInfo.setCreateUser(user.getNickName());
                 list.add(nmplOutlineSorterInfo);
             }

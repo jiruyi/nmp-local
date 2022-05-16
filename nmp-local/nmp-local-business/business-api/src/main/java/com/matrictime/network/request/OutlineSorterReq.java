@@ -23,6 +23,11 @@ public class OutlineSorterReq extends BaseRequest {
     private String deviceName;
 
     /**
+     * 设备入网码
+     */
+    private String stationNetworkId;
+
+    /**
      * 设备备注
      */
     private String remark;

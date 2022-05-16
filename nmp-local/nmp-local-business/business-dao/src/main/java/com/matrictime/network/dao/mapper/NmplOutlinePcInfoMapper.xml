@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
     <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -71,8 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, device_id, device_name, remark, create_user, create_time, update_user, update_time, 
-    is_exist
+    id, device_id, device_name, station_network_id, remark, create_user, create_time, 
+    update_user, update_time, is_exist
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplOutlinePcInfoExample" resultMap="BaseResultMap">
     select
@@ -107,13 +108,13 @@
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplOutlinePcInfo">
     insert into nmpl_outline_pc_info (id, device_id, device_name, 
-      remark, create_user, create_time, 
-      update_user, update_time, is_exist
-      )
+      station_network_id, remark, create_user, 
+      create_time, update_user, update_time, 
+      is_exist)
     values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{deviceName,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}
-      )
+      #{stationNetworkId,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{isExist,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplOutlinePcInfo">
     insert into nmpl_outline_pc_info
@@ -126,6 +127,9 @@
       </if>
       <if test="deviceName != null">
         device_name,
+      </if>
+      <if test="stationNetworkId != null">
+        station_network_id,
       </if>
       <if test="remark != null">
         remark,
@@ -155,6 +159,9 @@
       </if>
       <if test="deviceName != null">
         #{deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="stationNetworkId != null">
+        #{stationNetworkId,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
@@ -194,6 +201,9 @@
       <if test="record.deviceName != null">
         device_name = #{record.deviceName,jdbcType=VARCHAR},
       </if>
+      <if test="record.stationNetworkId != null">
+        station_network_id = #{record.stationNetworkId,jdbcType=VARCHAR},
+      </if>
       <if test="record.remark != null">
         remark = #{record.remark,jdbcType=VARCHAR},
       </if>
@@ -222,6 +232,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       device_id = #{record.deviceId,jdbcType=VARCHAR},
       device_name = #{record.deviceName,jdbcType=VARCHAR},
+      station_network_id = #{record.stationNetworkId,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -240,6 +251,9 @@
       </if>
       <if test="deviceName != null">
         device_name = #{deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="stationNetworkId != null">
+        station_network_id = #{stationNetworkId,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
@@ -266,6 +280,7 @@
     update nmpl_outline_pc_info
     set device_id = #{deviceId,jdbcType=VARCHAR},
       device_name = #{deviceName,jdbcType=VARCHAR},
+      station_network_id = #{stationNetworkId,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
