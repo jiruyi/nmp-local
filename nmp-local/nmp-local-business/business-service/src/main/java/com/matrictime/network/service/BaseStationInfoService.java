@@ -29,4 +29,6 @@ public interface BaseStationInfoService {
     BaseStationInfoVo selectByNetworkId(BaseStationInfoRequest baseStationInfoRequest);
 
     Result<BaseStationInfoResponse> selectByOperatorId(BaseStationInfoRequest baseStationInfoRequest);
+
+    Result<PageInfo> selectBaseStationList(BaseStationInfoRequest baseStationInfoRequest);
 }

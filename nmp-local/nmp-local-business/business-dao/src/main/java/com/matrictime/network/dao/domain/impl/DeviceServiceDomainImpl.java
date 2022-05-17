@@ -59,4 +59,15 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
         return nmplDeviceInfoMapper.selectDeviceId(deviceInfoRequest);
     }
 
+    @Override
+    public PageInfo<DeviceInfoVo> selectDeviceALl(DeviceInfoRequest deviceInfoRequest) {
+        Page page = PageHelper.startPage(deviceInfoRequest.getPageNo(),deviceInfoRequest.getPageSize());
+        List<DeviceInfoVo> deviceInfoVoList = nmplDeviceInfoMapper.selectDeviceALl(deviceInfoRequest);
+        PageInfo<DeviceInfoVo> pageResult =  new PageInfo<>();
+        pageResult.setList(deviceInfoVoList);
+        pageResult.setCount((int) page.getTotal());
+        pageResult.setPages(page.getPages());
+        return  pageResult;
+    }
+
 }

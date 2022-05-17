@@ -88,7 +88,7 @@ public class BaseStationController {
     public Result<PageInfo> selectBaseStationInfo(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         Result<PageInfo> result = new Result<>();
         try {
-            result = baseStationInfoService.selectBaseStationInfo(baseStationInfoRequest);
+            result = baseStationInfoService.selectBaseStationList(baseStationInfoRequest);
         }catch (Exception e){
             log.info("根据条件查询基站异常:selectBaseStationInfo{}",e.getMessage());
             result.setSuccess(false);

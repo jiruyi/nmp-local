@@ -21,4 +21,6 @@ public interface DeviceDomainService {
     List<DeviceInfoVo> selectLinkDevice(DeviceInfoRequest deviceInfoRequest);
 
     StationVo selectDeviceId(DeviceInfoRequest deviceInfoRequest);
+
+    PageInfo<DeviceInfoVo> selectDeviceALl(DeviceInfoRequest deviceInfoRequest);
 }

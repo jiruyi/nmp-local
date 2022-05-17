@@ -83,7 +83,7 @@ public class DeviceController {
         Result<PageInfo> result = new Result<>();
         try {
             deviceInfoRequest.setDeviceType(DeviceTypeEnum.DISPENSER.getCode());
-            result = deviceService.selectDevice(deviceInfoRequest);
+            result = deviceService.selectDeviceALl(deviceInfoRequest);
         }catch (Exception e){
             log.info("查询分发机信息异常:selectDispenser{}",e.getMessage());
             result.setSuccess(false);
@@ -149,7 +149,7 @@ public class DeviceController {
         Result<PageInfo> result = new Result<>();
         try {
             deviceInfoRequest.setDeviceType(DeviceTypeEnum.GENERATOR.getCode());
-            result = deviceService.selectDevice(deviceInfoRequest);
+            result = deviceService.selectDeviceALl(deviceInfoRequest);
         }catch (Exception e){
             log.info("查询生成机信息异常:updateDispenser{}",e.getMessage());
             result.setSuccess(false);
@@ -215,7 +215,7 @@ public class DeviceController {
         Result<PageInfo> result = new Result<>();
         try {
             deviceInfoRequest.setDeviceType(DeviceTypeEnum.CACHE.getCode());
-            result = deviceService.selectDevice(deviceInfoRequest);
+            result = deviceService.selectDeviceALl(deviceInfoRequest);
         }catch (Exception e){
             log.info("查询缓存机信息异常:selectCache{}",e.getMessage());
             result.setSuccess(false);
