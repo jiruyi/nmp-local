@@ -223,8 +223,10 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         UserRequest addUser = new UserRequest();
         addUser.setUserId(addUserRequestReq.getAddUserId());
         UserVo addUserVo = userFriendsDomainService.selectUserInfo(addUser);
-        if((userVo.getAgreeFriend() == 0 || addUserRequestReq.getAgree() != null) &&
-                !addUserRequestReq.getUserId().equals(addUserRequestReq.getAddUserId())){
+        if(addUserRequestReq.getUserId().equals(addUserRequestReq.getAddUserId())){
+            return new Result(false,"不能添加自己为好友");
+        }
+        if(userVo.getAgreeFriend() == 0 || addUserRequestReq.getAgree() != null){
             WsResultVo wsResultVo = new WsResultVo();
             WsSendVo wsSendVo = new WsSendVo();
             if(addUserRequestReq.getAgree() == null && userVo.getAgreeFriend() == 0){
@@ -274,8 +276,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
             result = buildResult(1,null,JSONObject.toJSONString(wsResultVo));
         }
-        if((userVo.getAgreeFriend() == 1 || addUserRequestReq.getRefuse() != null) &&
-                !addUserRequestReq.getUserId().equals(addUserRequestReq.getAddUserId())) {
+        if(userVo.getAgreeFriend() == 1 || addUserRequestReq.getRefuse() != null) {
             WsResultVo wsResultVo = new WsResultVo();
             WsSendVo wsSendVo = new WsSendVo();
             WebSocketVo webSocketVo;
