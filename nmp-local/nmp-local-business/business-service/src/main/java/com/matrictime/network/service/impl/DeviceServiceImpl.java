@@ -132,6 +132,20 @@ public class DeviceServiceImpl implements DeviceService {
         return result;
     }
 
+    @Override
+    public Result<PageInfo> selectDeviceALl(DeviceInfoRequest deviceInfoRequest) {
+        Result<PageInfo> result = new Result<>();
+        try {
+            PageInfo pageInfo = deviceDomainService.selectDeviceALl(deviceInfoRequest);
+            result.setResultObj(pageInfo);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
 
     private String getFormatDate(Date date){
         String creatDate = "yyyy-MM-dd HH:mm:ss";

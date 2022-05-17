@@ -72,4 +72,15 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         return nmplBaseStationInfoMapper.selectByOperatorId(baseStationInfoRequest);
     }
 
+    @Override
+    public PageInfo<BaseStationInfoVo> selectBaseStationList(BaseStationInfoRequest baseStationInfoRequest) {
+        Page page = PageHelper.startPage(baseStationInfoRequest.getPageNo(),baseStationInfoRequest.getPageSize());
+        List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationList(baseStationInfoRequest);
+        PageInfo<BaseStationInfoVo> pageResult =  new PageInfo<>();
+        pageResult.setList(baseStationInfoVoList);
+        pageResult.setCount((int) page.getTotal());
+        pageResult.setPages(page.getPages());
+        return  pageResult;
+    }
+
 }

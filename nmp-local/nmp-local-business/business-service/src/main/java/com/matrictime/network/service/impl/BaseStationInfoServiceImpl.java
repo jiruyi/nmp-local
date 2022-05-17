@@ -190,6 +190,20 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         return result;
     }
 
+    @Override
+    public Result<PageInfo> selectBaseStationList(BaseStationInfoRequest baseStationInfoRequest) {
+        Result<PageInfo> result = new Result<>();
+        try {
+            PageInfo pageInfo = baseStationInfoDomainService.selectBaseStationList(baseStationInfoRequest);
+            result.setResultObj(pageInfo);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
 
     private String getFormatDate(Date date){
         String creatDate = "yyyy-MM-dd HH:mm:ss";
