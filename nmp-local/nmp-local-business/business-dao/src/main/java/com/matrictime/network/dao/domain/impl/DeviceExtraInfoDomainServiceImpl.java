@@ -40,7 +40,7 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
                 !"".equals(nmplDeviceExtraInfo.getStationNetworkId())){
             NmplDeviceExtraInfoExample nmplDeviceExtraInfoExample =new NmplDeviceExtraInfoExample();
             nmplDeviceExtraInfoExample.createCriteria().andIsExistEqualTo(true).
-                    andStationNetworkIdEqualTo(nmplDeviceExtraInfo.getStationNetworkId());
+                    andStationNetworkIdEqualTo(nmplDeviceExtraInfo.getStationNetworkId()).andRelDeviceIdEqualTo(nmplDeviceExtraInfo.getRelDeviceId());
             List<NmplDeviceExtraInfo> nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(nmplDeviceExtraInfoExample);
             if(!CollectionUtils.isEmpty(nmplDeviceExtraInfos)){
                 throw new SystemException("设备id重复插入");
@@ -59,10 +59,10 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
     public PageInfo<DeviceExtraVo> selectByCondition(DeviceExtraInfoRequest deviceExtraInfoRequest) {
         NmplDeviceExtraInfoExample deviceExtraInfoExample = new NmplDeviceExtraInfoExample();
         NmplDeviceExtraInfoExample.Criteria criteria = deviceExtraInfoExample.createCriteria();
-        List<String> deviceStatusList = new ArrayList<>();
-        deviceStatusList.add(DeviceStatusEnum.ACTIVE.getCode());
-        deviceStatusList.add(DeviceStatusEnum.NOAUDIT.getCode());
-        deviceStatusList.add(DeviceStatusEnum.OFFLINE.getCode());
+//        List<String> deviceStatusList = new ArrayList<>();
+//        deviceStatusList.add(DeviceStatusEnum.ACTIVE.getCode());
+//        deviceStatusList.add(DeviceStatusEnum.NOAUDIT.getCode());
+//        deviceStatusList.add(DeviceStatusEnum.OFFLINE.getCode());
         if(deviceExtraInfoRequest.getRelDeviceId() != null){
             criteria.andRelDeviceIdEqualTo(deviceExtraInfoRequest.getRelDeviceId());
         }
@@ -75,7 +75,7 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
         if(deviceExtraInfoRequest.getStationNetworkId() != null){
             criteria.andStationNetworkIdEqualTo(deviceExtraInfoRequest.getStationNetworkId());
         }
-        criteria.andStationStatusIn(deviceStatusList);
+//        criteria.andStationStatusIn(deviceStatusList);
         criteria.andIsExistEqualTo(true);
         Page page = PageHelper.startPage(deviceExtraInfoRequest.getPageNo(),deviceExtraInfoRequest.getPageSize());
         List<NmplDeviceExtraInfo> nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(deviceExtraInfoExample);
