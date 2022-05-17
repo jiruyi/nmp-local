@@ -1,5 +1,5 @@
 server:
-  port: 8006
+  port: 8008
 
 spring:
   redis:
@@ -38,9 +38,9 @@ logging:
 app:
   handleType: 1
   flowtype: 0
-  name: userCenter
-  id: UC010
-  port: 9100
-  timeout: 10000
-  innerUrl: http://192.168.72.231:8006
-  outerUrl: http://192.168.72.211:8007
+  name: userCenterProd
+  id: UC020
+  port: 9120
+  timeout: 5000
+  innerUrl: http://192.168.72.231:8008
+  outerUrl: http://192.168.72.211:8009

@@ -533,7 +533,7 @@
   <select id="selectDeviceId" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.StationVo">
     select device_id,station_network_id from nmpl_device_info
     <where>
-      is_exist = 1 and station_status in(2,3,4)
+      is_exist = 1
       <if test="lanIp != null">
         and lan_ip = #{lanIp,jdbcType=CHAR}
       </if>

@@ -305,6 +305,76 @@ public class NmplOutlinePcInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andStationNetworkIdIsNull() {
+            addCriterion("station_network_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdIsNotNull() {
+            addCriterion("station_network_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdEqualTo(String value) {
+            addCriterion("station_network_id =", value, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdNotEqualTo(String value) {
+            addCriterion("station_network_id <>", value, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdGreaterThan(String value) {
+            addCriterion("station_network_id >", value, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdGreaterThanOrEqualTo(String value) {
+            addCriterion("station_network_id >=", value, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdLessThan(String value) {
+            addCriterion("station_network_id <", value, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdLessThanOrEqualTo(String value) {
+            addCriterion("station_network_id <=", value, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdLike(String value) {
+            addCriterion("station_network_id like", value, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdNotLike(String value) {
+            addCriterion("station_network_id not like", value, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdIn(List<String> values) {
+            addCriterion("station_network_id in", values, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdNotIn(List<String> values) {
+            addCriterion("station_network_id not in", values, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdBetween(String value1, String value2) {
+            addCriterion("station_network_id between", value1, value2, "stationNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNetworkIdNotBetween(String value1, String value2) {
+            addCriterion("station_network_id not between", value1, value2, "stationNetworkId");
+            return (Criteria) this;
+        }
+
         public Criteria andRemarkIsNull() {
             addCriterion("remark is null");
             return (Criteria) this;

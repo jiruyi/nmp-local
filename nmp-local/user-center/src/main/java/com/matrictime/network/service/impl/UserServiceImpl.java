@@ -442,7 +442,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             List<User> users = userMapper.selectByExample(userExample);
             if (!CollectionUtils.isEmpty(users)){
                 User user = users.get(0);
-                wsSendVo.setData(user);
+                wsSendVo.setData(JSONObject.toJSONString(user));
                 wsSendVo.setFrom(SEND_WS_FROM);
                 wsSendVo.setBusinessCode("13");
                 wsResultVo.setSendObject(deleteFriendReq.getFriendUserId());

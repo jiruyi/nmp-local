@@ -8,7 +8,7 @@ public class NmplOutlinePcInfoVo {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
 
     /**
      * 设备编号
@@ -19,6 +19,11 @@ public class NmplOutlinePcInfoVo {
      * 设备名称
      */
     private String deviceName;
+
+    /**
+     * 设备入网码
+     */
+    private String stationNetworkId;
 
     /**
      * 设备备注

@@ -54,6 +54,9 @@ public class WebSocketServer {
             addOnlineCount();
         }
         log.info("连接:"+userId+",当前在线用户数为:" + getOnlineCount());
+        for (String key : webSocketMap.keySet()) {
+            log.info("当前在线用户:"+key);
+        }
     }
 
     /**
@@ -68,6 +71,9 @@ public class WebSocketServer {
             subOnlineCount();
         }
         log.info("用户退出:"+userId+",当前在线用户数为:" + getOnlineCount());
+        for (String key : webSocketMap.keySet()) {
+            log.info("当前在线用户:"+key);
+        }
     }
 
     /**
@@ -123,6 +129,19 @@ public class WebSocketServer {
             this.session.getBasicRemote().sendText(message);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void serverClose(){
+        if (this.session.isOpen()){
+            try {
+                CloseReason closeReason = new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE,"鉴权失败！");
+                session.close(closeReason);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
         }
     }
 

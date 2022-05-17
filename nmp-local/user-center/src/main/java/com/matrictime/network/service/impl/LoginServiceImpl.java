@@ -16,6 +16,7 @@ import com.matrictime.network.base.util.CheckUtil;
 import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.controller.WebSocketServer;
 import com.matrictime.network.dao.mapper.GroupInfoMapper;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.GroupInfo;
@@ -85,13 +86,11 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     String paramF = JSONObject.toJSONString(req);
                     reqModelF.setParam(paramF);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModelF);
-
                     log.info("非密区接收返回值LoginServiceImpl.register resModel:{}",JSONObject.toJSONString(resModel));
                     Object returnValue = resModel.getReturnValue();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);// 兼容加密返回统一处理
                     if(returnValue != null && returnValue instanceof String){
                         ResModel ResModelX = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        result = JSONObject.parseObject(ResModelX.getReturnValue().toString(),new TypeReference<Result<RegisterResp>>(){});
+                        result = JSONObject.parseObject(ResModelX.getReturnValue().toString(), Result.class);
                         return result;
                     }else {
                         throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
@@ -283,6 +282,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             user.setDeviceIp(req.getDeviceIp());
             user.setLoginStatus(LOGIN_STATUS_IN);
             user.setLoginAppCode(req.getLoginAppCode());
+            user.setSid(req.getSid());
             userMapper.updateByPrimaryKeySelective(user);
             UserVo userVo = new UserVo();
             BeanUtils.copyProperties(user,userVo);
@@ -315,6 +315,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     commonLogout(req);
+                    webSocketOnClose(req.getCommonKey());
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
@@ -329,6 +330,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     if(returnValue != null && returnValue instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
                         Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),Result.class);
+                        if(returnRes.isSuccess()){
+                            webSocketOnClose(req.getCommonKey());
+                        }
                         return returnRes;
                     }else {
                         throw new SystemException("LoginServiceImpl.logout"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
@@ -367,6 +371,18 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         userExample.createCriteria().andUserIdEqualTo(req.getUserId());
         user.setLoginStatus(DataConfig.LOGIN_STATUS_OUT);
         userMapper.updateByExampleSelective(user,userExample);
+    }
+
+
+    private void webSocketOnClose(String userId){
+        try {
+            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(userId);
+            if(webSocketServer != null){
+                webSocketServer.serverClose();
+            }
+        }catch (Exception e){
+            log.info("user:{},webSocketOnClose Exception:{}",userId,e.getMessage());
+        }
     }
 
     @Override
@@ -523,6 +539,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         if(null == req){
             throw new SystemException("req"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
+        if(ParamCheckUtil.checkVoStrBlank(req.getSid())){
+            throw new SystemException("sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
         if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount()) && ParamCheckUtil.checkVoStrBlank(req.getUserId())){
             throw new SystemException("LoginAccount/UserId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
@@ -558,6 +577,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }
         if (req.getIdNo() == null || req.getIdNo().isEmpty()){
             throw new SystemException("IdNo"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (req.getSid() == null || req.getSid().isEmpty()){
+            throw new SystemException("Sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
     }
 }

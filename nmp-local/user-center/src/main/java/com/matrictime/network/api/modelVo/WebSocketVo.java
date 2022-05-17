@@ -6,6 +6,9 @@ import java.io.Serializable;
 
 @Data
 public class WebSocketVo implements Serializable {
+
+    private static final long serialVersionUID = -3054182848388200367L;
+
     private String destination;
 
     private String requestId;
