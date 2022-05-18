@@ -223,9 +223,9 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         UserRequest addUser = new UserRequest();
         addUser.setUserId(addUserRequestReq.getAddUserId());
         UserVo addUserVo = userFriendsDomainService.selectUserInfo(addUser);
-        if(addUserRequestReq.getUserId().equals(addUserRequestReq.getAddUserId())){
-            return new Result(false,"不能添加自己为好友");
-        }
+//        if(addUserRequestReq.getUserId().equals(addUserRequestReq.getAddUserId())){
+//            return new Result(false,"不能添加自己为好友");
+//        }
         if(userVo.getAgreeFriend() == 0 || addUserRequestReq.getAgree() != null){
             WsResultVo wsResultVo = new WsResultVo();
             WsSendVo wsSendVo = new WsSendVo();

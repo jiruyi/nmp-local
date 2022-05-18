@@ -2,12 +2,14 @@ package com.matrictime.network.config;
 
 import com.jzsg.bussiness.JServiceImpl;
 import com.matrictime.network.base.ComOptApiImpl;
+import com.matrictime.network.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.util.Date;
 
 
 @Component
@@ -33,10 +35,19 @@ public class MyStartupRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("SpringBoot run appName:{},appId:{},appPort:{}", appName, appId, appPort);
+        log.info("SpringBoot run appName:{},appId:{},appPort:{},FlowType:{},handleType:{}", appName, appId, appPort, FlowType, handleType);
         JServiceImpl.FlowType = FlowType;
         JServiceImpl.handleType = handleType;
         JServiceImpl.start(appName, appId, appPort, comOptApi);
+//        if (FlowType == 0){
+//            int i = -1;
+//            Date date = DateUtils.addMinuteForDate(new Date(), 1);
+//            while (i != 0 && new Date().before(date)){
+//                i = JServiceImpl.setBSAuth("192.168.72.213", 20055);
+//                log.info("接入基站认证结果："+i);
+//                Thread.currentThread().sleep(3000);
+//            }
+//        }
     }
 
     @PreDestroy

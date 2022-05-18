@@ -6,6 +6,7 @@ import com.jzsg.bussiness.util.EdException;
 import com.matrictime.network.api.request.BaseReq;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.util.ParamCheckUtil;
 
 public class ReqUtil<T> {
@@ -50,6 +51,9 @@ public class ReqUtil<T> {
 
     public T decryJsonToReq(BaseReq req) throws EdException {
         String decryptMsg = JServiceImpl.decryptMsg(req.getEncryptParam());
+//        if (ParamCheckUtil.checkVoStrBlank(decryptMsg)){
+//            throw new SystemException("解密失败");
+//        }
         String commonParam = req.getCommonParam();
         JSONObject decJson = JSONObject.parseObject(decryptMsg);
         if (!ParamCheckUtil.checkVoStrBlank(commonParam)) {
