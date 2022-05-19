@@ -325,10 +325,10 @@
   </select>
   <select id="selectLinkRelationStation" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
     select station_id,station_name,public_network_ip,public_network_port,lan_ip,lan_port
-    from nmpl_base_station_info
+    from nmpl_base_station_info where is_exist = 1
   </select>
   <select id="selectLinkRelationDevice" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.DeviceInfoVo">
     select device_id,device_name,public_network_ip,public_network_port,lan_ip,lan_port
-    from nmpl_device_info
+    from nmpl_device_info where is_exist = 1
   </select>
 </mapper>

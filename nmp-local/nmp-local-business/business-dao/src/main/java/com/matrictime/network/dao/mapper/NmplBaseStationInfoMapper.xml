@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="station_id" jdbcType="VARCHAR" property="deviceId" />
     <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+    <result column="station_type" jdbcType="CHAR" property="stationType" />
   </resultMap>
   <resultMap id="BaseStationMap" type="com.matrictime.network.modelVo.BaseStationInfoVo">
     <id column="id" jdbcType="BIGINT" property="id" />
@@ -540,7 +541,7 @@
     </foreach>
   </select>
   <select id="selectDeviceId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseResultMap">
-    select station_id,station_network_id from nmpl_base_station_info where lan_ip = #{lanIp,jdbcType=VARCHAR} and is_exist = 1
+    select station_id,station_network_id,station_type from nmpl_base_station_info where lan_ip = #{lanIp,jdbcType=VARCHAR} and is_exist = 1
   </select>
   <select id="selectByNetworkId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseStationMap">
     select station_id from nmpl_base_station_info where station_network_id like "%" #{stationNetworkId,jdbcType=CHAR} "%"

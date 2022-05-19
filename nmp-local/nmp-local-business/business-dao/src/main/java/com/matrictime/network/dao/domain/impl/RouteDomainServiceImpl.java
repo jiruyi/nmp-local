@@ -23,9 +23,6 @@ public class RouteDomainServiceImpl implements RouteDomainService {
     @Resource
     private NmplRouteMapper nmplRouteMapper;
 
-    @Resource
-    NmplSignalExtMapper nmplSignalExtMapper;
-
     @Override
     public int insertRoute(RouteRequest routeRequest) {
         return nmplRouteMapper.insertRoute(routeRequest);
@@ -60,6 +57,6 @@ public class RouteDomainServiceImpl implements RouteDomainService {
 
     @Override
     public List<NmplDeviceInfoExt> selectDevices() {
-        return nmplSignalExtMapper.selectDevices();
+        return nmplRouteMapper.selectDevices();
     }
 }

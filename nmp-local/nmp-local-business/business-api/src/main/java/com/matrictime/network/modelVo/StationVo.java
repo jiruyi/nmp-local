@@ -9,6 +9,8 @@ public class StationVo implements Serializable {
 
     private String stationNetworkId;
 
+    private String  stationType;
+
     public String getStationNetworkId() {
         return stationNetworkId;
     }
@@ -23,5 +25,13 @@ public class StationVo implements Serializable {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getStationType() {
+        return stationType;
+    }
+
+    public void setStationType(String stationType) {
+        this.stationType = stationType;
     }
 }
