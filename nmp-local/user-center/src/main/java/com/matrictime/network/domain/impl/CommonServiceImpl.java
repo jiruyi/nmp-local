@@ -8,6 +8,7 @@ import com.matrictime.network.api.request.BaseReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
+import com.matrictime.network.base.util.CheckUtil;
 import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
@@ -37,6 +38,7 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     public Result encrypt(String condition,String destination, Result res) throws Exception {
         if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
             ReqUtil resUtil = new ReqUtil();
+            log.info("通用接口开始加密了歪：{},{},{}",condition,destination,JSONObject.toJSONString(res));
             String resultObj = resUtil.encryJsonToReq(res, getSidByCondition(condition));
             res.setSuccess(true);
             res.setResultObj(resultObj);
@@ -77,10 +79,13 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
 
     @Override
     public Result encryptForLogin(LoginReq req, Result res) throws Exception {
+        log.info("登录开始加密了歪：{},{}",JSONObject.toJSONString(req),JSONObject.toJSONString(res));
         if(UcConstants.DESTINATION_OUT_TO_IN.equals(req.getDestination())){
             String userId = res.getErrorMsg();
             ReqUtil resUtil = new ReqUtil();
-            String resultObj = resUtil.encryJsonToReq(res, getSidByCondition(req.getCommonKey()));
+            log.info("登录开始加密了：{},{}",JSONObject.toJSONString(req),JSONObject.toJSONString(res));
+            String resultObj = CheckUtil.decryJsonToReq(JSONObject.toJSONString(res));
+            resultObj = resUtil.encryJsonToReq(res, getSidByCondition(req.getCommonKey()));
             res.setSuccess(true);
             res.setResultObj(resultObj);
             res.setErrorMsg(userId);
@@ -91,9 +96,12 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
 
     @Override
     public Result encryptForRegister(String sid,String destination, Result res) throws Exception {
-        if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
+        log.info("注册开始加密了歪：{},{},{}",sid,destination,JSONObject.toJSONString(res));
+        if(UcConstants.DESTINATION_OUT_TO_IN_SYN.equals(destination)){
             ReqUtil resUtil = new ReqUtil();
-            String resultObj = resUtil.encryJsonToReq(res, sid);
+            log.info("注册开始加密了：{},{},{}",sid,destination,JSONObject.toJSONString(res));
+            String resultObj = "注册加密内容";
+            resultObj = resUtil.encryJsonToReq(res, sid);
             res.setSuccess(true);
             res.setResultObj(resultObj);
             res.setErrorMsg(null);

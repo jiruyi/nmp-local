@@ -12,4 +12,9 @@ public class CheckUtil {
             throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
     }
+
+    public static String decryJsonToReq(String req){
+        String returnRes = req.substring(0,10)+"hh";
+        return returnRes;
+    }
 }

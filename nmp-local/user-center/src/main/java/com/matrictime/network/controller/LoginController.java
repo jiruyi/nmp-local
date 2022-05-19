@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
@@ -37,7 +38,9 @@ public class LoginController {
     @RequestMapping(value = "/login")
     public Result login(@RequestBody LoginReq req){
         try {
+            log.info("LoginReq begin:"+ JSONObject.toJSONString(req));
             Result<LoginResp> result = loginService.login(req);
+            log.info("LoginReq after:"+ JSONObject.toJSONString(req));
             result = commonService.encryptForLogin(req, result);
             return result;
         }catch (Exception e){
@@ -53,7 +56,9 @@ public class LoginController {
     @RequestMapping(value = "/register")
     public Result register(@RequestBody RegisterReq req){
         try {
+            log.info("RegisterReq begin:"+ JSONObject.toJSONString(req));
             Result<RegisterResp> result = loginService.register(req);
+            log.info("RegisterReq after:"+ JSONObject.toJSONString(req));
             result = commonService.encryptForRegister(req.getSid(), req.getDestination(), result);
             return result;
         }catch (Exception e){

@@ -87,6 +87,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     reqModelF.setParam(paramF);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModelF);
                     log.info("非密区接收返回值LoginServiceImpl.register resModel:{}",JSONObject.toJSONString(resModel));
+                    req.setDestination(UcConstants.DESTINATION_DEFAULT);
                     Object returnValue = resModel.getReturnValue();
                     if(returnValue != null && returnValue instanceof String){
                         ResModel ResModelX = JSONObject.parseObject((String) returnValue, ResModel.class);
@@ -132,6 +133,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     // 入参解密
 
                     ReqUtil<RegisterReq> reqUtil = new ReqUtil<>(req);
+//                    RegisterReq desReq = JSONObject.parseObject(req.getEncryptParam(),new TypeReference<RegisterReq>(){});
                     RegisterReq desReq = reqUtil.decryJsonToReq(req);
                     log.info("密区解密结果desReq:{}",JSONObject.toJSONString(desReq));
                     resp = new RegisterResp();
@@ -235,6 +237,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     // 入参解密
 
                     ReqUtil<LoginReq> reqUtil = new ReqUtil<>(req);
+//                    LoginReq desReq = JSONObject.parseObject(req.getEncryptParam(),new TypeReference<LoginReq>(){});
                     LoginReq desReq = reqUtil.decryJsonToReq(req);
                     resp = commonLogin(desReq);
                     // 返回值加密
