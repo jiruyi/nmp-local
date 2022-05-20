@@ -16,19 +16,19 @@ public class MonitorResp extends BaseResponse{
     /**
      * 总带宽
      */
-    private double totalBandwidth;
+    private String totalBandwidth;
     /**
      * 分发机秘钥量
      */
-    private double dispenserSecretKey;
+    private String dispenserSecretKey;
     /**
      * 生成机秘钥量
      */
-    private double generatorSecretKey;
+    private String generatorSecretKey;
     /**
      * 缓存机秘钥量
      */
-    private double cacheSecretKey;
+    private String cacheSecretKey;
 
     private List<DataCollectVo> dataCollectVoList;
 }
