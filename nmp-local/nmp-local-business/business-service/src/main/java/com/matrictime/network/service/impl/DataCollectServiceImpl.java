@@ -122,7 +122,8 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                 }
             }
             MonitorResp monitorResp = new MonitorResp
-                    (userNumber,totalBandwidth,dispenserSecretKey,generatorSecretKey,cacheSecretKey,new ArrayList<>());
+                    (userNumber,String.format("%.2f", totalBandwidth),String.format("%.2f", dispenserSecretKey),String.format("%.2f", generatorSecretKey),
+                            String.format("%.2f", cacheSecretKey),new ArrayList<>());
             result = buildResult(monitorResp);
         } catch (Exception e) {
             log.info("查询监控数据异常",e.getMessage());
