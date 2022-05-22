@@ -126,6 +126,7 @@ public class WebSocketServer {
      */
     public void sendMessage(String message) {
         try {
+            log.info("websocket推送消息:"+message);
             this.session.getBasicRemote().sendText(message);
         } catch (IOException e) {
             e.printStackTrace();

@@ -35,6 +35,7 @@ public class LoginController {
      * 登录
      * @return
      */
+//    @MonitorRequest
     @RequestMapping(value = "/login")
     public Result login(@RequestBody LoginReq req){
         try {
@@ -53,6 +54,7 @@ public class LoginController {
      * 注册
      * @return
      */
+//    @MonitorRequest
     @RequestMapping(value = "/register")
     public Result register(@RequestBody RegisterReq req){
         try {
@@ -71,6 +73,7 @@ public class LoginController {
      * 退出
      * @return
      */
+//    @MonitorRequest
     @RequestMapping(value = "/logout")
     public Result logout(@RequestBody LogoutReq req){
         try {
@@ -86,7 +89,7 @@ public class LoginController {
     /**
      * 绑定用户
      */
-    @MonitorRequest
+//    @MonitorRequest
     @RequestMapping(value = "/bind")
     public Result bind(@RequestBody BindReq req){
         try {
