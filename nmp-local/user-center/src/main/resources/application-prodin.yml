@@ -2,24 +2,12 @@ server:
   port: 8008
 
 spring:
-  redis:
-    database: 0
-    host: 127.0.0.1
-    port: 6379
-    timeout: 500
-    lettuce:
-      pool:
-        min-idle: 0
-        max-active: 100
-        max-wait: -1
-        max-idle: 8
-
   application:
     name: UserCenter
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
     driver-class-name: com.mysql.cj.jdbc.Driver              # mysql驱动包
-    url: jdbc:mysql://127.0.0.1:3306/user_center_in             # 数据库名称
+    url: jdbc:mysql://127.0.0.1:3306/user_center             # 数据库名称
     username: root
     password: Jzsg@2021
     druid:

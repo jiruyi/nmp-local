@@ -51,8 +51,8 @@ public class AsyncService{
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-                    String post = HttpClientUtil.post(map.get(KEY_URL), jsonReq.toJSONString());
-//                    String post = "{\"isSuccess\":false}";
+//                    String post = HttpClientUtil.post(map.get(KEY_URL), jsonReq.toJSONString());
+                    String post = "{\"isSuccess\":false}";
                     log.info("AsyncService.httpSyncConfig result deviceId:{},req:{},post:{}",deviceId,jsonReq.toJSONString(),post);
                     JSONObject jsonObject = JSONObject.parseObject(post);
                     if (jsonObject != null && jsonObject.get(KEY_IS_SUCCESS) instanceof Boolean){
@@ -94,8 +94,8 @@ public class AsyncService{
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
-//                    String postResp = "{\"isSuccess\":true}";
+//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
+                    String postResp = "{\"isSuccess\":true}";
                     log.info("AsyncService.httpSignalIo result deviceId:{},userId:{},req:{},postResp:{}",deviceId,userId,jsonReq.toJSONString(),postResp);
                     JSONObject jsonObject = JSONObject.parseObject(postResp);
                     if (jsonObject != null){
@@ -163,8 +163,8 @@ public class AsyncService{
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
-//                    String postResp = "{\"isSuccess\":true}";
+//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
+                    String postResp = "{\"isSuccess\":true}";
                     log.info("AsyncService.httpPushFile result url:{},deviceId:{},req:{},postResp:{}",url,deviceId,jsonReq.toJSONString(),postResp);
                     JSONObject jsonObject = JSONObject.parseObject(postResp);
                     if (jsonObject != null){
@@ -226,8 +226,8 @@ public class AsyncService{
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
-//                    String postResp = "{\"isSuccess\":true}";
+//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
+                    String postResp = "{\"isSuccess\":true}";
                     log.info("AsyncService.httpStartFile result deviceId:{},req:{},postResp:{}",deviceId,jsonReq.toJSONString(),postResp);
                     JSONObject jsonObject = JSONObject.parseObject(postResp);
                     if (jsonObject != null){
