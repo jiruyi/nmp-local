@@ -6,9 +6,13 @@
 <generatorConfiguration>
 
     <context id="my" targetRuntime="MyBatis3">
-        <commentGenerator>
-            <property name="suppressDate" value="false"/>
-            <property name="suppressAllComments" value="true"/>
+        <commentGenerator type="org.mybatis.generator.internal.CommentGenerator">
+            <property name="author" value="xxxx"/>
+            <property name="allArgsConstructor" value="false"/>
+            <property name="noArgsConstructor" value="false"/>
+            <property name="toString" value="false"/>
+            <property name="builder.toBuilder" value="false"/>
+            <property name="builder" value="false"/>
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
@@ -34,7 +38,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="add_user_request" domainObjectName="AddUserRequest"
+        <table tableName="user" domainObjectName="User"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
