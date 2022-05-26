@@ -1,6 +1,9 @@
 package com.matrictime.network.base;
 
+import com.matrictime.network.exception.ErrorCode;
+import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,10 +62,24 @@ public class SystemBaseService {
         result.setErrorMsg(errorMessage);
         return result;
     }
+
     public <T> Result<T> failResult(Exception exception) {
         Result<T> result = new Result<T>();
         result.setSuccess(false);
         result.setErrorMsg(exception.getMessage());
+        return result;
+    }
+
+    public <T> Result<T> failResult(String errorMessage) {
+        Result<T> result = new Result<T>();
+        result.setSuccess(false);
+        if (StringUtils.isBlank(errorMessage)) {
+            result.setErrorMsg(ErrorMessageContants.SYSTEM_ERROR_MSG);
+            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+        }else {
+            result.setErrorMsg(errorMessage);
+        }
+
         return result;
     }
 }

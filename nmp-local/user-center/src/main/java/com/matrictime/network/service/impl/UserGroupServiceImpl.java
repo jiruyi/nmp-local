@@ -12,6 +12,7 @@ import com.matrictime.network.api.response.UserGroupResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.ReqUtil;
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.domain.UserGroupDomianService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
@@ -30,6 +31,9 @@ import java.util.List;
 public class UserGroupServiceImpl extends SystemBaseService implements UserGroupService {
     @Autowired
     UserGroupDomianService userGroupDomianService;
+
+    @Autowired
+    private CommonService commonService;
 
     @Value("${app.innerUrl}")
     private String url;
@@ -78,6 +82,13 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
             log.error("createUserGroup Exception:{}",e.getMessage());
             result = failResult(e);
         }
+
+        try {
+            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return result;
     }
 
@@ -193,9 +204,12 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
         Result<Integer> result;
         try {
             result = buildResult(userGroupDomianService.createUserGroup(userGroupReq));
+        }catch (SystemException e){
+            log.error("组用户新增异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
             log.info("组用户新增异常",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
         }
         return result;
     }

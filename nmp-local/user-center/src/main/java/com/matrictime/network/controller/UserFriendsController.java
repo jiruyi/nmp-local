@@ -43,7 +43,7 @@ public class UserFriendsController {
 
     @ApiOperation(value = "注销用户",notes = "注销用户")
     @RequestMapping (value = "/cancelUser",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result<Integer> cancelUser(@RequestBody UserRequest userRequest){
         try {
             Result result = userFriendsService.modifyUserInfo(userRequest);
@@ -57,7 +57,7 @@ public class UserFriendsController {
 
     @ApiOperation(value = "查询用户好友列表",notes = "查询用户好友列表")
     @RequestMapping (value = "/selectUserFriend",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result<UserFriendResp> selectUserFriend(@RequestBody UserFriendReq userFriendReq){
         try {
             Result result = userFriendsService.selectUserFriend(userFriendReq);
@@ -71,7 +71,7 @@ public class UserFriendsController {
 
     @ApiOperation(value = "添加好友",notes = "添加好友")
     @RequestMapping (value = "/addFriends",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result<WebSocketVo> addFriends(@RequestBody AddUserRequestReq addUserRequestReq){
         try {
             Result result = userFriendsService.addFriends(addUserRequestReq);
@@ -86,7 +86,7 @@ public class UserFriendsController {
 
     @ApiOperation(value = "获取待认证请求信息",notes = "获取待认证请求信息")
     @RequestMapping (value = "/getAddUserInfo",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result<AddUserRequestResp> getAddUserInfo(@RequestBody AddUserRequestReq addUserRequestReq){
         Result<AddUserRequestResp> result;
         try {
@@ -102,7 +102,7 @@ public class UserFriendsController {
 
     @ApiOperation(value = "获取好友添加返回信息",notes = "获取好友添加返回信息")
     @RequestMapping (value = "/getRecall",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result getRecall(@RequestBody RecallRequest request){
         Result result = new Result<>();
         try {

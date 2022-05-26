@@ -3,19 +3,17 @@ package com.matrictime.network.domain.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.matrictime.network.api.modelVo.WsResultVo;
-import com.matrictime.network.api.modelVo.WsSendVo;
-import com.matrictime.network.api.request.BaseReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.CheckUtil;
 import com.matrictime.network.base.util.ReqUtil;
-import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
 import com.matrictime.network.dao.model.UserExample;
 import com.matrictime.network.domain.CommonService;
+import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +35,10 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     @Override
     public Result encrypt(String condition,String destination, Result res) throws Exception {
         if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
+            // if errorCode is system error, don't encrypt
+            if (ErrorCode.SYSTEM_ERROR.equals(res.getErrorCode())) {
+                return res;
+            }
             ReqUtil resUtil = new ReqUtil();
             log.info("通用接口开始加密了歪：{},{},{}",condition,destination,JSONObject.toJSONString(res));
             String resultObj = resUtil.encryJsonToReq(res, getSidByCondition(condition));
@@ -61,6 +63,10 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     @Override
     public Result encryptForWs(String condition, String destination, Result res) throws Exception {
         if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
+            // if errorCode is system error, don't encrypt
+            if (ErrorCode.SYSTEM_ERROR.equals(res.getErrorCode())) {
+                return res;
+            }
             ReqUtil resUtil = new ReqUtil();
             String sid = getSidByCondition(condition);
             WsResultVo wsResultVo = JSONObject.parseObject(res.getErrorMsg(), new TypeReference<WsResultVo>() {});

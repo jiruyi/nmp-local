@@ -58,7 +58,7 @@ public class UserController {
      */
     @ApiOperation(value = "用户信息修改",notes = "用户信息")
     @RequestMapping (value = "/modifyUserInfo",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result modifyUserInfo(@RequestBody UserRequest userRequest){
         try {
             Result result = userService.modifyUserInfo(userRequest);
@@ -80,12 +80,11 @@ public class UserController {
      */
     @ApiOperation(value = "删除好友",notes = "删除好友")
     @RequestMapping (value = "/deleteFriend",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result deleteFriend(@RequestBody DeleteFriendReq deleteFriendReq){
         try {
             Result result = userService.deleteFriend(deleteFriendReq);
             deleteFriendSendMsg(deleteFriendReq,result);
-            result = commonService.encryptForWs(deleteFriendReq.getCommonKey(), deleteFriendReq.getDestination(), result);
             return  result;
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
@@ -95,7 +94,7 @@ public class UserController {
 
     @ApiOperation(value = "修改密码",notes = "修改密码")
     @RequestMapping (value = "/changePasswd",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result changePasswd(@RequestBody ChangePasswdReq changePasswdReq){
         try {
             Result result = userService.changePasswd(changePasswdReq);
@@ -109,7 +108,7 @@ public class UserController {
 
     @ApiOperation(value = "查询单个用户",notes = "查询单个用户")
     @RequestMapping (value = "/queryUserInfo",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result queryUserInfo(@RequestBody UserRequest userRequest){
         try {
             /**1.0 参数校验**/
@@ -123,11 +122,10 @@ public class UserController {
     }
 
     @RequestMapping (value = "/verify",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result verify(@RequestBody VerifyReq req){
         try {
             Result result = userService.verify(req);
-            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("UserController.verify exception:{}",e.getMessage());

@@ -35,7 +35,7 @@ public class GroupController {
 
     @ApiOperation(value = "创建组",notes = "创建")
     @RequestMapping (value = "/createGroup",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result createGroup(@RequestBody GroupReq groupReq){
         Result result = groupService.createGroup(groupReq);
         try {
@@ -48,7 +48,7 @@ public class GroupController {
 
     @ApiOperation(value = "删除组",notes = "删除")
     @RequestMapping (value = "/deleteGroup",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result deleteGroup(@RequestBody GroupReq groupReq){
         Result result = groupService.deleteGroup(groupReq);
         try {
@@ -61,7 +61,7 @@ public class GroupController {
 
     @ApiOperation(value = "修改组",notes = "修改")
     @RequestMapping (value = "/modifyGroup",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result modifyGroup(@RequestBody GroupReq groupReq){
         Result result = groupService.modifyGroup(groupReq);
         try {
@@ -74,7 +74,7 @@ public class GroupController {
 
     @ApiOperation(value = "查询组",notes = "查询")
     @RequestMapping (value = "/queryGroup",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result queryGroup(@RequestBody GroupReq groupReq){
         Result result = groupService.queryGroup(groupReq);
         try {
@@ -89,7 +89,7 @@ public class GroupController {
 
     @ApiOperation(value = "创建组内用户",notes = "创建")
     @RequestMapping (value = "/createUserGroup",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result createUserGroup(@RequestBody UserGroupReq userGroupReq){
         Result result = userGroupService.createUserGroup(userGroupReq);
         try {
@@ -102,7 +102,7 @@ public class GroupController {
 
     @ApiOperation(value = "删除组内用户",notes = "删除")
     @RequestMapping (value = "/deleteUserGroup",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result deleteUserGroup(@RequestBody UserGroupReq userGroupReq){
         Result result = userGroupService.deleteUserGroup(userGroupReq);
         try {
@@ -115,7 +115,7 @@ public class GroupController {
 
     @ApiOperation(value = "修改组内用户",notes = "修改")
     @RequestMapping (value = "/modifyUserGroup",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result modifyUserGroup(@RequestBody UserGroupReq userGroupReq){
         Result result = userGroupService.modifyUserGroup(userGroupReq);
         try {

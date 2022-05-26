@@ -11,6 +11,8 @@ public class ErrorMessageContants {
 	
 	public static final String SYSTEM_ERROR = "系统异常，";
 
+	public static final String SYSTEM_ERROR_MSG = "系统异常，请稍后重试！";
+
 	public static final String PARAM_IS_NULL_MSG = "必输入参为空";
 
 	public static final String PARAM_IS_UNEXPECTED_MSG = "入参有误";

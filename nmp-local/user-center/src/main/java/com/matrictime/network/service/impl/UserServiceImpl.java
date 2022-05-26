@@ -21,6 +21,7 @@ import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
 import com.matrictime.network.dao.model.UserExample;
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.domain.UserDomainService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
@@ -32,6 +33,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -54,6 +57,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Autowired
     private UserDomainService userDomainService;
+
+    @Autowired
+    private CommonService commonService;
 
     @Autowired(required = false)
     private UserMapper userMapper;
@@ -141,6 +147,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
       * @create 2022/4/12 0012 13:56
       */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result deleteFriend(DeleteFriendReq deleteFriendReq) {
         Result result;
         try {
@@ -180,11 +187,21 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
         }catch (SystemException e){
-            log.error("deleteFriend SystemException:{}",e.getMessage());
+            log.error("UserServiceImpl.deleteFriend SystemException:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
         }catch (Exception e){
-            log.error("deleteFriend Exception:{}",e.getMessage());
+            log.error("UserServiceImpl.deleteFriend Exception:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
+        }
+
+        try {
+            result = commonService.encryptForWs(deleteFriendReq.getCommonKey(), deleteFriendReq.getDestination(), result);
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result = failResult("");
+            log.error("UserServiceImpl.deleteFriend encrypt Exception:{}",e.getMessage());
         }
         return result;
     }
@@ -312,13 +329,10 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     // 入参解密
-
                     ReqUtil<VerifyReq> reqUtil = new ReqUtil<>(req);
                     VerifyReq desReq = reqUtil.decryJsonToReq(req);
                     commonVerify(desReq);
 
-
-                    return buildResult(null);
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
@@ -330,8 +344,16 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             result = failResult(e);
         } catch (Exception e){
             log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
         }
+
+        try {
+            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
+        } catch (Exception e) {
+            result = failResult("");
+            log.error("UserServiceImpl.verify encrypt Exception:{}",e.getMessage());
+        }
+
         return result;
     }
 
@@ -426,34 +448,29 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
 
     private Result commonDeleteFriend(DeleteFriendReq deleteFriendReq) {
-        try {
-            /**1.0 参数校验**/
-            if(ObjectUtils.isEmpty(deleteFriendReq) || ObjectUtils.isEmpty(deleteFriendReq.getUserId())
-                    || ObjectUtils.isEmpty(deleteFriendReq.getFriendUserId())){
-                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
-            int n = userDomainService.deleteFriend(deleteFriendReq);
-
-            WsResultVo wsResultVo = new WsResultVo();
-            WsSendVo wsSendVo = new WsSendVo();
-            String userId = deleteFriendReq.getUserId();
-            UserExample userExample = new UserExample();
-            userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
-            List<User> users = userMapper.selectByExample(userExample);
-            if (!CollectionUtils.isEmpty(users)){
-                User user = users.get(0);
-                wsSendVo.setData(JSONObject.toJSONString(user));
-                wsSendVo.setFrom(SEND_WS_FROM);
-                wsSendVo.setBusinessCode("13");
-                wsResultVo.setSendObject(deleteFriendReq.getFriendUserId());
-                wsResultVo.setDestination(deleteFriendReq.getDestination());
-            }
-            wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
-            return  buildResult(n,null,JSONObject.toJSONString(wsResultVo));
-        }catch (Exception e){
-            log.error("modifyUserInfo exception:{}",e.getMessage());
-            return  failResult(e);
+        /**1.0 参数校验**/
+        if(ObjectUtils.isEmpty(deleteFriendReq) || ObjectUtils.isEmpty(deleteFriendReq.getUserId())
+                || ObjectUtils.isEmpty(deleteFriendReq.getFriendUserId())){
+            throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
+        int n = userDomainService.deleteFriend(deleteFriendReq);
+
+        WsResultVo wsResultVo = new WsResultVo();
+        WsSendVo wsSendVo = new WsSendVo();
+        String userId = deleteFriendReq.getUserId();
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<User> users = userMapper.selectByExample(userExample);
+        if (!CollectionUtils.isEmpty(users)){
+            User user = users.get(0);
+            wsSendVo.setData(JSONObject.toJSONString(user));
+            wsSendVo.setFrom(SEND_WS_FROM);
+            wsSendVo.setBusinessCode("13");
+            wsResultVo.setSendObject(deleteFriendReq.getFriendUserId());
+            wsResultVo.setDestination(deleteFriendReq.getDestination());
+        }
+        wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
+        return  buildResult(n,null,JSONObject.toJSONString(wsResultVo));
     }
 
 }
