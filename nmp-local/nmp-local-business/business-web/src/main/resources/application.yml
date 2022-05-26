@@ -36,6 +36,9 @@ spring:
           slow-sql-millis: 3000
       time-between-eviction-runs-millis: 10000
       min-evictable-idle-time-millis: 30000
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
   servlet:
     multipart:
       enabled: true

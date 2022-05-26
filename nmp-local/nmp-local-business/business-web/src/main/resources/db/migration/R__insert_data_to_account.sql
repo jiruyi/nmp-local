@@ -1,0 +1,1 @@
+insert into account (userid,money) values (1,800.0);
