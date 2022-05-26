@@ -291,10 +291,8 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                         List<Long> outTotalLoadVos = new ArrayList<>(24*60/15);
                         List<String> timeString = new ArrayList<>(24*60/15);
 
-                        Date startTime = DateUtils.getStartForDay(new Date());
+                        Date startTime = DateUtils.addMinuteForDate(DateUtils.getStartForDay(new Date()), -SPLIT_TIME);
                         for (int i=0; i<24*60/SPLIT_TIME; i++){
-                            TotalLoadVo inTotalLoadVo = new TotalLoadVo();
-                            TotalLoadVo outTotalLoadVo = new TotalLoadVo();
                             BigDecimal inTotalLoad = BigDecimal.ZERO;
                             BigDecimal outTotalLoad = BigDecimal.ZERO;
                             Date endTime = DateUtils.addMinuteForDate(startTime, SPLIT_TIME);
