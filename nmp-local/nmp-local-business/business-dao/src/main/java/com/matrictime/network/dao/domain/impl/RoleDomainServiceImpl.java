@@ -46,8 +46,8 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         NmplRole nmplRole = new NmplRole();
         BeanUtils.copyProperties(roleRequest,nmplRole);
         NmplRoleExample nmplRoleExample = new NmplRoleExample();
-        nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode());
-        nmplRoleExample.or().andRoleNameEqualTo(roleRequest.getRoleName());
+        nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode()).andIsExistEqualTo((byte) 1);
+        nmplRoleExample.or().andRoleNameEqualTo(roleRequest.getRoleName()).andIsExistEqualTo((byte) 1);
         List<NmplRole> nmplRoles = nmplRoleMapper.selectByExample(nmplRoleExample);
         if (!CollectionUtils.isEmpty(nmplRoles)){
             throw new SystemException("存在相同角色名称或角色编码");
@@ -98,8 +98,8 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         BeanUtils.copyProperties(roleRequest,nmplRole);
         if (roleRequest.getRoleName()!=null||roleRequest.getRoleCode()!=null){
             NmplRoleExample nmplRoleExample = new NmplRoleExample();
-            nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode());
-            nmplRoleExample.or().andRoleNameEqualTo(roleRequest.getRoleName());
+            nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode()).andIsExistEqualTo((byte) 1);
+            nmplRoleExample.or().andRoleNameEqualTo(roleRequest.getRoleName()).andIsExistEqualTo((byte) 1);
             List<NmplRole>nmplRoles = nmplRoleMapper.selectByExample(nmplRoleExample);
             if (!CollectionUtils.isEmpty(nmplRoles)){
                 if(!nmplRoles.get(0).getRoleId().equals(roleRequest.getRoleId())){
