@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
     private String url;
 
     @Override
+    @Transactional
     public Result<Integer> createUserGroup(UserGroupReq userGroupReq) {
         ReqUtil<UserGroupReq> jsonUtil = new ReqUtil<>(userGroupReq);
         userGroupReq = jsonUtil.jsonReqToDto(userGroupReq);
@@ -77,22 +79,26 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("createUserGroup Exception:{}",e.getMessage());
             result = failResult(e);
+        } catch (Exception e){
+            log.error("createUserGroup Exception:{}",e.getMessage());
+            result = failResult("");
         }
 
         try {
             result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
         }
 
         return result;
     }
 
     @Override
+    @Transactional
     public Result<Integer> modifyUserGroup(UserGroupReq userGroupReq) {
         ReqUtil<UserGroupReq> jsonUtil = new ReqUtil<>(userGroupReq);
         userGroupReq = jsonUtil.jsonReqToDto(userGroupReq);
@@ -131,14 +137,24 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
 
-        }catch (Exception e){
+        } catch (SystemException e){
             log.error("modifyUserGroup Exception:{}",e.getMessage());
             result = failResult(e);
+        } catch (Exception e){
+            log.error("modifyUserGroup Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        try {
+            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+        } catch (Exception e) {
+            log.error("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
 
     @Override
+    @Transactional
     public Result<Integer> deleteUserGroup(UserGroupReq userGroupReq) {
         ReqUtil<UserGroupReq> jsonUtil = new ReqUtil<>(userGroupReq);
         userGroupReq = jsonUtil.jsonReqToDto(userGroupReq);
@@ -177,62 +193,72 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
 
-        }catch (Exception e){
+        } catch (SystemException e){
             log.error("deleteUserGroup Exception:{}",e.getMessage());
             result = failResult(e);
+        } catch (Exception e){
+            log.error("deleteUserGroup Exception:{}",e.getMessage());
+            result = failResult("");
         }
+        try {
+            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+        } catch (Exception e) {
+            log.error("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
+        }
+
         return result;
     }
 
     @Override
     public Result<UserGroupResp> queryUserGroup(UserGroupReq userGroupReq) {
         Result<UserGroupResp> result;
-        try {
+//        try {
             UserGroupResp userGroupResp = new UserGroupResp();
             List<UserGroupVo> userGroupVos = userGroupDomianService.queryUserGroup(userGroupReq);
             userGroupResp.setUserGroupVos(userGroupVos);
             result = buildResult(userGroupResp);
-        }catch (Exception e){
-            log.info("组用户查询异常",e.getMessage());
-            result = failResult(e);
-        }
+//        }catch (Exception e){
+//            log.info("组用户查询异常",e.getMessage());
+//            result = failResult(e);
+//        }
         return result;
     }
 
 
-    private Result<Integer> commonCreateUserGroup(UserGroupReq userGroupReq) {
+    private Result<Integer> commonCreateUserGroup(UserGroupReq userGroupReq)throws Exception {
         Result<Integer> result;
-        try {
+//        try {
             result = buildResult(userGroupDomianService.createUserGroup(userGroupReq));
-        }catch (SystemException e){
-            log.error("组用户新增异常",e.getMessage());
-            result = failResult(e);
-        }catch (Exception e){
-            log.info("组用户新增异常",e.getMessage());
-            result = failResult("");
-        }
+//        }catch (SystemException e){
+//            log.error("组用户新增异常",e.getMessage());
+//            result = failResult(e);
+//        }catch (Exception e){
+//            log.info("组用户新增异常",e.getMessage());
+//            result = failResult("");
+//        }
         return result;
     }
 
-    private Result<Integer> commonModifyUserGroup(UserGroupReq userGroupReq) {
+    private Result<Integer> commonModifyUserGroup(UserGroupReq userGroupReq)throws Exception {
         Result<Integer> result;
-        try {
+//        try {
             result = buildResult(userGroupDomianService.modifyUserGroup(userGroupReq));
-        }catch (Exception e){
-            log.info("组用户修改异常",e.getMessage());
-            result = failResult(e);
-        }
+//        }catch (Exception e){
+//            log.info("组用户修改异常",e.getMessage());
+//            result = failResult(e);
+//        }
         return result;
     }
 
-    private Result<Integer> commonDeleteUserGroup(UserGroupReq userGroupReq) {
+    private Result<Integer> commonDeleteUserGroup(UserGroupReq userGroupReq)throws Exception {
         Result<Integer> result;
-        try {
+//        try {
             result = buildResult(userGroupDomianService.deleteUserGroup(userGroupReq));
-        }catch (Exception e){
-            log.info("组用户删除异常",e.getMessage());
-            result = failResult(e);
-        }
+//        }catch (Exception e){
+//            log.info("组用户删除异常",e.getMessage());
+//            result = failResult(e);
+//        }
         return result;
     }
 

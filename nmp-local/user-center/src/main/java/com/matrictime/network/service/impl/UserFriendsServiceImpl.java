@@ -16,6 +16,7 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.enums.AddUserRequestEnum;
 import com.matrictime.network.base.util.ReqUtil;
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.domain.UserDomainService;
 import com.matrictime.network.domain.UserFriendsDomainService;
 import com.matrictime.network.domain.UserGroupDomianService;
@@ -27,6 +28,7 @@ import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -50,6 +52,9 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
 
     @Value("${app.innerUrl}")
     private String url;
+
+    @Resource
+    CommonService commonService;
 
     @Override
     public Result<UserFriendResp> selectUserFriend(UserFriendReq userFriendReq) {
@@ -87,9 +92,18 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
+        }catch (SystemException e){
+            log.error("selectUserFriend exception:{}",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
-            result.setSuccess(false);
+            log.error("selectUserFriend exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        try {
+            result = commonService.encrypt(userFriendReq.getCommonKey(), userFriendReq.getDestination(), result);
+        }catch (Exception e){
+            log.error("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -457,14 +471,25 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("getAddUserInfo Exception:{}",e.getMessage());
             result = failResult(e);
+        } catch (Exception e){
+            log.error("getAddUserInfo Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+
+        try {
+            result = commonService.encrypt(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
+        }catch (Exception e){
+            log.error("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
 
     @Override
+    @Transactional
     public Result modifyUserInfo(UserRequest userRequest) {
         Result result = new Result();
         try {
@@ -499,17 +524,29 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-            return result;
-        }catch (Exception e){
+
+        }catch (SystemException e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-            return result;
+            result = failResult(e);
+        } catch (Exception e){
+//            log.error("modifyUserInfo exception:{}",e.getMessage());
+//            result.setSuccess(false);
+//            result.setErrorMsg(e.getMessage());
+//            return result;
+            log.error("modifyUserInfo exception:{}",e.getMessage());
+            result = failResult("");
         }
+        try {
+            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
+        }catch (Exception e){
+            log.error("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
     }
 
     //用户注销代码逻辑
-    private int commonCancelUser(UserRequest userRequest){
+    private int commonCancelUser(UserRequest userRequest)throws Exception{
         int n = userDomainService.modifyUserInfo(userRequest);
         return n;
     }
@@ -524,17 +561,17 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         return userFriendReq;
     }
 
-    private Result<AddUserRequestResp> commonGetAddUserInfo(AddUserRequestReq addUserRequestReq) {
+    private Result<AddUserRequestResp> commonGetAddUserInfo(AddUserRequestReq addUserRequestReq)throws Exception {
         Result<AddUserRequestResp> result = new Result<>();
         AddUserRequestResp addUserRequestResp = new AddUserRequestResp();
-        try {
+//        try {
             List<AddUserRequestVo> addUserRequestVos = userFriendsDomainService.getAddUserInfo(addUserRequestReq);
             addUserRequestResp.setList(addUserRequestVos);
             result.setResultObj(addUserRequestResp);
-        }catch (Exception e){
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
+//        }catch (Exception e){
+//            result.setSuccess(false);
+//            result.setErrorMsg(e.getMessage());
+//        }
         return result;
     }
 

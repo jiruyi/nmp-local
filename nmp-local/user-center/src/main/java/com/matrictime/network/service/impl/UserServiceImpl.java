@@ -208,6 +208,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
 
     @Override
+    @Transactional
     public Result changePasswd(ChangePasswdReq changePasswdReq) {
         ReqUtil<ChangePasswdReq> jsonUtil = new ReqUtil<>(changePasswdReq);
         changePasswdReq = jsonUtil.jsonReqToDto(changePasswdReq);
@@ -230,7 +231,6 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     if(returnValue != null && returnValue instanceof String){
                         ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
                         result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
-                        //result = JSONObject.parseObject((String) returnValue, Result.class);
                     }else {
                         throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
@@ -245,9 +245,19 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("changePasswd Exception:{}",e.getMessage());
             result = failResult(e);
+        }
+        catch (Exception e) {
+            log.error("changePasswd Exception:{}", e.getMessage());
+            result = failResult("");
+        }
+        try {
+            result = commonService.encrypt(changePasswdReq.getCommonKey(), changePasswdReq.getDestination(), result);
+        }catch (Exception e){
+            log.error("基础平台加密异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -290,9 +300,18 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("queryUser Exception:{}",e.getMessage());
             result = failResult(e);
+        } catch (Exception e){
+            log.error("queryUser Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        try {
+            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
+        }catch (Exception e){
+            log.error("基础平台加密异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -388,7 +407,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     }
 
 
-    private  Result commonQueryUser(UserRequest userRequest) {
+    private  Result commonQueryUser(UserRequest userRequest)throws Exception {
         if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getQueryParam())){
             return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
@@ -408,7 +427,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     }
 
 
-    private Result commonChangePasswd(ChangePasswdReq changePasswdReq) {
+    private Result commonChangePasswd(ChangePasswdReq changePasswdReq)throws Exception {
         /**1.0 参数校验**/
         if(ObjectUtils.isEmpty(changePasswdReq) || ObjectUtils.isEmpty(changePasswdReq.getNewPassword())
                 || ObjectUtils.isEmpty(changePasswdReq.getRepeatPassword())||

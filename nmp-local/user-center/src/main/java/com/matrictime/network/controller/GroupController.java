@@ -38,11 +38,11 @@ public class GroupController {
     @MonitorRequest
     public Result createGroup(@RequestBody GroupReq groupReq){
         Result result = groupService.createGroup(groupReq);
-        try {
-            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return result;
     }
 
@@ -51,11 +51,11 @@ public class GroupController {
     @MonitorRequest
     public Result deleteGroup(@RequestBody GroupReq groupReq){
         Result result = groupService.deleteGroup(groupReq);
-        try {
-            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return result;
     }
 
@@ -64,11 +64,11 @@ public class GroupController {
     @MonitorRequest
     public Result modifyGroup(@RequestBody GroupReq groupReq){
         Result result = groupService.modifyGroup(groupReq);
-        try {
-            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return result;
     }
 
@@ -77,11 +77,11 @@ public class GroupController {
     @MonitorRequest
     public Result queryGroup(@RequestBody GroupReq groupReq){
         Result result = groupService.queryGroup(groupReq);
-        try {
-            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return result;
     }
 
@@ -92,11 +92,11 @@ public class GroupController {
     @MonitorRequest
     public Result createUserGroup(@RequestBody UserGroupReq userGroupReq){
         Result result = userGroupService.createUserGroup(userGroupReq);
-        try {
-            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return result;
     }
 
@@ -105,11 +105,11 @@ public class GroupController {
     @MonitorRequest
     public Result deleteUserGroup(@RequestBody UserGroupReq userGroupReq){
         Result result = userGroupService.deleteUserGroup(userGroupReq);
-        try {
-            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return result;
     }
 
@@ -118,11 +118,11 @@ public class GroupController {
     @MonitorRequest
     public Result modifyUserGroup(@RequestBody UserGroupReq userGroupReq){
         Result result = userGroupService.modifyUserGroup(userGroupReq);
-        try {
-            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return result;
     }
 

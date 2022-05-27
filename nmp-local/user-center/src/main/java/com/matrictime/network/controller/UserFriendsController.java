@@ -45,28 +45,26 @@ public class UserFriendsController {
     @RequestMapping (value = "/cancelUser",method = RequestMethod.POST)
     @MonitorRequest
     public Result<Integer> cancelUser(@RequestBody UserRequest userRequest){
-        try {
+//        try {
             Result result = userFriendsService.modifyUserInfo(userRequest);
-            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
             return  result;
-        }catch (Exception e){
-            log.error("cancelUser exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
-        }
+//        }catch (Exception e){
+//            log.error("cancelUser exception:{}",e.getMessage());
+//            return new Result(false,e.getMessage());
+//        }
     }
 
     @ApiOperation(value = "查询用户好友列表",notes = "查询用户好友列表")
     @RequestMapping (value = "/selectUserFriend",method = RequestMethod.POST)
     @MonitorRequest
     public Result<UserFriendResp> selectUserFriend(@RequestBody UserFriendReq userFriendReq){
-        try {
+//        try {
             Result result = userFriendsService.selectUserFriend(userFriendReq);
-            result = commonService.encrypt(userFriendReq.getCommonKey(), userFriendReq.getDestination(), result);
             return  result;
-        }catch (Exception e){
-            log.error("selectUserFriend exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
-        }
+//        }catch (Exception e){
+//            log.error("selectUserFriend exception:{}",e.getMessage());
+//            return new Result(false,e.getMessage());
+//        }
     }
 
     @ApiOperation(value = "添加好友",notes = "添加好友")
@@ -89,14 +87,13 @@ public class UserFriendsController {
     @MonitorRequest
     public Result<AddUserRequestResp> getAddUserInfo(@RequestBody AddUserRequestReq addUserRequestReq){
         Result<AddUserRequestResp> result;
-        try {
+//        try {
             result = userFriendsService.getAddUserInfo(addUserRequestReq);
-            result = commonService.encrypt(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
             return result;
-        }catch (Exception e){
-            log.error("getAddUserInfo exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
-        }
+//        }catch (Exception e){
+//            log.error("getAddUserInfo exception:{}",e.getMessage());
+//            return new Result(false,e.getMessage());
+//        }
 
     }
 

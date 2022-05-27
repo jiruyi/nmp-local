@@ -96,29 +96,27 @@ public class UserController {
     @RequestMapping (value = "/changePasswd",method = RequestMethod.POST)
     @MonitorRequest
     public Result changePasswd(@RequestBody ChangePasswdReq changePasswdReq){
-        try {
+//        try {
             Result result = userService.changePasswd(changePasswdReq);
-            result = commonService.encrypt(changePasswdReq.getCommonKey(), changePasswdReq.getDestination(), result);
             return result;
-        }catch (Exception e){
-            log.error("changePasswd exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
-        }
+//        }catch (Exception e){
+//            log.error("changePasswd exception:{}",e.getMessage());
+//            return new Result(false,e.getMessage());
+//        }
     }
 
     @ApiOperation(value = "查询单个用户",notes = "查询单个用户")
     @RequestMapping (value = "/queryUserInfo",method = RequestMethod.POST)
     @MonitorRequest
     public Result queryUserInfo(@RequestBody UserRequest userRequest){
-        try {
+//        try {
             /**1.0 参数校验**/
             Result result = userService.queryUser(userRequest);
-            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
             return result;
-        }catch (Exception e){
-            log.error("queryUserInfo exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
-        }
+//        }catch (Exception e){
+//            log.error("queryUserInfo exception:{}",e.getMessage());
+//            return new Result(false,e.getMessage());
+//        }
     }
 
     @RequestMapping (value = "/verify",method = RequestMethod.POST)

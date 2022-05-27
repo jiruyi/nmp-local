@@ -17,6 +17,7 @@ import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.ReqUtil;
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.domain.GroupDomainService;
 import com.matrictime.network.domain.UserGroupDomianService;
 import com.matrictime.network.exception.ErrorMessageContants;
@@ -27,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +45,11 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
     @Value("${app.innerUrl}")
     private String url;
 
+    @Autowired
+    CommonService commonService;
 
     @Override
+    @Transactional
     public Result<Integer> createGroup(GroupReq groupReq) {
         ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
         groupReq = jsonUtil.jsonReqToDto(groupReq);
@@ -75,22 +80,34 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     // 入参解密
                     ReqUtil<GroupReq> reqUtil = new ReqUtil<>(groupReq);
                     GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
-
                     result = commonCreateGroup(groupReq1);
                     // 返回值加密
+
                     break;
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("createGroup Exception:{}",e.getMessage());
             result = failResult(e);
         }
+        catch (Exception e){
+            log.error("createGroup Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        try {
+            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+        }catch (Exception e){
+            log.info("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
+        }
+
         return result;
     }
 
 
     @Override
+    @Transactional
     public Result<Integer> modifyGroup(GroupReq groupReq) {
         ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
         groupReq = jsonUtil.jsonReqToDto(groupReq);
@@ -124,19 +141,29 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
                     result = commonModifyGroup(groupReq1);
                     // 返回值加密
-
                     break;
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("modifyGroup Exception:{}",e.getMessage());
             result = failResult(e);
+        }
+        catch (Exception e){
+            log.error("modifyGroup Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        try {
+            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+        }catch (Exception e){
+            log.info("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
 
     @Override
+    @Transactional
     public Result<Integer> deleteGroup(GroupReq groupReq) {
         ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
         groupReq = jsonUtil.jsonReqToDto(groupReq);
@@ -171,13 +198,24 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
                     result = commonDeleteGroup(groupReq1);
                     // 返回值加密
+
                     break;
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("deleteGroup Exception:{}",e.getMessage());
             result = failResult(e);
+        }
+        catch (Exception e){
+            log.error("deleteGroup Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        try {
+            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+        }catch (Exception e){
+            log.info("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -220,51 +258,56 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("queryGroup Exception:{}",e.getMessage());
             result = failResult(e);
         }
-        return result;
-    }
-
-    public Result<Integer> commonCreateGroup(GroupReq groupReq){
-        Result<Integer> result;
+        catch (Exception e){
+            log.error("queryGroup Exception:{}",e.getMessage());
+            result = failResult("");
+        }
         try {
-            groupReq.setOwner(groupReq.getUserId());
-            result = buildResult(groupDomainService.createGroup(groupReq));
+            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
         }catch (Exception e){
-            log.info("组创建异常",e.getMessage());
-            result = failResult(e);
+            log.info("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
 
-    private Result<Integer> commonModifyGroup(GroupReq groupReq) {
+    public Result<Integer> commonCreateGroup(GroupReq groupReq)throws Exception {
         Result<Integer> result;
-        try {
+        groupReq.setOwner(groupReq.getUserId());
+        result = buildResult(groupDomainService.createGroup(groupReq));
+        return result;
+    }
+
+    private Result<Integer> commonModifyGroup(GroupReq groupReq) throws Exception {
+        Result<Integer> result;
+//        try {
             groupReq.setOwner(groupReq.getUserId());
             result = buildResult(groupDomainService.modifyGroup(groupReq));
-        }catch (Exception e){
-            log.info("组修改异常",e.getMessage());
-            result = failResult(e);
-        }
+//        }catch (Exception e){
+//            log.info("组修改异常",e.getMessage());
+//            result = failResult(e);
+//        }
         return result;
     }
-    public Result<Integer> commonDeleteGroup(GroupReq groupReq) {
+    public Result<Integer> commonDeleteGroup(GroupReq groupReq) throws Exception {
         Result<Integer> result;
-        try {
+//        try {
             groupReq.setOwner(groupReq.getUserId());
             result = buildResult(groupDomainService.deleteGroup(groupReq));
-        }catch (Exception e){
-            log.info("组删除异常",e.getMessage());
-            result = failResult(e);
-        }
+//        }catch (Exception e){
+//            log.info("组删除异常",e.getMessage());
+//            result = failResult(e);
+//        }
         return result;
     }
 
-    public Result<GroupResp> commonQueryGroup(GroupReq groupReq) {
+    public Result<GroupResp> commonQueryGroup(GroupReq groupReq) throws Exception {
         Result<GroupResp> result;
-        try {
+//        try {
             groupReq.setOwner(groupReq.getUserId());
             List<GroupVo> groupVoList = new ArrayList<>();
             groupVoList = groupDomainService.queryGroup(groupReq);
@@ -283,10 +326,10 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
             GroupResp groupResp = new GroupResp();
             groupResp.setGroupVoList(groupVoList);
             result = buildResult(groupResp);
-        }catch (Exception e){
-            log.info("组查询异常",e.getMessage());
-            result = failResult(e);
-        }
+//        }catch (Exception e){
+//            log.info("组查询异常",e.getMessage());
+//            result = failResult(e);
+//        }
         return result;
     }
 
