@@ -85,7 +85,7 @@ public class UserRealm extends AuthorizingRealm {
 		//查询用户信息
 		NmplUser user = null;
 		NmplUserExample nmplUserExample = new NmplUserExample();
-		nmplUserExample.createCriteria().andNickNameEqualTo(token.getUsername());
+		nmplUserExample.createCriteria().andUserIdEqualTo(Long.valueOf(token.getUsername()));
 		List<NmplUser> nmplUserList = nmplUserMapper.selectByExample(nmplUserExample);
 		if (!CollectionUtils.isEmpty(nmplUserList)){
 			user = nmplUserList.get(0);

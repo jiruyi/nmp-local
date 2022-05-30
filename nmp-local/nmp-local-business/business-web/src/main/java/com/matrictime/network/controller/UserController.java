@@ -166,7 +166,7 @@ public class UserController {
     @ApiOperation(value = "用户查询")
     @SystemLog(opermodul = "用户管理",operDesc = "用户查询",operType = "查询")
     @RequestMapping(value = "/select",method = RequestMethod.POST)
-    @RequiresPermissions("sys:user:query")
+//    @RequiresPermissions("sys:user:query")
     public Result<PageInfo> selectUserList(@RequestBody UserRequest userRequest){
         try {
             return userService.selectUserList(userRequest);

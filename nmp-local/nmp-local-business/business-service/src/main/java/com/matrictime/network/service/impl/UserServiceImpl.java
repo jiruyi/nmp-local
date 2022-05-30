@@ -95,7 +95,7 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
 
 
             Subject subject = SecurityUtils.getSubject();
-            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(list.get(NumberUtils.INTEGER_ZERO).getNickName(),
+            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(String.valueOf(list.get(NumberUtils.INTEGER_ZERO).getUserId()),
                     list.get(NumberUtils.INTEGER_ZERO).getPassword());
             subject.login(usernamePasswordToken);
 
