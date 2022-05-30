@@ -582,7 +582,7 @@
         and lan_ip = #{lanIp,jdbcType=CHAR}
       </if>
       <if test="stationNetworkId != null and stationNetworkId != ''">
-        and station_network_id = #{stationNetworkId,jdbcType=CHAR}
+        and station_network_id like "%" #{stationNetworkId,jdbcType=CHAR}
       </if>
       and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
       and nmpl_user.user_id = nmpl_base_station_info.create_user
