@@ -23,6 +23,7 @@ import com.matrictime.network.dao.model.GroupInfo;
 import com.matrictime.network.dao.model.GroupInfoExample;
 import com.matrictime.network.dao.model.User;
 import com.matrictime.network.dao.model.UserExample;
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.domain.GroupDomainService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
@@ -36,6 +37,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -50,6 +53,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Autowired
     private GroupDomainService groupDomainService;
 
+    @Autowired
+    private CommonService commonService;
+
     @Autowired(required = false)
     private UserMapper userMapper;
 
@@ -63,6 +69,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     private GroupInfoMapper groupInfoMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result<RegisterResp> register(RegisterReq req) {
         Result result;
         RegisterResp resp;
@@ -118,6 +125,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                             String post = HttpClientUtil.post(outUrl + UcConstants.URL_REGISTER, JSONObject.toJSONString(req1));
                             log.info("非密区接收密区/非密区同步返回值LoginServiceImpl.register post:{}",post);
                             return JSONObject.parseObject(post,Result.class);
+                        }else {
+                            throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                         }
                     }else {
                         throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
@@ -147,20 +156,20 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             }
         }catch (SystemException e){
             log.error("LoginServiceImpl.register SystemException:{}",e.getMessage());
-
-            UserExample userExample = new UserExample();
-            userExample.createCriteria().andUserIdEqualTo(req.getUserId());
-            userMapper.deleteByExample(userExample);
-
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
         }catch (Exception e){
             log.error("LoginServiceImpl.register Exception:{}",e.getMessage());
-
-            UserExample userExample = new UserExample();
-            userExample.createCriteria().andUserIdEqualTo(req.getUserId());
-            userMapper.deleteByExample(userExample);
-
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
+        }
+
+        try {
+            result = commonService.encryptForRegister(req.getSid(), req.getDestination(), result);
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result = failResult("");
+            log.error("LoginServiceImpl.login register Exception:{}",e.getMessage());
         }
         return result;
     }
@@ -202,6 +211,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result<LoginResp> login(LoginReq req) {
         Result result;
         try {
@@ -250,10 +260,21 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             result = buildResult(resp);
         }catch (SystemException e){
             log.error("LoginServiceImpl.login SystemException:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
         }catch (Exception e){
             log.error("LoginServiceImpl.login Exception:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
+        }
+
+
+        try {
+            result = commonService.encryptForLogin(req, result);
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result = failResult("");
+            log.error("LoginServiceImpl.login encrypt Exception:{}",e.getMessage());
         }
         return result;
     }
@@ -308,6 +329,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result logout(LogoutReq req) {
         Result result;
         try {
@@ -359,11 +381,22 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             result = buildResult(null);
         }catch (SystemException e){
             log.error("LoginServiceImpl.logout SystemException:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
         }catch (Exception e){
             log.error("LoginServiceImpl.logout Exception:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
         }
+
+        try {
+            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result = failResult("");
+            log.error("LoginServiceImpl.logout encrypt Exception:{}",e.getMessage());
+        }
+
         return result;
     }
 
@@ -389,6 +422,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result bind(BindReq req) {
         Result result;
         try {
@@ -438,10 +472,20 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             result = buildResult(null);
         }catch (SystemException e){
             log.error("LoginServiceImpl.bind SystemException:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
         }catch (Exception e){
             log.error("LoginServiceImpl.bind Exception:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
+        }
+
+        try {
+            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result = failResult("");
+            log.error("LoginServiceImpl.bind encrypt Exception:{}",e.getMessage());
         }
         return result;
     }

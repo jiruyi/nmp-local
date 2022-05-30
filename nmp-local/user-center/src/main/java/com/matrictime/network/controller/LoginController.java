@@ -39,10 +39,7 @@ public class LoginController {
     @RequestMapping(value = "/login")
     public Result login(@RequestBody LoginReq req){
         try {
-            log.info("LoginReq begin:"+ JSONObject.toJSONString(req));
             Result<LoginResp> result = loginService.login(req);
-            log.info("LoginReq after:"+ JSONObject.toJSONString(req));
-            result = commonService.encryptForLogin(req, result);
             return result;
         }catch (Exception e){
             log.error("LoginController.login exception:{}",e.getMessage());
@@ -58,10 +55,7 @@ public class LoginController {
     @RequestMapping(value = "/register")
     public Result register(@RequestBody RegisterReq req){
         try {
-            log.info("RegisterReq begin:"+ JSONObject.toJSONString(req));
             Result<RegisterResp> result = loginService.register(req);
-            log.info("RegisterReq after:"+ JSONObject.toJSONString(req));
-            result = commonService.encryptForRegister(req.getSid(), req.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("LoginController.register exception:{}",e.getMessage());
@@ -78,7 +72,6 @@ public class LoginController {
     public Result logout(@RequestBody LogoutReq req){
         try {
             Result result = loginService.logout(req);
-            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("LoginController.logout exception:{}",e.getMessage());
@@ -94,7 +87,6 @@ public class LoginController {
     public Result bind(@RequestBody BindReq req){
         try {
             Result result = loginService.bind(req);
-            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("LoginController.bind exception:{}",e.getMessage());

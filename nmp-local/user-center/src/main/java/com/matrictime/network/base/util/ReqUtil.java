@@ -9,6 +9,9 @@ import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.util.ParamCheckUtil;
 import org.apache.commons.lang3.StringUtils;
+import sun.misc.BASE64Decoder;
+
+import java.util.Base64;
 
 public class ReqUtil<T> {
 
@@ -66,6 +69,7 @@ public class ReqUtil<T> {
 
     public String encryJsonToReq(T resp, String sid) throws Exception {
         String encryptMsg = JServiceImpl.encryptMsg(JSONObject.toJSONString(resp),sid);
+
         if (StringUtils.isBlank(encryptMsg)){
             throw new Exception("encrypt fail");
         }

@@ -37,6 +37,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         Result<Integer> result = new Result<>();
         Date date = new Date();
         Integer insertFlag = null;
+        BaseStationInfoRequest infoRequest = new BaseStationInfoRequest();
         try {
             baseStationInfoRequest.setCreateTime(getFormatDate(date));
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
@@ -49,6 +50,11 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
             String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
             baseStationInfoRequest.setStationNetworkId(networkId);
+            infoRequest.setStationNetworkId(networkId);
+            PageInfo<BaseStationInfoVo> baseStationInfo = baseStationInfoDomainService.selectBaseStationList(infoRequest);
+            if(baseStationInfo.getList().size() > 0){
+                return new Result<>(false,"入网id重复");
+            }
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);

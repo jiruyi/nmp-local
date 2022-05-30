@@ -91,6 +91,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
       * @create 2022/4/7 0007 17:39
       */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result modifyUserInfo(UserRequest userRequest) {
         Result result;
         try {
@@ -130,10 +131,20 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             }
         }catch (SystemException e){
             log.error("UserServiceImpl.modifyUserInfo SystemException:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
         }catch (Exception e){
             log.error("UserServiceImpl.modifyUserInfo Exception:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
+        }
+
+        try {
+            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result = failResult("");
+            log.error("UserServiceImpl.modifyUserInfo encrypt Exception:{}",e.getMessage());
         }
         return result;
     }
@@ -453,16 +464,11 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
 
     private Result commonModifyUserInfo(UserRequest userRequest) {
-        try {
-            if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
-                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
-            int n = userDomainService.modifyUserInfo(userRequest);
-            return  buildResult(n);
-        }catch (Exception e){
-            log.error("modifyUserInfo exception:{}",e.getMessage());
-            return  failResult(e);
+        if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
+            throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
+        int n = userDomainService.modifyUserInfo(userRequest);
+        return  buildResult(n);
     }
 
 

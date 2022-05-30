@@ -87,6 +87,9 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     public Result encryptForLogin(LoginReq req, Result res) throws Exception {
         log.info("登录开始加密了歪：{},{}",JSONObject.toJSONString(req),JSONObject.toJSONString(res));
         if(UcConstants.DESTINATION_OUT_TO_IN.equals(req.getDestination())){
+            if (ErrorCode.SYSTEM_ERROR.equals(res.getErrorCode())) {
+                return res;
+            }
             String userId = res.getErrorMsg();
             ReqUtil resUtil = new ReqUtil();
             log.info("登录开始加密了：{},{}",JSONObject.toJSONString(req),JSONObject.toJSONString(res));
@@ -104,10 +107,12 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     public Result encryptForRegister(String sid,String destination, Result res) throws Exception {
         log.info("注册开始加密了歪：{},{},{}",sid,destination,JSONObject.toJSONString(res));
         if(UcConstants.DESTINATION_OUT_TO_IN_SYN.equals(destination)){
+            if (ErrorCode.SYSTEM_ERROR.equals(res.getErrorCode())) {
+                return res;
+            }
             ReqUtil resUtil = new ReqUtil();
             log.info("注册开始加密了：{},{},{}",sid,destination,JSONObject.toJSONString(res));
-            String resultObj = "注册加密内容";
-            resultObj = resUtil.encryJsonToReq(res, sid);
+            String resultObj = resUtil.encryJsonToReq(res, sid);
             res.setSuccess(true);
             res.setResultObj(resultObj);
             res.setErrorMsg(null);
