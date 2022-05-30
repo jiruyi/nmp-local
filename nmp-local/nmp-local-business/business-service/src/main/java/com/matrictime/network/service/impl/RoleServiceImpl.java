@@ -29,8 +29,8 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
 
 
     @Override
-    public Result<PageInfo> queryByConditon(RoleRequest roleRequest) {
-        Result<PageInfo> result = null;
+    public Result queryByConditon(RoleRequest roleRequest) {
+        Result result = null;
         NmplUser user = RequestContext.getUser();
         try {
             //如果不是管理员用户则将管理员过滤
@@ -38,9 +38,8 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
                 roleRequest.setAdmin(true);
             }
             //多条件查询
-            PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
-            pageResult = roleDomainService.queryByConditions(roleRequest);
-            result = buildResult(pageResult);
+//            PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
+            result = buildResult(roleDomainService.queryByConditions(roleRequest));
         }catch (Exception e){
             log.error("查询角色异常：",e.getMessage());
             result = failResult(e);
