@@ -7,7 +7,7 @@ import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.RoleResponse;
 
 public interface RoleService {
-    Result<PageInfo> queryByConditon(RoleRequest roleRequest);
+    Result queryByConditon(RoleRequest roleRequest);
 
     Result save(RoleRequest roleRequest);
 
