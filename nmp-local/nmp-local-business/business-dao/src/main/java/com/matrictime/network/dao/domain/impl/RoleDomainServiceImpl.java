@@ -132,7 +132,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     }
 
     @Override
-    public PageInfo<NmplRoleVo> queryByConditions(RoleRequest roleRequest) throws Exception{
+    public List<NmplRoleVo> queryByConditions(RoleRequest roleRequest) throws Exception{
         NmplRoleExample nmplRoleExample = new NmplRoleExample();
         NmplRoleExample.Criteria criteria = nmplRoleExample.createCriteria();
         if (!roleRequest.isAdmin()){
@@ -150,21 +150,21 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             criteria.andCreateTimeLessThanOrEqualTo(sf.parse(roleRequest.getEndTime()));
         }
         criteria.andIsExistEqualTo(Byte.valueOf("1"));
-        Page page = PageHelper.startPage(roleRequest.getPageNo(),roleRequest.getPageSize());
+//        Page page = PageHelper.startPage(roleRequest.getPageNo(),roleRequest.getPageSize());
         List<NmplRole> nmplRoleList = nmplRoleMapper.selectByExample(nmplRoleExample);
 
-        PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
+//        PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
         List<NmplRoleVo> nmplRoles = new ArrayList<>();
         for (NmplRole nmplRole : nmplRoleList) {
             NmplRoleVo role = new NmplRoleVo();
             BeanUtils.copyProperties(nmplRole,role);
             nmplRoles.add(role);
         }
-
-        pageResult.setList(nmplRoles);
-        pageResult.setCount((int) page.getTotal());
-        pageResult.setPages(page.getPages());
-        return pageResult;
+//
+//        pageResult.setList(nmplRoles);
+//        pageResult.setCount((int) page.getTotal());
+//        pageResult.setPages(page.getPages());
+        return nmplRoles;
     }
 
     @Override
