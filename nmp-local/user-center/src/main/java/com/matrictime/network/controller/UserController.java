@@ -1,19 +1,13 @@
 package com.matrictime.network.controller;
 
-import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.matrictime.network.api.modelVo.WsResultVo;
-import com.matrictime.network.api.modelVo.WsSendVo;
 import com.matrictime.network.api.request.ChangePasswdReq;
 import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.request.VerifyReq;
-import com.matrictime.network.base.UcConstants;
-import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.controller.aop.MonitorRequest;
-import com.matrictime.network.domain.CommonService;
-import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserService;
 import io.swagger.annotations.Api;
@@ -21,13 +15,11 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.matrictime.network.config.DataConfig.JSON_KEY_COMMON_KEY;
 
 /**
  * @author jiruyi
@@ -44,9 +36,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private CommonService commonService;
-
     /**
      * 用户信息修改
      * @title modifyUserInfok
@@ -62,7 +51,6 @@ public class UserController {
     public Result modifyUserInfo(@RequestBody UserRequest userRequest){
         try {
             Result result = userService.modifyUserInfo(userRequest);
-            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
             return  result;
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());

@@ -50,6 +50,7 @@ public class UserDomainServiceImpl implements UserDomainService {
      * @author jiruyi
      * @create 2022/4/6 0006 10:06
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public int modifyUserInfo(UserRequest userRequest) {
         User user = new User();
