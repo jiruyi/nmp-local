@@ -11,6 +11,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.NmplRoleVo;
 import com.matrictime.network.request.RoleRequest;
 import com.matrictime.network.response.PageInfo;
+import com.matrictime.network.response.RoleResp;
 import com.matrictime.network.response.RoleResponse;
 import com.matrictime.network.service.RoleService;
 import com.matrictime.network.shiro.ShiroUtils;
@@ -18,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.matrictime.network.base.SystemBaseService;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -39,7 +42,10 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
             }
             //多条件查询
 //            PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
-            result = buildResult(roleDomainService.queryByConditions(roleRequest));
+            RoleResp roleResp = new RoleResp();
+            List<NmplRoleVo> list =roleDomainService.queryByConditions(roleRequest);
+            roleResp.setList(list);
+            result = buildResult(roleResp);
         }catch (Exception e){
             log.error("查询角色异常：",e.getMessage());
             result = failResult(e);
