@@ -51,9 +51,10 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
             baseStationInfoRequest.setStationNetworkId(networkId);
             infoRequest.setStationNetworkId(networkId);
+            infoRequest.setPublicNetworkIp(baseStationInfoRequest.getPublicNetworkIp());
             PageInfo<BaseStationInfoVo> baseStationInfo = baseStationInfoDomainService.selectBaseStationList(infoRequest);
             if(baseStationInfo.getList().size() > 0){
-                return new Result<>(false,"入网id重复");
+                return new Result<>(false,"入网id或ip重复");
             }
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
             if(insertFlag == 1){

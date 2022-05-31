@@ -271,7 +271,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             //添加到默认分组
             setAddFriendGroup(groupVo,addUserRequestReq);
             wsSendVo.setFrom(SEND_WS_FROM);
-            wsResultVo.setSendObject(userId);
+            wsResultVo.setSendObject(addUserRequestReq.getAddUserId());
             wsResultVo.setDestination(addUserRequestReq.getDestination());
             wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
             result = buildResult(1,null,JSONObject.toJSONString(wsResultVo));
