@@ -48,7 +48,7 @@ public class RoleController {
     @RequestMapping(value = "/queryByCondition",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:query")
     @SystemLog(opermodul = "角色管理模块",operDesc = "查询角色",operType = "查询")
-    public Result<PageInfo> queryRoleByConditon(@RequestBody RoleRequest roleRequest){
+    public Result queryRoleByConditon(@RequestBody RoleRequest roleRequest){
         return roleService.queryByConditon(roleRequest);
     }
 
