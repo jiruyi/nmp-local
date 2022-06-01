@@ -566,8 +566,11 @@
       <if test="lanIp != null and lanIp != ''">
         and lan_ip = #{lanIp,jdbcType=CHAR}
       </if>
+      <if test="publicNetworkIp != null and publicNetworkIp != ''">
+        and public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+      </if>
       <if test="stationNetworkId != null and stationNetworkId != ''">
-        and station_network_id = #{stationNetworkId,jdbcType=CHAR}
+        and station_network_id like "%" #{stationNetworkId,jdbcType=CHAR}
       </if>
       and nmpl_device_info.relation_operator_id = nmpl_company_info.company_code
       and nmpl_user.user_id = nmpl_device_info.create_user
