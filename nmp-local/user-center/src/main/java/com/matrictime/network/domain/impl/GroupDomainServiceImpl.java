@@ -95,6 +95,8 @@ public class GroupDomainServiceImpl implements GroupDomainService {
         GroupInfoExample.Criteria criteria = groupExample.createCriteria();
         if(groupReq.getOwner()!=null){
             criteria.andOwnerEqualTo(groupReq.getOwner());
+        }else {
+            throw new SystemException("缺少owner参数");
         }
         if(groupReq.getGroupName()!=null){
             criteria.andGroupNameEqualTo(groupReq.getGroupName());
