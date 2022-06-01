@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.csp.sentinel.util.StringUtil;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
@@ -42,10 +43,14 @@ public class DeviceServiceImpl implements DeviceService {
             //判断小区是否正确
 
             String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
+            if(StringUtil.isEmpty(preBID)){
+                return new Result<>(false,"运营商不存在");
+            }
             String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
             deviceInfoRequest.setStationNetworkId(NetworkId);
             infoRequest.setStationNetworkId(NetworkId);
             infoRequest.setPublicNetworkIp(deviceInfoRequest.getPublicNetworkIp());
+            infoRequest.setLanIp(deviceInfoRequest.getLanIp());
             PageInfo device = deviceDomainService.selectDeviceALl(infoRequest);
             if(device.getList().size() > 0){
                 return new Result<>(false,"入网id或ip重复");
