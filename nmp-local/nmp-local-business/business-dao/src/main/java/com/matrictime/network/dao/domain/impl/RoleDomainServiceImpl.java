@@ -11,6 +11,7 @@ import com.matrictime.network.dao.mapper.NmplRoleMapper;
 import com.matrictime.network.dao.mapper.NmplRoleMenuRelationMapper;
 import com.matrictime.network.dao.mapper.NmplUserMapper;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.modelVo.NmplMenuVo;
 import com.matrictime.network.modelVo.NmplRoleVo;
 import com.matrictime.network.request.RoleRequest;
 import com.matrictime.network.response.PageInfo;
@@ -24,9 +25,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
 @Service
 @Slf4j
 public class RoleDomainServiceImpl implements RoleDomainService {
@@ -58,6 +58,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         nmplRoleMapper.insertSelective(nmplRole);
         List<Long>menuList = new ArrayList<>();
         menuList = roleRequest.getMenuId();
+        menuList = roleHandle(new HashSet<>(menuList));
         Integer result = 0;
         if (!CollectionUtils.isEmpty(menuList)){
             for (Long meduId : menuList) {
@@ -120,6 +121,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         //新增该用户权限
         List<Long>menuList = new ArrayList<>();
         menuList = roleRequest.getMenuId();
+        menuList = roleHandle(new HashSet<>(menuList));
         if (!CollectionUtils.isEmpty(menuList)){
             for (Long meduId : menuList) {
                 NmplRoleMenuRelation nmplRoleMenuRelation = new NmplRoleMenuRelation();
@@ -189,4 +191,38 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         System.out.println(response);
         return response;
     }
+
+    public List<Long> roleHandle(Set<Long> third){
+        List<NmplMenuVo> menuList = nmplMenuMapper.queryAllMenu();
+        Map<Long,Long> map = new HashMap<>();
+        for (NmplMenuVo nmplMenuVo : menuList) {
+            map.put(nmplMenuVo.getMenuId(),nmplMenuVo.getParentMenuId());
+        }
+        Set<Long> second = new HashSet<>();
+        Set<Long> first = new HashSet<>();
+        for (Long integer : third) {
+            if(map.get(integer)==-1){
+                continue;
+            }
+            if(second.contains(map.get(integer))){
+                continue;
+            }else {
+                second.add(map.get(integer));
+            }
+        }
+        for (Long integer : second) {
+            if(map.get(integer)==-1){
+                continue;
+            }
+            if(first.contains(map.get(integer))){
+                continue;
+            }else {
+                first.add(map.get(integer));
+            }
+        }
+        third.addAll(second);
+        third.addAll(first);
+        return new ArrayList<>(third);
+    }
+
 }
