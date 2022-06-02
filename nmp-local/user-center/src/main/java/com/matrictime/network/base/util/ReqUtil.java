@@ -7,6 +7,7 @@ import com.matrictime.network.api.request.BaseReq;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.exception.SystemException;
+import com.matrictime.network.util.AesEncryptUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import org.apache.commons.lang3.StringUtils;
 import sun.misc.BASE64Decoder;
@@ -54,7 +55,10 @@ public class ReqUtil<T> {
 
 
     public T decryJsonToReq(BaseReq req) throws Exception {
-        String decryptMsg = JServiceImpl.decryptMsg(req.getEncryptParam());
+//        String decryptMsg = JServiceImpl.decryptMsg(req.getEncryptParam());
+
+        // TODO: 2022/5/30 跳过平台解密，上线需删除
+        String decryptMsg = AesEncryptUtil.aesDecrypt(req.getEncryptParam());
         if (StringUtils.isBlank(decryptMsg)){
             throw new Exception("decrypt fail");
         }
@@ -68,7 +72,10 @@ public class ReqUtil<T> {
     }
 
     public String encryJsonToReq(T resp, String sid) throws Exception {
-        String encryptMsg = JServiceImpl.encryptMsg(JSONObject.toJSONString(resp),sid);
+//        String encryptMsg = JServiceImpl.encryptMsg(JSONObject.toJSONString(resp),sid);
+
+        // TODO: 2022/5/30 跳过平台加密，上线需删除
+        String encryptMsg = AesEncryptUtil.aesEncrypt(JSONObject.toJSONString(resp));
 
         if (StringUtils.isBlank(encryptMsg)){
             throw new Exception("encrypt fail");

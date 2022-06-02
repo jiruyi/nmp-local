@@ -80,6 +80,28 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
+                    req.setUserId(SnowFlake.nextId_String());
+                    // 非密区生成用户
+                    commonRegister(req);
+
+                    // 密区同步用户
+                    ReqModel reqModelA = new ReqModel();
+                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN_SYN);
+                    req.setUrl(url+UcConstants.URL_REGISTER);
+
+                    String paramA = JSONObject.toJSONString(req);
+                    reqModelA.setParam(paramA);
+                    ResModel resModelA = JServiceImpl.syncSendMsg(reqModelA);
+                    log.info("非密区接收返回值LoginServiceImpl.register resModel:{}",JSONObject.toJSONString(resModelA));
+                    req.setDestination(UcConstants.DESTINATION_DEFAULT);
+                    Object returnValueA = resModelA.getReturnValue();
+                    if(returnValueA != null && returnValueA instanceof String){
+                        ResModel ResModelX = JSONObject.parseObject((String) returnValueA, ResModel.class);
+                        result = JSONObject.parseObject(ResModelX.getReturnValue().toString(), Result.class);
+                        return result;
+                    }else {
+                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     req.setUserId(SnowFlake.nextId_String());
                     // 非密区生成用户
@@ -101,7 +123,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                         result = JSONObject.parseObject(ResModelX.getReturnValue().toString(), Result.class);
                         return result;
                     }else {
-                        throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModelM = new ReqModel();
@@ -126,23 +148,23 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                             log.info("非密区接收密区/非密区同步返回值LoginServiceImpl.register post:{}",post);
                             return JSONObject.parseObject(post,Result.class);
                         }else {
-                            throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                            throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                         }
                     }else {
-                        throw new SystemException("LoginServiceImpl.register"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
 
                 case UcConstants.DESTINATION_OUT_TO_IN_SYN:
                     RegisterReq desReq2 = new RegisterReq();
                     BeanUtils.copyProperties(req,desReq2);
                     resp = commonRegister(desReq2);
-                    return buildResult(resp);
+                    result = buildResult(resp);
+                    break;
 
                 case UcConstants.DESTINATION_FOR_DES:
                     // 入参解密
 
                     ReqUtil<RegisterReq> reqUtil = new ReqUtil<>(req);
-//                    RegisterReq desReq = JSONObject.parseObject(req.getEncryptParam(),new TypeReference<RegisterReq>(){});
                     RegisterReq desReq = reqUtil.decryJsonToReq(req);
                     log.info("密区解密结果desReq:{}",JSONObject.toJSONString(desReq));
                     resp = new RegisterResp();
@@ -151,7 +173,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
                     return buildResult(resp);
                 default:
-                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+                    throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
             }
         }catch (SystemException e){
@@ -161,7 +183,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }catch (Exception e){
             log.error("LoginServiceImpl.register Exception:{}",e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult(e);
+            result = failResult("");
         }
 
         try {
@@ -169,12 +191,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult("");
-            log.error("LoginServiceImpl.login register Exception:{}",e.getMessage());
+            log.error("LoginServiceImpl.register Exception:{}",e.getMessage());
         }
         return result;
     }
 
-    private RegisterResp commonRegister(RegisterReq req){
+    private RegisterResp commonRegister(RegisterReq req) throws Exception {
 
         checkRegisterParam(req);
 
@@ -597,36 +619,33 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }
     }
 
-    private void checkRegisterParam(RegisterReq req) {
+    private void checkRegisterParam(RegisterReq req) throws Exception {
         if (req == null){
-            throw new SystemException("RegisterReq"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (req.getUserId() == null || req.getUserId().isEmpty()){
-            throw new SystemException("UserId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new Exception("req"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (req.getLoginAccount() == null || req.getLoginAccount().isEmpty()){
-            throw new SystemException("LoginAccount"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new SystemException("账号"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (req.getPassword() == null || req.getPassword().isEmpty()){
-            throw new SystemException("Password"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new SystemException("密码"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (req.getEmail() == null || req.getEmail().isEmpty()){
-            throw new SystemException("Email"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new SystemException("用户邮箱"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (req.getPhoneNumber() == null || req.getPhoneNumber().isEmpty()){
-            throw new SystemException("PhoneNumber"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new SystemException("手机号码"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (req.getUserType() == null || req.getUserType().isEmpty()){
-            throw new SystemException("UserType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new Exception("UserType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (req.getIdType() == null || req.getIdType().isEmpty()){
-            throw new SystemException("IdType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new SystemException("证件类型"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (req.getIdNo() == null || req.getIdNo().isEmpty()){
-            throw new SystemException("IdNo"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new SystemException("证件号"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (req.getSid() == null || req.getSid().isEmpty()){
-            throw new SystemException("Sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new Exception("Sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
     }
 }
