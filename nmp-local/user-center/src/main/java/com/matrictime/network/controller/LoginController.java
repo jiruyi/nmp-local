@@ -1,10 +1,9 @@
 package com.matrictime.network.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.matrictime.network.api.request.BindReq;
-import com.matrictime.network.api.request.LoginReq;
-import com.matrictime.network.api.request.LogoutReq;
-import com.matrictime.network.api.request.RegisterReq;
+import com.jzsg.bussiness.JServiceImpl;
+import com.jzsg.bussiness.util.EdException;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.controller.aop.MonitorRequest;
@@ -100,5 +99,11 @@ public class LoginController {
             log.error("LoginController.bind exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
+    }
+
+    @RequestMapping(value = "/zr")
+    public void zr(@RequestBody BaseReq req) throws EdException {
+        int i = JServiceImpl.setBSAuth(req.getCommonKey(), req.getUuid());
+        log.info("接入基站认证结果："+i);
     }
 }
