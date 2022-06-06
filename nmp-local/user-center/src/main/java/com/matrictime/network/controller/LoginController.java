@@ -1,6 +1,5 @@
 package com.matrictime.network.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.api.request.BindReq;
 import com.matrictime.network.api.request.LoginReq;
 import com.matrictime.network.api.request.LogoutReq;
@@ -8,7 +7,7 @@ import com.matrictime.network.api.request.RegisterReq;
 import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.controller.aop.MonitorRequest;
-import com.matrictime.network.domain.CommonService;
+import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +27,6 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-    @Autowired
-    private CommonService commonService;
-
     /**
      * 登录
      * @return
@@ -43,7 +39,7 @@ public class LoginController {
             return result;
         }catch (Exception e){
             log.error("LoginController.login exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -59,7 +55,7 @@ public class LoginController {
             return result;
         }catch (Exception e){
             log.error("LoginController.register exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -75,7 +71,7 @@ public class LoginController {
             return result;
         }catch (Exception e){
             log.error("LoginController.logout exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -90,7 +86,7 @@ public class LoginController {
             return result;
         }catch (Exception e){
             log.error("LoginController.bind exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 }

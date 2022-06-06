@@ -8,6 +8,7 @@ import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.request.VerifyReq;
 import com.matrictime.network.controller.aop.MonitorRequest;
+import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserService;
 import io.swagger.annotations.Api;
@@ -54,7 +55,7 @@ public class UserController {
             return  result;
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -76,7 +77,7 @@ public class UserController {
             return  result;
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -115,7 +116,7 @@ public class UserController {
             return result;
         }catch (Exception e){
             log.error("UserController.verify exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 

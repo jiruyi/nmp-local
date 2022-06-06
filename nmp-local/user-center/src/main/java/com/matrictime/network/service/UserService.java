@@ -5,7 +5,6 @@ import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.api.request.VerifyReq;
 import com.matrictime.network.model.Result;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * @author jiruyi
