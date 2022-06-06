@@ -42,7 +42,9 @@ spring:
       file-size-threshold: 2KB
       max-file-size: 300MB
       max-request-size: 215MB
-
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
   redis:
     database: 0
     host: 127.0.0.1
