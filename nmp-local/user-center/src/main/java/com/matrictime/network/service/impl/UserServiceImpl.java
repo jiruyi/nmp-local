@@ -433,6 +433,10 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             int n = userDomainService.deleteFriend(deleteFriendReq);
+            DeleteFriendReq deleteOpFriend = new DeleteFriendReq();
+            deleteOpFriend.setUserId(deleteFriendReq.getFriendUserId());
+            deleteOpFriend.setFriendUserId(deleteFriendReq.getUserId());
+            int m = userDomainService.deleteFriend(deleteOpFriend);
 
             WsResultVo wsResultVo = new WsResultVo();
             WsSendVo wsSendVo = new WsSendVo();
@@ -449,7 +453,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 wsResultVo.setDestination(deleteFriendReq.getDestination());
             }
             wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
-            return  buildResult(n,null,JSONObject.toJSONString(wsResultVo));
+            return  buildResult(null,null,JSONObject.toJSONString(wsResultVo));
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
             return  failResult(e);
