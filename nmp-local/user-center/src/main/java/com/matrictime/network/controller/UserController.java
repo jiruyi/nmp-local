@@ -66,7 +66,7 @@ public class UserController {
             return  result;
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -89,7 +89,7 @@ public class UserController {
             return  result;
         }catch (Exception e){
             log.error("modifyUserInfo exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -103,7 +103,7 @@ public class UserController {
             return result;
         }catch (Exception e){
             log.error("changePasswd exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -118,7 +118,7 @@ public class UserController {
             return result;
         }catch (Exception e){
             log.error("queryUserInfo exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -131,7 +131,7 @@ public class UserController {
             return result;
         }catch (Exception e){
             log.error("UserController.verify exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 

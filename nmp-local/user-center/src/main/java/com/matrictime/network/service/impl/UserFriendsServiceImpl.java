@@ -33,7 +33,7 @@ import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 
-import static com.matrictime.network.config.DataConfig.SEND_WS_FROM;
+import static com.matrictime.network.config.DataConfig.SYSTEM_UC;
 
 @Service
 @Slf4j
@@ -270,7 +270,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             GroupVo groupVo = userFriendsDomainService.selectGroupInfo(groupReq);
             //添加到默认分组
             setAddFriendGroup(groupVo,addUserRequestReq);
-            wsSendVo.setFrom(SEND_WS_FROM);
+            wsSendVo.setFrom(SYSTEM_UC);
             wsResultVo.setSendObject(addUserRequestReq.getAddUserId());
             wsResultVo.setDestination(addUserRequestReq.getDestination());
             wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
@@ -289,7 +289,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 addUserRequestReq.setRequestId(SnowFlake.nextId_String());
                 webSocketVo = setWebSocketVo(addUserRequestReq,user);
                 wsSendVo.setBusinessCode("7");
-                wsSendVo.setFrom(SEND_WS_FROM);
+                wsSendVo.setFrom(SYSTEM_UC);
                 wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
                 wsResultVo.setSendObject(userId);
                 wsResultVo.setDestination(addUserRequestReq.getDestination());
@@ -306,7 +306,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 webSocketVo = setWebSocketVo(addUserRequestReq,addUserVo);
                 //拒绝添加
                 wsSendVo.setBusinessCode("12");
-                wsSendVo.setFrom(SEND_WS_FROM);
+                wsSendVo.setFrom(SYSTEM_UC);
                 wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
                 wsResultVo.setSendObject(userId);
                 wsResultVo.setDestination(addUserRequestReq.getDestination());

@@ -15,4 +15,10 @@ public class DataConfig {
 
     public static final String SEND_WS_FROM = "uc";
     public static final String JSON_KEY_COMMON_KEY = "commonKey";
+
+    public static final String DELETE_USER_TYPE_USERID = "1";
+    public static final String DELETE_USER_TYPE_ACCOUNT = "2";
+    public static final String DELETE_USER_TYPE_PHONE = "3";
+
+    public static final String SYSTEM_UC = "uc";
 }

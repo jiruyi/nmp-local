@@ -1,9 +1,6 @@
 package com.matrictime.network.service;
 
-import com.matrictime.network.api.request.BindReq;
-import com.matrictime.network.api.request.LoginReq;
-import com.matrictime.network.api.request.LogoutReq;
-import com.matrictime.network.api.request.RegisterReq;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.model.Result;
@@ -36,6 +33,14 @@ public interface LoginService {
      * @return
      */
     Result bind(BindReq bindReq);
+
+
+    /**
+     * 删除用户
+     * @param deleteUserReq
+     * @return
+     */
+    Result deleteUser(DeleteUserReq deleteUserReq);
 
 
 }

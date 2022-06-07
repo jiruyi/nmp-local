@@ -11,6 +11,8 @@ public class ErrorMessageContants {
 	
 	public static final String SYSTEM_ERROR = "系统异常，";
 
+	public static final String SYSTEM_ERROR_MSG = "系统异常，请稍后重试！";
+
 	public static final String PARAM_IS_NULL_MSG = "必输入参为空";
 
 	public static final String PARAM_IS_UNEXPECTED_MSG = "入参有误";
@@ -34,6 +36,8 @@ public class ErrorMessageContants {
 	public static final String USER_BIND_MSG = "用户已绑定";
 
 	public static final String USER_UNBIND_MSG = "用户未绑定";
+
+	public static final String USER_LOGIN_MSG = "用户已登录";
 
 	public static final String SMS_CODE_NO_EXIST_MSG = "验证码已过期";
 
@@ -85,5 +89,7 @@ public class ErrorMessageContants {
 	public static final String RPC_RETURN_ERROR_MSG = "RPC返回错误";
 
 	public static final String GET_KEY_FAIL_MSG = "获取密钥失败";
+
+	public static final String ENCRYPT_FAIL_MSG = "加密失败";
 
 }
