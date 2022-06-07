@@ -2,12 +2,10 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.request.EditConfigReq;
-import com.matrictime.network.request.QueryConfigByPagesReq;
-import com.matrictime.network.request.ResetDefaultConfigReq;
-import com.matrictime.network.request.SyncConfigReq;
+import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
 import com.matrictime.network.service.ConfigService;
+import com.matrictime.network.service.ConfigurationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +25,8 @@ public class ConfigController {
 
     @Autowired
     private ConfigService configService;
+    @Autowired
+    private ConfigurationService configurationService;
 
     /**
      * 编辑配置
@@ -98,5 +98,13 @@ public class ConfigController {
             return new Result(false,e.getMessage());
         }
     }
+
+    @RequestMapping (value = "/insertOrUpdate",method = RequestMethod.POST)
+    @SystemLog(opermodul = "配置模块",operDesc = "更新设备配置信息",operType = "更新")
+    public Result insertOrUpdate(@RequestBody ConfigurationReq configurationReq){
+        return  configurationService.insertOrUpdate(configurationReq);
+    }
+
+
 
 }
