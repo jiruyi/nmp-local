@@ -26,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -154,7 +155,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         criteria.andIsExistEqualTo(Byte.valueOf("1"));
 //        Page page = PageHelper.startPage(roleRequest.getPageNo(),roleRequest.getPageSize());
         List<NmplRole> nmplRoleList = nmplRoleMapper.selectByExample(nmplRoleExample);
-
+        nmplRoleList = nmplRoleList.stream().sorted(Comparator.comparing(NmplRole::getCreateTime).reversed()).collect(Collectors.toList());
 //        PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
         List<NmplRoleVo> nmplRoles = new ArrayList<>();
         for (NmplRole nmplRole : nmplRoleList) {
