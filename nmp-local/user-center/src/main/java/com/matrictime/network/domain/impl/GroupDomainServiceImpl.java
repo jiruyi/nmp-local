@@ -41,6 +41,13 @@ public class GroupDomainServiceImpl implements GroupDomainService {
         if(groupReq.getGroupName()==null||groupReq.getGroupName().equals("")){
             throw new SystemException("组名为空");
         }
+        GroupInfoExample groupInfoExample = new GroupInfoExample();
+        groupInfoExample.createCriteria().andGroupNameEqualTo(groupReq.getGroupName()).andOwnerEqualTo(groupReq.getOwner())
+                .andIsExistEqualTo(true);
+        List<GroupInfo> groupInfos = groupMapper.selectByExample(groupInfoExample);
+        if(!CollectionUtils.isEmpty(groupInfos)){
+            throw new SystemException("已有重复组名");
+        }
         GroupInfo group = new GroupInfo();
         BeanUtils.copyProperties(groupReq,group);
         groupMapper.insertSelective(group);
@@ -84,6 +91,18 @@ public class GroupDomainServiceImpl implements GroupDomainService {
         if(groupReq.getGroupId()==null){
             throw new SystemException("缺少ID参数");
         }
+        if(groupReq.getGroupName()!=null){
+            GroupInfo groupInfo = groupMapper.selectByPrimaryKey(groupReq.getGroupId());
+            GroupInfoExample groupInfoExample = new GroupInfoExample();
+            groupInfoExample.createCriteria().andGroupNameEqualTo(groupReq.getGroupName()).andOwnerEqualTo(groupInfo.getOwner())
+                    .andIsExistEqualTo(true);
+            List<GroupInfo> groupInfos = groupMapper.selectByExample(groupInfoExample);
+            if(!CollectionUtils.isEmpty(groupInfos)){
+                if(!groupInfos.get(0).getGroupId().equals(groupReq.getGroupId())){
+                    throw new SystemException("已有重复组名");
+                }
+            }
+        }
         GroupInfo group = new GroupInfo();
         BeanUtils.copyProperties(groupReq,group);
         return groupMapper.updateByPrimaryKeySelective(group);
@@ -95,8 +114,6 @@ public class GroupDomainServiceImpl implements GroupDomainService {
         GroupInfoExample.Criteria criteria = groupExample.createCriteria();
         if(groupReq.getOwner()!=null){
             criteria.andOwnerEqualTo(groupReq.getOwner());
-        }else {
-            throw new SystemException("缺少owner参数");
         }
         if(groupReq.getGroupName()!=null){
             criteria.andGroupNameEqualTo(groupReq.getGroupName());
