@@ -26,8 +26,8 @@ app:
   handleType: 1                                             # 密区部署值为 1 ;非密区部署值为 0 （需修改项）
   flowtype: 0                                               # 密区部署值为 0 ;非密区部署值为 1 （需修改项）
   name: userCenterProd
-  id: UC020
-  port: 9120
+  id: UC999
+  port: 9999
   timeout: 5000
   innerUrl: http://127.0.0.1:8008
   outerUrl: http://127.0.0.1:8009
