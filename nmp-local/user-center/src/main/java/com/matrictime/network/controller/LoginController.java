@@ -86,6 +86,22 @@ public class LoginController {
     }
 
     /**
+     * 系统登出
+     * @param req
+     * @return
+     */
+    @RequestMapping(value = "/syslogout")
+    public Result syslogout(@RequestBody LogoutReq req){
+        try {
+            Result result = loginService.syslogout(req);
+            return result;
+        }catch (Exception e){
+            log.error("LoginController.logout exception:{}",e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    /**
      * 绑定用户
      */
 //    @MonitorRequest

@@ -510,6 +510,59 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     @Override
+    public Result syslogout(LogoutReq req) {
+        Result result;
+        try {
+            switch (req.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    commonLogout(req);
+//                    webSocketOnClose(req.getCommonKey());
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    req.setUrl(url+UcConstants.URL_SYSLOGOUT);
+                    String param = JSONObject.toJSONString(req);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收返回值LoginServiceImpl.logout resModel:{}",JSONObject.toJSONString(resModel));
+
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),Result.class);
+//                        if(returnRes.isSuccess()){
+//                            webSocketOnClose(req.getCommonKey());
+//                        }
+                        return returnRes;
+                    }else {
+                        throw new SystemException("LoginServiceImpl.logout"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
+
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+                    commonLogout(req);
+                    // 返回值加密
+
+                    return buildResult(null);
+                default:
+                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+
+            }
+
+
+            result = buildResult(null);
+        }catch (SystemException e){
+            log.error("LoginServiceImpl.logout SystemException:{}",e.getMessage());
+            result = failResult(e);
+        }catch (Exception e){
+            log.error("LoginServiceImpl.logout Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    @Override
     public Result deleteUser(DeleteUserReq req) {
         Result result;
         try {
