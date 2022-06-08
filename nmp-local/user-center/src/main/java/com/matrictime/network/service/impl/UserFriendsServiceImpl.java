@@ -291,7 +291,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 wsSendVo.setBusinessCode("7");
                 wsSendVo.setFrom(SYSTEM_UC);
                 wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
-                wsResultVo.setSendObject(userId);
+                wsResultVo.setSendObject(addUserRequestReq.getAddUserId());
                 wsResultVo.setDestination(addUserRequestReq.getDestination());
                 wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
                 //等待好友确认添加
@@ -308,7 +308,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 wsSendVo.setBusinessCode("12");
                 wsSendVo.setFrom(SYSTEM_UC);
                 wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
-                wsResultVo.setSendObject(userId);
+                wsResultVo.setSendObject(addUserRequestReq.getAddUserId());
                 wsResultVo.setDestination(addUserRequestReq.getDestination());
                 wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
                 userFriendsDomainService.update(addUserRequestReq);
