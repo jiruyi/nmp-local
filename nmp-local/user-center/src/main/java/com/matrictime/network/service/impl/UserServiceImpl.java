@@ -370,13 +370,13 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getQueryParam())){
             return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        String queryParam = userRequest.getQueryParam();
-        if(isMobile(queryParam)){
-            userRequest.setPhoneNumber(queryParam);
-        }else {
-            userRequest.setLoginAccount(queryParam);
-        }
-        User user = userDomainService.selectByCondition(userRequest);
+//        String queryParam = userRequest.getQueryParam();
+//        if(isMobile(queryParam)){
+//            userRequest.setPhoneNumber(queryParam);
+//        }else {
+//            userRequest.setLoginAccount(queryParam);
+//        }
+        User user = userDomainService.queryUserByqueryParam(userRequest);
         if(user==null){
             throw new SystemException("无此用户");
         }

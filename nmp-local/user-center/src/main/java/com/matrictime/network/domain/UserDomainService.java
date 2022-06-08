@@ -19,4 +19,6 @@ public interface UserDomainService {
 
     User selectByCondition(UserRequest userRequest);
 
+    User queryUserByqueryParam(UserRequest userRequest);
+
 }

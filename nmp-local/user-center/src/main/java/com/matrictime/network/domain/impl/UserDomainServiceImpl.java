@@ -9,6 +9,8 @@ import com.matrictime.network.dao.mapper.UserGroupMapper;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.domain.UserDomainService;
+import com.matrictime.network.exception.SystemException;
+import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
@@ -108,6 +110,24 @@ public class UserDomainServiceImpl implements UserDomainService {
             criteria.andLoginAccountEqualTo(userRequest.getLoginAccount());
         }
         criteria.andIsExistEqualTo(true);
+        List<User> userList = userMapper.selectByExample(userExample);
+        if(!CollectionUtils.isEmpty(userList)){
+            return userList.get(0);
+        }else {
+            return null;
+        }
+    }
+
+    @Override
+    public User queryUserByqueryParam(UserRequest userRequest) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        if(ParamCheckUtil.checkVoStrBlank(userRequest.getQueryParam())){
+            throw new SystemException("参数缺失");
+        }
+        userExample.or().andUserIdEqualTo(userRequest.getQueryParam()).andIsExistEqualTo(true);
+        userExample.or().andPhoneNumberEqualTo(userRequest.getQueryParam()).andIsExistEqualTo(true);
+        userExample.or().andLoginAccountEqualTo(userRequest.getQueryParam()).andIsExistEqualTo(true);
         List<User> userList = userMapper.selectByExample(userExample);
         if(!CollectionUtils.isEmpty(userList)){
             return userList.get(0);
