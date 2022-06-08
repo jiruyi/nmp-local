@@ -33,6 +33,7 @@ import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -258,6 +259,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Override
     public Result<LoginResp> login(LoginReq req) {
         Result result;
+        String sid = "";
         try {
             LoginResp resp = new LoginResp();
 
@@ -293,10 +295,11 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     ReqUtil<LoginReq> reqUtil = new ReqUtil<>(req);
 //                    LoginReq desReq = JSONObject.parseObject(req.getEncryptParam(),new TypeReference<LoginReq>(){});
                     LoginReq desReq = reqUtil.decryJsonToReq(req);
+                    sid = desReq.getSid();
                     resp = commonLogin(desReq);
                     // 返回值加密
 
-                    return buildResult(resp,null,resp.getUser().getUserId());
+                    return buildResult(resp,sid,resp.getUser().getUserId());
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
@@ -308,6 +311,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }catch (Exception e){
             log.error("LoginServiceImpl.login Exception:{}",e.getMessage());
             result = failResult(e);
+        }
+        if (StringUtils.isNotBlank(sid)){
+            result.setErrorCode(sid);
         }
         return result;
     }
