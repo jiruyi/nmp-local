@@ -76,6 +76,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     public Result<RegisterResp> register(RegisterReq req) {
         Result result;
         RegisterResp resp;
+        Boolean encryFlag = false;
         try {
 
             ReqUtil<RegisterReq> jsonUtil = new ReqUtil<>(req);
@@ -107,6 +108,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                         throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                 case UcConstants.DESTINATION_IN:
+                    encryFlag = true;
                     ReqModel reqModelM = new ReqModel();
                     req.setDestination(UcConstants.DESTINATION_FOR_DES);
                     req.setUrl(url+UcConstants.URL_REGISTER);
@@ -131,14 +133,13 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                             if (result.isSuccess()){
                                 req.setLoginAccount(req1.getLoginAccount());
                             }
-                            return result;
                         }else {
                             throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                         }
                     }else {
                         throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
-
+                    break;
                 case UcConstants.DESTINATION_OUT_TO_IN_SYN:
                     RegisterReq desReq2 = new RegisterReq();
                     BeanUtils.copyProperties(req,desReq2);
@@ -178,7 +179,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }
 
         try {
-            if (UcConstants.DESTINATION_IN.equals(req.getDestination())) {
+            if (encryFlag) {
                 ReqModel reqModel = new ReqModel();
                 req.setDestination(UcConstants.DESTINATION_FOR_ENC);
                 req.setUrl(url+UcConstants.URL_REGISTER);
@@ -630,12 +631,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 break;
             case DataConfig.DELETE_USER_TYPE_ACCOUNT:
                 if (ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())){
-                    throw new Exception("userId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                    throw new Exception("LoginAccount"+ErrorMessageContants.PARAM_IS_NULL_MSG);
                 }
                 break;
             case DataConfig.DELETE_USER_TYPE_PHONE:
                 if (ParamCheckUtil.checkVoStrBlank(req.getPhoneNumber())){
-                    throw new Exception("userId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                    throw new Exception("PhoneNumber"+ErrorMessageContants.PARAM_IS_NULL_MSG);
                 }
                 break;
             default:

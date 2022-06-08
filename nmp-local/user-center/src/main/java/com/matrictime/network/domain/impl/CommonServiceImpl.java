@@ -85,8 +85,7 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
             String userId = res.getErrorMsg();
             ReqUtil resUtil = new ReqUtil();
             log.info("登录开始加密了：{},{}",JSONObject.toJSONString(req),JSONObject.toJSONString(res));
-            String resultObj = CheckUtil.decryJsonToReq(JSONObject.toJSONString(res));
-            resultObj = resUtil.encryJsonToReq(res, getSidByCondition(req.getCommonKey()));
+            String resultObj = resUtil.encryJsonToReq(res, getSidByCondition(req.getCommonKey()));
             res.setSuccess(true);
             res.setResultObj(resultObj);
             res.setErrorMsg(userId);

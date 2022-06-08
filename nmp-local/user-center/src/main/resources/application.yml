@@ -29,5 +29,5 @@ app:
   id: UC999
   port: 9999
   timeout: 5000
-  innerUrl: http://127.0.0.1:8008
-  outerUrl: http://127.0.0.1:8009
+  innerUrl: http://127.0.0.1:8006                           # 端口默认值（8006）           (与密区配置顶部server.port值对应)
+  outerUrl: http://127.0.0.1:8007                           # 非密区端口修改为默认值（8007） (与非密区配置顶部server.port值对应)
