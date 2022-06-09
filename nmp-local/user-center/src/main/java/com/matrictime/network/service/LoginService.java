@@ -42,5 +42,12 @@ public interface LoginService {
      */
     Result deleteUser(DeleteUserReq deleteUserReq);
 
+    /**
+     * 系统登出
+     * @param logoutReq
+     * @return
+     */
+    Result syslogout(LogoutReq logoutReq);
+
 
 }

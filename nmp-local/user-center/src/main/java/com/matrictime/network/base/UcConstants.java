@@ -14,6 +14,8 @@ public class UcConstants {
 
     public static final String URL_LOGOUT = "/user/logout";
 
+    public static final String URL_SYSLOGOUT = "/user/syslogout";
+
     public static final String URL_REGISTER = "/user/register";
 
     public static final String URL_DELETEUSER = "/user/deleteUser";
