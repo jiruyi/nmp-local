@@ -7,7 +7,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/user_center            # 数据库名称（可根据自定义情况配置）
+    url: jdbc:mysql://127.0.0.1:3306/user_center            # 数据库服务器地址及端口号（可根据自定义情况配置）
     username: root                                          # 数据库用户名（可根据自定义情况配置）
     password: Jzsg@2021                                     # 数据库密码（可根据自定义情况配置）
     druid:
