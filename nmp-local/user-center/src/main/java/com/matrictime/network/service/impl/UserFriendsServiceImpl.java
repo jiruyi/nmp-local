@@ -235,7 +235,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 WsResultVo resultVo = new WsResultVo();
                 WsSendVo sendVo = new WsSendVo();
                 String userId = "";
-                sendVo.setBusinessCode("10");
+                sendVo.setBusinessCode("00");
                 sendVo.setFrom(SYSTEM_UC);
                 if(!AddRequestStatusFlag(addRequestVo).isSuccess()){
                     return AddRequestStatusFlag(addRequestVo);
