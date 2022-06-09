@@ -73,4 +73,14 @@ public class ReqUtil<T> {
 
         return encryptMsg;
     }
+
+    public String encryJsonStringToReq(String jsonString, String sid) throws Exception {
+        String encryptMsg = JServiceImpl.encryptMsg(jsonString,sid);
+
+        if (StringUtils.isBlank(encryptMsg)){
+            throw new Exception("encrypt fail");
+        }
+
+        return encryptMsg;
+    }
 }

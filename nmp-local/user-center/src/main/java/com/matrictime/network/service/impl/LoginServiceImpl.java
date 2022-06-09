@@ -162,7 +162,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case DESTINATION_FOR_ENC:
 
                     ReqUtil resUtil = new ReqUtil();
-                    String resultObj = resUtil.encryJsonToReq(req.getEncryptParam(), req.getSid());
+                    String resultObj = resUtil.encryJsonStringToReq(req.getEncryptParam(), req.getSid());
                     result = buildResult(resultObj);
                     break;
                 default:
