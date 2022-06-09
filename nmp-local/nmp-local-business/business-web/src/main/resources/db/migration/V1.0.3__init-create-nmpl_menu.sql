@@ -13,29 +13,9 @@ File Encoding         : 65001
 Date: 2022-06-02 13:38:57
 */
 
-SET FOREIGN_KEY_CHECKS=0;
+alter table `nmpl_menu`  modify column `perms_code` varchar(100);
 
--- ----------------------------
--- Table structure for nmpl_menu
--- ----------------------------
-DROP TABLE IF EXISTS `nmpl_menu`;
-CREATE TABLE `nmpl_menu` (
-    `menu_id` bigint NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
-    `menu_name` varchar(50) NOT NULL COMMENT '菜单名称',
-    `parent_menu_id` bigint DEFAULT '-1' COMMENT '父菜单ID',
-    `url` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '请求地址',
-    `is_frame` tinyint DEFAULT '0' COMMENT '是否为外链（1是 0否）',
-    `menu_type` tinyint DEFAULT NULL COMMENT '菜单类型（1目录 2菜单 3按钮）',
-    `menu_status` tinyint DEFAULT '1' COMMENT '菜单状态（1正常 0停用）',
-    `perms_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '权限标识',
-    `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
-    `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
-    `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
-    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-    `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '备注',
-    `is_exist` tinyint DEFAULT '1' COMMENT '1正常 0删除',
-    PRIMARY KEY (`menu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='菜单权限表';
+TRUNCATE TABLE `nmpl_menu`;
 
 -- ----------------------------
 -- Records of nmpl_menu
