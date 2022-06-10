@@ -31,9 +31,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.matrictime.network.config.DataConfig.SYSTEM_UC;
 
@@ -214,10 +212,10 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
 
     //添加好友信息逻辑
     private Result commonAddFriends(UserFriendReq userFriendReq,AddUserRequestReq addUserRequestReq,
-                                             UserRequest userRequest) {
+                                    UserRequest userRequest) {
         Result result = new Result<>();
         UserRequest request = new UserRequest();
-        Map<String,WsResultVo> sendMap = new HashMap();
+        String userId = "";
         request.setUserId(addUserRequestReq.getUserId());
         UserVo userVo = userFriendsDomainService.selectUserInfo(userRequest);
         AddRequestVo addRequestVo = userFriendsDomainService.selectGroupId(addUserRequestReq);
@@ -232,45 +230,23 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             WsResultVo wsResultVo = new WsResultVo();
             WsSendVo wsSendVo = new WsSendVo();
             if(addUserRequestReq.getAgree() == null && userVo.getAgreeFriend() == 0){
-                WsResultVo resultVo = new WsResultVo();
-                WsSendVo sendVo = new WsSendVo();
-                String userId = "";
-                sendVo.setBusinessCode("00");
-                sendVo.setFrom(SYSTEM_UC);
+                wsSendVo.setBusinessCode("10");
                 if(!AddRequestStatusFlag(addRequestVo).isSuccess()){
                     return AddRequestStatusFlag(addRequestVo);
                 }
                 //推给被添加好友的用户
                 userId = addUserRequestReq.getAddUserId();
-                resultVo.setSendObject(userId);
                 WebSocketVo webSocketVo = setWebSocketVo(addUserRequestReq,user);
-                sendVo.setData(JSONObject.toJSONString(webSocketVo));
-                resultVo.setDestination(addUserRequestReq.getDestination());
-                resultVo.setResult(JSONObject.toJSONString(sendVo));
-                //将被添加人放到发送map中
-                sendMap.put("sendAddUser",resultVo);
+                wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
                 addUserRequestReq.setStatus(AddUserRequestEnum.AGREE.getCode());
                 addUserRequestReq.setRequestId(SnowFlake.nextId_String());
                 userFriendsDomainService.addFriends(addUserRequestReq);
             }
             if(addUserRequestReq.getAgree() != null && userVo.getAgreeFriend() == 1){
-                String userId = "";
-                WsResultVo resultVo = new WsResultVo();
-                WsSendVo sendVo = new WsSendVo();
-                if(!AddRequestStatusFlag(addRequestVo).isSuccess()){
-                    return AddRequestStatusFlag(addRequestVo);
-                }
-                //推给被添加好友的用户
-                userId = addUserRequestReq.getAddUserId();
-                resultVo.setSendObject(userId);
                 WebSocketVo webSocketVo = setWebSocketVo(addUserRequestReq,addUserVo);
                 wsSendVo.setBusinessCode("10");
-                sendVo.setFrom(SYSTEM_UC);
-                sendVo.setData(JSONObject.toJSONString(webSocketVo));
-                resultVo.setDestination(addUserRequestReq.getDestination());
-                resultVo.setResult(JSONObject.toJSONString(sendVo));
-                //将被添加人放到发送map中
-                sendMap.put("sendAddUser",resultVo);
+                wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
+                userId = addUserRequestReq.getUserId();
                 userFriendsDomainService.update(addUserRequestReq);
             }
             //判断user_friend表中是否有该好友
@@ -293,14 +269,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             groupReq.setOwner(addUserRequestReq.getAddUserId());
             GroupVo groupVo = userFriendsDomainService.selectGroupInfo(groupReq);
             //添加到默认分组
-            String userId = "";
             setAddFriendGroup(groupVo,addUserRequestReq);
             wsSendVo.setFrom(SYSTEM_UC);
             wsResultVo.setSendObject(userId);
             wsResultVo.setDestination(addUserRequestReq.getDestination());
             wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
-            sendMap.put("sendUser",wsResultVo);
-            result = buildResult(1,null,JSONObject.toJSONString(sendMap));
+            result = buildResult(1,null,JSONObject.toJSONString(wsResultVo));
         }
         if(userVo.getAgreeFriend() == 1 || addUserRequestReq.getRefuse() != null) {
             WsResultVo wsResultVo = new WsResultVo();
@@ -309,7 +283,6 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             //等待好友认证
             if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() == null
                     && addUserRequestReq.getAgree() == null){
-                String userId = "";
                 addUserRequestReq.setStatus(AddUserRequestEnum.TOBECERTIFIED.getCode());
                 //推给主动添加好友的用户
                 userId = addUserRequestReq.getAddUserId();
@@ -321,15 +294,13 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 wsResultVo.setSendObject(userId);
                 wsResultVo.setDestination(addUserRequestReq.getDestination());
                 wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
-                sendMap.put("sendUser",wsResultVo);
                 //等待好友确认添加
                 userFriendsDomainService.addFriends(addUserRequestReq);
-                result = buildResult(2,null,JSONObject.toJSONString(sendMap));
+                result = buildResult(2,null,JSONObject.toJSONString(wsResultVo));
             }
             //拒绝添加好友
             if(userVo.getAgreeFriend() == 1 && addUserRequestReq.getRefuse() != null
                     && addUserRequestReq.getAgree() == null){
-                String userId = "";
                 //推给添加好友的用户
                 userId = addUserRequestReq.getUserId();
                 webSocketVo = setWebSocketVo(addUserRequestReq,addUserVo);
@@ -340,9 +311,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 wsResultVo.setSendObject(userId);
                 wsResultVo.setDestination(addUserRequestReq.getDestination());
                 wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
-                sendMap.put("sendUser",wsResultVo);
                 userFriendsDomainService.update(addUserRequestReq);
-                result = buildResult(3,null,JSONObject.toJSONString(sendMap));
+                result = buildResult(3,null,JSONObject.toJSONString(wsResultVo));
             }
         }
         return result;

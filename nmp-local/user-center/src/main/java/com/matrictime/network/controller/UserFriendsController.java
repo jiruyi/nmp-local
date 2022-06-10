@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 @RequestMapping(value = "/userFriends")
 @Api(value = "用户好友",tags = "用户好友接口")
@@ -120,69 +118,41 @@ public class UserFriendsController {
     }
 
     private void agreeFriendSendMsg(RecallRequest request,Result result){
-        Map<String,WsResultVo> sendMap;
-        WsResultVo resultAddUserVo = new WsResultVo();
-        WsResultVo resultUserVo = new WsResultVo();
-        String sendAddUserObject = "";
-        String sendUserObject = "";
+        WsResultVo wsResultVo = new WsResultVo();
+        String sendObject = "";
         if(StringUtils.isBlank(request.getDestination())){
             if (result.isSuccess()){
-                sendMap = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<Map>() {});
-                resultAddUserVo = sendMap.get("sendAddUser");
-                resultUserVo = sendMap.get("sendUser");
-                sendAddUserObject = resultAddUserVo.getSendObject();
-                sendUserObject = resultUserVo.getSendObject();
-                resultAddUserVo.setSendObject(null);
-                resultUserVo.setSendObject(null);
+                wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
+                sendObject = wsResultVo.getSendObject();
+                wsResultVo.setSendObject(null);
                 result.setErrorMsg(null);
             }
         }
 
-        if (StringUtils.isNotBlank(sendAddUserObject)){
-            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendAddUserObject);
+        if (StringUtils.isNotBlank(sendObject)){
+            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendObject);
             if(webSocketServer != null){
-                webSocketServer.sendMessage(JSONObject.toJSONString(resultAddUserVo));
-            }
-        }
-
-        if (StringUtils.isNotBlank(sendUserObject)){
-            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendUserObject);
-            if(webSocketServer != null){
-                webSocketServer.sendMessage(JSONObject.toJSONString(resultUserVo));
+                webSocketServer.sendMessage(JSONObject.toJSONString(wsResultVo));
             }
         }
     }
 
     private void addFriendSendMsg(AddUserRequestReq addUserRequestReq,Result result){
-        Map<String,WsResultVo> sendMap;
-        WsResultVo resultAddUserVo = new WsResultVo();
-        WsResultVo resultUserVo = new WsResultVo();
-        String sendAddUserObject = "";
-        String sendUserObject = "";
+        WsResultVo wsResultVo = new WsResultVo();
+        String sendObject = "";
         if(StringUtils.isBlank(addUserRequestReq.getDestination())){
             if (result.isSuccess()){
-                sendMap = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<Map>() {});
-                resultAddUserVo = sendMap.get("sendAddUser");
-                resultUserVo = sendMap.get("sendUser");
-                sendAddUserObject = resultAddUserVo.getSendObject();
-                sendUserObject = resultUserVo.getSendObject();
-                resultAddUserVo.setSendObject(null);
-                resultUserVo.setSendObject(null);
+                wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
+                sendObject = wsResultVo.getSendObject();
+                wsResultVo.setSendObject(null);
                 result.setErrorMsg(null);
             }
         }
 
-        if (StringUtils.isNotBlank(sendAddUserObject)){
-            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendAddUserObject);
+        if (StringUtils.isNotBlank(sendObject)){
+            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendObject);
             if(webSocketServer != null){
-                webSocketServer.sendMessage(JSONObject.toJSONString(resultAddUserVo));
-            }
-        }
-
-        if (StringUtils.isNotBlank(sendUserObject)){
-            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendUserObject);
-            if(webSocketServer != null){
-                webSocketServer.sendMessage(JSONObject.toJSONString(resultUserVo));
+                webSocketServer.sendMessage(JSONObject.toJSONString(wsResultVo));
             }
         }
     }
