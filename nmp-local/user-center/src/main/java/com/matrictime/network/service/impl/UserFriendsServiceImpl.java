@@ -589,6 +589,59 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         addUserRequestReq.setDestination(recallRequest.getDestination());
         return addUserRequestReq;
     }
+
+
+    private Result commonModifyFriend(UserFriendReq userFriendReq){
+        Result result = buildResult(userFriendsDomainService.modifyUserFriend(userFriendReq));
+        return result;
+    }
+
+
+    @Override
+    public Result modfiyFriendInfo(UserFriendReq userFriendReq) {
+        ReqUtil<UserFriendReq> jsonUtil = new ReqUtil<>(userFriendReq);
+        userFriendReq = jsonUtil.jsonReqToDto(userFriendReq);
+        Result result;
+        try {
+            switch (userFriendReq.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    result = commonModifyFriend(userFriendReq);
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    userFriendReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userFriendReq.setUrl(url+UcConstants.URL_MODIFYUSERGROUP);
+                    String param = JSONObject.toJSONString(userFriendReq);
+                    log.info("非密区向密区发送请求参数param:{}",param);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
+                        //result = JSONObject.parseObject((String) returnValue, Result.class);
+                    }else {
+                        throw new SystemException("modifyFriend"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
+                    break;
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+                    ReqUtil<UserFriendReq> reqUtil = new ReqUtil<>(userFriendReq);
+                    UserFriendReq userFriendReq1 = reqUtil.decryJsonToReq(userFriendReq);
+                    result = commonModifyFriend(userFriendReq1);
+                    // 返回值加密
+                    break;
+                default:
+                    throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+
+        }catch (Exception e){
+            log.error("modifyFriend Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
 }
 
 

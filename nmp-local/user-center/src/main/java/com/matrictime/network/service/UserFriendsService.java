@@ -21,4 +21,6 @@ public interface UserFriendsService {
 
     Result modifyUserInfo(UserRequest userRequest);
 
+    Result modfiyFriendInfo(UserFriendReq userFriendReq);
+
 }

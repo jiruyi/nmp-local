@@ -26,4 +26,6 @@ public interface UserFriendsDomainService {
     int update(AddUserRequestReq addUserRequestReq);
 
     AddRequestVo selectGroupId(AddUserRequestReq addUserRequestReq);
+
+    Integer modifyUserFriend(UserFriendReq userFriendReq);
 }

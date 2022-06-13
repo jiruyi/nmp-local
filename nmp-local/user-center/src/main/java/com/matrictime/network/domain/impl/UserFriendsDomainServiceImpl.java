@@ -2,15 +2,18 @@ package com.matrictime.network.domain.impl;
 
 
 import com.matrictime.network.api.modelVo.*;
-import com.matrictime.network.api.request.AddUserRequestReq;
-import com.matrictime.network.api.request.GroupReq;
-import com.matrictime.network.api.request.UserFriendReq;
-import com.matrictime.network.api.request.UserRequest;
+import com.matrictime.network.api.request.*;
+import com.matrictime.network.dao.mapper.UserFriendMapper;
 import com.matrictime.network.dao.mapper.ext.AddUserRequestExtMapper;
 import com.matrictime.network.dao.mapper.ext.UserFriendExtMapper;
+import com.matrictime.network.dao.model.UserFriend;
+import com.matrictime.network.dao.model.UserFriendExample;
 import com.matrictime.network.domain.UserFriendsDomainService;
+import com.matrictime.network.exception.SystemException;
+import com.matrictime.network.util.ParamCheckUtil;
 import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,6 +25,8 @@ public class UserFriendsDomainServiceImpl implements UserFriendsDomainService {
 
     @Resource
     private UserFriendExtMapper userFriendExtMapper;
+    @Resource
+    private UserFriendMapper userFriendMapper;
 
     @Resource
     private AddUserRequestExtMapper addUserRequestExtMapper;
@@ -64,6 +69,22 @@ public class UserFriendsDomainServiceImpl implements UserFriendsDomainService {
     @Override
     public AddRequestVo selectGroupId(AddUserRequestReq addUserRequestReq) {
         return addUserRequestExtMapper.selectGroupId(addUserRequestReq);
+    }
+
+
+    @Override
+    public Integer modifyUserFriend(UserFriendReq userFriendReq) {
+        if(ParamCheckUtil.checkVoStrBlank(userFriendReq.getUserId())
+                ||ParamCheckUtil.checkVoStrBlank(userFriendReq.getFriendUserId())
+                || ParamCheckUtil.checkVoStrBlank(userFriendReq.getRemarkName())){
+            throw new SystemException("参数缺失");
+        }
+        UserFriend userFriend = new UserFriend();
+        BeanUtils.copyProperties(userFriendReq,userFriend);
+        UserFriendExample userFriendExample = new UserFriendExample();
+        userFriendExample.createCriteria().andUserIdEqualTo(userFriendReq.getUserId()).andFriendUserIdEqualTo(userFriendReq.getFriendUserId())
+                .andIsExistEqualTo(true);
+        return userFriendMapper.updateByExampleSelective(userFriend,userFriendExample) ;
     }
 }
 
