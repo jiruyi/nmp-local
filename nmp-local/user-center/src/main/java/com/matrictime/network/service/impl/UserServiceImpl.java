@@ -42,7 +42,7 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.matrictime.network.config.DataConfig.SEND_WS_FROM;
+import static com.matrictime.network.config.DataConfig.SYSTEM_UC;
 
 /**
  * @author jiruyi
@@ -422,13 +422,13 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getQueryParam())){
             return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        String queryParam = userRequest.getQueryParam();
-        if(isMobile(queryParam)){
-            userRequest.setPhoneNumber(queryParam);
-        }else {
-            userRequest.setLoginAccount(queryParam);
-        }
-        User user = userDomainService.selectByCondition(userRequest);
+//        String queryParam = userRequest.getQueryParam();
+//        if(isMobile(queryParam)){
+//            userRequest.setPhoneNumber(queryParam);
+//        }else {
+//            userRequest.setLoginAccount(queryParam);
+//        }
+        User user = userDomainService.queryUserByqueryParam(userRequest);
         if(user==null){
             throw new SystemException("无此用户");
         }
@@ -473,29 +473,38 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
 
     private Result commonDeleteFriend(DeleteFriendReq deleteFriendReq) {
-        /**1.0 参数校验**/
-        if(ObjectUtils.isEmpty(deleteFriendReq) || ObjectUtils.isEmpty(deleteFriendReq.getUserId())
-                || ObjectUtils.isEmpty(deleteFriendReq.getFriendUserId())){
-            throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        int n = userDomainService.deleteFriend(deleteFriendReq);
+        try {
+            /**1.0 参数校验**/
+            if(ObjectUtils.isEmpty(deleteFriendReq) || ObjectUtils.isEmpty(deleteFriendReq.getUserId())
+                    || ObjectUtils.isEmpty(deleteFriendReq.getFriendUserId())){
+                return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            int n = userDomainService.deleteFriend(deleteFriendReq);
+            DeleteFriendReq deleteOpFriend = new DeleteFriendReq();
+            deleteOpFriend.setUserId(deleteFriendReq.getFriendUserId());
+            deleteOpFriend.setFriendUserId(deleteFriendReq.getUserId());
+            int m = userDomainService.deleteFriend(deleteOpFriend);
 
-        WsResultVo wsResultVo = new WsResultVo();
-        WsSendVo wsSendVo = new WsSendVo();
-        String userId = deleteFriendReq.getUserId();
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
-        List<User> users = userMapper.selectByExample(userExample);
-        if (!CollectionUtils.isEmpty(users)){
-            User user = users.get(0);
-            wsSendVo.setData(JSONObject.toJSONString(user));
-            wsSendVo.setFrom(SEND_WS_FROM);
-            wsSendVo.setBusinessCode("13");
-            wsResultVo.setSendObject(deleteFriendReq.getFriendUserId());
-            wsResultVo.setDestination(deleteFriendReq.getDestination());
+            WsResultVo wsResultVo = new WsResultVo();
+            WsSendVo wsSendVo = new WsSendVo();
+            String userId = deleteFriendReq.getUserId();
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
+            List<User> users = userMapper.selectByExample(userExample);
+            if (!CollectionUtils.isEmpty(users)){
+                User user = users.get(0);
+                wsSendVo.setData(JSONObject.toJSONString(user));
+                wsSendVo.setFrom(SYSTEM_UC);
+                wsSendVo.setBusinessCode("13");
+                wsResultVo.setSendObject(deleteFriendReq.getFriendUserId());
+                wsResultVo.setDestination(deleteFriendReq.getDestination());
+            }
+            wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
+            return  buildResult(null,null,JSONObject.toJSONString(wsResultVo));
+        }catch (Exception e){
+            log.error("modifyUserInfo exception:{}",e.getMessage());
+            return  failResult(e);
         }
-        wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
-        return  buildResult(n,null,JSONObject.toJSONString(wsResultVo));
     }
 
 }

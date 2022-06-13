@@ -33,6 +33,7 @@ import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +45,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.matrictime.network.base.UcConstants.DESTINATION_FOR_ENC;
 import static com.matrictime.network.config.DataConfig.LOGIN_STATUS_IN;
+import static com.matrictime.network.exception.ErrorMessageContants.USER_LOGIN_MSG;
 
 @Service
 @Slf4j
@@ -55,6 +58,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     @Autowired
     private CommonService commonService;
+
 
     @Autowired(required = false)
     private UserMapper userMapper;
@@ -73,6 +77,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     public Result<RegisterResp> register(RegisterReq req) {
         Result result;
         RegisterResp resp;
+        Boolean encryFlag = false;
         try {
 
             ReqUtil<RegisterReq> jsonUtil = new ReqUtil<>(req);
@@ -80,28 +85,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
-                    req.setUserId(SnowFlake.nextId_String());
-                    // 非密区生成用户
-                    commonRegister(req);
-
-                    // 密区同步用户
-                    ReqModel reqModelA = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN_SYN);
-                    req.setUrl(url+UcConstants.URL_REGISTER);
-
-                    String paramA = JSONObject.toJSONString(req);
-                    reqModelA.setParam(paramA);
-                    ResModel resModelA = JServiceImpl.syncSendMsg(reqModelA);
-                    log.info("非密区接收返回值LoginServiceImpl.register resModel:{}",JSONObject.toJSONString(resModelA));
-                    req.setDestination(UcConstants.DESTINATION_DEFAULT);
-                    Object returnValueA = resModelA.getReturnValue();
-                    if(returnValueA != null && returnValueA instanceof String){
-                        ResModel ResModelX = JSONObject.parseObject((String) returnValueA, ResModel.class);
-                        result = JSONObject.parseObject(ResModelX.getReturnValue().toString(), Result.class);
-                        return result;
-                    }else {
-                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
                 case UcConstants.DESTINATION_OUT_TO_IN:
                     req.setUserId(SnowFlake.nextId_String());
                     // 非密区生成用户
@@ -126,6 +109,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                         throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                 case UcConstants.DESTINATION_IN:
+                    encryFlag = true;
                     ReqModel reqModelM = new ReqModel();
                     req.setDestination(UcConstants.DESTINATION_FOR_DES);
                     req.setUrl(url+UcConstants.URL_REGISTER);
@@ -146,14 +130,17 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                             req1.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
                             String post = HttpClientUtil.post(outUrl + UcConstants.URL_REGISTER, JSONObject.toJSONString(req1));
                             log.info("非密区接收密区/非密区同步返回值LoginServiceImpl.register post:{}",post);
-                            return JSONObject.parseObject(post,Result.class);
+                            result = JSONObject.parseObject(post, Result.class);
+                            if (result.isSuccess()){
+                                req.setLoginAccount(req1.getLoginAccount());
+                            }
                         }else {
                             throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                         }
                     }else {
                         throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
-
+                    break;
                 case UcConstants.DESTINATION_OUT_TO_IN_SYN:
                     RegisterReq desReq2 = new RegisterReq();
                     BeanUtils.copyProperties(req,desReq2);
@@ -169,9 +156,15 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     log.info("密区解密结果desReq:{}",JSONObject.toJSONString(desReq));
                     resp = new RegisterResp();
                     resp.setRegisterReq(desReq);
-                    // 返回值加密
 
                     return buildResult(resp);
+
+                case DESTINATION_FOR_ENC:
+
+                    ReqUtil resUtil = new ReqUtil();
+                    String resultObj = resUtil.encryJsonStringToReq(req.getEncryptParam(), req.getSid());
+                    result = buildResult(resultObj);
+                    break;
                 default:
                     throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
@@ -187,9 +180,40 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }
 
         try {
-            result = commonService.encryptForRegister(req.getSid(), req.getDestination(), result);
+            if (encryFlag) {
+                ReqModel reqModel = new ReqModel();
+                req.setDestination(UcConstants.DESTINATION_FOR_ENC);
+                req.setUrl(url+UcConstants.URL_REGISTER);
+                req.setEncryptParam(JSONObject.toJSONString(result));
+
+                String param = JSONObject.toJSONString(req);
+                reqModel.setParam(param);
+                ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                log.info("非密区接收结果加密返回值LoginServiceImpl.register resModel:{}",resModel.getReturnValue());
+                Object returnValue = resModel.getReturnValue();
+                if(returnValue != null && returnValue instanceof String){
+                    ResModel ResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                    result = JSONObject.parseObject(ResModel.getReturnValue().toString(), Result.class);
+                    if (result.isSuccess()){
+                        return result;
+                    }else {
+                        throw new Exception(ErrorMessageContants.ENCRYPT_FAIL_MSG);
+                    }
+                }else {
+                    throw new Exception(ErrorMessageContants.ENCRYPT_FAIL_MSG);
+                }
+            }
         } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            if (!ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())) {
+                DeleteUserReq deleteUserReq = new DeleteUserReq();
+                deleteUserReq.setOpSystem(DataConfig.SYSTEM_UC);
+                deleteUserReq.setDeleteType(DataConfig.DELETE_USER_TYPE_ACCOUNT);
+                deleteUserReq.setLoginAccount(req.getLoginAccount());
+                Result delResp = deleteUser(deleteUserReq);
+                if (!delResp.isSuccess()){
+                    log.error("LoginServiceImpl.register Exception:注册返回值加密失败，数据回滚失败，请联系技术人员排查");
+                }
+            }
             result = failResult("");
             log.error("LoginServiceImpl.register Exception:{}",e.getMessage());
         }
@@ -236,6 +260,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Transactional(rollbackFor = Exception.class)
     public Result<LoginResp> login(LoginReq req) {
         Result result;
+        String sid = "";
         try {
             LoginResp resp = new LoginResp();
 
@@ -245,6 +270,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             switch (req.getDestination()){
                 case UcConstants.DESTINATION_OUT:
                     resp =commonLogin(req);
+                    result = buildResult(resp);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
@@ -271,15 +297,16 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     ReqUtil<LoginReq> reqUtil = new ReqUtil<>(req);
 //                    LoginReq desReq = JSONObject.parseObject(req.getEncryptParam(),new TypeReference<LoginReq>(){});
                     LoginReq desReq = reqUtil.decryJsonToReq(req);
+                    sid = desReq.getSid();
                     resp = commonLogin(desReq);
                     // 返回值加密
 
-                    return buildResult(resp,null,resp.getUser().getUserId());
+                    result = buildResult(resp,sid,resp.getUser().getUserId());
+                    break;
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
             }
-            result = buildResult(resp);
         }catch (SystemException e){
             log.error("LoginServiceImpl.login SystemException:{}",e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -321,6 +348,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
         }else {
             User user = users.get(0);
+            if (LOGIN_STATUS_IN.equals(user.getLoginStatus())){
+                throw new SystemException(ErrorMessageContants.USER_LOGIN_MSG);
+            }
             if(!user.getPassword().equals(req.getPassword())){
                 throw new SystemException(ErrorMessageContants.PASSWORD_ERROR_MSG);
             }
@@ -510,6 +540,200 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             log.error("LoginServiceImpl.bind encrypt Exception:{}",e.getMessage());
         }
         return result;
+    }
+
+    @Override
+    public Result syslogout(LogoutReq req) {
+        Result result;
+        try {
+            switch (req.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                    commonLogout(req);
+//                    webSocketOnClose(req.getCommonKey());
+                    break;
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModel = new ReqModel();
+                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    req.setUrl(url+UcConstants.URL_SYSLOGOUT);
+                    String param = JSONObject.toJSONString(req);
+                    reqModel.setParam(param);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+                    log.info("非密区接收返回值LoginServiceImpl.logout resModel:{}",JSONObject.toJSONString(resModel));
+
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),Result.class);
+//                        if(returnRes.isSuccess()){
+//                            webSocketOnClose(req.getCommonKey());
+//                        }
+                        return returnRes;
+                    }else {
+                        throw new SystemException("LoginServiceImpl.logout"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
+
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 入参解密
+                    commonLogout(req);
+                    // 返回值加密
+
+                    return buildResult(null);
+                default:
+                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+
+            }
+
+
+            result = buildResult(null);
+        }catch (SystemException e){
+            log.error("LoginServiceImpl.logout SystemException:{}",e.getMessage());
+            result = failResult(e);
+        }catch (Exception e){
+            log.error("LoginServiceImpl.logout Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    @Override
+    public Result deleteUser(DeleteUserReq req) {
+        Result result;
+        try {
+
+            ReqUtil<DeleteUserReq> jsonUtil = new ReqUtil<>(req);
+            req = jsonUtil.jsonReqToDto(req);
+
+            switch (req.getDestination()){
+                case UcConstants.DESTINATION_OUT:
+                case UcConstants.DESTINATION_OUT_TO_IN:
+                    // 非密区删除用户
+                    commonDeleteUser(req);
+
+                    // 密区同步删除用户
+                    ReqModel reqModelF = new ReqModel();
+                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN_SYN);
+                    req.setUrl(url+UcConstants.URL_DELETEUSER);
+
+                    String paramF = JSONObject.toJSONString(req);
+                    reqModelF.setParam(paramF);
+                    ResModel resModel = JServiceImpl.syncSendMsg(reqModelF);
+                    log.info("非密区接收返回值LoginServiceImpl.deleteUser resModel:{}",JSONObject.toJSONString(resModel));
+                    Object returnValue = resModel.getReturnValue();
+                    if(returnValue != null && returnValue instanceof String){
+                        ResModel ResModelX = JSONObject.parseObject((String) returnValue, ResModel.class);
+                        result = JSONObject.parseObject(ResModelX.getReturnValue().toString(), Result.class);
+                        return result;
+                    }else {
+                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
+                case UcConstants.DESTINATION_IN:
+                    ReqModel reqModelM = new ReqModel();
+                    req.setDestination(UcConstants.DESTINATION_FOR_DES);
+                    req.setUrl(url+UcConstants.URL_DELETEUSER);
+                    String paramM = JSONObject.toJSONString(req);
+                    reqModelM.setParam(paramM);
+                    ResModel resModelM = JServiceImpl.syncSendMsg(reqModelM);
+
+                    log.info("非密区接收返回值LoginServiceImpl.deleteUser resModel:{}",resModelM.getReturnValue());
+                    Object returnValueM = resModelM.getReturnValue();
+                    if(returnValueM != null && returnValueM instanceof String){
+                        ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
+                        Result<RegisterResp> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<RegisterResp>>(){});
+                        log.info("非密区接收返回值LoginServiceImpl.deleteUser returnRes:{}",returnRes.toString());
+                        if(returnRes.isSuccess()){
+                            // 密区/非密区同步用户
+                            RegisterResp resultObj = returnRes.getResultObj();
+                            RegisterReq req1 = resultObj.getRegisterReq();
+                            req1.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                            String post = HttpClientUtil.post(outUrl + UcConstants.URL_DELETEUSER, JSONObject.toJSONString(req1));
+                            log.info("非密区接收密区/非密区同步返回值LoginServiceImpl.deleteUser post:{}",post);
+                            return JSONObject.parseObject(post,Result.class);
+                        }else {
+                            throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                        }
+                    }else {
+                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+                    }
+
+                case UcConstants.DESTINATION_OUT_TO_IN_SYN:
+                    DeleteUserReq desReq2 = new DeleteUserReq();
+                    BeanUtils.copyProperties(req,desReq2);
+                    commonDeleteUser(desReq2);
+                    result = buildResult(null);
+                    break;
+
+                case UcConstants.DESTINATION_FOR_DES:
+                    // 入参解密
+
+                    ReqUtil<DeleteUserReq> reqUtil = new ReqUtil<>(req);
+                    DeleteUserReq desReq = reqUtil.decryJsonToReq(req);
+                    log.info("deleteUser密区解密结果desReq:{}",JSONObject.toJSONString(desReq));
+                    // 返回值加密
+
+                    result = buildResult(null);
+                    break;
+                default:
+                    throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+
+            }
+        }catch (SystemException e){
+            log.error("LoginServiceImpl.deleteUser SystemException:{}",e.getMessage());
+            result = failResult(e);
+        }catch (Exception e){
+            log.error("LoginServiceImpl.deleteUser Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+
+        return result;
+    }
+
+    private void commonDeleteUser(DeleteUserReq req) throws Exception{
+        checkDeleteUserParam(req);
+        UserExample userExample = new UserExample();
+        switch (req.getDeleteType()){
+            case DataConfig.DELETE_USER_TYPE_USERID:
+                userExample.createCriteria().andUserIdEqualTo(req.getUserId());
+                userMapper.deleteByExample(userExample);
+                break;
+            case DataConfig.DELETE_USER_TYPE_ACCOUNT:
+                userExample.createCriteria().andLoginAccountEqualTo(req.getLoginAccount());
+                userMapper.deleteByExample(userExample);
+                break;
+            case DataConfig.DELETE_USER_TYPE_PHONE:
+                userExample.createCriteria().andPhoneNumberEqualTo(req.getPhoneNumber());
+                userMapper.deleteByExample(userExample);
+                break;
+            default:
+                throw new Exception("deleteType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+        }
+    }
+
+    private void checkDeleteUserParam(DeleteUserReq req) throws Exception{
+        if (ParamCheckUtil.checkVoStrBlank(req.getDeleteType())){
+            throw new Exception("deleteType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getOpSystem())){
+            throw new Exception("opSystem"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        switch (req.getDeleteType()){
+            case DataConfig.DELETE_USER_TYPE_USERID:
+                if (ParamCheckUtil.checkVoStrBlank(req.getUserId())){
+                    throw new Exception("userId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                }
+                break;
+            case DataConfig.DELETE_USER_TYPE_ACCOUNT:
+                if (ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())){
+                    throw new Exception("LoginAccount"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                }
+                break;
+            case DataConfig.DELETE_USER_TYPE_PHONE:
+                if (ParamCheckUtil.checkVoStrBlank(req.getPhoneNumber())){
+                    throw new Exception("PhoneNumber"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                }
+                break;
+            default:
+                throw new Exception(ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+        }
     }
 
     private void commonBind(BindReq req){

@@ -41,9 +41,9 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
                 roleRequest.setAdmin(true);
             }
             //多条件查询
-//            PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
+            //PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
             RoleResp roleResp = new RoleResp();
-            List<NmplRoleVo> list =roleDomainService.queryByConditions(roleRequest);
+            List<NmplRoleVo> list = roleDomainService.queryByConditions(roleRequest);
             roleResp.setList(list);
             result = buildResult(roleResp);
         }catch (Exception e){

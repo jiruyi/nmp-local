@@ -278,7 +278,7 @@ public class UserController {
     @ApiOperation(value = "获取单个用户信息",notes = "用户姓名，电话，userId")
     @SystemLog(opermodul = "用户管理模块",operDesc = "查询用户",operType = "查询")
     @RequestMapping (value = "/getUserInfo",method = RequestMethod.POST)
-    @RequiresPermissions("sys:user:query")
+//    @RequiresPermissions("sys:user:query")
     public Result<UserInfoResp> selectUserInfo(@RequestBody UserRequest userRequest){
         Result<UserInfoResp> responseResult= new Result();
         try {

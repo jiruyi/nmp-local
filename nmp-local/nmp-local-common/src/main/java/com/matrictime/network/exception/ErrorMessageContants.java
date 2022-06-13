@@ -37,6 +37,8 @@ public class ErrorMessageContants {
 
 	public static final String USER_UNBIND_MSG = "用户未绑定";
 
+	public static final String USER_LOGIN_MSG = "用户已登录";
+
 	public static final String SMS_CODE_NO_EXIST_MSG = "验证码已过期";
 
 	public static final String SMS_CODE_ERROR_MSG = "验证码不正确，请核对后再试";
@@ -87,5 +89,7 @@ public class ErrorMessageContants {
 	public static final String RPC_RETURN_ERROR_MSG = "RPC返回错误";
 
 	public static final String GET_KEY_FAIL_MSG = "获取密钥失败";
+
+	public static final String ENCRYPT_FAIL_MSG = "加密失败";
 
 }

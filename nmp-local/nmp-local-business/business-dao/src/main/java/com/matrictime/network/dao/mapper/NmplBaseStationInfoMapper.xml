@@ -581,6 +581,9 @@
       <if test="lanIp != null and lanIp != ''">
         and lan_ip = #{lanIp,jdbcType=CHAR}
       </if>
+      <if test="publicNetworkIp != null and publicNetworkIp != ''">
+        and public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+      </if>
       <if test="stationNetworkId != null and stationNetworkId != ''">
         and station_network_id like "%" #{stationNetworkId,jdbcType=CHAR}
       </if>

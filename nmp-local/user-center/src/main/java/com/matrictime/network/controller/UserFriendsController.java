@@ -15,6 +15,7 @@ import com.matrictime.network.api.response.UserFriendResp;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.controller.aop.MonitorRequest;
 import com.matrictime.network.domain.CommonService;
+import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserFriendsService;
 import io.swagger.annotations.Api;
@@ -78,7 +79,7 @@ public class UserFriendsController {
             return result;
         }catch (Exception e){
             log.error("addFriends exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -109,7 +110,7 @@ public class UserFriendsController {
             return result;
         }catch (Exception e){
             log.error("getRecall exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
