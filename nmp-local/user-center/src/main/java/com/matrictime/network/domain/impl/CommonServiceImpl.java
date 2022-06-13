@@ -74,6 +74,7 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
             wsResultVo.setDestination(UcConstants.DESTINATION_IN);
             String encryJsonToReq = resUtil.encryJsonToReq(result, sid);
             wsResultVo.setResult(encryJsonToReq);
+            res.setErrorMsg(null);
             String resultObj = resUtil.encryJsonToReq(res, sid);
             res.setSuccess(true);
             res.setResultObj(resultObj);
@@ -93,8 +94,7 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
             String userId = res.getErrorMsg();
             ReqUtil resUtil = new ReqUtil();
             log.info("登录开始加密了：{},{}",JSONObject.toJSONString(req),JSONObject.toJSONString(res));
-            String resultObj = CheckUtil.decryJsonToReq(JSONObject.toJSONString(res));
-            resultObj = resUtil.encryJsonToReq(res, getSidByCondition(req.getCommonKey()));
+            String resultObj = resUtil.encryJsonToReq(res, res.getErrorCode());
             res.setSuccess(true);
             res.setResultObj(resultObj);
             res.setErrorMsg(userId);

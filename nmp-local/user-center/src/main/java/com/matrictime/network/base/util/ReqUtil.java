@@ -10,9 +10,6 @@ import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.util.AesEncryptUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import org.apache.commons.lang3.StringUtils;
-import sun.misc.BASE64Decoder;
-
-import java.util.Base64;
 
 public class ReqUtil<T> {
 
@@ -76,6 +73,20 @@ public class ReqUtil<T> {
 
         // TODO: 2022/5/30 跳过平台加密，上线需删除
         String encryptMsg = AesEncryptUtil.aesEncrypt(JSONObject.toJSONString(resp));
+
+        if (StringUtils.isBlank(encryptMsg)){
+            throw new Exception("encrypt fail");
+        }
+
+        if (StringUtils.isBlank(encryptMsg)){
+            throw new Exception("encrypt fail");
+        }
+
+        return encryptMsg;
+    }
+
+    public String encryJsonStringToReq(String jsonString, String sid) throws Exception {
+        String encryptMsg = JServiceImpl.encryptMsg(jsonString,sid);
 
         if (StringUtils.isBlank(encryptMsg)){
             throw new Exception("encrypt fail");

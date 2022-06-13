@@ -1,12 +1,13 @@
 package com.matrictime.network.controller;
 
-import com.matrictime.network.api.request.BindReq;
-import com.matrictime.network.api.request.LoginReq;
-import com.matrictime.network.api.request.LogoutReq;
-import com.matrictime.network.api.request.RegisterReq;
+import com.alibaba.fastjson.JSONObject;
+import com.jzsg.bussiness.JServiceImpl;
+import com.jzsg.bussiness.util.EdException;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.controller.aop.MonitorRequest;
+import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.LoginService;
@@ -27,6 +28,9 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private CommonService commonService;
+
     /**
      * 登录
      * @return
@@ -39,7 +43,7 @@ public class LoginController {
             return result;
         }catch (Exception e){
             log.error("LoginController.login exception:{}",e.getMessage());
-            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
@@ -76,6 +80,22 @@ public class LoginController {
     }
 
     /**
+     * 系统登出
+     * @param req
+     * @return
+     */
+    @RequestMapping(value = "/syslogout")
+    public Result syslogout(@RequestBody LogoutReq req){
+        try {
+            Result result = loginService.syslogout(req);
+            return result;
+        }catch (Exception e){
+            log.error("LoginController.logout exception:{}",e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    /**
      * 绑定用户
      */
     @MonitorRequest
@@ -88,5 +108,22 @@ public class LoginController {
             log.error("LoginController.bind exception:{}",e.getMessage());
             return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
+    }
+
+    @RequestMapping(value = "/deleteUser")
+    public Result deleteUser(@RequestBody DeleteUserReq req){
+        try {
+            Result result = loginService.deleteUser(req);
+            return result;
+        }catch (Exception e){
+            log.error("LoginController.deleteUser exception:{}",e.getMessage());
+            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    @RequestMapping(value = "/zr")
+    public void zr(@RequestBody BaseReq req) throws EdException {
+        int i = JServiceImpl.setBSAuth(req.getCommonKey(), req.getUuid());
+        log.info("接入基站认证结果："+i);
     }
 }

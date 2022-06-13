@@ -2,8 +2,11 @@ package com.matrictime.network.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.UcConstants;
+import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -69,6 +72,15 @@ public class WebSocketServer {
             webSocketMap.remove(userId);
             //从set中删除
             subOnlineCount();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("userId",userId);
+            jsonObject.put("destination",UcConstants.DESTINATION_IN);
+            try {
+                log.info("websocket系统退出地址:{},信息:{}","http://127.0.0.1:8007"+ UcConstants.URL_SYSLOGOUT,jsonObject.toJSONString());
+                HttpClientUtil.post("http://127.0.0.1:8007"+ UcConstants.URL_SYSLOGOUT, jsonObject.toJSONString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         log.info("用户退出:"+userId+",当前在线用户数为:" + getOnlineCount());
         for (String key : webSocketMap.keySet()) {

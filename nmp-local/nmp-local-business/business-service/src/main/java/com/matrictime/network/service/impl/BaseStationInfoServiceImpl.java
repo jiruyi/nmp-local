@@ -1,7 +1,7 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.csp.sentinel.util.StringUtil;
 import com.matrictime.network.base.enums.DeviceStatusEnum;
-import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
@@ -46,14 +46,18 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             baseStationInfoRequest.setIsExist("1");
             baseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
             //判断小区是否正确
-
             String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
+            if(StringUtil.isEmpty(preBID)){
+                return new Result<>(false,"运营商不存在");
+            }
             String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
             baseStationInfoRequest.setStationNetworkId(networkId);
             infoRequest.setStationNetworkId(networkId);
+            infoRequest.setPublicNetworkIp(baseStationInfoRequest.getPublicNetworkIp());
+            infoRequest.setLanIp(baseStationInfoRequest.getLanIp());
             PageInfo<BaseStationInfoVo> baseStationInfo = baseStationInfoDomainService.selectBaseStationList(infoRequest);
             if(baseStationInfo.getList().size() > 0){
-                return new Result<>(false,"入网id重复");
+                return new Result<>(false,"入网id或ip重复");
             }
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
             if(insertFlag == 1){
