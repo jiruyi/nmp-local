@@ -158,16 +158,15 @@ public class UserFriendsController {
 
     @ApiOperation(value = "修改好友信息",notes = "修改好友")
     @RequestMapping (value = "/modifyFriends",method = RequestMethod.POST)
-//    @MonitorRequest
+    @MonitorRequest
     public Result modifyFriends(@RequestBody UserFriendReq userFriendReq){
-        try {
+//        try {
             Result result = userFriendsService.modfiyFriendInfo(userFriendReq);
-            result = commonService.encryptForWs(userFriendReq.getCommonKey(), userFriendReq.getDestination(), result);
             return result;
-        }catch (Exception e){
-            log.error("modifyFriends exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
-        }
+//        }catch (Exception e){
+//            log.error("modifyFriends exception:{}",e.getMessage());
+//            return new Result(false,e.getMessage());
+//        }
     }
 
 
