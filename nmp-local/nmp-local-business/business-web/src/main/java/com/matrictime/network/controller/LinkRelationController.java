@@ -29,6 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 链路管理模块
+ * @author wangqiang
+ */
 @RestController
 @RequestMapping(value = "/linkRelation",method = RequestMethod.POST)
 @Slf4j
@@ -43,6 +47,11 @@ public class LinkRelationController {
     private LinkRelationService linkRelationService;
 
 
+    /**
+     * 链路查询基站设备
+     * @param baseStationInfoRequest
+     * @return
+     */
     @SystemLog(opermodul = "链路管理模块",operDesc = "链路查询基站设备",operType = "链路查询基站设备")
     @RequestMapping(value = "/selectBaseStation",method = RequestMethod.POST)
     public Result<BaseStationInfoResponse> selectBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
@@ -57,6 +66,11 @@ public class LinkRelationController {
         return result;
     }
 
+    /**
+     * 链路查询设备
+     * @param deviceInfoRequest
+     * @return
+     */
     @SystemLog(opermodul = "链路管理模块",operDesc = "链路查询设备",operType = "链路查询设备")
     @RequestMapping(value = "/selectDevice",method = RequestMethod.POST)
     public Result<DeviceResponse> selectDevice(@RequestBody DeviceInfoRequest deviceInfoRequest){
@@ -71,6 +85,11 @@ public class LinkRelationController {
         return result;
     }
 
+    /**
+     * 插入链路信息
+     * @param linkRelationRequest
+     * @return
+     */
     @RequiresPermissions("sys:link:save")
     @SystemLog(opermodul = "链路管理模块",operDesc = "插入链路信息",operType = "插入链路信息")
     @RequestMapping(value = "/insertLinkRelation",method = RequestMethod.POST)
@@ -86,6 +105,11 @@ public class LinkRelationController {
         return result;
     }
 
+    /**
+     * 删除链路信息
+     * @param linkRelationRequest
+     * @return
+     */
     @RequiresPermissions("sys:link:delete")
     @SystemLog(opermodul = "链路管理模块",operDesc = "删除链路信息",operType = "删除链路信息")
     @RequestMapping(value = "/deleteLinkRelation",method = RequestMethod.POST)
@@ -101,6 +125,11 @@ public class LinkRelationController {
         return result;
     }
 
+    /**
+     * 更新链路信息
+     * @param linkRelationRequest
+     * @return
+     */
     @RequiresPermissions("sys:link:update")
     @SystemLog(opermodul = "链路管理模块",operDesc = "更新链路信息",operType = "更新链路信息")
     @RequestMapping(value = "/updateLinkRelation",method = RequestMethod.POST)
@@ -116,6 +145,11 @@ public class LinkRelationController {
         return result;
     }
 
+    /**
+     * 查询链路信息
+     * @param linkRelationRequest
+     * @return
+     */
     @RequiresPermissions("sys:link:query")
     @SystemLog(opermodul = "链路管理模块",operDesc = "查询链路信息",operType = "查询链路信息")
     @RequestMapping(value = "/selectLinkRelation",method = RequestMethod.POST)

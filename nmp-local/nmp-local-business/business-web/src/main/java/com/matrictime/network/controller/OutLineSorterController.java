@@ -16,6 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
+/**
+ * 离线分发机管理模块
+ * @author zhangyunjie
+ */
 @RequestMapping(value = "/outlineSorter")
 @RestController
 @Slf4j

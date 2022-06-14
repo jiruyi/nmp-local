@@ -30,6 +30,7 @@ public class ConfigController {
 
     /**
      * 编辑配置
+     * @author hexu
      * @param req
      * @return
      */
@@ -48,6 +49,7 @@ public class ConfigController {
 
     /**
      * 查询接口（支持分页查询）
+     * @author hexu
      * @param req
      * @return
      */
@@ -66,6 +68,7 @@ public class ConfigController {
 
     /**
      * 恢复默认接口（支持全量恢复,同时需要同步数据）
+     * @author hexu
      * @param req
      * @return
      */
@@ -84,6 +87,7 @@ public class ConfigController {
 
     /**
      * 同步配置(支持全量同步)
+     * @author hexu
      * @param req
      * @return
      */
@@ -99,6 +103,12 @@ public class ConfigController {
         }
     }
 
+    /**
+     * 更新设备配置信息
+     * @author zhangyunjie
+     * @param configurationReq
+     * @return
+     */
     @RequestMapping (value = "/insertOrUpdate",method = RequestMethod.POST)
     @SystemLog(opermodul = "配置模块",operDesc = "更新设备配置信息",operType = "更新")
     public Result insertOrUpdate(@RequestBody ConfigurationReq configurationReq){

@@ -27,6 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 路由管理模块
+ * @author wangqiang
+ */
 @RestController
 @RequestMapping(value = "/route",method = RequestMethod.POST)
 @Slf4j
@@ -37,6 +41,11 @@ public class RouteController {
     @Resource
     private BaseStationInfoService baseStationInfoService;
 
+    /**
+     * 路由查询边界基站设备
+     * @param baseStationInfoRequest
+     * @return
+     */
     @SystemLog(opermodul = "路由管理模块",operDesc = "路由查询边界基站设备",operType = "路由查询边界基站设备")
     @RequestMapping(value = "/selectBaseStation",method = RequestMethod.POST)
     public Result<BaseStationInfoResponse> selectBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
@@ -52,6 +61,9 @@ public class RouteController {
         return result;
     }
 
+    /**
+     * 路由查询边界基站设备
+     */
     @SystemLog(opermodul = "路由管理模块",operDesc = "路由查询边界基站设备",operType = "路由查询边界基站设备")
     @RequestMapping(value = "/selectDevice",method = RequestMethod.POST)
     public List<NmplDeviceInfoExt> selectDevice(){
@@ -60,6 +72,11 @@ public class RouteController {
         return deviceInfoExtList;
     }
 
+    /**
+     * 新增路由
+     * @param routeRequest
+     * @return
+     */
     @RequiresPermissions("sys:route:save")
     @SystemLog(opermodul = "路由管理模块",operDesc = "新增路由",operType = "新增路由")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
@@ -75,6 +92,11 @@ public class RouteController {
         return result;
     }
 
+    /**
+     * 删除路由
+     * @param routeRequest
+     * @return
+     */
     @RequiresPermissions("sys:route:delete")
     @SystemLog(opermodul = "路由管理模块",operDesc = "删除路由",operType = "删除路由")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
@@ -90,6 +112,11 @@ public class RouteController {
         return result;
     }
 
+    /**
+     * 更新路由
+     * @param routeRequest
+     * @return
+     */
     @RequiresPermissions("sys:route:update")
     @SystemLog(opermodul = "路由管理模块",operDesc = "更新路由",operType = "更新路由")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
@@ -105,6 +132,11 @@ public class RouteController {
         return result;
     }
 
+    /**
+     * 查询路由
+     * @param routeRequest
+     * @return
+     */
     @RequiresPermissions("sys:route:query")
     @SystemLog(opermodul = "路由管理模块",operDesc = "查询路由",operType = "查询路由")
     @RequestMapping(value = "/select",method = RequestMethod.POST)

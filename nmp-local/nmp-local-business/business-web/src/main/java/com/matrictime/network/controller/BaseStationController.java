@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
+/**
+ * 基站管理模块
+ * @author wangqiang
+ */
 @RestController
 @RequestMapping(value = "/baseStation",method = RequestMethod.POST)
 @Slf4j
@@ -33,6 +37,11 @@ public class BaseStationController {
     @Resource
     private DeviceService deviceService;
 
+    /**
+     * 基站插入
+     * @param baseStationInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:station:save")
     @SystemLog(opermodul = "基站管理模块",operDesc = "基站插入",operType = "基站插入")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
@@ -49,6 +58,11 @@ public class BaseStationController {
         return result;
     }
 
+    /**
+     * 基站更新
+     * @param baseStationInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:station:update")
     @SystemLog(opermodul = "基站管理模块",operDesc = "基站更新",operType = "基站更新")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
@@ -65,6 +79,11 @@ public class BaseStationController {
         return result;
     }
 
+    /**
+     * 基站删除
+     * @param baseStationInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:station:delete")
     @SystemLog(opermodul = "基站管理模块",operDesc = "基站删除",operType = "基站删除")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
@@ -81,6 +100,11 @@ public class BaseStationController {
         return result;
     }
 
+    /**
+     * 根据条件基站信息查询
+     * @param baseStationInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:station:query")
     @SystemLog(opermodul = "基站管理模块",operDesc = "根据条件基站信息查询",operType = "根据条件基站信息查询")
     @RequestMapping(value = "/select",method = RequestMethod.POST)
@@ -97,7 +121,11 @@ public class BaseStationController {
         return result;
     }
 
-    //和基站进行路由交互
+    /**
+     * 和基站进行路由交互
+     * @param baseStationInfoRequest
+     * @return
+     */
     @SystemLog(opermodul = "基站管理模块",operDesc = "和基站进行路由交互",operType = "和基站进行路由交互")
     @RequestMapping(value = "/selectByOperatorId",method = RequestMethod.POST)
     @ApiOperation(value = "基站接口",notes = "根据条件基站信息查询")
@@ -113,6 +141,11 @@ public class BaseStationController {
         return result;
     }
 
+    /**
+     * 根据ip获取设备Id
+     * @param deviceInfoRequest
+     * @return
+     */
     @SystemLog(opermodul = "基站管理模块",operDesc = "根据ip获取设备Id",operType = "根据ip获取设备信息")
     @RequestMapping(value = "/selectDevice",method = RequestMethod.POST)
     public Result<StationVo> selectDevice(@RequestBody DeviceInfoRequest deviceInfoRequest){

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 区域管理接口
+ * @author zhangyunjie
  */
 @RequestMapping(value = "/company")
 @Api(value = "区域管理",tags = "区域管理")

@@ -22,13 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 日志相关
- * @author jiruyi
- * @copyright www.matrictime.com
- * @project nmp-local
- * @date 2022/3/2 0002 15:39
- *
- *
+ * 日志管理模块
  */
 
 @RequestMapping(value = "/log")
@@ -40,6 +34,12 @@ public class LogController {
     @Autowired
     private LogService logService;
 
+    /**
+     * 查询网关日志记录
+     * @author jiruyi
+     * @param logRequest
+     * @return
+     */
     @ApiOperation(value = "查询网关日志记录",notes = "查询网关日志记录")
     @SystemLog(opermodul = "日志管理模块",operDesc = "查询网关日志记录",operType = "查询")
     @RequiresPermissions("sys:sysLog:query")
@@ -54,8 +54,8 @@ public class LogController {
     }
 
     /**
+     * 查询用户登录明细
      * @title queryLoinDetailList
-     * @param [logRequest]
      * @return com.matrictime.network.model.Result<com.matrictime.network.response.PageInfo<NetworkLoginDetail>>
      * @description
      * @author jiruyi
@@ -77,7 +77,6 @@ public class LogController {
     /**
       * 设备日志保存
       * @title saveDeviceLog
-      * @param [deviceLog]
       * @return com.matrictime.network.model.Result
       * @author jiruyi
       * @create 2022/3/10 0010 14:04
@@ -107,9 +106,8 @@ public class LogController {
 
 
     /**
-     * 设备日志查询 xin git
+     * 设备日志查询
      * @title ApiOperation
-     * @param []
      * @return
      * @description
      * @author jiruyi

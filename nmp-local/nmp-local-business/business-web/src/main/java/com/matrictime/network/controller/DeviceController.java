@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
+/**
+ * 分发机管理模块
+ * @author wangqiang
+ */
 @RestController
 @RequestMapping(value = "/device",method = RequestMethod.POST)
 @Slf4j
@@ -26,6 +30,11 @@ public class DeviceController {
     @Resource
     private DeviceService deviceService;
 
+    /**
+     * 分发机信息插入
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:dispenser:save")
     @SystemLog(opermodul = "分发机管理模块",operDesc = "分发机信息插入",operType = "分发机信息插入")
     @RequestMapping(value = "/insertDispenser",method = RequestMethod.POST)
@@ -43,6 +52,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 删除分发机信息
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:dispenser:delete")
     @SystemLog(opermodul = "分发机管理模块",operDesc = "删除分发机信息",operType = "删除分发机信息")
     @RequestMapping(value = "/deleteDispenser",method = RequestMethod.POST)
@@ -59,6 +73,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 更新分发机信息
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:dispenser:update")
     @SystemLog(opermodul = "分发机管理模块",operDesc = "更新分发机信息",operType = "更新分发机信息")
     @RequestMapping(value = "/updateDispenser",method = RequestMethod.POST)
@@ -75,6 +94,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 查询分发机信息
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:dispenser:query")
     @SystemLog(opermodul = "分发机管理模块",operDesc = "查询分发机信息",operType = "查询分发机信息")
     @RequestMapping(value = "/selectDispenser",method = RequestMethod.POST)
@@ -92,6 +116,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 生成机信息插入
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:generator:save")
     @SystemLog(opermodul = "生成机管理模块",operDesc = "生成机信息插入",operType = "生成机信息插入")
     @RequestMapping(value = "/insertGenerator",method = RequestMethod.POST)
@@ -109,6 +138,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 删除生成机信息
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:generator:delete")
     @SystemLog(opermodul = "生成机管理模块",operDesc = "删除生成机信息",operType = "删除生成机信息")
     @RequestMapping(value = "/deleteGenerator",method = RequestMethod.POST)
@@ -125,6 +159,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 更新生成机信息
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:generator:update")
     @SystemLog(opermodul = "生成机管理模块",operDesc = "更新生成机信息",operType = "更新生成机信息")
     @RequestMapping(value = "/updateGenerator",method = RequestMethod.POST)
@@ -141,6 +180,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 查询生成机信息
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:generator:query")
     @SystemLog(opermodul = "生成机管理模块",operDesc = "查询生成机信息",operType = "查询生成机信息")
     @RequestMapping(value = "/selectGenerator",method = RequestMethod.POST)
@@ -158,6 +202,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 缓存机信息插入
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:cache:save")
     @SystemLog(opermodul = "缓存机管理模块",operDesc = "缓存机信息插入",operType = "缓存机信息插入")
     @RequestMapping(value = "/insertCache",method = RequestMethod.POST)
@@ -175,6 +224,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 删除缓存机信息
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:cache:delete")
     @SystemLog(opermodul = "缓存机管理模块",operDesc = "删除缓存机信息",operType = "删除缓存机信息")
     @RequestMapping(value = "/deleteCache",method = RequestMethod.POST)
@@ -191,6 +245,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 更新缓存机信息
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:cache:update")
     @SystemLog(opermodul = "缓存机管理模块",operDesc = "更新缓存机信息",operType = "更新缓存机信息")
     @RequestMapping(value = "/updateCache",method = RequestMethod.POST)
@@ -207,6 +266,11 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 查询缓存机信息
+     * @param deviceInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:cache:query")
     @SystemLog(opermodul = "缓存机管理模块",operDesc = "查询缓存机信息",operType = "查询缓存机信息")
     @RequestMapping(value = "/selectCache",method = RequestMethod.POST)

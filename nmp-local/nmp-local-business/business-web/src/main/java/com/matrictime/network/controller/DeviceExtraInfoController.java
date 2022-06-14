@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
+/**
+ * 主备管理
+ * @author wangqiang
+ */
 @RestController
 @RequestMapping(value = "/deviceExtraInfo",method = RequestMethod.POST)
 @Slf4j
@@ -23,6 +27,11 @@ public class DeviceExtraInfoController {
     @Resource
     private DeviceExtraInfoService deviceExtraInfoService;
 
+    /**
+     * 备用设备插入
+     * @param deviceExtraInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:deviceExtra:save")
     @SystemLog(opermodul = "主备管理",operDesc = "备用设备插入",operType = "备用设备插入")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
@@ -39,6 +48,11 @@ public class DeviceExtraInfoController {
         return result;
     }
 
+    /**
+     * 备用设备更新
+     * @param deviceExtraInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:deviceExtra:update")
     @SystemLog(opermodul = "主备管理",operDesc = "备用设备更新",operType = "备用设备更新")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
@@ -55,6 +69,11 @@ public class DeviceExtraInfoController {
         return result;
     }
 
+    /**
+     * 备用设备删除
+     * @param deviceExtraInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:deviceExtra:delete")
     @SystemLog(opermodul = "主备管理",operDesc = "备用设备删除",operType = "备用设备删除")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
@@ -71,6 +90,11 @@ public class DeviceExtraInfoController {
         return result;
     }
 
+    /**
+     * 备用设备查询
+     * @param deviceExtraInfoRequest
+     * @return
+     */
     @RequiresPermissions("sys:deviceExtra:query")
     @SystemLog(opermodul = "主备管理",operDesc = "备用设备查询",operType = "备用设备查询")
     @RequestMapping(value = "/select",method = RequestMethod.POST)

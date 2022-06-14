@@ -16,6 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
+/**
+ * 一体机管理模块
+ * @author zhangyunjie
+ */
 @RequestMapping(value = "/outlinePc")
 @RestController
 @Slf4j

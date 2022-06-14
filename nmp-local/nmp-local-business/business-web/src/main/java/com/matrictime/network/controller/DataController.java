@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * 统计管理
+ * @author zhangyunjie
  */
 @RequestMapping(value = "/data")
 @RestController

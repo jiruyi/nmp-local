@@ -39,6 +39,7 @@ public class VersionController {
 
     /**
      * 编辑版本信息
+     * @author hexu
      * @param req
      * @return
      */
@@ -56,6 +57,7 @@ public class VersionController {
 
     /**
      * 上传版本文件
+     * @author hexu
      * @param req
      * @return
      */
@@ -73,6 +75,7 @@ public class VersionController {
 
     /**
      * 删除版本文件
+     * @author hexu
      * @param req
      * @return
      */
@@ -90,6 +93,7 @@ public class VersionController {
 
     /**
      * 根据系统查询版本文件列表
+     * @author hexu
      * @param req
      * @return
      */
@@ -107,6 +111,7 @@ public class VersionController {
 
     /**
      * 根据系统查询版本列表
+     * @author hexu
      * @return
      */
     @RequestMapping (value = "/queryVersion",method = RequestMethod.POST)
@@ -123,6 +128,7 @@ public class VersionController {
 
     /**
      * 查询推送设备/详情
+     * @author hexu
      * @param req
      * @return
      */
@@ -140,6 +146,7 @@ public class VersionController {
 
     /**
      * 推送设备
+     * @author hexu
      * @param req
      * @return
      */
@@ -157,6 +164,7 @@ public class VersionController {
 
     /**
      * 获取版本文件
+     * @author hexu
      * @param fileId
      * @param resp
      */
@@ -207,6 +215,7 @@ public class VersionController {
 
     /**
      * 启动版本文件
+     * @author hexu
      * @param req
      * @return
      */

@@ -33,6 +33,7 @@ public class MonitorController {
 
     /**
      * 心跳缓存
+     * @author hexu
      * @param req
      * @return
      */
@@ -49,6 +50,7 @@ public class MonitorController {
 
     /**
      * 监控轮询展示查询
+     * @author hexu
      * @param req
      * @return
      */
@@ -66,6 +68,7 @@ public class MonitorController {
 
     /**
      * 总带宽负载变化查询
+     * @author hexu
      * @param req
      * @return
      */

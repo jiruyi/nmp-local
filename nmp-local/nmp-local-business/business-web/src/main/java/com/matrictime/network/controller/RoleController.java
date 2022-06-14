@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 角色管理接口
+ * @author zhangyunjie
  */
 @RequestMapping(value = "/role")
 @Api(value = "角色管理",tags = "用户角色管理")

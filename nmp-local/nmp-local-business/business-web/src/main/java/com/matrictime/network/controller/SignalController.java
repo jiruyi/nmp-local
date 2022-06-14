@@ -35,6 +35,7 @@ public class SignalController {
 
     /**
      * 信令追踪启停
+     * @author hexu
      * @param req
      * @return
      */
@@ -52,6 +53,7 @@ public class SignalController {
 
     /**
      * 信令上报
+     * @author hexu
      * @param req
      * @return
      */
@@ -68,6 +70,7 @@ public class SignalController {
 
     /**
      * 信令清空
+     * @author hexu
      * @param req
      * @return
      */
@@ -85,6 +88,7 @@ public class SignalController {
 
     /**
      * 信令轮询分页查询
+     * @author hexu
      * @param req
      * @return
      */
@@ -102,6 +106,7 @@ public class SignalController {
 
     /**
      * 根据用户id查询已选设备列表
+     * @author hexu
      * @param req
      * @return
      */
@@ -120,6 +125,7 @@ public class SignalController {
 
     /**
      * 信令导出
+     * @author hexu
      * @param req
      * @return
      */
@@ -140,6 +146,7 @@ public class SignalController {
 
     /**
      * 查询信令设备列表
+     * @author hexu
      * @return
      */
     @RequestMapping (value = "/devicesForSignal",method = RequestMethod.POST)
@@ -156,6 +163,7 @@ public class SignalController {
 
     /**
      * 设置下载响应
+     * @author hexu
      * @param fileName
      * @param bytes
      * @param response
