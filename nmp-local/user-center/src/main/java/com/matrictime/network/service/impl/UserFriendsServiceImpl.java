@@ -598,6 +598,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
 
 
     @Override
+    @Transactional
     public Result modfiyFriendInfo(UserFriendReq userFriendReq) {
         ReqUtil<UserFriendReq> jsonUtil = new ReqUtil<>(userFriendReq);
         userFriendReq = jsonUtil.jsonReqToDto(userFriendReq);
@@ -635,10 +636,19 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("modifyFriend Exception:{}",e.getMessage());
             result = failResult(e);
+        }
+        catch (Exception e){
+            log.error("modifyFriend Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        try {
+            result = commonService.encryptForWs(userFriendReq.getCommonKey(), userFriendReq.getDestination(), result);
+        }catch (Exception e){
+            log.info("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
