@@ -5,13 +5,15 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
+import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplCompanyInfoMapper;
-import com.matrictime.network.dao.model.NmplCompanyInfo;
-import com.matrictime.network.dao.model.NmplCompanyInfoExample;
+import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.NmplCompanyInfoVo;
 import com.matrictime.network.request.CompanyInfoRequest;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,10 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
 
     @Autowired
     NmplCompanyInfoMapper nmplCompanyInfoMapper;
+    @Autowired
+    NmplDeviceInfoMapper nmplDeviceInfoMapper;
+    @Autowired
+    NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
 
     /**
      * 正则表达式：验证手机号
@@ -84,7 +90,41 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         if (!info.getCompanyType().equals(companyInfoRequest.getCompanyType())){
             throw new SystemException("删除区域类型不一致");
         }
+        NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
+        NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        //删除逻辑判定 大类下面有小类则无法删除
+        List<NmplCompanyInfo> childs = new ArrayList<>();
+        List<NmplDeviceInfo> deviceInfos = new ArrayList<>();
+        List<NmplBaseStationInfo> baseStationInfos = new ArrayList<>();
+        switch (companyInfoRequest.getCompanyType()){
+            case "00":
+                nmplCompanyInfoExample.createCriteria().andParentCodeEqualTo(info.getCompanyCode()).andIsExistEqualTo(true)
+                        .andCompanyTypeEqualTo("01");
+                childs = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
+                if(!CollectionUtils.isEmpty(childs)){
+                    throw new SystemException("该运营商被大区绑定");
+                }
+                break;
+            case "01":
+                nmplCompanyInfoExample.createCriteria().andParentCodeEqualTo(info.getCompanyCode()).andIsExistEqualTo(true)
+                        .andCompanyTypeEqualTo("02");
+                 childs = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
+                if(!CollectionUtils.isEmpty(childs)){
+                    throw new SystemException("该大区被小区绑定");
+                }
+                break;
+            case "02":
+                nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(info.getCompanyCode()).andIsExistEqualTo(true);
+                deviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
 
+                nmplBaseStationInfoExample.createCriteria().andRelationOperatorIdEqualTo(info.getCompanyCode()).andIsExistEqualTo(true);
+                baseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+                if(!CollectionUtils.isEmpty(deviceInfos)||!CollectionUtils.isEmpty(baseStationInfos)){
+                    throw new SystemException("该小区被设备绑定");
+                }
+                break;
+        }
         NmplCompanyInfo nmplCompanyInfo = new NmplCompanyInfo();
         nmplCompanyInfo.setCompanyId(companyInfoRequest.getCompanyId());
         nmplCompanyInfo.setIsExist(false);
