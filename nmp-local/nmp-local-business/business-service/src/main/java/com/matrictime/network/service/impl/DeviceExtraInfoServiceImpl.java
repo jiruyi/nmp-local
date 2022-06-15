@@ -5,8 +5,10 @@ import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
 import com.matrictime.network.dao.model.NmplUser;
+import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
+import com.matrictime.network.response.DeviceInfoExtResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceExtraInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -76,7 +79,14 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
         return result;
     }
 
-
+    @Override
+    public Result<DeviceInfoExtResponse> selectDevices(DeviceExtraInfoRequest deviceExtraInfoRequest) {
+        Result<DeviceInfoExtResponse> result = new Result<>();
+        DeviceInfoExtResponse deviceInfoExtResponse = new DeviceInfoExtResponse();
+        deviceInfoExtResponse.setList(deviceExtraInfoDomainService.selectDevices(deviceExtraInfoRequest));
+        result.setResultObj(deviceInfoExtResponse);
+        return result;
+    }
 }
 
 

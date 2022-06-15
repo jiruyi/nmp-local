@@ -10,7 +10,9 @@ import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplDeviceExtraInfoMapper;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfoExample;
+import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.modelVo.DeviceExtraVo;
+import com.matrictime.network.modelVo.NmplDeviceInfoExtVo;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.util.SnowFlake;
@@ -110,6 +112,11 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
         }else {
             throw new SystemException("id字段为空");
         }
+    }
+
+    @Override
+    public List<NmplDeviceInfoExtVo> selectDevices(DeviceExtraInfoRequest deviceExtraInfoRequest) {
+        return nmplDeviceExtraInfoMapper.selectDevices(deviceExtraInfoRequest);
     }
 }
 
