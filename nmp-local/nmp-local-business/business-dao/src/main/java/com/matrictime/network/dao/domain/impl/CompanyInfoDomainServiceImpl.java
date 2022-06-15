@@ -124,6 +124,8 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
                     throw new SystemException("该小区被设备绑定");
                 }
                 break;
+            default:
+                break;
         }
         NmplCompanyInfo nmplCompanyInfo = new NmplCompanyInfo();
         nmplCompanyInfo.setCompanyId(companyInfoRequest.getCompanyId());
@@ -150,6 +152,30 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
                 if(!nmplCompanyInfoList.get(0).getCompanyId().equals(companyInfoRequest.getCompanyId())){
                     throw new SystemException("编码重复");
                 }
+            }
+        }
+        List<NmplCompanyInfo> childs = new ArrayList<>();
+        List<NmplDeviceInfo> deviceInfos = new ArrayList<>();
+        List<NmplBaseStationInfo> baseStationInfos = new ArrayList<>();
+        if(!companyInfoRequest.getCompanyType().equals("02")){
+            NmplCompanyInfoExample nmplCompanyInfoExample1 = new NmplCompanyInfoExample();
+            nmplCompanyInfoExample1.createCriteria().andParentCodeEqualTo(info.getCompanyCode()).andIsExistEqualTo(true);
+            childs = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample1);
+        }else {
+            NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+            NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+            nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(info.getCompanyCode()).andIsExistEqualTo(true);
+            deviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+            nmplBaseStationInfoExample.createCriteria().andRelationOperatorIdEqualTo(info.getCompanyCode()).andIsExistEqualTo(true);
+            baseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+        }
+        if(!CollectionUtils.isEmpty(childs)||!CollectionUtils.isEmpty(deviceInfos)||!CollectionUtils.isEmpty(baseStationInfos)){
+            //有关联关系则无法修改code
+            if(!companyInfoRequest.getCompanyCode().equals(info.getCompanyCode())){
+                throw new SystemException("存在子单位关联关系，无法修改code");
+            }
+            if(!companyInfoRequest.getParentCode().equals(info.getParentCode())){
+                throw new SystemException("存在子单位关联关系，无法修改关联关系");
             }
         }
         NmplCompanyInfo nmplCompanyInfo = new NmplCompanyInfo();
