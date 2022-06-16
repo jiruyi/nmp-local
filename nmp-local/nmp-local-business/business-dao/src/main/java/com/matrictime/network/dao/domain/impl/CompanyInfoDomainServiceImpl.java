@@ -243,7 +243,13 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         if(map.get(companyCode)!=null){
             NmplCompanyInfo village = map.get(companyCode);
             NmplCompanyInfo region = map.get(village.getParentCode());
+            if(region==null){
+                return "";
+            }
             NmplCompanyInfo operator = map.get(region.getParentCode());
+            if(operator==null){
+                return "";
+            }
             return operator.getCountryCode()+"-"+operator.getCompanyCode()+"-"+region.getCompanyCode()+"-"+village.getCompanyCode();
         } else {
             return "";
