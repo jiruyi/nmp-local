@@ -103,7 +103,7 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
                         .andCompanyTypeEqualTo("01");
                 childs = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
                 if(!CollectionUtils.isEmpty(childs)){
-                    throw new SystemException("该运营商被大区绑定");
+                    throw new SystemException("该运营商被大区绑定,解绑后可删除");
                 }
                 break;
             case "01":
@@ -111,7 +111,7 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
                         .andCompanyTypeEqualTo("02");
                  childs = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
                 if(!CollectionUtils.isEmpty(childs)){
-                    throw new SystemException("该大区被小区绑定");
+                    throw new SystemException("该大区被小区绑定,解绑后可删除");
                 }
                 break;
             case "02":
@@ -121,7 +121,7 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
                 nmplBaseStationInfoExample.createCriteria().andRelationOperatorIdEqualTo(info.getCompanyCode()).andIsExistEqualTo(true);
                 baseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
                 if(!CollectionUtils.isEmpty(deviceInfos)||!CollectionUtils.isEmpty(baseStationInfos)){
-                    throw new SystemException("该小区被设备绑定");
+                    throw new SystemException("该小区被设备绑定,解绑后可删除");
                 }
                 break;
             default:
