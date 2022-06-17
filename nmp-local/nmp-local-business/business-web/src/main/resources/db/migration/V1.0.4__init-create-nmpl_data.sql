@@ -16,13 +16,15 @@ CREATE TABLE IF NOT EXISTS `nmpl_data_collect_for_load` (
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+drop procedure if exists truncateTmpLoadData;
 create
-definer = root@`%` procedure truncateTmpLoadData()
+    procedure truncateTmpLoadData()
 BEGIN
 truncate table nmpl_data_collect_for_load;
 END;
 
-create definer = root@`%` event event_data_collect_for_load on schedule
+drop event if exists event_data_collect_for_load;
+create event event_data_collect_for_load on schedule
     every '1' day
         starts '2022-06-01 00:00:00'
     enable
