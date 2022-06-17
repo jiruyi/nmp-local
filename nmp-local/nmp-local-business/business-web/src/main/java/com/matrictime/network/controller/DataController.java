@@ -14,6 +14,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,7 +37,8 @@ import java.util.concurrent.ExecutionException;
 public class DataController {
     @Autowired
     DataCollectService dataCollectService;
-
+    @Value("${thread.batchMaxSize}")
+    Integer maxSize;
     /**
      * 基站数据多条件查询接口
      * @param dataCollectReq
@@ -102,9 +105,9 @@ public class DataController {
     public Result saveData(@RequestBody DataCollectReq dataCollectReq){
         Result result = null;
         try {
-            if (dataCollectReq.getDataCollectVoList()!=null&&dataCollectReq.getDataCollectVoList().size()>10){
+            if (dataCollectReq.getDataCollectVoList()!=null&&dataCollectReq.getDataCollectVoList().size()>maxSize){
                 List<Result>resultList = new ArrayList<>();
-                List<List<DataCollectVo>> data = ListSplitUtil.split(dataCollectReq.getDataCollectVoList(),10);
+                List<List<DataCollectVo>> data = ListSplitUtil.split(dataCollectReq.getDataCollectVoList(),maxSize);
                 for (List<DataCollectVo> datum : data) {
                     DataCollectReq req = new DataCollectReq();
                     req.setDataCollectVoList(datum);
