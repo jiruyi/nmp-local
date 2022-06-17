@@ -48,6 +48,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/linkRelation/selectDevice")
                 .excludePathPatterns("/baseStation/selectDevice")
                 .excludePathPatterns("/baseStation/selectByOperatorId")
-                .excludePathPatterns("/outlineSorter/auth");
+                .excludePathPatterns("/outlineSorter/auth")
+                .excludePathPatterns("/config/insertOrUpdate");
     }
 }
