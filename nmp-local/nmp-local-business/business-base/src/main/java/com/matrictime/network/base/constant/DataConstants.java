@@ -82,6 +82,11 @@ public class DataConstants {
     public static final String INTERNET_BROADBAND_LOAD_CODE = "10005";
     public static final String TIMER_SHAFT = "timerShaft";
 
+    public static final String CONFIGURATION_TYPE_CONFIG = "1";
+    public static final String CONFIGURATION_TYPE_SIGNAL = "2";
+    public static final String CONFIGURATION_TYPE_PUSHFILE = "3";
+    public static final String CONFIGURATION_TYPE_STARTFILE = "4";
+
     /**
      * redis key
      */
