@@ -233,7 +233,9 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
 
     @Override
     public String getPreBID(String companyCode) {
-        List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(null);
+        NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
+        nmplCompanyInfoExample.createCriteria().andIsExistEqualTo(true);
+        List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
         Map<String,NmplCompanyInfo> map = new HashMap<>();
         for (NmplCompanyInfo info : infos) {
             map.put(info.getCompanyCode(),info);
@@ -241,7 +243,13 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         if(map.get(companyCode)!=null){
             NmplCompanyInfo village = map.get(companyCode);
             NmplCompanyInfo region = map.get(village.getParentCode());
+            if(region==null){
+                return "";
+            }
             NmplCompanyInfo operator = map.get(region.getParentCode());
+            if(operator==null){
+                return "";
+            }
             return operator.getCountryCode()+"-"+operator.getCompanyCode()+"-"+region.getCompanyCode()+"-"+village.getCompanyCode();
         } else {
             return "";
