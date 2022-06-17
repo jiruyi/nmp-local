@@ -101,3 +101,5 @@ management:
 
 token:
   timeOut: 12
+thread:
+  batchMaxSize: 500

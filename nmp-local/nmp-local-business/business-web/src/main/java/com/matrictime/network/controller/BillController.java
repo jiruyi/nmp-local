@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,7 +35,8 @@ import java.util.concurrent.Future;
 public class BillController {
     @Autowired
     BillService billService;
-
+    @Value("${thread.batchMaxSize}")
+    Integer maxSize;
     /**
      * 话单查询接口
      * @param billRequest
@@ -57,9 +59,9 @@ public class BillController {
     @RequestMapping(value = "/saveBill",method = RequestMethod.POST)
     public Result saveRole(@RequestBody BillRequest billRequest) throws ExecutionException, InterruptedException {
         //根据具体需求修改  现可执行单个数据以及批量数据插入  如果数据量再大的情况采用线程池实现
-        if (billRequest.getNmplBillVoList()!=null&&billRequest.getNmplBillVoList().size()>10){
+        if (billRequest.getNmplBillVoList()!=null&&billRequest.getNmplBillVoList().size()>maxSize){
             List<Result>futureList= new ArrayList<>();
-            List<List<NmplBillVo>> list = ListSplitUtil.split(billRequest.getNmplBillVoList(),10);
+            List<List<NmplBillVo>> list = ListSplitUtil.split(billRequest.getNmplBillVoList(),maxSize);
             for (int i=0;i<list.size();i++){
                 BillRequest request = new BillRequest();
                 request.setNmplBillVoList(list.get(i));

@@ -99,3 +99,5 @@ management:
 
 token:
   timeOut: 12
+thread:
+  maxSize: 500

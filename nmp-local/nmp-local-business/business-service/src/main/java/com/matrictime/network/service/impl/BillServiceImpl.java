@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -47,6 +48,7 @@ public class BillServiceImpl extends SystemBaseService implements BillService {
 
     @Async("taskExecutor")
     @Override
+    @Transactional
     public Future<Result> save(BillRequest billRequest) {
         Result<Integer> result;
         try {

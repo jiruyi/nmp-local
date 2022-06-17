@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.*;
@@ -51,6 +52,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
 
     @Async("taskExecutor")
     @Override
+    @Transactional
     public Future<Result> save(DataCollectReq dataCollectReq) {
         Result<Integer> result;
         try {
