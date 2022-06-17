@@ -73,6 +73,8 @@ public class DataCollectReq extends BaseRequest implements Serializable {
 
     private List<DataCollectVo> dataCollectVoList;
 
+    private List<DataCollectVo> dataCollectVoLoadList;
+
     /**
      * 开始时间
      */

@@ -27,7 +27,7 @@ public interface SignalService {
      * @param req
      * @return
      */
-    Result addSignal(NmplSignalVo req);
+    Result addSignal(AddSignalReq req);
 
     /**
      * 信令清空

@@ -24,6 +24,9 @@ import java.time.*;
 import java.util.*;
 import java.util.concurrent.Future;
 
+import static com.matrictime.network.base.constant.DataConstants.INTERNET_BROADBAND_LOAD_CODE;
+import static com.matrictime.network.base.constant.DataConstants.INTRANET_BROADBAND_LOAD_CODE;
+
 @Service
 @Slf4j
 public class DataCollectServiceImpl extends SystemBaseService implements DataCollectService {
@@ -52,13 +55,18 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         Result<Integer> result;
         try {
             if(dataCollectReq.getDataCollectVoList()!=null){
+                List<DataCollectVo> dataCollectVoLoadList = new ArrayList<>();
                 Map<String,String> map = PropertiesUtil.paramMap;
                 for (DataCollectVo dataCollectVo : dataCollectReq.getDataCollectVoList()) {
                     String name = "data."+dataCollectVo.getDataItemCode()+".name";
                     String unit = "data."+dataCollectVo.getDataItemCode()+".unit";
                     dataCollectVo.setDataItemName(map.get(name));
                     dataCollectVo.setUnit(map.get(unit));
+                    if (INTRANET_BROADBAND_LOAD_CODE.equals(dataCollectVo.getDataItemCode()) || INTERNET_BROADBAND_LOAD_CODE.equals(dataCollectVo.getDataItemCode())) {
+                        dataCollectVoLoadList.add(dataCollectVo);
+                    }
                 }
+                dataCollectReq.setDataCollectVoLoadList(dataCollectVoLoadList);
             }
             result = buildResult(dataCollectDomainService.save(dataCollectReq));
         }catch (Exception e){

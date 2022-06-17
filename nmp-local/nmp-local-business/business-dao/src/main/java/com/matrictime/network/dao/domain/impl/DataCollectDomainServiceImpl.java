@@ -7,6 +7,7 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDataCollectForLoadMapper;
 import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
@@ -26,6 +27,10 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.matrictime.network.base.constant.DataConstants.INTERNET_BROADBAND_LOAD_CODE;
+import static com.matrictime.network.base.constant.DataConstants.INTRANET_BROADBAND_LOAD_CODE;
+
 @Service
 @Slf4j
 public class DataCollectDomainServiceImpl implements DataCollectDomainService {
@@ -37,6 +42,8 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     NmplDeviceInfoMapper nmplDeviceInfoMapper;
     @Autowired
     NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
+    @Autowired
+    NmplDataCollectForLoadMapper nmplDataCollectForLoadMapper;
 
 
 
@@ -64,8 +71,16 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         if (CollectionUtils.isEmpty(dataCollectReq.getDataCollectVoList())){
             NmplDataCollect dataCollect = new NmplDataCollect();
             BeanUtils.copyProperties(dataCollectReq,dataCollect);
+            if (INTRANET_BROADBAND_LOAD_CODE.equals(dataCollect.getDataItemCode()) || INTERNET_BROADBAND_LOAD_CODE.equals(dataCollect.getDataItemCode())){
+                NmplDataCollectForLoad nmplDataCollectForLoad = new NmplDataCollectForLoad();
+                BeanUtils.copyProperties(dataCollectReq,nmplDataCollectForLoad);
+                nmplDataCollectForLoadMapper.insertSelective(nmplDataCollectForLoad);
+            }
             return nmplDataCollectMapper.insertSelective(dataCollect);
         }else {
+            if (!CollectionUtils.isEmpty(dataCollectReq.getDataCollectVoLoadList())){
+                nmplDataCollectExtMapper.batchInsertLoad(dataCollectReq.getDataCollectVoLoadList());
+            }
             return nmplDataCollectExtMapper.batchInsert(dataCollectReq.getDataCollectVoList());
         }
     }
@@ -91,6 +106,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(monitorReq.getCompanyCode()).andIsExistEqualTo(true);
         List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
         for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+
             ids.add(nmplDeviceInfo.getDeviceId());
         }
         if(CollectionUtils.isEmpty(ids)){

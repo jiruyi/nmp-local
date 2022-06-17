@@ -16,7 +16,7 @@
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://192.168.72.230:3306/nmp_local" userId="root"
+                        connectionURL="jdbc:mysql://192.168.72.14:3306/nmp_local" userId="root"
                         password="Jzsg@2021">
             <property name="nullCatalogMeansCurrent" value="true" />
         </jdbcConnection>
@@ -49,26 +49,26 @@
         <!--               selectByExampleQueryId="true">-->
         <!--        </table>-->
 
-        <table tableName="nmpl_device_log" domainObjectName="NmplDeviceLog"
+        <table tableName="nmpl_data_collect_for_load" domainObjectName="NmplDataCollectForLoad"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
         </table>
-        <table tableName="nmpl_base_station_info" domainObjectName="NmplBaseStationInfo"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
-        <table tableName="nmpl_device_info" domainObjectName="NmplDeviceInfo"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
-        <table tableName="nmpl_link_relation" domainObjectName="NmplLinkRelation"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
+<!--        <table tableName="nmpl_base_station_info" domainObjectName="NmplBaseStationInfo"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+<!--        <table tableName="nmpl_device_info" domainObjectName="NmplDeviceInfo"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+<!--        <table tableName="nmpl_link_relation" domainObjectName="NmplLinkRelation"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
         <!--        <table tableName="network_region_info" domainObjectName="NetworkRegionInfo"-->
         <!--               enableCountByExample="true" enableUpdateByExample="true"-->
         <!--               enableDeleteByExample="true" enableSelectByExample="true"-->

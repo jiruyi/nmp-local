@@ -18,6 +18,8 @@ public interface NmplDataCollectExtMapper {
 
     Integer batchInsert(@Param("list") List<DataCollectVo> dataCollectVos);
 
+    Integer batchInsertLoad(@Param("list") List<DataCollectVo> dataCollectVos);
+
     List<DataCollectVo>selectTopTen(@Param("ids")List<String>ids,@Param("dataItemCode")String dataItemCode,@Param("uploadTime")Date uploadTime);
 
     // TODO: 2022/4/1 sql中有临时写死值需要在上前确认清

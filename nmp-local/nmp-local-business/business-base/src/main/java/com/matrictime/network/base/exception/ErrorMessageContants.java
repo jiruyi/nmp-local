@@ -47,6 +47,8 @@ public class ErrorMessageContants {
 
 	public static final String LOGOUT_SUCCESS_MSG = "成功退出";
 
+	public static final String DEVICE_LIST_IS_NULL_MSG = "上报列表不能为空";
+
 	public static final String DEVICE_IP_IS_NULL_MSG = "设备IP不能为空";
 
 	public static final String OPER_DESC_IS_NULL_MSG = "操作信息不能为空";

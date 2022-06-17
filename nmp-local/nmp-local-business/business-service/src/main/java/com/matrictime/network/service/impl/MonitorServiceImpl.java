@@ -65,14 +65,10 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     @Autowired(required = false)
     private NmplDataCollectMapper nmplDataCollectMapper;
 
-    // TODO: 2022/4/2 上线前需要确认配置信息
     private static final String USER_COUNT_CODE = "userNumber";
     private static final String TOTAL_BAND_WIDTH_CODE = "bandwidth";
-    private static final String INTRANET_BROADBAND_LOAD_CODE = "10004";
-    private static final String INTERNET_BROADBAND_LOAD_CODE = "10005";
-    private static final String TIMER_SHAFT = "timerShaft";
 
-    // TODO: 2022/4/2 上线前需要确认配置信息
+    // TODO: 2022/6/27 上线前需要确认配置信息
     private static final int USER_COUNT_TIME = 15;
     private static final int TOTAL_BAND_WIDTH_TIME = 15;
     private static final int SPLIT_TIME = 15;
@@ -251,7 +247,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                         List<Long> outTotalLoadVos = new ArrayList<>(24*60/15);
                         List<String> timeString = new ArrayList<>(24*60/15);
 
-                        Date startTime = DateUtils.addMinuteForDate(DateUtils.getStartForDay(new Date()), -SPLIT_TIME);
+                        Date startTime = DateUtils.getStartForDay(new Date());
                         for (int i=0; i<24*60/SPLIT_TIME ; i++){
                             BigDecimal inTotalLoad = BigDecimal.ZERO;
                             BigDecimal outTotalLoad = BigDecimal.ZERO;
@@ -291,7 +287,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                         List<Long> outTotalLoadVos = new ArrayList<>(24*60/15);
                         List<String> timeString = new ArrayList<>(24*60/15);
 
-                        Date startTime = DateUtils.addMinuteForDate(DateUtils.getStartForDay(new Date()), -SPLIT_TIME);
+                        Date startTime = DateUtils.getStartForDay(new Date());
                         for (int i=0; i<24*60/SPLIT_TIME; i++){
                             BigDecimal inTotalLoad = BigDecimal.ZERO;
                             BigDecimal outTotalLoad = BigDecimal.ZERO;

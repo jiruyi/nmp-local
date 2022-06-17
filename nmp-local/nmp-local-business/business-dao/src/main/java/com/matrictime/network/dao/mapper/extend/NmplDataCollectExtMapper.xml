@@ -109,6 +109,16 @@
         </foreach >
     </insert>
 
+    <insert id="batchInsertLoad" parameterType="com.matrictime.network.modelVo.DataCollectVo">
+        insert into nmpl_data_collect_for_load ( device_id, device_name,
+        device_type, data_item_name, data_item_code,
+        data_item_value, unit) values
+        <foreach collection ="list" item="data" separator =",">
+            ( #{data.deviceId},#{data.deviceName}, #{data.deviceType}, #{data.dataItemName}, #{data.dataItemCode},
+            #{data.dataItemValue}, #{data.unit})
+        </foreach >
+    </insert>
+
     <select id="selectTopTen" resultType="com.matrictime.network.modelVo.DataCollectVo">
         SELECT a.* from nmpl_data_collect a,
         (SELECT max(upload_time) as q,device_id,data_item_code from nmpl_data_collect group by device_id,data_item_code) as b
@@ -131,7 +141,7 @@
         select
             ifnull(sum(data_item_value),0)
         FROM
-            nmpl_data_collect
+            nmpl_data_collect_for_load
         where
             upload_time <![CDATA[ >= ]]> #{beginTime,jdbcType=TIMESTAMP}
         and upload_time <![CDATA[ < ]]> #{endTime,jdbcType=TIMESTAMP}

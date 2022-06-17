@@ -217,19 +217,17 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
     }
 
     @Override
-    public Result addSignal(NmplSignalVo req) {
+    public Result addSignal(AddSignalReq req) {
         Result result;
         try {
             // check param is legal
-            checkAddSignalParam(req);
+            checkAddSignalListParam(req);
             // if user logout,stop adding signal to this user
             boolean isOn = checkUserIsOn(req.getDeviceId());
             if (isOn){
                 EditSignalReq signalReq = new EditSignalReq();
-                List<NmplSignalVo> vos = new ArrayList<>(1);
-                vos.add(req);
                 signalReq.setEditType(DataConstants.EDIT_TYPE_ADD);
-                signalReq.setNmplSignalVos(vos);
+                signalReq.setNmplSignalVos(req.getNmplSignalVos());
                 Result<EditSignalResp> editSignal = editSignal(signalReq);
                 if (editSignal.isSuccess()){
                     result = buildResult(null);
@@ -629,6 +627,15 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
         }
         if (req.getUploadTime() == null){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "UploadTime"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+    private void checkAddSignalListParam(AddSignalReq req){
+        if (ParamCheckUtil.checkVoStrBlank(req.getDeviceId())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "DeviceId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (CollectionUtils.isEmpty(req.getNmplSignalVos())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "NmplSignalVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
     }
 

@@ -77,6 +77,11 @@ public class DataConstants {
     public static final Integer LEVEL_2 = 2;
     public static final Integer LEVEL_3 = 3;
 
+    // TODO: 2022/6/27 上线前需要确认配置信息
+    public static final String INTRANET_BROADBAND_LOAD_CODE = "10004";
+    public static final String INTERNET_BROADBAND_LOAD_CODE = "10005";
+    public static final String TIMER_SHAFT = "timerShaft";
+
     /**
      * redis key
      */

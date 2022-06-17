@@ -1,47 +1,20 @@
 package com.matrictime.network.request;
 
+import com.matrictime.network.modelVo.NmplSignalVo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.List;
 
 @Data
 public class AddSignalReq implements Serializable {
 
     private static final long serialVersionUID = 5773604491924285572L;
 
-    /**
-     * 设备编号
-     */
     private String deviceId;
 
     /**
-     * 信令名称
+     * 上报信令列表
      */
-    private String signalName;
-
-    /**
-     * 发送方ip
-     */
-    private String sendIp;
-
-    /**
-     * 接收方ip
-     */
-    private String receiveIp;
-
-    /**
-     * 信令内容
-     */
-    private String signalContent;
-
-    /**
-     * 业务模块
-     */
-    private String businessModule;
-
-    /**
-     * 上报时间
-     */
-    private Date uploadTime;
+    private List<NmplSignalVo> nmplSignalVos;
 }
