@@ -28,7 +28,8 @@ public class ConfigurationDomainServiceImpl implements ConfigurationDomainServic
         Integer res = 0;
         if(!CollectionUtils.isEmpty(configurationVoList)){
             for (ConfigurationVo configurationVo : configurationVoList) {
-                if(configurationVo.getDeviceId()==null||configurationVo.getType()==null){
+                if(configurationVo.getDeviceId()==null||configurationVo.getType()==null||
+                configurationVo.getRealIp()==null||configurationVo.getRealPort()==null||configurationVo.getUrl()==null){
                     throw new SystemException("参数缺失");
                 }
                 NmplConfigurationExample nmplConfigurationExample = new NmplConfigurationExample();
