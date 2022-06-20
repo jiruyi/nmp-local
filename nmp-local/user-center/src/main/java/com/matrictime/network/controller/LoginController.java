@@ -122,8 +122,9 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/zr")
-    public void zr(@RequestBody BaseReq req) throws EdException {
+    public Integer zr(@RequestBody BaseReq req) throws EdException {
         int i = JServiceImpl.setBSAuth(req.getCommonKey(), req.getUuid());
         log.info("接入基站认证结果："+i);
+        return i;
     }
 }
