@@ -7,6 +7,7 @@ import com.matrictime.network.base.SystemException;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplConfigMapper;
+import com.matrictime.network.dao.mapper.NmplConfigurationMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplConfigExtMapper;
 import com.matrictime.network.dao.model.*;
@@ -55,6 +56,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
 
     @Autowired(required = false)
     private NmplDeviceInfoMapper nmplDeviceInfoMapper;
+
+    @Autowired(required = false)
+    private NmplConfigurationMapper nmplConfigurationMapper;
 
     @Autowired
     private AsyncService asyncService;
@@ -230,15 +234,18 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                             httpParam.put(KEY_CONFIG_VALUE,nmplConfig.getConfigValue());
                             httpParam.put(KEY_UNIT,nmplConfig.getUnit());
                         }
+                        NmplConfigurationExample configurationExample = new NmplConfigurationExample();
+                        configurationExample.createCriteria().andTypeEqualTo(req.getDeviceType()).andDeviceTypeEqualTo(CONFIGURATION_TYPE_CONFIG);
+                        List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
                         switch (req.getDeviceType()){
                             case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_1:
                                 NmplBaseStationInfoExample bExample = new NmplBaseStationInfoExample();
                                 bExample.createCriteria().andStationIdEqualTo(deviceId).andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
                                 List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bExample);
-                                if (!CollectionUtils.isEmpty(stationInfos)){
+                                if (!CollectionUtils.isEmpty(stationInfos) && !CollectionUtils.isEmpty(configurations)){
                                     NmplBaseStationInfo info = stationInfos.get(0);
-                                    // TODO: 2022/4/7 path需要提供
-                                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),configPath));
+                                    NmplConfiguration nmplConfiguration = configurations.get(0);
+                                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),nmplConfiguration.getRealPort(),nmplConfiguration.getUrl()));
                                 }
                                 break;
                             case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_2:
@@ -247,10 +254,10 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                 NmplDeviceInfoExample dExample = new NmplDeviceInfoExample();
                                 dExample.createCriteria().andDeviceIdEqualTo(deviceId).andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
                                 List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dExample);
-                                if (!CollectionUtils.isEmpty(deviceInfos)){
+                                if (!CollectionUtils.isEmpty(deviceInfos) && !CollectionUtils.isEmpty(configurations)){
                                     NmplDeviceInfo info = deviceInfos.get(0);
-                                    // TODO: 2022/4/7 path需要提供
-                                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),configPath));
+                                    NmplConfiguration nmplConfiguration = configurations.get(0);
+                                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),nmplConfiguration.getRealPort(),nmplConfiguration.getUrl()));
                                 }
                                 break;
                             default:
@@ -270,6 +277,11 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                             httpParam.put(KEY_CONFIG_CODE,config.getConfigCode());
                             httpParam.put(KEY_CONFIG_VALUE,config.getConfigValue());
                             httpParam.put(KEY_UNIT,config.getUnit());
+
+                            NmplConfigurationExample configurationExample = new NmplConfigurationExample();
+                            configurationExample.createCriteria().andTypeEqualTo(config.getDeviceType()).andDeviceTypeEqualTo(CONFIGURATION_TYPE_CONFIG);
+                            List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
+
                             switch (config.getDeviceType()){
                                 case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_1:
                                     NmplBaseStationInfoExample bExample = new NmplBaseStationInfoExample();
@@ -278,8 +290,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                     if (!CollectionUtils.isEmpty(stationInfos)){
                                         for (NmplBaseStationInfo info : stationInfos){
                                             httpParam.put(KEY_DEVICE_ID,info.getStationId());
-                                            // TODO: 2022/4/7 path需要提供
-                                            httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                                            if (!CollectionUtils.isEmpty(configurations)){
+                                                httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),configurations.get(0).getRealPort(),configurations.get(0).getUrl()));
+                                            }
                                             httpList.add(httpParam);
                                         }
                                     }
@@ -293,8 +306,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                     if (!CollectionUtils.isEmpty(deviceInfos)){
                                         for (NmplDeviceInfo info : deviceInfos){
                                             httpParam.put(KEY_DEVICE_ID,info.getDeviceId());
-                                            // TODO: 2022/4/7 path需要提供
-                                            httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),null));
+                                            if (!CollectionUtils.isEmpty(configurations)){
+                                                httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),configurations.get(0).getRealPort(),configurations.get(0).getUrl()));
+                                            }
                                             httpList.add(httpParam);
                                         }
                                     }

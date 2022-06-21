@@ -51,15 +51,17 @@ public class AsyncService{
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
+                    if (map.containsKey(KEY_URL)){
 //                    String post = HttpClientUtil.post(map.get(KEY_URL), jsonReq.toJSONString());
-                    String post = "{\"isSuccess\":false}";
-                    log.info("AsyncService.httpSyncConfig result deviceId:{},req:{},post:{}",deviceId,jsonReq.toJSONString(),post);
-                    JSONObject jsonObject = JSONObject.parseObject(post);
-                    if (jsonObject != null && jsonObject.get(KEY_IS_SUCCESS) instanceof Boolean){
-                        flag = (Boolean) jsonObject.get(KEY_IS_SUCCESS);
+                        String post = "{\"isSuccess\":true}";
+                        log.info("AsyncService.httpSyncConfig result deviceId:{},req:{},post:{}",deviceId,jsonReq.toJSONString(),post);
+                        JSONObject jsonObject = JSONObject.parseObject(post);
+                        if (jsonObject != null && jsonObject.get(KEY_IS_SUCCESS) instanceof Boolean){
+                            flag = (Boolean) jsonObject.get(KEY_IS_SUCCESS);
+                        }
                     }
                 }catch (Exception e){
-                    log.warn("httpSyncConfig.HttpClientUtil Exception:{},deviceId:{},req:{}",e.getMessage(),deviceId,jsonReq.toJSONString());
+                    log.warn("httpSyncConfig.HttpClientUtil Exception:{},deviceId:{},map:{}",e.getMessage(),deviceId,JSONObject.toJSONString(map));
                 }
                 if (flag){
                     successIds.add(deviceId);
@@ -93,16 +95,18 @@ public class AsyncService{
                 jsonReq.put(KEY_IO_TYPE,ioType);
                 boolean flag = false;
                 try{
-                    // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
+                    if (map.containsKey(KEY_URL)) {
+                        // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
 //                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
-                    String postResp = "{\"isSuccess\":true}";
-                    log.info("AsyncService.httpSignalIo result deviceId:{},userId:{},req:{},postResp:{}",deviceId,userId,jsonReq.toJSONString(),postResp);
-                    JSONObject jsonObject = JSONObject.parseObject(postResp);
-                    if (jsonObject != null){
-                        Object success = jsonObject.get(KEY_IS_SUCCESS);
-                        if (success != null && success instanceof Boolean){
-                            if ((Boolean)success){
-                                flag = true;
+                        String postResp = "{\"isSuccess\":true}";
+                        log.info("AsyncService.httpSignalIo result deviceId:{},userId:{},req:{},postResp:{}", deviceId, userId, jsonReq.toJSONString(), postResp);
+                        JSONObject jsonObject = JSONObject.parseObject(postResp);
+                        if (jsonObject != null) {
+                            Object success = jsonObject.get(KEY_IS_SUCCESS);
+                            if (success != null && success instanceof Boolean) {
+                                if ((Boolean) success) {
+                                    flag = true;
+                                }
                             }
                         }
                     }
@@ -162,30 +166,32 @@ public class AsyncService{
                 jsonReq.put(KEY_FILE_NAME,fileName);
                 boolean flag = false;
                 try{
-                    // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
+                    if (map.containsKey(KEY_URL)) {
+                        // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
 //                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
-                    String postResp = "{\"isSuccess\":true}";
-                    log.info("AsyncService.httpPushFile result url:{},deviceId:{},req:{},postResp:{}",url,deviceId,jsonReq.toJSONString(),postResp);
-                    JSONObject jsonObject = JSONObject.parseObject(postResp);
-                    if (jsonObject != null){
-                        Object success = jsonObject.get(KEY_IS_SUCCESS);
-                        if (success != null && success instanceof Boolean){
-                            if ((Boolean)success){
-                                flag = true;
-                                NmplFileDeviceRelExample example = new NmplFileDeviceRelExample();
-                                example.createCriteria().andDeviceIdEqualTo(deviceId).andFileIdEqualTo(Long.parseLong(map.get(KEY_FILE_ID)));
-                                List<NmplFileDeviceRel> rels = nmplFileDeviceRelMapper.selectByExample(example);
-                                if (CollectionUtils.isEmpty(rels)){
-                                    NmplFileDeviceRel nmplFileDeviceRel = new NmplFileDeviceRel();
-                                    nmplFileDeviceRel.setFileId(Long.parseLong(map.get(KEY_FILE_ID)));
-                                    nmplFileDeviceRel.setDeviceId(deviceId);
-                                    nmplFileDeviceRelMapper.insertSelective(nmplFileDeviceRel);
-                                }else if (!rels.get(0).getIsDelete()){
-                                    NmplFileDeviceRel nmplFileDeviceRel = new NmplFileDeviceRel();
-                                    nmplFileDeviceRel.setId(rels.get(0).getId());
-                                    nmplFileDeviceRel.setIsDelete(IS_EXIST);
-                                    nmplFileDeviceRel.setUpdateTime(new Date());
-                                    nmplFileDeviceRelMapper.updateByPrimaryKeySelective(nmplFileDeviceRel);
+                        String postResp = "{\"isSuccess\":true}";
+                        log.info("AsyncService.httpPushFile result url:{},deviceId:{},req:{},postResp:{}", url, deviceId, jsonReq.toJSONString(), postResp);
+                        JSONObject jsonObject = JSONObject.parseObject(postResp);
+                        if (jsonObject != null) {
+                            Object success = jsonObject.get(KEY_IS_SUCCESS);
+                            if (success != null && success instanceof Boolean) {
+                                if ((Boolean) success) {
+                                    flag = true;
+                                    NmplFileDeviceRelExample example = new NmplFileDeviceRelExample();
+                                    example.createCriteria().andDeviceIdEqualTo(deviceId).andFileIdEqualTo(Long.parseLong(map.get(KEY_FILE_ID)));
+                                    List<NmplFileDeviceRel> rels = nmplFileDeviceRelMapper.selectByExample(example);
+                                    if (CollectionUtils.isEmpty(rels)) {
+                                        NmplFileDeviceRel nmplFileDeviceRel = new NmplFileDeviceRel();
+                                        nmplFileDeviceRel.setFileId(Long.parseLong(map.get(KEY_FILE_ID)));
+                                        nmplFileDeviceRel.setDeviceId(deviceId);
+                                        nmplFileDeviceRelMapper.insertSelective(nmplFileDeviceRel);
+                                    } else if (!rels.get(0).getIsDelete()) {
+                                        NmplFileDeviceRel nmplFileDeviceRel = new NmplFileDeviceRel();
+                                        nmplFileDeviceRel.setId(rels.get(0).getId());
+                                        nmplFileDeviceRel.setIsDelete(IS_EXIST);
+                                        nmplFileDeviceRel.setUpdateTime(new Date());
+                                        nmplFileDeviceRelMapper.updateByPrimaryKeySelective(nmplFileDeviceRel);
+                                    }
                                 }
                             }
                         }
@@ -225,16 +231,18 @@ public class AsyncService{
                 jsonReq.put(KEY_FILE_ID,fileId);
                 boolean flag = false;
                 try{
-                    // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
+                    if (map.containsKey(KEY_URL)) {
+                        // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
 //                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
-                    String postResp = "{\"isSuccess\":true}";
-                    log.info("AsyncService.httpStartFile result deviceId:{},req:{},postResp:{}",deviceId,jsonReq.toJSONString(),postResp);
-                    JSONObject jsonObject = JSONObject.parseObject(postResp);
-                    if (jsonObject != null){
-                        Object success = jsonObject.get(KEY_IS_SUCCESS);
-                        if (success != null && success instanceof Boolean){
-                            if ((Boolean)success){
-                                flag = true;
+                        String postResp = "{\"isSuccess\":true}";
+                        log.info("AsyncService.httpStartFile result deviceId:{},req:{},postResp:{}", deviceId, jsonReq.toJSONString(), postResp);
+                        JSONObject jsonObject = JSONObject.parseObject(postResp);
+                        if (jsonObject != null) {
+                            Object success = jsonObject.get(KEY_IS_SUCCESS);
+                            if (success != null && success instanceof Boolean) {
+                                if ((Boolean) success) {
+                                    flag = true;
+                                }
                             }
                         }
                     }

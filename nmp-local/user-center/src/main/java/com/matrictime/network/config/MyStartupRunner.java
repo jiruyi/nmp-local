@@ -64,7 +64,7 @@ public class MyStartupRunner implements CommandLineRunner {
                             e.printStackTrace();
                         }
                         try {
-                            Thread.currentThread().sleep(1000*30);
+                            Thread.sleep(1000*30);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

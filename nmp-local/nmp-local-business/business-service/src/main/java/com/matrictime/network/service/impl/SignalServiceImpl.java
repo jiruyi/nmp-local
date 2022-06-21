@@ -5,11 +5,9 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.constant.DataConstants;
-import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
-import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
-import com.matrictime.network.dao.mapper.NmplSignalIoMapper;
-import com.matrictime.network.dao.mapper.NmplSignalMapper;
+import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.NmplSignalExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
@@ -59,6 +57,9 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
 
     @Autowired(required = false)
     private NmplSignalExtMapper nmplSignalExtMapper;
+
+    @Autowired(required = false)
+    private NmplConfigurationMapper nmplConfigurationMapper;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -423,6 +424,9 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
         Map<String,String> map = new HashMap<>(4);
         String id = vo.getDeviceId();
         String bigType = vo.getDeviceBigType();
+        map.put(KEY_IO_TYPE,ioType);
+        map.put(KEY_USER_ID,userId);
+        map.put(KEY_DEVICE_ID,id);
 
         if (com.matrictime.network.base.constant.DataConstants.DEVICE_BIG_TYPE_0.equals(bigType)){
             NmplBaseStationInfoExample example = new NmplBaseStationInfoExample();
@@ -430,11 +434,12 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(example);
             if (!CollectionUtils.isEmpty(nmplBaseStationInfos)){
                 NmplBaseStationInfo info = nmplBaseStationInfos.get(0);
-                // TODO: 2022/4/7 path需要提供
-                map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),signalPath));
-                map.put(KEY_IO_TYPE,ioType);
-                map.put(KEY_USER_ID,userId);
-                map.put(KEY_DEVICE_ID,id);
+                NmplConfigurationExample configurationExample = new NmplConfigurationExample();
+                configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_1).andDeviceTypeEqualTo(CONFIGURATION_TYPE_SIGNAL);
+                List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
+                if (!CollectionUtils.isEmpty(configurations)){
+                    map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),configurations.get(0).getRealPort(),configurations.get(0).getUrl()));
+                }
             }
         }else if (com.matrictime.network.base.constant.DataConstants.DEVICE_BIG_TYPE_1.equals(bigType)){
             NmplDeviceInfoExample example = new NmplDeviceInfoExample();
@@ -442,11 +447,25 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(example);
             if (!CollectionUtils.isEmpty(nmplDeviceInfos)){
                 NmplDeviceInfo info = nmplDeviceInfos.get(0);
-                // TODO: 2022/4/7 path需要提供
-                map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),signalPath));
-                map.put(KEY_IO_TYPE,ioType);
-                map.put(KEY_USER_ID,userId);
-                map.put(KEY_DEVICE_ID,id);
+                NmplConfigurationExample configurationExample = new NmplConfigurationExample();
+                switch (info.getDeviceType()) {
+                    case SYSTEM_ID_1:
+                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_2).andDeviceTypeEqualTo(CONFIGURATION_TYPE_SIGNAL);
+                        break;
+                    case SYSTEM_ID_2:
+                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_3).andDeviceTypeEqualTo(CONFIGURATION_TYPE_SIGNAL);
+                        break;
+                    case SYSTEM_ID_3:
+                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_4).andDeviceTypeEqualTo(CONFIGURATION_TYPE_SIGNAL);
+                        break;
+                    default:
+                        break;
+
+                }
+                List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
+                if (!CollectionUtils.isEmpty(configurations)){
+                    map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),configurations.get(0).getRealPort(),configurations.get(0).getUrl()));
+                }
             }
         }
         return map;

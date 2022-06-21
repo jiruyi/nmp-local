@@ -58,6 +58,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
     @Autowired(required = false)
     private NmplDeviceInfoMapper nmplDeviceInfoMapper;
 
+    @Autowired(required = false)
+    private NmplConfigurationMapper nmplConfigurationMapper;
+
     @Autowired
     private UploadFileService uploadFileService;
 
@@ -425,6 +428,8 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                 map.put(KEY_FILE_ID,String.valueOf(file.getId()));
                 map.put(KEY_FILE_PATH,file.getFilePath());
                 map.put(KEY_FILE_NAME,file.getFileName());
+
+                NmplConfigurationExample configurationExample = new NmplConfigurationExample();
                 switch (req.getSystemId()){
                     case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_0:
                         NmplBaseStationInfoExample bexample = new NmplBaseStationInfoExample();
@@ -432,8 +437,12 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                         List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bexample);
                         if (!CollectionUtils.isEmpty(stationInfos)){
                             NmplBaseStationInfo info = stationInfos.get(0);
-                            // TODO: 2022/4/7 path需要提供
-                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),pushPath));
+                            configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_1).andDeviceTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE);
+                            List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
+                            if (!CollectionUtils.isEmpty(configurations)){
+                                map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),configurations.get(0).getRealPort(),configurations.get(0).getUrl()));
+                            }
+
                             httpList.add(map);
                         }
                         break;
@@ -445,8 +454,21 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                         List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dexample);
                         if (!CollectionUtils.isEmpty(deviceInfos)){
                             NmplDeviceInfo info = deviceInfos.get(0);
-                            // TODO: 2022/4/7 path需要提供
-                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),pushPath));
+                            switch (req.getSystemId()){
+                                case SYSTEM_ID_1:
+                                    configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_2).andDeviceTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE);
+                                    break;
+                                case SYSTEM_ID_2:
+                                    configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_3).andDeviceTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE);
+                                    break;
+                                case SYSTEM_ID_3:
+                                    configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_4).andDeviceTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE);
+                                    break;
+                            }
+                            List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
+                            if (!CollectionUtils.isEmpty(configurations)){
+                                map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),configurations.get(0).getRealPort(),configurations.get(0).getUrl()));
+                            }
                             httpList.add(map);
                         }
                         break;
@@ -543,42 +565,58 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                         List<String> successIds = new ArrayList<>();
                         List<String> failIds = new ArrayList<>();
                         List<Map<String,String>> httpList = new ArrayList<>();
+                        NmplConfigurationExample configurationExample = new NmplConfigurationExample();
                         switch (version.getSystemId()){
-                            case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_0:
+                            case SYSTEM_ID_0:
+                                configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_1).andDeviceTypeEqualTo(CONFIGURATION_TYPE_STARTFILE);
+                                List<NmplConfiguration> stationiConfigurations = nmplConfigurationMapper.selectByExample(configurationExample);
                                 for (NmplFileDeviceRel rel : rels){
                                     String deviceId = rel.getDeviceId();
                                     NmplBaseStationInfoExample bexample = new NmplBaseStationInfoExample();
                                     bexample.createCriteria().andStationIdEqualTo(deviceId).andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
                                     List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bexample);
+                                    Map<String,String> map = new HashMap<>();
+                                    map.put(KEY_DEVICE_ID,deviceId);
+                                    map.put(KEY_FILE_ID,String.valueOf(fileId));
                                     if (!CollectionUtils.isEmpty(stationInfos)){
                                         NmplBaseStationInfo info = stationInfos.get(0);
-                                        Map<String,String> map = new HashMap<>();
-                                        map.put(KEY_DEVICE_ID,deviceId);
-                                        map.put(KEY_FILE_ID,String.valueOf(fileId));
-                                        // TODO: 2022/4/7 path需要提供
-                                        map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),startPath));
-                                        httpList.add(map);
+                                        if (!CollectionUtils.isEmpty(stationiConfigurations)) {
+                                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),stationiConfigurations.get(0).getRealPort(),stationiConfigurations.get(0).getUrl()));
+                                        }
                                     }
+                                    httpList.add(map);
                                 }
                                 break;
-                            case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_1:
-                            case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_2:
-                            case com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_3:
+                            case SYSTEM_ID_1:
+                            case SYSTEM_ID_2:
+                            case SYSTEM_ID_3:
+                                switch (version.getSystemId()) {
+                                    case SYSTEM_ID_1:
+                                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_2).andDeviceTypeEqualTo(CONFIGURATION_TYPE_STARTFILE);
+                                        break;
+                                    case SYSTEM_ID_2:
+                                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_3).andDeviceTypeEqualTo(CONFIGURATION_TYPE_STARTFILE);
+                                        break;
+                                    case SYSTEM_ID_3:
+                                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_4).andDeviceTypeEqualTo(CONFIGURATION_TYPE_STARTFILE);
+                                        break;
+                                }
+                                List<NmplConfiguration> deviceConfigurations = nmplConfigurationMapper.selectByExample(configurationExample);
                                 for (NmplFileDeviceRel rel : rels){
                                     String deviceId = rel.getDeviceId();
                                     NmplDeviceInfoExample dexample = new NmplDeviceInfoExample();
                                     dexample.createCriteria().andDeviceIdEqualTo(deviceId).andStationStatusEqualTo(com.matrictime.network.base.constant.DataConstants.STATION_STATUS_ACTIVE).andIsExistEqualTo(IS_EXIST);
                                     List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dexample);
+                                    Map<String,String> map = new HashMap<>();
+                                    map.put(KEY_DEVICE_ID,deviceId);
+                                    map.put(KEY_FILE_ID,String.valueOf(fileId));
                                     if (!CollectionUtils.isEmpty(deviceInfos)){
                                         NmplDeviceInfo info = deviceInfos.get(0);
-                                        Map<String,String> map = new HashMap<>();
-                                        map.put(KEY_DEVICE_ID,deviceId);
-                                        map.put(KEY_FILE_ID,String.valueOf(fileId));
-                                        // TODO: 2022/4/7 path需要提供
-                                        map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),info.getLanPort(),startPath));
-                                        map.put(KEY_FILE_PATH,versionFile.getFilePath() + versionFile.getFileName());
-                                        httpList.add(map);
+                                        if (!CollectionUtils.isEmpty(deviceConfigurations)){
+                                            map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),deviceConfigurations.get(0).getRealPort(),deviceConfigurations.get(0).getUrl()));
+                                        }
                                     }
+                                    httpList.add(map);
                                 }
                                 break;
                             default:
