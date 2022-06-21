@@ -64,6 +64,9 @@ public class ConfigurationDomainServiceImpl implements ConfigurationDomainServic
         if(configurationReq.getDeviceId()!=null){
             criteria.andDeviceIdEqualTo(configurationReq.getDeviceId());
         }
+        if(configurationReq.getDeviceType()!=null){
+            criteria.andDeviceTypeEqualTo(configurationReq.getDeviceType());
+        }
         List<NmplConfiguration> nmplConfigurations = nmplConfigurationMapper.selectByExample(nmplConfigurationExample);
         return nmplConfigurations;
     }
