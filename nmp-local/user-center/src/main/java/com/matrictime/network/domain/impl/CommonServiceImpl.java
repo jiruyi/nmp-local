@@ -72,7 +72,7 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
             WsResultVo wsResultVo = JSONObject.parseObject(res.getErrorMsg(), new TypeReference<WsResultVo>() {});
             String result = wsResultVo.getResult();
             wsResultVo.setDestination(UcConstants.DESTINATION_IN);
-            String encryJsonToReq = resUtil.encryJsonToReq(result, sid);
+            String encryJsonToReq = resUtil.encryJsonToReq(result, getSidByCondition(wsResultVo.getSendObject()));
             wsResultVo.setResult(encryJsonToReq);
             res.setErrorMsg(null);
             String resultObj = resUtil.encryJsonToReq(res, sid);

@@ -69,6 +69,11 @@ public class DataConstants {
     public static final String CONFIG_DEVICE_TYPE_3 = "3";
     public static final String CONFIG_DEVICE_TYPE_4 = "4";
 
+    public static final String CONFIGURATION_DEVICE_TYPE_1 = "1";
+    public static final String CONFIGURATION_DEVICE_TYPE_2 = "2";
+    public static final String CONFIGURATION_DEVICE_TYPE_3 = "3";
+    public static final String CONFIGURATION_DEVICE_TYPE_4 = "4";
+
     public static final Boolean VERSION_FILE_IS_PUSHED = true;
 
     public static final Boolean VERSION_FILE_IS_STARTED = true;
@@ -86,6 +91,8 @@ public class DataConstants {
     public static final String CONFIGURATION_TYPE_SIGNAL = "2";
     public static final String CONFIGURATION_TYPE_PUSHFILE = "3";
     public static final String CONFIGURATION_TYPE_STARTFILE = "4";
+    public static final String CONFIGURATION_TYPE_ROUTER = "5";
+    public static final String CONFIGURATION_TYPE_LINK = "6";
 
     /**
      * redis key
