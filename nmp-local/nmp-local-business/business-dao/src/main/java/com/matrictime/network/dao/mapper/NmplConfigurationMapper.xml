@@ -8,6 +8,7 @@
     <result column="real_port" jdbcType="VARCHAR" property="realPort" />
     <result column="url" jdbcType="VARCHAR" property="url" />
     <result column="type" jdbcType="CHAR" property="type" />
+    <result column="device_type" jdbcType="CHAR" property="deviceType" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, device_id, real_ip, real_port, url, type
+    id, device_id, real_ip, real_port, url, type, device_type
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplConfigurationExample" resultMap="BaseResultMap">
     select
@@ -103,9 +104,11 @@
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplConfiguration">
     insert into nmpl_configuration (id, device_id, real_ip, 
-      real_port, url, type)
+      real_port, url, type, device_type
+      )
     values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{realIp,jdbcType=VARCHAR}, 
-      #{realPort,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{type,jdbcType=CHAR})
+      #{realPort,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{type,jdbcType=CHAR}, #{deviceType,jdbcType=CHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplConfiguration">
     insert into nmpl_configuration
@@ -128,6 +131,9 @@
       <if test="type != null">
         type,
       </if>
+      <if test="deviceType != null">
+        device_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -147,6 +153,9 @@
       </if>
       <if test="type != null">
         #{type,jdbcType=CHAR},
+      </if>
+      <if test="deviceType != null">
+        #{deviceType,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -177,6 +186,9 @@
       <if test="record.type != null">
         type = #{record.type,jdbcType=CHAR},
       </if>
+      <if test="record.deviceType != null">
+        device_type = #{record.deviceType,jdbcType=CHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -189,7 +201,8 @@
       real_ip = #{record.realIp,jdbcType=VARCHAR},
       real_port = #{record.realPort,jdbcType=VARCHAR},
       url = #{record.url,jdbcType=VARCHAR},
-      type = #{record.type,jdbcType=CHAR}
+      type = #{record.type,jdbcType=CHAR},
+      device_type = #{record.deviceType,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -212,6 +225,9 @@
       <if test="type != null">
         type = #{type,jdbcType=CHAR},
       </if>
+      <if test="deviceType != null">
+        device_type = #{deviceType,jdbcType=CHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -221,7 +237,8 @@
       real_ip = #{realIp,jdbcType=VARCHAR},
       real_port = #{realPort,jdbcType=VARCHAR},
       url = #{url,jdbcType=VARCHAR},
-      type = #{type,jdbcType=CHAR}
+      type = #{type,jdbcType=CHAR},
+      device_type = #{deviceType,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

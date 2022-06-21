@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * 
  * @author   hexu
- * @date   2022-06-06
+ * @date   2022-06-21
  */
 @Data
 public class NmplConfiguration {
@@ -35,9 +35,14 @@ public class NmplConfiguration {
     private String url;
 
     /**
-     * 路径类型 
+     * 路径类型 1：配置同步 2：信令启停 3：推送版本文件 4：启动版本文件
      */
     private String type;
+
+    /**
+     * 设备类型 1:基站 2 分发机 3 生成机 4 缓存机
+     */
+    private String deviceType;
 
     public Long getId() {
         return id;
@@ -85,5 +90,13 @@ public class NmplConfiguration {
 
     public void setType(String type) {
         this.type = type == null ? null : type.trim();
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType == null ? null : deviceType.trim();
     }
 }
