@@ -50,4 +50,6 @@ public interface NmplBaseStationInfoMapper {
 
     List<BaseStationInfoVo> selectBaseStationList(BaseStationInfoRequest baseStationInfoRequest);
 
+    List<BaseStationInfoVo> selectActiveBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
+
 }

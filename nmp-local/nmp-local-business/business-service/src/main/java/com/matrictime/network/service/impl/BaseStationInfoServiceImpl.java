@@ -146,6 +146,22 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
     }
 
     @Override
+    public Result<BaseStationInfoResponse> selectActiveBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
+        Result<BaseStationInfoResponse> result = new Result<>();
+        BaseStationInfoResponse baseStationInfoResponse = new BaseStationInfoResponse();
+        try {
+            baseStationInfoResponse.setBaseStationInfoList(baseStationInfoDomainService.
+                    selectActiveBaseStationInfo(baseStationInfoRequest));
+            result.setResultObj(baseStationInfoResponse);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
+    @Override
     public Result<BaseStationInfoResponse> selectBaseStationBatch(List<String> list) {
         Result<BaseStationInfoResponse> result = new Result<>();
         BaseStationInfoResponse baseStationInfoResponse = new BaseStationInfoResponse();

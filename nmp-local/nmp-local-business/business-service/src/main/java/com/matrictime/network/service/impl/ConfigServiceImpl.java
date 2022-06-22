@@ -235,7 +235,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                             httpParam.put(KEY_UNIT,nmplConfig.getUnit());
                         }
                         NmplConfigurationExample configurationExample = new NmplConfigurationExample();
-                        configurationExample.createCriteria().andTypeEqualTo(req.getDeviceType()).andDeviceTypeEqualTo(CONFIGURATION_TYPE_CONFIG);
+                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_CONFIG).andDeviceTypeEqualTo(req.getDeviceType());
                         List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
                         switch (req.getDeviceType()){
                             case com.matrictime.network.base.constant.DataConstants.CONFIG_DEVICE_TYPE_1:
@@ -279,7 +279,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                             httpParam.put(KEY_UNIT,config.getUnit());
 
                             NmplConfigurationExample configurationExample = new NmplConfigurationExample();
-                            configurationExample.createCriteria().andTypeEqualTo(config.getDeviceType()).andDeviceTypeEqualTo(CONFIGURATION_TYPE_CONFIG);
+                            configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_CONFIG).andDeviceTypeEqualTo(config.getDeviceType());
                             List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
 
                             switch (config.getDeviceType()){

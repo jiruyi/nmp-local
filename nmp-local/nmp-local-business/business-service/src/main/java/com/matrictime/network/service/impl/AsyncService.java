@@ -11,6 +11,7 @@ import com.matrictime.network.dao.model.NmplSignalIoExample;
 import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,9 @@ public class AsyncService{
     @Autowired(required = false)
     private NmplFileDeviceRelMapper nmplFileDeviceRelMapper;
 
+    @Value("${asynservice.isremote}")
+    private Integer isremote;
+
 
     @Async("taskExecutor")
     public Future<Map<String,List<String>>> httpSyncConfig(List<Map<String, String>> list) {
@@ -42,6 +46,7 @@ public class AsyncService{
         String deviceId = "";
         try {
             for (Map<String,String> map : list){
+                log.info("AsyncService.httpSyncConfig map:{},isremote:{}",JSONObject.toJSONString(map),isremote);
                 deviceId = map.get(KEY_DEVICE_ID);
                 String configCode = map.get(KEY_CONFIG_CODE);
                 JSONObject jsonReq = new JSONObject();
@@ -52,8 +57,12 @@ public class AsyncService{
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
                     if (map.containsKey(KEY_URL)){
-//                    String post = HttpClientUtil.post(map.get(KEY_URL), jsonReq.toJSONString());
-                        String post = "{\"isSuccess\":true}";
+                        String post = "";
+                        if (isremote == 1){
+                            post = HttpClientUtil.post(map.get(KEY_URL), jsonReq.toJSONString());
+                        }else {
+                            post = "{\"isSuccess\":true}";
+                        }
                         log.info("AsyncService.httpSyncConfig result deviceId:{},req:{},post:{}",deviceId,jsonReq.toJSONString(),post);
                         JSONObject jsonObject = JSONObject.parseObject(post);
                         if (jsonObject != null && jsonObject.get(KEY_IS_SUCCESS) instanceof Boolean){
@@ -87,6 +96,7 @@ public class AsyncService{
         String deviceId = "";
         try {
             for (Map<String,String> map : list){
+                log.info("AsyncService.httpSignalIo map:{},isremote:{}",JSONObject.toJSONString(map),isremote);
                 deviceId = map.get(KEY_DEVICE_ID);
                 String userId = map.get(KEY_USER_ID);
                 String ioType = map.get(KEY_IO_TYPE);
@@ -96,9 +106,12 @@ public class AsyncService{
                 boolean flag = false;
                 try{
                     if (map.containsKey(KEY_URL)) {
-                        // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
-                        String postResp = "{\"isSuccess\":true}";
+                        String postResp = "";
+                        if (isremote == 1){
+                            postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
+                        }else {
+                            postResp = "{\"isSuccess\":true}";
+                        }
                         log.info("AsyncService.httpSignalIo result deviceId:{},userId:{},req:{},postResp:{}", deviceId, userId, jsonReq.toJSONString(), postResp);
                         JSONObject jsonObject = JSONObject.parseObject(postResp);
                         if (jsonObject != null) {
@@ -154,6 +167,7 @@ public class AsyncService{
         List<String> failIds = new ArrayList<>();
         try {
             for (Map<String,String> map : list){
+                log.info("AsyncService.httpPushFile map:{},isremote:{}",JSONObject.toJSONString(map),isremote);
                 String deviceId = map.get(KEY_DEVICE_ID);
                 String fileId = map.get(KEY_FILE_ID);
                 String url = map.get(KEY_URL);
@@ -167,9 +181,12 @@ public class AsyncService{
                 boolean flag = false;
                 try{
                     if (map.containsKey(KEY_URL)) {
-                        // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
-                        String postResp = "{\"isSuccess\":true}";
+                        String postResp = "";
+                        if (isremote == 1){
+                            postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
+                        }else {
+                            postResp = "{\"isSuccess\":true}";
+                        }
                         log.info("AsyncService.httpPushFile result url:{},deviceId:{},req:{},postResp:{}", url, deviceId, jsonReq.toJSONString(), postResp);
                         JSONObject jsonObject = JSONObject.parseObject(postResp);
                         if (jsonObject != null) {
@@ -223,6 +240,7 @@ public class AsyncService{
         List<String> failIds = new ArrayList<>();
         try {
             for (Map<String,String> map : list){
+                log.info("AsyncService.httpStartFile map:{},isremote:{}",JSONObject.toJSONString(map),isremote);
                 String deviceId = map.get(KEY_DEVICE_ID);
                 String fileId = map.get(KEY_FILE_ID);
                 String url = map.get(KEY_URL);
@@ -232,9 +250,12 @@ public class AsyncService{
                 boolean flag = false;
                 try{
                     if (map.containsKey(KEY_URL)) {
-                        // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
-//                    String postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
-                        String postResp = "{\"isSuccess\":true}";
+                        String postResp = "";
+                        if (isremote == 1){
+                            postResp = HttpClientUtil.post(url, jsonReq.toJSONString());
+                        }else {
+                            postResp = "{\"isSuccess\":true}";
+                        }
                         log.info("AsyncService.httpStartFile result deviceId:{},req:{},postResp:{}", deviceId, jsonReq.toJSONString(), postResp);
                         JSONObject jsonObject = JSONObject.parseObject(postResp);
                         if (jsonObject != null) {
