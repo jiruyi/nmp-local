@@ -62,6 +62,7 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     public Result encryptForWs(String condition, String destination, Result res) throws Exception {
         if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
             ReqUtil resUtil = new ReqUtil();
+            log.info("encryptForWs errormsg:{}",res.getErrorMsg());
             WsResultVo wsResultVo = JSONObject.parseObject(res.getErrorMsg(), new TypeReference<WsResultVo>() {});
             String result = wsResultVo.getResult();
             wsResultVo.setDestination(UcConstants.DESTINATION_IN);
