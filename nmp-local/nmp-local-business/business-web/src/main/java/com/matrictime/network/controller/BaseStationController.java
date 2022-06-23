@@ -198,4 +198,23 @@ public class BaseStationController {
     }
 
 
+    /**
+     * 查询激活状态基站设备
+     * @param baseStationInfoRequest
+     * @return
+     */
+    @SystemLog(opermodul = "基站管理模块",operDesc = "查询激活状态基站设备",operType = "查询")
+    @RequestMapping(value = "/selectActiveBaseStation",method = RequestMethod.POST)
+    public Result<BaseStationInfoResponse> selectBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
+        Result<BaseStationInfoResponse> result = new Result<>();
+        try {
+            result = baseStationInfoService.selectActiveBaseStationInfo(baseStationInfoRequest);
+        }catch (Exception e){
+            log.info("查询激活状态基站设备异常:selectBaseStation{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("系统异常，请稍后再试");
+        }
+        return result;
+    }
+
 }

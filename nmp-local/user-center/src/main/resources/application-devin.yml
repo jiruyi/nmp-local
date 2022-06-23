@@ -44,3 +44,5 @@ app:
   timeout: 10000
   innerUrl: http://192.168.72.231:8006
   outerUrl: http://192.168.72.211:8007
+  stationip: 192.168.72.211                                 # 基站配置uc配对外网ip
+  stationport: 20066

@@ -437,7 +437,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                         List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bexample);
                         if (!CollectionUtils.isEmpty(stationInfos)){
                             NmplBaseStationInfo info = stationInfos.get(0);
-                            configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_1).andDeviceTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE);
+                            configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_1);
                             List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
                             if (!CollectionUtils.isEmpty(configurations)){
                                 map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),configurations.get(0).getRealPort(),configurations.get(0).getUrl()));
@@ -456,13 +456,13 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                             NmplDeviceInfo info = deviceInfos.get(0);
                             switch (req.getSystemId()){
                                 case SYSTEM_ID_1:
-                                    configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_2).andDeviceTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE);
+                                    configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_2);
                                     break;
                                 case SYSTEM_ID_2:
-                                    configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_3).andDeviceTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE);
+                                    configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_3);
                                     break;
                                 case SYSTEM_ID_3:
-                                    configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_4).andDeviceTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE);
+                                    configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_PUSHFILE).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_4);
                                     break;
                             }
                             List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
@@ -568,7 +568,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                         NmplConfigurationExample configurationExample = new NmplConfigurationExample();
                         switch (version.getSystemId()){
                             case SYSTEM_ID_0:
-                                configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_1).andDeviceTypeEqualTo(CONFIGURATION_TYPE_STARTFILE);
+                                configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_STARTFILE).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_1);
                                 List<NmplConfiguration> stationiConfigurations = nmplConfigurationMapper.selectByExample(configurationExample);
                                 for (NmplFileDeviceRel rel : rels){
                                     String deviceId = rel.getDeviceId();
@@ -592,13 +592,13 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                             case SYSTEM_ID_3:
                                 switch (version.getSystemId()) {
                                     case SYSTEM_ID_1:
-                                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_2).andDeviceTypeEqualTo(CONFIGURATION_TYPE_STARTFILE);
+                                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_STARTFILE).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_2);
                                         break;
                                     case SYSTEM_ID_2:
-                                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_3).andDeviceTypeEqualTo(CONFIGURATION_TYPE_STARTFILE);
+                                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_STARTFILE).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_3);
                                         break;
                                     case SYSTEM_ID_3:
-                                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_4).andDeviceTypeEqualTo(CONFIGURATION_TYPE_STARTFILE);
+                                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_STARTFILE).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_4);
                                         break;
                                 }
                                 List<NmplConfiguration> deviceConfigurations = nmplConfigurationMapper.selectByExample(configurationExample);

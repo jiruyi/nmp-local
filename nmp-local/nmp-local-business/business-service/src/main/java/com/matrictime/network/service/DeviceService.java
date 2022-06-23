@@ -21,6 +21,8 @@ public interface DeviceService {
 
     Result<DeviceResponse> selectLinkDevice(DeviceInfoRequest deviceInfoRequest);
 
+    Result<DeviceResponse> selectActiveDevice(DeviceInfoRequest deviceInfoRequest);
+
     Result<StationVo> selectDeviceId(DeviceInfoRequest deviceInfoRequest);
 
     Result<PageInfo> selectDeviceALl(DeviceInfoRequest deviceInfoRequest);
