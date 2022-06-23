@@ -55,8 +55,8 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             infoRequest.setStationNetworkId(networkId);
             infoRequest.setPublicNetworkIp(baseStationInfoRequest.getPublicNetworkIp());
             infoRequest.setLanIp(baseStationInfoRequest.getLanIp());
-            PageInfo<BaseStationInfoVo> baseStationInfo = baseStationInfoDomainService.selectBaseStationList(infoRequest);
-            if(baseStationInfo.getList().size() > 0){
+            List<BaseStationInfoVo> baseStationInfoVos = baseStationInfoDomainService.selectBaseStation(infoRequest);
+            if(baseStationInfoVos.size() > 0){
                 return new Result<>(false,"入网id或ip重复");
             }
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);

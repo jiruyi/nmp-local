@@ -70,4 +70,9 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
         return  pageResult;
     }
 
+    @Override
+    public List<DeviceInfoVo> getDevices(DeviceInfoRequest deviceInfoRequest) {
+        return nmplDeviceInfoMapper.getDevices(deviceInfoRequest);
+    }
+
 }
