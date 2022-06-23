@@ -27,10 +27,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -280,6 +284,15 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     groupVo.setUserGroupVoList(map.get(String.valueOf(groupVo.getGroupId())));
                 }
             }
+            //按照用户名排序
+        for (GroupVo groupVo : groupVoList) {
+//             list = new ArrayList<>();
+            List<UserGroupVo> list = groupVo.getUserGroupVoList();
+            if(!CollectionUtils.isEmpty(list)){
+                list = list.stream().sorted(Comparator.comparing(UserGroupVo::getNickName)).collect(Collectors.toList());
+                groupVo.setUserGroupVoList(list);
+            }
+        }
             GroupResp groupResp = new GroupResp();
             groupResp.setGroupVoList(groupVoList);
             result = buildResult(groupResp);
