@@ -83,4 +83,9 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         return  pageResult;
     }
 
+    @Override
+    public List<BaseStationInfoVo> selectBaseStation(BaseStationInfoRequest baseStationInfoRequest) {
+        return nmplBaseStationInfoMapper.selectBaseStation(baseStationInfoRequest);
+    }
+
 }

@@ -29,4 +29,6 @@ public interface BaseStationInfoDomainService {
     List<BaseStationInfoVo> selectByOperatorId(BaseStationInfoRequest baseStationInfoRequest);
 
     PageInfo<BaseStationInfoVo> selectBaseStationList(BaseStationInfoRequest baseStationInfoRequest);
+
+    List<BaseStationInfoVo> selectBaseStation(BaseStationInfoRequest baseStationInfoRequest);
 }
