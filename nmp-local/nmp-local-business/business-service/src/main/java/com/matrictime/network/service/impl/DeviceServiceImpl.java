@@ -5,6 +5,7 @@ import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
+import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
@@ -12,6 +13,7 @@ import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceService;
+import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -122,6 +124,27 @@ public class DeviceServiceImpl implements DeviceService {
         try {
             DeviceResponse deviceResponse = new DeviceResponse();
             deviceResponse.setDeviceInfoVos(deviceDomainService.selectLinkDevice(deviceInfoRequest));
+            result.setResultObj(deviceResponse);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
+    @Override
+    public Result<DeviceResponse> selectActiveDevice(DeviceInfoRequest deviceInfoRequest) {
+        Result<DeviceResponse> result = new Result<>();
+        try {
+            DeviceResponse deviceResponse = new DeviceResponse();
+            if (ParamCheckUtil.checkVoStrBlank(deviceInfoRequest.getDeviceType())){
+                log.info("DeviceServiceImpl.selectActiveDevice 接口异常,DeviceType"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
+                result.setErrorMsg("系统异常，请稍后再试");
+                result.setSuccess(false);
+                return result;
+            }
+            deviceResponse.setDeviceInfoVos(deviceDomainService.selectActiveDevice(deviceInfoRequest));
             result.setResultObj(deviceResponse);
             result.setSuccess(true);
         }catch (Exception e){

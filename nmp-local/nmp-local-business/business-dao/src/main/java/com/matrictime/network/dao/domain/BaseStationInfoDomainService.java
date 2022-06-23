@@ -20,6 +20,8 @@ public interface BaseStationInfoDomainService {
 
     List<BaseStationInfoVo> selectLinkBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
 
+    List<BaseStationInfoVo> selectActiveBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
+
     List<BaseStationInfoVo> selectBaseStationBatch(List<String> list );
 
     StationVo selectDeviceId(BaseStationInfoRequest baseStationInfoRequest);

@@ -592,4 +592,18 @@
     </where>
     order by nmpl_base_station_info.update_time desc
   </select>
+
+  <select id="selectActiveBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
+    select id,station_id, station_name, station_type,station_status,
+           nmpl_base_station_info.remark, public_network_ip,public_network_port,
+           lan_ip, SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id,lan_port,
+           relation_operator_id, company_name
+    from nmpl_base_station_info,nmpl_company_info
+    where
+      nmpl_base_station_info.is_exist = 1
+      and nmpl_company_info.is_exist = 1
+      and station_status = '02'
+      and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
+    order by nmpl_base_station_info.update_time desc
+  </select>
 </mapper>

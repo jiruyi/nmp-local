@@ -435,7 +435,7 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
             if (!CollectionUtils.isEmpty(nmplBaseStationInfos)){
                 NmplBaseStationInfo info = nmplBaseStationInfos.get(0);
                 NmplConfigurationExample configurationExample = new NmplConfigurationExample();
-                configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_1).andDeviceTypeEqualTo(CONFIGURATION_TYPE_SIGNAL);
+                configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_SIGNAL).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_1);
                 List<NmplConfiguration> configurations = nmplConfigurationMapper.selectByExample(configurationExample);
                 if (!CollectionUtils.isEmpty(configurations)){
                     map.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),configurations.get(0).getRealPort(),configurations.get(0).getUrl()));
@@ -450,13 +450,13 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
                 NmplConfigurationExample configurationExample = new NmplConfigurationExample();
                 switch (info.getDeviceType()) {
                     case SYSTEM_ID_1:
-                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_2).andDeviceTypeEqualTo(CONFIGURATION_TYPE_SIGNAL);
+                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_SIGNAL).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_2);
                         break;
                     case SYSTEM_ID_2:
-                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_3).andDeviceTypeEqualTo(CONFIGURATION_TYPE_SIGNAL);
+                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_SIGNAL).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_3);
                         break;
                     case SYSTEM_ID_3:
-                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_DEVICE_TYPE_4).andDeviceTypeEqualTo(CONFIGURATION_TYPE_SIGNAL);
+                        configurationExample.createCriteria().andTypeEqualTo(CONFIGURATION_TYPE_SIGNAL).andDeviceTypeEqualTo(CONFIGURATION_DEVICE_TYPE_4);
                         break;
                     default:
                         break;

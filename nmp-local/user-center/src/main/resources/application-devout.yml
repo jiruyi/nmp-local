@@ -2,18 +2,6 @@ server:
   port: 8007
 
 spring:
-  redis:
-    database: 0
-    host: 192.168.72.14
-    port: 6379
-    timeout: 500
-    lettuce:
-      pool:
-        min-idle: 0
-        max-active: 100
-        max-wait: -1
-        max-idle: 8
-
   application:
     name: UserCenter
   datasource:
@@ -41,5 +29,7 @@ app:
   id: UC010
   port: 9100
   timeout: 10000
-  innerUrl: http://192.168.72.231:8006
-  outerUrl: http://192.168.72.211:8007
+  innerUrl: http://127.0.0.1:8006
+  outerUrl: http://127.0.0.1:8007
+  stationip: 192.168.72.211                                 # 基站配置uc配对外网ip
+  stationport: 20066

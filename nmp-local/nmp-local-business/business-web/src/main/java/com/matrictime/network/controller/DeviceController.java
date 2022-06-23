@@ -288,7 +288,24 @@ public class DeviceController {
         return result;
     }
 
-
+    /**
+     * 查询非基站激活设备
+     * @param deviceInfoRequest
+     * @return
+     */
+    @SystemLog(opermodul = "非基站管理模块",operDesc = "查询非基站激活设备",operType = "查询")
+    @RequestMapping(value = "/selectActiveDevice",method = RequestMethod.POST)
+    public Result<DeviceResponse> selectDevice(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<DeviceResponse> result = new Result<>();
+        try {
+            result = deviceService.selectActiveDevice(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("查询非基站激活设备异常:selectDevice{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("系统异常，请稍后再试");
+        }
+        return result;
+    }
 
 
 
