@@ -2,14 +2,14 @@ package com.matrictime.network.config;
 
 import com.jzsg.bussiness.JServiceImpl;
 import com.matrictime.network.base.ComOptApiImpl;
-import com.matrictime.network.util.DateUtils;
+import com.matrictime.network.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
-import java.util.Date;
 
 
 @Component
@@ -33,12 +33,16 @@ public class MyStartupRunner implements CommandLineRunner {
     @Value("${app.handleType}")
     private Integer handleType;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public void run(String... args) throws Exception {
         log.info("SpringBoot run appName:{},appId:{},appPort:{},FlowType:{},handleType:{}", appName, appId, appPort, FlowType, handleType);
         JServiceImpl.FlowType = FlowType;
         JServiceImpl.handleType = handleType;
         JServiceImpl.start(appName, appId, appPort, comOptApi);
+        userService.updateUserLogStatus();
     }
 
     @PreDestroy
