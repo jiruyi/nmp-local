@@ -24,6 +24,11 @@ public class LoginReq extends BaseReq implements Serializable {
     private String userId;
 
     /**
+     * 绑定本地用户id
+     */
+    private String lId;
+
+    /**
      * 一体机设备ID
      */
     private String deviceId;

@@ -37,6 +37,8 @@ public class ErrorMessageContants {
 
 	public static final String USER_UNBIND_MSG = "用户未绑定";
 
+	public static final String LOGIN_BIND_MSG = "当前用户账号已绑定，跨设备登录请解绑！";
+
 	public static final String USER_LOGIN_MSG = "用户已登录";
 
 	public static final String SMS_CODE_NO_EXIST_MSG = "验证码已过期";
