@@ -7,6 +7,7 @@ import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.response.DeviceResponse;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -51,8 +53,8 @@ public class DeviceServiceImpl implements DeviceService {
             infoRequest.setStationNetworkId(NetworkId);
             infoRequest.setPublicNetworkIp(deviceInfoRequest.getPublicNetworkIp());
             infoRequest.setLanIp(deviceInfoRequest.getLanIp());
-            PageInfo device = deviceDomainService.selectDeviceALl(infoRequest);
-            if(device.getList().size() > 0){
+            List<DeviceInfoVo> devices = deviceDomainService.getDevices(infoRequest);
+            if(devices.size() > 0){
                 return new Result<>(false,"入网id或ip重复");
             }
             insertFlag = deviceDomainService.insertDevice(deviceInfoRequest);

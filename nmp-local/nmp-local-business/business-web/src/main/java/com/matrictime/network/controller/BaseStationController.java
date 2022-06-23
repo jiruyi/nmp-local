@@ -183,4 +183,19 @@ public class BaseStationController {
         return result;
     }
 
+    @SystemLog(opermodul = "路由管理模块",operDesc = "路由查询边界基站设备",operType = "主备设备查询基站")
+    @RequestMapping(value = "/selectBaseStation",method = RequestMethod.POST)
+    public Result<BaseStationInfoResponse> selectBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
+        Result<BaseStationInfoResponse> result = new Result<>();
+        try {
+            result = baseStationInfoService.selectLinkBaseStationInfo(baseStationInfoRequest);
+        }catch (Exception e){
+            log.info("主备设备查询基站:selectBaseStation{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("主备设备查询基站");
+        }
+        return result;
+    }
+
+
 }
