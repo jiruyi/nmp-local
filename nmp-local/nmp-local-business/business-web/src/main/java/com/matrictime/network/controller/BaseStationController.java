@@ -205,7 +205,7 @@ public class BaseStationController {
      */
     @SystemLog(opermodul = "基站管理模块",operDesc = "查询激活状态基站设备",operType = "查询")
     @RequestMapping(value = "/selectActiveBaseStation",method = RequestMethod.POST)
-    public Result<BaseStationInfoResponse> selectBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
+    public Result<BaseStationInfoResponse> selectActiveBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         Result<BaseStationInfoResponse> result = new Result<>();
         try {
             result = baseStationInfoService.selectActiveBaseStationInfo(baseStationInfoRequest);
