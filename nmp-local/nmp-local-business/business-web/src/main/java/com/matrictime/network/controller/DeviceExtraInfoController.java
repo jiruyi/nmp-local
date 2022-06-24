@@ -1,8 +1,10 @@
 package com.matrictime.network.controller;
 
 import com.matrictime.network.annotation.SystemLog;
+import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
+import com.matrictime.network.response.DeviceInfoExtResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceExtraInfoService;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 主备管理
@@ -107,6 +110,21 @@ public class DeviceExtraInfoController {
             log.info("备用设备删除异常:updateDeviceExtra{}",e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg("备用设备删除异常");
+        }
+        return result;
+    }
+
+    @SystemLog(opermodul = "主备管理",operDesc = "主设备查询",operType = "主设备查询")
+    @ApiOperation(value = "主设备查询",notes = "主设备查询")
+    @RequestMapping(value = "/selectRelDecive",method = RequestMethod.POST)
+    public Result<DeviceInfoExtResponse> selectDevice(@RequestBody DeviceExtraInfoRequest deviceExtraInfoRequest){
+        Result<DeviceInfoExtResponse> result = new Result<>();
+        try {
+            result = deviceExtraInfoService.selectDevices(deviceExtraInfoRequest);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+            log.info("主设备查询:selectRelDecive{}",e.getMessage());
         }
         return result;
     }

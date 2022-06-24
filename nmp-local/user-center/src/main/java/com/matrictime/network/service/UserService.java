@@ -43,4 +43,6 @@ public interface UserService {
     // 身份验证
     Result verify(VerifyReq verifyReq);
 
+    void updateUserLogStatus();
+
 }
