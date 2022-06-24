@@ -3,6 +3,7 @@ package com.matrictime.network.config;
 import com.alibaba.fastjson.JSONObject;
 import com.jzsg.bussiness.JServiceImpl;
 import com.matrictime.network.base.ComOptApiImpl;
+import com.matrictime.network.service.UserService;
 import com.matrictime.network.util.DateUtils;
 import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,9 @@ public class MyStartupRunner implements CommandLineRunner {
     @Value("${app.stationport}")
     private String stationport;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public void run(String... args) throws Exception {
         log.info("SpringBoot run appName:{},appId:{},appPort:{},FlowType:{},handleType:{}", appName, appId, appPort, FlowType, handleType);
@@ -73,6 +77,7 @@ public class MyStartupRunner implements CommandLineRunner {
                 }
             });
         }
+        userService.updateUserLogStatus();
 
     }
 
