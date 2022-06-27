@@ -36,13 +36,17 @@ spring:
           slow-sql-millis: 3000
       time-between-eviction-runs-millis: 10000
       min-evictable-idle-time-millis: 30000
+      async-init: true
   servlet:
     multipart:
       enabled: true
       file-size-threshold: 2KB
       max-file-size: 300MB
       max-request-size: 215MB
-
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    init-sqls: CREATE DATABASE IF NOT EXISTS `nmp_local` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
   redis:
     database: 0
     host: 192.168.72.14
