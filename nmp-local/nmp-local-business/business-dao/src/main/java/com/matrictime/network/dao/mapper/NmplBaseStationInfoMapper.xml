@@ -612,22 +612,13 @@
     lan_ip, SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id,lan_port,
     relation_operator_id, nick_name,company_name
     from nmpl_base_station_info,nmpl_company_info,nmpl_user
-    <where>
-      nmpl_base_station_info.is_exist = 1
-      and nmpl_company_info.is_exist = 1
-      and nmpl_user.is_exist = 1
-      <if test="lanIp != null and lanIp != ''">
-        or lan_ip = #{lanIp,jdbcType=CHAR}
-      </if>
-      <if test="publicNetworkIp != null and publicNetworkIp != ''">
-        or public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
-      </if>
-      <if test="stationNetworkId != null and stationNetworkId != ''">
+    where nmpl_base_station_info.is_exist = 1 and nmpl_company_info.is_exist = 1 and nmpl_user.is_exist = 1
+    and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
+    and nmpl_user.user_id = nmpl_base_station_info.create_user
+    and (
+        lan_ip = #{lanIp,jdbcType=CHAR} or public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
         or station_network_id like "%" #{stationNetworkId,jdbcType=CHAR}
-      </if>
-      and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
-      and nmpl_user.user_id = nmpl_base_station_info.create_user
-    </where>
+    )
     order by nmpl_base_station_info.update_time desc
   </select>
 </mapper>
