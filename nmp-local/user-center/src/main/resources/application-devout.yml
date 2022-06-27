@@ -2,6 +2,18 @@ server:
   port: 8007
 
 spring:
+  redis:
+    database: 0
+    host: 192.168.72.14
+    port: 6379
+    password: 123456
+    timeout: 500
+    lettuce:
+      pool:
+        min-idle: 0
+        max-active: 100
+        max-wait: -1
+        max-idle: 8
   application:
     name: UserCenter
   datasource:
