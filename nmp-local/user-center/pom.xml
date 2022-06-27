@@ -128,20 +128,20 @@
 
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>jzsg</id>
-            <name>jzsg</name>
-            <url>http://maven.matric.com/repository/maven-public/</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>jzsg</id>-->
+<!--            <name>jzsg</name>-->
+<!--            <url>http://maven.matric.com/repository/maven-public/</url>-->
+<!--            <layout>default</layout>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--    </repositories>-->
 
 
     <build>

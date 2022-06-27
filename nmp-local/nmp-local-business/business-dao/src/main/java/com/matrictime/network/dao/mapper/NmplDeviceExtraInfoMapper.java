@@ -3,6 +3,10 @@ package com.matrictime.network.dao.mapper;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfoExample;
 import java.util.List;
+
+import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
+import com.matrictime.network.modelVo.NmplDeviceInfoExtVo;
+import com.matrictime.network.request.DeviceExtraInfoRequest;
 import org.apache.ibatis.annotations.Param;
 
 public interface NmplDeviceExtraInfoMapper {
@@ -27,4 +31,6 @@ public interface NmplDeviceExtraInfoMapper {
     int updateByPrimaryKeySelective(NmplDeviceExtraInfo record);
 
     int updateByPrimaryKey(NmplDeviceExtraInfo record);
+
+    List<NmplDeviceInfoExtVo> selectDevices(DeviceExtraInfoRequest deviceExtraInfoRequest);
 }

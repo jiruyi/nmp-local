@@ -351,7 +351,10 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             if (LOGIN_STATUS_IN.equals(user.getLoginStatus())){
                 throw new SystemException(ErrorMessageContants.USER_LOGIN_MSG);
             }
-            if(!user.getPassword().equals(req.getPassword())){
+            if (!ParamCheckUtil.checkVoStrBlank(user.getlId()) && !user.getlId().equals(req.getLId())){
+                throw new SystemException(ErrorMessageContants.LOGIN_BIND_MSG);
+            }
+            if (!user.getPassword().equals(req.getPassword())){
                 throw new SystemException(ErrorMessageContants.PASSWORD_ERROR_MSG);
             }
             user.setDeviceId(req.getDeviceId());
@@ -834,6 +837,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }
         if(ParamCheckUtil.checkVoStrBlank(req.getSid())){
             throw new SystemException("sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getLId())){
+            throw new SystemException("lid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount()) && ParamCheckUtil.checkVoStrBlank(req.getUserId())){
             throw new SystemException("LoginAccount/UserId"+ErrorMessageContants.PARAM_IS_NULL_MSG);

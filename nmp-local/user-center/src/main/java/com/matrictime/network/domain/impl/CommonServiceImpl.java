@@ -68,13 +68,14 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
                 return res;
             }
             ReqUtil resUtil = new ReqUtil();
-            String sid = getSidByCondition(condition);
+            log.info("encryptForWs errormsg:{}",res.getErrorMsg());
             WsResultVo wsResultVo = JSONObject.parseObject(res.getErrorMsg(), new TypeReference<WsResultVo>() {});
             String result = wsResultVo.getResult();
             wsResultVo.setDestination(UcConstants.DESTINATION_IN);
             String encryJsonToReq = resUtil.encryJsonToReq(result, getSidByCondition(wsResultVo.getSendObject()));
             wsResultVo.setResult(encryJsonToReq);
             res.setErrorMsg(null);
+            String sid = getSidByCondition(condition);
             String resultObj = resUtil.encryJsonToReq(res, sid);
             res.setSuccess(true);
             res.setResultObj(resultObj);

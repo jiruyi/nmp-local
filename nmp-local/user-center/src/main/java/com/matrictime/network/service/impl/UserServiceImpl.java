@@ -17,6 +17,7 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.CheckUtil;
 import com.matrictime.network.base.util.ReqUtil;
+import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
@@ -385,6 +386,14 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         }
 
         return result;
+    }
+
+    @Override
+    public void updateUserLogStatus() {
+        User user = new User();
+        UserExample userExample = new UserExample();
+        user.setLoginStatus(DataConfig.LOGIN_STATUS_OUT);
+        userMapper.updateByExampleSelective(user,userExample);
     }
 
     private void commonVerify(VerifyReq req){

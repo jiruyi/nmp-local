@@ -119,6 +119,7 @@ public class UserFriendsController {
         String sendObject = "";
         if(StringUtils.isBlank(request.getDestination())){
             if (result.isSuccess()){
+                log.info("agreeFriendSendMsg result:{}",JSONObject.toJSONString(result));
                 wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
                 sendObject = wsResultVo.getSendObject();
                 wsResultVo.setSendObject(null);
