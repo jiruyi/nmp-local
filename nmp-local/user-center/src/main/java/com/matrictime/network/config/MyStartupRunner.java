@@ -44,6 +44,12 @@ public class MyStartupRunner implements CommandLineRunner {
     @Value("${app.stationport}")
     private String stationport;
 
+    @Value("${rz.sleep.time}")
+    private Integer rzSleepTime;
+
+    @Value("${rz.sleep.wait.time}")
+    private Integer rzSleepWaitTime;
+
     @Autowired
     private UserService userService;
 
@@ -55,7 +61,8 @@ public class MyStartupRunner implements CommandLineRunner {
         JServiceImpl.start(appName, appId, appPort, comOptApi);
         if (handleType == 1){
             new Thread(() -> {
-                while (true){
+                int i=0;
+                while (true && i < 5){
                     if (JServiceImpl.getFD()!=-1){
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("commonKey",stationip);
@@ -68,8 +75,15 @@ public class MyStartupRunner implements CommandLineRunner {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        i++;
                         try {
-                            Thread.sleep(1000*30);
+                            Thread.sleep(rzSleepTime);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        try {
+                            Thread.sleep(rzSleepWaitTime);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

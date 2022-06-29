@@ -27,6 +27,10 @@ public class DataConstants {
 
     public static final String REQUESET_HEADER_TOKEN = "jwt-token";
 
+    public static final String REQUESET_HEADER_DESTINATION = "destination";
+
+    public static final String REQUESET_HEADER_DEST = "jwt-dest";
+
     public static final String SUCCESS_MSG = "success";
 
     public static final String HEALTH_MONITOR_DEVICE_ID = "health_monitor_device_id:";
@@ -40,6 +44,8 @@ public class DataConstants {
     public static final String LEFT_BRACKET = "(";
 
     public static final String RIGHT_BRACKET = ")";
+
+    public static final String KEY_SPLIT_UNDERLINE = "_";
 
     public static final String PHONE_SMS_DAY_COUNT = "phone_sms_count_day:";
 
@@ -71,5 +77,7 @@ public class DataConstants {
     public static final String KEY_DESTINATION = "destination";
     public static final String KEY_COMMONPARAM = "commonParam";
     public static final String KEY_ENCRYPTPARAM = "encryptParam";
+
+    public static final String SYSTEM_UC = "UC";
 
 }

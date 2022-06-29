@@ -33,6 +33,11 @@ public class Result<T> implements Serializable {
      */
     private String errorMsg;
 
+    /**
+     * 附加信息
+     */
+    private String extendMsg;
+
     /*
      * 构造函数。
      */
@@ -50,6 +55,15 @@ public class Result<T> implements Serializable {
         this.success = success;
         this.errorMsg = msg;
     }
+
+    public Result(boolean success, T resultObj, String errorCode, String errorMsg, String extendMsg) {
+        this.success = success;
+        this.resultObj = resultObj;
+        this.errorCode = errorCode;
+        this.errorMsg = errorMsg;
+        this.extendMsg = extendMsg;
+    }
+
     public boolean isSuccess() {
         return success;
     }
@@ -81,14 +95,22 @@ public class Result<T> implements Serializable {
         this.errorMsg = errorMsg;
     }
 
+    public String getExtendMsg() {
+        return extendMsg;
+    }
+
+    public void setExtendMsg(String extendMsg) {
+        this.extendMsg = extendMsg;
+    }
 
     @Override
     public String toString() {
         return "Result{" +
                 "success=" + success +
                 ", resultObj=" + resultObj +
-                "errorCode=" + errorCode +
+                ", errorCode='" + errorCode + '\'' +
                 ", errorMsg='" + errorMsg + '\'' +
+                ", extendMsg='" + extendMsg + '\'' +
                 '}';
     }
 }

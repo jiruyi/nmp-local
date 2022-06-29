@@ -1,11 +1,14 @@
 package com.matrictime.network.controller.aop;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.matrictime.network.base.RequestContext;
 import com.matrictime.network.base.util.JwtUtils;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.model.User;
 import com.matrictime.network.dao.model.UserExample;
+import com.matrictime.network.model.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +21,14 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.List;
+
+import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.exception.ErrorMessageContants.TOKEN_ILLEGAL_MSG;
+import static com.matrictime.network.exception.ErrorMessageContants.TOKEN_INVALID_MSG;
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 /**
  * @author jiruyi
@@ -50,37 +60,48 @@ public class SessionHandlerInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         RequestContext.setRequestStartTimestamp();
         RequestContext.setRequest(request);
-        //1 获取token
-        String token = request.getHeader(DataConstants.REQUESET_HEADER_TOKEN);
-        if(StringUtils.isEmpty(token)){
-            log.info("请求:{}的token为空,访问被拒绝!",request.getRequestURI());
-            response.setStatus(403);
-            return false;
-        }
-        //2 解析token
-        if(ObjectUtils.isEmpty(JwtUtils.getClaimByName(token,"userId"))){
-            response.setStatus(403);
-            return false;
-        }
-        String userId = JwtUtils.getClaimByName(token,"userId").asString();
-        //3 查询用户信息
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
-        List<User> users = userMapper.selectByExample(userExample);
-        if (CollectionUtils.isEmpty(users)){
-            response.setStatus(403);
-            return false;
-        }
-        //4. 查看用户token是否失效
-        Object redisToken  = redisTemplate.opsForValue().get(userId+ DataConstants.USER_LOGIN_JWT_TOKEN);
-        if(ObjectUtils.isEmpty(redisToken) || !token.equals(redisToken.toString())){
-            response.setStatus(403);
-            response.setCharacterEncoding("Utf-8");
-            response.getWriter().print("登录已经失效，请重新登录");
-            return false;
-        }
+        if (StringUtils.isEmpty(request.getHeader(REQUESET_HEADER_DESTINATION))){
+            //1 获取token
+            String token = request.getHeader(REQUESET_HEADER_TOKEN);
+            String dest = request.getHeader(REQUESET_HEADER_DEST);
+            if(StringUtils.isEmpty(token) || StringUtils.isEmpty(dest)){
+                log.info("请求:{}的token:{}/dest:{}为空,访问被拒绝!",request.getRequestURI(),token,dest);
+                response.setStatus(SC_OK);
+                Result result = new Result<Object>(false,null,String.valueOf(SC_FORBIDDEN),TOKEN_ILLEGAL_MSG);
+                responseJson(response,result);
+                return false;
+            }
+            //2 解析token
+            if(ObjectUtils.isEmpty(JwtUtils.getClaimByName(token,"userId"))){
+                response.setStatus(SC_OK);
+                Result result = new Result<Object>(false,null,String.valueOf(SC_FORBIDDEN),TOKEN_ILLEGAL_MSG);
+                responseJson(response,result);
+                return false;
+            }
+            String userId = JwtUtils.getClaimByName(token,"userId").asString();
+            //3 查询用户信息
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
+            List<User> users = userMapper.selectByExample(userExample);
+            if (CollectionUtils.isEmpty(users)){
+                response.setStatus(SC_OK);
+                Result result = new Result<Object>(false,null,String.valueOf(SC_FORBIDDEN),TOKEN_ILLEGAL_MSG);
+                responseJson(response,result);
+                return false;
+            }
+            //4. 查看用户token是否失效
+            StringBuffer sb = new StringBuffer(SYSTEM_UC);
+            sb.append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(dest).append(USER_LOGIN_JWT_TOKEN);
+            Object redisToken  = redisTemplate.opsForValue().get(sb.toString());
+            if(ObjectUtils.isEmpty(redisToken) || !token.equals(redisToken.toString())){
+                response.setStatus(SC_OK);
+                Result result = new Result<Object>(false,null,String.valueOf(SC_FORBIDDEN),TOKEN_INVALID_MSG);
+                responseJson(response,result);
+                return false;
+            }
 
-        RequestContext.setUser(users.get(NumberUtils.INTEGER_ZERO));
+            RequestContext.setUser(users.get(NumberUtils.INTEGER_ZERO));
+        }
         return true;
     }
 
@@ -96,5 +117,20 @@ public class SessionHandlerInterceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
                                 Object handler, Exception ex) throws Exception {
         RequestContext.clean();
+    }
+
+    /**
+     * 返回JSON数据
+     * @param response
+     * @param obj
+     * @throws Exception
+     */
+    public static void responseJson(HttpServletResponse response, Object obj) throws Exception {
+        response.setContentType("application/json; charset=utf-8");
+        PrintWriter writer = response.getWriter();
+        writer.print(JSONObject.toJSONString(obj, SerializerFeature.WriteMapNullValue,
+                SerializerFeature.WriteDateUseDateFormat));
+        writer.close();
+        response.flushBuffer();
     }
 }

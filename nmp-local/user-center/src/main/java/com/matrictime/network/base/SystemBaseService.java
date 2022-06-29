@@ -46,6 +46,19 @@ public class SystemBaseService {
         return r;
     }
 
+    public <T> Result<T> buildResult(T response,String errCode ,String errorMessage,String extendMsg){
+
+        Result<T> r = new Result<T>();
+
+        r.setSuccess(true);
+
+        r.setResultObj(response);
+        r.setErrorCode(errCode);
+        r.setErrorMsg(errorMessage);
+        r.setExtendMsg(extendMsg);
+        return r;
+    }
+
 
 
     /**

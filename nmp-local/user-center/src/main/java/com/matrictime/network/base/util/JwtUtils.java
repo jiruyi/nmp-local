@@ -5,12 +5,14 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.matrictime.network.dao.model.User;
+import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.exception.ErrorMessageContants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+
+import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 
 /**
  * @author jiruyi
@@ -28,14 +30,14 @@ public class JwtUtils {
      * @param user
      * @return
      */
-    public static String createToken(User user){
+    public static String createToken(UserVo user,String destination){
         return  JWT.create().withAudience(String.valueOf(user.getUserId()))
                 .withIssuedAt(new Date())
                 .withClaim("nickName",user.getNickName())
                 .withClaim("loginAccount",user.getLoginAccount())
                 .withClaim("userId",String.valueOf(user.getUserId()))
                 .withClaim("phone",user.getPhoneNumber())
-                .sign(Algorithm.HMAC256(String.valueOf(user.getUserId())));
+                .sign(Algorithm.HMAC256(user.getUserId()+KEY_SPLIT_UNDERLINE+destination));
 
     }
 

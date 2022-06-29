@@ -11,6 +11,11 @@ import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.matrictime.network.base.UcConstants.DESTINATION_IN;
+import static com.matrictime.network.constant.DataConstants.REQUESET_HEADER_DESTINATION;
 
 @Slf4j
 public class ComOptApiImpl implements ComOptApi {
@@ -29,7 +34,9 @@ public class ComOptApiImpl implements ComOptApi {
                 jsonObject.remove(DataConstants.MAP_KEY_URL);
                 try {
                     log.info("密区处理接收信息HttpClientUtil.post url:{},paramObject:{}",url, jsonObject.toJSONString());
-                    String post = HttpClientUtil.post(url, jsonObject.toJSONString());
+                    Map<String,String> map = new HashMap<>(2);
+                    map.put(REQUESET_HEADER_DESTINATION,DESTINATION_IN);
+                    String post = HttpClientUtil.post(url, jsonObject.toJSONString(), map);
                     log.info("密区处理接收信息结果HttpClientUtil.post post:{}",post);
                     ResModel resModel = new ResModel();
                     resModel.setUuid(reqModel.getUuid());
