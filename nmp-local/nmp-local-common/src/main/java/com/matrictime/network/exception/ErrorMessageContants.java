@@ -13,6 +13,10 @@ public class ErrorMessageContants {
 
 	public static final String SYSTEM_ERROR_MSG = "系统异常，请稍后重试！";
 
+	public static final String TOKEN_ILLEGAL_MSG = "用户请求异常，请重新登录";
+
+	public static final String TOKEN_INVALID_MSG = "用户令牌失效，请重新登录";
+
 	public static final String PARAM_IS_NULL_MSG = "必输入参为空";
 
 	public static final String PARAM_IS_UNEXPECTED_MSG = "入参有误";
@@ -38,6 +42,8 @@ public class ErrorMessageContants {
 	public static final String USER_UNBIND_MSG = "用户未绑定";
 
 	public static final String LOGIN_BIND_MSG = "当前用户账号已绑定，跨设备登录请解绑！";
+
+	public static final String USER_BIND_IS_NOT_LOCAL = "本地用户不是当前绑定用户，无法解绑";
 
 	public static final String USER_LOGIN_MSG = "用户已登录";
 

@@ -16,6 +16,7 @@ import com.matrictime.network.api.response.UserResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.util.CheckUtil;
+import com.matrictime.network.base.util.JwtUtils;
 import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
@@ -33,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -41,9 +43,10 @@ import org.springframework.util.ObjectUtils;
 
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import static com.matrictime.network.config.DataConfig.SYSTEM_UC;
+import static com.matrictime.network.constant.DataConstants.*;
 
 /**
  * @author jiruyi
@@ -67,6 +70,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Value("${app.innerUrl}")
     private String url;
+
 
     /**
      * 正则表达式：验证手机号

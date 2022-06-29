@@ -17,6 +17,7 @@ import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -92,14 +93,22 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
             if (ErrorCode.SYSTEM_ERROR.equals(res.getErrorCode())) {
                 return res;
             }
-            String userId = res.getErrorMsg();
+            String extendMsg = res.getExtendMsg();
+            res.setExtendMsg(null);
+            if (StringUtils.isBlank(extendMsg)){
+                return res;
+            }
+            JSONObject jsonObject = JSONObject.parseObject(extendMsg);
+            String sid = jsonObject.getString("sid");
+            jsonObject.remove("sid");
             ReqUtil resUtil = new ReqUtil();
             log.info("登录开始加密了：{},{}",JSONObject.toJSONString(req),JSONObject.toJSONString(res));
-            String resultObj = resUtil.encryJsonToReq(res, res.getErrorCode());
+            String resultObj = resUtil.encryJsonToReq(res, sid);
             res.setSuccess(true);
             res.setResultObj(resultObj);
-            res.setErrorMsg(userId);
+            res.setErrorMsg(null);
             res.setErrorCode(null);
+            res.setExtendMsg(jsonObject.toJSONString());
         }
         return res;
     }

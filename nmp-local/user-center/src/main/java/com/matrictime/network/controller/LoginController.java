@@ -1,13 +1,11 @@
 package com.matrictime.network.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.util.EdException;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.controller.aop.MonitorRequest;
-import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.LoginService;
@@ -27,9 +25,6 @@ public class LoginController {
 
     @Autowired
     private LoginService loginService;
-
-    @Autowired
-    private CommonService commonService;
 
     /**
      * 登录

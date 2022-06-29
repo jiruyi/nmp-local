@@ -20,14 +20,12 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.springframework.util.CollectionUtils;
 
 import java.io.*;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class HttpClientUtil {
 
@@ -127,6 +125,36 @@ public class HttpClientUtil {
         RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
         httpPost.setConfig(requestConfig);
         httpPost.setHeader("Content-Type", "application/json; charset=utf-8");
+        httpPost.setEntity(new StringEntity(data, "UTF-8"));
+        HttpResponse response = httpClient.execute(httpPost);
+        String httpEntityContent = getHttpEntityContent(response);
+        httpPost.abort();
+        return httpEntityContent;
+    }
+
+    /**
+     * 封装HTTP POST方法
+     *
+     * @param
+     * @param （如JSON串）
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    public static String post(String url, String data, Map<String,String> header) throws ClientProtocolException, IOException {
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(url);
+        //设置请求和传输超时时间
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
+        httpPost.setConfig(requestConfig);
+        httpPost.setHeader("Content-Type", "application/json; charset=utf-8");
+        if (!CollectionUtils.isEmpty(header)){
+            Iterator<Map.Entry<String,String>> it=header.entrySet().iterator();
+            while (it.hasNext()){
+                Map.Entry<String,String> entry=it.next();
+                httpPost.setHeader(entry.getKey(),entry.getValue());
+            }
+        }
         httpPost.setEntity(new StringEntity(data, "UTF-8"));
         HttpResponse response = httpClient.execute(httpPost);
         String httpEntityContent = getHttpEntityContent(response);
