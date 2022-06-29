@@ -27,4 +27,6 @@ public class WebSocketVo implements Serializable {
 
     private String nickName;
 
+    private String loginAccount;
+
 }

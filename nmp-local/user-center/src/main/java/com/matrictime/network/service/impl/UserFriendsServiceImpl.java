@@ -338,6 +338,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         webSocketVo.setAddUserId(addUserRequestReq.getAddUserId());
         webSocketVo.setUserId(addUserRequestReq.getUserId());
         webSocketVo.setNickName(user.getNickName());
+        webSocketVo.setLoginAccount(user.getLoginAccount());
         webSocketVo.setPhoneNumber(user.getPhoneNumber());
         webSocketVo.setSex(user.getSex());
         webSocketVo.setRequestId(addUserRequestReq.getRequestId());
