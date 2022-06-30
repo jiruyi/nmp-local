@@ -9,6 +9,7 @@
         <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
         <result column="sex" jdbcType="VARCHAR" property="sex" />
         <result column="login_status" jdbcType="VARCHAR" property="loginStatus" />
+        <result column="login_account" jdbcType="VARCHAR" property="loginAccount" />
     </resultMap>
 
 
@@ -28,7 +29,7 @@
     </update>
 
     <select id="selectByCondition" resultMap="BaseResultMap">
-        select a.*,b.login_status,b.nick_name,b.sex,b.phone_number from user_group a,`user` b where a.user_id=b.user_id
+        select a.*,b.login_status,b.nick_name,b.sex,b.phone_number,b.login_account from user_group a,`user` b where a.user_id=b.user_id
         <if test="groupId != null">
             and  a.group_id = #{groupId,jdbcType=VARCHAR}
         </if>
@@ -40,7 +41,7 @@
 
 
     <select id="selectByGroupIds" resultMap="BaseResultMap">
-        select a.*,b.login_status,b.nick_name,b.sex,b.phone_number from user_group a,user b
+        select a.*,b.login_status,b.nick_name,b.sex,b.phone_number,b.login_account from user_group a,user b
         where a.user_id=b.user_id
         and a.group_id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
