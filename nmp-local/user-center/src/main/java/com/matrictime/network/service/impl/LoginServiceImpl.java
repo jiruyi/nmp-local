@@ -341,9 +341,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             if (LOGIN_STATUS_IN.equals(user.getLoginStatus())){
                 throw new SystemException(ErrorMessageContants.USER_LOGIN_MSG);
             }
-            if (!ParamCheckUtil.checkVoStrBlank(user.getlId()) && !user.getlId().equals(req.getLId())){
-                throw new SystemException(ErrorMessageContants.LOGIN_BIND_MSG);
-            }
+//            if (!ParamCheckUtil.checkVoStrBlank(user.getlId()) && !user.getlId().equals(req.getLId())){
+//                throw new SystemException(ErrorMessageContants.LOGIN_BIND_MSG);
+//            }
             if (!user.getPassword().equals(req.getPassword())){
                 throw new SystemException(ErrorMessageContants.PASSWORD_ERROR_MSG);
             }
