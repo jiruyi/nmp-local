@@ -32,4 +32,6 @@ public class UserGroupVo implements Serializable {
     private String remarkName;
 
     private String loginStatus;
+
+    private String loginAccount;
 }
