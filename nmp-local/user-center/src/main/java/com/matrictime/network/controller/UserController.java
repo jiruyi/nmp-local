@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.matrictime.network.config.DataConfig.JSON_KEY_COMMON_KEY;
+import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 
 /**
  * @author jiruyi
@@ -136,7 +137,7 @@ public class UserController {
         if(StringUtils.isBlank(deleteFriendReq.getDestination())){
             if (result.isSuccess()){
                 wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
-                sendObject = wsResultVo.getSendObject();
+                sendObject = wsResultVo.getSendObject()+KEY_SPLIT_UNDERLINE+wsResultVo.getDestination();
                 wsResultVo.setSendObject(null);
                 result.setErrorMsg(null);
             }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.util.HttpClientUtil;
+import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,8 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 
 /**
  * websocket的处理类。
@@ -72,14 +75,20 @@ public class WebSocketServer {
             webSocketMap.remove(userId);
             //从set中删除
             subOnlineCount();
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("userId",userId);
-            jsonObject.put("destination",UcConstants.DESTINATION_IN);
-            try {
-                log.info("websocket系统退出地址:{},信息:{}","http://127.0.0.1:8007"+ UcConstants.URL_SYSLOGOUT,jsonObject.toJSONString());
-                HttpClientUtil.post("http://127.0.0.1:8007"+ UcConstants.URL_SYSLOGOUT, jsonObject.toJSONString());
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (!ParamCheckUtil.checkVoStrBlank(userId)){
+                int i = userId.lastIndexOf(KEY_SPLIT_UNDERLINE);
+                if (i>0){
+                    String delUserId = userId.substring(0,i);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("userId",delUserId);
+                    jsonObject.put("destination",UcConstants.DESTINATION_IN);
+                    try {
+                        log.info("websocket系统退出地址:{},信息:{}","http://127.0.0.1:8007"+ UcConstants.URL_SYSLOGOUT,jsonObject.toJSONString());
+                        HttpClientUtil.post("http://127.0.0.1:8007"+ UcConstants.URL_SYSLOGOUT, jsonObject.toJSONString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         log.info("用户退出:"+userId+",当前在线用户数为:" + getOnlineCount());

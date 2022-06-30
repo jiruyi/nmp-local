@@ -50,6 +50,9 @@ public class MyStartupRunner implements CommandLineRunner {
     @Value("${rz.sleep.wait.time}")
     private Integer rzSleepWaitTime;
 
+    @Value("${rz.retry.time}")
+    private Integer rzRetryTime;
+
     @Autowired
     private UserService userService;
 
@@ -60,36 +63,37 @@ public class MyStartupRunner implements CommandLineRunner {
         JServiceImpl.handleType = handleType;
         JServiceImpl.start(appName, appId, appPort, comOptApi);
         if (handleType == 1){
-            new Thread(() -> {
-                int i=0;
-                while (true && i < 5){
-                    if (JServiceImpl.getFD()!=-1){
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("commonKey",stationip);
-                        jsonObject.put("uuid",stationport);
-                        try {
-                            String post = HttpClientUtil.post("http://127.0.0.1:8006/user/zr", jsonObject.toJSONString());
-                            if ("0".equals(post)){
-                                break;
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+            int i=0;
+            while (true && i < rzRetryTime){
+                log.info("FD:"+JServiceImpl.getFD());
+                if (JServiceImpl.getFD()!=-1){
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("commonKey",stationip);
+                    jsonObject.put("uuid",stationport);
+                    try {
+                        String post = HttpClientUtil.post("http://127.0.0.1:8006/user/zr", jsonObject.toJSONString());
+                        if ("0".equals(post.trim())){
+                            break;
                         }
-                        i++;
-                        try {
-                            Thread.sleep(rzSleepTime);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }else {
-                        try {
-                            Thread.sleep(rzSleepWaitTime);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    i++;
+                    try {
+                        log.info("认证重试第"+i+"次");
+                        Thread.sleep(rzSleepTime);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    try {
+                        log.info("等待非密区程序启动后做认证");
+                        Thread.sleep(rzSleepWaitTime);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
-            });
+            }
         }
         userService.updateUserLogStatus();
 
@@ -97,7 +101,7 @@ public class MyStartupRunner implements CommandLineRunner {
 
     @PreDestroy
     public void destory() throws Exception{
-        JServiceImpl.stop();
+//        JServiceImpl.stop();
         log.info("在程序关闭后执行");
     }
 }

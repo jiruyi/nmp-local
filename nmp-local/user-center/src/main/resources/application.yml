@@ -53,3 +53,5 @@ rz:
     time: 6000
     wait:
       time: 30000
+  retry:
+    time: 5

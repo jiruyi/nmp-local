@@ -1,18 +1,14 @@
 package com.matrictime.network.controller;
 
 
-import com.alibaba.druid.support.json.JSONUtils;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.matrictime.network.api.modelVo.WebSocketVo;
 import com.matrictime.network.api.modelVo.WsResultVo;
-import com.matrictime.network.api.modelVo.WsSendVo;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.AddUserRequestResp;
 import com.matrictime.network.api.response.UserFriendResp;
 
-import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.controller.aop.MonitorRequest;
 import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.exception.ErrorMessageContants;
@@ -29,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+
+import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 
 @RequestMapping(value = "/userFriends")
 @Api(value = "用户好友",tags = "用户好友接口")
@@ -121,7 +119,7 @@ public class UserFriendsController {
             if (result.isSuccess()){
                 log.info("agreeFriendSendMsg result:{}",JSONObject.toJSONString(result));
                 wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
-                sendObject = wsResultVo.getSendObject();
+                sendObject = wsResultVo.getSendObject()+KEY_SPLIT_UNDERLINE+wsResultVo.getDestination();
                 wsResultVo.setSendObject(null);
                 result.setErrorMsg(null);
             }
@@ -141,7 +139,7 @@ public class UserFriendsController {
         if(StringUtils.isBlank(addUserRequestReq.getDestination())){
             if (result.isSuccess()){
                 wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
-                sendObject = wsResultVo.getSendObject();
+                sendObject = wsResultVo.getSendObject()+KEY_SPLIT_UNDERLINE+wsResultVo.getDestination();
                 wsResultVo.setSendObject(null);
                 result.setErrorMsg(null);
             }
