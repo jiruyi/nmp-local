@@ -12,13 +12,13 @@ import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
-import com.matrictime.network.base.util.CheckUtil;
 import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.controller.WebSocketServer;
 import com.matrictime.network.dao.mapper.GroupInfoMapper;
 import com.matrictime.network.dao.mapper.UserMapper;
+import com.matrictime.network.dao.mapper.ext.UserExtMapper;
 import com.matrictime.network.dao.model.GroupInfo;
 import com.matrictime.network.dao.model.GroupInfoExample;
 import com.matrictime.network.dao.model.User;
@@ -47,7 +47,6 @@ import java.util.List;
 
 import static com.matrictime.network.base.UcConstants.DESTINATION_FOR_ENC;
 import static com.matrictime.network.config.DataConfig.LOGIN_STATUS_IN;
-import static com.matrictime.network.exception.ErrorMessageContants.USER_LOGIN_MSG;
 
 @Service
 @Slf4j
@@ -62,6 +61,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     @Autowired(required = false)
     private UserMapper userMapper;
+
+    @Autowired(required = false)
+    private UserExtMapper userExtMapper;
 
     @Value("${app.innerUrl}")
     private String url;
@@ -720,8 +722,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 Long unBindId = checkUserForUnBind(req);
                 User unUser = new User();
                 unUser.setId(unBindId);
-                unUser.setlId("null");
-                userMapper.updateByPrimaryKeySelective(unUser);
+                userExtMapper.unbind(unUser);
                 break;
             default:
                 throw new SystemException("OprType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
