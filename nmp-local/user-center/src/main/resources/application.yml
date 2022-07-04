@@ -55,3 +55,9 @@ rz:
       time: 30000
   retry:
     time: 5
+
+
+thread:
+  corePoolSize: 5
+  maxPoolSize: 10
+  queueCapacity: 500
