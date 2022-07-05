@@ -19,6 +19,7 @@ import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.controller.WebSocketServer;
 import com.matrictime.network.dao.mapper.GroupInfoMapper;
 import com.matrictime.network.dao.mapper.UserMapper;
+import com.matrictime.network.dao.mapper.ext.UserExtMapper;
 import com.matrictime.network.dao.model.GroupInfo;
 import com.matrictime.network.dao.model.GroupInfoExample;
 import com.matrictime.network.dao.model.User;
@@ -66,6 +67,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     @Autowired(required = false)
     private UserMapper userMapper;
+
+    @Autowired(required = false)
+    private UserExtMapper userExtMapper;
 
     @Value("${app.innerUrl}")
     private String url;
@@ -388,9 +392,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             if (LOGIN_STATUS_IN.equals(user.getLoginStatus())){
                 throw new SystemException(ErrorMessageContants.USER_LOGIN_MSG);
             }
-            if (!ParamCheckUtil.checkVoStrBlank(user.getlId()) && !user.getlId().equals(req.getLId())){
-                throw new SystemException(ErrorMessageContants.LOGIN_BIND_MSG);
-            }
+//            if (!ParamCheckUtil.checkVoStrBlank(user.getlId()) && !user.getlId().equals(req.getLId())){
+//                throw new SystemException(ErrorMessageContants.LOGIN_BIND_MSG);
+//            }
             if (!user.getPassword().equals(req.getPassword())){
                 throw new SystemException(ErrorMessageContants.PASSWORD_ERROR_MSG);
             }
@@ -799,8 +803,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 Long unBindId = checkUserForUnBind(req);
                 User unUser = new User();
                 unUser.setId(unBindId);
-                unUser.setlId("null");
-                userMapper.updateByPrimaryKeySelective(unUser);
+                userExtMapper.unbind(unUser);
                 break;
             default:
                 throw new Exception("OprType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);

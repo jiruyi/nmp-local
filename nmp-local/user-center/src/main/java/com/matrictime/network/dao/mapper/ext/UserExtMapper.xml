@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.ext.UserExtMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.User">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="l_id" jdbcType="VARCHAR" property="lId" />
+    <result column="sid" jdbcType="VARCHAR" property="sid" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="device_ip" jdbcType="VARCHAR" property="deviceIp" />
+    <result column="login_account" jdbcType="VARCHAR" property="loginAccount" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="sex" jdbcType="CHAR" property="sex" />
+    <result column="user_type" jdbcType="CHAR" property="userType" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
+    <result column="id_type" jdbcType="CHAR" property="idType" />
+    <result column="id_no" jdbcType="VARCHAR" property="idNo" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="login_status" jdbcType="CHAR" property="loginStatus" />
+    <result column="login_app_code" jdbcType="VARCHAR" property="loginAppCode" />
+    <result column="logout_app_code" jdbcType="VARCHAR" property="logoutAppCode" />
+    <result column="agree_friend" jdbcType="BIT" property="agreeFriend" />
+    <result column="delete_friend" jdbcType="BIT" property="deleteFriend" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, l_id, sid, device_id, device_ip, login_account, nick_name, sex, user_type, 
+    email, phone_number, id_type, id_no, password, login_status, login_app_code, logout_app_code, 
+    agree_friend, delete_friend, status, is_exist, create_user, create_time, update_user, 
+    update_time, remark
+  </sql>
+
+  <update id="unbind" parameterType="com.matrictime.network.dao.model.User">
+    update user
+    set
+      l_id = null
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -363,6 +363,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     }
 
     private void agreeSetFriendGroup(AddRequestVo addRequestVo,AddUserRequestReq addUserRequestReq){
+
         if(addRequestVo.getGroupId() != null){
             String groupIdArray = addRequestVo.getGroupId();
             String[] groupId = groupIdArray.split(",");
