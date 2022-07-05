@@ -94,6 +94,27 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
         return result;
     }
 
+
+    @Override
+    public Result<CompanyResp> queryOperatorByConditon(CompanyInfoRequest companyInfoRequest) {
+        Result<CompanyResp> result = null;
+        try {
+            if(companyInfoRequest.getCompanyType()==null){
+                result = failResult(ErrorCode.SYSTEM_ERROR, "缺少区域类别");
+                return result;
+            }
+            //多条件查询
+            CompanyResp companyResp = new CompanyResp();
+            List<NmplCompanyInfoVo> nmplCompanyInfoVoList = companyInfoDomainService.queryCompanyList(companyInfoRequest);
+            companyResp.setList(nmplCompanyInfoVoList);
+            result = buildResult(companyResp);
+        }catch (Exception e){
+            log.error("查询角色异常：",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
     @Override
     public Result<CompanyResp> queryCompanyList(CompanyInfoRequest companyInfoRequest) {
         Result<CompanyResp> result = null;
