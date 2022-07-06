@@ -263,11 +263,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 userId = addUserRequestReq.getUserId();
                 userFriendsDomainService.update(addUserRequestReq);
             }
-            //判断user_friend表中是否有该好友
-            List<UserFriendVo> userFriendVos = userFriendsDomainService.selectUserFriend(userFriendReq);
-            if(CollectionUtils.isEmpty(userFriendVos)){
-                userFriendsDomainService.insertFriend(userFriendReq);
-            }
+
             //直接添加好友并把好友分组到该分组中
             if(addUserRequestReq.getGroupId() != null){
                 setFriendGroup(addUserRequestReq);
@@ -284,11 +280,19 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             GroupVo groupVo = userFriendsDomainService.selectGroupInfo(groupReq);
             //添加到默认分组
             setAddFriendGroup(groupVo,addUserRequestReq);
-            wsSendVo.setFrom(SYSTEM_UC);
-            wsResultVo.setSendObject(userId);
-            wsResultVo.setDestination(addUserRequestReq.getDestination());
-            wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
-            result = buildResult(1,null,JSONObject.toJSONString(wsResultVo));
+            //判断user_friend表中是否有该好友
+            List<UserFriendVo> userFriendVos = userFriendsDomainService.selectUserFriend(userFriendReq);
+            if(CollectionUtils.isEmpty(userFriendVos)){
+                userFriendsDomainService.insertFriend(userFriendReq);
+                wsSendVo.setFrom(SYSTEM_UC);
+                wsResultVo.setSendObject(userId);
+                wsResultVo.setDestination(addUserRequestReq.getDestination());
+                wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
+                result = buildResult(1,null,JSONObject.toJSONString(wsResultVo));
+            }else {
+                result = new Result<>(false,"已经是好友关系");
+            }
+
         }
         if(userVo.getAgreeFriend() == 1 || addUserRequestReq.getRefuse() != null) {
             WsResultVo wsResultVo = new WsResultVo();
