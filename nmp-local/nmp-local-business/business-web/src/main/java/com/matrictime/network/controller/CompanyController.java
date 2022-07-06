@@ -81,7 +81,7 @@ public class CompanyController {
     @SystemLog(opermodul = "运营商管理模块",operDesc = "查询运营商",operType = "查询")
     public Result queryOperator(@RequestBody  CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("00");
-        return companyService.queryByConditon(companyInfoRequest);
+        return companyService.queryOperatorByConditon(companyInfoRequest);
     }
 
     //---------------------------大区------------------------------------------

@@ -20,5 +20,9 @@ public class UserResp {
 
     private String sex;
 
+    /**
+     * 登录账号
+     */
+    private String loginAccount;
 
 }

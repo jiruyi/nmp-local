@@ -15,5 +15,7 @@ public interface CompanyService {
 
     Result<PageInfo>queryByConditon(CompanyInfoRequest companyInfoRequest);
 
+    Result<CompanyResp> queryOperatorByConditon(CompanyInfoRequest companyInfoRequest);
+
     Result<CompanyResp> queryCompanyList(CompanyInfoRequest companyInfoRequest);
 }

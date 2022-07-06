@@ -271,6 +271,15 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
         if (companyInfoRequest.getCompanyType()!=null){
             criteria.andCompanyTypeEqualTo(companyInfoRequest.getCompanyType());
         }
+        if (companyInfoRequest.getCompanyName()!=null){
+            criteria.andCompanyNameEqualTo(companyInfoRequest.getCompanyName());
+        }
+        if (companyInfoRequest.getCompanyCode()!=null){
+            criteria.andCompanyCodeEqualTo(companyInfoRequest.getCompanyCode());
+        }
+        if (companyInfoRequest.getParentCode()!=null){
+            criteria.andParentCodeEqualTo(companyInfoRequest.getParentCode());
+        }
         criteria.andIsExistEqualTo(true);
 
         List<NmplCompanyInfo> nmplCompanyInfoList = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);

@@ -11,6 +11,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="sex" jdbcType="CHAR" property="sex" />
         <result column="phone_number" jdbcType="VARCHAR" property="phone" />
+        <result column="login_account" javaType="VARCHAR" property="loginAccount"/>
     </resultMap>
     <resultMap id="ResultMap" type="com.matrictime.network.api.modelVo.AddRequestVo">
         <result column="group_id" jdbcType="VARCHAR" property="groupId" />
@@ -36,7 +37,7 @@
 
 
     <select id="getAddUserInfo" parameterType="com.matrictime.network.api.request.AddUserRequestReq" resultMap="BaseResultMap">
-        select a.*,b.nick_name,b.sex,b.phone_number from add_user_request a ,user b,
+        select a.*,b.nick_name,b.sex,b.phone_number,b.login_account from add_user_request a ,user b,
             (select max(create_time) as create_time,user_id,add_user_id from add_user_request GROUP BY user_id,add_user_id) as q
         where a.user_id = b.user_id and a.is_exist = '1' and b.is_exist ='1'
             and a.user_id = q.user_id and a.create_time = q.create_time and a.add_user_id = q.add_user_id
