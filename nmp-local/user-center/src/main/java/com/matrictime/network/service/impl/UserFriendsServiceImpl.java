@@ -1,9 +1,7 @@
 package com.matrictime.network.service.impl;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
@@ -11,7 +9,6 @@ import com.matrictime.network.api.modelVo.*;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.AddUserRequestResp;
 import com.matrictime.network.api.response.UserFriendResp;
-import com.matrictime.network.api.response.UserResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
 import com.matrictime.network.base.enums.AddUserRequestEnum;
@@ -32,10 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
 
-import static com.matrictime.network.config.DataConfig.SYSTEM_UC;
+import static com.matrictime.network.constant.DataConstants.SYSTEM_UC;
+
 
 @Service
 @Slf4j

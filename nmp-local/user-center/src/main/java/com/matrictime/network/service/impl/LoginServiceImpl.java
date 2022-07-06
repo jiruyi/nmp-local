@@ -6,6 +6,7 @@ import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.GroupVo;
+import com.matrictime.network.api.modelVo.PushUserVo;
 import com.matrictime.network.api.modelVo.UserVo;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
@@ -18,12 +19,10 @@ import com.matrictime.network.config.DataConfig;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.controller.WebSocketServer;
 import com.matrictime.network.dao.mapper.GroupInfoMapper;
+import com.matrictime.network.dao.mapper.UserFriendMapper;
 import com.matrictime.network.dao.mapper.UserMapper;
 import com.matrictime.network.dao.mapper.ext.UserExtMapper;
-import com.matrictime.network.dao.model.GroupInfo;
-import com.matrictime.network.dao.model.GroupInfoExample;
-import com.matrictime.network.dao.model.User;
-import com.matrictime.network.dao.model.UserExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.domain.CommonService;
 import com.matrictime.network.domain.GroupDomainService;
 import com.matrictime.network.exception.ErrorMessageContants;
@@ -44,13 +43,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.UcConstants.*;
-import static com.matrictime.network.config.DataConfig.LOGIN_STATUS_IN;
+import static com.matrictime.network.config.DataConfig.*;
 import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.SYSTEM_IM;
+import static com.matrictime.network.constant.DataConstants.SYSTEM_UC;
 
 @Service
 @Slf4j
@@ -81,8 +85,15 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Value("${token.timeOut}")
     private Integer timeOut;
 
+    @Value("${im.pushTokenUrl}")
+    private String pushTokenUrl;
+
+
     @Autowired(required = false)
     private GroupInfoMapper groupInfoMapper;
+
+    @Autowired(required = false)
+    private UserFriendMapper userFriendMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -218,7 +229,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         } catch (Exception e) {
             if (!ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())) {
                 DeleteUserReq deleteUserReq = new DeleteUserReq();
-                deleteUserReq.setOpSystem(DataConfig.SYSTEM_UC);
+                deleteUserReq.setOpSystem(SYSTEM_UC);
                 deleteUserReq.setDeleteType(DataConfig.DELETE_USER_TYPE_ACCOUNT);
                 deleteUserReq.setLoginAccount(req.getLoginAccount());
                 Result delResp = deleteUser(deleteUserReq);
@@ -287,8 +298,11 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     userId = resp.getUser().getUserId();
                     JSONObject extendMsg = new JSONObject();
                     token = buildToken(resp.getUser(), DESTINATION_OUT);
+                    List<String> pushOnlineUsers = getPushOnlineUsers(userId,DESTINATION_OUT);
                     extendMsg.put("userId",userId);
                     extendMsg.put("token",token);
+                    extendMsg.put("pushOnlineUsers",pushOnlineUsers);
+                    extendMsg.put("pushInfo",getpushInfo(resp.getUser()));
                     putToken(userId,token,DESTINATION_OUT);
                     result = buildResult(resp,null,null,extendMsg.toJSONString());
                     break;
@@ -332,10 +346,13 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     userId = resp.getUser().getUserId();
                     // 返回值加密
                     token = buildToken(resp.getUser(), DESTINATION_IN);
+                    List<String> desPushOnlineUsers = getPushOnlineUsers(userId,DESTINATION_IN);
                     JSONObject desExtendMsg = new JSONObject();
                     desExtendMsg.put("sid",sid);
                     desExtendMsg.put("userId",userId);
                     desExtendMsg.put("token",token);
+                    desExtendMsg.put("pushOnlineUsers",desPushOnlineUsers);
+                    desExtendMsg.put("pushInfo",getpushInfo(resp.getUser()));
                     result = buildResult(resp,null,null,desExtendMsg.toJSONString());
                     break;
                 default:
@@ -437,7 +454,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case DESTINATION_OUT:
                     commonLogout(req);
                     removeToken(req.getUserId(),req.getDestination());
-                    webSocketOnClose(req.getCommonKey());
+                    webSocketOnClose(req.getCommonKey()+KEY_SPLIT_UNDERLINE+DESTINATION_OUT);
                     break;
                 case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
@@ -456,7 +473,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                             if (StringUtils.isNotBlank(returnRes.getExtendMsg())){
                                 removeToken(returnRes.getExtendMsg(),req.getDestination());
                             }
-                            webSocketOnClose(req.getCommonKey());
+                            webSocketOnClose(req.getCommonKey()+KEY_SPLIT_UNDERLINE+DESTINATION_IN);
                         }
                         return returnRes;
                     }else {
@@ -644,6 +661,29 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }catch (Exception e){
             log.error("LoginServiceImpl.logout Exception:{}",e.getMessage());
             result = failResult("");
+        }
+        return result;
+    }
+
+    @Override
+    public Result pushToken(PushTokenReq req){
+        Result result;
+        try {
+            String postRes = "";
+            switch (req.getType()){
+                case PUSH_TYPE_TOKEN:
+                case PUSH_TYPE_DISABLE_TOKEN:
+                    postRes = HttpClientUtil.post(req.getUrl(), req.getBody());
+                    break;
+                default:
+                    log.info("LoginServiceImpl.pushToken is not illegal type:{}",req.getType());
+                    break;
+            }
+            log.info("LoginServiceImpl.pushToken postRes:{}",postRes);
+            result = buildResult(null);
+        } catch (Exception e) {
+            log.error("LoginServiceImpl.pushToken error:{}",e.getMessage());
+            result = failResult(e);
         }
         return result;
     }
@@ -939,13 +979,62 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     public void putToken(String userId, String token, String destination){
         StringBuffer sb = new StringBuffer(SYSTEM_UC);
-        sb.append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(destination).append(USER_LOGIN_JWT_TOKEN);
+        sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(destination);
+        log.info("LoginServiceImpl.putToken key:{},token:{}", sb.toString(),token);
         redisTemplate.opsForValue().set(sb.toString(),token,timeOut, TimeUnit.MINUTES);
+
+        // im设置token
+        JSONObject param = new JSONObject();
+        param.put("userid",userId);
+        param.put("token",token);
+        param.put("type",PUSH_TYPE_TOKEN);
+        param.put("scope",destination);
+        PushTokenReq req = new PushTokenReq();
+        req.setSystem(SYSTEM_IM);
+        req.setType(PUSH_TYPE_TOKEN);
+        req.setUrl(pushTokenUrl);
+        req.setBody(param.toJSONString());
+        pushToken(req);
     }
 
     public void removeToken(String userId, String destination){
         StringBuffer sb = new StringBuffer(SYSTEM_UC);
-        sb.append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(destination).append(USER_LOGIN_JWT_TOKEN);
+        sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(destination);
+        log.info("LoginServiceImpl.removeToken key:{}", sb);
         redisTemplate.delete(sb.toString());
+
+        JSONObject param = new JSONObject();
+        param.put("type",PUSH_TYPE_DISABLE_TOKEN);
+        param.put("userid",userId);
+        param.put("scope",destination);
+        PushTokenReq req = new PushTokenReq();
+        req.setType(PUSH_TYPE_DISABLE_TOKEN);
+        req.setUrl(pushTokenUrl);
+        req.setSystem(SYSTEM_IM);
+        req.setBody(param.toString());
+        pushToken(req);
+    }
+
+    private List<String> getPushOnlineUsers(String userId, String destination){
+        List<String> resUsers = new ArrayList<>();
+        UserFriendExample example = new UserFriendExample();
+        example.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(IS_EXIST);
+        List<UserFriend> userFriends = userFriendMapper.selectByExample(example);
+        for (UserFriend userFriend:userFriends){
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andUserIdEqualTo(userFriend.getFriendUserId()).andLoginStatusEqualTo(LOGIN_STATUS_IN).andIsExistEqualTo(IS_EXIST);
+            List<User> users = userMapper.selectByExample(userExample);
+            if (!CollectionUtils.isEmpty(users)){
+                resUsers.add(users.get(0).getUserId()+KEY_SPLIT_UNDERLINE+destination);
+            }
+        }
+        return  resUsers;
+    }
+
+    private PushUserVo getpushInfo(UserVo userVo){
+        PushUserVo pushUserVo = new PushUserVo();
+        BeanUtils.copyProperties(userVo,pushUserVo);
+        pushUserVo.setFriendUserId(pushUserVo.getUserId());
+        return pushUserVo;
     }
 }

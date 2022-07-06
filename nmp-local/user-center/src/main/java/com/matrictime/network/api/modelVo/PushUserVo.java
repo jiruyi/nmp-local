@@ -6,9 +6,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class UserVo implements Serializable {
+public class PushUserVo implements Serializable {
 
-    private static final long serialVersionUID = 3453857524589581175L;
+    private static final long serialVersionUID = -839018111380835881L;
 
     /**
      * ID
@@ -19,6 +19,11 @@ public class UserVo implements Serializable {
      * 用户id
      */
     private String userId;
+
+    /**
+     * 用户id
+     */
+    private String friendUserId;
 
     /**
      * 绑定本地用户id
@@ -79,11 +84,6 @@ public class UserVo implements Serializable {
      * 证件号
      */
     private String idNo;
-
-    /**
-     * 密码
-     */
-    private String password;
 
     /**
      * 当前登录状态

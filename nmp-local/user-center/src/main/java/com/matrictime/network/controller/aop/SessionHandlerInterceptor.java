@@ -91,7 +91,7 @@ public class SessionHandlerInterceptor extends HandlerInterceptorAdapter {
             }
             //4. 查看用户token是否失效
             StringBuffer sb = new StringBuffer(SYSTEM_UC);
-            sb.append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(dest).append(USER_LOGIN_JWT_TOKEN);
+            sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(dest);
             Object redisToken  = redisTemplate.opsForValue().get(sb.toString());
             if(ObjectUtils.isEmpty(redisToken) || !token.equals(redisToken.toString())){
                 response.setStatus(SC_OK);

@@ -21,4 +21,10 @@ public class DataConfig {
     public static final String DELETE_USER_TYPE_PHONE = "3";
 
     public static final String SYSTEM_UC = "uc";
+
+    public static final String SYSTEM_IM = "im";
+
+    public static final String PUSH_TYPE_TOKEN = "1";
+
+    public static final String PUSH_TYPE_DISABLE_TOKEN = "0";
 }
