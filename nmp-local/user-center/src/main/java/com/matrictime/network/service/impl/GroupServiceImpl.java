@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.matrictime.network.base.UcConstants.DESTINATION_OUT;
+import static com.matrictime.network.base.UcConstants.DESTINATION_OUT_TO_IN;
+
 @Service
 @Slf4j
 public class GroupServiceImpl extends SystemBaseService implements GroupService {
@@ -55,17 +58,18 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
     @Override
     @Transactional
     public Result<Integer> createGroup(GroupReq groupReq) {
+        String entryFlag = DESTINATION_OUT;
         ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
         groupReq = jsonUtil.jsonReqToDto(groupReq);
         Result result;
         try {
             switch (groupReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonCreateGroup(groupReq);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    groupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    groupReq.setDestination(DESTINATION_OUT_TO_IN);
                     groupReq.setUrl(url+UcConstants.URL_CREATEGROUP);
                     String param = JSONObject.toJSONString(groupReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -80,7 +84,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                         throw new SystemException("createGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<GroupReq> reqUtil = new ReqUtil<>(groupReq);
                     GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
@@ -100,7 +105,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
             result = failResult("");
         }
         try {
-            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+            result = commonService.encrypt(groupReq.getCommonKey(), entryFlag, result);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.info("基础平台加密异常:{}",e.getMessage());
@@ -114,17 +119,18 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
     @Override
     @Transactional
     public Result<Integer> modifyGroup(GroupReq groupReq) {
+        String entryFlag = DESTINATION_OUT;
         ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
         groupReq = jsonUtil.jsonReqToDto(groupReq);
         Result result;
         try {
             switch (groupReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonModifyGroup(groupReq);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    groupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    groupReq.setDestination(DESTINATION_OUT_TO_IN);
                     groupReq.setUrl(url+UcConstants.URL_MODIFYGROUP);
                     String param = JSONObject.toJSONString(groupReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -140,8 +146,9 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                         throw new SystemException("modifyGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
                     // 入参解密
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     ReqUtil<GroupReq> reqUtil = new ReqUtil<>(groupReq);
                     GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
                     result = commonModifyGroup(groupReq1);
@@ -159,7 +166,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
             result = failResult("");
         }
         try {
-            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+            result = commonService.encrypt(groupReq.getCommonKey(), entryFlag, result);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.info("基础平台加密异常:{}",e.getMessage());
@@ -171,17 +178,18 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
     @Override
     @Transactional
     public Result<Integer> deleteGroup(GroupReq groupReq) {
+        String entryFlag = DESTINATION_OUT;
         ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
         groupReq = jsonUtil.jsonReqToDto(groupReq);
         Result result;
         try {
             switch (groupReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonDeleteGroup(groupReq);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    groupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    groupReq.setDestination(DESTINATION_OUT_TO_IN);
                     groupReq.setUrl(url+UcConstants.URL_DELETEGROUP);
                     String param = JSONObject.toJSONString(groupReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -198,7 +206,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     }
                     break;
 
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<GroupReq> reqUtil = new ReqUtil<>(groupReq);
                     GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
@@ -218,7 +227,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
             result = failResult("");
         }
         try {
-            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+            result = commonService.encrypt(groupReq.getCommonKey(), entryFlag, result);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.info("基础平台加密异常:{}",e.getMessage());
@@ -229,17 +238,18 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
 
     @Override
     public Result<GroupResp> queryGroup(GroupReq groupReq) {
+        String entryFlag = DESTINATION_OUT;
         ReqUtil<GroupReq> jsonUtil = new ReqUtil<>(groupReq);
         groupReq = jsonUtil.jsonReqToDto(groupReq);
         Result result;
         try {
             switch (groupReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonQueryGroup(groupReq);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    groupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    groupReq.setDestination(DESTINATION_OUT_TO_IN);
                     groupReq.setUrl(url+UcConstants.URL_QUERYGROUP);
                     String param = JSONObject.toJSONString(groupReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -255,7 +265,8 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
                     }
                     log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<GroupReq> reqUtil = new ReqUtil<>(groupReq);
                     GroupReq groupReq1 = reqUtil.decryJsonToReq(groupReq);
@@ -274,7 +285,7 @@ public class GroupServiceImpl extends SystemBaseService implements GroupService 
             result = failResult("");
         }
         try {
-            result = commonService.encrypt(groupReq.getCommonKey(), groupReq.getDestination(), result);
+            result = commonService.encrypt(groupReq.getCommonKey(), entryFlag, result);
         }catch (Exception e){
             log.info("基础平台加密异常:{}",e.getMessage());
             result = failResult("");

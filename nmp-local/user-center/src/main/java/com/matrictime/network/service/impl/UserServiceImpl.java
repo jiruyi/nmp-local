@@ -232,6 +232,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     @Override
     @Transactional
     public Result changePasswd(ChangePasswdReq changePasswdReq) {
+        String entryFlag = DESTINATION_OUT;
         ReqUtil<ChangePasswdReq> jsonUtil = new ReqUtil<>(changePasswdReq);
         changePasswdReq = jsonUtil.jsonReqToDto(changePasswdReq);
         Result result;
@@ -258,6 +259,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     }
                     break;
                 case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<ChangePasswdReq> reqUtil = new ReqUtil<>(changePasswdReq);
                     ChangePasswdReq changePasswdReq1 = reqUtil.decryJsonToReq(changePasswdReq);
@@ -276,7 +278,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             result = failResult("");
         }
         try {
-            result = commonService.encrypt(changePasswdReq.getCommonKey(), changePasswdReq.getDestination(), result);
+            result = commonService.encrypt(changePasswdReq.getCommonKey(), entryFlag, result);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("基础平台加密异常",e.getMessage());
@@ -287,6 +289,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Override
     public Result queryUser(UserRequest userRequest) {
+        String entryFlag = DESTINATION_OUT;
         ReqUtil<UserRequest> jsonUtil = new ReqUtil<>(userRequest);
         userRequest = jsonUtil.jsonReqToDto(userRequest);
         Result result;
@@ -314,6 +317,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     }
                     break;
                 case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<UserRequest> reqUtil = new ReqUtil<>(userRequest);
                     UserRequest userRequest1 = reqUtil.decryJsonToReq(userRequest);
@@ -331,7 +335,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             result = failResult(e);
         }
         try {
-            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
+            result = commonService.encrypt(userRequest.getCommonKey(), entryFlag, result);
         }catch (Exception e){
             log.error("基础平台加密异常",e.getMessage());
             result = failResult("");
