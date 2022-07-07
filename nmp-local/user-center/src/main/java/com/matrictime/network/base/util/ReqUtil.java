@@ -55,10 +55,10 @@ public class ReqUtil<T> {
 
     public T decryJsonToReq(BaseReq req) throws Exception {
         log.info("开始解密");
-//        String decryptMsg = JServiceImpl.decryptMsg(req.getEncryptParam());
+        String decryptMsg = JServiceImpl.decryptMsg(req.getEncryptParam());
 
         // TODO: 2022/5/30 跳过平台解密，上线需删除
-        String decryptMsg = AesEncryptUtil.aesDecrypt(req.getEncryptParam());
+//        String decryptMsg = AesEncryptUtil.aesDecrypt(req.getEncryptParam());
         log.info("解密结果：{}",decryptMsg);
         if (StringUtils.isBlank(decryptMsg)){
             throw new Exception("decrypt fail");
@@ -76,10 +76,10 @@ public class ReqUtil<T> {
         if (ParamCheckUtil.checkVoStrBlank(sid)){
             throw new Exception("encrypt fail,sid null");
         }
-//        String encryptMsg = JServiceImpl.encryptMsg(JSONObject.toJSONString(resp),sid);
+        String encryptMsg = JServiceImpl.encryptMsg(JSONObject.toJSONString(resp),sid);
 
         // TODO: 2022/5/30 跳过平台加密，上线需删除
-        String encryptMsg = AesEncryptUtil.aesEncrypt(JSONObject.toJSONString(resp));
+//        String encryptMsg = AesEncryptUtil.aesEncrypt(JSONObject.toJSONString(resp));
 
         if (StringUtils.isBlank(encryptMsg)){
             throw new Exception("encrypt fail,result null");
@@ -96,10 +96,10 @@ public class ReqUtil<T> {
         if (ParamCheckUtil.checkVoStrBlank(sid)){
             throw new Exception("encrypt fail,sid null");
         }
-//        String encryptMsg = JServiceImpl.encryptMsg(jsonString,sid);
+        String encryptMsg = JServiceImpl.encryptMsg(jsonString,sid);
 
         // TODO: 2022/5/30 跳过平台加密，上线需删除
-        String encryptMsg = AesEncryptUtil.aesEncrypt(jsonString);
+//        String encryptMsg = AesEncryptUtil.aesEncrypt(jsonString);
 
         if (StringUtils.isBlank(encryptMsg)){
             throw new Exception("encrypt fail,result null");

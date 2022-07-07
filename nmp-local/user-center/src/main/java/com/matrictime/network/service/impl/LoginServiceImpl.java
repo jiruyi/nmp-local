@@ -286,6 +286,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         String sid = "";
         String userId = "";
         String token = "";
+        String encryFlag = DESTINATION_OUT;
         try {
             LoginResp resp = new LoginResp();
 
@@ -336,6 +337,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     }
 
                 case DESTINATION_OUT_TO_IN:
+                    encryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
 
                     ReqUtil<LoginReq> reqUtil = new ReqUtil<>(req);
@@ -377,7 +379,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
 
         try {
-            result = commonService.encryptForLogin(req, result);
+            result = commonService.encryptForLogin(req, encryFlag, result);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult("");
@@ -445,6 +447,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Transactional(rollbackFor = Exception.class)
     public Result logout(LogoutReq req) {
         Result result;
+        String encryFlag = DESTINATION_OUT;
         try {
 
             ReqUtil<LogoutReq> jsonUtil = new ReqUtil<>(req);
@@ -482,6 +485,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     }
 
                 case UcConstants.DESTINATION_OUT_TO_IN:
+                    encryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
 
                     ReqUtil<LogoutReq> reqUtil = new ReqUtil<>(req);
@@ -508,7 +512,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }
 
         try {
-            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
+            result = commonService.encrypt(req.getCommonKey(), encryFlag, result);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult("");
@@ -543,6 +547,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Transactional(rollbackFor = Exception.class)
     public Result bind(BindReq req) {
         Result result;
+        String encryFlag = DESTINATION_OUT;
         try {
 
             ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
@@ -575,6 +580,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
                 case UcConstants.DESTINATION_OUT_TO_IN:
 
+                    encryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<BindReq> reqUtil = new ReqUtil<>(req);
                     BindReq desReq = reqUtil.decryJsonToReq(req);
@@ -598,7 +604,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }
 
         try {
-            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
+            result = commonService.encrypt(req.getCommonKey(), encryFlag, result);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult("");
