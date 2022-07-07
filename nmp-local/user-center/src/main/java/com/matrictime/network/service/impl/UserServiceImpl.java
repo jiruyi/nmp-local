@@ -272,6 +272,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         try {
             result = commonService.encrypt(changePasswdReq.getCommonKey(), changePasswdReq.getDestination(), result);
         }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("基础平台加密异常",e.getMessage());
             result = failResult("");
         }

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -90,6 +91,7 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
         try {
             result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
         } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("基础平台加密异常:{}",e.getMessage());
             result = failResult("");
         }
@@ -147,6 +149,7 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
         try {
             result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
         } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("基础平台加密异常:{}",e.getMessage());
             result = failResult("");
         }
@@ -203,6 +206,7 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
         try {
             result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
         } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("基础平台加密异常:{}",e.getMessage());
             result = failResult("");
         }
