@@ -28,6 +28,9 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
+import static com.matrictime.network.base.UcConstants.DESTINATION_OUT;
+import static com.matrictime.network.base.UcConstants.DESTINATION_OUT_TO_IN;
+
 @Service
 @Slf4j
 public class UserGroupServiceImpl extends SystemBaseService implements UserGroupService {
@@ -43,17 +46,18 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
     @Override
     @Transactional
     public Result<Integer> createUserGroup(UserGroupReq userGroupReq) {
+        String entryFlag =DESTINATION_OUT;
         ReqUtil<UserGroupReq> jsonUtil = new ReqUtil<>(userGroupReq);
         userGroupReq = jsonUtil.jsonReqToDto(userGroupReq);
         Result result;
         try {
             switch (userGroupReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonCreateUserGroup(userGroupReq);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    userGroupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userGroupReq.setDestination(DESTINATION_OUT_TO_IN);
                     userGroupReq.setUrl(url+UcConstants.URL_CREATEUSERGROUP);
                     String param = JSONObject.toJSONString(userGroupReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -70,7 +74,8 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                         throw new SystemException("createUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<UserGroupReq> reqUtil = new ReqUtil<>(userGroupReq);
                     UserGroupReq userGroupReq1 = reqUtil.decryJsonToReq(userGroupReq);
@@ -89,7 +94,7 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
         }
 
         try {
-            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+            result = commonService.encrypt(userGroupReq.getCommonKey(), entryFlag, result);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("基础平台加密异常:{}",e.getMessage());
@@ -102,17 +107,18 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
     @Override
     @Transactional
     public Result<Integer> modifyUserGroup(UserGroupReq userGroupReq) {
+        String entryFlag =DESTINATION_OUT;
         ReqUtil<UserGroupReq> jsonUtil = new ReqUtil<>(userGroupReq);
         userGroupReq = jsonUtil.jsonReqToDto(userGroupReq);
         Result result;
         try {
             switch (userGroupReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonModifyUserGroup(userGroupReq);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    userGroupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userGroupReq.setDestination(DESTINATION_OUT_TO_IN);
                     userGroupReq.setUrl(url+UcConstants.URL_MODIFYUSERGROUP);
                     String param = JSONObject.toJSONString(userGroupReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -128,7 +134,8 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                         throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
+                    entryFlag =DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<UserGroupReq> reqUtil = new ReqUtil<>(userGroupReq);
                     UserGroupReq userGroupReq1 = reqUtil.decryJsonToReq(userGroupReq);
@@ -147,7 +154,7 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
             result = failResult("");
         }
         try {
-            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+            result = commonService.encrypt(userGroupReq.getCommonKey(),entryFlag, result);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("基础平台加密异常:{}",e.getMessage());
@@ -159,17 +166,18 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
     @Override
     @Transactional
     public Result<Integer> deleteUserGroup(UserGroupReq userGroupReq) {
+        String entryFlag =DESTINATION_OUT;
         ReqUtil<UserGroupReq> jsonUtil = new ReqUtil<>(userGroupReq);
         userGroupReq = jsonUtil.jsonReqToDto(userGroupReq);
         Result result;
         try {
             switch (userGroupReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonDeleteUserGroup(userGroupReq);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    userGroupReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userGroupReq.setDestination(DESTINATION_OUT_TO_IN);
                     userGroupReq.setUrl(url+UcConstants.URL_DELETEUSERGROUP);
                     String param = JSONObject.toJSONString(userGroupReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -185,7 +193,8 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
                         throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
+                    entryFlag =DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<UserGroupReq> reqUtil = new ReqUtil<>(userGroupReq);
                     UserGroupReq userGroupReq1 = reqUtil.decryJsonToReq(userGroupReq);
@@ -204,7 +213,7 @@ public class UserGroupServiceImpl extends SystemBaseService implements UserGroup
             result = failResult("");
         }
         try {
-            result = commonService.encrypt(userGroupReq.getCommonKey(), userGroupReq.getDestination(), result);
+            result = commonService.encrypt(userGroupReq.getCommonKey(),entryFlag, result);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("基础平台加密异常:{}",e.getMessage());

@@ -46,6 +46,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import static com.matrictime.network.base.UcConstants.DESTINATION_OUT;
+import static com.matrictime.network.base.UcConstants.DESTINATION_OUT_TO_IN;
 import static com.matrictime.network.constant.DataConstants.*;
 
 /**
@@ -104,12 +106,12 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             userRequest = jsonUtil.jsonReqToDto(userRequest);
 
             switch (userRequest.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonModifyUserInfo(userRequest);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    userRequest.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userRequest.setDestination(DESTINATION_OUT_TO_IN);
                     userRequest.setUrl(url+UcConstants.URL_MODIFYUSERINFO);
                     String param = JSONObject.toJSONString(userRequest);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -124,7 +126,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     }else {
                         throw new SystemException("UserServiceImpl.modifyUserInfo"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
                     // 入参解密
                     ReqUtil<UserRequest> reqUtil = new ReqUtil<>(userRequest);
                     UserRequest desReq = reqUtil.decryJsonToReq(userRequest);
@@ -172,12 +174,12 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             deleteFriendReq = jsonUtil.jsonReqToDto(deleteFriendReq);
 
             switch (deleteFriendReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonDeleteFriend(deleteFriendReq);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    deleteFriendReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    deleteFriendReq.setDestination(DESTINATION_OUT_TO_IN);
                     deleteFriendReq.setUrl(url+UcConstants.URL_DELETEFRIEND);
                     String param = JSONObject.toJSONString(deleteFriendReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -192,7 +194,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     }else {
                         throw new SystemException("UserServiceImpl.deleteFriend"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
                     // 入参解密
                     ReqUtil<DeleteFriendReq> reqUtil = new ReqUtil<>(deleteFriendReq);
                     DeleteFriendReq desReq = reqUtil.decryJsonToReq(deleteFriendReq);
@@ -226,17 +228,18 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     @Override
     @Transactional
     public Result changePasswd(ChangePasswdReq changePasswdReq) {
+        String entryFlag = DESTINATION_OUT;
         ReqUtil<ChangePasswdReq> jsonUtil = new ReqUtil<>(changePasswdReq);
         changePasswdReq = jsonUtil.jsonReqToDto(changePasswdReq);
         Result result;
         try {
             switch (changePasswdReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonChangePasswd(changePasswdReq);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    changePasswdReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    changePasswdReq.setDestination(DESTINATION_OUT_TO_IN);
                     changePasswdReq.setUrl(url+UcConstants.URL_CHANGEPASSWD);
                     String param = JSONObject.toJSONString(changePasswdReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -251,7 +254,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                         throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<ChangePasswdReq> reqUtil = new ReqUtil<>(changePasswdReq);
                     ChangePasswdReq changePasswdReq1 = reqUtil.decryJsonToReq(changePasswdReq);
@@ -270,7 +274,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             result = failResult("");
         }
         try {
-            result = commonService.encrypt(changePasswdReq.getCommonKey(), changePasswdReq.getDestination(), result);
+            result = commonService.encrypt(changePasswdReq.getCommonKey(), entryFlag, result);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("基础平台加密异常",e.getMessage());
@@ -281,17 +285,18 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Override
     public Result queryUser(UserRequest userRequest) {
+        String entryFlag = DESTINATION_OUT;
         ReqUtil<UserRequest> jsonUtil = new ReqUtil<>(userRequest);
         userRequest = jsonUtil.jsonReqToDto(userRequest);
         Result result;
         try {
             switch (userRequest.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonQueryUser(userRequest);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    userRequest.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userRequest.setDestination(DESTINATION_OUT_TO_IN);
                     userRequest.setUrl(url+UcConstants.URL_QUERYUSERINFO);
                     String param = JSONObject.toJSONString(userRequest);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -307,7 +312,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                         throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<UserRequest> reqUtil = new ReqUtil<>(userRequest);
                     UserRequest userRequest1 = reqUtil.decryJsonToReq(userRequest);
@@ -325,7 +331,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             result = failResult(e);
         }
         try {
-            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
+            result = commonService.encrypt(userRequest.getCommonKey(), entryFlag, result);
         }catch (Exception e){
             log.error("基础平台加密异常",e.getMessage());
             result = failResult("");
@@ -341,12 +347,12 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             req = jsonUtil.jsonReqToDto(req);
 
             switch (req.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     commonVerify(req);
                     break;
                 case UcConstants.DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    req.setDestination(DESTINATION_OUT_TO_IN);
                     req.setUrl(url+UcConstants.URL_VERIFY);
                     String param = JSONObject.toJSONString(req);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -363,7 +369,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                         throw new SystemException("UserServiceImpl.verify"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
 
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
                     // 入参解密
                     ReqUtil<VerifyReq> reqUtil = new ReqUtil<>(req);
                     VerifyReq desReq = reqUtil.decryJsonToReq(req);
