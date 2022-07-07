@@ -78,7 +78,9 @@ public class DataConstants {
     public static final String KEY_COMMONPARAM = "commonParam";
     public static final String KEY_ENCRYPTPARAM = "encryptParam";
 
-    public static final String SYSTEM_UC = "UC";
+    public static final String SYSTEM_UC = "uc";
+
+    public static final String SYSTEM_IM = "im";
 
     public static final String KEY_SUCCESS_IDS = "successIds";
 

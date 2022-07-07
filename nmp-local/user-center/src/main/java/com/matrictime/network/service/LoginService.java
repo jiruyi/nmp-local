@@ -5,6 +5,8 @@ import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
 import com.matrictime.network.model.Result;
 
+import java.io.IOException;
+
 public interface LoginService {
     /**
      * 注册
@@ -48,6 +50,8 @@ public interface LoginService {
      * @return
      */
     Result syslogout(LogoutReq logoutReq);
+
+    Result pushToken(PushTokenReq req);
 
 
 }

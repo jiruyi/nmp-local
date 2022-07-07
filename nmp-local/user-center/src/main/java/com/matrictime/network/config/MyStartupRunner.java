@@ -101,7 +101,7 @@ public class MyStartupRunner implements CommandLineRunner {
 
     @PreDestroy
     public void destory() throws Exception{
-//        JServiceImpl.stop();
+        JServiceImpl.stop();
         log.info("在程序关闭后执行");
     }
 }

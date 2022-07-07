@@ -61,3 +61,6 @@ thread:
   corePoolSize: 5
   maxPoolSize: 10
   queueCapacity: 500
+
+im:
+  pushTokenUrl: http://127.0.0.1:8006/user
