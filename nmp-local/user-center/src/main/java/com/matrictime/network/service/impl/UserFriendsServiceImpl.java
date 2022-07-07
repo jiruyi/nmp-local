@@ -32,6 +32,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static com.matrictime.network.base.UcConstants.*;
 import static com.matrictime.network.constant.DataConstants.SYSTEM_UC;
 
 
@@ -61,12 +62,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             ReqUtil jsonUtil = new ReqUtil<>(userFriendReq);
             userFriendReq = (UserFriendReq) jsonUtil.jsonReqToDto(userFriendReq);
             switch (userFriendReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonSelectUserFriend(userFriendReq);
                     break;
-                case UcConstants.DESTINATION_IN:
+                case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    userFriendReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userFriendReq.setDestination(DESTINATION_OUT_TO_IN);
                     userFriendReq.setUrl(url+UcConstants.URL_SELECT_USER_FRIEND);
                     String param = JSONObject.toJSONString(userFriendReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -81,7 +82,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                         throw new SystemException("UserFriendsServiceImpl.selectUserFriend"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
                     // 入参解密
                     ReqUtil reqUtil = new ReqUtil<>(userFriendReq);
                     userFriendReq = (UserFriendReq)reqUtil.decryJsonToReq(userFriendReq);
@@ -123,6 +124,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
 
     @Override
     public Result addFriends(AddUserRequestReq addUserRequestReq) {
+        String entryFlag = DESTINATION_IN;
         Result result = new Result<>();
         ReqUtil jsonUtil = new ReqUtil<>(addUserRequestReq);
         addUserRequestReq = (AddUserRequestReq) jsonUtil.jsonReqToDto(addUserRequestReq);
@@ -131,12 +133,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         userRequest.setUserId(addUserRequestReq.getAddUserId());
         try {
             switch (addUserRequestReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
                     break;
-                case UcConstants.DESTINATION_IN:
+                case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    addUserRequestReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    addUserRequestReq.setDestination(DESTINATION_OUT_TO_IN);
                     addUserRequestReq.setUrl(url+UcConstants.URL_ADD_FRIENDS);
                     String param = JSONObject.toJSONString(addUserRequestReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -151,7 +153,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                         throw new SystemException("UserFriendsServiceImpl.addFriends"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil reqUtil = new ReqUtil<>(addUserRequestReq);
                     addUserRequestReq = (AddUserRequestReq)reqUtil.decryJsonToReq(addUserRequestReq);
@@ -163,6 +166,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
+            try {
+                result = commonService.encryptForWs(addUserRequestReq.getCommonKey(), entryFlag, result);
+            }catch (Exception e){
+                log.error("基础平台加密异常:{}",e.getMessage());
+                result = failResult("");
+            }
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
             result.setSuccess(false);
@@ -172,6 +181,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
 
     @Override
     public Result agreeAddFriedns(RecallRequest recallRequest) {
+        String entryFlag = DESTINATION_OUT;
         Result<WebSocketVo> result = new Result<>();
         ReqUtil jsonUtil = new ReqUtil<>(recallRequest);
         recallRequest = (RecallRequest) jsonUtil.jsonReqToDto(recallRequest);
@@ -181,12 +191,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         userRequest.setUserId(addUserRequestReq.getAddUserId());
         try {
             switch (recallRequest.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonAddFriends(userFriendReq,addUserRequestReq,userRequest);
                     break;
-                case UcConstants.DESTINATION_IN:
+                case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    recallRequest.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    recallRequest.setDestination(DESTINATION_OUT_TO_IN);
                     recallRequest.setUrl(url+UcConstants.URL_ADD_FRIENDS);
                     String param = JSONObject.toJSONString(recallRequest);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -202,7 +212,8 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                         throw new SystemException("UserFriendsServiceImpl.addFriends"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil reqUtil = new ReqUtil<>(recallRequest);
                     recallRequest = (RecallRequest)reqUtil.decryJsonToReq(recallRequest);
@@ -214,6 +225,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     break;
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+            try {
+                result = commonService.encryptForWs(recallRequest.getCommonKey(), entryFlag, result);
+            }catch (Exception e){
+                log.error("基础平台加密异常:{}",e.getMessage());
+                result = failResult("");
             }
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
@@ -444,12 +461,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         Result result;
         try {
             switch (addUserRequestReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonGetAddUserInfo(addUserRequestReq);
                     break;
-                case UcConstants.DESTINATION_IN:
+                case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    addUserRequestReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    addUserRequestReq.setDestination(DESTINATION_OUT_TO_IN);
                     addUserRequestReq.setUrl(url+UcConstants.URL_GETADDUSERINFO);
                     String param = JSONObject.toJSONString(addUserRequestReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -465,7 +482,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                         throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
                     // 入参解密
                     ReqUtil<AddUserRequestReq> reqUtil = new ReqUtil<>(addUserRequestReq);
                     AddUserRequestReq addUserRequestReq1 = reqUtil.decryJsonToReq(addUserRequestReq);
@@ -500,12 +517,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             ReqUtil jsonUtil = new ReqUtil<>(userRequest);
             userRequest = (UserRequest) jsonUtil.jsonReqToDto(userRequest);
             switch (userRequest.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result.setResultObj(commonCancelUser(userRequest));
                     break;
-                case UcConstants.DESTINATION_IN:
+                case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    userRequest.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userRequest.setDestination(DESTINATION_OUT_TO_IN);
                     userRequest.setUrl(url+UcConstants.URL_CANCEL_USER);
                     String param = JSONObject.toJSONString(userRequest);
                     reqModel.setParam(param);
@@ -519,7 +536,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                         throw new SystemException("UserFriendsServiceImpl.modifyUserInfo"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
                     // 入参解密
                     ReqUtil reqUtil = new ReqUtil<>(userRequest);
                     userRequest = (UserRequest)reqUtil.decryJsonToReq(userRequest);
@@ -610,12 +627,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         Result result;
         try {
             switch (userFriendReq.getDestination()){
-                case UcConstants.DESTINATION_OUT:
+                case DESTINATION_OUT:
                     result = commonModifyFriend(userFriendReq);
                     break;
-                case UcConstants.DESTINATION_IN:
+                case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
-                    userFriendReq.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+                    userFriendReq.setDestination(DESTINATION_OUT_TO_IN);
                     userFriendReq.setUrl(url+UcConstants.URL_MODIFYUSERGROUP);
                     String param = JSONObject.toJSONString(userFriendReq);
                     log.info("非密区向密区发送请求参数param:{}",param);
@@ -631,7 +648,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                         throw new SystemException("modifyFriend"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                     break;
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
                     // 入参解密
                     ReqUtil<UserFriendReq> reqUtil = new ReqUtil<>(userFriendReq);
                     UserFriendReq userFriendReq1 = reqUtil.decryJsonToReq(userFriendReq);

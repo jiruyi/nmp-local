@@ -73,7 +73,6 @@ public class UserFriendsController {
         try {
             Result result = userFriendsService.addFriends(addUserRequestReq);
             addFriendSendMsg(addUserRequestReq,result);
-            result = commonService.encryptForWs(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("addFriends exception:{}",e.getMessage());
