@@ -87,9 +87,9 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
     }
 
     @Override
-    public Result encryptForLogin(LoginReq req, Result res) throws Exception {
+    public Result encryptForLogin(LoginReq req, String destination, Result res) throws Exception {
         log.info("登录开始加密了歪：{},{}",JSONObject.toJSONString(req),JSONObject.toJSONString(res));
-        if(UcConstants.DESTINATION_OUT_TO_IN.equals(req.getDestination())){
+        if(UcConstants.DESTINATION_OUT_TO_IN.equals(destination)){
             if (ErrorCode.SYSTEM_ERROR.equals(res.getErrorCode())) {
                 return res;
             }
