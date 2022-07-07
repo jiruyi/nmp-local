@@ -11,7 +11,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="sex" jdbcType="CHAR" property="sex" />
         <result column="phone_number" jdbcType="VARCHAR" property="phone" />
-        <result column="login_account" javaType="VARCHAR" property="loginAccount"/>
+        <result column="login_account" jdbcType="VARCHAR" property="loginAccount"/>
     </resultMap>
     <resultMap id="ResultMap" type="com.matrictime.network.api.modelVo.AddRequestVo">
         <result column="group_id" jdbcType="VARCHAR" property="groupId" />
