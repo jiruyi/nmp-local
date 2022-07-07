@@ -1,6 +1,7 @@
 package com.matrictime.network.domain.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.api.request.PushTokenReq;
 import com.matrictime.network.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +59,11 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
                 String destination = strings[4];
                 log.info("过期token的用户id是:{},des:{}",userId,destination);
 
+                LogoutReq logoutReq = new LogoutReq();
+                logoutReq.setUserId(userId);
+                logoutReq.setDestination(destination);
+                loginService.syslogout(logoutReq);
+
                 JSONObject param = new JSONObject();
                 param.put("type",PUSH_TYPE_DISABLE_TOKEN);
                 param.put("userid",userId);
@@ -68,7 +74,6 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
                 req.setSystem(SYSTEM_IM);
                 req.setBody(param.toString());
                 loginService.pushToken(req);
-
 
                 log.info("修改过期token的用户id：{}",userId);
             }

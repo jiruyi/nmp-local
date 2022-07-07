@@ -455,6 +455,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     commonLogout(req);
                     removeToken(req.getUserId(),req.getDestination());
                     webSocketOnClose(req.getCommonKey()+KEY_SPLIT_UNDERLINE+DESTINATION_OUT);
+                    result = buildResult(null);
                     break;
                 case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
@@ -489,14 +490,13 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     // 返回值加密
 
 
-                    return buildResult(null,null,null,desReq.getUserId());
+                    result = buildResult(null,null,null,desReq.getUserId());
+                    break;
                 default:
                     throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
             }
 
-
-            result = buildResult(null);
         }catch (SystemException e){
             log.error("LoginServiceImpl.logout SystemException:{}",e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -552,7 +552,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case DESTINATION_OUT:
                     commonBind(req);
                     req.setDestination(UcConstants.DESTINATION_FOR_DES);
-                    log.info("非密区reqHashCode:{}",System.identityHashCode(req));
+                    result = buildResult(null);
                     break;
                 case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
@@ -580,14 +580,13 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     BindReq desReq = reqUtil.decryJsonToReq(req);
                     commonBind(desReq);
                     // 返回值加密
-
-                    return buildResult(null);
+                    result = buildResult(null);
+                    break;
                 default:
                     throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
             }
 
-            result = buildResult(null);
         }catch (SystemException e){
             log.error("LoginServiceImpl.bind SystemException:{}",e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -698,7 +697,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
             switch (req.getDestination()){
                 case DESTINATION_OUT:
-                case UcConstants.DESTINATION_OUT_TO_IN:
+                case DESTINATION_OUT_TO_IN:
                     // 非密区删除用户
                     commonDeleteUser(req);
 

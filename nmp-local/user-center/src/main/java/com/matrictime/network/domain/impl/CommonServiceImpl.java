@@ -133,6 +133,11 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
 
 
     public String getSidByCondition(String condition) throws Exception {
+
+        if (ParamCheckUtil.checkVoStrBlank(condition)){
+            throw new Exception(GET_KEY_FAIL_MSG);
+        }
+
         UserExample userExample1 = new UserExample();
         userExample1.createCriteria().andUserIdEqualTo(condition).andIsExistEqualTo(DataConstants.IS_EXIST);
         List<User> users1 = userMapper.selectByExample(userExample1);
