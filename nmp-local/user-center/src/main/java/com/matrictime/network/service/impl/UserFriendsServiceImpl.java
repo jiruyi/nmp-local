@@ -57,6 +57,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
 
     @Override
     public Result<UserFriendResp> selectUserFriend(UserFriendReq userFriendReq) {
+        String entryFlag = DESTINATION_IN;
         Result<UserFriendResp> result = new Result<>();
         try {
             ReqUtil jsonUtil = new ReqUtil<>(userFriendReq);
@@ -83,6 +84,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     }
                     break;
                 case DESTINATION_OUT_TO_IN:
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil reqUtil = new ReqUtil<>(userFriendReq);
                     userFriendReq = (UserFriendReq)reqUtil.decryJsonToReq(userFriendReq);
@@ -99,7 +101,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             result = failResult("");
         }
         try {
-            result = commonService.encrypt(userFriendReq.getCommonKey(), userFriendReq.getDestination(), result);
+            result = commonService.encrypt(userFriendReq.getCommonKey(),entryFlag, result);
         }catch (Exception e){
             log.error("基础平台加密异常:{}",e.getMessage());
             result = failResult("");
@@ -166,15 +168,19 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-            try {
-                result = commonService.encryptForWs(addUserRequestReq.getCommonKey(), entryFlag, result);
-            }catch (Exception e){
-                log.error("基础平台加密异常:{}",e.getMessage());
-                result = failResult("");
-            }
+
+        }catch (SystemException e){
+            log.error("selectUserFriend exception:{}",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
-            result.setSuccess(false);
+            log.error("selectUserFriend exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        try {
+            result = commonService.encryptForWs(addUserRequestReq.getCommonKey(), entryFlag, result);
+        }catch (Exception e){
+            log.error("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -226,15 +232,19 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 default:
                     throw new SystemException("Destination"+ ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-            try {
-                result = commonService.encryptForWs(recallRequest.getCommonKey(), entryFlag, result);
-            }catch (Exception e){
-                log.error("基础平台加密异常:{}",e.getMessage());
-                result = failResult("");
-            }
+
+        }catch (SystemException e){
+            log.error("selectUserFriend exception:{}",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
-            result.setSuccess(false);
+            log.error("selectUserFriend exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        try {
+            result = commonService.encryptForWs(recallRequest.getCommonKey(), entryFlag, result);
+        }catch (Exception e){
+            log.error("基础平台加密异常:{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
