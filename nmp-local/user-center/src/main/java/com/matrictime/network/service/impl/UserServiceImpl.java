@@ -380,7 +380,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     ReqUtil<VerifyReq> reqUtil = new ReqUtil<>(req);
                     VerifyReq desReq = reqUtil.decryJsonToReq(req);
                     commonVerify(desReq);
-
+                    break;
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
