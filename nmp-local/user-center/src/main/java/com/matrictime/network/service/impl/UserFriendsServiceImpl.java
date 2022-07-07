@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -545,6 +546,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         try {
             result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
         }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("基础平台加密异常:{}",e.getMessage());
             result = failResult("");
         }
@@ -653,6 +655,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         try {
             result = commonService.encryptForWs(userFriendReq.getCommonKey(), userFriendReq.getDestination(), result);
         }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.info("基础平台加密异常:{}",e.getMessage());
             result = failResult("");
         }
