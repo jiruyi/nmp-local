@@ -86,7 +86,10 @@ public class ReqUtil<T> {
     }
 
     public String encryJsonStringToReq(String jsonString, String sid) throws Exception {
-        String encryptMsg = JServiceImpl.encryptMsg(jsonString,sid);
+//        String encryptMsg = JServiceImpl.encryptMsg(jsonString,sid);
+
+        // TODO: 2022/5/30 跳过平台加密，上线需删除
+        String encryptMsg = AesEncryptUtil.aesEncrypt(jsonString);
 
         if (StringUtils.isBlank(encryptMsg)){
             throw new Exception("encrypt fail");
