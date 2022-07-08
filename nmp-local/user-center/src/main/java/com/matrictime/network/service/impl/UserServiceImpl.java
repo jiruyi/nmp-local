@@ -46,8 +46,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import static com.matrictime.network.base.UcConstants.DESTINATION_OUT;
-import static com.matrictime.network.base.UcConstants.DESTINATION_OUT_TO_IN;
+import static com.matrictime.network.base.UcConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
 
 /**
@@ -522,7 +521,11 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                 wsSendVo.setData(JSONObject.toJSONString(user));
                 wsSendVo.setFrom(SYSTEM_UC);
                 wsSendVo.setBusinessCode("13");
-                wsResultVo.setSendObject(deleteFriendReq.getFriendUserId());
+                if (DESTINATION_OUT_TO_IN.equals(deleteFriendReq.getDestination())){
+                    wsResultVo.setSendObject(deleteFriendReq.getFriendUserId()+KEY_SPLIT_UNDERLINE+DESTINATION_IN);
+                }else {
+                    wsResultVo.setSendObject(deleteFriendReq.getFriendUserId()+KEY_SPLIT_UNDERLINE+DESTINATION_OUT);
+                }
                 wsResultVo.setDestination(deleteFriendReq.getDestination());
             }
             wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
