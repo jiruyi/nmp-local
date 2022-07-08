@@ -103,7 +103,6 @@ public class UserFriendsController {
         try {
             result = userFriendsService.agreeAddFriedns(request);
             agreeFriendSendMsg(request,result);
-            result = commonService.encryptForWs(request.getCommonKey(), request.getDestination(), result);
             return result;
         }catch (Exception e){
             log.error("getRecall exception:{}",e.getMessage());
