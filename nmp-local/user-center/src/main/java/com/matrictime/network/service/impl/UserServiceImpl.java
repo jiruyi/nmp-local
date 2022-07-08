@@ -101,6 +101,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     @Transactional(rollbackFor = Exception.class)
     public Result modifyUserInfo(UserRequest userRequest) {
         Result result;
+        String encryFlag = DESTINATION_OUT;
         try {
             ReqUtil<UserRequest> jsonUtil = new ReqUtil<>(userRequest);
             userRequest = jsonUtil.jsonReqToDto(userRequest);
@@ -127,6 +128,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                         throw new SystemException("UserServiceImpl.modifyUserInfo"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                 case DESTINATION_OUT_TO_IN:
+                    encryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<UserRequest> reqUtil = new ReqUtil<>(userRequest);
                     UserRequest desReq = reqUtil.decryJsonToReq(userRequest);
@@ -147,7 +149,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         }
 
         try {
-            result = commonService.encrypt(userRequest.getCommonKey(), userRequest.getDestination(), result);
+            result = commonService.encrypt(userRequest.getCommonKey(), encryFlag, result);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult("");
@@ -168,6 +170,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     @Transactional(rollbackFor = Exception.class)
     public Result deleteFriend(DeleteFriendReq deleteFriendReq) {
         Result result;
+        String encryFlag = DESTINATION_OUT;
         try {
 
             ReqUtil<DeleteFriendReq> jsonUtil = new ReqUtil<>(deleteFriendReq);
@@ -195,6 +198,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                         throw new SystemException("UserServiceImpl.deleteFriend"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
                     }
                 case DESTINATION_OUT_TO_IN:
+                    encryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<DeleteFriendReq> reqUtil = new ReqUtil<>(deleteFriendReq);
                     DeleteFriendReq desReq = reqUtil.decryJsonToReq(deleteFriendReq);
@@ -215,7 +219,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         }
 
         try {
-            result = commonService.encryptForWs(deleteFriendReq.getCommonKey(), deleteFriendReq.getDestination(), result);
+            result = commonService.encryptForWs(deleteFriendReq.getCommonKey(), encryFlag, result);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult("");
@@ -342,6 +346,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     @Override
     public Result verify(VerifyReq req) {
         Result result;
+        String encryFlag = DESTINATION_OUT;
         try {
             ReqUtil<VerifyReq> jsonUtil = new ReqUtil<>(req);
             req = jsonUtil.jsonReqToDto(req);
@@ -370,11 +375,12 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                     }
 
                 case DESTINATION_OUT_TO_IN:
+                    encryFlag = DESTINATION_OUT_TO_IN;
                     // 入参解密
                     ReqUtil<VerifyReq> reqUtil = new ReqUtil<>(req);
                     VerifyReq desReq = reqUtil.decryJsonToReq(req);
                     commonVerify(desReq);
-
+                    break;
                 default:
                     throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
 
@@ -390,7 +396,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         }
 
         try {
-            result = commonService.encrypt(req.getCommonKey(), req.getDestination(), result);
+            result = commonService.encrypt(req.getCommonKey(), encryFlag, result);
         } catch (Exception e) {
             result = failResult("");
             log.error("UserServiceImpl.verify encrypt Exception:{}",e.getMessage());

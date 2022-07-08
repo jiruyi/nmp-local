@@ -11,7 +11,7 @@ public interface CommonService {
 
     Result encryptForWs(String condition,String destination, Result result) throws Exception;
 
-    Result encryptForLogin(LoginReq req, Result result) throws Exception;
+    Result encryptForLogin(LoginReq req,String destination, Result result) throws Exception;
 
     Result encryptForRegister(String sid,String destination, Result res) throws Exception;
 }

@@ -466,6 +466,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
 
     @Override
     public Result<AddUserRequestResp> getAddUserInfo(AddUserRequestReq addUserRequestReq) {
+        String entryFlag = DESTINATION_OUT;
         ReqUtil<AddUserRequestReq> jsonUtil = new ReqUtil<>(addUserRequestReq);
         addUserRequestReq = jsonUtil.jsonReqToDto(addUserRequestReq);
         Result result;
@@ -494,6 +495,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     break;
                 case DESTINATION_OUT_TO_IN:
                     // 入参解密
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     ReqUtil<AddUserRequestReq> reqUtil = new ReqUtil<>(addUserRequestReq);
                     AddUserRequestReq addUserRequestReq1 = reqUtil.decryJsonToReq(addUserRequestReq);
                     result = commonGetAddUserInfo(addUserRequestReq1);
@@ -511,7 +513,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
         }
 
         try {
-            result = commonService.encrypt(addUserRequestReq.getCommonKey(), addUserRequestReq.getDestination(), result);
+            result = commonService.encrypt(addUserRequestReq.getCommonKey(), entryFlag, result);
         }catch (Exception e){
             log.error("基础平台加密异常:{}",e.getMessage());
             result = failResult("");
@@ -632,6 +634,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
     @Override
     @Transactional
     public Result modfiyFriendInfo(UserFriendReq userFriendReq) {
+        String entryFlag = DESTINATION_OUT;
         ReqUtil<UserFriendReq> jsonUtil = new ReqUtil<>(userFriendReq);
         userFriendReq = jsonUtil.jsonReqToDto(userFriendReq);
         Result result;
@@ -660,6 +663,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                     break;
                 case DESTINATION_OUT_TO_IN:
                     // 入参解密
+                    entryFlag = DESTINATION_OUT_TO_IN;
                     ReqUtil<UserFriendReq> reqUtil = new ReqUtil<>(userFriendReq);
                     UserFriendReq userFriendReq1 = reqUtil.decryJsonToReq(userFriendReq);
                     result = commonModifyFriend(userFriendReq1);
@@ -677,7 +681,7 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             result = failResult("");
         }
         try {
-            result = commonService.encryptForWs(userFriendReq.getCommonKey(), userFriendReq.getDestination(), result);
+            result = commonService.encryptForWs(userFriendReq.getCommonKey(), entryFlag, result);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.info("基础平台加密异常:{}",e.getMessage());
