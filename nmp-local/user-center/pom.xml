@@ -129,7 +129,7 @@
         <dependency>
             <groupId>com.jzsg</groupId>
             <artifactId>bussiness</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.3-SNAPSHOT</version>
         </dependency>
 
         <dependency>
