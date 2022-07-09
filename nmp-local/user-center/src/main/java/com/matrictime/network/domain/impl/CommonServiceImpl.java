@@ -24,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 import static com.matrictime.network.exception.ErrorMessageContants.GET_KEY_FAIL_MSG;
 
 @Service
@@ -74,7 +75,8 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
                 WsResultVo wsResultVo = JSONObject.parseObject(res.getErrorMsg(), new TypeReference<WsResultVo>() {});
                 String result = wsResultVo.getResult();
                 wsResultVo.setDestination(UcConstants.DESTINATION_IN);
-                String encryJsonToReq = resUtil.encryJsonToReq(result, getSidByCondition(wsResultVo.getSendObject()));
+                String[] strings = wsResultVo.getSendObject().split(KEY_SPLIT_UNDERLINE);
+                String encryJsonToReq = resUtil.encryJsonToReq(result, getSidByCondition(strings[0]));
                 wsResultVo.setResult(encryJsonToReq);
                 res.setErrorMsg(null);
                 String sid = getSidByCondition(condition);
