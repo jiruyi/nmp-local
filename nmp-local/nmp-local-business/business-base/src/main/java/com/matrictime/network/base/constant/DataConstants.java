@@ -47,6 +47,8 @@ public class DataConstants {
 
     public static final long SUPER_ADMIN = 1;
 
+    public static final long COMMON_ADMIN = 2;
+
     public static final String IOTYPE_I = "1";
     public static final String IOTYPE_O = "0";
 

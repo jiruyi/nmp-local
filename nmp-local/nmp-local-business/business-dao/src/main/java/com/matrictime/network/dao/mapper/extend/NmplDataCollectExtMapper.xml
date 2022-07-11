@@ -119,7 +119,7 @@
         </foreach >
     </insert>
 
-    <select id="selectTopTen" resultType="com.matrictime.network.modelVo.DataCollectVo">
+    <select id="selectTopTenDesc" resultType="com.matrictime.network.modelVo.DataCollectVo">
         SELECT a.* from nmpl_data_collect a,
         (SELECT max(upload_time) as q,device_id,data_item_code from nmpl_data_collect group by device_id,data_item_code) as b
         where a.device_id = b.device_id and a.upload_time = b.q and a.data_item_code = b.data_item_code
@@ -134,7 +134,25 @@
                  open="(" close=")" separator=",">
             #{id}
         </foreach>
-        order by  data_item_value desc limit 10
+        order by  cast(data_item_value as decimal) desc limit 10
+    </select>
+
+    <select id="selectTopTenAsc" resultType="com.matrictime.network.modelVo.DataCollectVo">
+        SELECT a.* from nmpl_data_collect a,
+        (SELECT max(upload_time) as q,device_id,data_item_code from nmpl_data_collect group by device_id,data_item_code) as b
+        where a.device_id = b.device_id and a.upload_time = b.q and a.data_item_code = b.data_item_code
+        <if test="uploadTime != null">
+            and a.upload_time &gt;= #{uploadTime,jdbcType=VARCHAR}
+        </if>
+        <if test="dataItemCode != null">
+            and a.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
+        </if>
+        and a.device_id in
+        <foreach collection="ids" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        order by  cast(data_item_value as decimal) asc  limit 10
     </select>
 
     <select id="countLoad" resultType="java.math.BigDecimal">
