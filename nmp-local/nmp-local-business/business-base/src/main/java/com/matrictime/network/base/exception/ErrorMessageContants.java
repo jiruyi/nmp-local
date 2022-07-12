@@ -76,4 +76,6 @@ public class ErrorMessageContants {
 
 	public static final String SIGNAL_O_EXCEPTION_MSG = "信令关闭参数校验有误";
 
+	public static final String NO_CREATEUSER_ERROR_MSG = "并非该用户的创始人,无权修改";
+
 }

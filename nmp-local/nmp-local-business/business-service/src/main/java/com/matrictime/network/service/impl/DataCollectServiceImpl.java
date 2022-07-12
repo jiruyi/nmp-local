@@ -15,6 +15,8 @@ import com.matrictime.network.util.PropertiesUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -30,10 +32,13 @@ import static com.matrictime.network.base.constant.DataConstants.INTRANET_BROADB
 
 @Service
 @Slf4j
+@PropertySource(value = "classpath:/businessConfig.properties",encoding = "UTF-8")
 public class DataCollectServiceImpl extends SystemBaseService implements DataCollectService {
     @Autowired
     DataCollectDomainService dataCollectDomainService;
 
+    @Value("${data.delayTime}")
+    private Integer delayTime;
 
     @Override
     public Result<PageInfo> queryByConditon(DataCollectReq dataCollectReq) {
@@ -152,7 +157,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
     public Result monitorDataTopTen(MonitorReq monitorReq) {
         Result result= null;
         try {
-            monitorReq.setCurrentTime(LocalTimeToUdate(LocalTime.now().minusMinutes(15)));
+            monitorReq.setCurrentTime(LocalTimeToUdate(LocalTime.now().minusMinutes(delayTime)));
             result = buildResult(dataCollectDomainService.queryTopTen(monitorReq));
         }catch (Exception e){
             log.info("查询排行前10数据异常",e.getMessage());

@@ -138,6 +138,11 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             log.info("该区域下无设备");
             return new ArrayList<>();
         }
-        return nmplDataCollectExtMapper.selectTopTen(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
+        if(monitorReq.getDataItemCode().equals("10001")){
+            return nmplDataCollectExtMapper.selectTopTenDesc(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
+        }else {
+            return nmplDataCollectExtMapper.selectTopTenAsc(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
+        }
+
     }
 }
