@@ -25,6 +25,9 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
   </resultMap>
+  <resultMap id="ResultMap" type="com.matrictime.network.modelVo.NmplDeviceInfoExtVo">
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+  </resultMap>
   <resultMap id="DeviceBaseResultMap" type="com.matrictime.network.modelVo.NmplDeviceInfoExtVo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
@@ -548,5 +551,30 @@
       b.is_exist = '1'
       and
       c.is_exist = '1'
+  </select>
+  <select id="query" parameterType="com.matrictime.network.dao.model.NmplDeviceExtraInfo" resultMap="ResultMap">
+    select station_network_id
+    from nmpl_device_info
+    where
+      public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+       or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
+       or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
+      and is_exist = 1
+    union
+    select station_network_id
+    from nmpl_device_extra_info
+    where
+      public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+       or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
+       or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
+      and is_exist = 1
+    union
+    select station_network_id
+    from nmpl_base_station_info
+    where
+      public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+       or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
+       or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
+      and is_exist = 1
   </select>
 </mapper>

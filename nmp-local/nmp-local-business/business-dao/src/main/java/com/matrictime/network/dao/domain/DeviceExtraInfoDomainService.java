@@ -20,4 +20,6 @@ public interface DeviceExtraInfoDomainService {
     int delete(NmplDeviceExtraInfo nmplDeviceExtraInfo);
 
     List<NmplDeviceInfoExtVo> selectDevices(DeviceExtraInfoRequest deviceExtraInfoRequest);
+
+    List<NmplDeviceInfoExtVo> query(NmplDeviceExtraInfo nmplDeviceExtraInfo);
 }

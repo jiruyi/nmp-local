@@ -7,6 +7,7 @@ import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.NmplDeviceInfoExtVo;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
 import com.matrictime.network.response.DeviceInfoExtResponse;
 import com.matrictime.network.response.PageInfo;
@@ -33,6 +34,10 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
             NmplUser user = RequestContext.getUser();
             deviceExtraInfoRequest.setCreateUser(user.getNickName());
             BeanUtils.copyProperties(deviceExtraInfoRequest,nmplDeviceExtraInfo);
+            List<NmplDeviceInfoExtVo> list = deviceExtraInfoDomainService.query(nmplDeviceExtraInfo);
+            if(list.size() > 0){
+                return new Result<>(false,"入网id或ip重复");
+            }
             result = buildResult(deviceExtraInfoDomainService.insert(nmplDeviceExtraInfo));
         }catch (Exception e){
             result = failResult(e);

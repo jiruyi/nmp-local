@@ -33,4 +33,6 @@ public interface NmplDeviceExtraInfoMapper {
     int updateByPrimaryKey(NmplDeviceExtraInfo record);
 
     List<NmplDeviceInfoExtVo> selectDevices(DeviceExtraInfoRequest deviceExtraInfoRequest);
+
+    List<NmplDeviceInfoExtVo> query(NmplDeviceExtraInfo nmplDeviceExtraInfo);
 }

@@ -331,4 +331,11 @@
     select device_id,device_name,public_network_ip,public_network_port,lan_ip,lan_port
     from nmpl_device_info where is_exist = 1
   </select>
+  <select id="query" parameterType="com.matrictime.network.request.LinkRelationRequest" resultType="com.matrictime.network.modelVo.LinkRelationVo">
+    select link_name from nmpl_link_relation
+    where
+    is_exist = 1
+    and link_name = #{linkName,jdbcType=VARCHAR}
+    or (main_device_id = #{mainDeviceId,jdbcType=VARCHAR} and follow_device_id = #{followDeviceId,jdbcType=VARCHAR})
+  </select>
 </mapper>

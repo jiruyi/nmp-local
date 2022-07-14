@@ -32,9 +32,6 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
     @Resource
     NmplDeviceExtraInfoMapper nmplDeviceExtraInfoMapper;
 
-    @Resource
-    private CompanyInfoDomainService companyInfoDomainService;
-
     @Override
     public int insert(NmplDeviceExtraInfo nmplDeviceExtraInfo) {
         //入参判断
@@ -50,10 +47,6 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
         }else {
             throw new SystemException("设备id为空");
         }
-//        nmplDeviceExtraInfo.setDeviceId(SnowFlake.nextId_String());
-//        String preBID = companyInfoDomainService.getPreBID(nmplDeviceExtraInfo.getRelationOperatorId());
-//        String networkId = preBID + "-" + nmplDeviceExtraInfo.getStationNetworkId();
-//        nmplDeviceExtraInfo.setStationNetworkId(networkId);
         return nmplDeviceExtraInfoMapper.insertSelective(nmplDeviceExtraInfo);
     }
 
@@ -61,10 +54,6 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
     public PageInfo<DeviceExtraVo> selectByCondition(DeviceExtraInfoRequest deviceExtraInfoRequest) {
         NmplDeviceExtraInfoExample deviceExtraInfoExample = new NmplDeviceExtraInfoExample();
         NmplDeviceExtraInfoExample.Criteria criteria = deviceExtraInfoExample.createCriteria();
-//        List<String> deviceStatusList = new ArrayList<>();
-//        deviceStatusList.add(DeviceStatusEnum.ACTIVE.getCode());
-//        deviceStatusList.add(DeviceStatusEnum.NOAUDIT.getCode());
-//        deviceStatusList.add(DeviceStatusEnum.OFFLINE.getCode());
         if(deviceExtraInfoRequest.getRelDeviceId() != null){
             criteria.andRelDeviceIdEqualTo(deviceExtraInfoRequest.getRelDeviceId());
         }
@@ -77,7 +66,6 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
         if(deviceExtraInfoRequest.getStationNetworkId() != null){
             criteria.andStationNetworkIdEqualTo(deviceExtraInfoRequest.getStationNetworkId());
         }
-//        criteria.andStationStatusIn(deviceStatusList);
         criteria.andIsExistEqualTo(true);
         Page page = PageHelper.startPage(deviceExtraInfoRequest.getPageNo(),deviceExtraInfoRequest.getPageSize());
         List<NmplDeviceExtraInfo> nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(deviceExtraInfoExample);
@@ -117,6 +105,11 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
     @Override
     public List<NmplDeviceInfoExtVo> selectDevices(DeviceExtraInfoRequest deviceExtraInfoRequest) {
         return nmplDeviceExtraInfoMapper.selectDevices(deviceExtraInfoRequest);
+    }
+
+    @Override
+    public List<NmplDeviceInfoExtVo> query(NmplDeviceExtraInfo nmplDeviceExtraInfo) {
+        return nmplDeviceExtraInfoMapper.query(nmplDeviceExtraInfo);
     }
 }
 

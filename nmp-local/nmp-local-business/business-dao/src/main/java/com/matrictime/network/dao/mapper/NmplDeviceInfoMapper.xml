@@ -24,6 +24,9 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
   </resultMap>
+  <resultMap id="ResultMap" type="com.matrictime.network.modelVo.DeviceInfoVo">
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+  </resultMap>
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -525,8 +528,9 @@
       <if test="stationNetworkId != null and stationNetworkId != ''">
         and station_network_id = #{stationNetworkId,jdbcType=CHAR}
       </if>
-        and nmpl_device_info.relation_operator_id = nmpl_company_info.company_code
+        and nmpl_device_info.relation_operator_id = nmpl_company_info.company_id
         and nmpl_user.user_id = nmpl_device_info.create_user
+        and nmpl_company_info.company_type = '02'
     </where>
         order by nmpl_device_info.update_time desc
   </select>
@@ -540,7 +544,8 @@
       nmpl_device_info.is_exist = 1
       and nmpl_company_info.is_exist = 1
       and station_status = '02'
-      and nmpl_device_info.relation_operator_id = nmpl_company_info.company_code
+      and nmpl_device_info.relation_operator_id = nmpl_company_info.company_id
+      and nmpl_company_info.company_type = '02'
       and device_type = #{deviceType,jdbcType=CHAR}
     order by nmpl_device_info.update_time desc
   </select>
@@ -587,23 +592,35 @@
       <if test="stationNetworkId != null and stationNetworkId != ''">
         and station_network_id like "%" #{stationNetworkId,jdbcType=CHAR}
       </if>
-      and nmpl_device_info.relation_operator_id = nmpl_company_info.company_code
+      and nmpl_device_info.relation_operator_id = nmpl_company_info.company_id
       and nmpl_user.user_id = nmpl_device_info.create_user
+      and nmpl_company_info.company_type = '02'
     </where>
     order by nmpl_device_info.update_time desc
   </select>
-  <select id="getDevices" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.DeviceInfoVo">
-    select device_id,device_name,public_network_ip,public_network_port,station_status,
-    relation_operator_id,nmpl_device_info.remark,nick_name,lan_ip,lan_port,company_name,device_type,
-    SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id
-    from nmpl_device_info,nmpl_company_info,nmpl_user
-    where nmpl_device_info.is_exist = 1 and nmpl_company_info.is_exist = 1 and nmpl_user.is_exist = 1
-    and nmpl_device_info.relation_operator_id = nmpl_company_info.company_code
-    and nmpl_user.user_id = nmpl_device_info.create_user
-    and (
-      lan_ip = #{lanIp,jdbcType=CHAR} or public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
-      or station_network_id like "%" #{stationNetworkId,jdbcType=CHAR}
-    )
-    order by nmpl_device_info.update_time desc
+  <select id="getDevices" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultMap="ResultMap">
+    select station_network_id
+    from nmpl_device_info
+    where
+      public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+       or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
+       or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
+      and is_exist = 1
+    union
+    select station_network_id
+    from nmpl_device_extra_info
+    where
+      public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+       or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
+       or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
+      and is_exist = 1
+    union
+    select station_network_id
+    from nmpl_base_station_info
+    where
+      public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+       or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
+       or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
+      and is_exist = 1
   </select>
 </mapper>

@@ -61,6 +61,13 @@
         </where>
             order by nmpl_route.update_time desc
     </select>
+    <select id="query" parameterType="com.matrictime.network.request.RouteRequest" resultType="com.matrictime.network.modelVo.RouteVo">
+        select id
+        from nmpl_route
+        is_exist = 1
+        and access_device_id = #{accessDeviceId,jdbcType=VARCHAR}
+        and boundary_device_id = #{boundaryDeviceId,jdbcType=VARCHAR}
+    </select>
     <select id="selectDevices" resultMap="DeviceBaseResultMap">
         select
             device_id,

@@ -46,4 +46,6 @@ public interface NmplLinkRelationMapper {
     List<BaseStationInfoVo> selectLinkRelationStation(BaseStationInfoRequest baseStationInfoRequest);
 
     List<DeviceInfoVo> selectLinkRelationDevice(DeviceInfoRequest deviceInfoRequest);
+
+    List<LinkRelationVo> query(LinkRelationRequest linkRelationRequest);
 }

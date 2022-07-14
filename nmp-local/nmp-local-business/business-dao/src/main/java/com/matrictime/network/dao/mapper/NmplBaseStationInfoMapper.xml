@@ -525,7 +525,7 @@
       <if test="stationNetworkId != null and stationNetworkId != ''">
         and station_network_id = #{stationNetworkId,jdbcType=CHAR}
       </if>
-        and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
+        and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_id
         and nmpl_user.user_id = nmpl_base_station_info.create_user
     </where>
         order by nmpl_base_station_info.update_time desc
@@ -587,8 +587,9 @@
       <if test="stationNetworkId != null and stationNetworkId != ''">
         and station_network_id like "%" #{stationNetworkId,jdbcType=CHAR}
       </if>
-      and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
+      and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_id
       and nmpl_user.user_id = nmpl_base_station_info.create_user
+      and nmpl_company_info.company_type = '02'
     </where>
     order by nmpl_base_station_info.update_time desc
   </select>
@@ -603,22 +604,33 @@
       nmpl_base_station_info.is_exist = 1
       and nmpl_company_info.is_exist = 1
       and station_status = '02'
-      and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
+      and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_id
+      and nmpl_company_info.company_type = '02'
     order by nmpl_base_station_info.update_time desc
   </select>
-  <select id="selectBaseStation" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
-    select id,station_id, station_name, station_type,station_status,
-    nmpl_base_station_info.remark, public_network_ip,public_network_port,
-    lan_ip, SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id,lan_port,
-    relation_operator_id, nick_name,company_name
-    from nmpl_base_station_info,nmpl_company_info,nmpl_user
-    where nmpl_base_station_info.is_exist = 1 and nmpl_company_info.is_exist = 1 and nmpl_user.is_exist = 1
-    and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_code
-    and nmpl_user.user_id = nmpl_base_station_info.create_user
-    and (
-        lan_ip = #{lanIp,jdbcType=CHAR} or public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
-        or station_network_id like "%" #{stationNetworkId,jdbcType=CHAR}
-    )
-    order by nmpl_base_station_info.update_time desc
+  <select id="selectBaseStation" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseResultMap">
+    select station_network_id
+    from nmpl_device_info
+    where
+        public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+        or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
+        or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
+        and is_exist = 1
+    union
+    select station_network_id
+    from nmpl_device_extra_info
+    where
+        public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+        or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
+        or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
+        and is_exist = 1
+    union
+    select station_network_id
+    from nmpl_base_station_info
+    where
+       public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+       or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
+       or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
+       and is_exist = 1
   </select>
 </mapper>

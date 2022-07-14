@@ -51,6 +51,9 @@ public class RouteServiceImpl implements RouteService {
             routeRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             Integer insetFlag = routeDomainService.insertRoute(routeRequest);
             //List<Future<List<Result>>> futures = collectResult(routeRequest);
+            if(insetFlag == 2){
+                return new Result<>(false,"路由不可以重复插入");
+            }
             result.setResultObj(insetFlag);
             result.setSuccess(true);
         }catch (Exception e){

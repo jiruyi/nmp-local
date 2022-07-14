@@ -37,7 +37,11 @@ public class LinkRelationServiceImpl implements LinkRelationService {
             linkRelationRequest.setCreateTime(getFormatDate(date));
             linkRelationRequest.setUpdateTime(getFormatDate(date));
             linkRelationRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
-            result.setResultObj(linkRelationDomainService.insertLinkRelation(linkRelationRequest));
+            int i = linkRelationDomainService.insertLinkRelation(linkRelationRequest);
+            if(i == 2){
+                return new Result<>(false,"链路名称或线路重复");
+            }
+            result.setResultObj(i);
             result.setSuccess(true);
         }catch (Exception e){
             result.setSuccess(false);
