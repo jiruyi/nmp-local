@@ -34,4 +34,5 @@ public interface NmplMenuMapper {
 
     List<NmplMenuVo> queryAllMenu();
 
+    List<Long> queryAllPermId(Long roleId);
 }

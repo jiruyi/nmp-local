@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 菜单权限表
  * @author   hexu
- * @date   2022-03-02
+ * @date   2022-07-07
  */
 @Data
 public class NmplMenu {
@@ -46,7 +46,7 @@ public class NmplMenu {
     private Byte menuStatus;
 
     /**
-     * 权限标识
+     * 
      */
     private String permsCode;
 
@@ -79,6 +79,21 @@ public class NmplMenu {
      * 1正常 0删除
      */
     private Byte isExist;
+
+    /**
+     * 权限标识
+     */
+    private String permission;
+
+    /**
+     * 按钮
+     */
+    private String icon;
+
+    /**
+     * 前端组件信息
+     */
+    private String component;
 
     public Long getMenuId() {
         return menuId;
@@ -190,5 +205,29 @@ public class NmplMenu {
 
     public void setIsExist(Byte isExist) {
         this.isExist = isExist;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission == null ? null : permission.trim();
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon == null ? null : icon.trim();
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    public void setComponent(String component) {
+        this.component = component == null ? null : component.trim();
     }
 }

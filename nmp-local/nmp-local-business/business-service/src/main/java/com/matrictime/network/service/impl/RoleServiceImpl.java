@@ -75,7 +75,8 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
             NmplUser nmplUser = RequestContext.getUser();
             roleRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             //除管理员用户，其他用户只能编辑自己创建的角色
-            if (Long.parseLong(nmplUser.getRoleId())!=DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getUserId())){
+            if (Long.parseLong(nmplUser.getRoleId())!=DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getUserId())
+                    &&Long.parseLong(nmplUser.getRoleId())!=DataConstants.COMMON_ADMIN){
                 result = failResult(ErrorCode.SYSTEM_ERROR, "非该角色的创建者，无编辑该角色的权限");
                 return result;
             }
@@ -100,7 +101,8 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
 
             roleRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             //除管理员用户，其他用户只能删除自己创建的角色
-            if (Long.parseLong(nmplUser.getRoleId()) != DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getUserId())) {
+            if (Long.parseLong(nmplUser.getRoleId()) != DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getUserId())
+                    &&Long.parseLong(nmplUser.getRoleId())!=DataConstants.COMMON_ADMIN) {
                 result = failResult(ErrorCode.SYSTEM_ERROR, "非该角色的创建者，无编辑该角色的权限");
                 return result;
             }
@@ -135,6 +137,27 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
             result = buildResult(roleDomainService.queryOne(roleRequest));
         }catch (Exception e){
             log.info("查询角色异常",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+
+    @Override
+    public Result queryCreateRole(RoleRequest roleRequest) {
+        Result result = null;
+        NmplUser user = RequestContext.getUser();
+        try {
+            roleRequest.setRoleId(Long.valueOf(user.getRoleId()));
+            roleRequest.setCreateUser(String.valueOf(user.getUserId()));
+            //多条件查询
+            //PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
+            RoleResp roleResp = new RoleResp();
+            List<NmplRoleVo> list = roleDomainService.queryCreateRole(roleRequest);
+            roleResp.setList(list);
+            result = buildResult(roleResp);
+        }catch (Exception e){
+            log.error("查询角色异常：",e.getMessage());
             result = failResult(e);
         }
         return result;

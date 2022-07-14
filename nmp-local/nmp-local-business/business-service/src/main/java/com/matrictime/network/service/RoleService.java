@@ -17,5 +17,5 @@ public interface RoleService {
 
     Result<RoleResponse> queryOne(RoleRequest roleRequest);
 
-
+    Result queryCreateRole(RoleRequest roleRequest);
 }

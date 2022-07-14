@@ -104,6 +104,9 @@ public class RoleController {
         return roleService.queryOne(roleRequest);
     }
 
+
+
+
     @ApiOperation(value = "用户登录测试",notes = "用户登录")
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public void login(){
@@ -132,6 +135,18 @@ public class RoleController {
         roleRequest.setRoleId(1L);
         roleService.queryOne(roleRequest);
 
+    }
+
+    /**
+     * 角色条件查询
+     * @param roleRequest
+     * @return
+     */
+    @ApiOperation(value = "角色条件查询接口",notes = "条件查询，默认全量查询")
+    @RequestMapping(value = "/queryCreateRole",method = RequestMethod.POST)
+    @SystemLog(opermodul = "角色管理模块",operDesc = "查询角色",operType = "查询")
+    public Result queryCreateRole(@RequestBody RoleRequest roleRequest){
+        return roleService.queryCreateRole(roleRequest);
     }
 
 }

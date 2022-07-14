@@ -520,14 +520,20 @@ INSERT INTO `nmpl_role` (`role_id`, `role_name`, `role_code`, `menu_scope`, `sta
 select '1', '超级管理员', 'admin', '1', '1', '-1', NULL, '1'
 WHERE NOT EXISTS (SELECT * FROM `nmpl_role` WHERE role_id='1');
 
+INSERT INTO `nmpl_role` (`role_id`, `role_name`, `role_code`, `menu_scope`, `status`, `create_user`,  `remark`, `is_exist`)
+select '2', '业务管理员', 'common_admin', '1', '1', '-1', NULL, '1'
+    WHERE NOT EXISTS (SELECT * FROM `nmpl_role` WHERE role_id='2');
 
 -- ----------------------------
 -- Records of nmpl_user
 -- ----------------------------
-INSERT INTO `nmpl_user` (`user_id`,`village_id`,`login_account`,`nick_name`,`user_type`,`email`,`phone_number`,`password`,`role_id`,`status`,`is_exist`,`remark`)
-SELECT'1',NULL,'admin','admin','00',NULL,'00000000000','j2sivmjjihBLggve6ed5lw==','1','1','1',NULL
+INSERT INTO `nmpl_user` (`user_id`,`village_id`,`login_account`,`nick_name`,`user_type`,`email`,`phone_number`,`password`,`role_id`,`status`,`is_exist`,`remark`,`create_user`)
+SELECT'1',NULL,'superAdmin','superAdmin','00',NULL,'00000000000','j2sivmjjihBLggve6ed5lw==','1','1','1',NULL,'-1'
 WHERE NOT EXISTS (SELECT * FROM `nmpl_user` WHERE `user_id` = '1');
 
+INSERT INTO `nmpl_user` (`user_id`,`village_id`,`login_account`,`nick_name`,`user_type`,`email`,`phone_number`,`password`,`role_id`,`status`,`is_exist`,`remark`,`create_user`)
+SELECT'2',NULL,'admin','admin','00',NULL,'00000000000','j2sivmjjihBLggve6ed5lw==','2','1','1',NULL,'-1'
+    WHERE NOT EXISTS (SELECT * FROM `nmpl_user` WHERE `user_id` = '2');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

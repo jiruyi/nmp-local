@@ -59,6 +59,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         nmplRoleMapper.insertSelective(nmplRole);
         List<Long>menuList = new ArrayList<>();
         menuList = roleRequest.getMenuId();
+        menuList.add(63L);
         menuList = roleHandle(new HashSet<>(menuList));
         Integer result = 0;
         if (!CollectionUtils.isEmpty(menuList)){
@@ -122,6 +123,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         //新增该用户权限
         List<Long>menuList = new ArrayList<>();
         menuList = roleRequest.getMenuId();
+        menuList.add(63L);
         menuList = roleHandle(new HashSet<>(menuList));
         if (!CollectionUtils.isEmpty(menuList)){
             for (Long meduId : menuList) {
@@ -142,7 +144,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             criteria.andRoleIdNotEqualTo(DataConstants.SUPER_ADMIN);
         }
         if (roleRequest.getRoleName()!=null){
-            criteria.andRoleNameEqualTo(roleRequest.getRoleName());
+            criteria.andRoleNameLike("%"+roleRequest.getRoleName()+"%");
         }
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -154,8 +156,9 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         }
         criteria.andIsExistEqualTo(Byte.valueOf("1"));
 //        Page page = PageHelper.startPage(roleRequest.getPageNo(),roleRequest.getPageSize());
+        nmplRoleExample.setOrderByClause("create_time desc");
         List<NmplRole> nmplRoleList = nmplRoleMapper.selectByExample(nmplRoleExample);
-        nmplRoleList = nmplRoleList.stream().sorted(Comparator.comparing(NmplRole::getCreateTime).reversed()).collect(Collectors.toList());
+//        nmplRoleList = nmplRoleList.stream().sorted(Comparator.comparing(NmplRole::getCreateTime).reversed()).collect(Collectors.toList());
 //        PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
         List<NmplRoleVo> nmplRoles = new ArrayList<>();
         for (NmplRole nmplRole : nmplRoleList) {
@@ -226,4 +229,32 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         return new ArrayList<>(third);
     }
 
+
+    @Override
+    public List<NmplRoleVo> queryCreateRole(RoleRequest roleRequest) throws Exception {
+        NmplRoleExample nmplRoleExample = new NmplRoleExample();
+        NmplRoleExample.Criteria criteria = nmplRoleExample.createCriteria();
+        //如果不是管理员用户则将管理员过滤
+        if (roleRequest.getRoleId()== DataConstants.SUPER_ADMIN){
+            roleRequest.setAdmin(true);
+        }
+        if(roleRequest.getRoleId()==DataConstants.COMMON_ADMIN){
+            roleRequest.setAdmin(true);
+            criteria.andRoleIdNotEqualTo(DataConstants.COMMON_ADMIN);
+        }
+        if (!roleRequest.isAdmin()){
+            criteria.andCreateUserEqualTo(roleRequest.getCreateUser());
+        }
+        criteria.andIsExistEqualTo(Byte.valueOf("1"));
+        criteria.andRoleIdNotEqualTo(DataConstants.SUPER_ADMIN);
+        List<NmplRole> nmplRoleList = nmplRoleMapper.selectByExample(nmplRoleExample);
+        nmplRoleList = nmplRoleList.stream().sorted(Comparator.comparing(NmplRole::getCreateTime).reversed()).collect(Collectors.toList());
+        List<NmplRoleVo> nmplRoles = new ArrayList<>();
+        for (NmplRole nmplRole : nmplRoleList) {
+            NmplRoleVo role = new NmplRoleVo();
+            BeanUtils.copyProperties(nmplRole,role);
+            nmplRoles.add(role);
+        }
+        return nmplRoles;
+    }
 }

@@ -135,4 +135,13 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
         return result;
     }
 
+
+
+    private void parmCheck(CompanyInfoRequest companyInfoRequest){
+        if(companyInfoRequest.getCompanyName()!=null){
+
+        }
+    }
+
+
 }

@@ -16,6 +16,9 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="is_exist" jdbcType="TINYINT" property="isExist" />
+    <result column="permission" jdbcType="CHAR" property="permission" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="component" jdbcType="VARCHAR" property="component" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -77,7 +80,8 @@
   </sql>
   <sql id="Base_Column_List">
     menu_id, menu_name, parent_menu_id, url, is_frame, menu_type, menu_status, perms_code, 
-    create_user, create_time, update_user, update_time, remark, is_exist
+    create_user, create_time, update_user, update_time, remark, is_exist, permission, 
+    icon, component
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplMenuExample" resultMap="BaseResultMap">
     select
@@ -115,12 +119,14 @@
       url, is_frame, menu_type, 
       menu_status, perms_code, create_user, 
       create_time, update_user, update_time, 
-      remark, is_exist)
+      remark, is_exist, permission, 
+      icon, component)
     values (#{menuId,jdbcType=BIGINT}, #{menuName,jdbcType=VARCHAR}, #{parentMenuId,jdbcType=BIGINT}, 
       #{url,jdbcType=VARCHAR}, #{isFrame,jdbcType=TINYINT}, #{menuType,jdbcType=TINYINT}, 
       #{menuStatus,jdbcType=TINYINT}, #{permsCode,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{remark,jdbcType=VARCHAR}, #{isExist,jdbcType=TINYINT})
+      #{remark,jdbcType=VARCHAR}, #{isExist,jdbcType=TINYINT}, #{permission,jdbcType=CHAR}, 
+      #{icon,jdbcType=VARCHAR}, #{component,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplMenu">
     insert into nmpl_menu
@@ -167,6 +173,15 @@
       <if test="isExist != null">
         is_exist,
       </if>
+      <if test="permission != null">
+        permission,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+      <if test="component != null">
+        component,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="menuId != null">
@@ -210,6 +225,15 @@
       </if>
       <if test="isExist != null">
         #{isExist,jdbcType=TINYINT},
+      </if>
+      <if test="permission != null">
+        #{permission,jdbcType=CHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="component != null">
+        #{component,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -264,6 +288,15 @@
       <if test="record.isExist != null">
         is_exist = #{record.isExist,jdbcType=TINYINT},
       </if>
+      <if test="record.permission != null">
+        permission = #{record.permission,jdbcType=CHAR},
+      </if>
+      <if test="record.icon != null">
+        icon = #{record.icon,jdbcType=VARCHAR},
+      </if>
+      <if test="record.component != null">
+        component = #{record.component,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -284,7 +317,10 @@
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       remark = #{record.remark,jdbcType=VARCHAR},
-      is_exist = #{record.isExist,jdbcType=TINYINT}
+      is_exist = #{record.isExist,jdbcType=TINYINT},
+      permission = #{record.permission,jdbcType=CHAR},
+      icon = #{record.icon,jdbcType=VARCHAR},
+      component = #{record.component,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -331,6 +367,15 @@
       <if test="isExist != null">
         is_exist = #{isExist,jdbcType=TINYINT},
       </if>
+      <if test="permission != null">
+        permission = #{permission,jdbcType=CHAR},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="component != null">
+        component = #{component,jdbcType=VARCHAR},
+      </if>
     </set>
     where menu_id = #{menuId,jdbcType=BIGINT}
   </update>
@@ -348,18 +393,25 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       remark = #{remark,jdbcType=VARCHAR},
-      is_exist = #{isExist,jdbcType=TINYINT}
+      is_exist = #{isExist,jdbcType=TINYINT},
+      permission = #{permission,jdbcType=CHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      component = #{component,jdbcType=VARCHAR}
     where menu_id = #{menuId,jdbcType=BIGINT}
   </update>
-
-
   <select id="queryAllPerms" resultType="string">
     select b.perms_code from nmpl_role_menu_relation a ,nmpl_menu b
     where  a.menu_id = b.menu_id
-    and a.role_id = #{roleId}
+      and a.role_id = #{roleId}
   </select>
 
   <select id="queryAllMenu" resultType="com.matrictime.network.modelVo.NmplMenuVo">
     select * from nmpl_menu where is_exist=1;
+  </select>
+
+  <select id="queryAllPermId" resultType="Long">
+    select b.menu_Id from nmpl_role_menu_relation a ,nmpl_menu b
+    where  a.menu_id = b.menu_id
+      and a.role_id = #{roleId}
   </select>
 </mapper>

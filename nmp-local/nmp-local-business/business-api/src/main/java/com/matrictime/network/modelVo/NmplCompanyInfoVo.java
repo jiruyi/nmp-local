@@ -110,4 +110,11 @@ public class NmplCompanyInfoVo {
      * 单位名称
      */
     private String unitName;
+
+
+
+    private String fatherCode;
+
+
+    private String bid;
 }

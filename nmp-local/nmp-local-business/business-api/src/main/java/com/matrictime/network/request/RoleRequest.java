@@ -71,7 +71,7 @@ public class RoleRequest extends BaseRequest implements Serializable {
      */
     private Byte isExist;
 
-    private boolean isAdmin;
+    private boolean isAdmin=false;
     /**
      * 菜单id
      */

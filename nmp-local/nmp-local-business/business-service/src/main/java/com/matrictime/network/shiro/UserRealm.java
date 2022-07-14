@@ -7,6 +7,7 @@ import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.mapper.NmplMenuMapper;
 import com.matrictime.network.dao.mapper.NmplUserMapper;
 import com.matrictime.network.dao.model.NmplMenu;
+import com.matrictime.network.dao.model.NmplMenuExample;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.dao.model.NmplUserExample;
 import com.matrictime.network.response.UserInfoResp;
@@ -55,7 +56,15 @@ public class UserRealm extends AuthorizingRealm {
 			for(NmplMenu menu : menuList){
 				permsList.add(menu.getPermsCode());
 			}
-		}else{
+		}else if (Long.parseLong(roleId) == DataConstants.COMMON_ADMIN){
+			NmplMenuExample nmplMenuExample = new NmplMenuExample();
+			nmplMenuExample.createCriteria().andPermissionNotEqualTo("1").andIsExistEqualTo((byte) 1);
+			List<NmplMenu> menuList = nmplMenuMapper.selectByExample(nmplMenuExample);
+			permsList = new ArrayList<>(menuList.size());
+			for(NmplMenu menu : menuList){
+				permsList.add(menu.getPermsCode());
+			}
+		} else{
 			//查询非管理员用户所有权限
 			permsList = nmplMenuMapper.queryAllPerms(Long.valueOf(roleId));
 		}

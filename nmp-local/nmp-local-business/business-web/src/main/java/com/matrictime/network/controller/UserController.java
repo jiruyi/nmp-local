@@ -7,6 +7,7 @@ import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
+import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LoginRequest;
 import com.matrictime.network.request.UserInfo;
