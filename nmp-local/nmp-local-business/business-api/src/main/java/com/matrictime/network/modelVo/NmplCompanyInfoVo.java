@@ -111,10 +111,5 @@ public class NmplCompanyInfoVo {
      */
     private String unitName;
 
-
-
-    private String fatherCode;
-
-
     private String bid;
 }

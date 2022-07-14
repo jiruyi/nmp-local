@@ -209,14 +209,14 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
     public PageInfo<NmplCompanyInfoVo> queryByConditions(CompanyInfoRequest companyInfoRequest) {
 
         //寻找区域的父级关系
-        String parentType = "";
-        if(companyInfoRequest.getCompanyType().equals("01")){
-            parentType = "00";
-        }else if(companyInfoRequest.getCompanyType().equals("02")) {
-            parentType = "01";
-        }
+//        String parentType = "";
+//        if(companyInfoRequest.getCompanyType().equals("01")){
+//            parentType = "00";
+//        }else if(companyInfoRequest.getCompanyType().equals("02")) {
+//            parentType = "01";
+//        }
         NmplCompanyInfoExample companyInfoExample = new NmplCompanyInfoExample();
-        companyInfoExample.createCriteria().andIsExistEqualTo(true).andCompanyTypeEqualTo(parentType);
+        companyInfoExample.createCriteria().andIsExistEqualTo(true);
         List<NmplCompanyInfo> infos = nmplCompanyInfoMapper.selectByExample(companyInfoExample);
         Map<String,NmplCompanyInfo> map = new HashMap<>();
         for (NmplCompanyInfo info : infos) {
@@ -254,8 +254,8 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
             BeanUtils.copyProperties(nmplCompanyInfo,companyInfo);
             if (companyInfo.getParentCode()!=null){
                 companyInfo.setParentName(map.get(companyInfo.getParentCode()).getCompanyName());
-                companyInfo.setFatherCode(map.get(companyInfo.getParentCode()).getCompanyCode());
             }
+            companyInfo.setBid(getBid(String.valueOf(companyInfo.getCompanyId()),map));
             nmplCompanyInfos.add(companyInfo);
         }
         pageResult.setList(nmplCompanyInfos);
@@ -359,7 +359,7 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
 
 
 
-    private String getBid(String companyId,Map<String,NmplCompanyInfo>map){
+    public String getBid(String companyId,Map<String,NmplCompanyInfo>map){
         NmplCompanyInfo nmplCompanyInfo = map.get(companyId);
         String bid = nmplCompanyInfo.getCompanyCode();
         while (nmplCompanyInfo.getParentCode()!=null){
