@@ -14,8 +14,10 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import static com.matrictime.network.config.DataConfig.PUSH_TYPE_DISABLE_TOKEN;
+import static com.matrictime.network.config.DataConfig.*;
 import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.SYSTEM_IM;
+import static com.matrictime.network.constant.DataConstants.SYSTEM_UC;
 
 /**
  * @author jiruyi
@@ -65,7 +67,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
                 loginService.syslogout(logoutReq);
 
                 JSONObject param = new JSONObject();
-                param.put("type",PUSH_TYPE_DISABLE_TOKEN);
+                param.put("type",PUSH_TYPE_DISABLE_TOKEN_INVALID);
                 param.put("userid",userId);
                 param.put("scope",destination);
                 PushTokenReq req = new PushTokenReq();

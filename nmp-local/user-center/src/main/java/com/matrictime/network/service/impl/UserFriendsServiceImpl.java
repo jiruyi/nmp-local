@@ -33,6 +33,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import static com.matrictime.network.base.UcConstants.*;
+import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 import static com.matrictime.network.constant.DataConstants.SYSTEM_UC;
 
 
@@ -310,7 +311,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
             if(CollectionUtils.isEmpty(userFriendVos)){
                 userFriendsDomainService.insertFriend(userFriendReq);
                 wsSendVo.setFrom(SYSTEM_UC);
-                wsResultVo.setSendObject(userId);
+                log.info("getDestination:"+addUserRequestReq.getDestination());
+                if (DESTINATION_OUT.equals(addUserRequestReq.getDestination())){
+                    wsResultVo.setSendObject(userId+KEY_SPLIT_UNDERLINE+DESTINATION_OUT);
+                }else {
+                    wsResultVo.setSendObject(userId+KEY_SPLIT_UNDERLINE+DESTINATION_IN);
+                }
                 wsResultVo.setDestination(addUserRequestReq.getDestination());
                 wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
                 result = buildResult(1,null,JSONObject.toJSONString(wsResultVo));
@@ -334,7 +340,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 wsSendVo.setBusinessCode("7");
                 wsSendVo.setFrom(SYSTEM_UC);
                 wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
-                wsResultVo.setSendObject(userId);
+                log.info("getDestination:"+addUserRequestReq.getDestination());
+                if (DESTINATION_OUT.equals(addUserRequestReq.getDestination())){
+                    wsResultVo.setSendObject(userId+KEY_SPLIT_UNDERLINE+DESTINATION_OUT);
+                }else {
+                    wsResultVo.setSendObject(userId+KEY_SPLIT_UNDERLINE+DESTINATION_IN);
+                }
                 wsResultVo.setDestination(addUserRequestReq.getDestination());
                 wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
                 //等待好友确认添加
@@ -351,7 +362,12 @@ public class UserFriendsServiceImpl extends SystemBaseService implements UserFri
                 wsSendVo.setBusinessCode("12");
                 wsSendVo.setFrom(SYSTEM_UC);
                 wsSendVo.setData(JSONObject.toJSONString(webSocketVo));
-                wsResultVo.setSendObject(userId);
+                log.info("getDestination:"+addUserRequestReq.getDestination());
+                if (DESTINATION_OUT.equals(addUserRequestReq.getDestination())){
+                    wsResultVo.setSendObject(userId+KEY_SPLIT_UNDERLINE+DESTINATION_OUT);
+                }else {
+                    wsResultVo.setSendObject(userId+KEY_SPLIT_UNDERLINE+DESTINATION_IN);
+                }
                 wsResultVo.setDestination(addUserRequestReq.getDestination());
                 wsResultVo.setResult(JSONObject.toJSONString(wsSendVo));
                 userFriendsDomainService.update(addUserRequestReq);

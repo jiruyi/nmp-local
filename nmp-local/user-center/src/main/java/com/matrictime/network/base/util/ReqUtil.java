@@ -68,6 +68,7 @@ public class ReqUtil<T> {
         if (!ParamCheckUtil.checkVoStrBlank(commonParam)) {
             JSONObject commonJson = JSONObject.parseObject(commonParam);
             decJson.putAll(commonJson);
+            decJson.put("destination",req.getDestination());
         }
         return decJson.toJavaObject((Class<T>) this.dto.getClass());
     }

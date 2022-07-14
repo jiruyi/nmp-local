@@ -57,7 +57,7 @@ public class BillController {
      */
     @ApiOperation(value = "话单创建接口",notes = "话单创建")
     @RequestMapping(value = "/saveBill",method = RequestMethod.POST)
-    public Result saveRole(@RequestBody BillRequest billRequest) throws ExecutionException, InterruptedException {
+    public Result saveBill(@RequestBody BillRequest billRequest) throws ExecutionException, InterruptedException {
         //根据具体需求修改  现可执行单个数据以及批量数据插入  如果数据量再大的情况采用线程池实现
         if (billRequest.getNmplBillVoList()!=null&&billRequest.getNmplBillVoList().size()>maxSize){
             List<Result>futureList= new ArrayList<>();

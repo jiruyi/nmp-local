@@ -27,4 +27,6 @@ public class DataConfig {
     public static final String PUSH_TYPE_TOKEN = "1";
 
     public static final String PUSH_TYPE_DISABLE_TOKEN = "0";
+
+    public static final String PUSH_TYPE_DISABLE_TOKEN_INVALID = "2";
 }

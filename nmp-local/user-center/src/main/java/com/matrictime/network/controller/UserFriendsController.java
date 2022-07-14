@@ -117,7 +117,7 @@ public class UserFriendsController {
             if (result.isSuccess()){
                 log.info("agreeFriendSendMsg result:{}",JSONObject.toJSONString(result));
                 wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
-                sendObject = wsResultVo.getSendObject()+KEY_SPLIT_UNDERLINE+wsResultVo.getDestination();
+                sendObject = wsResultVo.getSendObject();
                 wsResultVo.setSendObject(null);
                 result.setErrorMsg(null);
             }
@@ -137,7 +137,7 @@ public class UserFriendsController {
         if(StringUtils.isBlank(addUserRequestReq.getDestination())){
             if (result.isSuccess()){
                 wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
-                sendObject = wsResultVo.getSendObject()+KEY_SPLIT_UNDERLINE+wsResultVo.getDestination();
+                sendObject = wsResultVo.getSendObject();
                 wsResultVo.setSendObject(null);
                 result.setErrorMsg(null);
             }

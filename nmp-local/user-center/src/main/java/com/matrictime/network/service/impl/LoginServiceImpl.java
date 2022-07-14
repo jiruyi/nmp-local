@@ -479,6 +479,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                             }
                             webSocketOnClose(req.getCommonKey()+KEY_SPLIT_UNDERLINE+DESTINATION_IN);
                         }
+                        returnRes.setExtendMsg(null);
                         return returnRes;
                     }else {
                         throw new SystemException("LoginServiceImpl.logout"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
@@ -1004,6 +1005,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     public void removeToken(String userId, String destination){
         StringBuffer sb = new StringBuffer(SYSTEM_UC);
+        if (DESTINATION_OUT_TO_IN.equals(destination)){
+            destination = DESTINATION_IN;
+        }
         sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(destination);
         log.info("LoginServiceImpl.removeToken key:{}", sb);
         redisTemplate.delete(sb.toString());
