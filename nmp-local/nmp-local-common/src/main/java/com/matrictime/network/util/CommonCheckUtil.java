@@ -36,9 +36,9 @@ public class CommonCheckUtil {
      * @return 正确返回true
      * @throws Exception
      */
-    public static boolean isParamMatchPattern(String str,String regExp) throws Exception{
+    public static boolean isParamMatchPattern(String str,String regExp){
         if (regExp == null){
-            throw new Exception("regExp is null");
+            return false;
         }
         Pattern p = Pattern.compile(regExp);
         Matcher m = p.matcher(str);
@@ -60,8 +60,14 @@ public class CommonCheckUtil {
      * @return 正确返回true
      * @throws Exception
      */
-    public static boolean isChinaPhoneLegal(String str) throws Exception {
-        return isParamMatchPattern(str,REG_EXP_CHINA_PHONE);
+    public static boolean isChinaPhoneLegal(String str){
+        try {
+            return isParamMatchPattern(str,REG_EXP_CHINA_PHONE);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     /**
@@ -70,8 +76,14 @@ public class CommonCheckUtil {
      * @return 正确返回true
      * @throws Exception
      */
-    public static boolean isHKPhoneLegal(String str) throws Exception {
-        return isParamMatchPattern(str,REG_EXP_HK_PHONE);
+    public static boolean isHKPhoneLegal(String str){
+        try {
+            return isParamMatchPattern(str,REG_EXP_HK_PHONE);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     /**
@@ -80,8 +92,14 @@ public class CommonCheckUtil {
      * @return 正确返回true
      * @throws Exception
      */
-    public static boolean isIpv4Legal(String str) throws Exception{
-        return isParamMatchPattern(str,REG_EXP_IPV4);
+    public static boolean isIpv4Legal(String str){
+        try {
+            return isParamMatchPattern(str,REG_EXP_IPV4);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     /**
@@ -90,8 +108,14 @@ public class CommonCheckUtil {
      * @return 正确返回true
      * @throws Exception
      */
-    public static boolean isPortLegal(String str) throws Exception{
-        return isParamMatchPattern(str,REG_EXP_PORT);
+    public static boolean isPortLegal(String str){
+        try {
+            return isParamMatchPattern(str,REG_EXP_PORT);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     /**
@@ -100,8 +124,32 @@ public class CommonCheckUtil {
      * @return 正确返回true
      * @throws Exception
      */
-    public static boolean isEmailLegal(String str) throws Exception{
-        return isParamMatchPattern(str,REG_EXP_EMAIL);
+    public static boolean isEmailLegal(String str){
+        try {
+            return isParamMatchPattern(str,REG_EXP_EMAIL);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    /**
+     * port端口号校验（1024-65535）
+     * @param str
+     * @return
+     */
+    public static boolean isPortWithinScope(String str){
+        try {
+            Integer port = Integer.valueOf(str);
+            if (port>65535 || port<1024){
+                return false;
+            }
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void main(String[] args) {

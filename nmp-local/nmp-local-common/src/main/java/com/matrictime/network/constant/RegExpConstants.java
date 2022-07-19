@@ -39,4 +39,29 @@ public class RegExpConstants {
      * @desc 邮箱校验
      */
     public static final String REG_EXP_EMAIL = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+
+
+
+    /*******************************************匹配前端校验规则*******************************************************/
+
+    /**
+     * @desc 用户号
+     */
+    public static final String REGEX_LOGACCOUNT = "^[a-zA-Z0-9~!@#$%^&*()_+]*$";
+
+    /**
+     * @desc 手机号
+     */
+    public static final String REGEX_PHONE = "^((13|14|15|16|17|18|19)[0-9]{1}\\d{8})$";
+
+    /**
+     * @desc 密码
+     */
+    public static final String REGEX_PASSWORD = "^(?![A-Za-z]+$)(?![A-Z0-9]+$)(?![a-z0-9]+$)(?![a-z~!@#$%^&*()_+]+$)(?![A-Z~!@#$%^&*()_+]+$)(?![0-9~!@#$%^&*()_+]+$)[a-zA-Z0-9~!@#$%^&*()_+]{8,12}$";
+
+    /**
+     * @desc 设备号
+     */
+    public static final String REGEX_DEVICE_ID = "^[0-9]{0,9}$";
+
 }
