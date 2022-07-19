@@ -49,7 +49,7 @@ public class CompanyController {
     @ApiOperation(value = "运营商编辑接口",notes = "运营商编辑")
     @RequestMapping(value = "/modifyOperator",method = RequestMethod.POST)
     @RequiresPermissions("sys:operator:update")
-    @SystemLog(opermodul = "运营商管理模块",operDesc = "修改运营商",operType = "编辑")
+    @SystemLog(opermodul = "运营商管理模块",operDesc = "修改运营商",operType = "编辑",operLevl = "2")
     public Result modifyOperator(@RequestBody CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("00");
         return companyService.modify(companyInfoRequest);
@@ -64,7 +64,7 @@ public class CompanyController {
     @ApiOperation(value = "运营商删除接口",notes = "运营商删除")
     @RequestMapping(value = "/deleteOperator",method = RequestMethod.POST)
     @RequiresPermissions("sys:operator:delete")
-    @SystemLog(opermodul = "运营商管理模块",operDesc = "删除运营商",operType = "删除")
+    @SystemLog(opermodul = "运营商管理模块",operDesc = "删除运营商",operType = "删除",operLevl = "2")
     public Result deleteOperator(@RequestBody  CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("00");
         return companyService.delete(companyInfoRequest);
@@ -108,7 +108,7 @@ public class CompanyController {
     @ApiOperation(value = "大区编辑接口",notes = "大区编辑")
     @RequestMapping(value = "/modifyRegion",method = RequestMethod.POST)
     @RequiresPermissions("sys:region:update")
-    @SystemLog(opermodul = "大区管理模块",operDesc = "修改大区",operType = "编辑")
+    @SystemLog(opermodul = "大区管理模块",operDesc = "修改大区",operType = "编辑",operLevl = "2")
     public Result modifyRegion(@RequestBody CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("01");
         return companyService.modify(companyInfoRequest);
@@ -123,7 +123,7 @@ public class CompanyController {
     @ApiOperation(value = "大区删除接口",notes = "大区删除")
     @RequestMapping(value = "/deleteRegion",method = RequestMethod.POST)
     @RequiresPermissions("sys:region:delete")
-    @SystemLog(opermodul = "大区管理模块",operDesc = "删除大区",operType = "删除")
+    @SystemLog(opermodul = "大区管理模块",operDesc = "删除大区",operType = "删除",operLevl = "2")
     public Result deleteRegion(@RequestBody  CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("01");
         return companyService.delete(companyInfoRequest);
@@ -167,7 +167,7 @@ public class CompanyController {
     @ApiOperation(value = "小区编辑接口",notes = "小区编辑")
     @RequestMapping(value = "/modifyVillage",method = RequestMethod.POST)
     @RequiresPermissions("sys:village:update")
-    @SystemLog(opermodul = "小区管理模块",operDesc = "修改小区",operType = "编辑")
+    @SystemLog(opermodul = "小区管理模块",operDesc = "修改小区",operType = "编辑",operLevl = "2")
     public Result modifyVillage(@RequestBody CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("02");
         return companyService.modify(companyInfoRequest);
@@ -182,7 +182,7 @@ public class CompanyController {
     @ApiOperation(value = "小区删除接口",notes = "小区删除")
     @RequestMapping(value = "/deleteVillage",method = RequestMethod.POST)
     @RequiresPermissions("sys:village:delete")
-    @SystemLog(opermodul = "小区管理模块",operDesc = "删除小区",operType = "删除")
+    @SystemLog(opermodul = "小区管理模块",operDesc = "删除小区",operType = "删除",operLevl = "2")
     public Result deleteVillage(@RequestBody  CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("02");
         return companyService.delete(companyInfoRequest);

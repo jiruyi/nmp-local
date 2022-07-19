@@ -114,7 +114,7 @@
       <if test="createTime != null">
         and date(create_time) = #{createTime}
       </if>
-    ORDER BY user_id DESC
+    ORDER BY create_time DESC
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">

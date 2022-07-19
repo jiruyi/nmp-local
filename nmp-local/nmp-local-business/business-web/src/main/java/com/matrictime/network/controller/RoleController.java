@@ -74,7 +74,7 @@ public class RoleController {
     @ApiOperation(value = "角色编辑接口",notes = "角色编辑")
     @RequestMapping(value = "/modify",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:update")
-    @SystemLog(opermodul = "角色管理模块",operDesc = "修改角色",operType = "编辑")
+    @SystemLog(opermodul = "角色管理模块",operDesc = "修改角色",operType = "编辑",operLevl = "2")
     public Result modifyRole(@RequestBody RoleRequest roleRequest){
         return roleService.modify(roleRequest);
     }
@@ -87,7 +87,7 @@ public class RoleController {
     @ApiOperation(value = "角色删除接口",notes = "角色删除")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:delete")
-    @SystemLog(opermodul = "角色管理模块",operDesc = "删除角色",operType = "删除")
+    @SystemLog(opermodul = "角色管理模块",operDesc = "删除角色",operType = "删除",operLevl = "2")
     public Result deleteRole(@RequestBody RoleRequest roleRequest){
         return roleService.delete(roleRequest);
     }
