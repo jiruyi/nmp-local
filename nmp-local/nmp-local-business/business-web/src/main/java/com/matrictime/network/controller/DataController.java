@@ -102,6 +102,7 @@ public class DataController {
      */
     @ApiOperation(value = "统计数据创建接口",notes = "话单多条件查询接口")
     @RequestMapping(value = "/saveData",method = RequestMethod.POST)
+    @SystemLog(opermodul = "统计管理模块",operDesc = "新增统计数据",operType = "新增")
     public Result saveData(@RequestBody DataCollectReq dataCollectReq){
         Result result = null;
         try {

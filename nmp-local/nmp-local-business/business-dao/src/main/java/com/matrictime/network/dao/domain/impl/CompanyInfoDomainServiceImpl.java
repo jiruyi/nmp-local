@@ -255,7 +255,7 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
             if (companyInfo.getParentCode()!=null){
                 companyInfo.setParentName(map.get(companyInfo.getParentCode()).getCompanyName());
             }
-            companyInfo.setBid(getBid(String.valueOf(companyInfo.getCompanyId()),map));
+            companyInfo.setBid(getBid(String.valueOf(companyInfo.getParentCode()),map));
             nmplCompanyInfos.add(companyInfo);
         }
         pageResult.setList(nmplCompanyInfos);

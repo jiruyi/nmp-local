@@ -13,6 +13,7 @@ import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.util.SnowFlake;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -121,6 +122,7 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
     }
 
     @Override
+    @Transactional
     public Integer batchInsert(List<NmplOutlinePcInfo> nmplOutlinePcInfoList) {
         return nmplOutlinePcInfoExtMapper.batchInsert(nmplOutlinePcInfoList);
     }

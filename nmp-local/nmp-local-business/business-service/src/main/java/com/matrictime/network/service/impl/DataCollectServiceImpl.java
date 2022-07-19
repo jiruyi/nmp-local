@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.model.NmplDataCollect;
 import com.matrictime.network.model.Result;
@@ -48,9 +49,12 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             PageInfo<DataCollectVo> pageResult = new PageInfo<>();
             pageResult = dataCollectDomainService.queryByConditions(dataCollectReq);
             result = buildResult(pageResult);
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("统计数据查询异常：",e.getMessage());
             result = failResult(e);
+        } catch (Exception e){
+            log.error("统计数据查询异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -76,9 +80,12 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                 dataCollectReq.setDataCollectVoLoadList(dataCollectVoLoadList);
             }
             result = buildResult(dataCollectDomainService.save(dataCollectReq));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("存储统计数据异常",e.getMessage());
             result = failResult(e);
+        } catch (Exception e){
+            log.info("存储统计数据异常",e.getMessage());
+            result = failResult("");
         }
         return new AsyncResult<>(result);
     }
@@ -146,9 +153,12 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                     (userNumber,String.format("%.2f", totalBandwidth),String.format("%.2f", dispenserSecretKey),String.format("%.2f", generatorSecretKey),
                             String.format("%.2f", cacheSecretKey),new ArrayList<>());
             result = buildResult(monitorResp);
-        } catch (Exception e) {
+        } catch (SystemException e) {
             log.info("查询监控数据异常",e.getMessage());
             result = failResult(e);
+        } catch (Exception e) {
+            log.info("查询监控数据异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -159,9 +169,12 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         try {
             monitorReq.setCurrentTime(LocalTimeToUdate(LocalTime.now().minusMinutes(delayTime)));
             result = buildResult(dataCollectDomainService.queryTopTen(monitorReq));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("查询排行前10数据异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("查询排行前10数据异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }

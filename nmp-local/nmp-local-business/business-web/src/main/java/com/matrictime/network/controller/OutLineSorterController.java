@@ -35,7 +35,7 @@ public class OutLineSorterController {
      */
     @ApiOperation(value = "离线分发机创建接口",notes = "离线分发机创建")
     @RequestMapping(value = "/saveOutlinePc",method = RequestMethod.POST)
-    @SystemLog(opermodul = "离线分发机管理模块",operDesc = "创建离线分发机",operType = "创建")
+    @SystemLog(opermodul = "离线分发机管理模块",operDesc = "创建离线分发机",operType = "新增")
     @RequiresPermissions("sys:sorter:insert")
     public Result saveOutlineSorter(@RequestBody OutlineSorterReq outlineSorterReq){
         return outlineSorterService.save(outlineSorterReq);
@@ -48,7 +48,7 @@ public class OutLineSorterController {
      */
     @ApiOperation(value = "离线分发机修改接口",notes = "离线分发机修改")
     @RequestMapping(value = "/modifyOutlinePc",method = RequestMethod.POST)
-    @SystemLog(opermodul = "离线分发机管理模块",operDesc = "修改离线分发机",operType = "修改")
+    @SystemLog(opermodul = "离线分发机管理模块",operDesc = "修改离线分发机",operType = "编辑")
     @RequiresPermissions("sys:sorter:modify")
     public Result modifyOutlineSorter(@RequestBody OutlineSorterReq outlineSorterReq){
         return outlineSorterService.modify(outlineSorterReq);

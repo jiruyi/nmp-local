@@ -35,7 +35,7 @@ public class CompanyController {
     @ApiOperation(value = "运营商创建接口",notes = "运营商创建")
     @RequestMapping(value = "/saveOperator",method = RequestMethod.POST)
     @RequiresPermissions("sys:operator:save")
-    @SystemLog(opermodul = "运营商管理模块",operDesc = "创建运营商",operType = "创建")
+    @SystemLog(opermodul = "运营商管理模块",operDesc = "创建运营商",operType = "新增")
     public Result saveOperator(@RequestBody CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("00");
         return companyService.save(companyInfoRequest);
@@ -49,7 +49,7 @@ public class CompanyController {
     @ApiOperation(value = "运营商编辑接口",notes = "运营商编辑")
     @RequestMapping(value = "/modifyOperator",method = RequestMethod.POST)
     @RequiresPermissions("sys:operator:update")
-    @SystemLog(opermodul = "运营商管理模块",operDesc = "修改运营商",operType = "修改")
+    @SystemLog(opermodul = "运营商管理模块",operDesc = "修改运营商",operType = "编辑")
     public Result modifyOperator(@RequestBody CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("00");
         return companyService.modify(companyInfoRequest);
@@ -94,7 +94,7 @@ public class CompanyController {
     @ApiOperation(value = "大区创建接口",notes = "大区创建")
     @RequestMapping(value = "/saveRegion",method = RequestMethod.POST)
     @RequiresPermissions("sys:region:save")
-    @SystemLog(opermodul = "大区管理模块",operDesc = "创建大区",operType = "创建")
+    @SystemLog(opermodul = "大区管理模块",operDesc = "创建大区",operType = "新增")
     public Result saveRegion(@RequestBody CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("01");
         return companyService.save(companyInfoRequest);
@@ -108,7 +108,7 @@ public class CompanyController {
     @ApiOperation(value = "大区编辑接口",notes = "大区编辑")
     @RequestMapping(value = "/modifyRegion",method = RequestMethod.POST)
     @RequiresPermissions("sys:region:update")
-    @SystemLog(opermodul = "大区管理模块",operDesc = "修改大区",operType = "修改")
+    @SystemLog(opermodul = "大区管理模块",operDesc = "修改大区",operType = "编辑")
     public Result modifyRegion(@RequestBody CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("01");
         return companyService.modify(companyInfoRequest);
@@ -153,7 +153,7 @@ public class CompanyController {
     @ApiOperation(value = "小区创建接口",notes = "小区创建")
     @RequestMapping(value = "/saveVillage",method = RequestMethod.POST)
     @RequiresPermissions("sys:village:save")
-    @SystemLog(opermodul = "小区管理模块",operDesc = "创建小区",operType = "创建")
+    @SystemLog(opermodul = "小区管理模块",operDesc = "创建小区",operType = "新增")
     public Result saveVillage(@RequestBody CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("02");
         return companyService.save(companyInfoRequest);
@@ -167,7 +167,7 @@ public class CompanyController {
     @ApiOperation(value = "小区编辑接口",notes = "小区编辑")
     @RequestMapping(value = "/modifyVillage",method = RequestMethod.POST)
     @RequiresPermissions("sys:village:update")
-    @SystemLog(opermodul = "小区管理模块",operDesc = "修改小区",operType = "修改")
+    @SystemLog(opermodul = "小区管理模块",operDesc = "修改小区",operType = "编辑")
     public Result modifyVillage(@RequestBody CompanyInfoRequest companyInfoRequest){
         companyInfoRequest.setCompanyType("02");
         return companyService.modify(companyInfoRequest);
@@ -209,7 +209,7 @@ public class CompanyController {
      * @param companyInfoRequest
      * @return
      */
-    @ApiOperation(value = "区域查询接口",notes = "小区查询")
+    @ApiOperation(value = "区域查询接口",notes = "查询")
     @RequestMapping(value = "/queryCompanyList",method = RequestMethod.POST)
     public Result queryCompanyList(@RequestBody  CompanyInfoRequest companyInfoRequest){
         return companyService.queryCompanyList(companyInfoRequest);

@@ -61,7 +61,7 @@ public class RoleController {
     @ApiOperation(value = "角色创建接口",notes = "角色创建")
     @RequestMapping(value = "/save",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:save")
-    @SystemLog(opermodul = "角色管理模块",operDesc = "创建角色",operType = "创建")
+    @SystemLog(opermodul = "角色管理模块",operDesc = "创建角色",operType = "新增")
     public Result saveRole(@RequestBody RoleRequest roleRequest){
         return roleService.save(roleRequest);
     }
@@ -74,7 +74,7 @@ public class RoleController {
     @ApiOperation(value = "角色编辑接口",notes = "角色编辑")
     @RequestMapping(value = "/modify",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:update")
-    @SystemLog(opermodul = "角色管理模块",operDesc = "修改角色",operType = "修改")
+    @SystemLog(opermodul = "角色管理模块",operDesc = "修改角色",operType = "编辑")
     public Result modifyRole(@RequestBody RoleRequest roleRequest){
         return roleService.modify(roleRequest);
     }
