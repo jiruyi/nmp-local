@@ -44,7 +44,7 @@ public class VersionController {
      * @return
      */
     @RequestMapping (value = "/editVersion",method = RequestMethod.POST)
-    @SystemLog(opermodul = "版本模块",operDesc = "编辑版本信息",operType = "操作")
+    @SystemLog(opermodul = "版本模块",operDesc = "编辑版本信息",operType = "操作",operLevl = "2")
     @RequiresPermissions("sys:version:save")
     public Result<EditVersionResp> editVersion(@RequestBody EditVersionReq req){
         try {
@@ -80,7 +80,7 @@ public class VersionController {
      * @return
      */
     @RequestMapping (value = "/deleteVersionFile",method = RequestMethod.POST)
-    @SystemLog(opermodul = "版本模块",operDesc = "删除版本文件",operType = "删除")
+    @SystemLog(opermodul = "版本模块",operDesc = "删除版本文件",operType = "删除",operLevl = "2")
     @RequiresPermissions("sys:version:deleteFile")
     public Result<DeleteVersionFileResp> deleteVersionFile(@RequestBody DeleteVersionFileReq req){
         try {

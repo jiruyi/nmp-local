@@ -35,7 +35,7 @@ public class ConfigController {
      * @return
      */
     @RequestMapping (value = "/editConfig",method = RequestMethod.POST)
-    @SystemLog(opermodul = "配置模块",operDesc = "编辑配置记录",operType = "编辑")
+    @SystemLog(opermodul = "配置模块",operDesc = "编辑配置记录",operType = "编辑",operLevl = "2")
     @RequiresPermissions("sys:parm:update")
     public Result<EditConfigResp> editConfig(@RequestBody EditConfigReq req){
         try {
@@ -73,7 +73,7 @@ public class ConfigController {
      * @return
      */
     @RequestMapping (value = "/resetDefaultConfig",method = RequestMethod.POST)
-    @SystemLog(opermodul = "配置模块",operDesc = "恢复默认接口记录",operType = "恢复默认")
+    @SystemLog(opermodul = "配置模块",operDesc = "恢复默认接口记录",operType = "恢复默认",operLevl = "2")
     @RequiresPermissions("sys:parm:reset")
     public Result<ResetDefaultConfigResp> resetDefaultConfig(@RequestBody ResetDefaultConfigReq req){
         try {
@@ -92,7 +92,7 @@ public class ConfigController {
      * @return
      */
     @RequestMapping (value = "/syncConfig",method = RequestMethod.POST)
-    @SystemLog(opermodul = "配置模块",operDesc = "同步配置接口（支持全量同步）记录",operType = "同步配置")
+    @SystemLog(opermodul = "配置模块",operDesc = "同步配置接口（支持全量同步）记录",operType = "同步配置",operLevl = "2")
     @RequiresPermissions("sys:parm:synchro")
     public Result<SyncConfigResp> syncConfig(@RequestBody SyncConfigReq req){
         try {
