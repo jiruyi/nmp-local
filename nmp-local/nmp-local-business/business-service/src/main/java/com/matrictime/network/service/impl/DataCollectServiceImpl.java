@@ -3,18 +3,23 @@ package com.matrictime.network.service.impl;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
-import com.matrictime.network.dao.model.NmplDataCollect;
+import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataCollectVo;
+import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.NmplBillVo;
 import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.MonitorReq;
+import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.MonitorResp;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DataCollectService;
 import com.matrictime.network.util.PropertiesUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -40,6 +45,12 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
 
     @Value("${data.delayTime}")
     private Integer delayTime;
+
+    @Autowired
+    NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
+
+    @Autowired
+    NmplDeviceInfoMapper nmplDeviceInfoMapper;
 
     @Override
     public Result<PageInfo> queryByConditon(DataCollectReq dataCollectReq) {
@@ -186,5 +197,50 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         ZoneId zone = ZoneId.systemDefault();
         Instant instant = localDateTime.atZone(zone).toInstant();
         return Date.from(instant);
+    }
+
+
+    @Override
+    public Result selectAllDevice(DataCollectReq dataCollectReq) {
+        Result result =null;
+        DeviceResponse deviceResponse = new DeviceResponse();
+        List<DeviceInfoVo>deviceInfoVos = new ArrayList<>();
+        try {
+            if(dataCollectReq.getDeviceType().equals("01")){
+                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+                nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
+                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+                    String[]strings = nmplBaseStationInfo.getStationNetworkId().split("-");
+                    nmplBaseStationInfo.setStationNetworkId(strings[strings.length-1]);
+                    DeviceInfoVo deviceInfoVo = new DeviceInfoVo();
+                    BeanUtils.copyProperties(nmplBaseStationInfo,deviceInfoVo);
+                    deviceInfoVo.setDeviceName(nmplBaseStationInfo.getStationName());
+                    deviceInfoVo.setDeviceId(nmplBaseStationInfo.getStationId());
+                    deviceInfoVos.add(deviceInfoVo);
+                }
+            }else {
+                Map<String,String> map = new HashMap<>();
+                map.put("02","01");
+                map.put("03","02");
+                map.put("04","03");
+                NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+                nmplDeviceInfoExample.createCriteria().andIsExistEqualTo(true).andDeviceTypeEqualTo(map.get(dataCollectReq.getDeviceType()));
+                List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+                for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+                    String[]strings = nmplDeviceInfo.getStationNetworkId().split("-");
+                    nmplDeviceInfo.setStationNetworkId(strings[strings.length-1]);
+                    DeviceInfoVo deviceInfoVo = new DeviceInfoVo();
+                    BeanUtils.copyProperties(nmplDeviceInfo,deviceInfoVo);
+                    deviceInfoVos.add(deviceInfoVo);
+                }
+            }
+            deviceResponse.setDeviceInfoVos(deviceInfoVos);
+            result = buildResult(deviceResponse);
+        }catch (Exception e){
+            log.info("查询设备异常",e.getMessage());
+            result =  failResult("");
+        }
+       return result;
     }
 }
