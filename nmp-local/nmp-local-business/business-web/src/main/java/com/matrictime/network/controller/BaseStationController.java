@@ -64,7 +64,7 @@ public class BaseStationController {
      * @return
      */
     @RequiresPermissions("sys:station:update")
-    @SystemLog(opermodul = "基站管理模块",operDesc = "基站更新",operType = "基站更新")
+    @SystemLog(opermodul = "基站管理模块",operDesc = "基站更新",operType = "基站更新",operLevl = "2")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     @ApiOperation(value = "基站接口",notes = "基站信息更新")
     public Result<Integer> updateBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
@@ -85,7 +85,7 @@ public class BaseStationController {
      * @return
      */
     @RequiresPermissions("sys:station:delete")
-    @SystemLog(opermodul = "基站管理模块",operDesc = "基站删除",operType = "基站删除")
+    @SystemLog(opermodul = "基站管理模块",operDesc = "基站删除",operType = "基站删除",operLevl = "2")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @ApiOperation(value = "基站接口",notes = "基站信息删除")
     public Result<Integer> deleteBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){

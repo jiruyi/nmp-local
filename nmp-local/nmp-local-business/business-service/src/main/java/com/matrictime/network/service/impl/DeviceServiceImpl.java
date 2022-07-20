@@ -65,7 +65,7 @@ public class DeviceServiceImpl implements DeviceService {
                 result.setSuccess(true);
             }
         }catch (Exception e){
-            result.setErrorCode(e.getMessage());
+            result.setErrorCode("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -82,7 +82,7 @@ public class DeviceServiceImpl implements DeviceService {
                 result.setSuccess(true);
             }
         }catch (Exception e){
-            result.setErrorCode(e.getMessage());
+            result.setErrorCode("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -100,7 +100,7 @@ public class DeviceServiceImpl implements DeviceService {
                 result.setSuccess(true);
             }
         }catch (Exception e){
-            result.setErrorCode(e.getMessage());
+            result.setErrorCode("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -114,7 +114,7 @@ public class DeviceServiceImpl implements DeviceService {
             result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -129,7 +129,7 @@ public class DeviceServiceImpl implements DeviceService {
             result.setResultObj(deviceResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -150,7 +150,7 @@ public class DeviceServiceImpl implements DeviceService {
             result.setResultObj(deviceResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -178,7 +178,7 @@ public class DeviceServiceImpl implements DeviceService {
             result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;

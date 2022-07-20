@@ -70,7 +70,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         }catch (Exception e){
             log.error("基站新增{}新增异常：{}",e.getMessage());
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
@@ -90,7 +90,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
@@ -107,7 +107,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
@@ -120,7 +120,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -139,7 +139,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -155,7 +155,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -171,7 +171,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -184,7 +184,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(baseStationInfoDomainService.selectDeviceId(baseStationInfoRequest));
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -210,7 +210,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -224,7 +224,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;

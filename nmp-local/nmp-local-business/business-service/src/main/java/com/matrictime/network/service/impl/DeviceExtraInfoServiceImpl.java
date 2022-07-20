@@ -28,7 +28,7 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
 
     @Override
     public Result<Integer> insert(DeviceExtraInfoRequest deviceExtraInfoRequest) {
-        Result<Integer> result;
+        Result<Integer> result = new Result<>();
         NmplDeviceExtraInfo nmplDeviceExtraInfo = new NmplDeviceExtraInfo();
         try {
             NmplUser user = RequestContext.getUser();
@@ -40,46 +40,50 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
             }
             result = buildResult(deviceExtraInfoDomainService.insert(nmplDeviceExtraInfo));
         }catch (Exception e){
-            result = failResult(e);
+            result.setErrorMsg("参数异常");
+            result.setSuccess(false);
         }
         return result;
     }
 
     @Override
     public Result<Integer> update(DeviceExtraInfoRequest deviceExtraInfoRequest) {
-        Result<Integer> result;
+        Result<Integer> result = new Result<>();
         NmplDeviceExtraInfo nmplDeviceExtraInfo = new NmplDeviceExtraInfo();
         try {
             deviceExtraInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
             BeanUtils.copyProperties(deviceExtraInfoRequest,nmplDeviceExtraInfo);
             result = buildResult(deviceExtraInfoDomainService.update(nmplDeviceExtraInfo));
         }catch (Exception e){
-            result = failResult(e);
+            result.setErrorMsg("参数异常");
+            result.setSuccess(false);
         }
         return result;
     }
 
     @Override
     public Result<Integer> delete(DeviceExtraInfoRequest deviceExtraInfoRequest) {
-        Result<Integer> result;
+        Result<Integer> result = new Result<>();
         NmplDeviceExtraInfo nmplDeviceExtraInfo = new NmplDeviceExtraInfo();
         try {
             deviceExtraInfoRequest.setUpdateUser(RequestContext.getUser().getNickName());
             BeanUtils.copyProperties(deviceExtraInfoRequest,nmplDeviceExtraInfo);
             result = buildResult(deviceExtraInfoDomainService.delete(nmplDeviceExtraInfo));
         }catch (Exception e){
-            result = failResult(e);
+            result.setErrorMsg("参数异常");
+            result.setSuccess(false);
         }
         return result;
     }
 
     @Override
     public Result<PageInfo> select(DeviceExtraInfoRequest deviceExtraInfoRequest) {
-        Result<PageInfo> result;
+        Result<PageInfo> result = new Result<>();
         try {
             result = buildResult(deviceExtraInfoDomainService.selectByCondition(deviceExtraInfoRequest));
         }catch (Exception e){
-            result = failResult(e);
+            result.setErrorMsg("参数异常");
+            result.setSuccess(false);
         }
         return result;
     }

@@ -58,7 +58,7 @@ public class DeviceController {
      * @return
      */
     @RequiresPermissions("sys:dispenser:delete")
-    @SystemLog(opermodul = "分发机管理模块",operDesc = "删除分发机信息",operType = "删除分发机信息")
+    @SystemLog(opermodul = "分发机管理模块",operDesc = "删除分发机信息",operType = "删除分发机信息",operLevl = "2")
     @RequestMapping(value = "/deleteDispenser",method = RequestMethod.POST)
     @ApiOperation(value = "分发机接口",notes = "删除分发机信息")
     public Result<Integer> deleteDispenser(@RequestBody DeviceInfoRequest deviceInfoRequest){
@@ -79,7 +79,7 @@ public class DeviceController {
      * @return
      */
     @RequiresPermissions("sys:dispenser:update")
-    @SystemLog(opermodul = "分发机管理模块",operDesc = "更新分发机信息",operType = "更新分发机信息")
+    @SystemLog(opermodul = "分发机管理模块",operDesc = "更新分发机信息",operType = "更新分发机信息",operLevl = "2")
     @RequestMapping(value = "/updateDispenser",method = RequestMethod.POST)
     @ApiOperation(value = "更新分发机接口",notes = "更新分发机信息")
     public Result<Integer> updateDispenser(@RequestBody DeviceInfoRequest deviceInfoRequest){
@@ -144,7 +144,7 @@ public class DeviceController {
      * @return
      */
     @RequiresPermissions("sys:generator:delete")
-    @SystemLog(opermodul = "生成机管理模块",operDesc = "删除生成机信息",operType = "删除生成机信息")
+    @SystemLog(opermodul = "生成机管理模块",operDesc = "删除生成机信息",operType = "删除生成机信息",operLevl = "2")
     @RequestMapping(value = "/deleteGenerator",method = RequestMethod.POST)
     @ApiOperation(value = "生成机接口",notes = "删除生成机信息")
     public Result<Integer> deleteGenerator(@RequestBody DeviceInfoRequest deviceInfoRequest){
@@ -165,7 +165,7 @@ public class DeviceController {
      * @return
      */
     @RequiresPermissions("sys:generator:update")
-    @SystemLog(opermodul = "生成机管理模块",operDesc = "更新生成机信息",operType = "更新生成机信息")
+    @SystemLog(opermodul = "生成机管理模块",operDesc = "更新生成机信息",operType = "更新生成机信息",operLevl = "2")
     @RequestMapping(value = "/updateGenerator",method = RequestMethod.POST)
     @ApiOperation(value = "更新生成机接口",notes = "更新生成机信息")
     public Result<Integer> updateGenerator(@RequestBody DeviceInfoRequest deviceInfoRequest){
@@ -230,7 +230,7 @@ public class DeviceController {
      * @return
      */
     @RequiresPermissions("sys:cache:delete")
-    @SystemLog(opermodul = "缓存机管理模块",operDesc = "删除缓存机信息",operType = "删除缓存机信息")
+    @SystemLog(opermodul = "缓存机管理模块",operDesc = "删除缓存机信息",operType = "删除缓存机信息",operLevl = "2")
     @RequestMapping(value = "/deleteCache",method = RequestMethod.POST)
     @ApiOperation(value = "缓存机接口",notes = "删除缓存机信息")
     public Result<Integer> deleteCache(@RequestBody DeviceInfoRequest deviceInfoRequest){
@@ -251,7 +251,7 @@ public class DeviceController {
      * @return
      */
     @RequiresPermissions("sys:cache:update")
-    @SystemLog(opermodul = "缓存机管理模块",operDesc = "更新缓存机信息",operType = "更新缓存机信息")
+    @SystemLog(opermodul = "缓存机管理模块",operDesc = "更新缓存机信息",operType = "更新缓存机信息",operLevl = "2")
     @RequestMapping(value = "/updateCache",method = RequestMethod.POST)
     @ApiOperation(value = "更新缓存机接口",notes = "更新缓存机信息")
     public Result<Integer> updateCache(@RequestBody DeviceInfoRequest deviceInfoRequest){

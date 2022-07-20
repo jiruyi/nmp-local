@@ -45,7 +45,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
             result.setSuccess(true);
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
@@ -58,7 +58,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
             result.setSuccess(true);
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
@@ -73,7 +73,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
             result.setSuccess(true);
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
@@ -86,7 +86,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
             result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -103,7 +103,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -120,7 +120,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
             result.setResultObj(deviceResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
