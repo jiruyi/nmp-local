@@ -16,6 +16,7 @@ import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -125,6 +126,7 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
     }
 
     @Override
+    @Transactional
     public Integer batchInsert(List<NmplOutlineSorterInfo> nmplOutlineSorterInfoList) {
         return nmplOutlineSorterInfoExtMapper.batchInsert(nmplOutlineSorterInfoList);
     }

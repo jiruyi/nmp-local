@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.MenuDomainService;
@@ -35,9 +36,12 @@ public class MenuServiceImpl extends SystemBaseService implements MenuService {
             MenuResponse menuResponse = new MenuResponse();
             menuResponse.setList(menuList);
             result = buildResult(menuResponse);
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("查询菜单异常：",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.error("查询菜单异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -56,9 +60,12 @@ public class MenuServiceImpl extends SystemBaseService implements MenuService {
             MenuResponse menuResponse = new MenuResponse();
             menuResponse.setList(menuList);
             result = buildResult(menuResponse);
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("查询菜单异常：",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.error("查询菜单异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }

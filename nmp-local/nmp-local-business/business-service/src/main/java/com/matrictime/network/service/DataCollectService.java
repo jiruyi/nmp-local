@@ -19,4 +19,7 @@ public interface DataCollectService {
 
     Result monitorDataTopTen(MonitorReq monitorReq);
 
+
+    Result selectAllDevice(DataCollectReq dataCollectReq);
+
 }

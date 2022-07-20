@@ -38,7 +38,7 @@ public class RegExpConstants {
     /**
      * @desc 邮箱校验
      */
-    public static final String REG_EXP_EMAIL = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+    public static final String REG_EXP_EMAIL = "^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+([.][a-zA-Z]+){1,2}$";
 
 
 
@@ -63,5 +63,12 @@ public class RegExpConstants {
      * @desc 设备号
      */
     public static final String REGEX_DEVICE_ID = "^[0-9]{0,9}$";
+
+    /**
+     * @desc 座机号
+     */
+    public static final String REGEX_LAND_LINE ="^(0[0-9]{2,3}-[0-9]{8})|(400[0-9]{7})$";
+
+
 
 }

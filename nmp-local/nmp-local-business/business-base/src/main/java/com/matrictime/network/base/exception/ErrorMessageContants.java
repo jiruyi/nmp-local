@@ -78,4 +78,8 @@ public class ErrorMessageContants {
 
 	public static final String NO_CREATEUSER_ERROR_MSG = "并非该用户的创始人,无权修改";
 
+	public static final String PARAM_LENTH_ERROR_MSG ="参数长度异常";
+
+	public static final String PARAM_FORMAT_ERROR_MSG = "参数格式异常";
+
 }

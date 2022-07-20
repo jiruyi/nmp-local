@@ -6,6 +6,7 @@ import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.request.BillRequest;
 import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.MonitorReq;
+import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DataCollectService;
 import com.matrictime.network.util.ListSplitUtil;
@@ -102,6 +103,7 @@ public class DataController {
      */
     @ApiOperation(value = "统计数据创建接口",notes = "话单多条件查询接口")
     @RequestMapping(value = "/saveData",method = RequestMethod.POST)
+    @SystemLog(opermodul = "统计管理模块",operDesc = "新增统计数据",operType = "新增")
     public Result saveData(@RequestBody DataCollectReq dataCollectReq){
         Result result = null;
         try {
@@ -146,6 +148,16 @@ public class DataController {
     @RequestMapping(value = "/monitorDataTopTen",method = RequestMethod.POST)
     public Result monitorDataTopTen(@RequestBody MonitorReq monitorReq){
         return dataCollectService.monitorDataTopTen(monitorReq);
+    }
+
+    /**
+     * 获取统计数据的设备
+     * @param dataCollectReq
+     * @return
+     */
+    @RequestMapping(value = "/selectAllDevice",method = RequestMethod.POST)
+    public Result selectAllDevice(@RequestBody DataCollectReq dataCollectReq){
+        return dataCollectService.selectAllDevice(dataCollectReq);
     }
 
 }

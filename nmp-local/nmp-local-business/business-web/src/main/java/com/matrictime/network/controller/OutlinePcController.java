@@ -34,7 +34,7 @@ public class OutlinePcController {
      */
     @ApiOperation(value = "一体机创建接口",notes = "一体机创建")
     @RequestMapping(value = "/saveOutlinePc",method = RequestMethod.POST)
-    @SystemLog(opermodul = "一体机管理模块",operDesc = "创建一体机",operType = "创建")
+    @SystemLog(opermodul = "一体机管理模块",operDesc = "创建一体机",operType = "新增")
     @RequiresPermissions("sys:pc:insert")
     public Result saveOutlinePc(@RequestBody OutlinePcReq outlinePcReq){
         return outlinePcService.save(outlinePcReq);
@@ -47,7 +47,7 @@ public class OutlinePcController {
      */
     @ApiOperation(value = "一体机修改接口",notes = "一体机修改")
     @RequestMapping(value = "/modifyOutlinePc",method = RequestMethod.POST)
-    @SystemLog(opermodul = "一体机管理模块",operDesc = "修改一体机",operType = "修改")
+    @SystemLog(opermodul = "一体机管理模块",operDesc = "修改一体机",operType = "编辑",operLevl = "2")
     @RequiresPermissions("sys:pc:modify")
     public Result modifyOutlinePc(@RequestBody OutlinePcReq outlinePcReq){
         return outlinePcService.modify(outlinePcReq);
@@ -60,7 +60,7 @@ public class OutlinePcController {
      */
     @ApiOperation(value = "一体机删除接口",notes = "一体机删除")
     @RequestMapping(value = "/deleteOutlinePc",method = RequestMethod.POST)
-    @SystemLog(opermodul = "一体机管理模块",operDesc = "删除一体机",operType = "删除")
+    @SystemLog(opermodul = "一体机管理模块",operDesc = "删除一体机",operType = "删除",operLevl = "2")
     @RequiresPermissions("sys:pc:delete")
     public Result deleteOutlinePc(@RequestBody OutlinePcReq outlinePcReq){
         return outlinePcService.delete(outlinePcReq);
