@@ -18,4 +18,7 @@ public interface RoleDomainService {
     public List<NmplRoleVo> queryByConditions(RoleRequest roleRequest) throws Exception;
 
     public RoleResponse queryOne(RoleRequest roleRequest)throws Exception;
+
+    public List<NmplRoleVo> queryCreateRole(RoleRequest roleRequest) throws Exception;
+
 }

@@ -61,7 +61,7 @@ public class RoleController {
     @ApiOperation(value = "角色创建接口",notes = "角色创建")
     @RequestMapping(value = "/save",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:save")
-    @SystemLog(opermodul = "角色管理模块",operDesc = "创建角色",operType = "创建")
+    @SystemLog(opermodul = "角色管理模块",operDesc = "创建角色",operType = "新增")
     public Result saveRole(@RequestBody RoleRequest roleRequest){
         return roleService.save(roleRequest);
     }
@@ -74,7 +74,7 @@ public class RoleController {
     @ApiOperation(value = "角色编辑接口",notes = "角色编辑")
     @RequestMapping(value = "/modify",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:update")
-    @SystemLog(opermodul = "角色管理模块",operDesc = "修改角色",operType = "修改")
+    @SystemLog(opermodul = "角色管理模块",operDesc = "修改角色",operType = "编辑",operLevl = "2")
     public Result modifyRole(@RequestBody RoleRequest roleRequest){
         return roleService.modify(roleRequest);
     }
@@ -87,7 +87,7 @@ public class RoleController {
     @ApiOperation(value = "角色删除接口",notes = "角色删除")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:delete")
-    @SystemLog(opermodul = "角色管理模块",operDesc = "删除角色",operType = "删除")
+    @SystemLog(opermodul = "角色管理模块",operDesc = "删除角色",operType = "删除",operLevl = "2")
     public Result deleteRole(@RequestBody RoleRequest roleRequest){
         return roleService.delete(roleRequest);
     }
@@ -103,6 +103,9 @@ public class RoleController {
     public Result<RoleResponse> queryOne(@RequestBody RoleRequest roleRequest) {
         return roleService.queryOne(roleRequest);
     }
+
+
+
 
     @ApiOperation(value = "用户登录测试",notes = "用户登录")
     @RequestMapping(value = "/login",method = RequestMethod.POST)
@@ -132,6 +135,18 @@ public class RoleController {
         roleRequest.setRoleId(1L);
         roleService.queryOne(roleRequest);
 
+    }
+
+    /**
+     * 角色条件查询
+     * @param roleRequest
+     * @return
+     */
+    @ApiOperation(value = "角色条件查询接口",notes = "条件查询，默认全量查询")
+    @RequestMapping(value = "/queryCreateRole",method = RequestMethod.POST)
+    @SystemLog(opermodul = "角色管理模块",operDesc = "查询角色",operType = "查询")
+    public Result queryCreateRole(@RequestBody RoleRequest roleRequest){
+        return roleService.queryCreateRole(roleRequest);
     }
 
 }

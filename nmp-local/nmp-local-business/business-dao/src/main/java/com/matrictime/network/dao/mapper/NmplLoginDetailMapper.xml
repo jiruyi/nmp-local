@@ -96,7 +96,7 @@
     from nmpl_login_detail
     <where>
       <if test="loginAccount != null and loginAccount != '' ">
-        login_account = #{loginAccount}
+        login_account like  concat('%',#{loginAccount},'%')
       </if>
       <if test="isSuccess != null  and isSuccess != '' ">
         and is_success = #{isSuccess}

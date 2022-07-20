@@ -7,6 +7,7 @@ import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
+import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.LoginRequest;
 import com.matrictime.network.request.UserInfo;
@@ -180,7 +181,7 @@ public class UserController {
      * @create 2022/2/28 0028 15:22
      */
     @ApiOperation(value = "用户修改")
-    @SystemLog(opermodul = "用户管理模块",operDesc = "用户修改",operType = "修改")
+    @SystemLog(opermodul = "用户管理模块",operDesc = "用户修改",operType = "修改",operLevl = "2")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     @RequiresPermissions("sys:user:update")
     public Result<Integer> updateUser(@RequestBody UserRequest userRequest){
@@ -208,7 +209,7 @@ public class UserController {
      * @create 2022/2/28 0028 16:29
      */
     @ApiOperation(value = "用户删除")
-    @SystemLog(opermodul = "用户管理模块",operDesc = "用户删除",operType = "删除")
+    @SystemLog(opermodul = "用户管理模块",operDesc = "用户删除",operType = "删除",operLevl = "2")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @RequiresPermissions("sys:user:delete")
     public Result<Integer> deleteUser(@RequestBody UserRequest userRequest){
@@ -235,7 +236,7 @@ public class UserController {
      * @create 2022/3/1 0001 11:09
      */
     @ApiOperation(value = "密码重置")
-    @SystemLog(opermodul = "用户管理模块",operDesc = "密码重置",operType = "重置")
+    @SystemLog(opermodul = "用户管理模块",operDesc = "密码重置",operType = "重置",operLevl = "2")
     @RequestMapping(value = "/reset",method = RequestMethod.POST)
     @RequiresPermissions("sys:user:changePasswd")
     public Result<Integer> passwordReset(@RequestBody UserInfo userInfo){
@@ -296,7 +297,7 @@ public class UserController {
      * @create 2022/3/1 0001 11:09
      */
     @ApiOperation(value = "密码修改")
-    @SystemLog(opermodul = "用户管理模块",operDesc = "密码修改",operType = "修改")
+    @SystemLog(opermodul = "用户管理模块",operDesc = "密码修改",operType = "修改",operLevl = "2")
     @RequestMapping(value = "/changePasswd",method = RequestMethod.POST)
     public Result<Integer> changePasswd(@RequestBody UserInfo userInfo){
         try {

@@ -2,7 +2,11 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
 
+import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.exception.ErrorCode;
+import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.constant.RegExpConstants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.model.NmplUser;
@@ -13,6 +17,7 @@ import com.matrictime.network.response.CompanyResp;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.CompanyService;
 import com.matrictime.network.shiro.ShiroUtils;
+import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,12 +46,22 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
     public Result save(CompanyInfoRequest companyInfoRequest) {
         Result<Integer> result;
         try {
+            if(!parmLenthCheck(companyInfoRequest)){
+                throw new SystemException(ErrorMessageContants.PARAM_LENTH_ERROR_MSG);
+            }
+            if(!parmFormatCheck(companyInfoRequest)){
+                throw new SystemException(ErrorMessageContants.PARAM_FORMAT_ERROR_MSG);
+            }
             NmplUser nmplUser = RequestContext.getUser();
             companyInfoRequest.setCreateUser(String.valueOf(nmplUser.getUserId()));
             result = buildResult(companyInfoDomainService.save(companyInfoRequest));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info(map.get(companyInfoRequest.getCompanyType())+"创建异常",e.getMessage());
             result = failResult(e);
+        }
+        catch (Exception e){
+            log.info(map.get(companyInfoRequest.getCompanyType())+"创建异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -55,12 +70,22 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
     public Result modify(CompanyInfoRequest companyInfoRequest) {
         Result<Integer> result;
         try {
+            if(!parmLenthCheck(companyInfoRequest)){
+                throw new SystemException(ErrorMessageContants.PARAM_LENTH_ERROR_MSG);
+            }
+            if(!parmFormatCheck(companyInfoRequest)){
+                throw new SystemException(ErrorMessageContants.PARAM_FORMAT_ERROR_MSG);
+            }
             NmplUser nmplUser = RequestContext.getUser();
             companyInfoRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             result = buildResult(companyInfoDomainService.modify(companyInfoRequest));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info(map.get(companyInfoRequest.getCompanyType())+"修改异常",e.getMessage());
             result = failResult(e);
+        }
+        catch (Exception e){
+            log.info(map.get(companyInfoRequest.getCompanyType())+"修改异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -72,9 +97,12 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
             NmplUser nmplUser = RequestContext.getUser();
             companyInfoRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             result = buildResult(companyInfoDomainService.delete(companyInfoRequest));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info(map.get(companyInfoRequest.getCompanyType())+"删除异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info(map.get(companyInfoRequest.getCompanyType())+"删除异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -87,9 +115,12 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
             PageInfo<NmplCompanyInfoVo> pageResult =  new PageInfo<>();
             pageResult = companyInfoDomainService.queryByConditions(companyInfoRequest);
             result = buildResult(pageResult);
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("查询角色异常：",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.error("查询角色异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -108,9 +139,13 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
             List<NmplCompanyInfoVo> nmplCompanyInfoVoList = companyInfoDomainService.queryCompanyList(companyInfoRequest);
             companyResp.setList(nmplCompanyInfoVoList);
             result = buildResult(companyResp);
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("查询角色异常：",e.getMessage());
             result = failResult(e);
+        }
+        catch (Exception e){
+            log.error("查询角色异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -128,11 +163,51 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
             List<NmplCompanyInfoVo> nmplCompanyInfoVoList = companyInfoDomainService.queryCompanyList(companyInfoRequest);
             companyResp.setNmplCompanyInfoVoList(nmplCompanyInfoVoList);
             result = buildResult(companyResp);
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("查询角色异常：",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.error("查询角色异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
+
+
+
+    private boolean parmLenthCheck(CompanyInfoRequest companyInfoRequest){
+        boolean flag = true;
+        if(companyInfoRequest.getCompanyName()!=null){
+            flag = CommonCheckUtil.checkStringLength(companyInfoRequest.getCompanyName(), null, 50);
+        }
+        if(companyInfoRequest.getUnitName()!=null){
+            flag = CommonCheckUtil.checkStringLength(companyInfoRequest.getUnitName(), null, 50);
+        }
+        if(companyInfoRequest.getCompanyCode()!=null){
+            flag = CommonCheckUtil.checkStringLength(companyInfoRequest.getCompanyCode(), null, 50);
+        }
+        if(companyInfoRequest.getTelephone()!=null){
+            flag = CommonCheckUtil.checkStringLength(companyInfoRequest.getTelephone(), null, 20);
+        }
+        if(companyInfoRequest.getEmail()!=null){
+            flag = CommonCheckUtil.checkStringLength(companyInfoRequest.getEmail(), null, 30);
+        }
+        if(companyInfoRequest.getAddr()!=null){
+            flag = CommonCheckUtil.checkStringLength(companyInfoRequest.getAddr(), null, 50);
+        }
+        return flag;
+    }
+
+    private boolean parmFormatCheck(CompanyInfoRequest companyInfoRequest){
+        boolean flag = true;
+        if(companyInfoRequest.getEmail()!=null){
+            flag = CommonCheckUtil.isParamMatchPattern(companyInfoRequest.getEmail(), RegExpConstants.REG_EXP_EMAIL);
+        }
+        if(companyInfoRequest.getTelephone()!=null){
+            flag = CommonCheckUtil.isParamMatchPattern(companyInfoRequest.getTelephone(), RegExpConstants.REGEX_LAND_LINE);
+        }
+        return flag;
+    }
+
 
 }

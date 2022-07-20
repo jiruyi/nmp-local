@@ -2,6 +2,7 @@ package com.matrictime.network.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.request.MenuReq;
 import com.matrictime.network.request.RoleRequest;
 import com.matrictime.network.response.MenuResponse;
 import com.matrictime.network.service.MenuService;
@@ -35,7 +36,24 @@ public class MenuController {
     @ApiOperation(value = "菜单查询接口",notes = "查询所有菜单")
     @RequestMapping(value = "/queryAllMenu",method = RequestMethod.POST)
     @RequiresPermissions("sys:power:query")
-    public Result<MenuResponse> queryAllMenu(){
-        return menuService.queryAllMenu();
+    public Result<MenuResponse> queryAllMenu(@RequestBody MenuReq menuReq){
+        return menuService.queryAllMenu(menuReq);
     }
+
+
+    /**
+     * 菜单查询
+     * @return
+     */
+    @ApiOperation(value = "菜单查询接口",notes = "查询当前用户拥有的所有菜单")
+    @RequestMapping(value = "/queryOwnerMenu",method = RequestMethod.POST)
+    @RequiresPermissions("sys:power:query")
+    public Result<MenuResponse> queryOwnerMenu(@RequestBody MenuReq menuReq){
+        return menuService.queryOwnerMenu(menuReq);
+    }
+
+
+
+
+
 }

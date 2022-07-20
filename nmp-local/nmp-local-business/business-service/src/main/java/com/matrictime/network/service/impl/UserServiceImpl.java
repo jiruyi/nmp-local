@@ -28,6 +28,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -172,6 +173,12 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
                     throw new SystemException(ErrorMessageContants.NO_ADMIN_ERROR_MSG);
                 }
             }
+            if(Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.SUPER_ADMIN
+                    && Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.COMMON_ADMIN){
+                if(Long.valueOf(nmplUser.getCreateUser()).longValue()!=RequestContext.getUser().getUserId()){
+                    throw new SystemException("非管理员用户，无法修改非当前用户创建的其他用户");
+                }
+            }
             userRequest.setUpdateUser(String.valueOf(RequestContext.getUser().getUserId()));
             int count = userDomainService.updateUser(userRequest);
             result = buildResult(count);
@@ -194,6 +201,13 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
     public Result<Integer> deleteUser(UserRequest userRequest) {
         Result<Integer> result = null;
         try {
+            NmplUser nmplUser =  userDomainService.getUserById(Long.valueOf(userRequest.getUserId()));
+            if(Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.SUPER_ADMIN
+                    && Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.COMMON_ADMIN){
+                if(Long.valueOf(nmplUser.getCreateUser()).longValue()!=RequestContext.getUser().getUserId()){
+                    throw new SystemException("非管理员用户，无法删除非当前用户创建的其他用户");
+                }
+            }
             int count = userDomainService.deleteUser(userRequest);
             result = buildResult(count);
         }catch (Exception e){
@@ -230,6 +244,17 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
                     user.setRoleName(roleName);
                 }
             }
+            //非超管用户无法看到超管用户信息
+            NmplUser nmplUser = RequestContext.getUser();
+            if(Integer.valueOf(nmplUser.getRoleId())!= DataConstants.SUPER_ADMIN){
+                List<UserRequest>result = new ArrayList<>();
+                for (UserRequest user : list) {
+                    if(Integer.valueOf(user.getRoleId())!=DataConstants.SUPER_ADMIN){
+                        result.add(user);
+                    }
+                }
+                list = result;
+            }
             pageInfo.setList(list);
             return buildResult(pageInfo);
         }catch (Exception e){
@@ -249,17 +274,29 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
     @Override
     public Result<Integer> passwordReset(UserInfo userInfo) {
         try {
+            NmplUser nmplUser = userDomainService.getUserById(Long.valueOf(userInfo.getUserId()));
             //个人信息密码修改 查询老密码
             if("1".equals(userInfo.getType())){
-                NmplUser nmplUser = userDomainService.getUserById(Long.valueOf(userInfo.getUserId()));
                 if(ObjectUtils.isEmpty(nmplUser)){
                     throw new SystemException(ErrorMessageContants.USER_NO_EXIST_ERROR_MSG);
                 }
                 if(!userInfo.getOldPassword().equals(nmplUser.getPassword())){
                     throw new SystemException(ErrorMessageContants.OLD_PASSWORD_ERROR_MSG);
                 }
+            }else {
+                NmplUser user = RequestContext.getUser();
+                if(!(Integer.valueOf(user.getRoleId())==DataConstants.SUPER_ADMIN)&&!(Integer.valueOf(user.getRoleId())==DataConstants.COMMON_ADMIN)){
+                    if(!user.getUserId().equals(nmplUser.getCreateUser())){
+                        throw new SystemException(ErrorMessageContants.NO_CREATEUSER_ERROR_MSG);
+                    }
+                }
             }
             int count = userDomainService.passwordReset(userInfo);
+            redisTemplate.delete(nmplUser.getUserId()+ DataConstants.USER_LOGIN_JWT_TOKEN);
+            Subject subject = (Subject) ThreadContext.get(nmplUser.getUserId()+"_SUBJECT_KEY");
+            if(subject!=null){
+                subject.logout();
+            }
             return  buildResult(count);
         }catch (Exception e){
             log.error("selectUserList exception :{}",e.getMessage());

@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.dao.domain.BillDomainService;
 import com.matrictime.network.dao.model.NmplUser;
@@ -39,9 +40,12 @@ public class BillServiceImpl extends SystemBaseService implements BillService {
             PageInfo<NmplBillVo> pageResult =  new PageInfo<>();
             pageResult = billDomainService.queryByConditions(billRequest);
             result = buildResult(pageResult);
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("查询话单异常：",e.getMessage());
             result = failResult(e);
+        } catch (Exception e){
+            log.error("查询话单异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -53,9 +57,12 @@ public class BillServiceImpl extends SystemBaseService implements BillService {
         Result<Integer> result;
         try {
             result = buildResult(billDomainService.save(billRequest));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("创建话单异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("创建话单异常",e.getMessage());
+            result = failResult("e");
         }
         return new AsyncResult<>(result);
     }

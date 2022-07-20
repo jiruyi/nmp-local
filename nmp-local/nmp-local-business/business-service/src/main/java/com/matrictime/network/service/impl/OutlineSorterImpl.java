@@ -1,6 +1,8 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.OutlineSorterDomainService;
 import com.matrictime.network.dao.model.NmplOutlinePcInfo;
@@ -9,9 +11,11 @@ import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.NmplCompanyInfoVo;
 import com.matrictime.network.modelVo.NmplOutlineSorterInfoVo;
+import com.matrictime.network.request.OutlinePcReq;
 import com.matrictime.network.request.OutlineSorterReq;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.OutlineSorterService;
+import com.matrictime.network.util.CommonCheckUtil;
 import com.matrictime.network.util.CsvUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -35,12 +39,18 @@ public class OutlineSorterImpl  extends SystemBaseService implements OutlineSort
     public Result save(OutlineSorterReq outlineSorterReq) {
         Result<Integer> result;
         try {
+            if(!parmLenthCheck(outlineSorterReq)){
+                throw new SystemException(ErrorMessageContants.PARAM_LENTH_ERROR_MSG);
+            }
             NmplUser nmplUser = RequestContext.getUser();
             outlineSorterReq.setCreateUser(nmplUser.getNickName());
             result =  buildResult(outlineSorterDomainService.save(outlineSorterReq));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("创建异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("创建异常",e.getMessage());
+            result = failResult("");
         }
         return result;
 
@@ -50,12 +60,18 @@ public class OutlineSorterImpl  extends SystemBaseService implements OutlineSort
     public Result modify(OutlineSorterReq outlineSorterReq) {
         Result<Integer> result;
         try {
+            if(!parmLenthCheck(outlineSorterReq)){
+                throw new SystemException(ErrorMessageContants.PARAM_LENTH_ERROR_MSG);
+            }
             NmplUser nmplUser = RequestContext.getUser();
             outlineSorterReq.setUpdateUser(nmplUser.getNickName());
             result =  buildResult(outlineSorterDomainService.modify(outlineSorterReq));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("修改异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("修改异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -67,9 +83,12 @@ public class OutlineSorterImpl  extends SystemBaseService implements OutlineSort
             NmplUser nmplUser = RequestContext.getUser();
             outlineSorterReq.setUpdateUser(nmplUser.getNickName());
             result =  buildResult(outlineSorterDomainService.delete(outlineSorterReq));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("删除异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("删除异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -82,9 +101,12 @@ public class OutlineSorterImpl  extends SystemBaseService implements OutlineSort
             PageInfo<NmplOutlineSorterInfoVo> pageResult =  new PageInfo<>();
             pageResult = outlineSorterDomainService.query(outlineSorterReq);
             result = buildResult(pageResult);
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("查询异常：",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.error("查询异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -99,9 +121,12 @@ public class OutlineSorterImpl  extends SystemBaseService implements OutlineSort
             List<NmplOutlineSorterInfo> nmplOutlineSorterInfoList = CsvUtils.readCsvToSorter(tmp);
             tmp.delete();
             result = buildResult(outlineSorterDomainService.batchInsert(nmplOutlineSorterInfoList));
-        } catch (IOException e) {
+        } catch (SystemException e) {
             log.error("查询异常：",e.getMessage());
             result = failResult(e);
+        }catch (Exception e) {
+            log.error("查询异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -111,9 +136,12 @@ public class OutlineSorterImpl  extends SystemBaseService implements OutlineSort
         Result<NmplOutlineSorterInfo> result = null;
         try {
             result = buildResult( outlineSorterDomainService.auth(outlineSorterReq));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("查询异常：",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.error("查询异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -156,4 +184,19 @@ public class OutlineSorterImpl  extends SystemBaseService implements OutlineSort
             ex.printStackTrace();
         }
     }
+
+    private boolean parmLenthCheck(OutlineSorterReq outlineSorterReq){
+        boolean flag = true;
+        if(outlineSorterReq.getStationNetworkId()!=null){
+            flag = CommonCheckUtil.checkStringLength(outlineSorterReq.getStationNetworkId(), null, 32);
+        }
+        if(outlineSorterReq.getDeviceName()!=null){
+            flag = CommonCheckUtil.checkStringLength(outlineSorterReq.getDeviceName(), null, 16);
+        }
+        if(outlineSorterReq.getRemark()!=null){
+            flag = CommonCheckUtil.checkStringLength(outlineSorterReq.getRemark(), null, 256);
+        }
+        return flag;
+    }
+
 }

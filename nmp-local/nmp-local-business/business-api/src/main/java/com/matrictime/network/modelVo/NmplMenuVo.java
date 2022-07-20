@@ -60,4 +60,17 @@ public class NmplMenuVo {
      *  菜单子集
      */
     private List<NmplMenuVo> child;
+
+    private Boolean own=false;
+
+    /**
+     * 前端组件信息
+     */
+    private String component;
+
+    /**
+     * 按钮
+     */
+    private String icon;
+
 }

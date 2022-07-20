@@ -1,6 +1,8 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.OutlinePcDomainService;
 import com.matrictime.network.dao.model.NmplOutlinePcInfo;
@@ -8,9 +10,12 @@ import com.matrictime.network.dao.model.NmplOutlineSorterInfo;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.NmplOutlinePcInfoVo;
+import com.matrictime.network.request.CompanyInfoRequest;
 import com.matrictime.network.request.OutlinePcReq;
+import com.matrictime.network.request.OutlineSorterReq;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.OutlinePcService;
+import com.matrictime.network.util.CommonCheckUtil;
 import com.matrictime.network.util.CsvUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -32,9 +37,15 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
     public Result save(OutlinePcReq outlinePcReq) {
         Result<Integer> result;
         try {
+            if(!parmLenthCheck(outlinePcReq)){
+                throw new SystemException(ErrorMessageContants.PARAM_LENTH_ERROR_MSG);
+            }
             NmplUser nmplUser = RequestContext.getUser();
             outlinePcReq.setCreateUser(nmplUser.getNickName());
             result =  buildResult(outlinePcDomainService.save(outlinePcReq));
+        }catch (SystemException e){
+            log.info("创建异常",e.getMessage());
+            result = failResult("");
         }catch (Exception e){
             log.info("创建异常",e.getMessage());
             result = failResult(e);
@@ -46,12 +57,18 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
     public Result modify(OutlinePcReq outlinePcReq) {
         Result<Integer> result;
         try {
+            if(!parmLenthCheck(outlinePcReq)){
+                throw new SystemException(ErrorMessageContants.PARAM_LENTH_ERROR_MSG);
+            }
             NmplUser nmplUser = RequestContext.getUser();
             outlinePcReq.setUpdateUser(nmplUser.getNickName());
             result =  buildResult(outlinePcDomainService.modify(outlinePcReq));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("修改异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("修改异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -63,9 +80,12 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
             NmplUser nmplUser = RequestContext.getUser();
             outlinePcReq.setUpdateUser(nmplUser.getNickName());
             result =  buildResult(outlinePcDomainService.delete(outlinePcReq));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("删除异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("删除异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -78,9 +98,12 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
             PageInfo<NmplOutlinePcInfoVo> pageResult =  new PageInfo<>();
             pageResult = outlinePcDomainService.query(outlinePcReq);
             result = buildResult(pageResult);
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("查询异常：",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.error("查询异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -95,10 +118,27 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
             List<NmplOutlinePcInfo> nmplOutlinePcInfoList = CsvUtils.readCsvToPc(tmp);
             tmp.delete();
             result = buildResult(outlinePcDomainService.batchInsert(nmplOutlinePcInfoList));
-        } catch (IOException e) {
+        }catch (SystemException e){
             log.error("查询异常：",e.getMessage());
             result = failResult(e);
+        } catch (Exception e) {
+            log.error("查询异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
+    }
+
+    private boolean parmLenthCheck(OutlinePcReq outlinePcReq){
+        boolean flag = true;
+        if(outlinePcReq.getStationNetworkId()!=null){
+            flag = CommonCheckUtil.checkStringLength(outlinePcReq.getStationNetworkId(), null, 32);
+        }
+        if(outlinePcReq.getDeviceName()!=null){
+            flag = CommonCheckUtil.checkStringLength(outlinePcReq.getDeviceName(), null, 16);
+        }
+        if(outlinePcReq.getRemark()!=null){
+            flag = CommonCheckUtil.checkStringLength(outlinePcReq.getRemark(), null, 256);
+        }
+        return flag;
     }
 }

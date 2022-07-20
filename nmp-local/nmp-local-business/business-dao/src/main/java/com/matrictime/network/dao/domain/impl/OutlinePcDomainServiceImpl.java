@@ -6,21 +6,22 @@ import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.OutlinePcDomainService;
 import com.matrictime.network.dao.mapper.NmplOutlinePcInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplOutlinePcInfoExtMapper;
-import com.matrictime.network.dao.model.NmplOutlinePcInfo;
-import com.matrictime.network.dao.model.NmplOutlinePcInfoExample;
-import com.matrictime.network.dao.model.NmplOutlineSorterInfo;
-import com.matrictime.network.dao.model.NmplOutlineSorterInfoExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.NmplOutlinePcInfoVo;
 import com.matrictime.network.request.OutlinePcReq;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.util.SnowFlake;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
     @Resource
@@ -68,7 +69,7 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
             criteria.andDeviceIdEqualTo(outlinePcReq.getDeviceId());
         }
         if(outlinePcReq.getDeviceName()!=null){
-            criteria.andDeviceNameEqualTo(outlinePcReq.getDeviceName());
+            criteria.andDeviceNameLike("%"+outlinePcReq.getDeviceName()+"%");
         }
         if(outlinePcReq.getStartTime()!=null){
             criteria.andCreateTimeGreaterThan(outlinePcReq.getStartTime());
@@ -77,9 +78,10 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
             criteria.andCreateTimeLessThan(outlinePcReq.getEndTime());
         }
         if(outlinePcReq.getStationNetworkId()!=null){
-            criteria.andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId());
+            criteria.andStationNetworkIdLike("%"+outlinePcReq.getStationNetworkId()+"%");
         }
         criteria.andIsExistEqualTo(true);
+        nmplOutlinePcInfoExample.setOrderByClause("create_time desc");
         Page page = PageHelper.startPage(outlinePcReq.getPageNo(),outlinePcReq.getPageSize());
         List<NmplOutlinePcInfo> nmplOutlinePcInfos = nmplOutlinePcInfoMapper.selectByExample(nmplOutlinePcInfoExample);
 
@@ -89,7 +91,6 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
             BeanUtils.copyProperties(nmplOutlinePcInfo,infoVo);
             list.add(infoVo);
         }
-
         PageInfo<NmplOutlinePcInfoVo> pageResult =  new PageInfo<>();
         pageResult.setList(list);
         pageResult.setCount((int) page.getTotal());
@@ -121,6 +122,7 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
     }
 
     @Override
+    @Transactional
     public Integer batchInsert(List<NmplOutlinePcInfo> nmplOutlinePcInfoList) {
         return nmplOutlinePcInfoExtMapper.batchInsert(nmplOutlinePcInfoList);
     }

@@ -1,20 +1,24 @@
 package com.matrictime.network.service.impl;
 
 
+import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.exception.ErrorCode;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.RoleDomainService;
 import com.matrictime.network.dao.mapper.NmplRoleMenuRelationMapper;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.NmplRoleVo;
+import com.matrictime.network.request.OutlinePcReq;
 import com.matrictime.network.request.RoleRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.RoleResp;
 import com.matrictime.network.response.RoleResponse;
 import com.matrictime.network.service.RoleService;
 import com.matrictime.network.shiro.ShiroUtils;
+import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,9 +50,12 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
             List<NmplRoleVo> list = roleDomainService.queryByConditions(roleRequest);
             roleResp.setList(list);
             result = buildResult(roleResp);
-        }catch (Exception e){
+        }catch (SystemException e){
             log.error("查询角色异常：",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.error("查询角色异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -58,12 +65,18 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
     public Result save(RoleRequest roleRequest) {
         Result<Integer> result;
         try {
+            if(!parmLenthCheck(roleRequest)){
+                throw new SystemException(ErrorMessageContants.PARAM_LENTH_ERROR_MSG);
+            }
             NmplUser nmplUser = RequestContext.getUser();
             roleRequest.setCreateUser(String.valueOf(nmplUser.getUserId()));
             result = buildResult(roleDomainService.save(roleRequest));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("创建角色异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("创建角色异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -72,10 +85,14 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
     public Result modify(RoleRequest roleRequest) {
         Result<Integer> result = null;
         try {
+            if(!parmLenthCheck(roleRequest)){
+                throw new SystemException(ErrorMessageContants.PARAM_LENTH_ERROR_MSG);
+            }
             NmplUser nmplUser = RequestContext.getUser();
             roleRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             //除管理员用户，其他用户只能编辑自己创建的角色
-            if (Long.parseLong(nmplUser.getRoleId())!=DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getUserId())){
+            if (Long.parseLong(nmplUser.getRoleId())!=DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getUserId())
+                    &&Long.parseLong(nmplUser.getRoleId())!=DataConstants.COMMON_ADMIN){
                 result = failResult(ErrorCode.SYSTEM_ERROR, "非该角色的创建者，无编辑该角色的权限");
                 return result;
             }
@@ -84,9 +101,12 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
                 return result;
             }
             result = buildResult(roleDomainService.modify(roleRequest));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("编辑角色异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("编辑角色异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -100,7 +120,8 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
 
             roleRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
             //除管理员用户，其他用户只能删除自己创建的角色
-            if (Long.parseLong(nmplUser.getRoleId()) != DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getUserId())) {
+            if (Long.parseLong(nmplUser.getRoleId()) != DataConstants.SUPER_ADMIN && !roleRequest.getCreateUser().equals(nmplUser.getUserId())
+                    &&Long.parseLong(nmplUser.getRoleId())!=DataConstants.COMMON_ADMIN) {
                 result = failResult(ErrorCode.SYSTEM_ERROR, "非该角色的创建者，无编辑该角色的权限");
                 return result;
             }
@@ -110,9 +131,12 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
                 return result;
             }
             result = buildResult(roleDomainService.delete(roleRequest));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("删除角色异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("删除角色异常",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -133,10 +157,48 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
                 return result;
             }
             result = buildResult(roleDomainService.queryOne(roleRequest));
-        }catch (Exception e){
+        }catch (SystemException e){
             log.info("查询角色异常",e.getMessage());
             result = failResult(e);
+        }catch (Exception e){
+            log.info("查询角色异常",e.getMessage());
+            result = failResult("");
         }
         return result;
+    }
+
+
+    @Override
+    public Result queryCreateRole(RoleRequest roleRequest) {
+        Result result = null;
+        NmplUser user = RequestContext.getUser();
+        try {
+            roleRequest.setRoleId(Long.valueOf(user.getRoleId()));
+            roleRequest.setCreateUser(String.valueOf(user.getUserId()));
+            //多条件查询
+            //PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
+            RoleResp roleResp = new RoleResp();
+            List<NmplRoleVo> list = roleDomainService.queryCreateRole(roleRequest);
+            roleResp.setList(list);
+            result = buildResult(roleResp);
+        }catch (SystemException e){
+            log.error("查询角色异常：",e.getMessage());
+            result = failResult(e);
+        }catch (Exception e){
+            log.error("查询角色异常：",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+    private boolean parmLenthCheck(RoleRequest roleRequest){
+        boolean flag = true;
+        if(roleRequest.getRoleName()!=null){
+            flag = CommonCheckUtil.checkStringLength(roleRequest.getRoleName(), null, 30);
+        }
+        if(roleRequest.getRoleCode()!=null){
+            flag = CommonCheckUtil.checkStringLength(roleRequest.getRoleCode(), null, 100);
+        }
+        return flag;
     }
 }

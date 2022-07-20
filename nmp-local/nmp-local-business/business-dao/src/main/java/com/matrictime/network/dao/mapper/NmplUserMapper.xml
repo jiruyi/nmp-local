@@ -103,18 +103,18 @@
     from nmpl_user
     where is_exist = 1
       <if test="loginAccount != null">
-        and login_account = #{loginAccount}
+        and login_account like  concat('%',#{loginAccount},'%')
       </if>
       <if test="roleId != null">
         and role_id = #{roleId}
       </if>
       <if test="phoneNumber != null">
-        and phone_number = #{phoneNumber}
+        and phone_number like  concat('%',#{phoneNumber},'%')
       </if>
       <if test="createTime != null">
         and date(create_time) = #{createTime}
       </if>
-    ORDER BY user_id DESC
+    ORDER BY create_time DESC
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">

@@ -8,6 +8,7 @@ import com.matrictime.network.dao.mapper.NmplOutlineSorterInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplOutlineSorterInfoExtMapper;
 import com.matrictime.network.dao.model.NmplOutlineSorterInfo;
 import com.matrictime.network.dao.model.NmplOutlineSorterInfoExample;
+import com.matrictime.network.modelVo.NmplOutlinePcInfoVo;
 import com.matrictime.network.modelVo.NmplOutlineSorterInfoVo;
 import com.matrictime.network.request.OutlineSorterReq;
 import com.matrictime.network.response.PageInfo;
@@ -15,11 +16,15 @@ import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainService {
@@ -69,10 +74,10 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
             criteria.andDeviceIdEqualTo(outlineSorterReq.getDeviceId());
         }
         if(outlineSorterReq.getStationNetworkId()!=null){
-            criteria.andStationNetworkIdEqualTo(outlineSorterReq.getStationNetworkId());
+            criteria.andStationNetworkIdLike("%"+outlineSorterReq.getStationNetworkId()+"%");
         }
         if(outlineSorterReq.getDeviceName()!=null){
-            criteria.andDeviceNameEqualTo(outlineSorterReq.getDeviceName());
+            criteria.andDeviceNameLike("%"+outlineSorterReq.getDeviceName()+"%");
         }
         if(outlineSorterReq.getStartTime()!=null){
             criteria.andCreateTimeGreaterThan(outlineSorterReq.getStartTime());
@@ -81,6 +86,7 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
             criteria.andCreateTimeLessThan(outlineSorterReq.getEndTime());
         }
         criteria.andIsExistEqualTo(true);
+        nmplOutlineSorterInfoExample.setOrderByClause("create_time desc");
         Page page = PageHelper.startPage(outlineSorterReq.getPageNo(),outlineSorterReq.getPageSize());
         List<NmplOutlineSorterInfo> nmplOutlineSorterInfoList = nmplOutlineSorterInfoMapper.selectByExample(nmplOutlineSorterInfoExample);
         List<NmplOutlineSorterInfoVo> list = new ArrayList<>();
@@ -89,6 +95,7 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
             BeanUtils.copyProperties(nmplOutlineSorterInfo,infoVo);
             list.add(infoVo);
         }
+        //list = list.stream().sorted(Comparator.comparing(NmplOutlineSorterInfoVo::getCreateTime).reversed()).collect(Collectors.toList());
         PageInfo<NmplOutlineSorterInfoVo> pageResult =  new PageInfo<>();
         pageResult.setList(list);
         pageResult.setCount((int) page.getTotal());
@@ -119,6 +126,7 @@ public class OutlineSorterDomainServiceImpl implements OutlineSorterDomainServic
     }
 
     @Override
+    @Transactional
     public Integer batchInsert(List<NmplOutlineSorterInfo> nmplOutlineSorterInfoList) {
         return nmplOutlineSorterInfoExtMapper.batchInsert(nmplOutlineSorterInfoList);
     }
