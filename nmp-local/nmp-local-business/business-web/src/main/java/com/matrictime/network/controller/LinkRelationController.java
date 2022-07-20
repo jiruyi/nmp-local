@@ -111,7 +111,7 @@ public class LinkRelationController {
      * @return
      */
     @RequiresPermissions("sys:link:delete")
-    @SystemLog(opermodul = "链路管理模块",operDesc = "删除链路信息",operType = "删除链路信息")
+    @SystemLog(opermodul = "链路管理模块",operDesc = "删除链路信息",operType = "删除链路信息",operLevl = "2")
     @RequestMapping(value = "/deleteLinkRelation",method = RequestMethod.POST)
     public Result<Integer> deleteLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
         Result<Integer> result = new Result<>();
@@ -131,7 +131,7 @@ public class LinkRelationController {
      * @return
      */
     @RequiresPermissions("sys:link:update")
-    @SystemLog(opermodul = "链路管理模块",operDesc = "更新链路信息",operType = "更新链路信息")
+    @SystemLog(opermodul = "链路管理模块",operDesc = "更新链路信息",operType = "更新链路信息",operLevl = "2")
     @RequestMapping(value = "/updateLinkRelation",method = RequestMethod.POST)
     public Result<Integer> updateLinkRelation(@RequestBody LinkRelationRequest linkRelationRequest){
         Result<Integer> result = new Result<>();

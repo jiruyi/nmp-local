@@ -13,6 +13,7 @@ import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BaseStationInfoService;
+import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
@@ -45,6 +46,16 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             baseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             baseStationInfoRequest.setIsExist("1");
             baseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
+            boolean publicIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getPublicNetworkIp());
+            boolean lanIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getLanIp());
+            if(publicIpReg == false || lanIpReg == false){
+                return new Result<>(false,"ip格式不正确");
+            }
+            boolean publicPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getPublicNetworkPort());
+            boolean lanPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getLanPort());
+            if(publicPortReg == false || lanPortReg == false){
+                return new Result<>(false,"端口格式不正确");
+            }
             //判断小区是否正确
             String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
             if(StringUtil.isEmpty(preBID)){
@@ -52,7 +63,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             }
             String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
             baseStationInfoRequest.setStationNetworkId(networkId);
-            infoRequest.setStationNetworkId(networkId);
+            infoRequest.setStationNetworkId(baseStationInfoRequest.getStationNetworkId());
             infoRequest.setPublicNetworkIp(baseStationInfoRequest.getPublicNetworkIp());
             infoRequest.setLanIp(baseStationInfoRequest.getLanIp());
             List<BaseStationInfoVo> baseStationInfoVos = baseStationInfoDomainService.selectBaseStation(infoRequest);
@@ -70,7 +81,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         }catch (Exception e){
             log.error("基站新增{}新增异常：{}",e.getMessage());
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
@@ -83,6 +94,16 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         try {
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
             baseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
+            boolean publicIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getPublicNetworkIp());
+            boolean lanIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getLanIp());
+            if(publicIpReg == false || lanIpReg == false){
+                return new Result<>(false,"ip格式不正确");
+            }
+            boolean publicPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getPublicNetworkPort());
+            boolean lanPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getLanPort());
+            if(publicPortReg == false || lanPortReg == false){
+                return new Result<>(false,"端口格式不正确");
+            }
             updateFlag = baseStationInfoDomainService.updateBaseStationInfo(baseStationInfoRequest);
             if(updateFlag == 1){
                 result.setSuccess(true);
@@ -90,7 +111,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
@@ -107,7 +128,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
@@ -120,7 +141,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -139,7 +160,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -155,7 +176,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -171,7 +192,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -184,7 +205,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(baseStationInfoDomainService.selectDeviceId(baseStationInfoRequest));
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -210,7 +231,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -224,7 +245,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;

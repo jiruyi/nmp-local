@@ -14,6 +14,7 @@ import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceService;
+import com.matrictime.network.util.CommonCheckUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,15 +45,24 @@ public class DeviceServiceImpl implements DeviceService {
             deviceInfoRequest.setUpdateTime(getFormatDate(date));
             deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
             deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
+            boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getPublicNetworkIp());
+            boolean lanIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getLanIp());
+            if(publicIpReg == false || lanIpReg == false){
+                return new Result<>(false,"ip格式不正确");
+            }
+            boolean publicPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getPublicNetworkPort());
+            boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getLanPort());
+            if(publicPortReg == false || lanPortReg == false){
+                return new Result<>(false,"端口格式不正确");
+            }
             //判断小区是否正确
-
             String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
             if(StringUtil.isEmpty(preBID)){
                 return new Result<>(false,"运营商不存在");
             }
             String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
             deviceInfoRequest.setStationNetworkId(NetworkId);
-            infoRequest.setStationNetworkId(NetworkId);
+            infoRequest.setStationNetworkId(deviceInfoRequest.getStationNetworkId());
             infoRequest.setPublicNetworkIp(deviceInfoRequest.getPublicNetworkIp());
             infoRequest.setLanIp(deviceInfoRequest.getLanIp());
             List<DeviceInfoVo> devices = deviceDomainService.getDevices(infoRequest);
@@ -65,7 +75,7 @@ public class DeviceServiceImpl implements DeviceService {
                 result.setSuccess(true);
             }
         }catch (Exception e){
-            result.setErrorCode(e.getMessage());
+            result.setErrorCode("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -82,7 +92,7 @@ public class DeviceServiceImpl implements DeviceService {
                 result.setSuccess(true);
             }
         }catch (Exception e){
-            result.setErrorCode(e.getMessage());
+            result.setErrorCode("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -94,13 +104,23 @@ public class DeviceServiceImpl implements DeviceService {
         Integer updateFlag;
         try {
             deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
+            boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getPublicNetworkIp());
+            boolean lanIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getLanIp());
+            if(publicIpReg == false || lanIpReg == false){
+                return new Result<>(false,"ip格式不正确");
+            }
+            boolean publicPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getPublicNetworkPort());
+            boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getLanPort());
+            if(publicPortReg == false || lanPortReg == false){
+                return new Result<>(false,"端口格式不正确");
+            }
             updateFlag = deviceDomainService.updateDevice(deviceInfoRequest);
             if(updateFlag == 1){
                 result.setResultObj(updateFlag);
                 result.setSuccess(true);
             }
         }catch (Exception e){
-            result.setErrorCode(e.getMessage());
+            result.setErrorCode("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -114,7 +134,7 @@ public class DeviceServiceImpl implements DeviceService {
             result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -129,7 +149,7 @@ public class DeviceServiceImpl implements DeviceService {
             result.setResultObj(deviceResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -150,7 +170,7 @@ public class DeviceServiceImpl implements DeviceService {
             result.setResultObj(deviceResponse);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -178,7 +198,7 @@ public class DeviceServiceImpl implements DeviceService {
             result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;

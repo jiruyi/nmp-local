@@ -98,7 +98,7 @@ public class RouteController {
      * @return
      */
     @RequiresPermissions("sys:route:delete")
-    @SystemLog(opermodul = "路由管理模块",operDesc = "删除路由",operType = "删除路由")
+    @SystemLog(opermodul = "路由管理模块",operDesc = "删除路由",operType = "删除路由",operLevl = "2")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     public Result<Integer> deleteRoute(@RequestBody RouteRequest routeRequest){
         Result<Integer> result = new Result<>();
@@ -118,7 +118,7 @@ public class RouteController {
      * @return
      */
     @RequiresPermissions("sys:route:update")
-    @SystemLog(opermodul = "路由管理模块",operDesc = "更新路由",operType = "更新路由")
+    @SystemLog(opermodul = "路由管理模块",operDesc = "更新路由",operType = "更新路由",operLevl = "2")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     public Result<Integer> updateRoute(@RequestBody RouteRequest routeRequest){
         Result<Integer> result = new Result<>();

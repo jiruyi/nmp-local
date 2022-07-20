@@ -58,7 +58,7 @@ public class RouteServiceImpl implements RouteService {
             result.setSuccess(true);
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
@@ -70,7 +70,7 @@ public class RouteServiceImpl implements RouteService {
             result.setResultObj(routeDomainService.deleteRoute(routeRequest));
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -88,7 +88,7 @@ public class RouteServiceImpl implements RouteService {
             result.setResultObj(updateFlag);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -102,7 +102,7 @@ public class RouteServiceImpl implements RouteService {
             result.setSuccess(true);
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+            result.setErrorMsg("参数异常");
         }
         return result;
     }
