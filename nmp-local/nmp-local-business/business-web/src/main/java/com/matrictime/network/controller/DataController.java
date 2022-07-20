@@ -6,6 +6,7 @@ import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.request.BillRequest;
 import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.MonitorReq;
+import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DataCollectService;
 import com.matrictime.network.util.ListSplitUtil;
@@ -147,6 +148,16 @@ public class DataController {
     @RequestMapping(value = "/monitorDataTopTen",method = RequestMethod.POST)
     public Result monitorDataTopTen(@RequestBody MonitorReq monitorReq){
         return dataCollectService.monitorDataTopTen(monitorReq);
+    }
+
+    /**
+     * 获取统计数据的设备
+     * @param dataCollectReq
+     * @return
+     */
+    @RequestMapping(value = "/selectAllDevice",method = RequestMethod.POST)
+    public Result selectAllDevice(@RequestBody DataCollectReq dataCollectReq){
+        return dataCollectService.selectAllDevice(dataCollectReq);
     }
 
 }
