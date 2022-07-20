@@ -12,6 +12,7 @@ import com.matrictime.network.request.DeviceExtraInfoRequest;
 import com.matrictime.network.response.DeviceInfoExtResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceExtraInfoService;
+import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,16 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
         try {
             NmplUser user = RequestContext.getUser();
             deviceExtraInfoRequest.setCreateUser(user.getNickName());
+            boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceExtraInfoRequest.getPublicNetworkIp());
+            boolean lanIpReg = CommonCheckUtil.isIpv4Legal(deviceExtraInfoRequest.getLanIp());
+            if(publicIpReg == false || lanIpReg == false){
+                return new Result<>(false,"ip格式不正确");
+            }
+            boolean publicPortReg = CommonCheckUtil.isPortLegal(deviceExtraInfoRequest.getPublicNetworkPort());
+            boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceExtraInfoRequest.getLanPort());
+            if(publicPortReg == false || lanPortReg == false){
+                return new Result<>(false,"端口格式不正确");
+            }
             BeanUtils.copyProperties(deviceExtraInfoRequest,nmplDeviceExtraInfo);
             List<NmplDeviceInfoExtVo> list = deviceExtraInfoDomainService.query(nmplDeviceExtraInfo);
             if(list.size() > 0){
@@ -52,6 +63,16 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
         NmplDeviceExtraInfo nmplDeviceExtraInfo = new NmplDeviceExtraInfo();
         try {
             deviceExtraInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
+            boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceExtraInfoRequest.getPublicNetworkIp());
+            boolean lanIpReg = CommonCheckUtil.isIpv4Legal(deviceExtraInfoRequest.getLanIp());
+            if(publicIpReg == false || lanIpReg == false){
+                return new Result<>(false,"ip格式不正确");
+            }
+            boolean publicPortReg = CommonCheckUtil.isPortLegal(deviceExtraInfoRequest.getPublicNetworkPort());
+            boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceExtraInfoRequest.getLanPort());
+            if(publicPortReg == false || lanPortReg == false){
+                return new Result<>(false,"端口格式不正确");
+            }
             BeanUtils.copyProperties(deviceExtraInfoRequest,nmplDeviceExtraInfo);
             result = buildResult(deviceExtraInfoDomainService.update(nmplDeviceExtraInfo));
         }catch (Exception e){
