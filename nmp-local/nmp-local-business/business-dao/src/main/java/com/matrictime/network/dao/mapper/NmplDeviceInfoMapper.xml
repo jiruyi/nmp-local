@@ -575,7 +575,7 @@
         and device_id = #{deviceId,jdbcType=VARCHAR}
       </if>
       <if test="deviceName != null and deviceName != ''">
-        and device_name = #{deviceName,jdbcType=VARCHAR}
+        and device_name = "%" #{deviceName,jdbcType=VARCHAR} "%"
       </if>
       <if test="deviceType != null and deviceType != ''">
         and device_type = #{deviceType,jdbcType=CHAR}
@@ -590,7 +590,7 @@
         and public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
       </if>
       <if test="stationNetworkId != null and stationNetworkId != ''">
-        and station_network_id like "%" #{stationNetworkId,jdbcType=CHAR}
+        and station_network_id like "%" #{stationNetworkId,jdbcType=CHAR} "%"
       </if>
       and nmpl_device_info.relation_operator_id = nmpl_company_info.company_id
       and nmpl_user.user_id = nmpl_device_info.create_user

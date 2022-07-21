@@ -570,7 +570,7 @@
         and station_id = #{stationId,jdbcType=VARCHAR}
       </if>
       <if test="stationName != null and stationName != ''">
-        and station_name = #{stationName,jdbcType=VARCHAR}
+        and station_name = like "%" #{stationName,jdbcType=VARCHAR} "%"
       </if>
       <if test="relationOperatorId != null and relationOperatorId != ''">
         and relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
@@ -585,7 +585,7 @@
         and public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
       </if>
       <if test="stationNetworkId != null and stationNetworkId != ''">
-        and station_network_id like "%" #{stationNetworkId,jdbcType=CHAR}
+        and station_network_id like "%" #{stationNetworkId,jdbcType=CHAR} "%"
       </if>
       and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_id
       and nmpl_user.user_id = nmpl_base_station_info.create_user

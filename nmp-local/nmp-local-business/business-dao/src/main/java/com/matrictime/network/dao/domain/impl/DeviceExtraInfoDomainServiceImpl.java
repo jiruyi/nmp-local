@@ -58,13 +58,13 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
             criteria.andRelDeviceIdEqualTo(deviceExtraInfoRequest.getRelDeviceId());
         }
         if(deviceExtraInfoRequest.getDeviceName() != null){
-            criteria.andDeviceNameEqualTo(deviceExtraInfoRequest.getDeviceName());
+            criteria.andDeviceNameLike(deviceExtraInfoRequest.getDeviceName());
         }
         if(deviceExtraInfoRequest.getDeviceType() != null){
             criteria.andDeviceTypeEqualTo(deviceExtraInfoRequest.getDeviceType());
         }
         if(deviceExtraInfoRequest.getStationNetworkId() != null){
-            criteria.andStationNetworkIdEqualTo(deviceExtraInfoRequest.getStationNetworkId());
+            criteria.andStationNetworkIdLike(deviceExtraInfoRequest.getStationNetworkId());
         }
         criteria.andIsExistEqualTo(true);
         Page page = PageHelper.startPage(deviceExtraInfoRequest.getPageNo(),deviceExtraInfoRequest.getPageSize());
