@@ -24,6 +24,7 @@ import com.matrictime.network.util.ExportCSVUtil;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +38,7 @@ import java.util.*;
 import java.util.concurrent.Future;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_MIDLINE;
 
 @Slf4j
 @Service
@@ -365,6 +367,12 @@ public class SignalServiceImpl extends SystemBaseService implements SignalServic
                 for (NmplDeviceInfoExt ext: infoExts){
                     NmplDeviceVo vo = new NmplDeviceVo();
                     BeanUtils.copyProperties(ext,vo);
+                    if (StringUtils.isNotBlank(ext.getStationNetworkId())){
+                        String[] strings = ext.getStationNetworkId().split(KEY_SPLIT_MIDLINE);
+                        if (strings.length>0){
+                            vo.setStationNetworkId(strings[strings.length-1]);
+                        }
+                    }
                     vos.add(vo);
                 }
                 resp.setVos(vos);

@@ -47,6 +47,7 @@ public class DataConstants {
 
     public static final String KEY_SPLIT_UNDERLINE = "_";
 
+    public static final String KEY_SPLIT_MIDLINE = "-";
     public static final String PHONE_SMS_DAY_COUNT = "phone_sms_count_day:";
 
     public static final String NETWORK_LOG_COUNT = "network_log_count";
