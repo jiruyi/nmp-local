@@ -152,7 +152,9 @@ public class RouteController {
             deviceInfoExtList = routeService.selectDevices();
             Map<String, NmplDeviceInfoExt> deviceStationMap = getDeviceStationMap(deviceInfoExtList);
             BaseStationInfoVo baseStationInfoVo = baseStationInfoService.selectByNetworkId(baseStationInfoRequest);
-            routeRequest.setAccessDeviceId(baseStationInfoVo.getStationId());
+            if(baseStationInfoVo != null){
+                routeRequest.setAccessDeviceId(baseStationInfoVo.getStationId());
+            }
             Result<PageInfo<RouteVo>> pageInfoResult = routeService.selectRoute(routeRequest);
             List<RouteVo> routeVoList = pageInfoResult.getResultObj().getList();
             list = getStationIdList(routeVoList);
