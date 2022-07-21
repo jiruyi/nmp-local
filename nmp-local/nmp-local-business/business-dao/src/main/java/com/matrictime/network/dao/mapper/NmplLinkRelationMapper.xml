@@ -314,7 +314,7 @@
     <where>
       nmpl_link_relation.is_exist = 1 and nmpl_user.is_exist = 1
       <if test="linkName != null and linkName != ''">
-        and link_name = #{linkName,jdbcType=VARCHAR}
+        and link_name like "%" #{linkName,jdbcType=VARCHAR} "%"
       </if>
       <if test="linkType != null and linkType != ''">
         and link_type = #{linkType,jdbcType=VARCHAR}
