@@ -75,7 +75,7 @@ public class SignalController {
      * @return
      */
     @RequestMapping (value = "/cleanSignal",method = RequestMethod.POST)
-    @SystemLog(opermodul = "信令模块",operDesc = "信令清空",operType = "操作")
+    @SystemLog(opermodul = "信令模块",operDesc = "信令清空",operType = "操作",operLevl = "2")
     @RequiresPermissions("sys:sign:clear")
     public Result<CleanSignalResp> cleanSignal(@RequestBody CleanSignalReq req){
         try {

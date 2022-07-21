@@ -57,6 +57,7 @@ public class UploadFileServiceImpl extends SystemBaseService implements UploadFi
             resp.setFileName(req.getFileName());
             result = buildResult(resp);
         }catch (SystemException e){
+
             log.error("uploadSingleFile SystemException" + e.getMessage());
             result = failResult(e.getCode(),e.getMessage());
         }catch (Exception e){

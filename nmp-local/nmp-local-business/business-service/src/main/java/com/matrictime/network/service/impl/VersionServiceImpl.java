@@ -237,6 +237,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             checkQueryVersionFileParam(req);
 
             NmplVersionExample example = new NmplVersionExample();
+            example.setOrderByClause("update_time desc");
             example.createCriteria().andSystemIdEqualTo(req.getSystemId()).andIsDeleteEqualTo(true);
             List<NmplVersion> versions = nmplVersionMapper.selectByExample(example);
 
@@ -247,6 +248,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                     BeanUtils.copyProperties(version,vo);
 
                     NmplVersionFileExample versionFileExample = new NmplVersionFileExample();
+                    versionFileExample.setOrderByClause("update_time desc");
                     versionFileExample.createCriteria().andVersionIdEqualTo(version.getId()).andIsDeleteEqualTo(true);
                     List<NmplVersionFile> versionFiles = nmplVersionFileMapper.selectByExample(versionFileExample);
                     if (!CollectionUtils.isEmpty(versionFiles)){
@@ -291,6 +293,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
 //            checkQueryVersionParam(req);
 
             NmplVersionExample example = new NmplVersionExample();
+            example.setOrderByClause("update_time desc");
             example.createCriteria().andIsDeleteEqualTo(true);
             List<NmplVersion> versions = nmplVersionMapper.selectByExample(example);
             Map<String,List<NmplVersionVo>> versionMap = new HashMap<>(4);
