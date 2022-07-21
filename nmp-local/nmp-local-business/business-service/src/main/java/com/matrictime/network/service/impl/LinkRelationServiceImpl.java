@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.LinkRelationDomainService;
 import com.matrictime.network.model.Result;
@@ -14,6 +15,7 @@ import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.LinkRelationResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.LinkRelationService;
+import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,9 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         Result<Integer> result = new Result<>();
         Date date = new Date();
         try {
+            if(!CommonCheckUtil.checkStringLength(linkRelationRequest.getLinkName(),null,100)){
+                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
+            }
             linkRelationRequest.setCreateTime(getFormatDate(date));
             linkRelationRequest.setUpdateTime(getFormatDate(date));
             linkRelationRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
@@ -68,6 +73,9 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         Result<Integer> result = new Result<>();
         Date date = new Date();
         try {
+            if(!CommonCheckUtil.checkStringLength(linkRelationRequest.getLinkName(),null,100)){
+                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
+            }
             linkRelationRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             result.setResultObj(linkRelationDomainService.updateLinkRelation(linkRelationRequest));
             result.setSuccess(true);

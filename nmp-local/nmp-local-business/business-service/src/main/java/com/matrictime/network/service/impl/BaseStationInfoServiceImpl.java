@@ -2,6 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.alibaba.csp.sentinel.util.StringUtil;
 import com.matrictime.network.base.enums.DeviceStatusEnum;
+import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
@@ -40,6 +41,9 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         Integer insertFlag = null;
         BaseStationInfoRequest infoRequest = new BaseStationInfoRequest();
         try {
+            if(!CommonCheckUtil.checkStringLength(baseStationInfoRequest.getStationName(),null,16)){
+                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
+            }
             baseStationInfoRequest.setCreateTime(getFormatDate(date));
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
             baseStationInfoRequest.setStationId(SnowFlake.nextId_String());
@@ -92,6 +96,9 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
         Date date = new Date();
         Integer updateFlag;
         try {
+            if(!CommonCheckUtil.checkStringLength(baseStationInfoRequest.getStationName(),null,16)){
+                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
+            }
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
             baseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             boolean publicIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getPublicNetworkIp());

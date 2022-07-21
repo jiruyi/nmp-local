@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
@@ -32,6 +33,9 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
         Result<Integer> result = new Result<>();
         NmplDeviceExtraInfo nmplDeviceExtraInfo = new NmplDeviceExtraInfo();
         try {
+            if(!CommonCheckUtil.checkStringLength(deviceExtraInfoRequest.getDeviceName(),null,16)){
+                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
+            }
             NmplUser user = RequestContext.getUser();
             deviceExtraInfoRequest.setCreateUser(user.getNickName());
             boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceExtraInfoRequest.getPublicNetworkIp());
@@ -62,6 +66,9 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
         Result<Integer> result = new Result<>();
         NmplDeviceExtraInfo nmplDeviceExtraInfo = new NmplDeviceExtraInfo();
         try {
+            if(!CommonCheckUtil.checkStringLength(deviceExtraInfoRequest.getDeviceName(),null,16)){
+                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
+            }
             deviceExtraInfoRequest.setCreateUser(RequestContext.getUser().getNickName());
             boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceExtraInfoRequest.getPublicNetworkIp());
             boolean lanIpReg = CommonCheckUtil.isIpv4Legal(deviceExtraInfoRequest.getLanIp());

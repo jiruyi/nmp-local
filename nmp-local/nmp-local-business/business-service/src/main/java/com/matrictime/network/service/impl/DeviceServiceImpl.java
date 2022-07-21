@@ -7,7 +7,6 @@ import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.DeviceInfoRequest;
@@ -41,6 +40,9 @@ public class DeviceServiceImpl implements DeviceService {
         Date date = new Date();
         DeviceInfoRequest infoRequest = new DeviceInfoRequest();
         try {
+            if(!CommonCheckUtil.checkStringLength(deviceInfoRequest.getDeviceName(),null,16)){
+                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
+            }
             deviceInfoRequest.setCreateTime(getFormatDate(date));
             deviceInfoRequest.setUpdateTime(getFormatDate(date));
             deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
@@ -103,6 +105,9 @@ public class DeviceServiceImpl implements DeviceService {
         Result<Integer> result = new Result<>();
         Integer updateFlag;
         try {
+            if(!CommonCheckUtil.checkStringLength(deviceInfoRequest.getDeviceName(),null,16)){
+                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
+            }
             deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getPublicNetworkIp());
             boolean lanIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getLanIp());
