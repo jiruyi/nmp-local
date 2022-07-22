@@ -524,7 +524,7 @@
       and
       device_id = #{relDeviceId,jdbcType=VARCHAR}
       and
-      d.relation_operator_id = c.company_code
+      d.relation_operator_id = c.company_id
       and
       d.is_exist = '1'
       and
@@ -546,7 +546,7 @@
       and
       station_id = #{relDeviceId,jdbcType=VARCHAR}
       and
-      b.relation_operator_id = c.company_code
+      b.relation_operator_id = c.company_id
       and
       b.is_exist = '1'
       and
