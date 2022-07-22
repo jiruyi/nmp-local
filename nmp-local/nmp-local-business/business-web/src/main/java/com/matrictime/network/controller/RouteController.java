@@ -154,6 +154,10 @@ public class RouteController {
             BaseStationInfoVo baseStationInfoVo = baseStationInfoService.selectByNetworkId(baseStationInfoRequest);
             if(baseStationInfoVo != null){
                 routeRequest.setAccessDeviceId(baseStationInfoVo.getStationId());
+            }else {
+                resultRoute.setResultObj(new PageInfo<>());
+                resultRoute.setSuccess(true);
+                return resultRoute;
             }
             Result<PageInfo<RouteVo>> pageInfoResult = routeService.selectRoute(routeRequest);
             List<RouteVo> routeVoList = pageInfoResult.getResultObj().getList();
