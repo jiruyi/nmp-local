@@ -115,4 +115,9 @@ public class DeviceExtraInfoRequest extends BaseRequest{
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * 关联主设备名字
+     */
+    private String relDeviceName;
 }

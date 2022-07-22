@@ -7,9 +7,13 @@ import com.matrictime.network.base.enums.DeviceStatusEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
+import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceExtraInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.model.NmplBaseStationInfo;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfoExample;
+import com.matrictime.network.dao.model.NmplDeviceInfo;
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.modelVo.DeviceExtraVo;
 import com.matrictime.network.modelVo.NmplDeviceInfoExtVo;
@@ -23,7 +27,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -31,6 +37,13 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
 
     @Resource
     NmplDeviceExtraInfoMapper nmplDeviceExtraInfoMapper;
+
+    @Resource
+    NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
+
+    @Resource
+    NmplDeviceInfoMapper nmplDeviceInfoMapper;
+
 
     @Override
     public int insert(NmplDeviceExtraInfo nmplDeviceExtraInfo) {
@@ -52,28 +65,53 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
 
     @Override
     public PageInfo<DeviceExtraVo> selectByCondition(DeviceExtraInfoRequest deviceExtraInfoRequest) {
+        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
+        List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(null);
+        List<String> ids = new ArrayList<>();
+        Map<String,String> map = new HashMap<>();
+        for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+            map.put(nmplDeviceInfo.getDeviceId(),nmplDeviceInfo.getDeviceName());
+            if(deviceExtraInfoRequest.getRelDeviceName()!=null && nmplDeviceInfo.getDeviceName().contains(deviceExtraInfoRequest.getRelDeviceName())){
+                ids.add(nmplDeviceInfo.getDeviceId());
+            }
+        }
+        for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+            map.put(nmplBaseStationInfo.getStationId(),nmplBaseStationInfo.getStationName());
+            if(deviceExtraInfoRequest.getRelDeviceName()!=null && nmplBaseStationInfo.getStationName().contains(deviceExtraInfoRequest.getRelDeviceName())){
+                ids.add(nmplBaseStationInfo.getStationId());
+            }
+        }
+
         NmplDeviceExtraInfoExample deviceExtraInfoExample = new NmplDeviceExtraInfoExample();
         NmplDeviceExtraInfoExample.Criteria criteria = deviceExtraInfoExample.createCriteria();
-        if(deviceExtraInfoRequest.getRelDeviceId() != null){
-            criteria.andRelDeviceIdEqualTo(deviceExtraInfoRequest.getRelDeviceId());
+        if(deviceExtraInfoRequest.getRelDeviceName() != null){
+            if(ids.size()!=0){
+                criteria.andRelDeviceIdIn(ids);
+            }else {
+                PageInfo pageInfo = new PageInfo<>();
+                pageInfo.setList(new ArrayList<>());
+                return pageInfo;
+            }
         }
         if(deviceExtraInfoRequest.getDeviceName() != null){
-            criteria.andDeviceNameLike(deviceExtraInfoRequest.getDeviceName());
+            criteria.andDeviceNameLike("%"+deviceExtraInfoRequest.getDeviceName()+"%");
         }
         if(deviceExtraInfoRequest.getDeviceType() != null){
             criteria.andDeviceTypeEqualTo(deviceExtraInfoRequest.getDeviceType());
         }
         if(deviceExtraInfoRequest.getStationNetworkId() != null){
-            criteria.andStationNetworkIdLike(deviceExtraInfoRequest.getStationNetworkId());
+            criteria.andStationNetworkIdLike("%"+deviceExtraInfoRequest.getStationNetworkId()+"%");
         }
         criteria.andIsExistEqualTo(true);
         Page page = PageHelper.startPage(deviceExtraInfoRequest.getPageNo(),deviceExtraInfoRequest.getPageSize());
         List<NmplDeviceExtraInfo> nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(deviceExtraInfoExample);
         PageInfo<DeviceExtraVo> pageResult =  new PageInfo<>();
         List<DeviceExtraVo> list = new ArrayList<>();
+
         for (NmplDeviceExtraInfo nmplDeviceExtraInfo : nmplDeviceExtraInfos) {
             DeviceExtraVo deviceExtraVo = new DeviceExtraVo();
             BeanUtils.copyProperties(nmplDeviceExtraInfo,deviceExtraVo);
+            deviceExtraVo.setRelDeviceName(map.get(deviceExtraVo.getRelDeviceId()));
             list.add(deviceExtraVo);
         }
         pageResult.setList(list);
