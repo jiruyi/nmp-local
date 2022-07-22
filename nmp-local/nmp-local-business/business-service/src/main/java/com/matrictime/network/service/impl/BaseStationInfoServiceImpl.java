@@ -252,6 +252,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             result.setResultObj(pageInfo);
             result.setSuccess(true);
         }catch (Exception e){
+            log.error(e.getMessage());
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }

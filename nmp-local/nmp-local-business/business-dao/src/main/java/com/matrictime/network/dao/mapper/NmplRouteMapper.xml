@@ -50,16 +50,42 @@
         where id = #{id,jdbcType=VARCHAR}
     </update>
     <select id="selectRoute" parameterType="com.matrictime.network.request.RouteRequest" resultType="com.matrictime.network.modelVo.RouteVo">
-        select id,access_device_id,boundary_device_id,nick_name
+        select temp.id,temp.access_device_id,temp.boundary_device_id,temp.nick_name,temp.update_time,device.station_network_id
+        from
+        (select id,access_device_id,boundary_device_id,nick_name,nmpl_route.update_time
         from nmpl_route,nmpl_user
-        <where>
+        where
             nmpl_route.is_exist = 1 and nmpl_user.is_exist = 1
-            <if test="accessDeviceId != null and accessDeviceId != ''">
-                and access_device_id like "%" #{accessDeviceId,jdbcType=VARCHAR} "%"
+            and nmpl_user.user_id = nmpl_route.create_user) as temp
+        left join (
+            select
+                device_id,
+                device_name,
+                station_network_id
+            from
+                nmpl_device_info
+            where
+                station_status in('01','02','03','04')
+            and
+                is_exist = '1'
+            union all
+            select
+                station_id as device_id,
+                station_name as device_name,
+                station_network_id
+            from
+                nmpl_base_station_info
+            where
+                station_status in('01','02','03','04')
+            and
+                is_exist = '1'
+        ) as device on device.device_id = temp.access_device_id
+        <where>
+            <if test="stationNetworkId !=null and stationNetworkId != ''">
+                and station_network_id like concat('%',#{stationNetworkId},'%')
             </if>
-                and nmpl_user.user_id = nmpl_route.create_user
         </where>
-            order by nmpl_route.update_time desc
+        order by temp.update_time desc
     </select>
     <select id="query" parameterType="com.matrictime.network.request.RouteRequest" resultType="com.matrictime.network.modelVo.RouteVo">
         select id

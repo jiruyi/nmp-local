@@ -151,14 +151,14 @@ public class RouteController {
             List<NmplDeviceInfoExt> deviceInfoExtList;
             deviceInfoExtList = routeService.selectDevices();
             Map<String, NmplDeviceInfoExt> deviceStationMap = getDeviceStationMap(deviceInfoExtList);
-            BaseStationInfoVo baseStationInfoVo = baseStationInfoService.selectByNetworkId(baseStationInfoRequest);
-            if(baseStationInfoVo != null){
-                routeRequest.setAccessDeviceId(baseStationInfoVo.getStationId());
-            }else {
-                resultRoute.setResultObj(new PageInfo<>());
-                resultRoute.setSuccess(true);
-                return resultRoute;
-            }
+//            BaseStationInfoVo baseStationInfoVo = baseStationInfoService.selectByNetworkId(baseStationInfoRequest);
+//            if(baseStationInfoVo != null){
+//                routeRequest.setAccessDeviceId(baseStationInfoVo.getStationId());
+//            }else {
+//                resultRoute.setResultObj(new PageInfo<>());
+//                resultRoute.setSuccess(true);
+//                return resultRoute;
+//            }
             Result<PageInfo<RouteVo>> pageInfoResult = routeService.selectRoute(routeRequest);
             List<RouteVo> routeVoList = pageInfoResult.getResultObj().getList();
             list = getStationIdList(routeVoList);
@@ -228,12 +228,7 @@ public class RouteController {
             BaseStationInfoVo baseStationInfoVo = baseStationInfoVoMap.get(routeVoList.get(resultIndex).getBoundaryDeviceId());
             NmplDeviceInfoExt nmplDeviceInfoExt = deviceStationMap.get(routeVoList.get(resultIndex).getAccessDeviceId());
             if(baseStationInfoVo!= null && nmplDeviceInfoExt!= null) {
-                if(routeRequest.getConditionType() == 1){
-                    String[] split = nmplDeviceInfoExt.getStationNetworkId().split("-");
-                    routeVoList.get(resultIndex).setStationNetworkId(split[split.length-1]);
-                }else {
-                    routeVoList.get(resultIndex).setStationNetworkId(nmplDeviceInfoExt.getStationNetworkId());
-                }
+                routeVoList.get(resultIndex).setStationNetworkId(nmplDeviceInfoExt.getStationNetworkId());
                 routeVoList.get(resultIndex).setBoundaryDevicePublicIp(baseStationInfoVo.getPublicNetworkIp());
                 routeVoList.get(resultIndex).setBoundaryDevicePublicPort(baseStationInfoVo.getPublicNetworkPort());
                 routeVoList.get(resultIndex).setBoundaryDeviceLanIp(baseStationInfoVo.getLanIp());
