@@ -64,6 +64,7 @@
     <select id="query" parameterType="com.matrictime.network.request.RouteRequest" resultType="com.matrictime.network.modelVo.RouteVo">
         select id
         from nmpl_route
+        where
         is_exist = 1
         and access_device_id = #{accessDeviceId,jdbcType=VARCHAR}
         and boundary_device_id = #{boundaryDeviceId,jdbcType=VARCHAR}
