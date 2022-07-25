@@ -26,7 +26,7 @@
                     owner_id like concat('%', #{ownerId,jdbcType=VARCHAR}, '%')  and
                 </if>
                 <if test="streamId != null">
-                    stream_id = concat('%', #{streamId,jdbcType=VARCHAR}, '%') and
+                    stream_id like concat('%', #{streamId,jdbcType=VARCHAR}, '%') and
                 </if>
                 <if test="flowNumber != null">
                     flow_number = #{flowNumber,jdbcType=VARCHAR} and
