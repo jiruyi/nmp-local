@@ -77,7 +77,11 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
             }
             linkRelationRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
-            result.setResultObj(linkRelationDomainService.updateLinkRelation(linkRelationRequest));
+            int i = linkRelationDomainService.updateLinkRelation(linkRelationRequest);
+            if(i == 2){
+                return new Result<>(false,"链路名称或线路重复");
+            }
+            result.setResultObj(i);
             result.setSuccess(true);
         }catch (Exception e){
             result.setSuccess(false);
