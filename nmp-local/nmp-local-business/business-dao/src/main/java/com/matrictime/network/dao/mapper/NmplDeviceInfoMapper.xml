@@ -508,7 +508,6 @@
     <where>
       nmpl_device_info.is_exist = 1
       and nmpl_company_info.is_exist = 1
-      and nmpl_user.is_exist = 1
       and station_status in(2,3,4)
       <if test="deviceId != null and deviceId != ''">
         and device_id = #{deviceId,jdbcType=VARCHAR}
