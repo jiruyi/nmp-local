@@ -104,6 +104,7 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
         }
         criteria.andIsExistEqualTo(true);
         Page page = PageHelper.startPage(deviceExtraInfoRequest.getPageNo(),deviceExtraInfoRequest.getPageSize());
+        deviceExtraInfoExample.setOrderByClause("create_time desc");
         List<NmplDeviceExtraInfo> nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(deviceExtraInfoExample);
         PageInfo<DeviceExtraVo> pageResult =  new PageInfo<>();
         List<DeviceExtraVo> list = new ArrayList<>();
