@@ -240,7 +240,13 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
                     ids.add(String.valueOf(info.getCompanyId()));
                 }
             }
-            criteria.andParentCodeIn(ids);
+            if(ids.size()!=0){
+                criteria.andParentCodeIn(ids);
+            }else {
+                PageInfo pageInfo = new PageInfo<>();
+                pageInfo.setList(new ArrayList<>());
+                return pageInfo;
+            }
         }
         criteria.andIsExistEqualTo(true);
         nmplCompanyInfoExample.setOrderByClause("create_time desc");
