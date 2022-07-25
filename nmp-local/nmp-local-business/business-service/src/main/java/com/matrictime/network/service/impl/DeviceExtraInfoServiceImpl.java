@@ -43,11 +43,6 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
             if(publicIpReg == false || lanIpReg == false){
                 return new Result<>(false,"ip格式不正确");
             }
-            boolean publicPortReg = CommonCheckUtil.isPortLegal(deviceExtraInfoRequest.getPublicNetworkPort());
-            boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceExtraInfoRequest.getLanPort());
-            if(publicPortReg == false || lanPortReg == false){
-                return new Result<>(false,"端口格式不正确");
-            }
             BeanUtils.copyProperties(deviceExtraInfoRequest,nmplDeviceExtraInfo);
             List<NmplDeviceInfoExtVo> list = deviceExtraInfoDomainService.query(nmplDeviceExtraInfo);
             if(list.size() > 0){

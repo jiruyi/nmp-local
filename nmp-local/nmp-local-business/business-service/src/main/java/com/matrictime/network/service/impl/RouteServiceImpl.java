@@ -84,6 +84,9 @@ public class RouteServiceImpl implements RouteService {
             routeRequest.setUpdateTime(getFormatDate(date));
             routeRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             Integer updateFlag = routeDomainService.updateRoute(routeRequest);
+            if(updateFlag == 2){
+                return new Result<>(false,"路由不可以重复插入");
+            }
             //List<Future<List<Result>>> futures = collectResult(routeRequest);
             result.setResultObj(updateFlag);
             result.setSuccess(true);

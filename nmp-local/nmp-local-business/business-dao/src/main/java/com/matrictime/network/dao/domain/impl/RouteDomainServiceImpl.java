@@ -39,6 +39,10 @@ public class RouteDomainServiceImpl implements RouteDomainService {
 
     @Override
     public int updateRoute(RouteRequest routeRequest) {
+        List<RouteVo> list = nmplRouteMapper.query(routeRequest);
+        if(list.size() > 0){
+            return 2;
+        }
         return nmplRouteMapper.updateRoute(routeRequest);
     }
 
