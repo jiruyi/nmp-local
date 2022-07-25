@@ -98,7 +98,7 @@
     from nmpl_device_log
     <where>
       <if test="deviceId != null and deviceId != ''">
-        device_id = #{deviceId}
+        device_id like concat ('%',#{deviceId},'%')
       </if>
       <if test="deviceType != null and deviceType != ''">
         and device_type = #{deviceType}
