@@ -23,10 +23,10 @@
         <where>
             <trim prefix="(" suffix=")" suffixOverrides="and">
                 <if test="ownerId != null">
-                    owner_id = #{ownerId,jdbcType=VARCHAR} and
+                    owner_id like concat('%', #{ownerId,jdbcType=VARCHAR}, '%')  and
                 </if>
                 <if test="streamId != null">
-                    stream_id = #{streamId,jdbcType=VARCHAR} and
+                    stream_id = concat('%', #{streamId,jdbcType=VARCHAR}, '%') and
                 </if>
                 <if test="flowNumber != null">
                     flow_number = #{flowNumber,jdbcType=VARCHAR} and
@@ -44,10 +44,10 @@
                     upload_time = #{uploadTime,jdbcType=TIMESTAMP} and
                 </if>
                 <if test="startTime != null">
-                    start_time &lt;= #{startTime,jdbcType=VARCHAR} and
+                    start_time &gt;= #{startTime,jdbcType=VARCHAR} and
                 </if>
                 <if test="endTime != null">
-                    end_time &gt;= #{endTime,jdbcType=VARCHAR}
+                    end_time &lt;= #{endTime,jdbcType=VARCHAR}
                 </if>
             </trim>
         </where>
