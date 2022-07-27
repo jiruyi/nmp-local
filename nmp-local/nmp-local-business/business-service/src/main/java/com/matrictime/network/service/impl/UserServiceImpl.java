@@ -228,6 +228,11 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
     @Override
     public Result<PageInfo> selectUserList(UserRequest userRequest) {
         try {
+            //非超管用户无法看到超管用户信息
+            NmplUser nmplUser = RequestContext.getUser();
+            if(Integer.valueOf(nmplUser.getRoleId())!= DataConstants.SUPER_ADMIN){
+                userRequest.setIsAdmin(true);
+            }
             PageInfo pageInfo = userDomainService.selectUserList(userRequest);
             //参数转换
             List<UserRequest> list =  userConvert.to(pageInfo.getList());
@@ -244,17 +249,16 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
                     user.setRoleName(roleName);
                 }
             }
-            //非超管用户无法看到超管用户信息
-            NmplUser nmplUser = RequestContext.getUser();
-            if(Integer.valueOf(nmplUser.getRoleId())!= DataConstants.SUPER_ADMIN){
-                List<UserRequest>result = new ArrayList<>();
-                for (UserRequest user : list) {
-                    if(Integer.valueOf(user.getRoleId())!=DataConstants.SUPER_ADMIN){
-                        result.add(user);
-                    }
-                }
-                list = result;
-            }
+
+//            if(Integer.valueOf(nmplUser.getRoleId())!= DataConstants.SUPER_ADMIN){
+//                List<UserRequest>result = new ArrayList<>();
+//                for (UserRequest user : list) {
+//                    if(Integer.valueOf(user.getRoleId())!=DataConstants.SUPER_ADMIN){
+//                        result.add(user);
+//                    }
+//                }
+//                list = result;
+//            }
             pageInfo.setList(list);
             return buildResult(pageInfo);
         }catch (Exception e){
@@ -274,6 +278,9 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
     @Override
     public Result<Integer> passwordReset(UserInfo userInfo) {
         try {
+            if(userInfo.getOldPassword()!=null && userInfo.getOldPassword().equals(userInfo.getNewPassword())){
+                throw new SystemException(ErrorMessageContants.EQUAL_PASSWORD_ERROR_MSG);
+            }
             NmplUser nmplUser = userDomainService.getUserById(Long.valueOf(userInfo.getUserId()));
             //个人信息密码修改 查询老密码
             if("1".equals(userInfo.getType())){

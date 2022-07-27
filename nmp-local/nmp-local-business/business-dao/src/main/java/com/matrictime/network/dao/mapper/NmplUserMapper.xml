@@ -114,6 +114,9 @@
       <if test="createTime != null">
         and date(create_time) = #{createTime}
       </if>
+      <if test="isAdmin">
+        and role_id != 1
+      </if>
     ORDER BY create_time DESC
   </select>
 

@@ -82,4 +82,6 @@ public class ErrorMessageContants {
 
 	public static final String PARAM_FORMAT_ERROR_MSG = "参数格式异常";
 
+	public static final String EQUAL_PASSWORD_ERROR_MSG = "新旧密码不可相同";
+
 }

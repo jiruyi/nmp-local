@@ -53,4 +53,6 @@ public class UserRequest extends BaseRequest {
     private String updateTime;
 
     private String remark;
+
+    private Boolean isAdmin =false;
 }
