@@ -46,7 +46,7 @@ public class LogController {
      */
     @ApiOperation(value = "查询网关日志记录",notes = "查询网关日志记录")
     @SystemLog(opermodul = "日志管理模块",operDesc = "查询网关日志记录",operType = "查询")
-    @RequiresPermissions("sys:sysLog:query")
+    @RequiresPermissions("sys:operateLog:query")
     @RequestMapping(value = "/oper/query",method = RequestMethod.POST)
     public Result<PageInfo> queryLogList(@RequestBody LogRequest logRequest){
         try {
@@ -125,7 +125,7 @@ public class LogController {
      */
     @ApiOperation(value = "设备日志查询",notes = "设备日志查询")
     @SystemLog(opermodul = "日志管理模块",operDesc = "设备日志查询",operType = "插入")
-    @RequiresPermissions("sys:operateLog:query")
+    @RequiresPermissions("sys:sysLog:query")
     @RequestMapping(value = "/device/query",method = RequestMethod.POST)
     public Result queryDeviceLog(@RequestBody DeviceLog deviceLog){
         try {
