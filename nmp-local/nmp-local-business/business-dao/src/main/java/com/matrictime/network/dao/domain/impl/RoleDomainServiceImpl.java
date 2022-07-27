@@ -51,7 +51,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         nmplRoleExample.or().andRoleNameEqualTo(roleRequest.getRoleName()).andIsExistEqualTo((byte) 1);
         List<NmplRole> nmplRoles = nmplRoleMapper.selectByExample(nmplRoleExample);
         if (!CollectionUtils.isEmpty(nmplRoles)){
-            throw new SystemException("存在相同角色名称或角色编码");
+            throw new SystemException("存在相同角色名称或权限字符");
         }
 //        nmplRole.setCreateTime(new Date());
 //        nmplRole.setUpdateTime(new Date());
@@ -106,7 +106,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             List<NmplRole>nmplRoles = nmplRoleMapper.selectByExample(nmplRoleExample);
             if (!CollectionUtils.isEmpty(nmplRoles)){
                 if(!nmplRoles.get(0).getRoleId().equals(roleRequest.getRoleId())){
-                    throw new SystemException("存在相同角色名称或角色编码");
+                    throw new SystemException("存在相同角色名称或权限字符");
                 }
             }
         }
