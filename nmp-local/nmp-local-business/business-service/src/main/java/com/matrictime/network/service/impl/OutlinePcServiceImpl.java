@@ -45,10 +45,10 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
             result =  buildResult(outlinePcDomainService.save(outlinePcReq));
         }catch (SystemException e){
             log.info("创建异常",e.getMessage());
-            result = failResult("");
+            result = failResult(e);
         }catch (Exception e){
             log.info("创建异常",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
         }
         return result;
     }
