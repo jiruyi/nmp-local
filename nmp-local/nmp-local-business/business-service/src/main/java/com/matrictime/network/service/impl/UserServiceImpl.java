@@ -293,7 +293,7 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             }else {
                 NmplUser user = RequestContext.getUser();
                 if(!(Integer.valueOf(user.getRoleId())==DataConstants.SUPER_ADMIN)&&!(Integer.valueOf(user.getRoleId())==DataConstants.COMMON_ADMIN)){
-                    if(!user.getUserId().equals(nmplUser.getCreateUser())){
+                    if(!user.getUserId().equals(Long.valueOf(nmplUser.getCreateUser()))){
                         throw new SystemException(ErrorMessageContants.NO_CREATEUSER_ERROR_MSG);
                     }
                 }
