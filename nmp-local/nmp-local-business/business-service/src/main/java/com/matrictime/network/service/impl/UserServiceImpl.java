@@ -176,7 +176,7 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             if(Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.SUPER_ADMIN
                     && Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.COMMON_ADMIN){
                 if(Long.valueOf(nmplUser.getCreateUser()).longValue()!=RequestContext.getUser().getUserId()){
-                    throw new SystemException("非管理员用户，无法修改非当前用户创建的其他用户");
+                    throw new SystemException(ErrorMessageContants.NO_CREATEUSER_ERROR_MSG);
                 }
             }
             userRequest.setUpdateUser(String.valueOf(RequestContext.getUser().getUserId()));
@@ -205,7 +205,7 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             if(Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.SUPER_ADMIN
                     && Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.COMMON_ADMIN){
                 if(Long.valueOf(nmplUser.getCreateUser()).longValue()!=RequestContext.getUser().getUserId()){
-                    throw new SystemException("非管理员用户，无法删除非当前用户创建的其他用户");
+                    throw new SystemException(ErrorMessageContants.NO_CREATEUSER_ERROR_MSG);
                 }
             }
             int count = userDomainService.deleteUser(userRequest);
