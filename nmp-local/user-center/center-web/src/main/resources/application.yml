@@ -1,0 +1,69 @@
+server:
+  port: 8007
+  servlet:
+    context-path: /user-center
+
+spring:
+  redis:
+    database: 0
+    host: 192.168.72.14
+    port: 6379
+    password: 123456
+    timeout: 500
+    lettuce:
+      pool:
+        min-idle: 0
+        max-active: 100
+        max-wait: -1
+        max-idle: 8
+  application:
+    name: UserCenter
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+    driver-class-name: com.mysql.cj.jdbc.Driver              # mysql驱动包
+    url: jdbc:mysql://192.168.72.14:3306/user_center              # 数据库名称
+    username: root
+    password: Jzsg@2021
+    druid:
+      min-idle: 5                                           # 数据库连接池的最小维持连接数
+      initial-size: 5                                       # 初始化连接数
+      max-total: 5                                          # 最大连接数
+      max-wait-millis: 200                                  # 等待连接获取的最大超时时间
+
+logging:
+  file:
+    path: ./logs
+  level:
+    com.jzsg: info
+
+app:
+  handleType: 0
+  flowtype: 1
+  name: userCenter
+  id: UC010
+  port: 9100
+  timeout: 10000
+  innerUrl: http://127.0.0.1:8006
+  outerUrl: http://127.0.0.1:8007
+  stationip: 192.168.72.211                                 # 基站配置uc配对外网ip
+  stationport: 20066
+
+token:
+  timeOut: 30
+
+rz:
+  sleep:
+    time: 6000
+    wait:
+      time: 30000
+  retry:
+    time: 5
+
+
+thread:
+  corePoolSize: 5
+  maxPoolSize: 10
+  queueCapacity: 500
+
+im:
+  pushTokenUrl: http://127.0.0.1:8006/user

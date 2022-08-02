@@ -5,7 +5,7 @@ spring:
    name: gateway
   redis:
     database: 0
-    host: 192.168.72.230
+    host: 192.168.72.14
     port: 6379
     password: 123456
     timeout: 500
@@ -25,6 +25,14 @@ spring:
             uri: http://127.0.0.1:8001
             predicates:
               - Path=/network-manager/**
+            filters:
+              - StripPrefix=0
+
+          - id: user-center-gateway
+            uri:
+              http://127.0.0.1:8007
+            predicates:
+              - Path=/user-center/**
             filters:
               - StripPrefix=0
 

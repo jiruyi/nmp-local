@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.ext.UserGroupExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.api.modelVo.UserGroupVo">
+        <result column="user_id" jdbcType="VARCHAR" property="userId" />
+        <result column="group_id" jdbcType="VARCHAR" property="groupId" />
+        <result column="is_exist" jdbcType="BIT" property="isExist" />
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+        <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
+        <result column="sex" jdbcType="VARCHAR" property="sex" />
+        <result column="login_status" jdbcType="VARCHAR" property="loginStatus" />
+        <result column="login_account" jdbcType="VARCHAR" property="loginAccount" />
+    </resultMap>
+
+
+
+    <update id="updateByUserIdAndGroupId" parameterType="com.matrictime.network.api.request.UserGroupReq">
+        update user_group
+        <set>
+            <if test="targetGroupId != null">
+                group_id = #{targetGroupId,jdbcType=BIGINT},
+            </if>
+            <if test="isExist != null">
+                is_exist = #{isExist,jdbcType=BIT},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=VARCHAR} and
+        group_id = #{groupId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        select a.*,b.login_status,b.nick_name,b.sex,b.phone_number,b.login_account from user_group a,`user` b where a.user_id=b.user_id
+        <if test="groupId != null">
+            and  a.group_id = #{groupId,jdbcType=VARCHAR}
+        </if>
+        <if test="userId != null">
+            and a.user_id = #{userId,jdbcType=VARCHAR}
+        </if>
+        and a.is_exist ='1'
+    </select>
+
+
+    <select id="selectByGroupIds" resultMap="BaseResultMap">
+        select a.*,b.login_status,b.nick_name,b.sex,b.phone_number,b.login_account from user_group a,user b
+        where a.user_id=b.user_id
+        and a.group_id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and a.is_exist ='1'
+        and b.is_exist ='1'
+    </select>
+
+
+</mapper>
