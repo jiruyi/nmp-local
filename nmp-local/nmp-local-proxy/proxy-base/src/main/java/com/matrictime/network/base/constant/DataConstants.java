@@ -118,4 +118,9 @@ public class DataConstants {
     public static final String KEY_FILE_PATH = "filePath";
     public static final String KEY_FILE_NAME = "fileName";
 
+    /**
+     * table name
+     */
+    public static final String NMPL_BASE_STATION_INFO = "nmpl_base_station_info";
+
 }

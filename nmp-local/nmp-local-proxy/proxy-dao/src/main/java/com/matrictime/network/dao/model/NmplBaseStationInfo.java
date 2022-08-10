@@ -1,53 +1,120 @@
-package com.matrictime.network.request;
+package com.matrictime.network.dao.model;
 
 import java.util.Date;
+import lombok.Data;
 
-public class BaseStationInfoRequest extends BaseRequest{
-    private String id;
+/**
+ * 
+ * @author   hexu
+ * @date   2022-08-08
+ */
+@Data
+public class NmplBaseStationInfo {
+    /**
+     * 主键
+     */
+    private Long id;
 
+    /**
+     * 设备id
+     */
     private String stationId;
 
+    /**
+     * 设备名称
+     */
     private String stationName;
 
+    /**
+     * 设备类型 01:小区内基站 02:小区边界基站
+     */
     private String stationType;
 
+    /**
+     * 接入网时间
+     */
     private Date enterNetworkTime;
 
+    /**
+     * 设备管理员
+     */
     private String stationAdmain;
 
+    /**
+     * 设备备注
+     */
     private String remark;
 
+    /**
+     * 公网Ip
+     */
     private String publicNetworkIp;
 
+    /**
+     * 公网端口
+     */
     private String publicNetworkPort;
 
+    /**
+     * 局域网ip
+     */
     private String lanIp;
 
+    /**
+     * 局域网port
+     */
     private String lanPort;
 
+    /**
+     * 设备状态 01:静态  02:激活  03:禁用 04:下线
+     */
     private String stationStatus;
 
+    /**
+     * 设备入网码
+     */
     private String stationNetworkId;
 
+    /**
+     * 加密随机数
+     */
     private String stationRandomSeed;
 
+    /**
+     * 关联小区
+     */
     private String relationOperatorId;
 
+    /**
+     * 创建人
+     */
     private String createUser;
 
-    private String createTime;
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 
+    /**
+     * 修改人
+     */
     private String updateUser;
 
-    private String updateTime;
+    /**
+     * 修改时间
+     */
+    private Date updateTime;
 
-    private String isExist;
+    /**
+     * 1:存在 0:删除
+     */
+    private Boolean isExist;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -56,7 +123,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setStationId(String stationId) {
-        this.stationId = stationId;
+        this.stationId = stationId == null ? null : stationId.trim();
     }
 
     public String getStationName() {
@@ -64,7 +131,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setStationName(String stationName) {
-        this.stationName = stationName;
+        this.stationName = stationName == null ? null : stationName.trim();
     }
 
     public String getStationType() {
@@ -72,7 +139,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setStationType(String stationType) {
-        this.stationType = stationType;
+        this.stationType = stationType == null ? null : stationType.trim();
     }
 
     public Date getEnterNetworkTime() {
@@ -88,7 +155,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setStationAdmain(String stationAdmain) {
-        this.stationAdmain = stationAdmain;
+        this.stationAdmain = stationAdmain == null ? null : stationAdmain.trim();
     }
 
     public String getRemark() {
@@ -96,7 +163,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setRemark(String remark) {
-        this.remark = remark;
+        this.remark = remark == null ? null : remark.trim();
     }
 
     public String getPublicNetworkIp() {
@@ -104,7 +171,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setPublicNetworkIp(String publicNetworkIp) {
-        this.publicNetworkIp = publicNetworkIp;
+        this.publicNetworkIp = publicNetworkIp == null ? null : publicNetworkIp.trim();
     }
 
     public String getPublicNetworkPort() {
@@ -112,7 +179,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setPublicNetworkPort(String publicNetworkPort) {
-        this.publicNetworkPort = publicNetworkPort;
+        this.publicNetworkPort = publicNetworkPort == null ? null : publicNetworkPort.trim();
     }
 
     public String getLanIp() {
@@ -120,7 +187,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setLanIp(String lanIp) {
-        this.lanIp = lanIp;
+        this.lanIp = lanIp == null ? null : lanIp.trim();
     }
 
     public String getLanPort() {
@@ -128,7 +195,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setLanPort(String lanPort) {
-        this.lanPort = lanPort;
+        this.lanPort = lanPort == null ? null : lanPort.trim();
     }
 
     public String getStationStatus() {
@@ -136,7 +203,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setStationStatus(String stationStatus) {
-        this.stationStatus = stationStatus;
+        this.stationStatus = stationStatus == null ? null : stationStatus.trim();
     }
 
     public String getStationNetworkId() {
@@ -144,7 +211,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setStationNetworkId(String stationNetworkId) {
-        this.stationNetworkId = stationNetworkId;
+        this.stationNetworkId = stationNetworkId == null ? null : stationNetworkId.trim();
     }
 
     public String getStationRandomSeed() {
@@ -152,7 +219,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setStationRandomSeed(String stationRandomSeed) {
-        this.stationRandomSeed = stationRandomSeed;
+        this.stationRandomSeed = stationRandomSeed == null ? null : stationRandomSeed.trim();
     }
 
     public String getRelationOperatorId() {
@@ -160,7 +227,7 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setRelationOperatorId(String relationOperatorId) {
-        this.relationOperatorId = relationOperatorId;
+        this.relationOperatorId = relationOperatorId == null ? null : relationOperatorId.trim();
     }
 
     public String getCreateUser() {
@@ -168,7 +235,15 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setCreateUser(String createUser) {
-        this.createUser = createUser;
+        this.createUser = createUser == null ? null : createUser.trim();
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public String getUpdateUser() {
@@ -176,30 +251,22 @@ public class BaseStationInfoRequest extends BaseRequest{
     }
 
     public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
+        this.updateUser = updateUser == null ? null : updateUser.trim();
     }
 
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(String updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
-    public String getIsExist() {
+    public Boolean getIsExist() {
         return isExist;
     }
 
-    public void setIsExist(String isExist) {
+    public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
     }
 }

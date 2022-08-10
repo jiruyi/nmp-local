@@ -1,8 +1,8 @@
 package com.matrictime.network.base.util;
 
 
-import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.exception.ErrorCode;
+import com.matrictime.network.exception.SystemException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.util.CollectionUtils;

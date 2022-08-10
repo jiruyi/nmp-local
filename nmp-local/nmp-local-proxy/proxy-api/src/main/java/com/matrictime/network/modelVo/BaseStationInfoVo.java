@@ -1,225 +1,108 @@
 package com.matrictime.network.modelVo;
 
+import lombok.Data;
+
+import java.io.Serializable;
 import java.util.Date;
+@Data
+public class BaseStationInfoVo implements Serializable {
+    /**
+     * 主键
+     */
+    private Long id;
 
-public class BaseStationInfoVo {
-    private String id;
-
+    /**
+     * 设备id
+     */
     private String stationId;
 
+    /**
+     * 设备名称
+     */
     private String stationName;
 
+    /**
+     * 设备类型 01:小区内基站 02:小区边界基站
+     */
     private String stationType;
 
+    /**
+     * 接入网时间
+     */
     private Date enterNetworkTime;
 
+    /**
+     * 设备管理员
+     */
     private String stationAdmain;
 
+    /**
+     * 设备备注
+     */
     private String remark;
 
+    /**
+     * 公网Ip
+     */
     private String publicNetworkIp;
 
+    /**
+     * 公网端口
+     */
     private String publicNetworkPort;
 
+    /**
+     * 局域网ip
+     */
     private String lanIp;
 
+    /**
+     * 局域网port
+     */
     private String lanPort;
 
+    /**
+     * 设备状态 01:静态  02:激活  03:禁用 04:下线
+     */
     private String stationStatus;
 
+    /**
+     * 设备入网码
+     */
     private String stationNetworkId;
 
+    /**
+     * 加密随机数
+     */
     private String stationRandomSeed;
 
+    /**
+     * 关联小区
+     */
     private String relationOperatorId;
 
-    private String companyName;
-
-    private String nickName;
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
+    /**
+     * 创建人
+     */
     private String createUser;
 
-    private String createTime;
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 
+    /**
+     * 修改人
+     */
     private String updateUser;
 
-    private String updateTime;
+    /**
+     * 修改时间
+     */
+    private Date updateTime;
 
+    /**
+     * 1:存在 0:删除
+     */
     private Boolean isExist;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getStationId() {
-        return stationId;
-    }
-
-    public void setStationId(String stationId) {
-        this.stationId = stationId;
-    }
-
-    public String getStationName() {
-        return stationName;
-    }
-
-    public void setStationName(String stationName) {
-        this.stationName = stationName;
-    }
-
-    public String getStationType() {
-        return stationType;
-    }
-
-    public void setStationType(String stationType) {
-        this.stationType = stationType;
-    }
-
-    public Date getEnterNetworkTime() {
-        return enterNetworkTime;
-    }
-
-    public void setEnterNetworkTime(Date enterNetworkTime) {
-        this.enterNetworkTime = enterNetworkTime;
-    }
-
-    public String getStationAdmain() {
-        return stationAdmain;
-    }
-
-    public void setStationAdmain(String stationAdmain) {
-        this.stationAdmain = stationAdmain;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public String getPublicNetworkIp() {
-        return publicNetworkIp;
-    }
-
-    public void setPublicNetworkIp(String publicNetworkIp) {
-        this.publicNetworkIp = publicNetworkIp;
-    }
-
-    public String getPublicNetworkPort() {
-        return publicNetworkPort;
-    }
-
-    public void setPublicNetworkPort(String publicNetworkPort) {
-        this.publicNetworkPort = publicNetworkPort;
-    }
-
-    public String getLanIp() {
-        return lanIp;
-    }
-
-    public void setLanIp(String lanIp) {
-        this.lanIp = lanIp;
-    }
-
-    public String getLanPort() {
-        return lanPort;
-    }
-
-    public void setLanPort(String lanPort) {
-        this.lanPort = lanPort;
-    }
-
-    public String getStationStatus() {
-        return stationStatus;
-    }
-
-    public void setStationStatus(String stationStatus) {
-        this.stationStatus = stationStatus;
-    }
-
-    public String getStationNetworkId() {
-        return stationNetworkId;
-    }
-
-    public void setStationNetworkId(String stationNetworkId) {
-        this.stationNetworkId = stationNetworkId;
-    }
-
-    public String getStationRandomSeed() {
-        return stationRandomSeed;
-    }
-
-    public void setStationRandomSeed(String stationRandomSeed) {
-        this.stationRandomSeed = stationRandomSeed;
-    }
-
-    public String getRelationOperatorId() {
-        return relationOperatorId;
-    }
-
-    public void setRelationOperatorId(String relationOperatorId) {
-        this.relationOperatorId = relationOperatorId;
-    }
-
-    public String getCreateUser() {
-        return createUser;
-    }
-
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
-
-    public String getUpdateUser() {
-        return updateUser;
-    }
-
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Boolean getExist() {
-        return isExist;
-    }
-
-    public void setExist(Boolean exist) {
-        isExist = exist;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
 }
