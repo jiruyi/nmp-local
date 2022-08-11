@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.matrictime.network.dao.mapper.NmplUpdateInfoMapper">
-  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplUpdateInfo">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplUpdateInfoBase">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="table_name" jdbcType="VARCHAR" property="tableName" />
     <result column="operation_type" jdbcType="VARCHAR" property="operationType" />
@@ -73,14 +73,14 @@
     id, table_name, operation_type, create_user, create_time, update_user, update_time, 
     is_exist
   </sql>
-  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplUpdateInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplUpdateInfoBaseExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from nmpl_update_info
+    from nmpl_update_info_base
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -91,29 +91,29 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from nmpl_update_info
+    from nmpl_update_info_base
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from nmpl_update_info
+    delete from nmpl_update_info_base
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplUpdateInfoExample">
-    delete from nmpl_update_info
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplUpdateInfoBaseExample">
+    delete from nmpl_update_info_base
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplUpdateInfo">
-    insert into nmpl_update_info (id, table_name, operation_type, 
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplUpdateInfoBase">
+    insert into nmpl_update_info_base (id, table_name, operation_type, 
       create_user, create_time, update_user, 
       update_time, is_exist)
     values (#{id,jdbcType=BIGINT}, #{tableName,jdbcType=VARCHAR}, #{operationType,jdbcType=VARCHAR}, 
       #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplUpdateInfo">
-    insert into nmpl_update_info
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplUpdateInfoBase">
+    insert into nmpl_update_info_base
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -167,14 +167,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplUpdateInfoExample" resultType="java.lang.Long">
-    select count(*) from nmpl_update_info
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplUpdateInfoBaseExample" resultType="java.lang.Long">
+    select count(*) from nmpl_update_info_base
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update nmpl_update_info
+    update nmpl_update_info_base
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -206,7 +206,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update nmpl_update_info
+    update nmpl_update_info_base
     set id = #{record.id,jdbcType=BIGINT},
       table_name = #{record.tableName,jdbcType=VARCHAR},
       operation_type = #{record.operationType,jdbcType=VARCHAR},
@@ -219,8 +219,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplUpdateInfo">
-    update nmpl_update_info
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplUpdateInfoBase">
+    update nmpl_update_info_base
     <set>
       <if test="tableName != null">
         table_name = #{tableName,jdbcType=VARCHAR},
@@ -246,8 +246,8 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplUpdateInfo">
-    update nmpl_update_info
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplUpdateInfoBase">
+    update nmpl_update_info_base
     set table_name = #{tableName,jdbcType=VARCHAR},
       operation_type = #{operationType,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},

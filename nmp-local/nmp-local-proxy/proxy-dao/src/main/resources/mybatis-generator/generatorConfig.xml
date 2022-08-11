@@ -38,7 +38,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="nmpl_update_info" domainObjectName="NmplUpdateInfo"
+        <table tableName="nmpl_update_info_base" domainObjectName="NmplUpdateInfoBase"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
