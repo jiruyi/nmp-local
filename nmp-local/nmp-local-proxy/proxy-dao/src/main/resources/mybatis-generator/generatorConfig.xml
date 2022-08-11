@@ -38,7 +38,13 @@
         </javaClientGenerator>
 
 
-        <table tableName="nmpl_update_info_base" domainObjectName="NmplUpdateInfoBase"
+        <table tableName="nmpl_link_relation" domainObjectName="NmplLinkRelation"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
+
+        <table tableName="nmpl_route" domainObjectName="NmplRoute"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">

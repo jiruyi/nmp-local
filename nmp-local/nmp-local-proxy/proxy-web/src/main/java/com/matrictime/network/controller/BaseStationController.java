@@ -2,8 +2,7 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.request.DeleteBaseStationInfoRequest;
-import com.matrictime.network.request.InsertBaseStationInfoRequest;
+import com.matrictime.network.request.AddBaseStationInfoRequest;
 import com.matrictime.network.request.UpdateBaseStationInfoRequest;
 import com.matrictime.network.service.BaseStationInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,12 +32,12 @@ public class BaseStationController extends SystemBaseService {
      */
 
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Result insertBaseStation(@RequestBody InsertBaseStationInfoRequest request){
+    public Result addBaseStationInfo(@RequestBody AddBaseStationInfoRequest request){
         Result result;
         try {
-            result = baseStationInfoService.insertBaseStationInfo(request);
+            result = baseStationInfoService.addBaseStationInfo(request.getInfoVos());
         }catch (Exception e){
-            log.info("BaseStationController:insertBaseStation{}",e.getMessage());
+            log.info("BaseStationController.addBaseStationInfo{}",e.getMessage());
             result = failResult(e);
         }
         return result;
@@ -50,12 +49,12 @@ public class BaseStationController extends SystemBaseService {
      * @return
      */
     @RequestMapping(value = "/update",method = RequestMethod.POST)
-    public Result updateBaseStation(@RequestBody UpdateBaseStationInfoRequest request){
+    public Result updateBaseStationInfo(@RequestBody UpdateBaseStationInfoRequest request){
         Result result;
         try {
-            result = baseStationInfoService.updateBaseStationInfo(request);
+            result = baseStationInfoService.updateBaseStationInfo(request.getInfoVos());
         }catch (Exception e){
-            log.info("BaseStationController:updateBaseStation{}",e.getMessage());
+            log.info("BaseStationController.updateBaseStation{}",e.getMessage());
             result = failResult(e);
         }
         return result;

@@ -9,7 +9,7 @@ import com.matrictime.network.dao.model.NmplUpdateInfoBase;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.request.DeleteBaseStationInfoRequest;
-import com.matrictime.network.request.InsertBaseStationInfoRequest;
+import com.matrictime.network.request.AddBaseStationInfoRequest;
 import com.matrictime.network.request.UpdateBaseStationInfoRequest;
 import com.matrictime.network.service.BaseStationInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 import static com.matrictime.network.base.constant.DataConstants.NMPL_BASE_STATION_INFO;
 import static com.matrictime.network.constant.DataConstants.*;
@@ -38,14 +39,14 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     @Override
     @Transactional
-    public Result insertBaseStationInfo(InsertBaseStationInfoRequest request) {
+    public Result addBaseStationInfo(List<BaseStationInfoVo> infoVos) {
         Result result = new Result<>();
         try {
-            if (CollectionUtils.isEmpty(request.getInfoVos())){
+            if (CollectionUtils.isEmpty(infoVos)){
                 throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             Date createTime = new Date();
-            for (BaseStationInfoVo infoVo : request.getInfoVos()){
+            for (BaseStationInfoVo infoVo : infoVos){
                 infoVo.setUpdateTime(createTime);
             }
             NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
@@ -54,10 +55,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             updateInfo.setCreateTime(createTime);
             updateInfo.setCreateUser(SYSTEM_NM);
             int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-            int batchNum = baseStationInfoDomainService.insertBaseStationInfo(request.getInfoVos());
-            log.info("BaseStationInfoServiceImpl,insertBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
+            int batchNum = baseStationInfoDomainService.insertBaseStationInfo(infoVos);
+            log.info("BaseStationInfoServiceImpl.addBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
-            log.error("BaseStationInfoServiceImpl,insertBaseStationInfo：{}",e.getMessage());
+            log.error("BaseStationInfoServiceImpl.addBaseStationInfo：{}",e.getMessage());
             result = failResult(e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
@@ -65,14 +66,14 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     }
 
     @Override
-    public Result<Integer> updateBaseStationInfo(UpdateBaseStationInfoRequest request) {
+    public Result<Integer> updateBaseStationInfo(List<BaseStationInfoVo> infoVos) {
         Result result = new Result<>();
         try {
-            if (CollectionUtils.isEmpty(request.getInfoVos())){
+            if (CollectionUtils.isEmpty(infoVos)){
                 throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             Date createTime = new Date();
-            for (BaseStationInfoVo infoVo : request.getInfoVos()){
+            for (BaseStationInfoVo infoVo : infoVos){
                 infoVo.setUpdateTime(createTime);
             }
             NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
@@ -81,10 +82,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             updateInfo.setCreateTime(createTime);
             updateInfo.setCreateUser(SYSTEM_NM);
             int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-            int batchNum = baseStationInfoDomainService.updateBaseStationInfo(request.getInfoVos());
-            log.info("BaseStationInfoServiceImpl,updateBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
+            int batchNum = baseStationInfoDomainService.updateBaseStationInfo(infoVos);
+            log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
-            log.error("BaseStationInfoServiceImpl,updateBaseStationInfo：{}",e.getMessage());
+            log.error("BaseStationInfoServiceImpl.updateBaseStationInfo：{}",e.getMessage());
             result = failResult(e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
@@ -99,9 +100,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             int batchNum = baseStationInfoDomainService.deleteBaseStationInfo(request.getIds());
-            log.info("BaseStationInfoServiceImpl,deleteBaseStationInfo：batchNum:{}",batchNum);
+            log.info("BaseStationInfoServiceImpl.deleteBaseStationInfo：batchNum:{}",batchNum);
         }catch (Exception e){
-            log.error("BaseStationInfoServiceImpl,deleteBaseStationInfo：{}",e.getMessage());
+            log.error("BaseStationInfoServiceImpl.deleteBaseStationInfo：{}",e.getMessage());
             result = failResult(e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }

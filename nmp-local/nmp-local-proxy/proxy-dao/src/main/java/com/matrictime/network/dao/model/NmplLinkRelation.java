@@ -1,18 +1,15 @@
-package com.matrictime.network.modelVo;
+package com.matrictime.network.dao.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
 
 /**
- * 链路
- * @author   hexu
+ * 
+ * @author   xxxx
  * @date   2022-08-11
  */
 @Data
-public class LinkRelationVo implements Serializable {
-
-    private static final long serialVersionUID = -3440337554676964970L;
+public class NmplLinkRelation {
     /**
      * 主键
      */

@@ -1,18 +1,15 @@
-package com.matrictime.network.modelVo;
+package com.matrictime.network.dao.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
 
 /**
- * 路由
- * @author   hexu
+ * 密钥生成机和密钥缓存机器
+ * @author   xxxx
  * @date   2022-08-11
  */
 @Data
-public class RouteVo implements Serializable {
-
-    private static final long serialVersionUID = 2325378929052936386L;
+public class NmplRoute {
     /**
      * 主键
      */
