@@ -14,6 +14,7 @@ import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.RouteService;
 import com.matrictime.network.util.ListSplitUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -87,7 +88,7 @@ public class RouteServiceImpl implements RouteService {
             if(updateFlag == 2){
                 return new Result<>(false,"路由不可以重复插入");
             }
-            //List<Future<List<Result>>> futures = collectResult(routeRequest);
+            List<Future<List<Result>>> futures = collectResult(routeRequest);
             result.setResultObj(updateFlag);
             result.setSuccess(true);
         }catch (Exception e){
@@ -137,11 +138,18 @@ public class RouteServiceImpl implements RouteService {
       获取多线程推送后的返回值
     * */
     private List<Future<List<Result>>> collectResult(RouteRequest routeRequest){
-        BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
+        BaseStationInfoRequest accessDaseStationInfoRequest = new BaseStationInfoRequest();
+        accessDaseStationInfoRequest.setStationId(routeRequest.getAccessDeviceId());
+        BaseStationInfoRequest boundaryDaseStationInfoRequest = new BaseStationInfoRequest();
+        boundaryDaseStationInfoRequest.setStationId(routeRequest.getBoundaryDeviceId());
+        //获取修改基站信息
         List<Future<List<Result>>> futureLinkedList = new LinkedList<>();
-        List<BaseStationInfoVo> baseStationInfoVoList =
-                baseStationInfoDomainService.selectLinkBaseStationInfo(baseStationInfoRequest);
-        List<List<BaseStationInfoVo>> list = ListSplitUtil.split(baseStationInfoVoList,10);
+        List<BaseStationInfoVo> accessDaseStationList =
+                baseStationInfoDomainService.selectLinkBaseStationInfo(accessDaseStationInfoRequest);
+        List<BaseStationInfoVo> boundaryDaseStationList =
+                baseStationInfoDomainService.selectLinkBaseStationInfo(accessDaseStationInfoRequest);
+        List<BaseStationInfoVo> unionList = ListUtils.union(accessDaseStationList,boundaryDaseStationList);
+        List<List<BaseStationInfoVo>> list = ListSplitUtil.split(unionList,1);
         for(int poolIndex = 0;poolIndex<list.size();poolIndex ++){
             Future<List<Result>> sendRoute = sendRoute(list.get(poolIndex), routeRequest);
             futureLinkedList.add(sendRoute);
