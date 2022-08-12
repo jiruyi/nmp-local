@@ -64,13 +64,13 @@ public class DeviceServiceImpl implements DeviceService {
             }
             String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
             deviceInfoRequest.setStationNetworkId(NetworkId);
-            infoRequest.setStationNetworkId(deviceInfoRequest.getStationNetworkId());
-            infoRequest.setPublicNetworkIp(deviceInfoRequest.getPublicNetworkIp());
-            infoRequest.setLanIp(deviceInfoRequest.getLanIp());
-            List<DeviceInfoVo> devices = deviceDomainService.getDevices(infoRequest);
-            if(devices.size() > 0){
-                return new Result<>(false,"入网id或ip重复");
-            }
+//            infoRequest.setStationNetworkId(deviceInfoRequest.getStationNetworkId());
+//            infoRequest.setPublicNetworkIp(deviceInfoRequest.getPublicNetworkIp());
+//            infoRequest.setLanIp(deviceInfoRequest.getLanIp());
+//            List<DeviceInfoVo> devices = deviceDomainService.getDevices(infoRequest);
+//            if(devices.size() > 0){
+//                return new Result<>(false,"入网id或ip重复");
+//            }
             insertFlag = deviceDomainService.insertDevice(deviceInfoRequest);
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);
@@ -119,6 +119,13 @@ public class DeviceServiceImpl implements DeviceService {
             if(publicPortReg == false || lanPortReg == false){
                 return new Result<>(false,"端口格式不正确");
             }
+            //判断小区是否正确
+            String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
+            if(StringUtil.isEmpty(preBID)){
+                return new Result<>(false,"运营商不存在");
+            }
+            String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
+            deviceInfoRequest.setStationNetworkId(NetworkId);
             updateFlag = deviceDomainService.updateDevice(deviceInfoRequest);
             if(updateFlag == 1){
                 result.setResultObj(updateFlag);

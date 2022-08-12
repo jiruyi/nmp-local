@@ -1,12 +1,21 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.csp.sentinel.util.StringUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonArray;
+import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.DeviceStatusEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
+import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.model.NmplBaseStationInfo;
+import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
@@ -17,22 +26,38 @@ import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
 @Slf4j
-public class BaseStationInfoServiceImpl implements BaseStationInfoService {
+public class BaseStationInfoServiceImpl extends SystemBaseService implements BaseStationInfoService {
 
     @Resource
     private BaseStationInfoDomainService baseStationInfoDomainService;
 
     @Resource
     private CompanyInfoDomainService companyInfoDomainService;
+
+    @Resource
+    private AsyncService asyncService;
+
+    @Resource
+    private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
+
+    @Value("${proxy.port}")
+    private String port;
+
+    @Value("${proxy.context-path}")
+    private String contextPath;
+
 
     @Override
     public Result<Integer> insertBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
@@ -50,6 +75,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             baseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             baseStationInfoRequest.setIsExist("1");
             baseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
+            //参数格式校验
             boolean publicIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getPublicNetworkIp());
             boolean lanIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getLanIp());
             if(publicIpReg == false || lanIpReg == false){
@@ -63,29 +89,50 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             //判断小区是否正确
             String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
             if(StringUtil.isEmpty(preBID)){
-                return new Result<>(false,"运营商不存在");
+                return new Result<>(false,"小区不存在");
             }
             String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
             baseStationInfoRequest.setStationNetworkId(networkId);
-            infoRequest.setStationNetworkId(baseStationInfoRequest.getStationNetworkId());
-            infoRequest.setPublicNetworkIp(baseStationInfoRequest.getPublicNetworkIp());
-            infoRequest.setLanIp(baseStationInfoRequest.getLanIp());
-            List<BaseStationInfoVo> baseStationInfoVos = baseStationInfoDomainService.selectBaseStation(infoRequest);
-            if(baseStationInfoVos.size() > 0){
-                return new Result<>(false,"入网id或ip重复");
-            }
+            //校验唯一性
+//            infoRequest.setStationNetworkId(baseStationInfoRequest.getStationNetworkId());
+//            infoRequest.setPublicNetworkIp(baseStationInfoRequest.getPublicNetworkIp());
+//            infoRequest.setLanIp(baseStationInfoRequest.getLanIp());
+//            List<BaseStationInfoVo> baseStationInfoVos = baseStationInfoDomainService.selectBaseStation(infoRequest);
+//            if(baseStationInfoVos.size() > 0){
+//                return new Result<>(false,"入网id或ip重复");
+//            }
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
+
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);
                 result.setSuccess(true);
+                //推送到代理
+                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+                nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(baseStationInfoRequest.getStationId());
+                List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+
+                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
+
+                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+                    Map<String,String> map = new HashMap<>();
+                    map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
+                    JSONObject jsonReq = new JSONObject();
+                    jsonReq.put("infoVos",nmplBaseStationInfoList);
+                    map.put("data",jsonReq.toJSONString());
+                    String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_INSERT;
+                    map.put(DataConstants.KEY_URL,url);
+                    asyncService.httpBaseStationPush(map);
+                }
             }else {
                 result.setResultObj(insertFlag);
                 result.setSuccess(false);
             }
+        }catch (SystemException e){
+            log.info("基站创建异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
             log.error("基站新增{}新增异常：{}",e.getMessage());
-            result.setSuccess(false);
-            result.setErrorMsg("参数异常");
+            result = failResult("");
         }
         return result;
     }
@@ -111,14 +158,40 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             if(publicPortReg == false || lanPortReg == false){
                 return new Result<>(false,"端口格式不正确");
             }
+            //判断小区是否正确
+            String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
+            if(StringUtil.isEmpty(preBID)){
+                return new Result<>(false,"小区不存在");
+            }
+            String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
+            baseStationInfoRequest.setStationNetworkId(networkId);
+
             updateFlag = baseStationInfoDomainService.updateBaseStationInfo(baseStationInfoRequest);
             if(updateFlag == 1){
                 result.setSuccess(true);
                 result.setResultObj(updateFlag);
+                //推送到代理
+                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+                nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(baseStationInfoRequest.getStationId());
+                List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
+                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+                    Map<String,String> map = new HashMap<>();
+                    map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
+                    JSONObject jsonReq = new JSONObject();
+                    jsonReq.put("infoVos",nmplBaseStationInfoList);
+                    map.put("data",jsonReq.toJSONString());
+                    String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
+                    map.put(DataConstants.KEY_URL,url);
+                    asyncService.httpBaseStationPush(map);
+                }
             }
+        }catch (SystemException e){
+            log.info("基站修改异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setSuccess(false);
-            result.setErrorMsg("参数异常");
+            log.error("基站修改异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -132,10 +205,28 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             if(deleteFlag == 1){
                 result.setSuccess(true);
                 result.setResultObj(deleteFlag);
+                //推送到代理
+                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+                nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(baseStationInfoRequest.getStationId());
+                List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
+                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+                    Map<String,String> map = new HashMap<>();
+                    map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
+                    JSONObject jsonReq = new JSONObject();
+                    jsonReq.put("infoVos",nmplBaseStationInfoList);
+                    map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
+                    String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
+                    map.put(DataConstants.KEY_URL,url);
+                    asyncService.httpBaseStationPush(map);
+                }
             }
+        }catch (SystemException e){
+            log.info("基站删除异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setSuccess(false);
-            result.setErrorMsg("参数异常");
+            log.error("基站删除异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -147,7 +238,7 @@ public class BaseStationInfoServiceImpl implements BaseStationInfoService {
             PageInfo pageInfo = baseStationInfoDomainService.selectBaseStationInfo(baseStationInfoRequest);
             result.setResultObj(pageInfo);
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e){
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
