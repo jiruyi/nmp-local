@@ -8,15 +8,21 @@ import com.matrictime.network.dao.model.NmplFileDeviceRel;
 import com.matrictime.network.dao.model.NmplFileDeviceRelExample;
 import com.matrictime.network.dao.model.NmplSignalIo;
 import com.matrictime.network.dao.model.NmplSignalIoExample;
+import com.matrictime.network.model.Result;
 import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.remoting.RemoteAccessException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Future;
 
@@ -284,4 +290,22 @@ public class AsyncService{
         result.put(KEY_FAIL_IDS,failIds);
         return new AsyncResult<>(result);
     }
+
+    @Async("taskExecutor")
+    @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 1000,multiplier = 1.5))
+    public void httpPush(Map<String, String> map) throws Exception{
+        String deviceId = map.get(KEY_DEVICE_ID);
+        String url = map.get(KEY_URL);
+        String data = map.get(KEY_DATA);
+        String postResp = HttpClientUtil.post(url,data);
+        log.info("AsyncService.httpBaseStationPush deviceId:{},req:{} postResp:{}",deviceId, data,postResp);
+    }
+
+    @Recover
+    public void recover(Exception e,Map<String, String> map) {
+        String deviceId = map.get(KEY_DEVICE_ID);
+        log.warn("httpBaseStationPush.retry error  deviceId:{} Exception:{} ",deviceId,e.getMessage());
+    }
+
+
 }
