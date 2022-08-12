@@ -118,10 +118,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                     map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
                     JSONObject jsonReq = new JSONObject();
                     jsonReq.put("infoVos",nmplBaseStationInfoList);
-                    map.put("data",jsonReq.toJSONString());
+                    map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
                     String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_INSERT;
                     map.put(DataConstants.KEY_URL,url);
-                    asyncService.httpBaseStationPush(map);
+                    asyncService.httpPush(map);
                 }
             }else {
                 result.setResultObj(insertFlag);
@@ -180,10 +180,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                     map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
                     JSONObject jsonReq = new JSONObject();
                     jsonReq.put("infoVos",nmplBaseStationInfoList);
-                    map.put("data",jsonReq.toJSONString());
+                    map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
                     String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
                     map.put(DataConstants.KEY_URL,url);
-                    asyncService.httpBaseStationPush(map);
+                    asyncService.httpPush(map);
                 }
             }
         }catch (SystemException e){
@@ -218,7 +218,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                     map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
                     String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
                     map.put(DataConstants.KEY_URL,url);
-                    asyncService.httpBaseStationPush(map);
+                    asyncService.httpPush(map);
                 }
             }
         }catch (SystemException e){
