@@ -42,7 +42,7 @@ public class RouteController extends SystemBaseService {
             result = routeService.addRoute(voList);
         }catch (Exception e){
             log.info("RouteController.addRoute{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
         }
         return result;
     }
@@ -61,7 +61,7 @@ public class RouteController extends SystemBaseService {
             result = routeService.updateRoute(voList);
         }catch (Exception e){
             log.info("RouteController.updateRoute{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
         }
         return result;
     }

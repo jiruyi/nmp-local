@@ -7,8 +7,6 @@ import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
 import com.matrictime.network.dao.model.NmplUpdateInfoBase;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.RouteVo;
-import com.matrictime.network.request.AddRouteRequest;
-import com.matrictime.network.request.UpdateRouteRequest;
 import com.matrictime.network.service.RouteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +54,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             log.info("RouteServiceImpl.addRoute：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
             log.error("RouteServiceImpl.addRoute：{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;
@@ -84,7 +82,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             log.info("RouteServiceImpl.updateRoute：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
             log.error("RouteServiceImpl.updateRoute：{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;

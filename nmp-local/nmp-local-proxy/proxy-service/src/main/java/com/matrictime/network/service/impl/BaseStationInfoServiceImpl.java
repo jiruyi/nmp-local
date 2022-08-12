@@ -9,8 +9,6 @@ import com.matrictime.network.dao.model.NmplUpdateInfoBase;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.request.DeleteBaseStationInfoRequest;
-import com.matrictime.network.request.AddBaseStationInfoRequest;
-import com.matrictime.network.request.UpdateBaseStationInfoRequest;
 import com.matrictime.network.service.BaseStationInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -59,13 +57,14 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             log.info("BaseStationInfoServiceImpl.addBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
             log.error("BaseStationInfoServiceImpl.addBaseStationInfo：{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;
     }
 
     @Override
+    @Transactional
     public Result<Integer> updateBaseStationInfo(List<BaseStationInfoVo> infoVos) {
         Result result = new Result<>();
         try {
@@ -86,7 +85,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
             log.error("BaseStationInfoServiceImpl.updateBaseStationInfo：{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;
@@ -103,7 +102,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             log.info("BaseStationInfoServiceImpl.deleteBaseStationInfo：batchNum:{}",batchNum);
         }catch (Exception e){
             log.error("BaseStationInfoServiceImpl.deleteBaseStationInfo：{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;

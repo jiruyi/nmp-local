@@ -44,7 +44,7 @@ public class BaseStationController extends SystemBaseService {
             result = baseStationInfoService.addBaseStationInfo(infoVos);
         }catch (Exception e){
             log.info("BaseStationController.addBaseStationInfo{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
         }
         return result;
     }
@@ -63,7 +63,7 @@ public class BaseStationController extends SystemBaseService {
             result = baseStationInfoService.updateBaseStationInfo(infoVos);
         }catch (Exception e){
             log.info("BaseStationController.updateBaseStation{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
         }
         return result;
     }

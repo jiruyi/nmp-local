@@ -114,7 +114,7 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             log.info("LinkRelationServiceImpl.addLinkRelation：batchNum:{}",batchNum);
         }catch (Exception e){
             log.error("LinkRelationServiceImpl.addLinkRelation：{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;
@@ -186,7 +186,7 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             log.info("LinkRelationServiceImpl.updateLinkRelation：batchNum:{}",batchNum);
         }catch (Exception e){
             log.error("LinkRelationServiceImpl.updateLinkRelation：{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;

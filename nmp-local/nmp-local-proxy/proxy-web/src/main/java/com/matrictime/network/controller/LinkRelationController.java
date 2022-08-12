@@ -42,7 +42,7 @@ public class LinkRelationController extends SystemBaseService {
             result = linkRelationService.addLinkRelation(voList);
         }catch (Exception e){
             log.info("LinkRelationController.addLinkRelation{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
         }
         return result;
     }
@@ -61,7 +61,7 @@ public class LinkRelationController extends SystemBaseService {
             result = linkRelationService.updateLinkRelation(voList);
         }catch (Exception e){
             log.info("LinkRelationController.updateLinkRelation{}",e.getMessage());
-            result = failResult(e);
+            result = failResult("");
         }
         return result;
     }

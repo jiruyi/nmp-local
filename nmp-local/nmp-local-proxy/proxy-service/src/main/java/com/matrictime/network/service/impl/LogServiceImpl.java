@@ -40,7 +40,7 @@ public class LogServiceImpl extends SystemBaseService implements LogService {
             return  buildResult(count);
         }catch (Exception e){
             log.error("saveDeviceLog exception :{}",e.getMessage());
-            return  failResult(e);
+            return  failResult("");
         }
     }
 
