@@ -1,8 +1,8 @@
 package com.matrictime.network.controller;
 
-import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.DeviceLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.SaveDeviceLogReq;

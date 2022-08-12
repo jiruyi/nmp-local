@@ -1,5 +1,5 @@
 server:
-  port: 8002
+  port: 8008
   servlet:
       context-path: /nmp-local-proxy
     
@@ -44,33 +44,12 @@ spring:
       file-size-threshold: 2KB
       max-file-size: 300MB
       max-request-size: 215MB
-  redis:
-    database: 0
-    host: 192.168.72.14
-    port: 6379
-    password: 123456
-    timeout: 500
-    lettuce:
-      pool:
-        max-active: 100
-        max-wait: -1
-        max-idle: 8
-        min-idle: 0
-  cloud:
-    sentinel:
-      transport:
-        port: 8720
-        dashboard: 127.0.0.1:8090
   jackson:
     time-zone: "GMT+8"
     date-format: "yyyy-MM-dd HH:mm:ss"
   mvc:
     async:
       request-timeout: 60000
-eureka:
-  client: #客户端注册进eureka服务列表内
-    service-url:
-       defaultZone: http://127.0.0.1:7002/eureka/
   instance:
     instance-id: nmp-local-proxy
     prefer-ip-address: true     #访问路径可以显示IP地址
@@ -85,17 +64,5 @@ logging:
     path: logs
   level:
     com.jzsg: info
-management:
-  endpoint:
-    health:
-      enabled: true
-      show-details: always
-    beans:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
 thread:
   batchMaxSize: 500

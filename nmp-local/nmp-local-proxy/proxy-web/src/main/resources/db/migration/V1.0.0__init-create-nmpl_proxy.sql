@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_base_station_info` (
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '修改时间',
     `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
     PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='基站信息表';
 
 -- ----------------------------
 -- Table structure for nmpl_bill
@@ -396,6 +396,31 @@ CREATE TABLE IF NOT EXISTS `nmpl_version_file` (
     `update_user` varchar(50) DEFAULT NULL,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE IF NOT EXISTS `nmpl_update_info_base` (
+                                                  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                                  `table_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '更新表名',
+    `operation_type` varchar(8) DEFAULT NULL COMMENT '操作类型：新增:1 修改:2',
+    `create_user` varchar(20) DEFAULT NULL COMMENT '创建人',
+    `create_time` datetime(2) NOT NULL COMMENT '创建时间',
+    `update_user` varchar(20) DEFAULT NULL COMMENT '修改人',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '修改时间',
+    `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='数据更新信息表(基站专用)';
+
+CREATE TABLE IF NOT EXISTS `nmpl_update_info_keycenter` (
+                                                       `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                                       `table_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '更新表名',
+    `operation_type` varchar(8) DEFAULT NULL COMMENT '操作类型：新增:1 修改:2',
+    `create_user` varchar(20) DEFAULT NULL COMMENT '创建人',
+    `create_time` datetime(2) NOT NULL COMMENT '创建时间',
+    `update_user` varchar(20) DEFAULT NULL COMMENT '修改人',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '修改时间',
+    `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='数据更新信息表(秘钥中心专用)';
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
