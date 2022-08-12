@@ -6,10 +6,10 @@ import lombok.Data;
 /**
  * 数据更新信息表
  * @author   xxxx
- * @date   2022-08-09
+ * @date   2022-08-10
  */
 @Data
-public class NmplUpdateInfo {
+public class NmplUpdateInfoBase {
     /**
      * 主键
      */

@@ -4,8 +4,8 @@ package com.matrictime.network.service.impl;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
-import com.matrictime.network.dao.mapper.NmplUpdateInfoMapper;
-import com.matrictime.network.dao.model.NmplUpdateInfo;
+import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
+import com.matrictime.network.dao.model.NmplUpdateInfoBase;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.request.DeleteBaseStationInfoRequest;
@@ -33,7 +33,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     private BaseStationInfoDomainService baseStationInfoDomainService;
 
     @Resource
-    private NmplUpdateInfoMapper nmplUpdateInfoMapper;
+    private NmplUpdateInfoBaseMapper nmplUpdateInfoBaseMapper;
 
 
     @Override
@@ -48,12 +48,12 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             for (BaseStationInfoVo infoVo : request.getInfoVos()){
                 infoVo.setUpdateTime(createTime);
             }
-            NmplUpdateInfo updateInfo = new NmplUpdateInfo();
+            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
             updateInfo.setTableName(NMPL_BASE_STATION_INFO);
             updateInfo.setOperationType(EDIT_TYPE_ADD);
             updateInfo.setCreateTime(createTime);
             updateInfo.setCreateUser(SYSTEM_NM);
-            int addNum = nmplUpdateInfoMapper.insertSelective(updateInfo);
+            int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
             int batchNum = baseStationInfoDomainService.insertBaseStationInfo(request.getInfoVos());
             log.info("BaseStationInfoServiceImpl,insertBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
@@ -75,12 +75,12 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             for (BaseStationInfoVo infoVo : request.getInfoVos()){
                 infoVo.setUpdateTime(createTime);
             }
-            NmplUpdateInfo updateInfo = new NmplUpdateInfo();
+            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
             updateInfo.setTableName(NMPL_BASE_STATION_INFO);
             updateInfo.setOperationType(EDIT_TYPE_UPD);
             updateInfo.setCreateTime(createTime);
             updateInfo.setCreateUser(SYSTEM_NM);
-            int addNum = nmplUpdateInfoMapper.insertSelective(updateInfo);
+            int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
             int batchNum = baseStationInfoDomainService.updateBaseStationInfo(request.getInfoVos());
             log.info("BaseStationInfoServiceImpl,updateBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){

@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NmplUpdateInfoExample {
+public class NmplUpdateInfoBaseExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public NmplUpdateInfoExample() {
+    public NmplUpdateInfoBaseExample() {
         oredCriteria = new ArrayList<>();
     }
 
