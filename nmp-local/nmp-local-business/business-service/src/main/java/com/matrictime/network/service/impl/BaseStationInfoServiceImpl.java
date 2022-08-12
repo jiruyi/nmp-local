@@ -116,9 +116,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
                     Map<String,String> map = new HashMap<>();
                     map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
-                    JSONObject jsonReq = new JSONObject();
-                    jsonReq.put("infoVos",nmplBaseStationInfoList);
-                    map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
+                    map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(nmplBaseStationInfoList.get(0)));
                     String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_INSERT;
                     map.put(DataConstants.KEY_URL,url);
                     asyncService.httpPush(map);
@@ -178,9 +176,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
                     Map<String,String> map = new HashMap<>();
                     map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
-                    JSONObject jsonReq = new JSONObject();
-                    jsonReq.put("infoVos",nmplBaseStationInfoList);
-                    map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
+                    map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(nmplBaseStationInfoList.get(0)));
                     String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
                     map.put(DataConstants.KEY_URL,url);
                     asyncService.httpPush(map);
@@ -213,9 +209,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
                     Map<String,String> map = new HashMap<>();
                     map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
-                    JSONObject jsonReq = new JSONObject();
-                    jsonReq.put("infoVos",nmplBaseStationInfoList);
-                    map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
+                    map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(nmplBaseStationInfoList.get(0)));
                     String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
                     map.put(DataConstants.KEY_URL,url);
                     asyncService.httpPush(map);
