@@ -293,7 +293,7 @@ public class AsyncService{
 
     @Async("taskExecutor")
     @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 1000,multiplier = 1.5))
-    public void httpBaseStationPush(Map<String, String> map) throws Exception{
+    public void httpPush(Map<String, String> map) throws Exception{
         String deviceId = map.get(KEY_DEVICE_ID);
         String url = map.get(KEY_URL);
         String data = map.get(KEY_DATA);
