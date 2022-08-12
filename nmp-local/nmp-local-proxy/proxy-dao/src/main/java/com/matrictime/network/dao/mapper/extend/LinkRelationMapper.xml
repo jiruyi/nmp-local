@@ -22,10 +22,10 @@
     is_exist)
     values
     <foreach collection ="list" item="vo" separator =",">
-      (#{id,jdbcType=BIGINT}, #{linkName,jdbcType=VARCHAR}, #{linkType,jdbcType=VARCHAR},
-      #{mainDeviceId,jdbcType=VARCHAR}, #{followDeviceId,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR},
-      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP},
-      #{isExist,jdbcType=CHAR})
+      (#{vo.id,jdbcType=BIGINT}, #{vo.linkName,jdbcType=VARCHAR}, #{vo.linkType,jdbcType=VARCHAR},
+      #{vo.mainDeviceId,jdbcType=VARCHAR}, #{vo.followDeviceId,jdbcType=VARCHAR}, #{vo.createUser,jdbcType=VARCHAR},
+      #{vo.createTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP},
+      #{vo.isExist,jdbcType=CHAR})
     </foreach >
   </insert>
 
@@ -33,35 +33,35 @@
     <foreach collection="list" separator=";" item="info">
       update nmpl_link_relation
       <set>
-        <if test="linkName != null">
-          link_name = #{linkName,jdbcType=VARCHAR},
+        <if test="info.linkName != null">
+          link_name = #{info.linkName,jdbcType=VARCHAR},
         </if>
-        <if test="linkType != null">
-          link_type = #{linkType,jdbcType=VARCHAR},
+        <if test="info.linkType != null">
+          link_type = #{info.linkType,jdbcType=VARCHAR},
         </if>
-        <if test="mainDeviceId != null">
-          main_device_id = #{mainDeviceId,jdbcType=VARCHAR},
+        <if test="info.mainDeviceId != null">
+          main_device_id = #{info.mainDeviceId,jdbcType=VARCHAR},
         </if>
-        <if test="followDeviceId != null">
-          follow_device_id = #{followDeviceId,jdbcType=VARCHAR},
+        <if test="info.followDeviceId != null">
+          follow_device_id = #{info.followDeviceId,jdbcType=VARCHAR},
         </if>
-        <if test="createUser != null">
-          create_user = #{createUser,jdbcType=VARCHAR},
+        <if test="info.createUser != null">
+          create_user = #{info.createUser,jdbcType=VARCHAR},
         </if>
-        <if test="createTime != null">
-          create_time = #{createTime,jdbcType=TIMESTAMP},
+        <if test="info.createTime != null">
+          create_time = #{info.createTime,jdbcType=TIMESTAMP},
         </if>
-        <if test="updateUser != null">
-          update_user = #{updateUser,jdbcType=VARCHAR},
+        <if test="info.updateUser != null">
+          update_user = #{info.updateUser,jdbcType=VARCHAR},
         </if>
-        <if test="updateTime != null">
-          update_time = #{updateTime,jdbcType=TIMESTAMP},
+        <if test="info.updateTime != null">
+          update_time = #{info.updateTime,jdbcType=TIMESTAMP},
         </if>
-        <if test="isExist != null">
-          is_exist = #{isExist,jdbcType=CHAR},
+        <if test="info.isExist != null">
+          is_exist = #{info.isExist,jdbcType=CHAR},
         </if>
       </set>
-      where id = #{id,jdbcType=BIGINT}
+      where id = #{info.id,jdbcType=BIGINT}
     </foreach>
   </update>
 </mapper>
