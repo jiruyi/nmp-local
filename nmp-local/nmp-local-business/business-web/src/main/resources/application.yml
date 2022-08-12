@@ -104,3 +104,6 @@ token:
   timeOut: 12
 thread:
   batchMaxSize: 500
+proxy:
+  context-path: /nmp-local-proxy
+  port: 8008

@@ -33,4 +33,8 @@ public interface BaseStationInfoDomainService {
     PageInfo<BaseStationInfoVo> selectBaseStationList(BaseStationInfoRequest baseStationInfoRequest);
 
     List<BaseStationInfoVo> selectBaseStation(BaseStationInfoRequest baseStationInfoRequest);
+
+    void InsertCheckUnique(BaseStationInfoRequest baseStationInfoRequest);
+
+    void UpdateCheckUnique(BaseStationInfoRequest baseStationInfoRequest);
 }
