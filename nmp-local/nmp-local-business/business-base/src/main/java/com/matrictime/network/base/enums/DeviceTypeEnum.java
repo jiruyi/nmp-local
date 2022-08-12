@@ -1,9 +1,10 @@
 package com.matrictime.network.base.enums;
 
 public enum DeviceTypeEnum {
-    DISPENSER("01","密钥分发机"),
-    GENERATOR("02","生成机"),
-    CACHE("03","缓存机");
+    BASE("10","其他设备"),
+    DISPENSER("11","密钥中心"),
+    GENERATOR("12","生成机"),
+    CACHE("13","缓存机");
     private String code;
     private String conditionDesc;
     public String getCode() {

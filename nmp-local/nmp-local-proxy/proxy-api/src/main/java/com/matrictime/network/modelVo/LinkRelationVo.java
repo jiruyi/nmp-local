@@ -63,6 +63,11 @@ public class LinkRelationVo implements Serializable {
      */
     private String isExist;
 
+    /**
+     * 通知设备类型（00：基站 11：秘钥中心 12：生成机 13：缓存机）
+     */
+    private String noticeDeviceType;
+
     public Long getId() {
         return id;
     }
@@ -141,5 +146,13 @@ public class LinkRelationVo implements Serializable {
 
     public void setIsExist(String isExist) {
         this.isExist = isExist == null ? null : isExist.trim();
+    }
+
+    public String getNoticeDeviceType() {
+        return noticeDeviceType;
+    }
+
+    public void setNoticeDeviceType(String noticeDeviceType) {
+        this.noticeDeviceType = noticeDeviceType == null ? null : noticeDeviceType.trim();;
     }
 }

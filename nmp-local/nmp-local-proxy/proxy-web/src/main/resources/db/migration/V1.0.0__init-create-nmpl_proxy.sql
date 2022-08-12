@@ -160,7 +160,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_device_info` (
                                                   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
                                                   `device_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '设备编号',
     `device_name` varchar(16) DEFAULT NULL COMMENT '设备名称',
-    `device_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '01' COMMENT '设备类型 01:密钥分发机 02:生成机 03:缓存机',
+    `device_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '01' COMMENT '设备类型 11:密钥中心 12:生成机 13:缓存机',
     `other_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '备用类型 ',
     `enter_network_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '接入网时间',
     `device_admain` varchar(20) DEFAULT NULL COMMENT '设备管理员',
@@ -239,7 +239,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_key_poll_detail` (
 CREATE TABLE IF NOT EXISTS `nmpl_link_relation` (
                                                     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
                                                     `link_name` varchar(100) DEFAULT NULL COMMENT '链路名称',
-    `link_type` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '链路类型: 01:边界基站-边界基站,02:基站-分发机,03:基站-缓存机,04:分发机-生成机',
+    `link_type` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '链路类型: 01:边界基站-边界基站,02:基站-秘钥中心,03:基站-缓存机,04:秘钥中心-生成机',
     `main_device_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '主设备id',
     `follow_device_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备id',
     `create_user` varchar(100) DEFAULT NULL COMMENT '创建人',
