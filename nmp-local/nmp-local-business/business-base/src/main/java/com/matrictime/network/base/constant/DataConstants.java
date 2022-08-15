@@ -125,4 +125,16 @@ public class DataConstants {
     public static final String URL_STATION_INSERT="/baseStation/insert";
     public static final String URL_STATION_UPDATE="/baseStation/update";
 
+    public static final String URL_ROUTE_INSERT="/route/insert";
+
+    public static final String URL_ROUTE_UPDATE="/route/update";
+
+    public static final String URL_ROUTE_DELETE="/route/delete";
+
+    public static final String URL_LINK_RELATION_INSERT="/linkRelation/insert";
+
+    public static final String URL_LINK_RELATION_UPDATE="/linkRelation/update";
+
+    public static final String URL_LINK_RELATION_DELETE="/linkRelation/delete";
+
 }

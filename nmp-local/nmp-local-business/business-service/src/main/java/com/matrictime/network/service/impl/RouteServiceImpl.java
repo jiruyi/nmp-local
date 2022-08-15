@@ -1,9 +1,13 @@
 package com.matrictime.network.service.impl;
 
-import com.matrictime.network.config.RestTemplateContextConfig;
+import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.RouteDomainService;
+import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.model.NmplDeviceInfo;
+import com.matrictime.network.dao.model.NmplDeviceInfoExample;
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
@@ -12,21 +16,14 @@ import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.RouteRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.RouteService;
-import com.matrictime.network.util.ListSplitUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.ListUtils;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Future;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -37,10 +34,14 @@ public class RouteServiceImpl implements RouteService {
     @Resource
     private BaseStationInfoDomainService baseStationInfoDomainService;
 
-    @Resource
-    private RestTemplateContextConfig restTemplateContextConfig;
+    @Value("${proxy.port}")
+    private String port;
 
-    private final String HTTP_URL = "HTTP://";
+    @Value("${proxy.context-path}")
+    private String contextPath;
+
+    @Resource
+    private AsyncService asyncService;
 
     @Override
     public Result<Integer> insertRoute(RouteRequest routeRequest) {
@@ -51,15 +52,16 @@ public class RouteServiceImpl implements RouteService {
             routeRequest.setUpdateTime(getFormatDate(date));
             routeRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             Integer insetFlag = routeDomainService.insertRoute(routeRequest);
-            //List<Future<List<Result>>> futures = collectResult(routeRequest);
             if(insetFlag == 2){
                 return new Result<>(false,"路由不可以重复插入");
             }
+            sendRout(routeRequest,DataConstants.URL_ROUTE_INSERT);
             result.setResultObj(insetFlag);
             result.setSuccess(true);
         }catch (Exception e){
+            log.info("创建路由异常",e.getMessage());
             result.setSuccess(false);
-            result.setErrorMsg("参数异常");
+            result.setErrorMsg("创建路由异常");
         }
         return result;
     }
@@ -70,6 +72,7 @@ public class RouteServiceImpl implements RouteService {
         try {
             result.setResultObj(routeDomainService.deleteRoute(routeRequest));
             result.setSuccess(true);
+            //sendRout(routeRequest,DataConstants.URL_ROUTE_DELETE);
         }catch (Exception e){
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
@@ -88,7 +91,7 @@ public class RouteServiceImpl implements RouteService {
             if(updateFlag == 2){
                 return new Result<>(false,"路由不可以重复插入");
             }
-            List<Future<List<Result>>> futures = collectResult(routeRequest);
+            sendRout(routeRequest,DataConstants.URL_ROUTE_UPDATE);
             result.setResultObj(updateFlag);
             result.setSuccess(true);
         }catch (Exception e){
@@ -118,44 +121,42 @@ public class RouteServiceImpl implements RouteService {
         return deviceInfoExtList;
     }
 
-    /*
-    * 多线程推送路由信息
-    * */
-    @Async("asyncServiceExecutor")
-    public Future<List<Result>> sendRoute(List<BaseStationInfoVo> ipList,RouteRequest postForEntity){
-        List<Result> resultList = new ArrayList<>();
-        for(int ipIndex = 0;ipIndex<ipList.size();ipIndex ++){
-            ResponseEntity<Result> routeVoResponseEntity = restTemplateContextConfig.getRestTemplate().
-                    postForEntity(HTTP_URL + ipList.get(ipIndex).getPublicNetworkIp()+":"+
-                            ipList.get(ipIndex).getPublicNetworkPort()+"/nmp-local-business/menu/queryAllMenu",
-                            postForEntity, Result.class);
-            resultList.add(routeVoResponseEntity.getBody());
+    /**
+     * 多线程推送
+     * @param routeRequest
+     * @throws Exception
+     */
+    private void sendRout(RouteRequest routeRequest,String suffix) throws Exception {
+        //获取基站信息
+        BaseStationInfoRequest accessBaseStationInfoRequest = new BaseStationInfoRequest();
+        accessBaseStationInfoRequest.setStationId(routeRequest.getAccessDeviceId());
+
+        BaseStationInfoRequest boundaryBaseStationInfoRequest = new BaseStationInfoRequest();
+        boundaryBaseStationInfoRequest.setStationId(routeRequest.getBoundaryDeviceId());
+
+        List<BaseStationInfoVo> accessBaseStationList =
+                baseStationInfoDomainService.selectLinkBaseStationInfo(accessBaseStationInfoRequest);
+        List<BaseStationInfoVo> boundaryBaseStationList =
+                baseStationInfoDomainService.selectLinkBaseStationInfo(boundaryBaseStationInfoRequest);
+
+        if(accessBaseStationList.size() > 0 && boundaryBaseStationList.size() > 0){
+            List<BaseStationInfoVo> unionList = ListUtils.union(accessBaseStationList,boundaryBaseStationList);
+            //开启多线程
+            for (BaseStationInfoVo baseStationInfoVo : unionList) {
+                Map<String,String> map = new HashMap<>();
+                map.put(DataConstants.KEY_DEVICE_ID,baseStationInfoVo.getStationId());
+                JSONObject jsonReq = new JSONObject();
+                jsonReq.put("infoVos",baseStationInfoVo);
+                map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
+                String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
+                map.put(DataConstants.KEY_URL,url);
+                asyncService.httpPush(map);
+            }
         }
-        return new AsyncResult<>(resultList);
+
     }
 
-    /*
-      获取多线程推送后的返回值
-    * */
-    private List<Future<List<Result>>> collectResult(RouteRequest routeRequest){
-        BaseStationInfoRequest accessDaseStationInfoRequest = new BaseStationInfoRequest();
-        accessDaseStationInfoRequest.setStationId(routeRequest.getAccessDeviceId());
-        BaseStationInfoRequest boundaryDaseStationInfoRequest = new BaseStationInfoRequest();
-        boundaryDaseStationInfoRequest.setStationId(routeRequest.getBoundaryDeviceId());
-        //获取修改基站信息
-        List<Future<List<Result>>> futureLinkedList = new LinkedList<>();
-        List<BaseStationInfoVo> accessDaseStationList =
-                baseStationInfoDomainService.selectLinkBaseStationInfo(accessDaseStationInfoRequest);
-        List<BaseStationInfoVo> boundaryDaseStationList =
-                baseStationInfoDomainService.selectLinkBaseStationInfo(accessDaseStationInfoRequest);
-        List<BaseStationInfoVo> unionList = ListUtils.union(accessDaseStationList,boundaryDaseStationList);
-        List<List<BaseStationInfoVo>> list = ListSplitUtil.split(unionList,1);
-        for(int poolIndex = 0;poolIndex<list.size();poolIndex ++){
-            Future<List<Result>> sendRoute = sendRoute(list.get(poolIndex), routeRequest);
-            futureLinkedList.add(sendRoute);
-        }
-        return futureLinkedList;
-    }
+
 
 
     private String getFormatDate(Date date){
