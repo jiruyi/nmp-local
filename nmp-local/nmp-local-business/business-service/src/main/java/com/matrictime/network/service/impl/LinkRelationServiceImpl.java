@@ -207,7 +207,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 Map<String,String> map = new HashMap<>();
                 map.put(DataConstants.KEY_DEVICE_ID,deviceInfo.getDeviceId());
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",deviceInfo);
+                jsonReq.put("infoVos",linkRelationRequest);
                 map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
                 String url = "http://"+deviceInfo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
@@ -222,7 +222,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 Map<String,String> map = new HashMap<>();
                 map.put(DataConstants.KEY_DEVICE_ID,baseStationInfoVo.getStationId());
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",baseStationInfoVo);
+                jsonReq.put("infoVos",linkRelationRequest);
                 map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
                 String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
@@ -237,7 +237,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 Map<String,String> map = new HashMap<>();
                 map.put(DataConstants.KEY_DEVICE_ID,baseStationInfoVo.getStationId());
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",baseStationInfoVo);
+                jsonReq.put("infoVos",linkRelationRequest);
                 map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
                 String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
@@ -248,7 +248,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 Map<String,String> map = new HashMap<>();
                 map.put(DataConstants.KEY_DEVICE_ID,deviceInfo.getDeviceId());
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",deviceInfo);
+                jsonReq.put("infoVos",linkRelationRequest);
                 map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
                 String url = "http://"+deviceInfo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
@@ -264,7 +264,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 Map<String,String> map = new HashMap<>();
                 map.put(DataConstants.KEY_DEVICE_ID,baseStationInfoVo.getStationId());
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",baseStationInfoVo);
+                jsonReq.put("infoVos",linkRelationRequest);
                 map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
                 String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
@@ -275,7 +275,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 Map<String,String> map = new HashMap<>();
                 map.put(DataConstants.KEY_DEVICE_ID,deviceInfo.getDeviceId());
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",deviceInfo);
+                jsonReq.put("infoVos",linkRelationRequest);
                 map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
                 String url = "http://"+deviceInfo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);

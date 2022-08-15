@@ -146,9 +146,9 @@ public class RouteServiceImpl implements RouteService {
                 Map<String,String> map = new HashMap<>();
                 map.put(DataConstants.KEY_DEVICE_ID,baseStationInfoVo.getStationId());
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",baseStationInfoVo);
+                jsonReq.put("infoVos",routeRequest);
                 map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
-                String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
+                String url = "http://"+baseStationInfoVo.getPublicNetworkIp()+":"+baseStationInfoVo.getPublicNetworkPort()+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
                 asyncService.httpPush(map);
             }
