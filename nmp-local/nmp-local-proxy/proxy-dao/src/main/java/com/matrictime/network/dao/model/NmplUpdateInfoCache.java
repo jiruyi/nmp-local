@@ -1,32 +1,29 @@
-package com.matrictime.network.modelVo;
+package com.matrictime.network.dao.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
 
 /**
- * 路由
- * @author   hexu
+ * 数据更新信息表(缓存机专用)
+ * @author   xxxx
  * @date   2022-08-11
  */
 @Data
-public class RouteVo implements Serializable {
-
-    private static final long serialVersionUID = 2325378929052936386L;
+public class NmplUpdateInfoCache {
     /**
      * 主键
      */
     private Long id;
 
     /**
-     * 接入基站id
+     * 更新表名
      */
-    private String accessDeviceId;
+    private String tableName;
 
     /**
-     * 边界基站id
+     * 操作类型：新增:1 修改:2
      */
-    private String boundaryDeviceId;
+    private String operationType;
 
     /**
      * 创建人
@@ -61,20 +58,20 @@ public class RouteVo implements Serializable {
         this.id = id;
     }
 
-    public String getAccessDeviceId() {
-        return accessDeviceId;
+    public String getTableName() {
+        return tableName;
     }
 
-    public void setAccessDeviceId(String accessDeviceId) {
-        this.accessDeviceId = accessDeviceId == null ? null : accessDeviceId.trim();
+    public void setTableName(String tableName) {
+        this.tableName = tableName == null ? null : tableName.trim();
     }
 
-    public String getBoundaryDeviceId() {
-        return boundaryDeviceId;
+    public String getOperationType() {
+        return operationType;
     }
 
-    public void setBoundaryDeviceId(String boundaryDeviceId) {
-        this.boundaryDeviceId = boundaryDeviceId == null ? null : boundaryDeviceId.trim();
+    public void setOperationType(String operationType) {
+        this.operationType = operationType == null ? null : operationType.trim();
     }
 
     public String getCreateUser() {

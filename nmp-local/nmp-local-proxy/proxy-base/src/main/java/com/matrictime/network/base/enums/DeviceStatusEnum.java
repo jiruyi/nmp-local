@@ -9,7 +9,7 @@ package com.matrictime.network.base.enums;
  */
 public enum DeviceStatusEnum {
 
-    NORMAL("01","静态"),
+    NORMAL("01","待激活"),
     ACTIVE("02","激活"),
     NOAUDIT("03","禁用"),
     OFFLINE("04","下线"),

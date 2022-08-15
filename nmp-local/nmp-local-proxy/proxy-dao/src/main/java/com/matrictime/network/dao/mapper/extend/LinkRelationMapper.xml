@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.LinkRelationMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplLinkRelation">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="link_name" jdbcType="VARCHAR" property="linkName" />
+    <result column="link_type" jdbcType="VARCHAR" property="linkType" />
+    <result column="main_device_id" jdbcType="VARCHAR" property="mainDeviceId" />
+    <result column="follow_device_id" jdbcType="VARCHAR" property="followDeviceId" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="CHAR" property="isExist" />
+  </resultMap>
+
+
+  <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.RouteVo">
+    insert into nmpl_link_relation (id, link_name, link_type,
+    main_device_id, follow_device_id, create_user,
+    create_time, update_user, update_time,
+    is_exist)
+    values
+    <foreach collection ="list" item="vo" separator =",">
+      (#{vo.id,jdbcType=BIGINT}, #{vo.linkName,jdbcType=VARCHAR}, #{vo.linkType,jdbcType=VARCHAR},
+      #{vo.mainDeviceId,jdbcType=VARCHAR}, #{vo.followDeviceId,jdbcType=VARCHAR}, #{vo.createUser,jdbcType=VARCHAR},
+      #{vo.createTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP},
+      #{vo.isExist,jdbcType=CHAR})
+    </foreach >
+  </insert>
+
+  <update id="batchUpdate" parameterType="com.matrictime.network.modelVo.RouteVo">
+    <foreach collection="list" separator=";" item="info">
+      update nmpl_link_relation
+      <set>
+        <if test="info.linkName != null">
+          link_name = #{info.linkName,jdbcType=VARCHAR},
+        </if>
+        <if test="info.linkType != null">
+          link_type = #{info.linkType,jdbcType=VARCHAR},
+        </if>
+        <if test="info.mainDeviceId != null">
+          main_device_id = #{info.mainDeviceId,jdbcType=VARCHAR},
+        </if>
+        <if test="info.followDeviceId != null">
+          follow_device_id = #{info.followDeviceId,jdbcType=VARCHAR},
+        </if>
+        <if test="info.createUser != null">
+          create_user = #{info.createUser,jdbcType=VARCHAR},
+        </if>
+        <if test="info.createTime != null">
+          create_time = #{info.createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="info.updateUser != null">
+          update_user = #{info.updateUser,jdbcType=VARCHAR},
+        </if>
+        <if test="info.updateTime != null">
+          update_time = #{info.updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="info.isExist != null">
+          is_exist = #{info.isExist,jdbcType=CHAR},
+        </if>
+      </set>
+      where id = #{info.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+</mapper>

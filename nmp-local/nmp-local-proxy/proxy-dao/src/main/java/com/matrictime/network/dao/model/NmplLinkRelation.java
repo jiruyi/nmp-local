@@ -1,18 +1,15 @@
-package com.matrictime.network.modelVo;
+package com.matrictime.network.dao.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
 
 /**
- * 链路
- * @author   hexu
+ * 
+ * @author   xxxx
  * @date   2022-08-11
  */
 @Data
-public class LinkRelationVo implements Serializable {
-
-    private static final long serialVersionUID = -3440337554676964970L;
+public class NmplLinkRelation {
     /**
      * 主键
      */
@@ -62,11 +59,6 @@ public class LinkRelationVo implements Serializable {
      * 1:存在  0删除
      */
     private String isExist;
-
-    /**
-     * 通知设备类型（00：基站 11：秘钥中心 12：生成机 13：缓存机）
-     */
-    private String noticeDeviceType;
 
     public Long getId() {
         return id;
@@ -146,13 +138,5 @@ public class LinkRelationVo implements Serializable {
 
     public void setIsExist(String isExist) {
         this.isExist = isExist == null ? null : isExist.trim();
-    }
-
-    public String getNoticeDeviceType() {
-        return noticeDeviceType;
-    }
-
-    public void setNoticeDeviceType(String noticeDeviceType) {
-        this.noticeDeviceType = noticeDeviceType == null ? null : noticeDeviceType.trim();;
     }
 }

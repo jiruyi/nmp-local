@@ -1,16 +1,15 @@
 package com.matrictime.network.service.impl;
 
-
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.exception.ErrorMessageContants;
-import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
+import com.matrictime.network.dao.domain.RouteDomainService;
 import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
 import com.matrictime.network.dao.model.NmplUpdateInfoBase;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.BaseStationInfoVo;
-import com.matrictime.network.request.DeleteBaseStationInfoRequest;
-import com.matrictime.network.service.BaseStationInfoService;
+import com.matrictime.network.modelVo.RouteVo;
+import com.matrictime.network.service.RouteService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -20,43 +19,41 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
-import static com.matrictime.network.base.constant.DataConstants.NMPL_BASE_STATION_INFO;
+import static com.matrictime.network.base.constant.DataConstants.NMPL_ROUTE;
 import static com.matrictime.network.constant.DataConstants.*;
-
 
 @Service
 @Slf4j
-public class BaseStationInfoServiceImpl extends SystemBaseService implements BaseStationInfoService {
-
-    @Resource
-    private BaseStationInfoDomainService baseStationInfoDomainService;
+public class RouteServiceImpl  extends SystemBaseService implements RouteService {
 
     @Resource
     private NmplUpdateInfoBaseMapper nmplUpdateInfoBaseMapper;
 
+    @Autowired
+    private RouteDomainService routeDomainService;
 
     @Override
     @Transactional
-    public Result addBaseStationInfo(List<BaseStationInfoVo> infoVos) {
+    public Result<Integer> addRoute(List<RouteVo> voList) {
         Result result = new Result<>();
         try {
-            if (CollectionUtils.isEmpty(infoVos)){
+            if (CollectionUtils.isEmpty(voList)){
                 throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             Date createTime = new Date();
-            for (BaseStationInfoVo infoVo : infoVos){
+            for (RouteVo infoVo : voList){
                 infoVo.setUpdateTime(createTime);
             }
             NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-            updateInfo.setTableName(NMPL_BASE_STATION_INFO);
+            updateInfo.setTableName(NMPL_ROUTE);
             updateInfo.setOperationType(EDIT_TYPE_ADD);
             updateInfo.setCreateTime(createTime);
             updateInfo.setCreateUser(SYSTEM_NM);
             int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-            int batchNum = baseStationInfoDomainService.insertBaseStationInfo(infoVos);
-            log.info("BaseStationInfoServiceImpl.addBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
+            int batchNum = routeDomainService.insertRoute(voList);
+            log.info("RouteServiceImpl.addRoute：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
-            log.error("BaseStationInfoServiceImpl.addBaseStationInfo：{}",e.getMessage());
+            log.error("RouteServiceImpl.addRoute：{}",e.getMessage());
             result = failResult("");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
@@ -65,43 +62,26 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     @Override
     @Transactional
-    public Result<Integer> updateBaseStationInfo(List<BaseStationInfoVo> infoVos) {
+    public Result<Integer> updateRoute(List<RouteVo> voList) {
         Result result = new Result<>();
         try {
-            if (CollectionUtils.isEmpty(infoVos)){
+            if (CollectionUtils.isEmpty(voList)){
                 throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             Date createTime = new Date();
-            for (BaseStationInfoVo infoVo : infoVos){
+            for (RouteVo infoVo : voList){
                 infoVo.setUpdateTime(createTime);
             }
             NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-            updateInfo.setTableName(NMPL_BASE_STATION_INFO);
+            updateInfo.setTableName(NMPL_ROUTE);
             updateInfo.setOperationType(EDIT_TYPE_UPD);
             updateInfo.setCreateTime(createTime);
             updateInfo.setCreateUser(SYSTEM_NM);
             int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-            int batchNum = baseStationInfoDomainService.updateBaseStationInfo(infoVos);
-            log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
+            int batchNum = routeDomainService.updateRoute(voList);
+            log.info("RouteServiceImpl.updateRoute：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
-            log.error("BaseStationInfoServiceImpl.updateBaseStationInfo：{}",e.getMessage());
-            result = failResult("");
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-        }
-        return result;
-    }
-
-    @Override
-    public Result<Integer> deleteBaseStationInfo(DeleteBaseStationInfoRequest request) {
-        Result result = new Result<>();
-        try {
-            if (CollectionUtils.isEmpty(request.getIds())){
-                throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
-            int batchNum = baseStationInfoDomainService.deleteBaseStationInfo(request.getIds());
-            log.info("BaseStationInfoServiceImpl.deleteBaseStationInfo：batchNum:{}",batchNum);
-        }catch (Exception e){
-            log.error("BaseStationInfoServiceImpl.deleteBaseStationInfo：{}",e.getMessage());
+            log.error("RouteServiceImpl.updateRoute：{}",e.getMessage());
             result = failResult("");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }

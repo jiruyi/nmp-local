@@ -4,16 +4,15 @@ package com.matrictime.network.base.enums;
  * @author jiruyi
  * @copyright www.matrictime.com
  * @project microservicecloud-jzsg
- * @date 2021/9/13 0013 11:05
+ * @date 2021/9/15 0015 15:22
  * @desc
  */
-public enum DeviceStatusEnum {
+public enum LinkTypeEnum {
+    BS("01","边界基站-边界基站"),
+    BK("02","基站-秘钥中心"),
+    BC("03","基站-缓存机"),
+    KG("04","秘钥中心-生成机");
 
-    NORMAL("01","待激活"),
-    ACTIVE("02","激活"),
-    NOAUDIT("03","禁用"),
-    OFFLINE("04","下线"),
-    REJECT("05","审核拒绝");
     private String code;
     private String conditionDesc;
     public String getCode() {
@@ -24,7 +23,7 @@ public enum DeviceStatusEnum {
         return conditionDesc;
     }
 
-    DeviceStatusEnum(String code, String conditionDesc) {
+    LinkTypeEnum(String code, String conditionDesc) {
         this.code = code;
         this.conditionDesc = conditionDesc;
     }
