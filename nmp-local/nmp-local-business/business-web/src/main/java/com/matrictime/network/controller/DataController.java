@@ -1,6 +1,8 @@
 package com.matrictime.network.controller;
 
 import com.matrictime.network.annotation.SystemLog;
+import com.matrictime.network.base.enums.DeviceTypeEnum;
+import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.request.BillRequest;
@@ -50,7 +52,7 @@ public class DataController {
     @RequiresPermissions("sys:stationData:query")
     @SystemLog(opermodul = "统计管理模块",operDesc = "查询基站数据",operType = "查询")
     public Result<PageInfo> queryStationDataByConditon(@RequestBody DataCollectReq dataCollectReq){
-        dataCollectReq.setDeviceType("01");
+        dataCollectReq.setDeviceType(StationTypeEnum.BASE.getCode());
         return dataCollectService.queryByConditon(dataCollectReq);
     }
 
@@ -64,7 +66,7 @@ public class DataController {
     @RequiresPermissions("sys:dispenserData:query")
     @SystemLog(opermodul = "统计管理模块",operDesc = "查询分发机数据",operType = "查询")
     public Result<PageInfo> queryDispenserDataByConditon(@RequestBody DataCollectReq dataCollectReq){
-        dataCollectReq.setDeviceType("02");
+        dataCollectReq.setDeviceType(DeviceTypeEnum.DISPENSER.getCode());
         return dataCollectService.queryByConditon(dataCollectReq);
     }
 
@@ -78,7 +80,7 @@ public class DataController {
     @RequiresPermissions("sys:generatorData:query")
     @SystemLog(opermodul = "统计管理模块",operDesc = "查询生成机数据",operType = "查询")
     public Result<PageInfo> queryGeneratorDataByConditon(@RequestBody DataCollectReq dataCollectReq){
-        dataCollectReq.setDeviceType("03");
+        dataCollectReq.setDeviceType(DeviceTypeEnum.GENERATOR.getCode());
         return dataCollectService.queryByConditon(dataCollectReq);
     }
 
@@ -92,7 +94,7 @@ public class DataController {
     @RequiresPermissions("sys:cacheData:query")
     @SystemLog(opermodul = "统计管理模块",operDesc = "查询缓存机数据",operType = "查询")
     public Result<PageInfo> queryCacheDataByConditon(@RequestBody DataCollectReq dataCollectReq){
-        dataCollectReq.setDeviceType("04");
+        dataCollectReq.setDeviceType(DeviceTypeEnum.CACHE.getCode());
         return dataCollectService.queryByConditon(dataCollectReq);
     }
 
