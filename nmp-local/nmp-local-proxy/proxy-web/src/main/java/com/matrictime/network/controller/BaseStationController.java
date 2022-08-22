@@ -3,8 +3,6 @@ package com.matrictime.network.controller;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
-import com.matrictime.network.request.AddBaseStationInfoRequest;
-import com.matrictime.network.request.UpdateBaseStationInfoRequest;
 import com.matrictime.network.service.BaseStationInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 基站管理模块
@@ -36,12 +32,10 @@ public class BaseStationController extends SystemBaseService {
      */
 
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Result addBaseStationInfo(@RequestBody BaseStationInfoVo request){
-        Result result;
+    public Result<Integer> addBaseStationInfo(@RequestBody BaseStationInfoVo request){
+        Result<Integer> result;
         try {
-            List<BaseStationInfoVo> infoVos = new ArrayList<>();
-            infoVos.add(request);
-            result = baseStationInfoService.addBaseStationInfo(infoVos);
+            result = baseStationInfoService.addBaseStationInfo(request);
         }catch (Exception e){
             log.info("BaseStationController.addBaseStationInfo{}",e.getMessage());
             result = failResult("");
@@ -55,12 +49,10 @@ public class BaseStationController extends SystemBaseService {
      * @return
      */
     @RequestMapping(value = "/update",method = RequestMethod.POST)
-    public Result updateBaseStationInfo(@RequestBody BaseStationInfoVo request){
-        Result result;
+    public Result<Integer> updateBaseStationInfo(@RequestBody BaseStationInfoVo request){
+        Result<Integer> result;
         try {
-            List<BaseStationInfoVo> infoVos = new ArrayList<>();
-            infoVos.add(request);
-            result = baseStationInfoService.updateBaseStationInfo(infoVos);
+            result = baseStationInfoService.updateBaseStationInfo(request);
         }catch (Exception e){
             log.info("BaseStationController.updateBaseStation{}",e.getMessage());
             result = failResult("");
@@ -74,8 +66,8 @@ public class BaseStationController extends SystemBaseService {
      * @return
      */
 //    @RequestMapping(value = "/delete",method = RequestMethod.POST)
-//    public Result deleteBaseStation(@RequestBody DeleteBaseStationInfoRequest request){
-//        Result result;
+//    public Result<Integer> deleteBaseStation(@RequestBody DeleteBaseStationInfoRequest request){
+//        Result<Integer> result;
 //        try {
 //            result = baseStationInfoService.deleteBaseStationInfo(request);
 //        }catch (Exception e){

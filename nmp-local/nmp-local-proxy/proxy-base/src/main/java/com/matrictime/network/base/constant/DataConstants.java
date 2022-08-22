@@ -123,6 +123,10 @@ public class DataConstants {
      */
     public static final String NMPL_BASE_STATION_INFO = "nmpl_base_station_info";
 
+    public static final String NMPL_NMPL_DEVICE_INFO = "nmpl_device_info";
+
+    public static final String NMPL_LOCAL_DEVICE_INFO = "nmpl_local_device_info";
+
     public static final String NMPL_ROUTE = "nmpl_route";
 
     public static final String NMPL_LINK_RELATION = "nmpl_link_relation";

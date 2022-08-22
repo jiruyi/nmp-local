@@ -6,6 +6,9 @@ import java.io.Serializable;
 import java.util.Date;
 @Data
 public class BaseStationInfoVo implements Serializable {
+
+
+    private static final long serialVersionUID = 6374529825829840063L;
     /**
      * 主键
      */
@@ -105,4 +108,9 @@ public class BaseStationInfoVo implements Serializable {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * true:是本机 false:不是本机
+     */
+    private Boolean isLocal;
 }
