@@ -641,4 +641,9 @@ from(
        or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
        and is_exist = 1
   </select>
+  <select id="getSequenceId" resultType="java.lang.Integer">
+    select _nextval('seq_name1');
+  </select>
+
+
 </mapper>
