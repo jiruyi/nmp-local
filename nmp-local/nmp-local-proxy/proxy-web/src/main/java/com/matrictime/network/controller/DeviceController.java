@@ -27,18 +27,17 @@ public class DeviceController extends SystemBaseService {
     private DeviceInfoService deviceInfoService;
 
     /**
-     * 秘钥中心信息插入
+     * 设备信息插入
      * @param deviceInfoVo
      * @return
      */
-    @RequestMapping(value = "/insertKeyCenter",method = RequestMethod.POST)
-    public Result<Integer> insertKeyCenter(@RequestBody DeviceInfoVo deviceInfoVo){
+    @RequestMapping(value = "/insert",method = RequestMethod.POST)
+    public Result<Integer> insert(@RequestBody DeviceInfoVo deviceInfoVo){
         Result<Integer> result;
         try {
-            deviceInfoVo.setDeviceType(DeviceTypeEnum.DISPENSER.getCode());
             result = deviceInfoService.addDeviceInfo(deviceInfoVo);
         }catch (Exception e){
-            log.info("新增秘钥中心异常:insertKeyCenter{}",e.getMessage());
+            log.info("新增设备信息异常:insert{}",e.getMessage());
             result = failResult("");
         }
         return result;
@@ -46,96 +45,21 @@ public class DeviceController extends SystemBaseService {
 
 
     /**
-     * 更新秘钥中心信息
+     * 更新设备信息
      * @param deviceInfoVo
      * @return
      */
-    @RequestMapping(value = "/updateKeyCenter",method = RequestMethod.POST)
-    public Result<Integer> updateKeyCenter(@RequestBody DeviceInfoVo deviceInfoVo){
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
+    public Result<Integer> update(@RequestBody DeviceInfoVo deviceInfoVo){
         Result<Integer> result;
         try {
-            deviceInfoVo.setDeviceType(DeviceTypeEnum.DISPENSER.getCode());
             result = deviceInfoService.updateDeviceInfo(deviceInfoVo);
         }catch (Exception e){
-            log.info("更新秘钥中心信息异常:updateKeyCenter{}",e.getMessage());
+            log.info("更新设备信息异常:update{}",e.getMessage());
             result = failResult("");
         }
         return result;
     }
 
-    /**
-     * 生成机信息插入
-     * @param deviceInfoVo
-     * @return
-     */
-    @RequestMapping(value = "/insertGenerator",method = RequestMethod.POST)
-    public Result<Integer> insertGenerator(@RequestBody DeviceInfoVo deviceInfoVo){
-        Result<Integer> result;
-        try {
-            deviceInfoVo.setDeviceType(DeviceTypeEnum.GENERATOR.getCode());
-            result = deviceInfoService.addDeviceInfo(deviceInfoVo);
-        }catch (Exception e){
-            log.info("新增生成机异常:insertGenerator{}",e.getMessage());
-            result = failResult("");
-        }
-        return result;
-    }
-
-
-    /**
-     * 更新生成机信息
-     * @param deviceInfoVo
-     * @return
-     */
-    @RequestMapping(value = "/updateGenerator",method = RequestMethod.POST)
-    public Result<Integer> updateGenerator(@RequestBody DeviceInfoVo deviceInfoVo){
-        Result<Integer> result;
-        try {
-            deviceInfoVo.setDeviceType(DeviceTypeEnum.GENERATOR.getCode());
-            result = deviceInfoService.updateDeviceInfo(deviceInfoVo);
-        }catch (Exception e){
-            log.info("更新生成机信息:updateGenerator{}",e.getMessage());
-            result = failResult("");
-        }
-        return result;
-    }
-
-
-    /**
-     * 缓存机信息插入
-     * @param deviceInfoVo
-     * @return
-     */
-    @RequestMapping(value = "/insertCache",method = RequestMethod.POST)
-    public Result<Integer> insertCache(@RequestBody DeviceInfoVo deviceInfoVo){
-        Result<Integer> result;
-        try {
-            deviceInfoVo.setDeviceType(DeviceTypeEnum.CACHE.getCode());
-            result = deviceInfoService.addDeviceInfo(deviceInfoVo);
-        }catch (Exception e){
-            log.info("新增缓存机异常:insertCache{}",e.getMessage());
-            result = failResult("");
-        }
-        return result;
-    }
-
-
-    /**
-     * 更新缓存机信息
-     * @param deviceInfoVo
-     * @return
-     */
-    @RequestMapping(value = "/updateCache",method = RequestMethod.POST)
-    public Result<Integer> updateCache(@RequestBody DeviceInfoVo deviceInfoVo){
-        Result<Integer> result;
-        try {
-            deviceInfoVo.setDeviceType(DeviceTypeEnum.CACHE.getCode());
-            result = deviceInfoService.updateDeviceInfo(deviceInfoVo);
-        }catch (Exception e){
-            log.info("更新缓存机信息:updateCache{}",e.getMessage());
-            result = failResult("");
-        }
-        return result;
-    }
 
 }
