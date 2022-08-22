@@ -14,8 +14,11 @@ import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.model.NmplBaseStationInfo;
 import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
+import com.matrictime.network.dao.model.NmplDeviceInfo;
+import com.matrictime.network.dao.model.NmplDeviceInfoExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
@@ -30,10 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -58,6 +58,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     @Value("${proxy.context-path}")
     private String contextPath;
 
+    @Resource
+    private NmplDeviceInfoMapper nmplDeviceInfoMapper;
+
 
     @Override
     public Result<Integer> insertBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
@@ -66,6 +69,8 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Integer insertFlag = null;
         BaseStationInfoRequest infoRequest = new BaseStationInfoRequest();
         try {
+            Integer stationNetworkId = nmplBaseStationInfoMapper.getSequenceId();
+            baseStationInfoRequest.setStationNetworkId(stationNetworkId.toString());
             if(!CommonCheckUtil.checkStringLength(baseStationInfoRequest.getStationName(),null,16)){
                 return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
             }
@@ -111,13 +116,14 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(baseStationInfoRequest.getStationId());
                 List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
 
-                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
-
-                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+                Map<String,String> deviceMap = getAllUrl(nmplBaseStationInfoList.get(0).getRelationOperatorId());
+               // deviceMap.put(nmplBaseStationInfoList.get(0).getLanIp(),nmplBaseStationInfoList.get(0).getStationId());
+                Set<String> set = deviceMap.keySet();
+                for (String lanIp : set) {
                     Map<String,String> map = new HashMap<>();
-                    map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
+                    map.put(DataConstants.KEY_DEVICE_ID,deviceMap.get(lanIp));
                     map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(nmplBaseStationInfoList.get(0)));
-                    String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_INSERT;
+                    String url = "http://"+lanIp+":"+port+contextPath+DataConstants.URL_STATION_INSERT;
                     map.put(DataConstants.KEY_URL,url);
                     asyncService.httpPush(map);
                 }
@@ -172,12 +178,15 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
                 nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(baseStationInfoRequest.getStationId());
                 List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
-                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+
+                Map<String,String> deviceMap = getAllUrl(nmplBaseStationInfoList.get(0).getRelationOperatorId());
+                //deviceMap.put(nmplBaseStationInfoList.get(0).getLanIp(),nmplBaseStationInfoList.get(0).getStationId());
+                Set<String> set = deviceMap.keySet();
+                for (String lanIp : set) {
                     Map<String,String> map = new HashMap<>();
-                    map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
+                    map.put(DataConstants.KEY_DEVICE_ID,deviceMap.get(lanIp));
                     map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(nmplBaseStationInfoList.get(0)));
-                    String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
+                    String url = "http://"+lanIp+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
                     map.put(DataConstants.KEY_URL,url);
                     asyncService.httpPush(map);
                 }
@@ -205,12 +214,15 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
                 nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(baseStationInfoRequest.getStationId());
                 List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
-                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+
+                Map<String,String> deviceMap = getAllUrl(nmplBaseStationInfoList.get(0).getRelationOperatorId());
+                deviceMap.put(nmplBaseStationInfoList.get(0).getLanIp(),nmplBaseStationInfoList.get(0).getStationId());
+                Set<String> set = deviceMap.keySet();
+                for (String lanIp : set) {
                     Map<String,String> map = new HashMap<>();
-                    map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
+                    map.put(DataConstants.KEY_DEVICE_ID,deviceMap.get(lanIp));
                     map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(nmplBaseStationInfoList.get(0)));
-                    String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
+                    String url = "http://"+lanIp+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
                     map.put(DataConstants.KEY_URL,url);
                     asyncService.httpPush(map);
                 }
@@ -350,4 +362,23 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         SimpleDateFormat creatDateToString = new SimpleDateFormat(creatDate);
         return creatDateToString.format(date);
     }
+
+
+    private Map<String,String> getAllUrl(String relationOperatorId){
+        Map<String,String> map = new HashMap<>();
+        NmplBaseStationInfoExample nmplBaseStationInfoExample  = new NmplBaseStationInfoExample();
+        nmplBaseStationInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
+        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+        NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+        nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
+        List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+        for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+            map.put(nmplBaseStationInfo.getLanIp(),nmplBaseStationInfo.getStationId());
+        }
+        for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+            map.put(nmplDeviceInfo.getLanIp(),nmplDeviceInfo.getDeviceId());
+        }
+        return  map;
+    }
+
 }

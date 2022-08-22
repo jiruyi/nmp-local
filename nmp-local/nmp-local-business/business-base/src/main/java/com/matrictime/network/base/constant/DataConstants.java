@@ -124,6 +124,10 @@ public class DataConstants {
 
     public static final String URL_STATION_INSERT="/baseStation/insert";
     public static final String URL_STATION_UPDATE="/baseStation/update";
+    public static final String URL_DEVICE_INSERT="/device/insert";
+    public static final String URL_DEVICE_UPDATE="/device/update";
+
+
 
     public static final String URL_ROUTE_INSERT="/route/insert";
 
