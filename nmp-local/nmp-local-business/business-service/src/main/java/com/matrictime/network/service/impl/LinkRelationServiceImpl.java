@@ -2,16 +2,19 @@ package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.LinkRelationDomainService;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.mapper.NmplLinkRelationMapper;
 import com.matrictime.network.dao.model.NmplDeviceInfo;
 import com.matrictime.network.dao.model.NmplDeviceInfoExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
+import com.matrictime.network.modelVo.LinkRelationSendVo;
 import com.matrictime.network.modelVo.LinkRelationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.DeviceInfoRequest;
@@ -25,6 +28,7 @@ import com.matrictime.network.service.LinkRelationService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.ListUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +60,9 @@ public class LinkRelationServiceImpl implements LinkRelationService {
 
     @Resource
     private AsyncService asyncService;
+
+    @Resource
+    private NmplLinkRelationMapper nmplLinkRelationMapper;
 
     @Override
     public Result<Integer> insertLinkRelation(LinkRelationRequest linkRelationRequest) {
@@ -105,10 +112,43 @@ public class LinkRelationServiceImpl implements LinkRelationService {
             if(!CommonCheckUtil.checkStringLength(linkRelationRequest.getLinkName(),null,100)){
                 return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
             }
+            List<LinkRelationVo> list = nmplLinkRelationMapper.query(linkRelationRequest);
             linkRelationRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             int i = linkRelationDomainService.updateLinkRelation(linkRelationRequest);
             if(i == 2){
                 return new Result<>(false,"链路名称或线路重复");
+            }
+            NmplDeviceInfoExample followDeviceInfoExample = new NmplDeviceInfoExample();
+            NmplDeviceInfoExample.Criteria deviceInfoExampleCriteria = followDeviceInfoExample.createCriteria();
+            deviceInfoExampleCriteria.andDeviceIdEqualTo(list.get(0).getFollowDeviceId());
+            List<NmplDeviceInfo> followDeviceList = deviceInfoMapper.selectByExample(followDeviceInfoExample);
+            if(followDeviceList.size() > 0){
+                for (NmplDeviceInfo deviceInfo : followDeviceList) {
+                    LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
+                    BeanUtils.copyProperties(list.get(0),linkRelationSendVo);
+                    linkRelationSendVo.setNoticeDeviceType(deviceInfo.getDeviceType());
+                    Map<String,String> map = new HashMap<>();
+                    map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(linkRelationSendVo));
+                    String url = "http://"+deviceInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_LINK_RELATION_UPDATE;
+                    map.put(DataConstants.KEY_URL,url);
+                    asyncService.httpPush(map);
+                }
+            }
+            BaseStationInfoRequest followBaseStationInfoRequest = new BaseStationInfoRequest();
+            followBaseStationInfoRequest.setStationId(list.get(0).getFollowDeviceId());
+            List<BaseStationInfoVo> followBaseStationList =
+                    baseStationInfoDomainService.selectLinkBaseStationInfo(followBaseStationInfoRequest);
+            if(followBaseStationList.size() > 0){
+                for (BaseStationInfoVo baseStationInfoVo : followBaseStationList) {
+                    LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
+                    BeanUtils.copyProperties(list.get(0),linkRelationSendVo);
+                    linkRelationSendVo.setNoticeDeviceType(StationTypeEnum.BASE.getCode());
+                    Map<String,String> map = new HashMap<>();
+                    map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(linkRelationSendVo));
+                    String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+DataConstants.URL_LINK_RELATION_UPDATE;
+                    map.put(DataConstants.KEY_URL,url);
+                    asyncService.httpPush(map);
+                }
             }
             sendLinkRelation(linkRelationRequest,DataConstants.URL_LINK_RELATION_UPDATE);
             result.setResultObj(i);
@@ -175,6 +215,9 @@ public class LinkRelationServiceImpl implements LinkRelationService {
      * @throws Exception
      */
     private void sendLinkRelation(LinkRelationRequest linkRelationRequest,String suffix) throws Exception {
+
+        List<LinkRelationVo> list = nmplLinkRelationMapper.query(linkRelationRequest);
+
         //获取基站信息
         BaseStationInfoRequest mainBaseStationInfoRequest = new BaseStationInfoRequest();
         mainBaseStationInfoRequest.setStationId(linkRelationRequest.getMainDeviceId());
@@ -202,13 +245,14 @@ public class LinkRelationServiceImpl implements LinkRelationService {
 
         if(mainDeviceList.size() > 0 && followDeviceList.size() > 0){
             List<NmplDeviceInfo> deviceInfoList = ListUtils.union(mainDeviceList,followDeviceList);
+
             //开启多线程
             for (NmplDeviceInfo deviceInfo : deviceInfoList) {
+                LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
+                BeanUtils.copyProperties(list.get(0),linkRelationSendVo);
+                linkRelationSendVo.setNoticeDeviceType(deviceInfo.getDeviceType());
                 Map<String,String> map = new HashMap<>();
-                map.put(DataConstants.KEY_DEVICE_ID,deviceInfo.getDeviceId());
-                JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",linkRelationRequest);
-                map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
+                map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(linkRelationSendVo));
                 String url = "http://"+deviceInfo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
                 asyncService.httpPush(map);
@@ -217,13 +261,13 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         }
         if(mainBaseStationList.size() > 0 && followBaseStationList.size() > 0){
             List<BaseStationInfoVo> unionList = ListUtils.union(mainBaseStationList,followBaseStationList);
+            LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
+            BeanUtils.copyProperties(list.get(0),linkRelationSendVo);
+            linkRelationSendVo.setNoticeDeviceType(StationTypeEnum.BASE.getCode());
             //开启多线程
             for (BaseStationInfoVo baseStationInfoVo : unionList) {
                 Map<String,String> map = new HashMap<>();
-                map.put(DataConstants.KEY_DEVICE_ID,baseStationInfoVo.getStationId());
-                JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",linkRelationRequest);
-                map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
+                map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(linkRelationSendVo));
                 String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
                 asyncService.httpPush(map);
@@ -234,21 +278,23 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         if(mainBaseStationList.size() > 0 && followDeviceList.size() > 0){
             //开启多线程
             for (BaseStationInfoVo baseStationInfoVo : mainBaseStationList) {
+                LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
+                BeanUtils.copyProperties(list.get(0),linkRelationSendVo);
+                linkRelationSendVo.setNoticeDeviceType(StationTypeEnum.BASE.getCode());
                 Map<String,String> map = new HashMap<>();
-                map.put(DataConstants.KEY_DEVICE_ID,baseStationInfoVo.getStationId());
-                JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",linkRelationRequest);
-                map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
+                map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(linkRelationSendVo));
                 String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
                 asyncService.httpPush(map);
             }
             //开启多线程
             for (NmplDeviceInfo deviceInfo : followDeviceList) {
+                LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
+                BeanUtils.copyProperties(list.get(0),linkRelationSendVo);
+                linkRelationSendVo.setNoticeDeviceType(deviceInfo.getDeviceType());
                 Map<String,String> map = new HashMap<>();
-                map.put(DataConstants.KEY_DEVICE_ID,deviceInfo.getDeviceId());
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",linkRelationRequest);
+                jsonReq.put("linkRelation",linkRelationSendVo);
                 map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
                 String url = "http://"+deviceInfo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
@@ -261,22 +307,22 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         if(mainDeviceList.size() > 0 && followBaseStationList.size() > 0){
             //开启多线程
             for (BaseStationInfoVo baseStationInfoVo : followBaseStationList) {
+                LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
+                BeanUtils.copyProperties(list.get(0),linkRelationSendVo);
+                linkRelationSendVo.setNoticeDeviceType(StationTypeEnum.BASE.getCode());
                 Map<String,String> map = new HashMap<>();
-                map.put(DataConstants.KEY_DEVICE_ID,baseStationInfoVo.getStationId());
-                JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",linkRelationRequest);
-                map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
+                map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(linkRelationSendVo));
                 String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
                 asyncService.httpPush(map);
             }
             //开启多线程
             for (NmplDeviceInfo deviceInfo : mainDeviceList) {
+                LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
+                BeanUtils.copyProperties(list.get(0),linkRelationSendVo);
+                linkRelationSendVo.setNoticeDeviceType(deviceInfo.getDeviceType());
                 Map<String,String> map = new HashMap<>();
-                map.put(DataConstants.KEY_DEVICE_ID,deviceInfo.getDeviceId());
-                JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",linkRelationRequest);
-                map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
+                map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(linkRelationSendVo));
                 String url = "http://"+deviceInfo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
                 asyncService.httpPush(map);
@@ -285,7 +331,6 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         return;
 
     }
-
 
 
 
