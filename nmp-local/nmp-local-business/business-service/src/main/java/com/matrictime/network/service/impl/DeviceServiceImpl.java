@@ -270,6 +270,7 @@ public class DeviceServiceImpl implements DeviceService {
         List<NmplDeviceInfo> nmplDeviceInfoList = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
 
         Map<String,String> deviceMap = getAllUrl(nmplDeviceInfoList.get(0).getRelationOperatorId());
+        deviceMap.put(nmplDeviceInfoList.get(0).getLanIp(),nmplDeviceInfoList.get(0).getDeviceId());
         Set<String> set = deviceMap.keySet();
         for (String lanIp : set) {
             NmplDeviceInfo request = new NmplDeviceInfo();
