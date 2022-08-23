@@ -6,6 +6,7 @@ import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplLocalBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
+import com.matrictime.network.dao.model.NmplBaseStationInfo;
 import com.matrictime.network.dao.model.NmplLocalBaseStationInfo;
 import com.matrictime.network.dao.model.NmplUpdateInfoBase;
 import com.matrictime.network.model.Result;
@@ -20,11 +21,10 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import static com.matrictime.network.base.constant.DataConstants.NMPL_BASE_STATION_INFO;
+import static com.matrictime.network.base.constant.DataConstants.NMPL_LOCAL_BASE_STATION_INFO;
 import static com.matrictime.network.constant.DataConstants.*;
 
 
@@ -47,27 +47,39 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     public Result addBaseStationInfo(BaseStationInfoVo infoVo) {
         Result result = new Result<>();
         try {
+            Date createTime = new Date();
+            infoVo.setUpdateTime(createTime);
+
             if (infoVo.getIsLocal()){
                 NmplLocalBaseStationInfo stationInfo = new NmplLocalBaseStationInfo();
                 BeanUtils.copyProperties(infoVo,stationInfo);
                 int local = nmplLocalBaseStationInfoMapper.insertSelective(stationInfo);
-                log.info("BaseStationInfoServiceImpl.addBaseStationInfo：local:{}",local);
+
+                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+                updateInfo.setTableName(NMPL_LOCAL_BASE_STATION_INFO);
+                updateInfo.setOperationType(EDIT_TYPE_ADD);
+                updateInfo.setCreateTime(createTime);
+                updateInfo.setCreateUser(SYSTEM_NM);
+
+                int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+
+                log.info("BaseStationInfoServiceImpl.addBaseStationInfo：local:{},updateLocal:{}",local,updateLocal);
             }
 
-            Date createTime = new Date();
-            infoVo.setUpdateTime(createTime);
 
-            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-            updateInfo.setTableName(NMPL_BASE_STATION_INFO);
-            updateInfo.setOperationType(EDIT_TYPE_ADD);
-            updateInfo.setCreateTime(createTime);
-            updateInfo.setCreateUser(SYSTEM_NM);
+            // 插入通知表通知base表更新
+            NmplUpdateInfoBase updateTable = new NmplUpdateInfoBase();
+            updateTable.setTableName(NMPL_BASE_STATION_INFO);
+            updateTable.setOperationType(EDIT_TYPE_ADD);
+            updateTable.setCreateTime(createTime);
+            updateTable.setCreateUser(SYSTEM_NM);
 
-            int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-            List<BaseStationInfoVo> infoVos = new ArrayList<>();
-            infoVos.add(infoVo);
-            int batchNum = baseStationInfoDomainService.insertBaseStationInfo(infoVos);
-            log.info("BaseStationInfoServiceImpl.addBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
+            int addTable = nmplUpdateInfoBaseMapper.insertSelective(updateTable);
+
+            NmplBaseStationInfo baseStationInfo = new NmplBaseStationInfo();
+            BeanUtils.copyProperties(infoVo,baseStationInfo);
+            int addStation = baseStationInfoDomainService.insert(baseStationInfo);
+            log.info("BaseStationInfoServiceImpl.addBaseStationInfo：addTable:{},addStation:{}",addTable,addStation);
         }catch (Exception e){
             log.error("BaseStationInfoServiceImpl.addBaseStationInfo：{}",e.getMessage());
             result = failResult("");
@@ -81,24 +93,35 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     public Result<Integer> updateBaseStationInfo(BaseStationInfoVo infoVo) {
         Result result = new Result<>();
         try {
+            Date createTime = new Date();
+            infoVo.setUpdateTime(createTime);
+
             if (infoVo.getIsLocal()){
                 NmplLocalBaseStationInfo stationInfo = new NmplLocalBaseStationInfo();
                 BeanUtils.copyProperties(infoVo,stationInfo);
                 int local = nmplLocalBaseStationInfoMapper.updateByPrimaryKeySelective(stationInfo);
-                log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：local:{}",local);
+
+                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+                updateInfo.setTableName(NMPL_LOCAL_BASE_STATION_INFO);
+                updateInfo.setOperationType(EDIT_TYPE_UPD);
+                updateInfo.setCreateTime(createTime);
+                updateInfo.setCreateUser(SYSTEM_NM);
+
+                int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+                log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：local:{},updateLocal:{}",local,updateLocal);
             }
 
-            Date createTime = new Date();
             NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
             updateInfo.setTableName(NMPL_BASE_STATION_INFO);
             updateInfo.setOperationType(EDIT_TYPE_UPD);
             updateInfo.setCreateTime(createTime);
             updateInfo.setCreateUser(SYSTEM_NM);
-            int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-            List<BaseStationInfoVo> infoVos = new ArrayList<>();
-            infoVos.add(infoVo);
-            int batchNum = baseStationInfoDomainService.updateBaseStationInfo(infoVos);
-            log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：addNum:{},batchNum:{}",addNum,batchNum);
+            int updateTable = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+
+            NmplBaseStationInfo baseStationInfo = new NmplBaseStationInfo();
+            BeanUtils.copyProperties(infoVo,baseStationInfo);
+            int updateBase = baseStationInfoDomainService.update(baseStationInfo);
+            log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：updateTable:{},updateBase:{}",updateTable,updateBase);
         }catch (Exception e){
             log.error("BaseStationInfoServiceImpl.updateBaseStationInfo：{}",e.getMessage());
             result = failResult("");
