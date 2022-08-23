@@ -88,12 +88,21 @@
         order by temp.update_time desc
     </select>
     <select id="query" parameterType="com.matrictime.network.request.RouteRequest" resultType="com.matrictime.network.modelVo.RouteVo">
-        select id
+        select id,access_device_id,boundary_device_id,create_user,
+               create_time,update_user,update_time,is_exist
         from nmpl_route
         where
         is_exist = 1
         and access_device_id = #{accessDeviceId,jdbcType=VARCHAR}
         and boundary_device_id = #{boundaryDeviceId,jdbcType=VARCHAR}
+    </select>
+    <select id="selectById" parameterType="com.matrictime.network.request.RouteRequest" resultType="com.matrictime.network.modelVo.RouteVo">
+        select id,access_device_id,boundary_device_id,create_user,
+               create_time,update_user,update_time,is_exist
+        from nmpl_route
+        where
+            is_exist = 1
+          and id = #{id,jdbcType=VARCHAR}
     </select>
     <select id="selectDevices" resultMap="DeviceBaseResultMap">
         select

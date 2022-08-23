@@ -20,6 +20,8 @@ import com.matrictime.network.request.TotalLoadChangeReq;
 import com.matrictime.network.response.CheckHeartResp;
 import com.matrictime.network.response.QueryMonitorResp;
 import com.matrictime.network.response.TotalLoadChangeResp;
+import com.matrictime.network.service.BaseStationInfoService;
+import com.matrictime.network.service.DeviceService;
 import com.matrictime.network.service.MonitorService;
 import com.matrictime.network.util.DateUtils;
 import com.matrictime.network.util.ParamCheckUtil;
@@ -65,6 +67,14 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     @Autowired(required = false)
     private NmplDataCollectMapper nmplDataCollectMapper;
 
+    @Autowired
+    private BaseStationInfoService baseStationInfoService;
+
+    @Autowired
+    private DeviceService deviceService;
+
+
+
     private static final String USER_COUNT_CODE = "userNumber";
     private static final String TOTAL_BAND_WIDTH_CODE = "bandwidth";
 
@@ -93,13 +103,20 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                         NmplBaseStationInfo baseStationInfo = new NmplBaseStationInfo();
                         baseStationInfo.setId(Long.parseLong(id));
                         baseStationInfo.setStationStatus(STATION_STATUS_ACTIVE);
-                        nmplBaseStationInfoMapper.updateByPrimaryKeySelective(baseStationInfo);
+                        int num =nmplBaseStationInfoMapper.updateByPrimaryKeySelective(baseStationInfo);
+                        if(num==1){
+                            baseStationInfoService.pushToProxy(req.getDeviceId(), URL_STATION_UPDATE);
+                        }
                     }else if (DEVICE_BIG_TYPE_1.equals(bigType)){
                         NmplDeviceInfo deviceInfo = new NmplDeviceInfo();
                         deviceInfo.setId(Long.parseLong(id));
                         deviceInfo.setStationStatus(STATION_STATUS_ACTIVE);
-                        nmplDeviceInfoMapper.updateByPrimaryKeySelective(deviceInfo);
+                        int num =nmplDeviceInfoMapper.updateByPrimaryKeySelective(deviceInfo);
+                        if(num==1){
+                            deviceService.pushToProxy(req.getDeviceId(),URL_DEVICE_UPDATE);
+                        }
                     }
+                    break;
                 case STATION_STATUS_ACTIVE:
                     // 激活更新缓存时间
                     redisTemplate.opsForValue().set(HEART_CHECK_DEVICE_ID+req.getDeviceId(),true,healthDeadlineTime, TimeUnit.SECONDS);

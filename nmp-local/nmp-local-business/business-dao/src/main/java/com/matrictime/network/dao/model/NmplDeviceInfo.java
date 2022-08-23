@@ -115,6 +115,11 @@ public class NmplDeviceInfo {
      */
     private Boolean isExist;
 
+    /**
+     * true:是本机 false:不是本机
+     */
+    private Boolean isLocal;
+
     public Long getId() {
         return id;
     }
@@ -281,5 +286,13 @@ public class NmplDeviceInfo {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public Boolean getLocal() {
+        return isLocal;
+    }
+
+    public void setLocal(Boolean local) {
+        isLocal = local;
     }
 }

@@ -26,4 +26,6 @@ public interface DeviceService {
     Result<StationVo> selectDeviceId(DeviceInfoRequest deviceInfoRequest);
 
     Result<PageInfo> selectDeviceALl(DeviceInfoRequest deviceInfoRequest);
+
+    public void pushToProxy(String deviceId,String suffix)throws Exception;
 }
