@@ -33,4 +33,6 @@ public interface BaseStationInfoService {
     Result<BaseStationInfoResponse> selectByOperatorId(BaseStationInfoRequest baseStationInfoRequest);
 
     Result<PageInfo> selectBaseStationList(BaseStationInfoRequest baseStationInfoRequest);
+
+    public void pushToProxy(String stationId,String suffix)throws Exception;
 }

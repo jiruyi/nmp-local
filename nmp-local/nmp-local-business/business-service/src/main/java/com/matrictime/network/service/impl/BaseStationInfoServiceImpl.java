@@ -195,7 +195,8 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
      * @param suffix 推送url后缀信息
      * @throws Exception
      */
-    private void pushToProxy(String stationId,String suffix)throws Exception{
+    @Override
+    public void pushToProxy(String stationId, String suffix)throws Exception{
         //推送到代理
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(stationId);

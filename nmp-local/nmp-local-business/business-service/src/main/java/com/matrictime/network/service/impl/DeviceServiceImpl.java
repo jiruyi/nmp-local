@@ -262,8 +262,8 @@ public class DeviceServiceImpl implements DeviceService {
         }
         return  map;
     }
-
-    private void pushToProxy(String deviceId,String suffix)throws Exception{
+    @Override
+    public void pushToProxy(String deviceId,String suffix)throws Exception{
         //推送到代理
         NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
         nmplDeviceInfoExample.createCriteria().andDeviceIdEqualTo(deviceId);
