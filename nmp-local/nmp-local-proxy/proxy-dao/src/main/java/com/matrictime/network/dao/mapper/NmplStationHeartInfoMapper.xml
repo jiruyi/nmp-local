@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.matrictime.network.dao.mapper.NmplHeartInfoMapper">
-  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplHeartInfo">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplStationHeartInfoMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplStationHeartInfo">
     <result column="station_id" jdbcType="VARCHAR" property="stationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
@@ -68,14 +68,14 @@
   <sql id="Base_Column_List">
     station_id, remark, station_network_id, create_time
   </sql>
-  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplHeartInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplStationHeartInfoExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from nmpl_heart_info
+    from nmpl_station_heart_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -83,20 +83,20 @@
       order by ${orderByClause}
     </if>
   </select>
-  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplHeartInfoExample">
-    delete from nmpl_heart_info
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplStationHeartInfoExample">
+    delete from nmpl_station_heart_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplHeartInfo">
-    insert into nmpl_heart_info (station_id, remark, station_network_id, 
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplStationHeartInfo">
+    insert into nmpl_station_heart_info (station_id, remark, station_network_id, 
       create_time)
     values (#{stationId,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{stationNetworkId,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplHeartInfo">
-    insert into nmpl_heart_info
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplStationHeartInfo">
+    insert into nmpl_station_heart_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="stationId != null">
         station_id,
@@ -126,14 +126,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplHeartInfoExample" resultType="java.lang.Long">
-    select count(*) from nmpl_heart_info
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplStationHeartInfoExample" resultType="java.lang.Long">
+    select count(*) from nmpl_station_heart_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update nmpl_heart_info
+    update nmpl_station_heart_info
     <set>
       <if test="record.stationId != null">
         station_id = #{record.stationId,jdbcType=VARCHAR},
@@ -153,7 +153,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update nmpl_heart_info
+    update nmpl_station_heart_info
     set station_id = #{record.stationId,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       station_network_id = #{record.stationNetworkId,jdbcType=VARCHAR},

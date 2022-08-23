@@ -133,4 +133,11 @@ public class DataConstants {
 
     public static final String NMPL_LINK_RELATION = "nmpl_link_relation";
 
+
+    /**
+     * netmanage url
+     */
+
+    public static final String HEART_REPORT_URL = "/nmp-local-business/monitor/checkHeart";
+
 }

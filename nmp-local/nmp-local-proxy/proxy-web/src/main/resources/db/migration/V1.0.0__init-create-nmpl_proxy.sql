@@ -73,13 +73,21 @@ CREATE TABLE IF NOT EXISTS `nmpl_local_base_station_info` (
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='本机基站信息表';
 
 
-CREATE TABLE IF NOT EXISTS `nmpl_heart_info` (
+CREATE TABLE IF NOT EXISTS `nmpl_station_heart_info` (
     `station_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '设备id',
     `remark` varchar(256) DEFAULT NULL COMMENT '备注',
     `station_network_id` varchar(32) DEFAULT NULL COMMENT '设备入网码',
     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
     KEY (`station_id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='心跳上报信息表';
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='基站心跳上报信息表';
+
+CREATE TABLE IF NOT EXISTS `nmpl_keycenter_heart_info` (
+    `device_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '设备id',
+    `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+    `station_network_id` varchar(32) DEFAULT NULL COMMENT '设备入网码',
+    `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+    KEY (`device_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='密钥中心心跳上报信息表';
 
 -- ----------------------------
 -- Table structure for nmpl_bill

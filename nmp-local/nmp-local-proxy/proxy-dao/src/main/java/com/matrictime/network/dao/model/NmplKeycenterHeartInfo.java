@@ -4,16 +4,16 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 心跳上报信息表
+ * 密钥中心心跳上报信息表
  * @author   xxxx
- * @date   2022-08-19
+ * @date   2022-08-23
  */
 @Data
-public class NmplHeartInfo {
+public class NmplKeycenterHeartInfo {
     /**
      * 设备id
      */
-    private String stationId;
+    private String deviceId;
 
     /**
      * 备注
@@ -30,12 +30,12 @@ public class NmplHeartInfo {
      */
     private Date createTime;
 
-    public String getStationId() {
-        return stationId;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setStationId(String stationId) {
-        this.stationId = stationId == null ? null : stationId.trim();
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId == null ? null : deviceId.trim();
     }
 
     public String getRemark() {
