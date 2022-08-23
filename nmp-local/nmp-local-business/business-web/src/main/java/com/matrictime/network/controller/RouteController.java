@@ -77,7 +77,7 @@ public class RouteController {
      * @param routeRequest
      * @return
      */
-    @RequiresPermissions("sys:route:save")
+    //@RequiresPermissions("sys:route:save")
     @SystemLog(opermodul = "路由管理模块",operDesc = "新增路由",operType = "新增路由")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     public Result<Integer> insertRoute(@RequestBody RouteRequest routeRequest){
@@ -117,7 +117,7 @@ public class RouteController {
      * @param routeRequest
      * @return
      */
-    @RequiresPermissions("sys:route:update")
+    //@RequiresPermissions("sys:route:update")
     @SystemLog(opermodul = "路由管理模块",operDesc = "更新路由",operType = "更新路由",operLevl = "2")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     public Result<Integer> updateRoute(@RequestBody RouteRequest routeRequest){

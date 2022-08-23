@@ -48,4 +48,6 @@ public interface NmplLinkRelationMapper {
     List<DeviceInfoVo> selectLinkRelationDevice(DeviceInfoRequest deviceInfoRequest);
 
     List<LinkRelationVo> query(LinkRelationRequest linkRelationRequest);
+
+    List<LinkRelationVo> selectById(LinkRelationRequest linkRelationRequest);
 }

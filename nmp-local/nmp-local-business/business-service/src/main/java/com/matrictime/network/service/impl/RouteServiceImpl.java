@@ -6,11 +6,13 @@ import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.RouteDomainService;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.mapper.NmplRouteMapper;
 import com.matrictime.network.dao.model.NmplDeviceInfo;
 import com.matrictime.network.dao.model.NmplDeviceInfoExample;
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.RouteSendVo;
 import com.matrictime.network.modelVo.RouteVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.RouteRequest;
@@ -18,6 +20,7 @@ import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.RouteService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.ListUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +45,9 @@ public class RouteServiceImpl implements RouteService {
 
     @Resource
     private AsyncService asyncService;
+
+    @Resource
+    private NmplRouteMapper nmplRouteMapper;
 
     @Override
     public Result<Integer> insertRoute(RouteRequest routeRequest) {
@@ -85,13 +91,26 @@ public class RouteServiceImpl implements RouteService {
         Result<Integer> result = new Result<>();
         Date date = new Date();
         try {
+            List<RouteVo> list = nmplRouteMapper.selectById(routeRequest);
             routeRequest.setUpdateTime(getFormatDate(date));
+            sendRout(routeRequest,DataConstants.URL_ROUTE_UPDATE);
             routeRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             Integer updateFlag = routeDomainService.updateRoute(routeRequest);
             if(updateFlag == 2){
                 return new Result<>(false,"路由不可以重复插入");
             }
-            sendRout(routeRequest,DataConstants.URL_ROUTE_UPDATE);
+            BaseStationInfoRequest accessBaseStationInfoRequest = new BaseStationInfoRequest();
+            accessBaseStationInfoRequest.setStationId(list.get(0).getBoundaryDeviceId());
+            List<BaseStationInfoVo> baseStationInfoVos = baseStationInfoDomainService.selectLinkBaseStationInfo(accessBaseStationInfoRequest);
+            RouteSendVo routeSendVo = new RouteSendVo();
+            BeanUtils.copyProperties(list.get(0),routeSendVo);
+            for (BaseStationInfoVo baseStationInfoVo : baseStationInfoVos) {
+                Map<String,String> map = new HashMap<>();
+                map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(routeSendVo));
+                String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+DataConstants.URL_ROUTE_UPDATE;
+                map.put(DataConstants.KEY_URL,url);
+                asyncService.httpPush(map);
+            }
             result.setResultObj(updateFlag);
             result.setSuccess(true);
         }catch (Exception e){
@@ -127,6 +146,10 @@ public class RouteServiceImpl implements RouteService {
      * @throws Exception
      */
     private void sendRout(RouteRequest routeRequest,String suffix) throws Exception {
+        RouteSendVo routeSendVo = new RouteSendVo();
+        BeanUtils.copyProperties(routeRequest,routeSendVo);
+        List<RouteVo> list = nmplRouteMapper.selectById(routeRequest);
+        BeanUtils.copyProperties(list.get(0),routeSendVo);
         //获取基站信息
         BaseStationInfoRequest accessBaseStationInfoRequest = new BaseStationInfoRequest();
         accessBaseStationInfoRequest.setStationId(routeRequest.getAccessDeviceId());
@@ -144,11 +167,8 @@ public class RouteServiceImpl implements RouteService {
             //开启多线程
             for (BaseStationInfoVo baseStationInfoVo : unionList) {
                 Map<String,String> map = new HashMap<>();
-                map.put(DataConstants.KEY_DEVICE_ID,baseStationInfoVo.getStationId());
-                JSONObject jsonReq = new JSONObject();
-                jsonReq.put("infoVos",routeRequest);
-                map.put(DataConstants.KEY_DATA,jsonReq.toJSONString());
-                String url = "http://"+baseStationInfoVo.getPublicNetworkIp()+":"+baseStationInfoVo.getPublicNetworkPort()+contextPath+suffix;
+                map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(routeSendVo));
+                String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
                 asyncService.httpPush(map);
             }
