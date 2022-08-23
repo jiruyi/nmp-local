@@ -4,6 +4,7 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
+import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
@@ -27,12 +28,16 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
 
     @Resource
     private DeviceExtraInfoDomainService deviceExtraInfoDomainService;
+    @Resource
+    private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
 
     @Override
     public Result<Integer> insert(DeviceExtraInfoRequest deviceExtraInfoRequest) {
         Result<Integer> result = new Result<>();
         NmplDeviceExtraInfo nmplDeviceExtraInfo = new NmplDeviceExtraInfo();
         try {
+            Integer stationNetworkId = nmplBaseStationInfoMapper.getSequenceId();
+            deviceExtraInfoRequest.setStationNetworkId(stationNetworkId.toString());
             if(!CommonCheckUtil.checkStringLength(deviceExtraInfoRequest.getDeviceName(),null,16)){
                 return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
             }

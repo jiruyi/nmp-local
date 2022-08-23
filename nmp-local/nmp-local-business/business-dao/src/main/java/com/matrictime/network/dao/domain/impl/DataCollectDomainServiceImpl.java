@@ -5,6 +5,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDataCollectForLoadMapper;
@@ -52,7 +53,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     public PageInfo<DataCollectVo> queryByConditions(DataCollectReq dataCollectReq) {
         Page page = null;
         List<DataCollectVo> dataCollectVos = new ArrayList<>();
-        if(dataCollectReq.getDeviceType().equals("01")){
+        if(dataCollectReq.getDeviceType().equals(StationTypeEnum.BASE.getCode())){
             page = PageHelper.startPage(dataCollectReq.getPageNo(),dataCollectReq.getPageSize());
             dataCollectVos = nmplDataCollectExtMapper.stationLinkQuery(dataCollectReq);
         }else {

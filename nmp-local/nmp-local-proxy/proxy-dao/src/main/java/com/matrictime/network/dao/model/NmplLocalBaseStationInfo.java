@@ -4,36 +4,31 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 密钥分发和U盘
- * @author   hexu
- * @date   2022-03-07
+ * 本机基站信息表
+ * @author   xxxx
+ * @date   2022-08-19
  */
 @Data
-public class NmplDeviceInfo {
+public class NmplLocalBaseStationInfo {
     /**
      * 主键
      */
     private Long id;
 
     /**
-     * 设备编号
+     * 设备id
      */
-    private String deviceId;
+    private String stationId;
 
     /**
      * 设备名称
      */
-    private String deviceName;
+    private String stationName;
 
     /**
-     * 设备类型 01:密钥分发机 02:生成机 03:缓存机
+     * 设备类型 01:小区内基站 02:小区边界基站
      */
-    private String deviceType;
-
-    /**
-     * 备用类型 
-     */
-    private String otherType;
+    private String stationType;
 
     /**
      * 接入网时间
@@ -43,7 +38,7 @@ public class NmplDeviceInfo {
     /**
      * 设备管理员
      */
-    private String deviceAdmain;
+    private String stationAdmain;
 
     /**
      * 设备备注
@@ -61,12 +56,12 @@ public class NmplDeviceInfo {
     private String publicNetworkPort;
 
     /**
-     * 内网Ip
+     * 局域网ip
      */
     private String lanIp;
 
     /**
-     * 内网端口
+     * 局域网port
      */
     private String lanPort;
 
@@ -86,7 +81,7 @@ public class NmplDeviceInfo {
     private String stationRandomSeed;
 
     /**
-     * 关联区域
+     * 关联小区
      */
     private String relationOperatorId;
 
@@ -115,11 +110,6 @@ public class NmplDeviceInfo {
      */
     private Boolean isExist;
 
-    /**
-     * true:是本机 false:不是本机
-     */
-    private Boolean isLocal;
-
     public Long getId() {
         return id;
     }
@@ -128,36 +118,28 @@ public class NmplDeviceInfo {
         this.id = id;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    public String getStationId() {
+        return stationId;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId == null ? null : deviceId.trim();
+    public void setStationId(String stationId) {
+        this.stationId = stationId == null ? null : stationId.trim();
     }
 
-    public String getDeviceName() {
-        return deviceName;
+    public String getStationName() {
+        return stationName;
     }
 
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName == null ? null : deviceName.trim();
+    public void setStationName(String stationName) {
+        this.stationName = stationName == null ? null : stationName.trim();
     }
 
-    public String getDeviceType() {
-        return deviceType;
+    public String getStationType() {
+        return stationType;
     }
 
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType == null ? null : deviceType.trim();
-    }
-
-    public String getOtherType() {
-        return otherType;
-    }
-
-    public void setOtherType(String otherType) {
-        this.otherType = otherType == null ? null : otherType.trim();
+    public void setStationType(String stationType) {
+        this.stationType = stationType == null ? null : stationType.trim();
     }
 
     public Date getEnterNetworkTime() {
@@ -168,12 +150,12 @@ public class NmplDeviceInfo {
         this.enterNetworkTime = enterNetworkTime;
     }
 
-    public String getDeviceAdmain() {
-        return deviceAdmain;
+    public String getStationAdmain() {
+        return stationAdmain;
     }
 
-    public void setDeviceAdmain(String deviceAdmain) {
-        this.deviceAdmain = deviceAdmain == null ? null : deviceAdmain.trim();
+    public void setStationAdmain(String stationAdmain) {
+        this.stationAdmain = stationAdmain == null ? null : stationAdmain.trim();
     }
 
     public String getRemark() {
@@ -286,13 +268,5 @@ public class NmplDeviceInfo {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
-    }
-
-    public Boolean getLocal() {
-        return isLocal;
-    }
-
-    public void setLocal(Boolean local) {
-        isLocal = local;
     }
 }

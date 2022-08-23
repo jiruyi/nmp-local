@@ -298,13 +298,13 @@ public class AsyncService{
         String url = map.get(KEY_URL);
         String data = map.get(KEY_DATA);
         String postResp = HttpClientUtil.post(url,data);
-        log.info("AsyncService.httpBaseStationPush deviceId:{},req:{} postResp:{}",deviceId, data,postResp);
+        log.info("AsyncService.httpPush deviceId:{},req:{} postResp:{}",deviceId, data,postResp);
     }
 
     @Recover
     public void recover(Exception e,Map<String, String> map) {
         String deviceId = map.get(KEY_DEVICE_ID);
-        log.warn("httpBaseStationPush.retry error  deviceId:{} Exception:{} ",deviceId,e.getMessage());
+        log.warn("httpPush.retry error  deviceId:{} Exception:{} ",deviceId,e.getMessage());
     }
 
 

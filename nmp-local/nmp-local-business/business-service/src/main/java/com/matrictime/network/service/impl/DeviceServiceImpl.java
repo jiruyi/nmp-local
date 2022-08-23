@@ -1,10 +1,18 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.csp.sentinel.util.StringUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
+import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.model.NmplBaseStationInfo;
+import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
+import com.matrictime.network.dao.model.NmplDeviceInfo;
+import com.matrictime.network.dao.model.NmplDeviceInfoExample;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DeviceInfoVo;
@@ -16,12 +24,13 @@ import com.matrictime.network.service.DeviceService;
 import com.matrictime.network.util.CommonCheckUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -33,6 +42,21 @@ public class DeviceServiceImpl implements DeviceService {
     @Resource
     private CompanyInfoDomainService companyInfoDomainService;
 
+    @Resource
+    private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
+
+    @Resource
+    private NmplDeviceInfoMapper nmplDeviceInfoMapper;
+
+    @Resource
+    private AsyncService asyncService;
+
+    @Value("${proxy.port}")
+    private String port;
+
+    @Value("${proxy.context-path}")
+    private String contextPath;
+
     @Override
     public Result<Integer> insertDevice(DeviceInfoRequest deviceInfoRequest) {
         Result<Integer> result = new Result<>();
@@ -40,6 +64,8 @@ public class DeviceServiceImpl implements DeviceService {
         Date date = new Date();
         DeviceInfoRequest infoRequest = new DeviceInfoRequest();
         try {
+            Integer stationNetworkId = nmplBaseStationInfoMapper.getSequenceId();
+            deviceInfoRequest.setStationNetworkId(stationNetworkId.toString());
             if(!CommonCheckUtil.checkStringLength(deviceInfoRequest.getDeviceName(),null,16)){
                 return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
             }
@@ -64,20 +90,15 @@ public class DeviceServiceImpl implements DeviceService {
             }
             String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
             deviceInfoRequest.setStationNetworkId(NetworkId);
-//            infoRequest.setStationNetworkId(deviceInfoRequest.getStationNetworkId());
-//            infoRequest.setPublicNetworkIp(deviceInfoRequest.getPublicNetworkIp());
-//            infoRequest.setLanIp(deviceInfoRequest.getLanIp());
-//            List<DeviceInfoVo> devices = deviceDomainService.getDevices(infoRequest);
-//            if(devices.size() > 0){
-//                return new Result<>(false,"入网id或ip重复");
-//            }
+
             insertFlag = deviceDomainService.insertDevice(deviceInfoRequest);
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);
                 result.setSuccess(true);
+                pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_INSERT);
             }
         }catch (Exception e){
-            result.setErrorCode("参数异常");
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -92,9 +113,10 @@ public class DeviceServiceImpl implements DeviceService {
             if(deleteFlag == 1){
                 result.setResultObj(deleteFlag);
                 result.setSuccess(true);
+                pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_UPDATE);
             }
         }catch (Exception e){
-            result.setErrorCode("参数异常");
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -130,9 +152,10 @@ public class DeviceServiceImpl implements DeviceService {
             if(updateFlag == 1){
                 result.setResultObj(updateFlag);
                 result.setSuccess(true);
+                pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_UPDATE);
             }
         }catch (Exception e){
-            result.setErrorCode("参数异常");
+            result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
@@ -222,4 +245,47 @@ public class DeviceServiceImpl implements DeviceService {
         SimpleDateFormat creatDateToString = new SimpleDateFormat(creatDate);
         return creatDateToString.format(date);
     }
+
+    private Map<String,String> getAllUrl(String relationOperatorId){
+        Map<String,String> map = new HashMap<>();
+        NmplBaseStationInfoExample nmplBaseStationInfoExample  = new NmplBaseStationInfoExample();
+        nmplBaseStationInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
+        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+        NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+        nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
+        List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+        for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+            map.put(nmplBaseStationInfo.getLanIp(),nmplBaseStationInfo.getStationId());
+        }
+        for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+            map.put(nmplDeviceInfo.getLanIp(),nmplDeviceInfo.getDeviceId());
+        }
+        return  map;
+    }
+
+    private void pushToProxy(String deviceId,String suffix)throws Exception{
+        //推送到代理
+        NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+        nmplDeviceInfoExample.createCriteria().andDeviceIdEqualTo(deviceId);
+        List<NmplDeviceInfo> nmplDeviceInfoList = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+
+        Map<String,String> deviceMap = getAllUrl(nmplDeviceInfoList.get(0).getRelationOperatorId());
+        Set<String> set = deviceMap.keySet();
+        for (String lanIp : set) {
+            NmplDeviceInfo request = new NmplDeviceInfo();
+            BeanUtils.copyProperties(nmplDeviceInfoList.get(0),request);
+            request.setLocal(false);
+            if(lanIp.equals(request.getLanIp())){
+                request.setLocal(true);
+            }
+            Map<String,String> map = new HashMap<>();
+            map.put(DataConstants.KEY_DEVICE_ID,deviceMap.get(lanIp));
+            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(request));
+            String url = "http://"+lanIp+":"+port+contextPath+suffix;
+            map.put(DataConstants.KEY_URL,url);
+            asyncService.httpPush(map);
+        }
+    }
+
+
 }

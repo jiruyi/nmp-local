@@ -14,8 +14,11 @@ import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.model.NmplBaseStationInfo;
 import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
+import com.matrictime.network.dao.model.NmplDeviceInfo;
+import com.matrictime.network.dao.model.NmplDeviceInfoExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
@@ -26,14 +29,12 @@ import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -58,6 +59,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     @Value("${proxy.context-path}")
     private String contextPath;
 
+    @Resource
+    private NmplDeviceInfoMapper nmplDeviceInfoMapper;
+
 
     @Override
     public Result<Integer> insertBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
@@ -66,6 +70,8 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Integer insertFlag = null;
         BaseStationInfoRequest infoRequest = new BaseStationInfoRequest();
         try {
+            Integer stationNetworkId = nmplBaseStationInfoMapper.getSequenceId();
+            baseStationInfoRequest.setStationNetworkId(stationNetworkId.toString());
             if(!CommonCheckUtil.checkStringLength(baseStationInfoRequest.getStationName(),null,16)){
                 return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
             }
@@ -93,34 +99,14 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             }
             String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
             baseStationInfoRequest.setStationNetworkId(networkId);
-            //校验唯一性
-//            infoRequest.setStationNetworkId(baseStationInfoRequest.getStationNetworkId());
-//            infoRequest.setPublicNetworkIp(baseStationInfoRequest.getPublicNetworkIp());
-//            infoRequest.setLanIp(baseStationInfoRequest.getLanIp());
-//            List<BaseStationInfoVo> baseStationInfoVos = baseStationInfoDomainService.selectBaseStation(infoRequest);
-//            if(baseStationInfoVos.size() > 0){
-//                return new Result<>(false,"入网id或ip重复");
-//            }
+
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
 
             if(insertFlag == 1){
                 result.setResultObj(insertFlag);
                 result.setSuccess(true);
                 //推送到代理
-                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-                nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(baseStationInfoRequest.getStationId());
-                List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-
-                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
-
-                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
-                    Map<String,String> map = new HashMap<>();
-                    map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
-                    map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(nmplBaseStationInfoList.get(0)));
-                    String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_INSERT;
-                    map.put(DataConstants.KEY_URL,url);
-                    asyncService.httpPush(map);
-                }
+                pushToProxy(baseStationInfoRequest.getStationId(),DataConstants.URL_STATION_INSERT);
             }else {
                 result.setResultObj(insertFlag);
                 result.setSuccess(false);
@@ -169,18 +155,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 result.setSuccess(true);
                 result.setResultObj(updateFlag);
                 //推送到代理
-                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-                nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(baseStationInfoRequest.getStationId());
-                List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
-                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
-                    Map<String,String> map = new HashMap<>();
-                    map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
-                    map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(nmplBaseStationInfoList.get(0)));
-                    String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
-                    map.put(DataConstants.KEY_URL,url);
-                    asyncService.httpPush(map);
-                }
+                pushToProxy(baseStationInfoRequest.getStationId(),DataConstants.URL_STATION_UPDATE);
             }
         }catch (SystemException e){
             log.info("基站修改异常",e.getMessage());
@@ -202,18 +177,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 result.setSuccess(true);
                 result.setResultObj(deleteFlag);
                 //推送到代理
-                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-                nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(baseStationInfoRequest.getStationId());
-                List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
-                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
-                    Map<String,String> map = new HashMap<>();
-                    map.put(DataConstants.KEY_DEVICE_ID,nmplBaseStationInfo.getStationId());
-                    map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(nmplBaseStationInfoList.get(0)));
-                    String url = "http://"+nmplBaseStationInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_STATION_UPDATE;
-                    map.put(DataConstants.KEY_URL,url);
-                    asyncService.httpPush(map);
-                }
+                pushToProxy(baseStationInfoRequest.getStationId(),DataConstants.URL_STATION_UPDATE);
             }
         }catch (SystemException e){
             log.info("基站删除异常",e.getMessage());
@@ -223,6 +187,38 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             result = failResult("");
         }
         return result;
+    }
+
+    /**
+     * 基站推送到代理
+     * @param stationId 基站id
+     * @param suffix 推送url后缀信息
+     * @throws Exception
+     */
+    private void pushToProxy(String stationId,String suffix)throws Exception{
+        //推送到代理
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(stationId);
+        List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+
+        Map<String,String> deviceMap = getAllUrl(nmplBaseStationInfoList.get(0).getRelationOperatorId());
+        deviceMap.put(nmplBaseStationInfoList.get(0).getLanIp(),nmplBaseStationInfoList.get(0).getStationId());
+        Set<String> set = deviceMap.keySet();
+        for (String lanIp : set) {
+            //默认为非本机
+            NmplBaseStationInfo request = new NmplBaseStationInfo();
+            BeanUtils.copyProperties(nmplBaseStationInfoList.get(0),request);
+            request.setLocal(false);
+            if(lanIp.equals(request.getLanIp())){
+                request.setLocal(true);
+            }
+            Map<String,String> map = new HashMap<>();
+            map.put(DataConstants.KEY_DEVICE_ID,deviceMap.get(lanIp));
+            map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(request));
+            String url = "http://"+lanIp+":"+port+contextPath+suffix;
+            map.put(DataConstants.KEY_URL,url);
+            asyncService.httpPush(map);
+        }
     }
 
     @Override
@@ -350,4 +346,23 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         SimpleDateFormat creatDateToString = new SimpleDateFormat(creatDate);
         return creatDateToString.format(date);
     }
+
+
+    private Map<String,String> getAllUrl(String relationOperatorId){
+        Map<String,String> map = new HashMap<>();
+        NmplBaseStationInfoExample nmplBaseStationInfoExample  = new NmplBaseStationInfoExample();
+        nmplBaseStationInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
+        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+        NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+        nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
+        List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+        for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+            map.put(nmplBaseStationInfo.getLanIp(),nmplBaseStationInfo.getStationId());
+        }
+        for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+            map.put(nmplDeviceInfo.getLanIp(),nmplDeviceInfo.getDeviceId());
+        }
+        return  map;
+    }
+
 }

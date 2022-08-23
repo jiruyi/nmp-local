@@ -2,6 +2,8 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.enums.DeviceTypeEnum;
+import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
@@ -125,7 +127,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                     value = bigDecimal.divide(new BigDecimal(1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue();
                 }
                 switch (nmplDataCollect.getDeviceType()){
-                    case "01":
+                    case "00":
                         if(nmplDataCollect.getDataItemCode().equals("10000")){
                             userNumber+=Integer.valueOf(nmplDataCollect.getDataItemValue());
                         }
@@ -133,7 +135,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                             totalBandwidth+=value;
                         }
                         break;
-                    case "02":
+                    case "11":
                         if(nmplDataCollect.getDataItemCode().equals("10007")){
                             dispenserSecretKey+=value;
                         }
@@ -141,7 +143,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                             totalBandwidth+=value;
                         }
                         break;
-                    case "03":
+                    case "12":
                         if(nmplDataCollect.getDataItemCode().equals("10007")){
                             generatorSecretKey+=value;
                         }
@@ -149,7 +151,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                             totalBandwidth+=value;
                         }
                         break;
-                    case "04":
+                    case "13":
                         if(nmplDataCollect.getDataItemCode().equals("10007")){
                             cacheSecretKey+=value;
                         }
@@ -206,7 +208,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         DeviceResponse deviceResponse = new DeviceResponse();
         List<DeviceInfoVo>deviceInfoVos = new ArrayList<>();
         try {
-            if(dataCollectReq.getDeviceType().equals("01")){
+            if(dataCollectReq.getDeviceType().equals(StationTypeEnum.BASE.getCode())){
                 NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
                 nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
                 List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
@@ -220,12 +222,12 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                     deviceInfoVos.add(deviceInfoVo);
                 }
             }else {
-                Map<String,String> map = new HashMap<>();
-                map.put("02","01");
-                map.put("03","02");
-                map.put("04","03");
+//                Map<String,String> map = new HashMap<>();
+//                map.put("02","01");
+//                map.put("03","02");
+//                map.put("04","03");
                 NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
-                nmplDeviceInfoExample.createCriteria().andIsExistEqualTo(true).andDeviceTypeEqualTo(map.get(dataCollectReq.getDeviceType()));
+                nmplDeviceInfoExample.createCriteria().andIsExistEqualTo(true).andDeviceTypeEqualTo(dataCollectReq.getDeviceType());
                 List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
                 for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
                     String[]strings = nmplDeviceInfo.getStationNetworkId().split("-");

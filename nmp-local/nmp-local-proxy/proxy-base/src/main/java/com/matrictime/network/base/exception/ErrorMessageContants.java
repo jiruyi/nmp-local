@@ -54,6 +54,8 @@ public class ErrorMessageContants {
 	public static final String OPER_DESC_IS_NULL_MSG = "操作信息不能为空";
 	public static final String OPER_TYPE_IS_NULL_MSG = "设备类型不能为空";
 
+	public static final String OPER_TYPE_IS_ERROR_MSG = "设备类型有误";
+
 	public static final String DEVICE_NOT_EXIST_MSG = "设备不存在";
 
 	public static final String DEVICE_NOT_ACTIVE_MSG = "设备未激活或者设备非下线状态";

@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper">
-  <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.StationVo">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="station_id" jdbcType="VARCHAR" property="deviceId" />
-    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
-    <result column="station_type" jdbcType="CHAR" property="stationType" />
-  </resultMap>
-  <resultMap id="BaseStationMap" type="com.matrictime.network.modelVo.BaseStationInfoVo">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
-  </resultMap>
-  <resultMap id="BaseOriResultMap" type="com.matrictime.network.dao.model.NmplBaseStationInfo">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplLocalBaseStationInfoMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplLocalBaseStationInfo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="station_id" jdbcType="VARCHAR" property="stationId" />
     <result column="station_name" jdbcType="VARCHAR" property="stationName" />
@@ -97,14 +87,14 @@
     station_random_seed, relation_operator_id, create_user, create_time, update_user, 
     update_time, is_exist
   </sql>
-  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfoExample" resultMap="BaseOriResultMap">
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplLocalBaseStationInfoExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from nmpl_base_station_info
+    from nmpl_local_base_station_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -115,21 +105,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from nmpl_base_station_info
+    from nmpl_local_base_station_info
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from nmpl_base_station_info
+    delete from nmpl_local_base_station_info
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfoExample">
-    delete from nmpl_base_station_info
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplLocalBaseStationInfoExample">
+    delete from nmpl_local_base_station_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfo">
-    insert into nmpl_base_station_info (id, station_id, station_name, 
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplLocalBaseStationInfo">
+    insert into nmpl_local_base_station_info (id, station_id, station_name, 
       station_type, enter_network_time, station_admain, 
       remark, public_network_ip, public_network_port, 
       lan_ip, lan_port, station_status, 
@@ -144,8 +134,8 @@
       #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfo">
-    insert into nmpl_base_station_info
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplLocalBaseStationInfo">
+    insert into nmpl_local_base_station_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -271,14 +261,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfoExample" resultType="java.lang.Long">
-    select count(*) from nmpl_base_station_info
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplLocalBaseStationInfoExample" resultType="java.lang.Long">
+    select count(*) from nmpl_local_base_station_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update nmpl_base_station_info
+    update nmpl_local_base_station_info
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -346,7 +336,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update nmpl_base_station_info
+    update nmpl_local_base_station_info
     set id = #{record.id,jdbcType=BIGINT},
       station_id = #{record.stationId,jdbcType=VARCHAR},
       station_name = #{record.stationName,jdbcType=VARCHAR},
@@ -371,8 +361,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfo">
-    update nmpl_base_station_info
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplLocalBaseStationInfo">
+    update nmpl_local_base_station_info
     <set>
       <if test="stationId != null">
         station_id = #{stationId,jdbcType=VARCHAR},
@@ -434,8 +424,8 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfo">
-    update nmpl_base_station_info
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplLocalBaseStationInfo">
+    update nmpl_local_base_station_info
     set station_id = #{stationId,jdbcType=VARCHAR},
       station_name = #{stationName,jdbcType=VARCHAR},
       station_type = #{stationType,jdbcType=CHAR},
@@ -451,199 +441,10 @@
       station_random_seed = #{stationRandomSeed,jdbcType=VARCHAR},
       relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
       is_exist = #{isExist,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <insert id="insertBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest">
-        insert into  nmpl_base_station_info (
-            station_id, station_name,
-            station_type, enter_network_time, station_admain,
-            remark, public_network_ip, public_network_port,
-            lan_ip, lan_port, station_status,
-            station_network_id, station_random_seed, relation_operator_id,
-            create_user, create_time, update_user,
-            update_time, is_exist
-        )
-        values(
-            #{stationId,jdbcType=VARCHAR}, #{stationName,jdbcType=VARCHAR},
-            #{stationType,jdbcType=CHAR}, #{enterNetworkTime,jdbcType=TIMESTAMP}, #{stationAdmain,jdbcType=VARCHAR},
-            #{remark,jdbcType=VARCHAR}, #{publicNetworkIp,jdbcType=VARCHAR}, #{publicNetworkPort,jdbcType=VARCHAR},
-            #{lanIp,jdbcType=VARCHAR}, #{lanPort,jdbcType=VARCHAR}, #{stationStatus,jdbcType=CHAR},
-            #{stationNetworkId,jdbcType=VARCHAR}, #{stationRandomSeed,jdbcType=VARCHAR}, #{relationOperatorId,jdbcType=VARCHAR},
-            #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR},
-            #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=VARCHAR}
-        )
-  </insert>
-  <update id="updateBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest">
-    update nmpl_base_station_info
-    set station_name = #{stationName,jdbcType=VARCHAR},
-      station_type = #{stationType,jdbcType=CHAR},
-      remark = #{remark,jdbcType=VARCHAR},
-      public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
-      lan_ip = #{lanIp,jdbcType=VARCHAR},
-      lan_port = #{lanPort,jdbcType=VARCHAR},
-      public_network_port = #{publicNetworkPort,jdbcType=VARCHAR},
-      relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR},
-      create_user = #{createUser,jdbcType=VARCHAR},
-      update_user = #{updateUser,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=VARCHAR}
-    where station_id = #{stationId,jdbcType=VARCHAR}
-  </update>
-  <update id="deleteBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest">
-    update nmpl_base_station_info set is_exist = 0
-    where station_id = #{stationId,jdbcType=VARCHAR}
-  </update>
-  <select id="selectBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
-    select id,station_id, station_name, station_type,station_status,
-           nmpl_base_station_info.remark, public_network_ip,public_network_port,
-           lan_ip, SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id,lan_port,
-           relation_operator_id, nick_name,company_name
-    from nmpl_base_station_info,nmpl_company_info,nmpl_user
-    <where>
-        nmpl_base_station_info.is_exist = 1
-        and nmpl_company_info.is_exist = 1
-        and nmpl_user.is_exist = 1
-        and station_status in(2,3,4)
-      <if test="stationId != null and stationId != ''">
-        and station_id = #{stationId,jdbcType=VARCHAR}
-      </if>
-      <if test="stationName != null and stationName != ''">
-        and station_name = #{stationName,jdbcType=VARCHAR}
-      </if>
-      <if test="relationOperatorId != null and relationOperatorId != ''">
-        and relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
-      </if>
-      <if test="stationType != null and stationType != ''">
-        and station_type = #{stationType,jdbcType=VARCHAR}
-      </if>
-      <if test="lanIp != null and lanIp != ''">
-        and lan_ip = #{lanIp,jdbcType=CHAR}
-      </if>
-      <if test="stationNetworkId != null and stationNetworkId != ''">
-        and station_network_id = #{stationNetworkId,jdbcType=CHAR}
-      </if>
-        and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_id
-        and nmpl_user.user_id = nmpl_base_station_info.create_user
-    </where>
-        order by nmpl_base_station_info.update_time desc
-  </select>
-  <select id="selectBaseStationBatch" parameterType="list" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
-    select id,station_id, station_name, station_type,
-           remark, public_network_ip,public_network_port,
-           lan_ip, station_network_id,lan_port,
-           relation_operator_id, create_user
-    from nmpl_base_station_info where station_id in
-    <foreach collection="stationId" item="item" open="(" close=")" separator=",">
-        #{item,jdbcType=VARCHAR}
-    </foreach>
-  </select>
-  <select id="selectDeviceId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseResultMap">
-    select station_id,station_network_id,station_type from nmpl_base_station_info where lan_ip = #{lanIp,jdbcType=VARCHAR} and is_exist = 1
-  </select>
-  <select id="selectByNetworkId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseStationMap">
-    select station_id from nmpl_base_station_info where station_network_id like "%" #{stationNetworkId,jdbcType=CHAR} "%"
-    union
-    select device_id as station_id from nmpl_device_info where station_network_id like "%" #{stationNetworkId,jdbcType=CHAR} "%"
-  </select>
-  <select id="selectByOperatorId" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
-    select id,station_id, station_name, station_type,station_status,
-           nmpl_base_station_info.remark, public_network_ip,public_network_port,
-           lan_ip,station_network_id,lan_port,
-           relation_operator_id from nmpl_base_station_info where
-    relation_operator_id = (select relation_operator_id from nmpl_base_station_info where station_id = #{stationId,jdbcType=VARCHAR})
-    and nmpl_base_station_info.is_exist = 1 and station_status in(1,2,3)
-  </select>
-  <select id="selectBaseStationList" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
-select
-    id,station_id, station_name, station_type,station_status,
-    remark, public_network_ip,public_network_port,
-    lan_ip, station_network_id,lan_port,
-    relation_operator_id, nick_name,company_name
-from(
-  select id,station_id, station_name, station_type,station_status,
-      nmpl_base_station_info.remark, public_network_ip,public_network_port,
-      lan_ip, SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id,lan_port,
-      relation_operator_id, nick_name,company_name
-      from nmpl_base_station_info,nmpl_company_info,nmpl_user
-      <where>
-        nmpl_base_station_info.is_exist = 1
-        and nmpl_company_info.is_exist = 1
-        <if test="stationId != null and stationId != ''">
-          and station_id = #{stationId,jdbcType=VARCHAR}
-        </if>
-        <if test="stationName != null and stationName != ''">
-          and station_name like concat ('%',#{stationName,jdbcType=VARCHAR},'%')
-        </if>
-        <if test="relationOperatorId != null and relationOperatorId != ''">
-          and relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
-        </if>
-        <if test="stationType != null and stationType != ''">
-          and station_type = #{stationType,jdbcType=VARCHAR}
-        </if>
-        <if test="lanIp != null and lanIp != ''">
-          and lan_ip = #{lanIp,jdbcType=CHAR}
-        </if>
-        <if test="publicNetworkIp != null and publicNetworkIp != ''">
-          and public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
-        </if>
-        and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_id
-        and nmpl_user.user_id = nmpl_base_station_info.create_user
-        and nmpl_company_info.company_type = '02'
-      </where>
-      order by nmpl_base_station_info.update_time desc
-      ) as temp
-    <where>
-      <if test="stationNetworkId != null and stationNetworkId != ''">
-        and station_network_id like concat ('%',#{stationNetworkId,jdbcType=CHAR},'%')
-      </if>
-    </where>
-  </select>
-
-  <select id="selectActiveBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
-    select id,station_id, station_name, station_type,station_status,
-           nmpl_base_station_info.remark, public_network_ip,public_network_port,
-           lan_ip, SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id,lan_port,
-           relation_operator_id, company_name
-    from nmpl_base_station_info,nmpl_company_info
-    where
-      nmpl_base_station_info.is_exist = 1
-      and nmpl_company_info.is_exist = 1
-      and station_status = '02'
-      and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_id
-      and nmpl_company_info.company_type = '02'
-    order by nmpl_base_station_info.update_time desc
-  </select>
-  <select id="selectBaseStation" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultMap="BaseResultMap">
-    select station_network_id
-    from nmpl_device_info
-    where
-        public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
-        or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
-        or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
-        and is_exist = 1
-    union
-    select station_network_id
-    from nmpl_device_extra_info
-    where
-        public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
-        or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
-        or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
-        and is_exist = 1
-    union
-    select station_network_id
-    from nmpl_base_station_info
-    where
-       public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
-       or SUBSTRING_INDEX(station_network_id,'-',-1) = #{stationNetworkId,jdbcType=CHAR}
-       or (lan_ip = #{lanIp,jdbcType=VARCHAR} and lan_port = #{lanPort,jdbcType=VARCHAR})
-       and is_exist = 1
-  </select>
-  <select id="getSequenceId" resultType="java.lang.Integer">
-    select _nextval('seq_name1');
-  </select>
-
-
 </mapper>
