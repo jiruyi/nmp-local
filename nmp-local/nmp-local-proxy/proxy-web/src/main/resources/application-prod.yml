@@ -64,3 +64,7 @@ logging:
     com.jzsg: info
 thread:
   batchMaxSize: 500
+
+netmanage:
+  ip: 192.168.72.14
+  port: 8002
