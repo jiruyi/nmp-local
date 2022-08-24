@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `sys_sequence` (
 ) ENGINE=InnoDB;
 
 DROP FUNCTION IF EXISTS `_nextval`;
-
+set global log_bin_trust_function_creators=TRUE;
 DELIMITER $$
 
 CREATE DEFINER=`root`@`%` FUNCTION `_nextval`(name varchar(50)) RETURNS int(11)
@@ -31,5 +31,6 @@ return _cur;
 
 end$$
 
-INSERT INTO `sys_sequence` (`seq_name`,`min_value`,`max_value`,`current_value`,`increment_value`)VALUES('seq_name1', 1, 99999999, 1000, 1);
+INSERT INTO `sys_sequence` (`seq_name`,`min_value`,`max_value`,`current_value`,`increment_value`)
+SELECT 'seq_name1', 1, 99999999, 1000, 1 WHERE NOT EXISTS (SELECT * FROM `sys_sequence` WHERE `seq_name`= 'seq_name1' );
 

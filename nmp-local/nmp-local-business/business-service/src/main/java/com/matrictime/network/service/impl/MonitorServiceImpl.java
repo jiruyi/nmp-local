@@ -116,7 +116,6 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                             deviceService.pushToProxy(req.getDeviceId(),URL_DEVICE_UPDATE);
                         }
                     }
-                    break;
                 case STATION_STATUS_ACTIVE:
                     // 激活更新缓存时间
                     redisTemplate.opsForValue().set(HEART_CHECK_DEVICE_ID+req.getDeviceId(),true,healthDeadlineTime, TimeUnit.SECONDS);

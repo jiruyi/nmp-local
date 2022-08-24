@@ -11,9 +11,12 @@ import com.matrictime.network.dao.mapper.NmplUserMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.VoiceCallRequest;
+import com.matrictime.network.service.BaseStationInfoService;
+import com.matrictime.network.service.DeviceService;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -29,7 +32,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.matrictime.network.base.constant.DataConstants.KEY_DEVICE_ID;
+import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.base.exception.ErrorMessageContants.DEVICE_NOT_EXIST_MSG;
 import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
@@ -68,6 +71,13 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
     @Value("${voice.code.down}")
     private String voiceCode;
 
+    @Autowired
+    private DeviceService deviceService;
+
+    @Autowired
+    private BaseStationInfoService baseStationInfoService;
+
+
     public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer) {
         super(listenerContainer);
     }
@@ -91,7 +101,17 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
                 log.info("过期心跳的设备id是:{}",deviceId);
                 // 更新设备状态
                 int count = updateDeviceStatus(deviceId);
-
+                //更新设备状态，推送到代理
+                if(count>0){
+                    NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
+                    deviceInfoExample.createCriteria().andDeviceIdEqualTo(deviceId);
+                    List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(deviceInfoExample);
+                    if(nmplDeviceInfos.size()==0){
+                        baseStationInfoService.pushToProxy(deviceId,URL_STATION_UPDATE);
+                    }else {
+                        deviceService.pushToProxy(deviceId,URL_DEVICE_UPDATE);
+                    }
+                }
                 // 查询设备创建人
                 String userId = "";
                 String phoneNumber = "";
