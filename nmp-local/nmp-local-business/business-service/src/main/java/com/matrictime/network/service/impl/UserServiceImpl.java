@@ -167,10 +167,10 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             //2.权限检验
             //被修改人
             NmplUser nmplUser =  userDomainService.getUserById(Long.valueOf(userRequest.getUserId()));
-            //超级管理员
+            //超级管理员无法被其他管理员修改 超管可以修改管理员
             if(Long.valueOf(nmplUser.getRoleId()) == DataConstants.SUPER_ADMIN){
-                if(DataConstants.SUPER_ADMIN  !=  Long.valueOf(RequestContext.getUser().getRoleId())){
-                    throw new SystemException(ErrorMessageContants.NO_ADMIN_ERROR_MSG);
+                if(Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.SUPER_ADMIN){
+                    throw new SystemException(ErrorMessageContants.ADMIN_DELETE_ERROR_MSG);
                 }
             }
             if(Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.SUPER_ADMIN
@@ -202,6 +202,11 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
         Result<Integer> result = null;
         try {
             NmplUser nmplUser =  userDomainService.getUserById(Long.valueOf(userRequest.getUserId()));
+            //管理员 无法删除
+            if(Long.valueOf(nmplUser.getRoleId()) == DataConstants.SUPER_ADMIN ||
+                    Long.valueOf(nmplUser.getRoleId()) == DataConstants.COMMON_ADMIN){
+                throw new SystemException(ErrorMessageContants.ADMIN_DELETE_ERROR_MSG);
+            }
             if(Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.SUPER_ADMIN
                     && Long.valueOf(RequestContext.getUser().getRoleId()) != DataConstants.COMMON_ADMIN){
                 if(Long.valueOf(nmplUser.getCreateUser()).longValue()!=RequestContext.getUser().getUserId()){
