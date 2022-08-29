@@ -352,7 +352,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     private Map<String,String> getAllUrl(String relationOperatorId){
         Map<String,String> map = new HashMap<>();
         NmplBaseStationInfoExample nmplBaseStationInfoExample  = new NmplBaseStationInfoExample();
-        nmplBaseStationInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
+        nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
         nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
