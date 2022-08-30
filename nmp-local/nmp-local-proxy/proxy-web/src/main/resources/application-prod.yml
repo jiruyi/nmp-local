@@ -35,10 +35,6 @@ spring:
       time-between-eviction-runs-millis: 10000
       min-evictable-idle-time-millis: 30000
       async-init: true
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    init-sqls: CREATE DATABASE IF NOT EXISTS `nmp_proxy` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
   servlet:
     multipart:
       enabled: true
@@ -53,7 +49,7 @@ spring:
       request-timeout: 60000
 
 info:
-  app.name: nmp-local-business
+  app.name: nmp-local-proxy
   company.name: www.matrictime.com
   build.artifactId: $project.artifactId$
   build.version: $project.version$

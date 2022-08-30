@@ -13,6 +13,11 @@ public class AddBaseStationInfoRequest implements Serializable {
     private static final long serialVersionUID = 7275300056652874036L;
 
     /**
+     *
+     */
+    private BaseStationInfoVo localBaseInfo;
+
+    /**
      * 插入基站信息列表
      */
     private List<BaseStationInfoVo> infoVos;

@@ -27,10 +27,6 @@
             <artifactId>springfox-boot-starter</artifactId>
             <version>3.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -44,10 +40,8 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>**/*.sql</include>
                     <include>**/*.xml</include>
                     <include>**/application.yml</include>
-                    <!--                    <include>**/application-dev.yml</include>-->
                 </includes>
             </resource>
         </resources>
