@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.DeviceInfoMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplDeviceInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_type" jdbcType="CHAR" property="deviceType" />
+    <result column="other_type" jdbcType="CHAR" property="otherType" />
+    <result column="enter_network_time" jdbcType="TIMESTAMP" property="enterNetworkTime" />
+    <result column="device_admain" jdbcType="VARCHAR" property="deviceAdmain" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="public_network_ip" jdbcType="VARCHAR" property="publicNetworkIp" />
+    <result column="public_network_port" jdbcType="VARCHAR" property="publicNetworkPort" />
+    <result column="lan_ip" jdbcType="VARCHAR" property="lanIp" />
+    <result column="lan_port" jdbcType="VARCHAR" property="lanPort" />
+    <result column="station_status" jdbcType="CHAR" property="stationStatus" />
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+    <result column="station_random_seed" jdbcType="VARCHAR" property="stationRandomSeed" />
+    <result column="relation_operator_id" jdbcType="VARCHAR" property="relationOperatorId" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, device_id, device_name, device_type, other_type, enter_network_time, device_admain, 
+    remark, public_network_ip, public_network_port, lan_ip, lan_port, station_status, 
+    station_network_id, station_random_seed, relation_operator_id, create_user, create_time, 
+    update_user, update_time, is_exist
+  </sql>
+
+  <insert id="batchInsert" parameterType="com.matrictime.network.dao.model.NmplDeviceInfo">
+    insert into nmpl_device_info (id, device_id, device_name,
+      device_type, other_type, enter_network_time,
+      device_admain, remark, public_network_ip,
+      public_network_port, lan_ip, lan_port,
+      station_status, station_network_id, station_random_seed,
+      relation_operator_id, create_user, create_time,
+      update_user, update_time, is_exist
+      )
+    values
+  <foreach collection ="list" item="vo" separator =",">
+    (#{vo.id,jdbcType=BIGINT}, #{vo.deviceId,jdbcType=VARCHAR}, #{vo.deviceName,jdbcType=VARCHAR},
+    #{vo.deviceType,jdbcType=CHAR}, #{vo.otherType,jdbcType=CHAR}, #{vo.enterNetworkTime,jdbcType=TIMESTAMP},
+    #{vo.deviceAdmain,jdbcType=VARCHAR}, #{vo.remark,jdbcType=VARCHAR}, #{vo.publicNetworkIp,jdbcType=VARCHAR},
+    #{vo.publicNetworkPort,jdbcType=VARCHAR}, #{vo.lanIp,jdbcType=VARCHAR}, #{vo.lanPort,jdbcType=VARCHAR},
+    #{vo.stationStatus,jdbcType=CHAR}, #{vo.stationNetworkId,jdbcType=VARCHAR}, #{vo.stationRandomSeed,jdbcType=VARCHAR},
+    #{vo.relationOperatorId,jdbcType=VARCHAR}, #{vo.createUser,jdbcType=VARCHAR}, #{vo.createTime,jdbcType=TIMESTAMP},
+    #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT})
+  </foreach >
+  </insert>
+</mapper>

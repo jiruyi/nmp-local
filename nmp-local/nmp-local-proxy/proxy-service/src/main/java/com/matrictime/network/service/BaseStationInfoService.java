@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface BaseStationInfoService {
 
-    Result<Integer> addBaseStationInfo(BaseStationInfoVo infoVo);
+    Result<Integer> addBaseStationInfo(AddBaseStationInfoRequest infoVo);
 
     Result<Integer> updateBaseStationInfo(BaseStationInfoVo infoVo);
 

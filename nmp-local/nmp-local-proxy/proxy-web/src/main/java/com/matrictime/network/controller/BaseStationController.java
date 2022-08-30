@@ -3,6 +3,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.request.AddBaseStationInfoRequest;
 import com.matrictime.network.service.BaseStationInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class BaseStationController extends SystemBaseService {
      */
 
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Result<Integer> addBaseStationInfo(@RequestBody BaseStationInfoVo request){
+    public Result<Integer> addBaseStationInfo(@RequestBody AddBaseStationInfoRequest request){
         Result<Integer> result;
         try {
             result = baseStationInfoService.addBaseStationInfo(request);
