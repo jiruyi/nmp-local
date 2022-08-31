@@ -11,5 +11,5 @@ public interface RouteService {
 
     Result<Integer> addRoute(List<RouteVo> voList);
 
-    Result<Integer> updateRoute(List<RouteVo> voList);
+    Result<Integer> updateRoute(RouteVo req);
 }

@@ -56,9 +56,7 @@ public class RouteController extends SystemBaseService {
     public Result updateRoute(@RequestBody RouteVo req){
         Result result;
         try {
-            List<RouteVo> voList = new ArrayList<>();
-            voList.add(req);
-            result = routeService.updateRoute(voList);
+            result = routeService.updateRoute(req);
         }catch (Exception e){
             log.info("RouteController.updateRoute{}",e.getMessage());
             result = failResult("");
