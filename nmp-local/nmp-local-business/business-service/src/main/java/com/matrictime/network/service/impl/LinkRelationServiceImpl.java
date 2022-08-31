@@ -131,6 +131,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 NmplDeviceInfoExample.Criteria deviceInfoExampleCriteria = followDeviceInfoExample.createCriteria();
                 deviceInfoExampleCriteria.andDeviceIdEqualTo(list.get(0).getFollowDeviceId());
                 List<NmplDeviceInfo> followDeviceList = deviceInfoMapper.selectByExample(followDeviceInfoExample);
+                //推送被修改之前的设备
                 if(followDeviceList.size() > 0){
                     for (NmplDeviceInfo deviceInfo : followDeviceList) {
                         LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
