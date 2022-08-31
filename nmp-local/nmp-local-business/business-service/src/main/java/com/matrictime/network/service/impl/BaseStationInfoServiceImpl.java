@@ -213,9 +213,15 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             if(lanIp.equals(request.getLanIp())){
                 request.setLocal(true);
             }
+            String data = "";
+            if(suffix.equals(DataConstants.URL_STATION_INSERT)){
+                data = firstPushData(request);
+            }else {
+                data = JSONObject.toJSONString(request);
+            }
             Map<String,String> map = new HashMap<>();
             map.put(DataConstants.KEY_DEVICE_ID,deviceMap.get(lanIp));
-            map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(request));
+            map.put(DataConstants.KEY_DATA,data);
             String url = "http://"+lanIp+":"+port+contextPath+suffix;
             map.put(DataConstants.KEY_URL,url);
             asyncService.httpPush(map);
@@ -365,5 +371,22 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         }
         return  map;
     }
+    private String firstPushData(NmplBaseStationInfo nmplBaseStationInfo){
+        JSONObject jsonObject = new JSONObject();
+        if(nmplBaseStationInfo.getIsLocal()){
+            List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
+            NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+            nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(nmplBaseStationInfo.getRelationOperatorId());
+            List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+            jsonObject.put("stationInfoVos",nmplBaseStationInfos);
+            jsonObject.put("deviceInfoVos",nmplDeviceInfos);
+        }
+        jsonObject.put("localBaseInfo",nmplBaseStationInfo);
+        return jsonObject.toJSONString();
+    }
+
+
+
+
 
 }
