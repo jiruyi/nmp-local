@@ -181,38 +181,20 @@ public class RouteServiceImpl implements RouteService {
         List<BaseStationInfoVo> boundaryBaseStationList =
                 baseStationInfoDomainService.selectForRoute(boundaryBaseStationInfoRequest);
 
-        if(suffix.equals(DataConstants.URL_ROUTE_UPDATE)){
-            for (BaseStationInfoVo baseStationInfoVo : accessBaseStationList) {
-                Map<String,String> map = new HashMap<>();
-                map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(routeSendVo));
-                String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+DataConstants.URL_ROUTE_UPDATE;
-                map.put(DataConstants.KEY_URL,url);
-                map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());
-                asyncService.httpPush(map);
-            }
 
-            for (BaseStationInfoVo baseStationInfoVo : boundaryBaseStationList) {
+        if(accessBaseStationList.size() > 0 && boundaryBaseStationList.size() > 0){
+            List<BaseStationInfoVo> unionList = ListUtils.union(accessBaseStationList,boundaryBaseStationList);
+            //开启多线程
+            for (BaseStationInfoVo baseStationInfoVo : unionList) {
                 Map<String,String> map = new HashMap<>();
                 map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(routeSendVo));
-                String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+DataConstants.URL_ROUTE_INSERT;
+                String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
                 map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());
                 asyncService.httpPush(map);
-            }
-        }else {
-            if(accessBaseStationList.size() > 0 && boundaryBaseStationList.size() > 0){
-                List<BaseStationInfoVo> unionList = ListUtils.union(accessBaseStationList,boundaryBaseStationList);
-                //开启多线程
-                for (BaseStationInfoVo baseStationInfoVo : unionList) {
-                    Map<String,String> map = new HashMap<>();
-                    map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(routeSendVo));
-                    String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
-                    map.put(DataConstants.KEY_URL,url);
-                    map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());
-                    asyncService.httpPush(map);
-                }
             }
         }
+
 
     }
 
