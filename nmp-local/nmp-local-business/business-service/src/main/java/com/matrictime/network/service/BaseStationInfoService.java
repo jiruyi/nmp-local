@@ -22,6 +22,8 @@ public interface BaseStationInfoService {
 
     Result<BaseStationInfoResponse> selectLinkBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
 
+    Result<BaseStationInfoResponse> selectForRoute(BaseStationInfoRequest baseStationInfoRequest);
+
     Result<BaseStationInfoResponse> selectActiveBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest);
 
     Result<BaseStationInfoResponse> selectBaseStationBatch(List<String> list);

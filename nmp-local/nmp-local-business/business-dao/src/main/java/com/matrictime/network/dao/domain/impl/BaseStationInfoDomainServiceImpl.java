@@ -77,6 +77,12 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     }
 
     @Override
+    public List<BaseStationInfoVo> selectForRoute(BaseStationInfoRequest baseStationInfoRequest) {
+        return nmplBaseStationInfoMapper.selectForRoute(baseStationInfoRequest);
+    }
+
+
+    @Override
     public List<BaseStationInfoVo> selectActiveBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
         return nmplBaseStationInfoMapper.selectActiveBaseStationInfo(baseStationInfoRequest);
     }
