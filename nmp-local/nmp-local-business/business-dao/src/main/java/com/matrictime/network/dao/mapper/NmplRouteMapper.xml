@@ -111,8 +111,7 @@
                create_time,update_user,update_time,is_exist
         from nmpl_route
         where
-            is_exist = 1
-          and id = #{id,jdbcType=VARCHAR}
+            id = #{id,jdbcType=VARCHAR}
 
     </select>
     <select id="selectDevices" resultMap="DeviceBaseResultMap">
