@@ -99,7 +99,7 @@ public class LinkRelationServiceImpl implements LinkRelationService {
             int i = linkRelationDomainService.deleteLinkRelation(linkRelationRequest);
             result.setResultObj(i);
             result.setSuccess(true);
-            if(i == 1){
+            if(i >= 1){
                 sendLinkRelation(linkRelationRequest,DataConstants.URL_LINK_RELATION_UPDATE);
             }
         }catch (Exception e){
@@ -134,11 +134,13 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 if(followDeviceList.size() > 0){
                     for (NmplDeviceInfo deviceInfo : followDeviceList) {
                         LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
+                        list.get(0).setIsExist("0");
                         BeanUtils.copyProperties(list.get(0),linkRelationSendVo);
                         linkRelationSendVo.setNoticeDeviceType(deviceInfo.getDeviceType());
                         Map<String,String> map = new HashMap<>();
                         map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(linkRelationSendVo));
                         String url = "http://"+deviceInfo.getLanIp()+":"+port+contextPath+DataConstants.URL_LINK_RELATION_UPDATE;
+                        map.put(DataConstants.KEY_DEVICE_ID,deviceInfo.getDeviceId());
                         map.put(DataConstants.KEY_URL,url);
                         asyncService.httpPush(map);
                     }
@@ -146,16 +148,18 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 BaseStationInfoRequest followBaseStationInfoRequest = new BaseStationInfoRequest();
                 followBaseStationInfoRequest.setStationId(list.get(0).getFollowDeviceId());
                 List<BaseStationInfoVo> followBaseStationList =
-                        baseStationInfoDomainService.selectLinkBaseStationInfo(followBaseStationInfoRequest);
+                        baseStationInfoDomainService.selectForRoute(followBaseStationInfoRequest);
                 if(followBaseStationList.size() > 0){
                     for (BaseStationInfoVo baseStationInfoVo : followBaseStationList) {
                         LinkRelationSendVo linkRelationSendVo = new LinkRelationSendVo();
+                        list.get(0).setIsExist("0");
                         BeanUtils.copyProperties(list.get(0),linkRelationSendVo);
                         linkRelationSendVo.setNoticeDeviceType(StationTypeEnum.BASE.getCode());
                         Map<String,String> map = new HashMap<>();
                         map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(linkRelationSendVo));
                         String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+DataConstants.URL_LINK_RELATION_UPDATE;
                         map.put(DataConstants.KEY_URL,url);
+                        map.put(DataConstants.KEY_DEVICE_ID,baseStationInfoVo.getStationId());
                         asyncService.httpPush(map);
                     }
                 }
@@ -233,10 +237,10 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         }
         //获取基站信息
         BaseStationInfoRequest mainBaseStationInfoRequest = new BaseStationInfoRequest();
-        mainBaseStationInfoRequest.setStationId(linkRelationRequest.getMainDeviceId());
+        mainBaseStationInfoRequest.setStationId(list.get(0).getMainDeviceId());
 
         BaseStationInfoRequest followBaseStationInfoRequest = new BaseStationInfoRequest();
-        followBaseStationInfoRequest.setStationId(linkRelationRequest.getFollowDeviceId());
+        followBaseStationInfoRequest.setStationId(list.get(0).getFollowDeviceId());
 
         //获取设备信息
         NmplDeviceInfoExample mainDeviceInfoExample = new NmplDeviceInfoExample();
@@ -252,9 +256,9 @@ public class LinkRelationServiceImpl implements LinkRelationService {
         List<NmplDeviceInfo> followDeviceList = deviceInfoMapper.selectByExample(followDeviceInfoExample);
 
         List<BaseStationInfoVo> mainBaseStationList =
-                baseStationInfoDomainService.selectLinkBaseStationInfo(mainBaseStationInfoRequest);
+                baseStationInfoDomainService.selectForRoute(mainBaseStationInfoRequest);
         List<BaseStationInfoVo> followBaseStationList =
-                baseStationInfoDomainService.selectLinkBaseStationInfo(followBaseStationInfoRequest);
+                baseStationInfoDomainService.selectForRoute(followBaseStationInfoRequest);
 
         if(mainDeviceList.size() > 0 && followDeviceList.size() > 0){
             List<NmplDeviceInfo> deviceInfoList = ListUtils.union(mainDeviceList,followDeviceList);
