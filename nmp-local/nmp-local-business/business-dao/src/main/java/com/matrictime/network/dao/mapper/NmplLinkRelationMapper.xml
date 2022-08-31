@@ -332,20 +332,20 @@
     from nmpl_device_info where is_exist = 1
   </select>
   <select id="query" parameterType="com.matrictime.network.request.LinkRelationRequest" resultType="com.matrictime.network.modelVo.LinkRelationVo">
-    select link_name, link_type,
+    select id,link_name, link_type,
+           is_exist,
            main_device_id, follow_device_id, create_user,
            create_time, update_user, update_time from nmpl_link_relation
     where
-    is_exist = 1
-    and link_name = #{linkName,jdbcType=VARCHAR}
-    or (main_device_id = #{mainDeviceId,jdbcType=VARCHAR} and follow_device_id = #{followDeviceId,jdbcType=VARCHAR})
+    is_exist = 1  and link_name = #{linkName,jdbcType=VARCHAR}
+    or (main_device_id = #{mainDeviceId,jdbcType=VARCHAR} and follow_device_id = #{followDeviceId,jdbcType=VARCHAR} and is_exist = 1)
   </select>
   <select id="selectById" parameterType="com.matrictime.network.request.LinkRelationRequest" resultType="com.matrictime.network.modelVo.LinkRelationVo">
-    select link_name, link_type,
+    select id,link_name, link_type,
+           is_exist,
            main_device_id, follow_device_id, create_user,
            create_time, update_user, update_time from nmpl_link_relation
     where
-          is_exist = 1
-        and id = #{id,jdbcType=VARCHAR}
+        id = #{id,jdbcType=VARCHAR}
   </select>
 </mapper>

@@ -25,4 +25,6 @@ public class LinkRelationSendVo {
     private Date updateTime;
 
     private String noticeDeviceType;
+
+    private String isExist;
 }

@@ -100,23 +100,22 @@ public class RouteServiceImpl implements RouteService {
                 return new Result<>(true,"修改成功");
             }
             routeRequest.setUpdateTime(getFormatDate(date));
-            sendRout(routeRequest,DataConstants.URL_ROUTE_UPDATE);
             routeRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             Integer updateFlag = routeDomainService.updateRoute(routeRequest);
             if(updateFlag == 2){
                 return new Result<>(false,"路由不可以重复插入");
             }
-
             result.setResultObj(updateFlag);
             result.setSuccess(true);
             //修改成功后推送到代理
             if(updateFlag==1){
                 BaseStationInfoRequest accessBaseStationInfoRequest = new BaseStationInfoRequest();
                 accessBaseStationInfoRequest.setStationId(list.get(0).getBoundaryDeviceId());
-                List<BaseStationInfoVo> baseStationInfoVos = baseStationInfoDomainService.selectLinkBaseStationInfo(accessBaseStationInfoRequest);
-                RouteSendVo routeSendVo = new RouteSendVo();
-                BeanUtils.copyProperties(list.get(0),routeSendVo);
+                List<BaseStationInfoVo> baseStationInfoVos = baseStationInfoDomainService.selectForRoute(accessBaseStationInfoRequest);
                 for (BaseStationInfoVo baseStationInfoVo : baseStationInfoVos) {
+                    RouteSendVo routeSendVo = new RouteSendVo();
+                    list.get(0).setIsExist((byte) 0);
+                    BeanUtils.copyProperties(list.get(0),routeSendVo);
                     Map<String,String> map = new HashMap<>();
                     map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(routeSendVo));
                     String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+DataConstants.URL_ROUTE_UPDATE;
@@ -172,10 +171,10 @@ public class RouteServiceImpl implements RouteService {
         BeanUtils.copyProperties(list.get(0),routeSendVo);
         //获取基站信息
         BaseStationInfoRequest accessBaseStationInfoRequest = new BaseStationInfoRequest();
-        accessBaseStationInfoRequest.setStationId(routeRequest.getAccessDeviceId());
+        accessBaseStationInfoRequest.setStationId(routeSendVo.getAccessDeviceId());
 
         BaseStationInfoRequest boundaryBaseStationInfoRequest = new BaseStationInfoRequest();
-        boundaryBaseStationInfoRequest.setStationId(routeRequest.getBoundaryDeviceId());
+        boundaryBaseStationInfoRequest.setStationId(routeSendVo.getBoundaryDeviceId());
 
         List<BaseStationInfoVo> accessBaseStationList =
                 baseStationInfoDomainService.selectForRoute(accessBaseStationInfoRequest);

@@ -43,7 +43,9 @@ public class LinkRelationDomainServiceImpl implements LinkRelationDomainService 
     public int updateLinkRelation(LinkRelationRequest linkRelationRequest) {
         List<LinkRelationVo> list = nmplLinkRelationMapper.query(linkRelationRequest);
         if(list.size() > 0){
-            return 2;
+            if(!list.get(0).getId().equals(linkRelationRequest.getId())){
+                return 2;
+            }
         }
         return nmplLinkRelationMapper.updateLinkRelation(linkRelationRequest);
     }
