@@ -96,6 +96,9 @@ public class RouteServiceImpl implements RouteService {
         Date date = new Date();
         try {
             List<RouteVo> list = nmplRouteMapper.selectById(routeRequest);
+            if(list.get(0).getBoundaryDeviceId().equals(routeRequest.getBoundaryDeviceId())){
+                return new Result<>(true,"修改成功");
+            }
             routeRequest.setUpdateTime(getFormatDate(date));
             sendRout(routeRequest,DataConstants.URL_ROUTE_UPDATE);
             routeRequest.setCreateUser(RequestContext.getUser().getUserId().toString());

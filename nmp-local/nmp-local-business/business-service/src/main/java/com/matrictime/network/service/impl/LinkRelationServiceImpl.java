@@ -118,6 +118,9 @@ public class LinkRelationServiceImpl implements LinkRelationService {
                 return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
             }
             List<LinkRelationVo> list = nmplLinkRelationMapper.query(linkRelationRequest);
+            if(list.get(0).getFollowDeviceId().equals(linkRelationRequest.getFollowDeviceId())){
+                return new Result<>(true,"修改成功");
+            }
             linkRelationRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             int i = linkRelationDomainService.updateLinkRelation(linkRelationRequest);
             if(i == 2){
@@ -222,9 +225,12 @@ public class LinkRelationServiceImpl implements LinkRelationService {
      * @throws Exception
      */
     private void sendLinkRelation(LinkRelationRequest linkRelationRequest,String suffix) throws Exception {
-
-        List<LinkRelationVo> list = nmplLinkRelationMapper.query(linkRelationRequest);
-
+        List<LinkRelationVo> list;
+        if(suffix.equals(DataConstants.URL_LINK_RELATION_INSERT)){
+            list = nmplLinkRelationMapper.query(linkRelationRequest);
+        }else {
+            list = nmplLinkRelationMapper.selectById(linkRelationRequest);
+        }
         //获取基站信息
         BaseStationInfoRequest mainBaseStationInfoRequest = new BaseStationInfoRequest();
         mainBaseStationInfoRequest.setStationId(linkRelationRequest.getMainDeviceId());
