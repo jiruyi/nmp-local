@@ -261,6 +261,25 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         return result;
     }
 
+    /**
+     * 根据前端页面条件自动关联获取基站信息
+     */
+    @Override
+    public Result<BaseStationInfoResponse> selectForRoute(BaseStationInfoRequest baseStationInfoRequest) {
+        Result<BaseStationInfoResponse> result = new Result<>();
+        BaseStationInfoResponse baseStationInfoResponse = new BaseStationInfoResponse();
+        try {
+            baseStationInfoResponse.setBaseStationInfoList(baseStationInfoDomainService.
+                    selectForRoute(baseStationInfoRequest));
+            result.setResultObj(baseStationInfoResponse);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg("参数异常");
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
     @Override
     public Result<BaseStationInfoResponse> selectActiveBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
         Result<BaseStationInfoResponse> result = new Result<>();

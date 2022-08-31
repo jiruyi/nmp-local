@@ -28,6 +28,8 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.matrictime.network.base.constant.DataConstants.KEY_DEVICE_ID;
+
 @Service
 @Slf4j
 public class RouteServiceImpl implements RouteService {
@@ -61,9 +63,11 @@ public class RouteServiceImpl implements RouteService {
             if(insetFlag == 2){
                 return new Result<>(false,"路由不可以重复插入");
             }
-            sendRout(routeRequest,DataConstants.URL_ROUTE_INSERT);
             result.setResultObj(insetFlag);
             result.setSuccess(true);
+            if(insetFlag==1){
+                sendRout(routeRequest,DataConstants.URL_ROUTE_INSERT);
+            }
         }catch (Exception e){
             log.info("创建路由异常",e.getMessage());
             result.setSuccess(false);
@@ -78,7 +82,7 @@ public class RouteServiceImpl implements RouteService {
         try {
             result.setResultObj(routeDomainService.deleteRoute(routeRequest));
             result.setSuccess(true);
-            //sendRout(routeRequest,DataConstants.URL_ROUTE_DELETE);
+            sendRout(routeRequest,DataConstants.URL_ROUTE_UPDATE);
         }catch (Exception e){
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
@@ -99,20 +103,25 @@ public class RouteServiceImpl implements RouteService {
             if(updateFlag == 2){
                 return new Result<>(false,"路由不可以重复插入");
             }
-            BaseStationInfoRequest accessBaseStationInfoRequest = new BaseStationInfoRequest();
-            accessBaseStationInfoRequest.setStationId(list.get(0).getBoundaryDeviceId());
-            List<BaseStationInfoVo> baseStationInfoVos = baseStationInfoDomainService.selectLinkBaseStationInfo(accessBaseStationInfoRequest);
-            RouteSendVo routeSendVo = new RouteSendVo();
-            BeanUtils.copyProperties(list.get(0),routeSendVo);
-            for (BaseStationInfoVo baseStationInfoVo : baseStationInfoVos) {
-                Map<String,String> map = new HashMap<>();
-                map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(routeSendVo));
-                String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+DataConstants.URL_ROUTE_UPDATE;
-                map.put(DataConstants.KEY_URL,url);
-                asyncService.httpPush(map);
-            }
+
             result.setResultObj(updateFlag);
             result.setSuccess(true);
+            //修改成功后推送到代理
+            if(updateFlag==1){
+                BaseStationInfoRequest accessBaseStationInfoRequest = new BaseStationInfoRequest();
+                accessBaseStationInfoRequest.setStationId(list.get(0).getBoundaryDeviceId());
+                List<BaseStationInfoVo> baseStationInfoVos = baseStationInfoDomainService.selectLinkBaseStationInfo(accessBaseStationInfoRequest);
+                RouteSendVo routeSendVo = new RouteSendVo();
+                BeanUtils.copyProperties(list.get(0),routeSendVo);
+                for (BaseStationInfoVo baseStationInfoVo : baseStationInfoVos) {
+                    Map<String,String> map = new HashMap<>();
+                    map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(routeSendVo));
+                    String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+DataConstants.URL_ROUTE_UPDATE;
+                    map.put(DataConstants.KEY_URL,url);
+                    asyncService.httpPush(map);
+                }
+                sendRout(routeRequest,DataConstants.URL_ROUTE_UPDATE);
+            }
         }catch (Exception e){
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
@@ -148,7 +157,15 @@ public class RouteServiceImpl implements RouteService {
     private void sendRout(RouteRequest routeRequest,String suffix) throws Exception {
         RouteSendVo routeSendVo = new RouteSendVo();
         BeanUtils.copyProperties(routeRequest,routeSendVo);
-        List<RouteVo> list = nmplRouteMapper.selectById(routeRequest);
+        List<RouteVo> list = new ArrayList<>();
+        if(suffix.equals(DataConstants.URL_ROUTE_INSERT)){
+            list = nmplRouteMapper.selectByTwoId(routeRequest);
+        }else {
+            list = nmplRouteMapper.selectById(routeRequest);
+        }
+        if(list.size()==0){
+            return;
+        }
         BeanUtils.copyProperties(list.get(0),routeSendVo);
         //获取基站信息
         BaseStationInfoRequest accessBaseStationInfoRequest = new BaseStationInfoRequest();
@@ -158,9 +175,9 @@ public class RouteServiceImpl implements RouteService {
         boundaryBaseStationInfoRequest.setStationId(routeRequest.getBoundaryDeviceId());
 
         List<BaseStationInfoVo> accessBaseStationList =
-                baseStationInfoDomainService.selectLinkBaseStationInfo(accessBaseStationInfoRequest);
+                baseStationInfoDomainService.selectForRoute(accessBaseStationInfoRequest);
         List<BaseStationInfoVo> boundaryBaseStationList =
-                baseStationInfoDomainService.selectLinkBaseStationInfo(boundaryBaseStationInfoRequest);
+                baseStationInfoDomainService.selectForRoute(boundaryBaseStationInfoRequest);
 
         if(accessBaseStationList.size() > 0 && boundaryBaseStationList.size() > 0){
             List<BaseStationInfoVo> unionList = ListUtils.union(accessBaseStationList,boundaryBaseStationList);
@@ -170,6 +187,7 @@ public class RouteServiceImpl implements RouteService {
                 map.put(DataConstants.KEY_DATA,JSONObject.toJSONString(routeSendVo));
                 String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
                 map.put(DataConstants.KEY_URL,url);
+                map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());
                 asyncService.httpPush(map);
             }
         }
