@@ -534,6 +534,39 @@
         order by nmpl_device_info.update_time desc
   </select>
 
+  <select id="selectDeviceForLinkRelation" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.DeviceInfoVo">
+    select device_id,device_name,public_network_ip,public_network_port,station_status,
+    relation_operator_id,nmpl_device_info.remark,nick_name,lan_ip,lan_port,company_name,device_type,
+    SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id
+    from nmpl_device_info,nmpl_company_info,nmpl_user
+    <where>
+      nmpl_device_info.is_exist = 1
+      and nmpl_company_info.is_exist = 1
+      <if test="deviceId != null and deviceId != ''">
+        and device_id = #{deviceId,jdbcType=VARCHAR}
+      </if>
+      <if test="deviceName != null and deviceName != ''">
+        and device_name = #{deviceName,jdbcType=VARCHAR}
+      </if>
+      <if test="deviceType != null and deviceType != ''">
+        and device_type = #{deviceType,jdbcType=CHAR}
+      </if>
+      <if test="relationOperatorId != null and relationOperatorId != ''">
+        and relation_operator_id = #{relationOperatorId,jdbcType=CHAR}
+      </if>
+      <if test="lanIp != null and lanIp != ''">
+        and lan_ip = #{lanIp,jdbcType=CHAR}
+      </if>
+      <if test="stationNetworkId != null and stationNetworkId != ''">
+        and station_network_id = #{stationNetworkId,jdbcType=CHAR}
+      </if>
+      and nmpl_device_info.relation_operator_id = nmpl_company_info.company_id
+      and nmpl_user.user_id = nmpl_device_info.create_user
+      and nmpl_company_info.company_type = '02'
+    </where>
+    order by nmpl_device_info.update_time desc
+  </select>
+
   <select id="selectActiveDevice" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.DeviceInfoVo">
     select device_id,device_name,public_network_ip,public_network_port,station_status,
     relation_operator_id,nmpl_device_info.remark,lan_ip,lan_port,company_name,device_type,

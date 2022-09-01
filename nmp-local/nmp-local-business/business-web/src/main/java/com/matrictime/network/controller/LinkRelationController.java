@@ -76,7 +76,7 @@ public class LinkRelationController {
     public Result<DeviceResponse> selectDevice(@RequestBody DeviceInfoRequest deviceInfoRequest){
         Result<DeviceResponse> result = new Result<>();
         try {
-            result = deviceService.selectLinkDevice(deviceInfoRequest);
+            result = deviceService.selectDeviceForLinkRelation(deviceInfoRequest);
         }catch (Exception e){
             log.info("链路查询设备异常:selectDevice{}",e.getMessage());
             result.setSuccess(false);

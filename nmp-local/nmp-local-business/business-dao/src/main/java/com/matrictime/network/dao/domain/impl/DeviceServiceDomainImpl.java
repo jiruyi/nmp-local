@@ -69,6 +69,11 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
     }
 
     @Override
+    public List<DeviceInfoVo> selectDeviceForLinkRelation(DeviceInfoRequest deviceInfoRequest) {
+        return nmplDeviceInfoMapper.selectDeviceForLinkRelation(deviceInfoRequest);
+    }
+
+    @Override
     public List<DeviceInfoVo> selectActiveDevice(DeviceInfoRequest deviceInfoRequest) {
         return nmplDeviceInfoMapper.selectActiveDevice(deviceInfoRequest);
     }

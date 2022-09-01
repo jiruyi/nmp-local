@@ -191,6 +191,21 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
+    public Result<DeviceResponse> selectDeviceForLinkRelation(DeviceInfoRequest deviceInfoRequest) {
+        Result<DeviceResponse> result = new Result<>();
+        try {
+            DeviceResponse deviceResponse = new DeviceResponse();
+            deviceResponse.setDeviceInfoVos(deviceDomainService.selectDeviceForLinkRelation(deviceInfoRequest));
+            result.setResultObj(deviceResponse);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg("参数异常");
+            result.setSuccess(false);
+        }
+        return result;
+    }
+
+    @Override
     public Result<DeviceResponse> selectActiveDevice(DeviceInfoRequest deviceInfoRequest) {
         Result<DeviceResponse> result = new Result<>();
         try {

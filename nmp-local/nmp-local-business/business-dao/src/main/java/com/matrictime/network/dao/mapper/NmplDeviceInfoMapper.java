@@ -40,6 +40,8 @@ public interface NmplDeviceInfoMapper {
 
     List<DeviceInfoVo> selectDevice(DeviceInfoRequest deviceInfoRequest);
 
+    List<DeviceInfoVo> selectDeviceForLinkRelation(DeviceInfoRequest deviceInfoRequest);
+
     List<DeviceInfoVo> selectActiveDevice(DeviceInfoRequest deviceInfoRequest);
 
     StationVo selectDeviceId(DeviceInfoRequest deviceInfoRequest);
