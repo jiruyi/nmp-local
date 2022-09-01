@@ -52,7 +52,7 @@ public class RouteController {
         Result<BaseStationInfoResponse> result = new Result<>();
         try {
             baseStationInfoRequest.setStationType(StationTypeEnum.BOUNDARY.getCode());
-            result = baseStationInfoService.selectLinkBaseStationInfo(baseStationInfoRequest);
+            result = baseStationInfoService.selectForRoute(baseStationInfoRequest);
         }catch (Exception e){
             log.info("路由查询边界基站设备异常:selectBaseStation{}",e.getMessage());
             result.setSuccess(false);

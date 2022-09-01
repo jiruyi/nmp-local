@@ -55,4 +55,6 @@ public interface NmplBaseStationInfoMapper {
     List<BaseStationInfoVo> selectBaseStation(BaseStationInfoRequest baseStationInfoRequest);
 
     int getSequenceId();
+
+    List<BaseStationInfoVo> selectForRoute(BaseStationInfoRequest baseStationInfoRequest);
 }

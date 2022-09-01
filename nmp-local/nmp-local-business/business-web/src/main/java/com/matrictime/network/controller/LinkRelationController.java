@@ -57,7 +57,7 @@ public class LinkRelationController {
     public Result<BaseStationInfoResponse> selectBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         Result<BaseStationInfoResponse> result = new Result<>();
         try {
-            result = baseStationInfoService.selectLinkBaseStationInfo(baseStationInfoRequest);
+            result = baseStationInfoService.selectForRoute(baseStationInfoRequest);
         }catch (Exception e){
             log.info("链路查询基站设备异常:selectBaseStation{}",e.getMessage());
             result.setSuccess(false);
