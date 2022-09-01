@@ -56,9 +56,7 @@ public class LinkRelationController extends SystemBaseService {
     public Result updateLinkRelation(@RequestBody LinkRelationVo req){
         Result result;
         try {
-            List<LinkRelationVo> voList = new ArrayList<>();
-            voList.add(req);
-            result = linkRelationService.updateLinkRelation(voList);
+            result = linkRelationService.updateLinkRelation(req);
         }catch (Exception e){
             log.info("LinkRelationController.updateLinkRelation{}",e.getMessage());
             result = failResult("");

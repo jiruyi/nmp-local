@@ -5,14 +5,8 @@ import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.dao.domain.LinkRelationDomainService;
-import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
-import com.matrictime.network.dao.mapper.NmplUpdateInfoCacheMapper;
-import com.matrictime.network.dao.mapper.NmplUpdateInfoGeneratorMapper;
-import com.matrictime.network.dao.mapper.NmplUpdateInfoKeycenterMapper;
-import com.matrictime.network.dao.model.NmplUpdateInfoBase;
-import com.matrictime.network.dao.model.NmplUpdateInfoCache;
-import com.matrictime.network.dao.model.NmplUpdateInfoGenerator;
-import com.matrictime.network.dao.model.NmplUpdateInfoKeycenter;
+import com.matrictime.network.dao.mapper.*;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.LinkRelationVo;
 import com.matrictime.network.service.LinkRelationService;
@@ -24,10 +18,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.matrictime.network.base.constant.DataConstants.NMPL_LINK_RELATION;
 import static com.matrictime.network.constant.DataConstants.*;
@@ -50,6 +41,9 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
 
     @Autowired
     private LinkRelationDomainService linkRelationDomainService;
+
+    @Resource
+    private NmplLinkRelationMapper nmplLinkRelationMapper;
 
     @Override
     @Transactional
@@ -122,27 +116,28 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
 
     @Override
     @Transactional
-    public Result<Integer> updateLinkRelation(List<LinkRelationVo> voList) {
+    public Result<Integer> updateLinkRelation(LinkRelationVo req) {
         Result result = new Result<>();
         try {
-            if (CollectionUtils.isEmpty(voList)){
-                throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
             Date createTime = new Date();
-            for (LinkRelationVo infoVo : voList){
-                infoVo.setUpdateTime(createTime);
-            }
             Set<String> set = new HashSet();
-            for (LinkRelationVo infoVo : voList){
-                infoVo.setUpdateTime(createTime);
-                set.add(infoVo.getNoticeDeviceType());
-            }
+            req.setUpdateTime(createTime);
+            set.add(req.getNoticeDeviceType());
+
+            NmplLinkRelation nmplLinkRelation = nmplLinkRelationMapper.selectByPrimaryKey(req.getId());
+
+
 
             // 通知基站
             if (set.contains(StationTypeEnum.BASE.getCode())){
                 NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
                 updateInfo.setTableName(NMPL_LINK_RELATION);
-                updateInfo.setOperationType(EDIT_TYPE_UPD);
+                if (nmplLinkRelation != null){
+                    updateInfo.setOperationType(EDIT_TYPE_UPD);
+                }else {
+                    updateInfo.setOperationType(EDIT_TYPE_ADD);
+                }
+
                 updateInfo.setCreateTime(createTime);
                 updateInfo.setCreateUser(SYSTEM_NM);
                 int baseNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
@@ -153,7 +148,11 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             if (set.contains(DeviceTypeEnum.DISPENSER.getCode())){
                 NmplUpdateInfoKeycenter updateInfo = new NmplUpdateInfoKeycenter();
                 updateInfo.setTableName(NMPL_LINK_RELATION);
-                updateInfo.setOperationType(EDIT_TYPE_UPD);
+                if (nmplLinkRelation != null){
+                    updateInfo.setOperationType(EDIT_TYPE_UPD);
+                }else {
+                    updateInfo.setOperationType(EDIT_TYPE_ADD);
+                }
                 updateInfo.setCreateTime(createTime);
                 updateInfo.setCreateUser(SYSTEM_NM);
                 int keycenterNum = nmplUpdateInfoKeycenterMapper.insertSelective(updateInfo);
@@ -164,7 +163,11 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             if (set.contains(DeviceTypeEnum.GENERATOR.getCode())){
                 NmplUpdateInfoGenerator updateInfo = new NmplUpdateInfoGenerator();
                 updateInfo.setTableName(NMPL_LINK_RELATION);
-                updateInfo.setOperationType(EDIT_TYPE_UPD);
+                if (nmplLinkRelation != null){
+                    updateInfo.setOperationType(EDIT_TYPE_UPD);
+                }else {
+                    updateInfo.setOperationType(EDIT_TYPE_ADD);
+                }
                 updateInfo.setCreateTime(createTime);
                 updateInfo.setCreateUser(SYSTEM_NM);
                 int generatorNum = nmplUpdateInfoGeneratorMapper.insertSelective(updateInfo);
@@ -175,14 +178,27 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             if (set.contains(DeviceTypeEnum.CACHE.getCode())){
                 NmplUpdateInfoCache updateInfo = new NmplUpdateInfoCache();
                 updateInfo.setTableName(NMPL_LINK_RELATION);
-                updateInfo.setOperationType(EDIT_TYPE_UPD);
+                if (nmplLinkRelation != null){
+                    updateInfo.setOperationType(EDIT_TYPE_UPD);
+                }else {
+                    updateInfo.setOperationType(EDIT_TYPE_ADD);
+                }
                 updateInfo.setCreateTime(createTime);
                 updateInfo.setCreateUser(SYSTEM_NM);
                 int cacheNum = nmplUpdateInfoCacheMapper.insertSelective(updateInfo);
                 log.info("LinkRelationServiceImpl.updateLinkRelation：cacheNum:{}",cacheNum);
             }
+            int batchNum=0;
+            if (nmplLinkRelation != null){
+                List<LinkRelationVo> voList = new ArrayList<>(1);
+                voList.add(req);
+                batchNum = linkRelationDomainService.updateLinkRelation(voList);
+            }else {
+                List<LinkRelationVo> voList = new ArrayList<>(1);
+                voList.add(req);
+                batchNum = linkRelationDomainService.insertLinkRelation(voList);
+            }
 
-            int batchNum = linkRelationDomainService.updateLinkRelation(voList);
             log.info("LinkRelationServiceImpl.updateLinkRelation：batchNum:{}",batchNum);
         }catch (Exception e){
             log.error("LinkRelationServiceImpl.updateLinkRelation：{}",e.getMessage());

@@ -11,5 +11,5 @@ public interface LinkRelationService {
 
     Result<Integer> addLinkRelation(List<LinkRelationVo> list);
 
-    Result<Integer> updateLinkRelation(List<LinkRelationVo> list);
+    Result<Integer> updateLinkRelation(LinkRelationVo req);
 }
