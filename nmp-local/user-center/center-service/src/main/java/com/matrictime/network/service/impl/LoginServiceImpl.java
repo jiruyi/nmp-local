@@ -443,81 +443,18 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result logout(LogoutReq req) {
-        Result result;
-        String encryFlag = DESTINATION_OUT;
         try {
-
-            ReqUtil<LogoutReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-
-            switch (req.getDestination()){
-                case DESTINATION_OUT:
-                    commonLogout(req);
-                    removeToken(req.getUserId(),req.getDestination());
-                    webSocketOnClose(req.getCommonKey()+KEY_SPLIT_UNDERLINE+DESTINATION_OUT);
-                    result = buildResult(null);
-                    break;
-                case DESTINATION_IN:
-                    ReqModel reqModel = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                    req.setUrl(url+UcConstants.URL_LOGOUT);
-                    String param = JSONObject.toJSONString(req);
-                    reqModel.setParam(param);
-                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    log.info("非密区接收返回值LoginServiceImpl.logout resModel:{}",JSONObject.toJSONString(resModel));
-
-                    Object returnValue = resModel.getReturnValue();
-                    if(returnValue != null && returnValue instanceof String){
-                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),Result.class);
-                        if(returnRes.isSuccess()){
-                            if (StringUtils.isNotBlank(returnRes.getExtendMsg())){
-                                removeToken(returnRes.getExtendMsg(),req.getDestination());
-                            }
-                            webSocketOnClose(req.getCommonKey()+KEY_SPLIT_UNDERLINE+DESTINATION_IN);
-                        }
-                        returnRes.setExtendMsg(null);
-                        return returnRes;
-                    }else {
-                        throw new SystemException("LoginServiceImpl.logout"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-
-                case UcConstants.DESTINATION_OUT_TO_IN:
-                    encryFlag = DESTINATION_OUT_TO_IN;
-                    // 入参解密
-
-                    ReqUtil<LogoutReq> reqUtil = new ReqUtil<>(req);
-                    LogoutReq desReq = reqUtil.decryJsonToReq(req);
-                    commonLogout(desReq);
-                    // 返回值加密
-
-
-                    result = buildResult(null,null,null,desReq.getUserId());
-                    break;
-                default:
-                    throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-
-            }
-
-        }catch (SystemException e){
-            log.error("LoginServiceImpl.logout SystemException:{}",e.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult(e);
+            checkLogoutParam(req);
+            User user = new User();
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andUserIdEqualTo(req.getUserId());
+            user.setLoginStatus(DataConfig.LOGIN_STATUS_OUT);
+            return buildResult(userMapper.updateByExampleSelective(user,userExample));
         }catch (Exception e){
-            log.error("LoginServiceImpl.logout Exception:{}",e.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult("");
+            log.info("logout:{}",e.getMessage());
         }
+        return buildResult(null);
 
-        try {
-            result = commonService.encrypt(req.getCommonKey(), encryFlag, result);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult("");
-            log.error("LoginServiceImpl.logout encrypt Exception:{}",e.getMessage());
-        }
-
-        return result;
     }
 
     private void commonLogout(LogoutReq req) throws Exception{

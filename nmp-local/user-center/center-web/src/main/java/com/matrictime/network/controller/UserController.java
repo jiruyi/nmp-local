@@ -144,4 +144,31 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "当前退出系统",notes = "用户信息")
+    @RequestMapping (value = "/updateLogoutAppCode",method = RequestMethod.POST)
+    @MonitorRequest
+    public Result updateLogoutAppCode(@RequestBody UserRequest userRequest){
+        try {
+            Result result = userService.updateAppCode(userRequest);
+            return  result;
+        }catch (Exception e){
+            log.error("updateLogoutAppCode exception:{}",e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    @ApiOperation(value = "当前登录系统",notes = "用户信息")
+    @RequestMapping (value = "/updateLoginAppCode",method = RequestMethod.POST)
+    @MonitorRequest
+    public Result updateLoginAppCode(@RequestBody UserRequest userRequest){
+        try {
+            Result result = userService.updateAppCode(userRequest);
+            return  result;
+        }catch (Exception e){
+            log.error("updateLoginAppCode exception:{}",e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+
 }

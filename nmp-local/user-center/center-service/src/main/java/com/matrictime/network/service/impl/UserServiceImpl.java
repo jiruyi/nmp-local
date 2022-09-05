@@ -94,62 +94,11 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result modifyUserInfo(UserRequest userRequest) {
-        Result result;
-        String encryFlag = DESTINATION_OUT;
-        try {
-            ReqUtil<UserRequest> jsonUtil = new ReqUtil<>(userRequest);
-            userRequest = jsonUtil.jsonReqToDto(userRequest);
-
-            switch (userRequest.getDestination()){
-                case DESTINATION_OUT:
-                    result = commonModifyUserInfo(userRequest);
-                    break;
-                case UcConstants.DESTINATION_IN:
-                    ReqModel reqModel = new ReqModel();
-                    userRequest.setDestination(DESTINATION_OUT_TO_IN);
-                    userRequest.setUrl(url+UcConstants.URL_MODIFYUSERINFO);
-                    String param = JSONObject.toJSONString(userRequest);
-                    log.info("非密区向密区发送请求参数param:{}",param);
-                    reqModel.setParam(param);
-                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    Object returnValue = resModel.getReturnValue();
-                    log.info("非密区接收密区返回值ResModel:{}",returnValue);
-                    if(returnValue != null && returnValue instanceof String){
-                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result>(){});
-                        return returnRes;
-                    }else {
-                        throw new SystemException("UserServiceImpl.modifyUserInfo"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-                case DESTINATION_OUT_TO_IN:
-                    encryFlag = DESTINATION_OUT_TO_IN;
-                    // 入参解密
-                    ReqUtil<UserRequest> reqUtil = new ReqUtil<>(userRequest);
-                    UserRequest desReq = reqUtil.decryJsonToReq(userRequest);
-                    result = commonModifyUserInfo(desReq);
-                    // 返回值加密
-                    break;
-                default:
-                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-            }
-        }catch (SystemException e){
-            log.error("UserServiceImpl.modifyUserInfo SystemException:{}",e.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult(e);
-        }catch (Exception e){
-            log.error("UserServiceImpl.modifyUserInfo Exception:{}",e.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult(e);
+        if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
+            throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-
-        try {
-            result = commonService.encrypt(userRequest.getCommonKey(), encryFlag, result);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult("");
-            log.error("UserServiceImpl.modifyUserInfo encrypt Exception:{}",e.getMessage());
-        }
-        return result;
+        int n = userDomainService.modifyUserInfo(userRequest);
+        return  buildResult(n);
     }
 
     /**
@@ -335,6 +284,15 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             result = failResult("");
         }
         return result;
+    }
+
+    @Override
+    public Result updateAppCode(UserRequest userRequest) {
+        if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
+            throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        int n = userDomainService.modifyUserInfo(userRequest);
+        return  buildResult(n);
     }
 
     @Override
