@@ -17,6 +17,4 @@ public class ChangePasswdReq extends BaseReq implements Serializable {
 
     private String repeatPassword;
 
-    private String idNumber;
-
 }

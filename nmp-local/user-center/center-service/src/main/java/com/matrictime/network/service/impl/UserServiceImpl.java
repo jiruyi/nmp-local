@@ -175,56 +175,68 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     @Override
     @Transactional
     public Result changePasswd(ChangePasswdReq changePasswdReq) {
-        String entryFlag = DESTINATION_OUT;
-        ReqUtil<ChangePasswdReq> jsonUtil = new ReqUtil<>(changePasswdReq);
-        changePasswdReq = jsonUtil.jsonReqToDto(changePasswdReq);
+//        String entryFlag = DESTINATION_OUT;
+//        ReqUtil<ChangePasswdReq> jsonUtil = new ReqUtil<>(changePasswdReq);
+//        changePasswdReq = jsonUtil.jsonReqToDto(changePasswdReq);
+//        Result result;
+//        try {
+//            switch (changePasswdReq.getDestination()){
+//                case DESTINATION_OUT:
+//                    result = commonChangePasswd(changePasswdReq);
+//                    break;
+//                case UcConstants.DESTINATION_IN:
+//                    ReqModel reqModel = new ReqModel();
+//                    changePasswdReq.setDestination(DESTINATION_OUT_TO_IN);
+//                    changePasswdReq.setUrl(url+UcConstants.URL_CHANGEPASSWD);
+//                    String param = JSONObject.toJSONString(changePasswdReq);
+//                    log.info("非密区向密区发送请求参数param:{}",param);
+//                    reqModel.setParam(param);
+//                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+//                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
+//                    Object returnValue = resModel.getReturnValue();
+//                    if(returnValue != null && returnValue instanceof String){
+//                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+//                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
+//                    }else {
+//                        throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+//                    }
+//                    break;
+//                case DESTINATION_OUT_TO_IN:
+//                    entryFlag = DESTINATION_OUT_TO_IN;
+//                    // 入参解密
+//                    ReqUtil<ChangePasswdReq> reqUtil = new ReqUtil<>(changePasswdReq);
+//                    ChangePasswdReq changePasswdReq1 = reqUtil.decryJsonToReq(changePasswdReq);
+//                    result = commonChangePasswd(changePasswdReq1);
+//                    // 返回值加密
+//                    break;
+//                default:
+//                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+//            }
+//        }catch (SystemException e){
+//            log.error("changePasswd Exception:{}",e.getMessage());
+//            result = failResult(e);
+//        }
+//        catch (Exception e) {
+//            log.error("changePasswd Exception:{}", e.getMessage());
+//            result = failResult("");
+//        }
+//        try {
+//            result = commonService.encrypt(changePasswdReq.getCommonKey(), entryFlag, result);
+//        }catch (Exception e){
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            log.error("基础平台加密异常",e.getMessage());
+//            result = failResult("");
+//        }
+//        return result;
         Result result;
-        try {
-            switch (changePasswdReq.getDestination()){
-                case DESTINATION_OUT:
-                    result = commonChangePasswd(changePasswdReq);
-                    break;
-                case UcConstants.DESTINATION_IN:
-                    ReqModel reqModel = new ReqModel();
-                    changePasswdReq.setDestination(DESTINATION_OUT_TO_IN);
-                    changePasswdReq.setUrl(url+UcConstants.URL_CHANGEPASSWD);
-                    String param = JSONObject.toJSONString(changePasswdReq);
-                    log.info("非密区向密区发送请求参数param:{}",param);
-                    reqModel.setParam(param);
-                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-                    Object returnValue = resModel.getReturnValue();
-                    if(returnValue != null && returnValue instanceof String){
-                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
-                    }else {
-                        throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-                    break;
-                case DESTINATION_OUT_TO_IN:
-                    entryFlag = DESTINATION_OUT_TO_IN;
-                    // 入参解密
-                    ReqUtil<ChangePasswdReq> reqUtil = new ReqUtil<>(changePasswdReq);
-                    ChangePasswdReq changePasswdReq1 = reqUtil.decryJsonToReq(changePasswdReq);
-                    result = commonChangePasswd(changePasswdReq1);
-                    // 返回值加密
-                    break;
-                default:
-                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-            }
+        try{
+            result = commonChangePasswd(changePasswdReq);
         }catch (SystemException e){
             log.error("changePasswd Exception:{}",e.getMessage());
             result = failResult(e);
         }
         catch (Exception e) {
             log.error("changePasswd Exception:{}", e.getMessage());
-            result = failResult("");
-        }
-        try {
-            result = commonService.encrypt(changePasswdReq.getCommonKey(), entryFlag, result);
-        }catch (Exception e){
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error("基础平台加密异常",e.getMessage());
             result = failResult("");
         }
         return result;
@@ -297,47 +309,67 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Override
     public Result verify(VerifyReq req) {
+//        Result result;
+//        String encryFlag = DESTINATION_OUT;
+//        try {
+//            ReqUtil<VerifyReq> jsonUtil = new ReqUtil<>(req);
+//            req = jsonUtil.jsonReqToDto(req);
+//
+//            switch (req.getDestination()){
+//                case DESTINATION_OUT:
+//                    commonVerify(req);
+//                    break;
+//                case UcConstants.DESTINATION_IN:
+//                    ReqModel reqModel = new ReqModel();
+//                    req.setDestination(DESTINATION_OUT_TO_IN);
+//                    req.setUrl(url+UcConstants.URL_VERIFY);
+//                    String param = JSONObject.toJSONString(req);
+//                    log.info("非密区向密区发送请求参数param:{}",param);
+//                    reqModel.setParam(param);
+//                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+//
+//                    log.info("非密区接收返回值UserServiceImpl.verify resModel:{}",JSONObject.toJSONString(resModel));
+//                    Object returnValue = resModel.getReturnValue();
+//                    if(returnValue != null && returnValue instanceof String){
+//                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+//                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result>(){});
+//                        return returnRes;
+//                    }else {
+//                        throw new SystemException("UserServiceImpl.verify"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+//                    }
+//
+//                case DESTINATION_OUT_TO_IN:
+//                    encryFlag = DESTINATION_OUT_TO_IN;
+//                    // 入参解密
+//                    ReqUtil<VerifyReq> reqUtil = new ReqUtil<>(req);
+//                    VerifyReq desReq = reqUtil.decryJsonToReq(req);
+//                    commonVerify(desReq);
+//                    break;
+//                default:
+//                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+//
+//            }
+//
+//            result = buildResult(null);
+//        }catch (SystemException e){
+//            log.error("UserServiceImpl.verify SystemException:{}",e.getMessage());
+//            result = failResult(e);
+//        } catch (Exception e){
+//            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
+//            result = failResult("");
+//        }
+//
+//        try {
+//            result = commonService.encrypt(req.getCommonKey(), encryFlag, result);
+//        } catch (Exception e) {
+//            result = failResult("");
+//            log.error("UserServiceImpl.verify encrypt Exception:{}",e.getMessage());
+//        }
+//        return result;
+
         Result result;
-        String encryFlag = DESTINATION_OUT;
         try {
-            ReqUtil<VerifyReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-
-            switch (req.getDestination()){
-                case DESTINATION_OUT:
-                    commonVerify(req);
-                    break;
-                case UcConstants.DESTINATION_IN:
-                    ReqModel reqModel = new ReqModel();
-                    req.setDestination(DESTINATION_OUT_TO_IN);
-                    req.setUrl(url+UcConstants.URL_VERIFY);
-                    String param = JSONObject.toJSONString(req);
-                    log.info("非密区向密区发送请求参数param:{}",param);
-                    reqModel.setParam(param);
-                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-
-                    log.info("非密区接收返回值UserServiceImpl.verify resModel:{}",JSONObject.toJSONString(resModel));
-                    Object returnValue = resModel.getReturnValue();
-                    if(returnValue != null && returnValue instanceof String){
-                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result>(){});
-                        return returnRes;
-                    }else {
-                        throw new SystemException("UserServiceImpl.verify"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-
-                case DESTINATION_OUT_TO_IN:
-                    encryFlag = DESTINATION_OUT_TO_IN;
-                    // 入参解密
-                    ReqUtil<VerifyReq> reqUtil = new ReqUtil<>(req);
-                    VerifyReq desReq = reqUtil.decryJsonToReq(req);
-                    commonVerify(desReq);
-                    break;
-                default:
-                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-
-            }
-
+            commonVerify(req);
             result = buildResult(null);
         }catch (SystemException e){
             log.error("UserServiceImpl.verify SystemException:{}",e.getMessage());
@@ -345,13 +377,6 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         } catch (Exception e){
             log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
             result = failResult("");
-        }
-
-        try {
-            result = commonService.encrypt(req.getCommonKey(), encryFlag, result);
-        } catch (Exception e) {
-            result = failResult("");
-            log.error("UserServiceImpl.verify encrypt Exception:{}",e.getMessage());
         }
 
         return result;
