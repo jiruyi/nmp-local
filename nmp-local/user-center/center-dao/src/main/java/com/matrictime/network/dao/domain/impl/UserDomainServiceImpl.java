@@ -98,6 +98,15 @@ public class UserDomainServiceImpl implements UserDomainService {
     }
 
     @Override
+    public int updateAppCode(UserRequest userRequest) {
+        User user = new User();
+        BeanUtils.copyProperties(userRequest, user);
+        UserExample example = new UserExample();
+        example.createCriteria().andUserIdEqualTo(userRequest.getUserId());
+        return userMapper.updateByExampleSelective(user, example);
+    }
+
+    @Override
     public User selectByCondition(UserRequest userRequest) {
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();

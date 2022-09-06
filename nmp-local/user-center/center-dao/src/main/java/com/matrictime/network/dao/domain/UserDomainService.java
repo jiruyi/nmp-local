@@ -17,6 +17,8 @@ public interface UserDomainService {
 
     int deleteFriend(DeleteFriendReq deleteFriendReq);
 
+    int updateAppCode(UserRequest userRequest);
+
     User selectByCondition(UserRequest userRequest);
 
     User queryUserByqueryParam(UserRequest userRequest);

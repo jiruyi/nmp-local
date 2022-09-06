@@ -40,6 +40,8 @@ public interface UserService {
 
     Result queryUser(UserRequest userRequest);
 
+    Result updateAppCode(UserRequest userRequest);
+
     // 身份验证
     Result verify(VerifyReq verifyReq);
 
