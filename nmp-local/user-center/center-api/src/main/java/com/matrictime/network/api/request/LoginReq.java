@@ -1,5 +1,6 @@
 package com.matrictime.network.api.request;
 
+import com.matrictime.network.api.modelVo.CAVo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -77,5 +78,10 @@ public class LoginReq extends BaseReq implements Serializable {
      * 当前登录系统
      */
     private String loginAppCode;
+
+    /**
+     * 验签证书
+     */
+    private CAVo caVo;
 
 }

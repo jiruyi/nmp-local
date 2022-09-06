@@ -13,6 +13,8 @@ public class LoginResp implements Serializable {
 
     private UserVo user;
 
+    private String token;
+
     private List<GroupVo> groups;
 
 }

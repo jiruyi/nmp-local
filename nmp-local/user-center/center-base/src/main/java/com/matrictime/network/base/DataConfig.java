@@ -5,6 +5,8 @@ public class DataConfig {
     public static final String LOGIN_TYPE_USER = "0";
     public static final String LOGIN_TYPE_ACCOUNT = "1";
 
+    public static final String LOGIN_TYPE_CA = "2";
+
     public static final String LOGIN_STATUS_IN = "1";
     public static final String LOGIN_STATUS_OUT = "0";
 
@@ -29,4 +31,8 @@ public class DataConfig {
     public static final String PUSH_TYPE_DISABLE_TOKEN = "0";
 
     public static final String PUSH_TYPE_DISABLE_TOKEN_INVALID = "2";
+
+    public static final String REGISTER_TYPE_COM = "0";
+
+    public static final String REGISTER_TYPE_CA = "1";
 }

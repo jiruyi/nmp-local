@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
+import com.matrictime.network.api.modelVo.CAVo;
 import com.matrictime.network.api.modelVo.GroupVo;
 import com.matrictime.network.api.modelVo.PushUserVo;
 import com.matrictime.network.api.modelVo.UserVo;
@@ -47,6 +48,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.DataConfig.LOGIN_STATUS_IN;
+import static com.matrictime.network.base.ErrorMessageContants.SAVE_FAIL_MSG;
+import static com.matrictime.network.base.ErrorMessageContants.VERIFY_FAIL_MSG;
 import static com.matrictime.network.base.UcConstants.*;
 import static com.matrictime.network.base.DataConfig.*;
 import static com.matrictime.network.constant.DataConstants.*;
@@ -57,8 +60,8 @@ import static com.matrictime.network.constant.DataConstants.SYSTEM_UC;
 @Slf4j
 public class LoginServiceImpl extends SystemBaseService implements LoginService {
 
-    @Autowired
-    private GroupDomainService groupDomainService;
+//    @Autowired
+//    private GroupDomainService groupDomainService;
 
     @Autowired
     private CommonService commonService;
@@ -72,13 +75,18 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Autowired(required = false)
     private UserExtMapper userExtMapper;
 
-    @Value("${app.innerUrl}")
-    private String url;
+    @Value("${sign.ip}")
+    private String signIp;
 
-    @Value("${app.outerUrl}")
-    private String outUrl;
+    @Value("${sign.port}")
+    private String signPort;
 
+    @Value("${sign.verifyUrl}")
+    private String verifyUrl;
 
+    @Value("${sign.saveUrl}")
+    private String saveUrl;
+    
     @Value("${token.timeOut}")
     private Integer timeOut;
 
@@ -96,99 +104,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Transactional(rollbackFor = Exception.class)
     public Result<RegisterResp> register(RegisterReq req) {
         Result result;
-        RegisterResp resp;
-        Boolean encryFlag = false;
         try {
-
-            ReqUtil<RegisterReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-
-            switch (req.getDestination()){
-                case DESTINATION_OUT:
-                case UcConstants.DESTINATION_OUT_TO_IN:
-                    req.setUserId(SnowFlake.nextId_String());
-                    // 非密区生成用户
-                    commonRegister(req);
-
-                    // 密区同步用户
-                    ReqModel reqModelF = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN_SYN);
-                    req.setUrl(url+UcConstants.URL_REGISTER);
-
-                    String paramF = JSONObject.toJSONString(req);
-                    reqModelF.setParam(paramF);
-                    ResModel resModel = JServiceImpl.syncSendMsg(reqModelF);
-                    log.info("非密区接收返回值LoginServiceImpl.register resModel:{}",JSONObject.toJSONString(resModel));
-                    req.setDestination(UcConstants.DESTINATION_DEFAULT);
-                    Object returnValue = resModel.getReturnValue();
-                    if(returnValue != null && returnValue instanceof String){
-                        ResModel ResModelX = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        result = JSONObject.parseObject(ResModelX.getReturnValue().toString(), Result.class);
-                        return result;
-                    }else {
-                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-                case DESTINATION_IN:
-                    encryFlag = true;
-                    ReqModel reqModelM = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_FOR_DES);
-                    req.setUrl(url+UcConstants.URL_REGISTER);
-                    String paramM = JSONObject.toJSONString(req);
-                    reqModelM.setParam(paramM);
-                    ResModel resModelM = JServiceImpl.syncSendMsg(reqModelM);
-
-                    log.info("非密区接收返回值LoginServiceImpl.register resModel:{}",resModelM.getReturnValue());
-                    Object returnValueM = resModelM.getReturnValue();
-                    if(returnValueM != null && returnValueM instanceof String){
-                        ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
-                        Result<RegisterResp> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<RegisterResp>>(){});
-                        log.info("非密区接收返回值LoginServiceImpl.register returnRes:{}",returnRes.toString());
-                        if(returnRes.isSuccess()){
-                            // 密区/非密区同步用户
-                            RegisterResp resultObj = returnRes.getResultObj();
-                            RegisterReq req1 = resultObj.getRegisterReq();
-                            req1.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                            String post = HttpClientUtil.post(outUrl + UcConstants.URL_REGISTER, JSONObject.toJSONString(req1));
-                            log.info("非密区接收密区/非密区同步返回值LoginServiceImpl.register post:{}",post);
-                            result = JSONObject.parseObject(post, Result.class);
-                            if (result.isSuccess()){
-                                req.setLoginAccount(req1.getLoginAccount());
-                            }
-                        }else {
-                            throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                        }
-                    }else {
-                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-                    break;
-                case UcConstants.DESTINATION_OUT_TO_IN_SYN:
-                    RegisterReq desReq2 = new RegisterReq();
-                    BeanUtils.copyProperties(req,desReq2);
-                    resp = commonRegister(desReq2);
-                    result = buildResult(resp);
-                    break;
-
-                case UcConstants.DESTINATION_FOR_DES:
-                    // 入参解密
-
-                    ReqUtil<RegisterReq> reqUtil = new ReqUtil<>(req);
-                    RegisterReq desReq = reqUtil.decryJsonToReq(req);
-                    log.info("密区解密结果desReq:{}",JSONObject.toJSONString(desReq));
-                    resp = new RegisterResp();
-                    resp.setRegisterReq(desReq);
-
-                    return buildResult(resp);
-
-                case DESTINATION_FOR_ENC:
-
-                    ReqUtil resUtil = new ReqUtil();
-                    String resultObj = resUtil.encryJsonStringToReq(req.getEncryptParam(), req.getSid());
-                    result = buildResult(resultObj);
-                    break;
-                default:
-                    throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-
-            }
+            result = buildResult(commonRegister(req));
         }catch (SystemException e){
             log.error("LoginServiceImpl.register SystemException:{}",e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -197,45 +114,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             log.error("LoginServiceImpl.register Exception:{}",e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult("");
-        }
-
-        try {
-            if (encryFlag) {
-                ReqModel reqModel = new ReqModel();
-                req.setDestination(UcConstants.DESTINATION_FOR_ENC);
-                req.setUrl(url+UcConstants.URL_REGISTER);
-                req.setEncryptParam(JSONObject.toJSONString(result));
-
-                String param = JSONObject.toJSONString(req);
-                reqModel.setParam(param);
-                ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                log.info("非密区接收结果加密返回值LoginServiceImpl.register resModel:{}",resModel.getReturnValue());
-                Object returnValue = resModel.getReturnValue();
-                if(returnValue != null && returnValue instanceof String){
-                    ResModel ResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-                    result = JSONObject.parseObject(ResModel.getReturnValue().toString(), Result.class);
-                    if (result.isSuccess()){
-                        return result;
-                    }else {
-                        throw new Exception(ErrorMessageContants.ENCRYPT_FAIL_MSG);
-                    }
-                }else {
-                    throw new Exception(ErrorMessageContants.ENCRYPT_FAIL_MSG);
-                }
-            }
-        } catch (Exception e) {
-            if (!ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())) {
-                DeleteUserReq deleteUserReq = new DeleteUserReq();
-                deleteUserReq.setOpSystem(SYSTEM_UC);
-                deleteUserReq.setDeleteType(DataConfig.DELETE_USER_TYPE_ACCOUNT);
-                deleteUserReq.setLoginAccount(req.getLoginAccount());
-                Result delResp = deleteUser(deleteUserReq);
-                if (!delResp.isSuccess()){
-                    log.error("LoginServiceImpl.register Exception:注册返回值加密失败，数据回滚失败，请联系技术人员排查");
-                }
-            }
-            result = failResult("");
-            log.error("LoginServiceImpl.register Exception:{}",e.getMessage());
         }
         return result;
     }
@@ -249,29 +127,45 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         if(userExist){
             throw new SystemException(ErrorMessageContants.USER_IS_EXIST_MSG);
         }
-
         User user = new User();
-        user.setUserId(req.getUserId());
-        user.setSid(req.getSid());
         user.setLoginAccount(req.getLoginAccount());
         user.setNickName(req.getNickName());
-        user.setPassword(req.getPassword());
-        user.setEmail(req.getEmail());
-        user.setPhoneNumber(req.getPhoneNumber());
-        user.setUserType(req.getUserType());
-        user.setIdType(req.getIdType());
-        user.setIdNo(req.getIdNo());
-        user.setLoginAppCode(req.getLoginAppCode());
-        user.setSex(req.getSex());
+        if (REGISTER_TYPE_COM.equals(req.getRegisterType())){
+            user.setUserId(req.getUserId());
+            user.setSid(req.getSid());
+            user.setPassword(req.getPassword());
+            user.setEmail(req.getEmail());
+            user.setPhoneNumber(req.getPhoneNumber());
+            user.setUserType(req.getUserType());
+            user.setIdType(req.getIdType());
+            user.setIdNo(req.getIdNo());
+            user.setLoginAppCode(SYSTEM_JZDQ);
+            user.setSex(req.getSex());
+        }else if (REGISTER_TYPE_CA.equals(req.getRegisterType())){
+            CAVo saveCaVo = req.getCaVo();
+            String savePost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + saveUrl, JSONObject.toJSONString(saveCaVo));
+            if (true){
+                CAVo verifyCaVo = req.getCaVo();
+                String verifyPost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + verifyUrl, JSONObject.toJSONString(verifyCaVo));
+                user.setCaId(verifyCaVo.getTxn_id());
+                if (false){
+                    throw new SystemException(VERIFY_FAIL_MSG);
+                }
+            }else {
+                throw new SystemException(SAVE_FAIL_MSG);
+            }
+        }
+
+
         userMapper.insertSelective(user);
         RegisterResp resp = new RegisterResp();
         resp.setUserId(user.getUserId());
 
-        GroupReq groupReq = new GroupReq();
-        groupReq.setOwner(req.getUserId());
-        groupReq.setGroupName(DataConfig.DEFAULT_GROUP_NAME);
-        groupReq.setDefaultGroup(true);
-        Integer group = groupDomainService.createGroup(groupReq);
+//        GroupReq groupReq = new GroupReq();
+//        groupReq.setOwner(req.getUserId());
+//        groupReq.setGroupName(DataConfig.DEFAULT_GROUP_NAME);
+//        groupReq.setDefaultGroup(true);
+//        Integer group = groupDomainService.createGroup(groupReq);
 
         return resp;
     }
@@ -280,84 +174,10 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Transactional(rollbackFor = Exception.class)
     public Result<LoginResp> login(LoginReq req) {
         Result result;
-        String sid = "";
         String userId = "";
-        String token = "";
-        String encryFlag = DESTINATION_OUT;
         try {
-            LoginResp resp = new LoginResp();
+            result = buildResult(commonLogin(req));
 
-            ReqUtil<LoginReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-
-            switch (req.getDestination()){
-                case DESTINATION_OUT:
-                    resp =commonLogin(req);
-                    userId = resp.getUser().getUserId();
-                    JSONObject extendMsg = new JSONObject();
-                    token = buildToken(resp.getUser(), DESTINATION_OUT);
-                    List<String> pushOnlineUsers = getPushOnlineUsers(userId,DESTINATION_OUT);
-                    extendMsg.put("userId",userId);
-                    extendMsg.put("token",token);
-                    extendMsg.put("pushOnlineUsers",pushOnlineUsers);
-                    extendMsg.put("pushInfo",getpushInfo(resp.getUser()));
-                    putToken(userId,token,DESTINATION_OUT);
-                    result = buildResult(resp,null,null,extendMsg.toJSONString());
-                    break;
-                case DESTINATION_IN:
-                    ReqModel reqModel = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                    req.setUrl(url+UcConstants.URL_LOGIN);
-                    String param = JSONObject.toJSONString(req);
-                    reqModel.setParam(param);
-                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-
-                    log.info("非密区接收返回值LoginServiceImpl.login resModel:{}",resModel.getReturnValue());
-
-                    Object returnValue = resModel.getReturnValue();
-                    if(returnValue != null && returnValue instanceof String){
-                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result>(){});
-                        if (returnRes.isSuccess() && StringUtils.isNotBlank(returnRes.getExtendMsg())){
-                            JSONObject jsonObject = JSONObject.parseObject(returnRes.getExtendMsg());
-                            if (jsonObject.containsKey("userId") && jsonObject.containsKey("token")){
-                                userId = jsonObject.getString("userId");
-                                token = jsonObject.getString("token");
-                                if (StringUtils.isNotBlank(userId) && StringUtils.isNotBlank(token)){
-                                    putToken(userId,token,DESTINATION_IN);
-                                }
-                            }
-                        }
-                        return returnRes;
-                    }else {
-                        throw new Exception("LoginServiceImpl.login"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-
-                case DESTINATION_OUT_TO_IN:
-                    encryFlag = DESTINATION_OUT_TO_IN;
-                    // 入参解密
-
-                    ReqUtil<LoginReq> reqUtil = new ReqUtil<>(req);
-//                    LoginReq desReq = JSONObject.parseObject(req.getEncryptParam(),new TypeReference<LoginReq>(){});
-                    LoginReq desReq = reqUtil.decryJsonToReq(req);
-                    sid = desReq.getSid();
-                    resp = commonLogin(desReq);
-                    userId = resp.getUser().getUserId();
-                    // 返回值加密
-                    token = buildToken(resp.getUser(), DESTINATION_IN);
-                    List<String> desPushOnlineUsers = getPushOnlineUsers(userId,DESTINATION_IN);
-                    JSONObject desExtendMsg = new JSONObject();
-                    desExtendMsg.put("sid",sid);
-                    desExtendMsg.put("userId",userId);
-                    desExtendMsg.put("token",token);
-                    desExtendMsg.put("pushOnlineUsers",desPushOnlineUsers);
-                    desExtendMsg.put("pushInfo",getpushInfo(resp.getUser()));
-                    result = buildResult(resp,null,null,desExtendMsg.toJSONString());
-                    break;
-                default:
-                    throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-
-            }
         }catch (SystemException e){
             log.error("LoginServiceImpl.login SystemException:{}",e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -374,14 +194,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             result = failResult("");
         }
 
-
-        try {
-            result = commonService.encryptForLogin(req, encryFlag, result);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult("");
-            log.error("LoginServiceImpl.login encrypt Exception:{}",e.getMessage());
-        }
         return result;
     }
 
@@ -389,16 +201,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         checkLoginParam(req);
         LoginResp resp = new LoginResp();
         UserExample userExample = new UserExample();
-        switch (req.getLoginType()){
-            case DataConfig.LOGIN_TYPE_USER:
-                userExample.createCriteria().andUserIdEqualTo(req.getUserId());
-                break;
-            case DataConfig.LOGIN_TYPE_ACCOUNT:
-                userExample.createCriteria().andLoginAccountEqualTo(req.getLoginAccount());
-                break;
-            default:
-                throw new Exception("LoginType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-        }
+        userExample.createCriteria().andLoginAccountEqualTo(req.getLoginAccount());
 
         List<User> users = userMapper.selectByExample(userExample);
         if(CollectionUtils.isEmpty(users)){
@@ -408,34 +211,44 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             if (LOGIN_STATUS_IN.equals(user.getLoginStatus())){
                 throw new SystemException(ErrorMessageContants.USER_LOGIN_MSG);
             }
-//            if (!ParamCheckUtil.checkVoStrBlank(user.getlId()) && !user.getlId().equals(req.getLId())){
-//                throw new SystemException(ErrorMessageContants.LOGIN_BIND_MSG);
-//            }
+            switch (req.getLoginType()){
+                case LOGIN_TYPE_ACCOUNT:
+                    break;
+                case LOGIN_TYPE_CA:
+                    CAVo saveCaVo = req.getCaVo();
+                    String savePost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + saveUrl, JSONObject.toJSONString(saveCaVo));
+                    if (true){
+                        CAVo verifyCaVo = req.getCaVo();
+                        String verifyPost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + verifyUrl, JSONObject.toJSONString(verifyCaVo));
+                        user.setCaId(verifyCaVo.getTxn_id());
+                        if (false){
+                            throw new SystemException(VERIFY_FAIL_MSG);
+                        }
+                    }else {
+                        throw new SystemException(SAVE_FAIL_MSG);
+                    }
+                    break;
+                default:
+                    throw new SystemException("登录方式"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
             if (!user.getPassword().equals(req.getPassword())){
                 throw new SystemException(ErrorMessageContants.PASSWORD_ERROR_MSG);
             }
             user.setDeviceId(req.getDeviceId());
             user.setDeviceIp(req.getDeviceIp());
             user.setLoginStatus(LOGIN_STATUS_IN);
-            user.setLoginAppCode(req.getLoginAppCode());
+            user.setLoginAppCode(SYSTEM_JZDQ);
             user.setSid(req.getSid());
             userMapper.updateByPrimaryKeySelective(user);
             UserVo userVo = new UserVo();
             BeanUtils.copyProperties(user,userVo);
             userVo.setPassword(null);
 
-            String userId = user.getUserId();
-            GroupInfoExample groupInfoExample = new GroupInfoExample();
-            groupInfoExample.createCriteria().andOwnerEqualTo(userId).andIsExistEqualTo(DataConstants.IS_EXIST);
-            List<GroupInfo> groupInfos = groupInfoMapper.selectByExample(groupInfoExample);
-            List<GroupVo> groupVos = new ArrayList<>(groupInfos.size());
-            for (GroupInfo groupInfo : groupInfos) {
-                GroupVo groupVo = new GroupVo();
-                BeanUtils.copyProperties(groupInfo,groupVo);
-                groupVos.add(groupVo);
-            }
+            String token = buildToken(userVo, req.getDestination());
+            setToken(user.getUserId(),token,req.getDestination());
+
             resp.setUser(userVo);
-            resp.setGroups(groupVos);
+            resp.setToken(token);
         }
         return resp;
     }
@@ -460,7 +273,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
                     req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                    req.setUrl(url+UcConstants.URL_LOGOUT);
+                    req.setUrl(UcConstants.URL_LOGOUT);
                     String param = JSONObject.toJSONString(req);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
@@ -560,7 +373,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
                     req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                    req.setUrl(url+UcConstants.URL_BIND);
+                    req.setUrl(UcConstants.URL_BIND);
                     String param = JSONObject.toJSONString(req);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
@@ -624,7 +437,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case DESTINATION_IN:
                     ReqModel reqModel = new ReqModel();
                     req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                    req.setUrl(url+UcConstants.URL_SYSLOGOUT);
+                    req.setUrl(UcConstants.URL_SYSLOGOUT);
                     String param = JSONObject.toJSONString(req);
                     reqModel.setParam(param);
                     ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
@@ -708,7 +521,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     // 密区同步删除用户
                     ReqModel reqModelF = new ReqModel();
                     req.setDestination(UcConstants.DESTINATION_OUT_TO_IN_SYN);
-                    req.setUrl(url+UcConstants.URL_DELETEUSER);
+                    req.setUrl(UcConstants.URL_DELETEUSER);
 
                     String paramF = JSONObject.toJSONString(req);
                     reqModelF.setParam(paramF);
@@ -725,7 +538,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 case DESTINATION_IN:
                     ReqModel reqModelM = new ReqModel();
                     req.setDestination(UcConstants.DESTINATION_FOR_DES);
-                    req.setUrl(url+UcConstants.URL_DELETEUSER);
+                    req.setUrl(UcConstants.URL_DELETEUSER);
                     String paramM = JSONObject.toJSONString(req);
                     reqModelM.setParam(paramM);
                     ResModel resModelM = JServiceImpl.syncSendMsg(reqModelM);
@@ -741,7 +554,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                             RegisterResp resultObj = returnRes.getResultObj();
                             RegisterReq req1 = resultObj.getRegisterReq();
                             req1.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                            String post = HttpClientUtil.post(outUrl + UcConstants.URL_DELETEUSER, JSONObject.toJSONString(req1));
+                            String post = HttpClientUtil.post(UcConstants.URL_DELETEUSER, JSONObject.toJSONString(req1));
                             log.info("非密区接收密区/非密区同步返回值LoginServiceImpl.deleteUser post:{}",post);
                             return JSONObject.parseObject(post,Result.class);
                         }else {
@@ -927,48 +740,83 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         if(null == req){
             throw new Exception("req"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if(ParamCheckUtil.checkVoStrBlank(req.getSid())){
-            throw new Exception("sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        if (ParamCheckUtil.checkVoStrBlank(req.getLoginType())){
+            throw new Exception("loginType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if (ParamCheckUtil.checkVoStrBlank(req.getLId())){
-            throw new Exception("lid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        if (LOGIN_TYPE_ACCOUNT.equals(req.getLoginType())){
+            if(ParamCheckUtil.checkVoStrBlank(req.getSid())){
+                throw new Exception("sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            if (ParamCheckUtil.checkVoStrBlank(req.getLId())){
+                throw new Exception("lid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())){
+                throw new Exception("LoginAccount"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            if(ParamCheckUtil.checkVoStrBlank(req.getPassword())){
+                throw new Exception("Password"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+        }else if (LOGIN_TYPE_CA.equals(req.getLoginType())){
+            if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())){
+                throw new Exception("LoginAccount"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+        }else {
+            throw new SystemException("登录方式"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
         }
-        if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount()) && ParamCheckUtil.checkVoStrBlank(req.getUserId())){
-            throw new Exception("LoginAccount/UserId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if(ParamCheckUtil.checkVoStrBlank(req.getPassword())){
-            throw new Exception("Password"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
+
     }
 
     private void checkRegisterParam(RegisterReq req) throws Exception {
         if (req == null){
             throw new Exception("req"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if (req.getLoginAccount() == null || req.getLoginAccount().isEmpty()){
-            throw new SystemException("账号"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        if (req.getRegisterType() == null || req.getRegisterType().isEmpty()){
+            throw new SystemException("注册方式"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if (req.getPassword() == null || req.getPassword().isEmpty()){
-            throw new SystemException("密码"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        if (REGISTER_TYPE_COM.equals(req.getRegisterType())){
+            if (req.getLoginAccount() == null || req.getLoginAccount().isEmpty()){
+                throw new SystemException("账号"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            if (req.getPassword() == null || req.getPassword().isEmpty()){
+                throw new SystemException("密码"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            if (req.getEmail() == null || req.getEmail().isEmpty()){
+                throw new SystemException("用户邮箱"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            if (req.getPhoneNumber() == null || req.getPhoneNumber().isEmpty()){
+                throw new SystemException("手机号码"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            if (req.getUserType() == null || req.getUserType().isEmpty()){
+                throw new Exception("UserType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            if (req.getIdType() == null || req.getIdType().isEmpty()){
+                throw new SystemException("证件类型"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            if (req.getIdNo() == null || req.getIdNo().isEmpty()){
+                throw new SystemException("证件号"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+        }else if (REGISTER_TYPE_CA.equals(req.getRegisterType())){
+            if (req.getLoginAccount() == null || req.getLoginAccount().isEmpty()){
+                throw new SystemException("账号"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+        }else {
+            throw new SystemException("注册方式"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
         }
-        if (req.getEmail() == null || req.getEmail().isEmpty()){
-            throw new SystemException("用户邮箱"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (req.getPhoneNumber() == null || req.getPhoneNumber().isEmpty()){
-            throw new SystemException("手机号码"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (req.getUserType() == null || req.getUserType().isEmpty()){
-            throw new Exception("UserType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (req.getIdType() == null || req.getIdType().isEmpty()){
-            throw new SystemException("证件类型"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (req.getIdNo() == null || req.getIdNo().isEmpty()){
-            throw new SystemException("证件号"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (req.getSid() == null || req.getSid().isEmpty()){
-            throw new Exception("Sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
+
+    }
+
+    public void setToken(String userId, String token, String destination){
+        StringBuffer sb = new StringBuffer(SYSTEM_UC);
+        sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(destination);
+        log.info("LoginServiceImpl.putToken key:{},token:{}", sb.toString(),token);
+        redisTemplate.opsForValue().set(sb.toString(),token);
+    }
+
+    public void delToken(String userId, String destination){
+        StringBuffer sb = new StringBuffer(SYSTEM_UC);
+        sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(destination);
+        log.info("LoginServiceImpl.removeToken key:{}", sb);
+        redisTemplate.delete(sb.toString());
     }
 
     /**

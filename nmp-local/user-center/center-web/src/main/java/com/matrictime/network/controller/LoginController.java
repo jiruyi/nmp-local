@@ -41,18 +41,18 @@ public class LoginController {
     public Result login(@RequestBody LoginReq req){
         try {
             Result<LoginResp> result = loginService.login(req);
-            if (StringUtils.isBlank(req.getDestination()) && result.isSuccess() && StringUtils.isNotBlank(result.getExtendMsg())){
-                String extendMsg = result.getExtendMsg();
-                asyncService.pushOnlineUser(extendMsg);
-                JSONObject resJson = JSONObject.parseObject(extendMsg);
-                if (resJson.containsKey("pushOnlineUsers")){
-                    resJson.remove("pushOnlineUsers");
-                }
-                if (resJson.containsKey("pushInfo")){
-                    resJson.remove("pushInfo");
-                }
-                result.setExtendMsg(resJson.toJSONString());
-            }
+//            if (StringUtils.isBlank(req.getDestination()) && result.isSuccess() && StringUtils.isNotBlank(result.getExtendMsg())){
+//                String extendMsg = result.getExtendMsg();
+//                asyncService.pushOnlineUser(extendMsg);
+//                JSONObject resJson = JSONObject.parseObject(extendMsg);
+//                if (resJson.containsKey("pushOnlineUsers")){
+//                    resJson.remove("pushOnlineUsers");
+//                }
+//                if (resJson.containsKey("pushInfo")){
+//                    resJson.remove("pushInfo");
+//                }
+//                result.setExtendMsg(resJson.toJSONString());
+//            }
             return result;
         }catch (Exception e){
             log.error("LoginController.login exception:{}",e.getMessage());
