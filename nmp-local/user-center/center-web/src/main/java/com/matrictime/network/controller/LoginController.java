@@ -111,17 +111,17 @@ public class LoginController {
     /**
      * 绑定用户
      */
-    @MonitorRequest
-    @RequestMapping(value = "/bind")
-    public Result bind(@RequestBody BindReq req){
-        try {
-            Result result = loginService.bind(req);
-            return result;
-        }catch (Exception e){
-            log.error("LoginController.bind exception:{}",e.getMessage());
-            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
-        }
-    }
+//    @MonitorRequest
+//    @RequestMapping(value = "/bind")
+//    public Result bind(@RequestBody BindReq req){
+//        try {
+//            Result result = loginService.bind(req);
+//            return result;
+//        }catch (Exception e){
+//            log.error("LoginController.bind exception:{}",e.getMessage());
+//            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
+//        }
+//    }
 
     @RequestMapping(value = "/deleteUser")
     public Result deleteUser(@RequestBody DeleteUserReq req){
