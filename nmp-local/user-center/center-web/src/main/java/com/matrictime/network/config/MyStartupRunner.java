@@ -27,9 +27,6 @@ public class MyStartupRunner implements CommandLineRunner {
 
     @Value("${app.port}")
     private Integer appPort;
-
-    private ComOptApiImpl comOptApi = new ComOptApiImpl();
-
     @Value("${app.flowtype}")
     private Integer FlowType;
 
@@ -99,7 +96,6 @@ public class MyStartupRunner implements CommandLineRunner {
 
     @PreDestroy
     public void destory() throws Exception{
-        JServiceImpl.stop();
         log.info("在程序关闭后执行");
     }
 }

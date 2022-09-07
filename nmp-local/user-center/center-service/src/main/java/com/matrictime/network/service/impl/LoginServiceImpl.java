@@ -5,10 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
-import com.matrictime.network.api.modelVo.CAVo;
-import com.matrictime.network.api.modelVo.GroupVo;
-import com.matrictime.network.api.modelVo.PushUserVo;
-import com.matrictime.network.api.modelVo.UserVo;
+import com.matrictime.network.api.modelVo.*;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
 import com.matrictime.network.api.response.RegisterResp;
@@ -105,6 +102,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     public Result<RegisterResp> register(RegisterReq req) {
         Result result;
         try {
+            req.setUserId(SnowFlake.nextId_String());
             result = buildResult(commonRegister(req));
         }catch (SystemException e){
             log.error("LoginServiceImpl.register SystemException:{}",e.getMessage());
@@ -142,13 +140,43 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             user.setLoginAppCode(SYSTEM_JZDQ);
             user.setSex(req.getSex());
         }else if (REGISTER_TYPE_CA.equals(req.getRegisterType())){
-            CAVo saveCaVo = req.getCaVo();
-            String savePost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + saveUrl, JSONObject.toJSONString(saveCaVo));
-            if (true){
-                CAVo verifyCaVo = req.getCaVo();
-                String verifyPost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + verifyUrl, JSONObject.toJSONString(verifyCaVo));
-                user.setCaId(verifyCaVo.getTxn_id());
-                if (false){
+            CAVo caVo = req.getCaVo();
+            String contents = caVo.getContents();
+            String content_type = caVo.getContent_type();
+            PublicDataVo public_data = caVo.getPublic_data();
+            caVo.setPublic_data(null);
+            caVo.setContents(null);
+            caVo.setContent_type(null);
+            String savePost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + saveUrl, JSONObject.toJSONString(caVo));
+            JSONObject saveRes = JSONObject.parseObject(savePost);
+            log.info("ca保存签名结果："+saveRes.toJSONString());
+            boolean saveFlag = false;
+            if (saveRes != null) {
+                Object saveCode = saveRes.get("code");
+                if (saveCode != null && saveCode instanceof Integer) {
+                    if (0 == (Integer)saveCode){
+                        saveFlag = true;
+                    }
+                }
+            }
+            if (saveFlag){
+                caVo.setContents(contents);
+                caVo.setContent_type(content_type);
+                caVo.setPublic_data(public_data);
+                caVo.setSign_args(null);
+                String verifyPost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + verifyUrl, JSONObject.toJSONString(caVo));
+                JSONObject verifyRes = JSONObject.parseObject(verifyPost);
+                log.info("ca验签结果："+verifyRes.toJSONString());
+                boolean verifyFlag = false;
+                if (verifyRes != null) {
+                    Object verifyCode = verifyRes.get("code");
+                    if (verifyCode != null && verifyCode instanceof Integer) {
+                        if (0 == (Integer)verifyCode){
+                            verifyFlag = true;
+                        }
+                    }
+                }
+                if (!verifyFlag){
                     throw new SystemException(VERIFY_FAIL_MSG);
                 }
             }else {
@@ -213,15 +241,51 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             }
             switch (req.getLoginType()){
                 case LOGIN_TYPE_ACCOUNT:
+                    if (!user.getPassword().equals(req.getPassword())){
+                        throw new SystemException(ErrorMessageContants.PASSWORD_ERROR_MSG);
+                    }
                     break;
                 case LOGIN_TYPE_CA:
-                    CAVo saveCaVo = req.getCaVo();
-                    String savePost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + saveUrl, JSONObject.toJSONString(saveCaVo));
-                    if (true){
-                        CAVo verifyCaVo = req.getCaVo();
-                        String verifyPost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + verifyUrl, JSONObject.toJSONString(verifyCaVo));
-                        user.setCaId(verifyCaVo.getTxn_id());
-                        if (false){
+
+                    // ca保存签名
+                    CAVo caVo = req.getCaVo();
+                    String contents = caVo.getContents();
+                    String content_type = caVo.getContent_type();
+                    PublicDataVo public_data = caVo.getPublic_data();
+                    caVo.setPublic_data(null);
+                    caVo.setContents(null);
+                    caVo.setContent_type(null);
+                    String savePost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + saveUrl, JSONObject.toJSONString(caVo));
+                    JSONObject saveRes = JSONObject.parseObject(savePost);
+                    log.info("ca保存签名结果："+saveRes.toJSONString());
+                    boolean saveFlag = false;
+                    if (saveRes != null) {
+                        Object saveCode = saveRes.get("code");
+                        if (saveCode != null && saveCode instanceof Integer) {
+                            if (0 == (Integer)saveCode){
+                                saveFlag = true;
+                            }
+                        }
+                    }
+                    if (saveFlag){
+                        // ca验签
+                        caVo.setContents(contents);
+                        caVo.setContent_type(content_type);
+                        caVo.setPublic_data(public_data);
+                        caVo.setSign_args(null);
+                        String verifyPost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + verifyUrl, JSONObject.toJSONString(caVo));
+                        JSONObject verifyRes = JSONObject.parseObject(verifyPost);
+                        log.info("ca验签结果："+verifyRes.toJSONString());
+                        boolean verifyFlag = false;
+                        if (verifyRes != null) {
+                            Object verifyCode = verifyRes.get("code");
+                            if (verifyCode != null && verifyCode instanceof Integer) {
+                                if (0 == (Integer)verifyCode){
+                                    verifyFlag = true;
+                                }
+                            }
+                        }
+                        if (!verifyFlag){
                             throw new SystemException(VERIFY_FAIL_MSG);
                         }
                     }else {
@@ -231,9 +295,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 default:
                     throw new SystemException("登录方式"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
             }
-            if (!user.getPassword().equals(req.getPassword())){
-                throw new SystemException(ErrorMessageContants.PASSWORD_ERROR_MSG);
-            }
+
             user.setDeviceId(req.getDeviceId());
             user.setDeviceIp(req.getDeviceIp());
             user.setLoginStatus(LOGIN_STATUS_IN);
@@ -262,6 +324,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             UserExample userExample = new UserExample();
             userExample.createCriteria().andUserIdEqualTo(req.getUserId());
             user.setLoginStatus(DataConfig.LOGIN_STATUS_OUT);
+            delToken(req.getUserId(),req.getDestination());
             return buildResult(userMapper.updateByExampleSelective(user,userExample));
         }catch (Exception e){
             log.info("logout:{}",e.getMessage());
@@ -653,12 +716,16 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 //        UserExample.Criteria criteria2 = userExample.createCriteria();
 //        criteria2.andEmailEqualTo(req.getEmail());
 //        userExample.or(criteria2);
-        UserExample.Criteria criteria3 = userExample.createCriteria();
-        criteria3.andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
-        userExample.or(criteria3);
-        UserExample.Criteria criteria4 = userExample.createCriteria();
-        criteria4.andIdTypeEqualTo(req.getIdType()).andIdNoEqualTo(req.getIdNo()).andIsExistEqualTo(DataConstants.IS_EXIST);
-        userExample.or(criteria4);
+        if (!ParamCheckUtil.checkVoStrBlank(req.getPhoneNumber())){
+            UserExample.Criteria criteria3 = userExample.createCriteria();
+            criteria3.andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
+            userExample.or(criteria3);
+        }
+        if (!ParamCheckUtil.checkVoStrBlank(req.getIdType()) && !ParamCheckUtil.checkVoStrBlank(req.getIdNo())){
+            UserExample.Criteria criteria4 = userExample.createCriteria();
+            criteria4.andIdTypeEqualTo(req.getIdType()).andIdNoEqualTo(req.getIdNo()).andIsExistEqualTo(DataConstants.IS_EXIST);
+            userExample.or(criteria4);
+        }
 
         List<User> userList = userMapper.selectByExample(userExample);
         if(CollectionUtils.isEmpty(userList)){
@@ -684,9 +751,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             if(ParamCheckUtil.checkVoStrBlank(req.getSid())){
                 throw new Exception("sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
-            if (ParamCheckUtil.checkVoStrBlank(req.getLId())){
-                throw new Exception("lid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
+//            if (ParamCheckUtil.checkVoStrBlank(req.getLId())){
+//                throw new Exception("lid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//            }
             if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())){
                 throw new Exception("LoginAccount"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }

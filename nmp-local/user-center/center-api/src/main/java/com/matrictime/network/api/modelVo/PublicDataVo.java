@@ -12,6 +12,6 @@ public class PublicDataVo implements Serializable {
     private String cert;
     private String expire;
     private String now;
-    private String OTCA;
+    private String otca;
     private String sign;
 }

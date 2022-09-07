@@ -49,8 +49,8 @@ app:
   stationport: 20066
 
 sign:
-  ip: http://127.0.0.1
-  port: 9999
+  ip: http://192.168.72.238
+  port: 38089
   verifyUrl: /v1/signature/verify1toN
   saveUrl: /v1/signature/args/save1toN
 
