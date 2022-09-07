@@ -15,6 +15,5 @@ public class LoginResp implements Serializable {
 
     private String token;
 
-    private List<GroupVo> groups;
 
 }

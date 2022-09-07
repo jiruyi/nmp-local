@@ -35,4 +35,6 @@ public class DataConfig {
     public static final String REGISTER_TYPE_COM = "0";
 
     public static final String REGISTER_TYPE_CA = "1";
+
+    public static final String USER_TYPE_REG = "01";
 }

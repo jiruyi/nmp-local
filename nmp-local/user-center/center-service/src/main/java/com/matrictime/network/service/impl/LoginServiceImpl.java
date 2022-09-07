@@ -130,11 +130,10 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         user.setNickName(req.getNickName());
         if (REGISTER_TYPE_COM.equals(req.getRegisterType())){
             user.setUserId(req.getUserId());
-            user.setSid(req.getSid());
             user.setPassword(req.getPassword());
             user.setEmail(req.getEmail());
             user.setPhoneNumber(req.getPhoneNumber());
-            user.setUserType(req.getUserType());
+            user.setUserType(USER_TYPE_REG);
             user.setIdType(req.getIdType());
             user.setIdNo(req.getIdNo());
             user.setLoginAppCode(SYSTEM_JZDQ);
@@ -300,7 +299,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             user.setDeviceIp(req.getDeviceIp());
             user.setLoginStatus(LOGIN_STATUS_IN);
             user.setLoginAppCode(SYSTEM_JZDQ);
-            user.setSid(req.getSid());
             userMapper.updateByPrimaryKeySelective(user);
             UserVo userVo = new UserVo();
             BeanUtils.copyProperties(user,userVo);
@@ -748,9 +746,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             throw new Exception("loginType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (LOGIN_TYPE_ACCOUNT.equals(req.getLoginType())){
-            if(ParamCheckUtil.checkVoStrBlank(req.getSid())){
-                throw new Exception("sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
+//            if(ParamCheckUtil.checkVoStrBlank(req.getSid())){
+//                throw new Exception("sid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//            }
 //            if (ParamCheckUtil.checkVoStrBlank(req.getLId())){
 //                throw new Exception("lid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
 //            }
