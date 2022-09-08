@@ -14,5 +14,4 @@ public class RegisterResp implements Serializable {
      */
     private String userId;
 
-    private RegisterReq registerReq;
 }

@@ -85,28 +85,17 @@ public class UserController {
     @ApiOperation(value = "修改密码",notes = "修改密码")
     @RequestMapping (value = "/changePasswd",method = RequestMethod.POST)
     @MonitorRequest
-    public Result changePasswd(@RequestBody ChangePasswdReq changePasswdReq){
-//        try {
-            Result result = userService.changePasswd(changePasswdReq);
-            return result;
-//        }catch (Exception e){
-//            log.error("changePasswd exception:{}",e.getMessage());
-//            return new Result(false,e.getMessage());
-//        }
+    public Result changePasswd(@RequestBody ChangePasswdReq changePasswdReq) {
+        Result result = userService.changePasswd(changePasswdReq);
+        return result;
     }
 
     @ApiOperation(value = "查询单个用户",notes = "查询单个用户")
     @RequestMapping (value = "/queryUserInfo",method = RequestMethod.POST)
     @MonitorRequest
-    public Result queryUserInfo(@RequestBody UserRequest userRequest){
-//        try {
-            /**1.0 参数校验**/
-            Result result = userService.queryUser(userRequest);
-            return result;
-//        }catch (Exception e){
-//            log.error("queryUserInfo exception:{}",e.getMessage());
-//            return new Result(false,e.getMessage());
-//        }
+    public Result queryUserInfo(@RequestBody UserRequest userRequest) {
+        Result result = userService.queryUser(userRequest);
+        return result;
     }
 
     @RequestMapping (value = "/verify",method = RequestMethod.POST)
@@ -117,6 +106,18 @@ public class UserController {
             return result;
         }catch (Exception e){
             log.error("UserController.verify exception:{}",e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    @RequestMapping (value = "/verifyToken",method = RequestMethod.POST)
+    @MonitorRequest
+    public Result verifyToken(@RequestBody VerifyTokenReq req){
+        try {
+            Result result = userService.verifyToken(req);
+            return result;
+        }catch (Exception e){
+            log.error("UserController.verifyToken exception:{}",e.getMessage());
             return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }

@@ -36,7 +36,6 @@ public class JwtUtils {
                 .withClaim("nickName",user.getNickName())
                 .withClaim("loginAccount",user.getLoginAccount())
                 .withClaim("userId",String.valueOf(user.getUserId()))
-                .withClaim("phone",user.getPhoneNumber())
                 .sign(Algorithm.HMAC256(user.getUserId()+KEY_SPLIT_UNDERLINE+destination));
 
     }

@@ -1,5 +1,6 @@
 package com.matrictime.network.api.request;
 
+import com.matrictime.network.api.modelVo.CAVo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -72,4 +73,14 @@ public class RegisterReq extends BaseReq implements Serializable {
      * 当前登录系统
      */
     private String loginAppCode;
+
+    /**
+     * 验签证书
+     */
+    private CAVo caVo;
+
+    /**
+     * 0：用户名+密码注册 1：ca证书注册
+     */
+    private String registerType;
 }

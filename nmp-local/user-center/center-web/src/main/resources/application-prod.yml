@@ -45,6 +45,12 @@ app:
   stationip: 192.168.72.211                                 # 基站配置uc配对外网ip
   stationport: 20066                                        # 基站配置uc配对外网port
 
+sign:
+  ip: http://127.0.0.1
+  port: 9999
+  verifyUrl: /v1/signature/verify1toN
+  saveUrl: /v1/signature/args/save1toN
+
 token:
   timeOut: 30
 

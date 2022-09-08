@@ -1,13 +1,12 @@
 package com.matrictime.network.dao.model;
 
-import lombok.Data;
-
 import java.util.Date;
+import lombok.Data;
 
 /**
  * 用户信息表
- * @author   hexu
- * @date   2022-05-10
+ * @author   xxxx
+ * @date   2022-09-05
  */
 @Data
 public class User {
@@ -30,6 +29,11 @@ public class User {
      * sid
      */
     private String sid;
+
+    /**
+     * 证书id
+     */
+    private String caId;
 
     /**
      * 一体机设备ID
@@ -176,6 +180,14 @@ public class User {
 
     public void setSid(String sid) {
         this.sid = sid == null ? null : sid.trim();
+    }
+
+    public String getCaId() {
+        return caId;
+    }
+
+    public void setCaId(String caId) {
+        this.caId = caId == null ? null : caId.trim();
     }
 
     public String getDeviceId() {

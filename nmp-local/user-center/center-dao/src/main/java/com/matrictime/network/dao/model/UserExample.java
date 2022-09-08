@@ -375,6 +375,76 @@ public class UserExample {
             return (Criteria) this;
         }
 
+        public Criteria andCaIdIsNull() {
+            addCriterion("ca_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdIsNotNull() {
+            addCriterion("ca_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdEqualTo(String value) {
+            addCriterion("ca_id =", value, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdNotEqualTo(String value) {
+            addCriterion("ca_id <>", value, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdGreaterThan(String value) {
+            addCriterion("ca_id >", value, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdGreaterThanOrEqualTo(String value) {
+            addCriterion("ca_id >=", value, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdLessThan(String value) {
+            addCriterion("ca_id <", value, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdLessThanOrEqualTo(String value) {
+            addCriterion("ca_id <=", value, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdLike(String value) {
+            addCriterion("ca_id like", value, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdNotLike(String value) {
+            addCriterion("ca_id not like", value, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdIn(List<String> values) {
+            addCriterion("ca_id in", values, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdNotIn(List<String> values) {
+            addCriterion("ca_id not in", values, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdBetween(String value1, String value2) {
+            addCriterion("ca_id between", value1, value2, "caId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCaIdNotBetween(String value1, String value2) {
+            addCriterion("ca_id not between", value1, value2, "caId");
+            return (Criteria) this;
+        }
+
         public Criteria andDeviceIdIsNull() {
             addCriterion("device_id is null");
             return (Criteria) this;

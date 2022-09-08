@@ -42,6 +42,9 @@ public interface UserService {
     // 身份验证
     Result verify(VerifyReq verifyReq);
 
+    //token验证
+    Result verifyToken(VerifyTokenReq verifyReq);
+
     void updateUserLogStatus();
 
 }
