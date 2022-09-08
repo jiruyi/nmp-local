@@ -1,9 +1,6 @@
 package com.matrictime.network.service;
 
-import com.matrictime.network.api.request.ChangePasswdReq;
-import com.matrictime.network.api.request.DeleteFriendReq;
-import com.matrictime.network.api.request.UserRequest;
-import com.matrictime.network.api.request.VerifyReq;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.model.Result;
 
 /**
@@ -40,7 +37,7 @@ public interface UserService {
 
     Result queryUser(UserRequest userRequest);
 
-    Result updateAppCode(UserRequest userRequest);
+    Result updateAppCode(AppCodeRequest appCodeRequest);
 
     // 身份验证
     Result verify(VerifyReq verifyReq);

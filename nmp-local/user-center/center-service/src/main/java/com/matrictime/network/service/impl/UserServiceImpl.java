@@ -7,10 +7,7 @@ import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.WsResultVo;
 import com.matrictime.network.api.modelVo.WsSendVo;
-import com.matrictime.network.api.request.ChangePasswdReq;
-import com.matrictime.network.api.request.DeleteFriendReq;
-import com.matrictime.network.api.request.UserRequest;
-import com.matrictime.network.api.request.VerifyReq;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.UserResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
@@ -287,11 +284,11 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     }
 
     @Override
-    public Result updateAppCode(UserRequest userRequest) {
-        if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
+    public Result updateAppCode(AppCodeRequest appCodeRequest) {
+        if(ObjectUtils.isEmpty(appCodeRequest) || ObjectUtils.isEmpty(appCodeRequest.getUserId())){
             throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        int n = userDomainService.modifyUserInfo(userRequest);
+        int n = userDomainService.updateAppCode(appCodeRequest);
         return  buildResult(n);
     }
 

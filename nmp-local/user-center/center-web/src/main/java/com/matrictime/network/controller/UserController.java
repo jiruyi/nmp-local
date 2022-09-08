@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.matrictime.network.aop.MonitorRequest;
 import com.matrictime.network.api.modelVo.WsResultVo;
-import com.matrictime.network.api.request.ChangePasswdReq;
-import com.matrictime.network.api.request.DeleteFriendReq;
-import com.matrictime.network.api.request.UserRequest;
-import com.matrictime.network.api.request.VerifyReq;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.dao.domain.CommonService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
@@ -147,9 +144,9 @@ public class UserController {
     @ApiOperation(value = "当前退出系统",notes = "用户信息")
     @RequestMapping (value = "/updateLogoutAppCode",method = RequestMethod.POST)
     @MonitorRequest
-    public Result updateLogoutAppCode(@RequestBody UserRequest userRequest){
+    public Result updateLogoutAppCode(@RequestBody AppCodeRequest appCodeRequest){
         try {
-            Result result = userService.updateAppCode(userRequest);
+            Result result = userService.updateAppCode(appCodeRequest);
             return  result;
         }catch (Exception e){
             log.error("updateLogoutAppCode exception:{}",e.getMessage());
@@ -160,9 +157,9 @@ public class UserController {
     @ApiOperation(value = "当前登录系统",notes = "用户信息")
     @RequestMapping (value = "/updateLoginAppCode",method = RequestMethod.POST)
     @MonitorRequest
-    public Result updateLoginAppCode(@RequestBody UserRequest userRequest){
+    public Result updateLoginAppCode(@RequestBody AppCodeRequest appCodeRequest){
         try {
-            Result result = userService.updateAppCode(userRequest);
+            Result result = userService.updateAppCode(appCodeRequest);
             return  result;
         }catch (Exception e){
             log.error("updateLoginAppCode exception:{}",e.getMessage());
