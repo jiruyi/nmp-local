@@ -301,6 +301,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         if(ObjectUtils.isEmpty(appCodeRequest) || ObjectUtils.isEmpty(appCodeRequest.getUserId())){
             throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
+        if (ParamCheckUtil.checkVoStrBlank(appCodeRequest.getLoginAppCode()) && ParamCheckUtil.checkVoStrBlank(appCodeRequest.getLogoutAppCode())){
+            throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
         int n = userDomainService.updateAppCode(appCodeRequest);
         return  buildResult(n);
     }

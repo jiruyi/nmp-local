@@ -23,6 +23,9 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static com.matrictime.network.constant.DataConstants.STR_SPLIT;
+import static com.matrictime.network.exception.ErrorMessageContants.USER_NO_EXIST_MSG;
+
 /**
  * @author jiruyi
  * @copyright www.matrictime.com
@@ -100,12 +103,47 @@ public class UserDomainServiceImpl implements UserDomainService {
     }
 
     @Override
-    public int updateAppCode(AppCodeRequest appCodeRequest) {
-        User user = new User();
-        BeanUtils.copyProperties(appCodeRequest, user);
+    public int updateAppCode(AppCodeRequest req) {
+        int i = 0;
         UserExample example = new UserExample();
-        example.createCriteria().andUserIdEqualTo(appCodeRequest.getUserId());
-        return userMapper.updateByExampleSelective(user, example);
+        example.createCriteria().andUserIdEqualTo(req.getUserId());
+        List<User> users = userMapper.selectByExample(example);
+        User user = new User();
+
+        // app登录
+        if (!ParamCheckUtil.checkVoStrBlank(req.getLoginAppCode())){
+            if (CollectionUtils.isEmpty(users)){
+                throw new SystemException(USER_NO_EXIST_MSG);
+            }else {
+                String logoutAppCode = users.get(0).getLogoutAppCode();
+                if (!ParamCheckUtil.checkVoStrBlank(logoutAppCode)){
+                    if (logoutAppCode.contains(req.getLoginAppCode())){
+                        logoutAppCode = logoutAppCode.replace(req.getLoginAppCode()+STR_SPLIT,"");
+                    }
+                }
+
+                user.setId(users.get(0).getId());
+                user.setLogoutAppCode(logoutAppCode);
+            }
+            i = userMapper.updateByPrimaryKeySelective(user);
+        }else if (!ParamCheckUtil.checkVoStrBlank(req.getLogoutAppCode())){
+            if (CollectionUtils.isEmpty(users)){
+                throw new SystemException(USER_NO_EXIST_MSG);
+            }else {
+                String logoutAppCode = users.get(0).getLogoutAppCode();
+                if (ParamCheckUtil.checkVoStrBlank(logoutAppCode)){
+                    logoutAppCode = req.getLogoutAppCode()+STR_SPLIT;
+                }else {
+                    if (!logoutAppCode.contains(req.getLogoutAppCode())){
+                        logoutAppCode = logoutAppCode.concat(req.getLogoutAppCode()+STR_SPLIT);
+                    }
+                }
+                user.setId(users.get(0).getId());
+                user.setLogoutAppCode(logoutAppCode);
+            }
+            i = userMapper.updateByPrimaryKeySelective(user);
+        }
+        return i;
     }
 
     @Override
