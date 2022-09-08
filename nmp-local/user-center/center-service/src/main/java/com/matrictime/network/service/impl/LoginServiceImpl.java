@@ -502,97 +502,97 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         return result;
     }
 
-    @Override
-    public Result deleteUser(DeleteUserReq req) {
-        Result result;
-        try {
-
-            ReqUtil<DeleteUserReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-
-            switch (req.getDestination()){
-                case DESTINATION_OUT:
-                case DESTINATION_OUT_TO_IN:
-                    // 非密区删除用户
-                    commonDeleteUser(req);
-
-                    // 密区同步删除用户
-                    ReqModel reqModelF = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN_SYN);
-                    req.setUrl(UcConstants.URL_DELETEUSER);
-
-                    String paramF = JSONObject.toJSONString(req);
-                    reqModelF.setParam(paramF);
-                    ResModel resModel = JServiceImpl.syncSendMsg(reqModelF);
-                    log.info("非密区接收返回值LoginServiceImpl.deleteUser resModel:{}",JSONObject.toJSONString(resModel));
-                    Object returnValue = resModel.getReturnValue();
-                    if(returnValue != null && returnValue instanceof String){
-                        ResModel ResModelX = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        result = JSONObject.parseObject(ResModelX.getReturnValue().toString(), Result.class);
-                        return result;
-                    }else {
-                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-                case DESTINATION_IN:
-                    ReqModel reqModelM = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_FOR_DES);
-                    req.setUrl(UcConstants.URL_DELETEUSER);
-                    String paramM = JSONObject.toJSONString(req);
-                    reqModelM.setParam(paramM);
-                    ResModel resModelM = JServiceImpl.syncSendMsg(reqModelM);
-
-                    log.info("非密区接收返回值LoginServiceImpl.deleteUser resModel:{}",resModelM.getReturnValue());
-                    Object returnValueM = resModelM.getReturnValue();
-                    if(returnValueM != null && returnValueM instanceof String){
-                        ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
-                        Result<RegisterResp> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<RegisterResp>>(){});
-                        log.info("非密区接收返回值LoginServiceImpl.deleteUser returnRes:{}",returnRes.toString());
-                        if(returnRes.isSuccess()){
-                            // 密区/非密区同步用户
-                            RegisterResp resultObj = returnRes.getResultObj();
-                            RegisterReq req1 = resultObj.getRegisterReq();
-                            req1.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                            String post = HttpClientUtil.post(UcConstants.URL_DELETEUSER, JSONObject.toJSONString(req1));
-                            log.info("非密区接收密区/非密区同步返回值LoginServiceImpl.deleteUser post:{}",post);
-                            return JSONObject.parseObject(post,Result.class);
-                        }else {
-                            throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                        }
-                    }else {
-                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-
-                case UcConstants.DESTINATION_OUT_TO_IN_SYN:
-                    DeleteUserReq desReq2 = new DeleteUserReq();
-                    BeanUtils.copyProperties(req,desReq2);
-                    commonDeleteUser(desReq2);
-                    result = buildResult(null);
-                    break;
-
-                case UcConstants.DESTINATION_FOR_DES:
-                    // 入参解密
-
-                    ReqUtil<DeleteUserReq> reqUtil = new ReqUtil<>(req);
-                    DeleteUserReq desReq = reqUtil.decryJsonToReq(req);
-                    log.info("deleteUser密区解密结果desReq:{}",JSONObject.toJSONString(desReq));
-                    // 返回值加密
-
-                    result = buildResult(null);
-                    break;
-                default:
-                    throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-
-            }
-        }catch (SystemException e){
-            log.error("LoginServiceImpl.deleteUser SystemException:{}",e.getMessage());
-            result = failResult(e);
-        }catch (Exception e){
-            log.error("LoginServiceImpl.deleteUser Exception:{}",e.getMessage());
-            result = failResult("");
-        }
-
-        return result;
-    }
+//    @Override
+//    public Result deleteUser(DeleteUserReq req) {
+//        Result result;
+//        try {
+//
+//            ReqUtil<DeleteUserReq> jsonUtil = new ReqUtil<>(req);
+//            req = jsonUtil.jsonReqToDto(req);
+//
+//            switch (req.getDestination()){
+//                case DESTINATION_OUT:
+//                case DESTINATION_OUT_TO_IN:
+//                    // 非密区删除用户
+//                    commonDeleteUser(req);
+//
+//                    // 密区同步删除用户
+//                    ReqModel reqModelF = new ReqModel();
+//                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN_SYN);
+//                    req.setUrl(UcConstants.URL_DELETEUSER);
+//
+//                    String paramF = JSONObject.toJSONString(req);
+//                    reqModelF.setParam(paramF);
+//                    ResModel resModel = JServiceImpl.syncSendMsg(reqModelF);
+//                    log.info("非密区接收返回值LoginServiceImpl.deleteUser resModel:{}",JSONObject.toJSONString(resModel));
+//                    Object returnValue = resModel.getReturnValue();
+//                    if(returnValue != null && returnValue instanceof String){
+//                        ResModel ResModelX = JSONObject.parseObject((String) returnValue, ResModel.class);
+//                        result = JSONObject.parseObject(ResModelX.getReturnValue().toString(), Result.class);
+//                        return result;
+//                    }else {
+//                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+//                    }
+//                case DESTINATION_IN:
+//                    ReqModel reqModelM = new ReqModel();
+//                    req.setDestination(UcConstants.DESTINATION_FOR_DES);
+//                    req.setUrl(UcConstants.URL_DELETEUSER);
+//                    String paramM = JSONObject.toJSONString(req);
+//                    reqModelM.setParam(paramM);
+//                    ResModel resModelM = JServiceImpl.syncSendMsg(reqModelM);
+//
+//                    log.info("非密区接收返回值LoginServiceImpl.deleteUser resModel:{}",resModelM.getReturnValue());
+//                    Object returnValueM = resModelM.getReturnValue();
+//                    if(returnValueM != null && returnValueM instanceof String){
+//                        ResModel syncResModel = JSONObject.parseObject((String) returnValueM, ResModel.class);
+//                        Result<RegisterResp> returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result<RegisterResp>>(){});
+//                        log.info("非密区接收返回值LoginServiceImpl.deleteUser returnRes:{}",returnRes.toString());
+//                        if(returnRes.isSuccess()){
+//                            // 密区/非密区同步用户
+//                            RegisterResp resultObj = returnRes.getResultObj();
+//                            RegisterReq req1 = resultObj.getRegisterReq();
+//                            req1.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+//                            String post = HttpClientUtil.post(UcConstants.URL_DELETEUSER, JSONObject.toJSONString(req1));
+//                            log.info("非密区接收密区/非密区同步返回值LoginServiceImpl.deleteUser post:{}",post);
+//                            return JSONObject.parseObject(post,Result.class);
+//                        }else {
+//                            throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+//                        }
+//                    }else {
+//                        throw new Exception(ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+//                    }
+//
+//                case UcConstants.DESTINATION_OUT_TO_IN_SYN:
+//                    DeleteUserReq desReq2 = new DeleteUserReq();
+//                    BeanUtils.copyProperties(req,desReq2);
+//                    commonDeleteUser(desReq2);
+//                    result = buildResult(null);
+//                    break;
+//
+//                case UcConstants.DESTINATION_FOR_DES:
+//                    // 入参解密
+//
+//                    ReqUtil<DeleteUserReq> reqUtil = new ReqUtil<>(req);
+//                    DeleteUserReq desReq = reqUtil.decryJsonToReq(req);
+//                    log.info("deleteUser密区解密结果desReq:{}",JSONObject.toJSONString(desReq));
+//                    // 返回值加密
+//
+//                    result = buildResult(null);
+//                    break;
+//                default:
+//                    throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+//
+//            }
+//        }catch (SystemException e){
+//            log.error("LoginServiceImpl.deleteUser SystemException:{}",e.getMessage());
+//            result = failResult(e);
+//        }catch (Exception e){
+//            log.error("LoginServiceImpl.deleteUser Exception:{}",e.getMessage());
+//            result = failResult("");
+//        }
+//
+//        return result;
+//    }
 
     private void commonDeleteUser(DeleteUserReq req) throws Exception{
         checkDeleteUserParam(req);
@@ -788,9 +788,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             if (req.getPhoneNumber() == null || req.getPhoneNumber().isEmpty()){
                 throw new SystemException("手机号码"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
-            if (req.getUserType() == null || req.getUserType().isEmpty()){
-                throw new Exception("UserType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
+//            if (req.getUserType() == null || req.getUserType().isEmpty()){
+//                throw new Exception("UserType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//            }
             if (req.getIdType() == null || req.getIdType().isEmpty()){
                 throw new SystemException("证件类型"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }

@@ -40,7 +40,7 @@ public interface LoginService {
      * @param deleteUserReq
      * @return
      */
-    Result deleteUser(DeleteUserReq deleteUserReq);
+//    Result deleteUser(DeleteUserReq deleteUserReq);
 
     /**
      * 系统登出

@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.matrictime.network.aop.MonitorRequest;
 import com.matrictime.network.api.modelVo.WsResultVo;
-import com.matrictime.network.api.request.ChangePasswdReq;
-import com.matrictime.network.api.request.DeleteFriendReq;
-import com.matrictime.network.api.request.UserRequest;
-import com.matrictime.network.api.request.VerifyReq;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.dao.domain.CommonService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
@@ -109,6 +106,18 @@ public class UserController {
             return result;
         }catch (Exception e){
             log.error("UserController.verify exception:{}",e.getMessage());
+            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    @RequestMapping (value = "/verifyToken",method = RequestMethod.POST)
+    @MonitorRequest
+    public Result verifyToken(@RequestBody VerifyTokenReq req){
+        try {
+            Result result = userService.verifyToken(req);
+            return result;
+        }catch (Exception e){
+            log.error("UserController.verifyToken exception:{}",e.getMessage());
             return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }

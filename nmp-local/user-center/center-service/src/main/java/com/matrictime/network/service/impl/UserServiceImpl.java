@@ -7,13 +7,11 @@ import com.jzsg.bussiness.model.ReqModel;
 import com.jzsg.bussiness.model.ResModel;
 import com.matrictime.network.api.modelVo.WsResultVo;
 import com.matrictime.network.api.modelVo.WsSendVo;
-import com.matrictime.network.api.request.ChangePasswdReq;
-import com.matrictime.network.api.request.DeleteFriendReq;
-import com.matrictime.network.api.request.UserRequest;
-import com.matrictime.network.api.request.VerifyReq;
+import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.UserResp;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.UcConstants;
+import com.matrictime.network.base.util.JwtUtils;
 import com.matrictime.network.base.util.ReqUtil;
 import com.matrictime.network.base.DataConfig;
 import com.matrictime.network.constant.DataConstants;
@@ -383,6 +381,23 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     }
 
     @Override
+    public Result verifyToken(VerifyTokenReq req) {
+        Result result;
+        try {
+            commonVerifyToken(req);
+            result = buildResult(null);
+        }catch (SystemException e){
+            log.error("UserServiceImpl.verifyToken SystemException:{}",e.getMessage());
+            result = failResult(e);
+        } catch (Exception e){
+            log.error("UserServiceImpl.verifyToken Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+
+        return result;
+    }
+
+    @Override
     public void updateUserLogStatus() {
         User user = new User();
         UserExample userExample = new UserExample();
@@ -402,12 +417,37 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         judgeAfterSix(req.getAfterSix(),user.getIdNo());
     }
 
+
+    private void commonVerifyToken(VerifyTokenReq req){
+        checkVerifyTokenParam(req);
+
+        String userId = JwtUtils.getClaimByName(req.getToken(),"userId").asString();
+        if (!req.getUserId().equals(userId)){
+            throw new SystemException(ErrorMessageContants.TOKEN_ILLEGAL_MSG);
+        }
+        UserExample example = new UserExample();
+        example.createCriteria().andUserIdEqualTo(req.getUserId()).andIsExistEqualTo(DataConstants.IS_EXIST);
+        List<User> users = userMapper.selectByExample(example);
+        if(CollectionUtils.isEmpty(users)){
+            throw new SystemException(ErrorMessageContants.USER_NO_EXIST_MSG);
+        }
+    }
+
     private void checkVerifyParam(VerifyReq verifyReq){
         if (ParamCheckUtil.checkVoStrBlank(verifyReq.getPhoneNumber())) {
             throw new SystemException("PhoneNumber"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (ParamCheckUtil.checkVoStrBlank(verifyReq.getAfterSix())) {
             throw new SystemException("AfterSix"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+    private void checkVerifyTokenParam(VerifyTokenReq verifyReq){
+        if (ParamCheckUtil.checkVoStrBlank(verifyReq.getToken())) {
+            throw new SystemException("token"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(verifyReq.getUserId())) {
+            throw new SystemException("userId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
     }
 

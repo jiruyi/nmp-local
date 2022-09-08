@@ -123,16 +123,16 @@ public class LoginController {
 //        }
 //    }
 
-    @RequestMapping(value = "/deleteUser")
-    public Result deleteUser(@RequestBody DeleteUserReq req){
-        try {
-            Result result = loginService.deleteUser(req);
-            return result;
-        }catch (Exception e){
-            log.error("LoginController.deleteUser exception:{}",e.getMessage());
-            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
-        }
-    }
+//    @RequestMapping(value = "/deleteUser")
+//    public Result deleteUser(@RequestBody DeleteUserReq req){
+//        try {
+//            Result result = loginService.deleteUser(req);
+//            return result;
+//        }catch (Exception e){
+//            log.error("LoginController.deleteUser exception:{}",e.getMessage());
+//            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
+//        }
+//    }
 
     @RequestMapping(value = "/zr")
     public Integer zr(@RequestBody BaseReq req) throws EdException {
