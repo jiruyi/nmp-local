@@ -1,5 +1,6 @@
 package com.matrictime.network.dao.domain;
 
+import com.matrictime.network.api.request.AppCodeRequest;
 import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.dao.model.User;
@@ -17,7 +18,7 @@ public interface UserDomainService {
 
     int deleteFriend(DeleteFriendReq deleteFriendReq);
 
-    int updateAppCode(UserRequest userRequest);
+    int updateAppCode(AppCodeRequest appCodeRequest);
 
     User selectByCondition(UserRequest userRequest);
 

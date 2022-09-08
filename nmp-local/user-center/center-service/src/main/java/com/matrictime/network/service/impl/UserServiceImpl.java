@@ -297,11 +297,11 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     }
 
     @Override
-    public Result updateAppCode(UserRequest userRequest) {
-        if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
+    public Result updateAppCode(AppCodeRequest appCodeRequest) {
+        if(ObjectUtils.isEmpty(appCodeRequest) || ObjectUtils.isEmpty(appCodeRequest.getUserId())){
             throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        int n = userDomainService.modifyUserInfo(userRequest);
+        int n = userDomainService.updateAppCode(appCodeRequest);
         return  buildResult(n);
     }
 

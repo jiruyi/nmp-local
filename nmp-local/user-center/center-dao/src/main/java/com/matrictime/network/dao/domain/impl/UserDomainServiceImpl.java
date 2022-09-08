@@ -1,5 +1,6 @@
 package com.matrictime.network.dao.domain.impl;
 
+import com.matrictime.network.api.request.AppCodeRequest;
 import com.matrictime.network.api.request.DeleteFriendReq;
 import com.matrictime.network.api.request.UserRequest;
 import com.matrictime.network.constant.DataConstants;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -32,13 +34,13 @@ import java.util.List;
 @Slf4j
 public class UserDomainServiceImpl implements UserDomainService {
 
-    @Autowired
+    @Resource
     private UserMapper userMapper;
-    @Autowired
+    @Resource
     private UserFriendMapper userFriendMapper;
-    @Autowired
+    @Resource
     private UserGroupMapper userGroupMapper;
-    @Autowired
+    @Resource
     private GroupInfoMapper groupInfoMapper;
 
 
@@ -98,11 +100,11 @@ public class UserDomainServiceImpl implements UserDomainService {
     }
 
     @Override
-    public int updateAppCode(UserRequest userRequest) {
+    public int updateAppCode(AppCodeRequest appCodeRequest) {
         User user = new User();
-        BeanUtils.copyProperties(userRequest, user);
+        BeanUtils.copyProperties(appCodeRequest, user);
         UserExample example = new UserExample();
-        example.createCriteria().andUserIdEqualTo(userRequest.getUserId());
+        example.createCriteria().andUserIdEqualTo(appCodeRequest.getUserId());
         return userMapper.updateByExampleSelective(user, example);
     }
 
