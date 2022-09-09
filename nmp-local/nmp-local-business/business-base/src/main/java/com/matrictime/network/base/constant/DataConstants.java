@@ -17,6 +17,8 @@ public class DataConstants {
     public static final String USER_LOGIN_SMS_CODE= "login_sms_code:";
     public static final String USER_ROUTE_SMS_CODE= "route_sms_code:";
 
+    public static final String USER_LOGIN_STATUS = "_login_status";
+
     public static final String PASSWORD_ERROR_INIT_VALUE = "1:N";
 
     public static final String USER_ACCOUNT_NORMAL = "N";
@@ -140,5 +142,10 @@ public class DataConstants {
     public static final String URL_LINK_RELATION_UPDATE="/linkRelation/update";
 
     public static final String URL_LINK_RELATION_DELETE="/linkRelation/delete";
+
+    public static final String URL_OUTLINEPC_INSERTORUPDATE = "/outlinePc/updateOutlinePc";
+
+
+    public static final String URL_OUTLINEPC_BATCHINSERT = "/outlinePc/batchInsertOutlinePc";
 
 }
