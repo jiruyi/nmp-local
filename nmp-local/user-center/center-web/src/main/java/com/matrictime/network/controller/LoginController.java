@@ -11,6 +11,7 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.LoginService;
 import com.matrictime.network.service.impl.AsyncService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,7 @@ public class LoginController {
      * 退出
      * @return
      */
+    @ApiOperation(value = "用户退出",notes = "用户退出")
     @MonitorRequest
     @RequestMapping(value = "/logout")
     public Result logout(@RequestBody LogoutReq req){

@@ -142,7 +142,7 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "当前退出系统",notes = "用户信息")
+    @ApiOperation(value = "当前退出系统",notes = "当前退出系统")
     @RequestMapping (value = "/updateLogoutAppCode",method = RequestMethod.POST)
     @MonitorRequest
     public Result updateLogoutAppCode(@RequestBody AppCodeRequest appCodeRequest){
@@ -155,7 +155,7 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "当前登录系统",notes = "用户信息")
+    @ApiOperation(value = "当前登录系统",notes = "当前登录系统")
     @RequestMapping (value = "/updateLoginAppCode",method = RequestMethod.POST)
     @MonitorRequest
     public Result updateLoginAppCode(@RequestBody AppCodeRequest appCodeRequest){
