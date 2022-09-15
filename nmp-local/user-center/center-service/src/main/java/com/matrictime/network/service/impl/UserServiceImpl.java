@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -39,8 +40,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.matrictime.network.base.UcConstants.*;
-import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
-import static com.matrictime.network.constant.DataConstants.SYSTEM_UC;
+import static com.matrictime.network.constant.DataConstants.*;
 
 /**
  * @author jiruyi
@@ -55,6 +55,9 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Autowired
     private UserDomainService userDomainService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Autowired
     private CommonService commonService;
@@ -424,10 +427,26 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     private void commonVerifyToken(VerifyTokenReq req){
         checkVerifyTokenParam(req);
 
-        String userId = JwtUtils.getClaimByName(req.getToken(),"userId").asString();
-        if (!req.getUserId().equals(userId)){
+        String token = getToken(req.getUserId());
+        if (!token.equals(req.getToken())){
             throw new SystemException(ErrorMessageContants.TOKEN_ILLEGAL_MSG);
         }
+
+        try{
+            String userId = JwtUtils.getClaimByName(req.getToken(),"userId").asString();
+            if (!req.getUserId().equals(userId)){
+                throw new SystemException(ErrorMessageContants.TOKEN_ILLEGAL_MSG);
+            }
+        }catch (Exception e){
+            log.info(e.getMessage());
+            throw new SystemException(ErrorMessageContants.TOKEN_ILLEGAL_MSG);
+        }
+
+        int jwtRes = JwtUtils.verifyTokenRes(req.getToken(), req.getUserId());
+        if (jwtRes != 0){
+            throw new SystemException(ErrorMessageContants.TOKEN_ILLEGAL_MSG);
+        }
+
         UserExample example = new UserExample();
         example.createCriteria().andUserIdEqualTo(req.getUserId()).andIsExistEqualTo(DataConstants.IS_EXIST);
         List<User> users = userMapper.selectByExample(example);
@@ -555,6 +574,17 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             log.error("modifyUserInfo exception:{}",e.getMessage());
             return  failResult(e);
         }
+    }
+
+    public String getToken(String userId){
+        String token = "";
+        StringBuffer sb = new StringBuffer(SYSTEM_UC);
+        sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId);
+        Object o = redisTemplate.opsForValue().get(sb.toString());
+        if (o != null && o instanceof String){
+            token = (String) o;
+        }
+        return token;
     }
 
 }

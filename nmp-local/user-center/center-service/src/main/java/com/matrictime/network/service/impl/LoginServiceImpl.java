@@ -753,14 +753,14 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 //                throw new Exception("lid"+ErrorMessageContants.PARAM_IS_NULL_MSG);
 //            }
             if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())){
-                throw new Exception("LoginAccount"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                throw new SystemException("用户名"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             if(ParamCheckUtil.checkVoStrBlank(req.getPassword())){
-                throw new Exception("Password"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                throw new SystemException("密码"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
         }else if (LOGIN_TYPE_CA.equals(req.getLoginType())){
             if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())){
-                throw new Exception("LoginAccount"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                throw new SystemException("用户名"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
         }else {
             throw new SystemException("登录方式"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
@@ -773,24 +773,24 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             throw new Exception("req"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (req.getRegisterType() == null || req.getRegisterType().isEmpty()){
-            throw new SystemException("注册方式"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new Exception("注册方式"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (REGISTER_TYPE_COM.equals(req.getRegisterType())){
             if (req.getLoginAccount() == null || req.getLoginAccount().isEmpty()){
-                throw new SystemException("账号"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                throw new SystemException("用户名"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             if (req.getPassword() == null || req.getPassword().isEmpty()){
                 throw new SystemException("密码"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             if (req.getEmail() == null || req.getEmail().isEmpty()){
-                throw new SystemException("用户邮箱"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                throw new SystemException("邮箱"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             if (req.getPhoneNumber() == null || req.getPhoneNumber().isEmpty()){
-                throw new SystemException("手机号码"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                throw new SystemException("手机"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
-//            if (req.getUserType() == null || req.getUserType().isEmpty()){
-//                throw new Exception("UserType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-//            }
+            if (req.getSex() == null || req.getSex().isEmpty()){
+                throw new SystemException("性别"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
             if (req.getIdType() == null || req.getIdType().isEmpty()){
                 throw new SystemException("证件类型"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
@@ -799,24 +799,24 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             }
         }else if (REGISTER_TYPE_CA.equals(req.getRegisterType())){
             if (req.getLoginAccount() == null || req.getLoginAccount().isEmpty()){
-                throw new SystemException("账号"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                throw new SystemException("用户名"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
         }else {
-            throw new SystemException("注册方式"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            throw new Exception("注册方式"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
         }
 
     }
 
     public void setToken(String userId, String token, String destination){
         StringBuffer sb = new StringBuffer(SYSTEM_UC);
-        sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(destination);
+        sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId);
         log.info("LoginServiceImpl.putToken key:{},token:{}", sb.toString(),token);
         redisTemplate.opsForValue().set(sb.toString(),token);
     }
 
     public void delToken(String userId, String destination){
         StringBuffer sb = new StringBuffer(SYSTEM_UC);
-        sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId).append(KEY_SPLIT_UNDERLINE).append(destination);
+        sb.append(USER_LOGIN_JWT_TOKEN).append(KEY_SPLIT_UNDERLINE).append(userId);
         log.info("LoginServiceImpl.removeToken key:{}", sb);
         redisTemplate.delete(sb.toString());
     }
