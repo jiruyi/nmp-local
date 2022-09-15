@@ -1,5 +1,7 @@
 server:
   port: 8006                                                # 密区端口默认值（8006）; 非密区端口修改为默认值（8007）   （下个版本允许修改）
+  servlet:
+    context-path: /user-center
 
 spring:
   application:

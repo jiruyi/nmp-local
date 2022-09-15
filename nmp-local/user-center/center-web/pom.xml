@@ -43,7 +43,7 @@
                     <include>**/*.sql</include>
                     <include>**/*.xml</include>
                     <include>**/application.yml</include>
-                    <include>**/application-dev.yml</include>
+<!--                    <include>**/application-dev.yml</include>-->
                 </includes>
             </resource>
         </resources>

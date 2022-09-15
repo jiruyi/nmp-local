@@ -38,6 +38,7 @@ public class Result<T> implements Serializable {
      */
     private String extendMsg;
 
+
     /*
      * 构造函数。
      */
