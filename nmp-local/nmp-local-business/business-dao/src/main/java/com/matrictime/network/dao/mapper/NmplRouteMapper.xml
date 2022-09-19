@@ -139,4 +139,16 @@
           and
             is_exist = '1'
     </select>
+
+    <select id="selectByRelationId" parameterType="com.matrictime.network.request.RouteRequest" resultType="com.matrictime.network.modelVo.RouteVo">
+        select id,access_device_id,boundary_device_id,create_user,
+               create_time,update_user,update_time,is_exist
+        from nmpl_route
+        where
+            access_device_id = #{accessDeviceId,jdbcType=VARCHAR} and is_exist='1'
+        or
+            (boundary_device_id = #{boundaryDeviceId,jdbcType=VARCHAR} and is_exist='1')
+
+    </select>
+
 </mapper>
