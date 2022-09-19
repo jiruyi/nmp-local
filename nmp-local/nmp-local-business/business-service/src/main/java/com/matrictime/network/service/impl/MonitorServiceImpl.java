@@ -83,48 +83,32 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     private static final int TOTAL_BAND_WIDTH_TIME = 15;
     private static final int SPLIT_TIME = 15;
 
+
+    /**
+     * 设备状态映射
+     */
+    public static final Map<String,String> deviceMap = new HashMap<String,String>() ;
+
+    static {
+       deviceMap.put("0",STATION_STATUS_ACTIVE);
+       deviceMap.put("1",STATION_STATUS_ABNORMAL);
+    }
+
+
     @Override
     public Result<CheckHeartResp> checkHeart(CheckHeartReq req) {
         Result result;
         CheckHeartResp resp = null;
         try {
             checkHeartParam(req);
-
             Map<String, String> map = checkStationStatus(req.getDeviceId());
+            redisTemplate.opsForValue().set(HEART_CHECK_DEVICE_ID+req.getDeviceId(),true,healthDeadlineTime, TimeUnit.SECONDS);
             String status = map.get("status");
-
-            switch (status){
-                case STATION_STATUS_UNACTIVE:
-                case STATION_STATUS_DOWN:
-                    // 未激活和下线更新表状态
-                    String bigType = map.get("bigType");
-                    String id = map.get("id");
-                    if (DEVICE_BIG_TYPE_0.equals(bigType)){
-                        NmplBaseStationInfo baseStationInfo = new NmplBaseStationInfo();
-                        baseStationInfo.setId(Long.parseLong(id));
-                        baseStationInfo.setStationStatus(STATION_STATUS_ACTIVE);
-                        int num =nmplBaseStationInfoMapper.updateByPrimaryKeySelective(baseStationInfo);
-                        if(num==1){
-                            baseStationInfoService.pushToProxy(req.getDeviceId(), URL_STATION_UPDATE);
-                        }
-                    }else if (DEVICE_BIG_TYPE_1.equals(bigType)){
-                        NmplDeviceInfo deviceInfo = new NmplDeviceInfo();
-                        deviceInfo.setId(Long.parseLong(id));
-                        deviceInfo.setStationStatus(STATION_STATUS_ACTIVE);
-                        int num =nmplDeviceInfoMapper.updateByPrimaryKeySelective(deviceInfo);
-                        if(num==1){
-                            deviceService.pushToProxy(req.getDeviceId(),URL_DEVICE_UPDATE);
-                        }
-                    }
-                case STATION_STATUS_ACTIVE:
-                    // 激活更新缓存时间
-                    redisTemplate.opsForValue().set(HEART_CHECK_DEVICE_ID+req.getDeviceId(),true,healthDeadlineTime, TimeUnit.SECONDS);
-                    break;
-                default:
-                    log.error("MonitorServiceImpl.checkHeart error: 设备id:{},状态为{}",req.getDeviceId(),status);
-                    throw new SystemException(ErrorMessageContants.DEVICE_NOT_ACTIVE_MSG);
+            String bigType = map.get("bigType");
+            String id = map.get("id");
+            if(!deviceMap.get(req.getStatus()).equals(status)){
+                heartHttpPush(bigType,id, req.getDeviceId(),deviceMap.get(req.getStatus()));
             }
-
             result = buildResult(resp);
         }catch (Exception e){
             log.error("MonitorServiceImpl.checkHeart Exception:{}",e.getMessage());
@@ -356,19 +340,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     private Map<String,String> checkStationStatus(String deviceId){
         Map<String,String> resultMap = new HashMap<>(2);
 
-        // 先查看缓存是否在线
-        try {
-            Object key = redisTemplate.opsForValue().get(HEART_CHECK_DEVICE_ID+deviceId);
-
-            if (key != null){
-                resultMap.put("status",STATION_STATUS_ACTIVE);
-                return resultMap;
-            }
-        }catch (Exception e){
-            log.warn("get heart_check_device_id error,id:{},msg:{}",deviceId,e.getMessage());
-        }
-
-        // 查看设备是否存在
+        // 先判断设备类型 获取设备id 信息
         NmplBaseStationInfoExample example = new NmplBaseStationInfoExample();
         example.createCriteria().andStationIdEqualTo(deviceId).andIsExistEqualTo(DataConstants.IS_EXIST);
         List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(example);
@@ -390,6 +362,18 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             resultMap.put("bigType",DEVICE_BIG_TYPE_0);
             resultMap.put("id",String.valueOf(baseStationInfo.getId()));
         }
+
+//        // 再查看缓存是否在线
+//        try {
+//            Object key = redisTemplate.opsForValue().get(HEART_CHECK_DEVICE_ID+deviceId);
+//
+//            if (key != null){
+//                resultMap.put("status",STATION_STATUS_ACTIVE);
+//                return resultMap;
+//            }
+//        }catch (Exception e){
+//            log.warn("get heart_check_device_id error,id:{},msg:{}",deviceId,e.getMessage());
+//        }
 
         return resultMap;
     }
@@ -439,6 +423,27 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         }
         if (ParamCheckUtil.checkVoStrBlank(req.getDeviceType())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "deviceType"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+
+    private void heartHttpPush(String bigType,String id,String deviceId,String latestStatus) throws Exception {
+        if (DEVICE_BIG_TYPE_0.equals(bigType)){
+            NmplBaseStationInfo baseStationInfo = new NmplBaseStationInfo();
+            baseStationInfo.setId(Long.parseLong(id));
+            baseStationInfo.setStationStatus(latestStatus);
+            int num =nmplBaseStationInfoMapper.updateByPrimaryKeySelective(baseStationInfo);
+            if(num==1){
+                baseStationInfoService.pushToProxy(deviceId, URL_STATION_UPDATE);
+            }
+        }else if (DEVICE_BIG_TYPE_1.equals(bigType)){
+            NmplDeviceInfo deviceInfo = new NmplDeviceInfo();
+            deviceInfo.setId(Long.parseLong(id));
+            deviceInfo.setStationStatus(latestStatus);
+            int num =nmplDeviceInfoMapper.updateByPrimaryKeySelective(deviceInfo);
+            if(num==1){
+                deviceService.pushToProxy(deviceId,URL_DEVICE_UPDATE);
+            }
         }
     }
 
