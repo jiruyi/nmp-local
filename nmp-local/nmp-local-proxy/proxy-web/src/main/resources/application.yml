@@ -66,3 +66,6 @@ thread:
 netmanage:
   ip: http://192.168.72.34
   port: 8002
+
+local:
+  ip: 192.168.72.14

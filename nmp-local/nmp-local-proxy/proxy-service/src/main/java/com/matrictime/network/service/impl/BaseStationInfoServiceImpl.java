@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
@@ -12,19 +13,25 @@ import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.request.AddBaseStationInfoRequest;
 import com.matrictime.network.request.DeleteBaseStationInfoRequest;
+import com.matrictime.network.request.InitInfoReq;
 import com.matrictime.network.service.BaseStationInfoService;
+import com.matrictime.network.util.HttpClientUtil;
+import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
+import static com.matrictime.network.base.constant.DataConstants.KEY_SPLIT;
 import static com.matrictime.network.constant.DataConstants.*;
 
 
@@ -52,6 +59,12 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     @Resource
     private NmplLinkRelationMapper nmplLinkRelationMapper;
+
+    @Value("${netmanage.ip}")
+    private String ip;
+
+    @Value("${netmanage.port}")
+    private String port;
 
 
 
@@ -204,5 +217,20 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;
+    }
+
+    @Override
+    public void initInfo(InitInfoReq req) {
+        String localIp = req.getLocalIp();
+        if (!ParamCheckUtil.checkVoStrBlank(localIp)){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("ip",localIp);
+            try {
+                String post = HttpClientUtil.post(ip + KEY_SPLIT + port + HEART_REPORT_URL, jsonObject.toJSONString());
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

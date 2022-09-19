@@ -140,4 +140,6 @@ public class DataConstants {
 
     public static final String HEART_REPORT_URL = "/nmp-local-business/monitor/checkHeart";
 
+    public static final String INIT_URL = "/nmp-local-business/initUrl";
+
 }

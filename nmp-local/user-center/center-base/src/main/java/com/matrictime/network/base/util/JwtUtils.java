@@ -36,7 +36,7 @@ public class JwtUtils {
                 .withClaim("nickName",user.getNickName())
                 .withClaim("loginAccount",user.getLoginAccount())
                 .withClaim("userId",String.valueOf(user.getUserId()))
-                .sign(Algorithm.HMAC256(user.getUserId()+KEY_SPLIT_UNDERLINE+destination));
+                .sign(Algorithm.HMAC256(user.getUserId()));
 
     }
 
@@ -64,6 +64,25 @@ public class JwtUtils {
      */
     public static Claim getClaimByName(String token, String name){
         return JWT.decode(token).getClaim(name);
+    }
+
+
+    /**
+     * 检验合法性，其中secret参数就应该传入的是用户的id
+     * @param token
+     * @param secret
+     */
+    public static int verifyTokenRes(String token, String secret){
+        int res = 0;
+        DecodedJWT verify = null;
+        try {
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret)).build();
+            verify = verifier.verify(token);
+        } catch (Exception e) {
+            logger.error(ErrorMessageContants.JWT_VERIFY_FAIL_MSG);
+            res = -1;
+        }
+        return res;
     }
 
 }
