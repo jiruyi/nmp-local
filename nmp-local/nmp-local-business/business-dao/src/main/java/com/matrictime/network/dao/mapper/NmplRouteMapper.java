@@ -22,4 +22,6 @@ public interface NmplRouteMapper {
     List<NmplDeviceInfoExt> selectDevices();
 
     List<RouteVo> selectByTwoId(RouteRequest routeRequest);
+
+    List<RouteVo> selectByRelationId(RouteRequest routeRequest);
 }
