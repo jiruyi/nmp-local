@@ -16,7 +16,7 @@ public class CheckHeartReq implements Serializable {
 
 
     /**
-     * 设备状态（1：上线 2：下线）
+     * 设备状态（0:正常  1：外网异常）
      */
     private String status;
 }
