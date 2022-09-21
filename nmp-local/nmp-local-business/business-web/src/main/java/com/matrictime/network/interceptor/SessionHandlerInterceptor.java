@@ -2,11 +2,13 @@ package com.matrictime.network.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.LoginStatusEnum;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.UserDomainService;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -66,7 +68,16 @@ public class SessionHandlerInterceptor extends HandlerInterceptorAdapter {
             response.setStatus(403);
             return false;
         }
-        //4. 查看用户token是否失效
+        //4 查询用户状态
+        Object userStatus  = redisTemplate.opsForValue().get(user.getUserId()+DataConstants.USER_LOGIN_STATUS);
+        if(!ObjectUtils.isEmpty(userStatus)){
+            if(userStatus.toString().equals(LoginStatusEnum.UPDATE.getCode())){
+                response.setStatus(402);
+                return false;
+            }
+        }
+
+        //5. 查看用户token是否失效
         Object redisToken  = redisTemplate.opsForValue().get(userId+DataConstants.USER_LOGIN_JWT_TOKEN);
         if(ObjectUtils.isEmpty(redisToken) || !token.equals(redisToken.toString())){
             response.setStatus(403);

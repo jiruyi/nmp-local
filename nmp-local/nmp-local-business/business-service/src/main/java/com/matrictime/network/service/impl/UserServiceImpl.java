@@ -3,6 +3,7 @@ package com.matrictime.network.service.impl;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.LoginStatusEnum;
 import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.AesEncryptUtil;
@@ -101,6 +102,11 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             subject.login(usernamePasswordToken);
 
             String token = buildToken(list.get(NumberUtils.INTEGER_ZERO));
+
+            //记录用户的登录状态
+            redisTemplate.opsForValue().set(list.get(NumberUtils.INTEGER_ZERO).getUserId()+DataConstants.USER_LOGIN_STATUS,
+                    LoginStatusEnum.NORMAL.getCode(),timeOut, TimeUnit.HOURS);
+
             LoginResponse response = LoginResponse.builder().token(token).build();
             result = buildResult(response);
         }catch (Exception e){
@@ -254,16 +260,6 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
                     user.setRoleName(roleName);
                 }
             }
-
-//            if(Integer.valueOf(nmplUser.getRoleId())!= DataConstants.SUPER_ADMIN){
-//                List<UserRequest>result = new ArrayList<>();
-//                for (UserRequest user : list) {
-//                    if(Integer.valueOf(user.getRoleId())!=DataConstants.SUPER_ADMIN){
-//                        result.add(user);
-//                    }
-//                }
-//                list = result;
-//            }
             pageInfo.setList(list);
             return buildResult(pageInfo);
         }catch (Exception e){
@@ -302,6 +298,12 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
                         throw new SystemException(ErrorMessageContants.NO_CREATEUSER_ERROR_MSG);
                     }
                 }
+                //如果用户在线 则修改用户的用户状态
+                if(redisTemplate.opsForValue().get(nmplUser.getUserId()+ DataConstants.USER_LOGIN_STATUS)!=null){
+                    redisTemplate.opsForValue().set(nmplUser.getUserId()+DataConstants.USER_LOGIN_STATUS,
+                            LoginStatusEnum.UPDATE.getCode(),timeOut, TimeUnit.HOURS);
+                }
+
             }
             int count = userDomainService.passwordReset(userInfo);
             redisTemplate.delete(nmplUser.getUserId()+ DataConstants.USER_LOGIN_JWT_TOKEN);
