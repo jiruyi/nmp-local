@@ -140,4 +140,6 @@ public class DataConstants {
 
     public static final String HEART_REPORT_URL = "/nmp-local-business/monitor/checkHeart";
 
+    public static final String LOG_PUSH_URL = "/nmp-local-business/log/device/save";
+
 }
