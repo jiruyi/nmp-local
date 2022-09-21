@@ -1,19 +1,13 @@
 package com.matrictime.network.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.matrictime.network.aop.MonitorRequest;
-import com.matrictime.network.api.modelVo.WsResultVo;
 import com.matrictime.network.api.request.*;
-import com.matrictime.network.dao.domain.CommonService;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserService;
-import com.matrictime.network.service.impl.WebSocketServer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +29,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private CommonService commonService;
 
     /**
      * 用户信息修改
@@ -60,27 +52,6 @@ public class UserController {
         }
     }
 
-    /**
-     * @title deleteFriend
-     * @param deleteFriendReq
-     * @return com.matrictime.network.model.Result
-     * @description  删除好友
-     * @author jiruyi
-     * @create 2022/4/8 0008 9:19
-     */
-    @ApiOperation(value = "删除好友",notes = "删除好友")
-    @RequestMapping (value = "/deleteFriend",method = RequestMethod.POST)
-    @MonitorRequest
-    public Result deleteFriend(@RequestBody DeleteFriendReq deleteFriendReq){
-        try {
-            Result result = userService.deleteFriend(deleteFriendReq);
-            deleteFriendSendMsg(deleteFriendReq,result);
-            return  result;
-        }catch (Exception e){
-            log.error("modifyUserInfo exception:{}",e.getMessage());
-            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
-        }
-    }
 
     @ApiOperation(value = "修改密码",notes = "修改密码")
     @RequestMapping (value = "/changePasswd",method = RequestMethod.POST)
@@ -119,26 +90,6 @@ public class UserController {
         }catch (Exception e){
             log.error("UserController.verifyToken exception:{}",e.getMessage());
             return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
-        }
-    }
-
-    public void deleteFriendSendMsg(DeleteFriendReq deleteFriendReq,Result result){
-        WsResultVo wsResultVo = new WsResultVo();
-        String sendObject = "";
-        if(StringUtils.isBlank(deleteFriendReq.getDestination())){
-            if (result.isSuccess()){
-                wsResultVo = JSONObject.parseObject(result.getErrorMsg(), new TypeReference<WsResultVo>() {});
-                sendObject = wsResultVo.getSendObject();
-                wsResultVo.setSendObject(null);
-                result.setErrorMsg(null);
-            }
-        }
-
-        if (StringUtils.isNotBlank(sendObject)){
-            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(sendObject);
-            if(webSocketServer != null){
-                webSocketServer.sendMessage(JSONObject.toJSONString(wsResultVo));
-            }
         }
     }
 

@@ -41,4 +41,10 @@ public class DeviceInfoDomainServiceImpl implements DeviceInfoDomainService {
         return deviceInfoMapper.batchInsert(deviceInfos);
     }
 
+    @Override
+    @Transactional
+    public int localInsertDeviceInfo(List<DeviceInfoVo> deviceInfos) {
+        return deviceInfoMapper.localBatchInsert(deviceInfos);
+    }
+
 }

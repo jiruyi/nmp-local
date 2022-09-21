@@ -1,7 +1,7 @@
 package com.matrictime.network.controller;
 
 import com.matrictime.network.request.InitInfoReq;
-import com.matrictime.network.service.BaseStationInfoService;
+import com.matrictime.network.service.InitInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,7 @@ public class MyStartupRunner implements CommandLineRunner {
     private String localIp;
 
     @Autowired
-    private BaseStationInfoService baseStationInfoService;
+    private InitInfoService initInfoService;
 
 
     @Override
@@ -27,7 +27,7 @@ public class MyStartupRunner implements CommandLineRunner {
         log.info("SpringBoot run localIp:{}", localIp);
         InitInfoReq req = new InitInfoReq();
         req.setLocalIp(localIp);
-        baseStationInfoService.initInfo(req);
+        initInfoService.initInfo(req);
     }
 
     @PreDestroy

@@ -57,8 +57,6 @@ import static com.matrictime.network.constant.DataConstants.SYSTEM_UC;
 @Slf4j
 public class LoginServiceImpl extends SystemBaseService implements LoginService {
 
-//    @Autowired
-//    private GroupDomainService groupDomainService;
 
     @Autowired
     private CommonService commonService;
@@ -188,12 +186,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         RegisterResp resp = new RegisterResp();
         resp.setUserId(user.getUserId());
 
-//        GroupReq groupReq = new GroupReq();
-//        groupReq.setOwner(req.getUserId());
-//        groupReq.setGroupName(DataConfig.DEFAULT_GROUP_NAME);
-//        groupReq.setDefaultGroup(true);
-//        Integer group = groupDomainService.createGroup(groupReq);
-
         return resp;
     }
 
@@ -225,16 +217,19 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     }
 
     private LoginResp commonLogin(LoginReq req)throws Exception{
+        // 参数校验
         checkLoginParam(req);
         LoginResp resp = new LoginResp();
         UserExample userExample = new UserExample();
         userExample.createCriteria().andLoginAccountEqualTo(req.getLoginAccount());
 
         List<User> users = userMapper.selectByExample(userExample);
+        // 查询用户是否存在
         if(CollectionUtils.isEmpty(users)){
             throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
         }else {
             User user = users.get(0);
+            // 判断用户是否已登录
             if (LOGIN_STATUS_IN.equals(user.getLoginStatus())){
                 throw new SystemException(ErrorMessageContants.USER_LOGIN_MSG);
             }
@@ -304,6 +299,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             BeanUtils.copyProperties(user,userVo);
             userVo.setPassword(null);
 
+            // 生成token
             String token = buildToken(userVo, req.getDestination());
             setToken(user.getUserId(),token,req.getDestination());
 
@@ -317,11 +313,14 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Transactional(rollbackFor = Exception.class)
     public Result logout(LogoutReq req) {
         try {
+            // 参数校验
             checkLogoutParam(req);
             User user = new User();
             UserExample userExample = new UserExample();
             userExample.createCriteria().andUserIdEqualTo(req.getUserId());
             user.setLoginStatus(DataConfig.LOGIN_STATUS_OUT);
+
+            // 删除token
             delToken(req.getUserId(),req.getDestination());
             return buildResult(userMapper.updateByExampleSelective(user,userExample));
         }catch (Exception e){

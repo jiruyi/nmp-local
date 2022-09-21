@@ -7,11 +7,14 @@ import com.matrictime.network.dao.mapper.NmplRouteMapper;
 import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
 import com.matrictime.network.dao.mapper.extend.RouteMapper;
 import com.matrictime.network.dao.model.NmplRoute;
+import com.matrictime.network.dao.model.NmplRouteExample;
 import com.matrictime.network.dao.model.NmplUpdateInfoBase;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.CenterRouteVo;
 import com.matrictime.network.modelVo.RouteVo;
 import com.matrictime.network.service.RouteService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +42,11 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
     @Resource
     private NmplRouteMapper nmplRouteMapper;
 
+    /**
+     * 新增路由
+     * @param voList
+     * @return
+     */
     @Override
     @Transactional
     public Result<Integer> addRoute(List<RouteVo> voList) {
@@ -51,13 +59,17 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             for (RouteVo infoVo : voList){
                 infoVo.setUpdateTime(createTime);
             }
+            // 新增路由信息
+            int batchNum = routeDomainService.insertRoute(voList);
+
+            // 通知基站有路由信息变更
             NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
             updateInfo.setTableName(NMPL_ROUTE);
             updateInfo.setOperationType(EDIT_TYPE_ADD);
             updateInfo.setCreateTime(createTime);
             updateInfo.setCreateUser(SYSTEM_NM);
             int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-            int batchNum = routeDomainService.insertRoute(voList);
+
             log.info("RouteServiceImpl.addRoute：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
             log.error("RouteServiceImpl.addRoute：{}",e.getMessage());
@@ -67,6 +79,11 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
         return result;
     }
 
+    /**
+     * 更新路由
+     * @param req
+     * @return
+     */
     @Override
     @Transactional
     public Result<Integer> updateRoute(RouteVo req) {
@@ -81,7 +98,9 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             int addNum=0;
             List<RouteVo> voList = new ArrayList<>(1);
             voList.add(req);
-            if (nmplRoute != null){
+
+            // 判断路由信息是否存在
+            if (nmplRoute != null){// 路由已存在，则更新路由信息
                 batchNum = routeDomainService.updateRoute(voList);
 
                 NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
@@ -90,7 +109,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
                 updateInfo.setCreateTime(createTime);
                 updateInfo.setCreateUser(SYSTEM_NM);
                 addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-            }else {
+            }else {// 路由不存在在插入路由信息
                 batchNum = routeDomainService.insertRoute(voList);
 
                 NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
@@ -108,5 +127,81 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;
+    }
+
+    /**
+     * 初始化路由
+     * @param centerRouteVos
+     */
+    @Override
+    @Transactional
+    public void initInfo(List<CenterRouteVo> centerRouteVos) {
+        List<NmplRoute> nmplRoutes = nmplRouteMapper.selectByExample(new NmplRouteExample());
+        if (CollectionUtils.isEmpty(nmplRoutes)){// 路由表为空，直接插入数据
+            Date createTime = new Date();
+            List<RouteVo> voList = new ArrayList<>(centerRouteVos.size());
+            for (CenterRouteVo vo:centerRouteVos){
+                RouteVo routeVo = new RouteVo();
+                BeanUtils.copyProperties(vo,routeVo);
+                routeVo.setUpdateTime(createTime);
+                voList.add(routeVo);
+            }
+            routeDomainService.insertRoute(voList);
+
+            // 通知基站有路由插入
+            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+            updateInfo.setTableName(NMPL_ROUTE);
+            updateInfo.setOperationType(EDIT_TYPE_ADD);
+            updateInfo.setCreateTime(createTime);
+            updateInfo.setCreateUser(SYSTEM_NM);
+            nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+        }else {// 路由表不为空，更新数据
+            List<RouteVo> updateVoList = new ArrayList<>();
+            List<RouteVo> insertVoList = new ArrayList<>();
+
+            Date updateTime = new Date();
+            for (CenterRouteVo vo:centerRouteVos){
+                boolean flag = true;
+                for (NmplRoute route:nmplRoutes){
+                    if (vo.getId().equals(String.valueOf(route.getId()))){
+                        RouteVo temp = new RouteVo();
+                        BeanUtils.copyProperties(vo,temp);
+                        temp.setUpdateTime(updateTime);
+                        updateVoList.add(temp);
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag){
+                    RouteVo temp = new RouteVo();
+                    BeanUtils.copyProperties(vo,temp);
+                    insertVoList.add(temp);
+                }
+            }
+
+            // 更新路由列表
+            routeDomainService.updateRoute(updateVoList);
+
+            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+            updateInfo.setTableName(NMPL_ROUTE);
+            updateInfo.setOperationType(EDIT_TYPE_UPD);
+            updateInfo.setCreateTime(updateTime);
+            updateInfo.setCreateUser(SYSTEM_NM);
+            nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+
+            // 新增路由列表
+            Date insertTime = new Date();
+            for (RouteVo vo:insertVoList){
+                vo.setUpdateTime(insertTime);
+            }
+            routeDomainService.insertRoute(insertVoList);
+
+            NmplUpdateInfoBase updateInfo2 = new NmplUpdateInfoBase();
+            updateInfo2.setTableName(NMPL_ROUTE);
+            updateInfo2.setOperationType(EDIT_TYPE_ADD);
+            updateInfo2.setCreateTime(insertTime);
+            updateInfo2.setCreateUser(SYSTEM_NM);
+            nmplUpdateInfoBaseMapper.insertSelective(updateInfo2);
+        }
     }
 }

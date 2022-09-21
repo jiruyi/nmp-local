@@ -8,4 +8,6 @@ import java.util.List;
 public interface DeviceInfoMapper {
 
     int batchInsert(@Param("list") List<DeviceInfoVo> deviceInfoVos);
+
+    int localBatchInsert(@Param("list") List<DeviceInfoVo> deviceInfoVos);
 }

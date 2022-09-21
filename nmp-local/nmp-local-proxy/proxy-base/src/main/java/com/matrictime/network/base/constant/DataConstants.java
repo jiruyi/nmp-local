@@ -125,7 +125,7 @@ public class DataConstants {
 
     public static final String NMPL_LOCAL_BASE_STATION_INFO = "nmpl_local_base_station_info";
 
-    public static final String NMPL_NMPL_DEVICE_INFO = "nmpl_device_info";
+    public static final String NMPL_DEVICE_INFO = "nmpl_device_info";
 
     public static final String NMPL_LOCAL_DEVICE_INFO = "nmpl_local_device_info";
 
@@ -140,6 +140,6 @@ public class DataConstants {
 
     public static final String HEART_REPORT_URL = "/nmp-local-business/monitor/checkHeart";
 
-    public static final String INIT_URL = "/nmp-local-business/initUrl";
+    public static final String INIT_URL = "/nmp-local-business/proxy/init";
 
 }

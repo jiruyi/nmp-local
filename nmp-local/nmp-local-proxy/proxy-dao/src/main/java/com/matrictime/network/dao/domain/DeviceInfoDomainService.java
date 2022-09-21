@@ -15,4 +15,6 @@ public interface DeviceInfoDomainService {
 
     int insertDeviceInfo(List<DeviceInfoVo> deviceInfos);
 
+    int localInsertDeviceInfo(List<DeviceInfoVo> deviceInfos);
+
 }
