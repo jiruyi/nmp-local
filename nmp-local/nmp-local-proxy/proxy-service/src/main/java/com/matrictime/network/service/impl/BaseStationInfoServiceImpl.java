@@ -95,7 +95,6 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
                 int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
 
-
                 // 插入所有基站信息
                 int addBase = 0;
                 int updateBase = 0;
@@ -109,7 +108,6 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                     updateInfo.setTableName(NMPL_BASE_STATION_INFO);
                     updateBase = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
                 }
-
 
                 int addDevice =0;
                 int updateDevice =0;
@@ -125,12 +123,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                     updateDevice = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
                 }
 
-
                 log.info("BaseStationInfoServiceImpl.addBaseStationInfo：" +
                                 "addlocal:{},updateLocal:{},addBase:{},updateBase:{},addDevice:{},updateDevice:{}",
                         addlocal,updateLocal,addBase,updateBase,addDevice,updateDevice);
-
-
             }else {
                 /* 其他基站的推送插入 */
 

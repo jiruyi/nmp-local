@@ -16,7 +16,7 @@ public class ProxyResp implements Serializable {
 
     private List<CenterDeviceInfoVo> deviceInfoVos=new ArrayList<>();
 
-    private List<CenterRouteVo> roteVoList = new ArrayList<>();
+    private List<CenterRouteVo> routeVoList = new ArrayList<>();
 
     private List<CenterLinkRelationVo> linkRelationVoList = new ArrayList<>();
 
