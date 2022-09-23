@@ -1,6 +1,7 @@
 package com.matrictime.network.dao.mapper;
 
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
+import com.matrictime.network.modelVo.ProxyRouteInfoVo;
 import com.matrictime.network.modelVo.RouteVo;
 import com.matrictime.network.request.RouteRequest;
 
@@ -23,5 +24,5 @@ public interface NmplRouteMapper {
 
     List<RouteVo> selectByTwoId(RouteRequest routeRequest);
 
-    List<RouteVo> selectByRelationId(RouteRequest routeRequest);
+    List<ProxyRouteInfoVo> selectByRelationId(RouteRequest routeRequest);
 }
