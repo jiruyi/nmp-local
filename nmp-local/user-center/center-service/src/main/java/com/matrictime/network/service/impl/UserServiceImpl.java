@@ -41,6 +41,8 @@ import java.util.regex.Pattern;
 
 import static com.matrictime.network.base.UcConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.exception.ErrorMessageContants.NO_USER_BOUND_TEL;
+import static com.matrictime.network.exception.ErrorMessageContants.PASSWORD_TWICE_INCONSISTENT;
 
 /**
  * @author jiruyi
@@ -176,59 +178,6 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     @Override
     @Transactional
     public Result changePasswd(ChangePasswdReq changePasswdReq) {
-//        String entryFlag = DESTINATION_OUT;
-//        ReqUtil<ChangePasswdReq> jsonUtil = new ReqUtil<>(changePasswdReq);
-//        changePasswdReq = jsonUtil.jsonReqToDto(changePasswdReq);
-//        Result result;
-//        try {
-//            switch (changePasswdReq.getDestination()){
-//                case DESTINATION_OUT:
-//                    result = commonChangePasswd(changePasswdReq);
-//                    break;
-//                case UcConstants.DESTINATION_IN:
-//                    ReqModel reqModel = new ReqModel();
-//                    changePasswdReq.setDestination(DESTINATION_OUT_TO_IN);
-//                    changePasswdReq.setUrl(url+UcConstants.URL_CHANGEPASSWD);
-//                    String param = JSONObject.toJSONString(changePasswdReq);
-//                    log.info("非密区向密区发送请求参数param:{}",param);
-//                    reqModel.setParam(param);
-//                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-//                    log.info("非密区接收密区返回值ResModel:{}",JSONObject.toJSONString(resModel));
-//                    Object returnValue = resModel.getReturnValue();
-//                    if(returnValue != null && returnValue instanceof String){
-//                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-//                        result = JSONObject.parseObject(syncResModel.getReturnValue().toString(), Result.class);
-//                    }else {
-//                        throw new SystemException("modifyUserGroup"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-//                    }
-//                    break;
-//                case DESTINATION_OUT_TO_IN:
-//                    entryFlag = DESTINATION_OUT_TO_IN;
-//                    // 入参解密
-//                    ReqUtil<ChangePasswdReq> reqUtil = new ReqUtil<>(changePasswdReq);
-//                    ChangePasswdReq changePasswdReq1 = reqUtil.decryJsonToReq(changePasswdReq);
-//                    result = commonChangePasswd(changePasswdReq1);
-//                    // 返回值加密
-//                    break;
-//                default:
-//                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-//            }
-//        }catch (SystemException e){
-//            log.error("changePasswd Exception:{}",e.getMessage());
-//            result = failResult(e);
-//        }
-//        catch (Exception e) {
-//            log.error("changePasswd Exception:{}", e.getMessage());
-//            result = failResult("");
-//        }
-//        try {
-//            result = commonService.encrypt(changePasswdReq.getCommonKey(), entryFlag, result);
-//        }catch (Exception e){
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//            log.error("基础平台加密异常",e.getMessage());
-//            result = failResult("");
-//        }
-//        return result;
         Result result;
         try{
             result = commonChangePasswd(changePasswdReq);
@@ -313,64 +262,6 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
     @Override
     public Result verify(VerifyReq req) {
-//        Result result;
-//        String encryFlag = DESTINATION_OUT;
-//        try {
-//            ReqUtil<VerifyReq> jsonUtil = new ReqUtil<>(req);
-//            req = jsonUtil.jsonReqToDto(req);
-//
-//            switch (req.getDestination()){
-//                case DESTINATION_OUT:
-//                    commonVerify(req);
-//                    break;
-//                case UcConstants.DESTINATION_IN:
-//                    ReqModel reqModel = new ReqModel();
-//                    req.setDestination(DESTINATION_OUT_TO_IN);
-//                    req.setUrl(url+UcConstants.URL_VERIFY);
-//                    String param = JSONObject.toJSONString(req);
-//                    log.info("非密区向密区发送请求参数param:{}",param);
-//                    reqModel.setParam(param);
-//                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-//
-//                    log.info("非密区接收返回值UserServiceImpl.verify resModel:{}",JSONObject.toJSONString(resModel));
-//                    Object returnValue = resModel.getReturnValue();
-//                    if(returnValue != null && returnValue instanceof String){
-//                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-//                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),new TypeReference<Result>(){});
-//                        return returnRes;
-//                    }else {
-//                        throw new SystemException("UserServiceImpl.verify"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-//                    }
-//
-//                case DESTINATION_OUT_TO_IN:
-//                    encryFlag = DESTINATION_OUT_TO_IN;
-//                    // 入参解密
-//                    ReqUtil<VerifyReq> reqUtil = new ReqUtil<>(req);
-//                    VerifyReq desReq = reqUtil.decryJsonToReq(req);
-//                    commonVerify(desReq);
-//                    break;
-//                default:
-//                    throw new SystemException("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-//
-//            }
-//
-//            result = buildResult(null);
-//        }catch (SystemException e){
-//            log.error("UserServiceImpl.verify SystemException:{}",e.getMessage());
-//            result = failResult(e);
-//        } catch (Exception e){
-//            log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
-//            result = failResult("");
-//        }
-//
-//        try {
-//            result = commonService.encrypt(req.getCommonKey(), encryFlag, result);
-//        } catch (Exception e) {
-//            result = failResult("");
-//            log.error("UserServiceImpl.verify encrypt Exception:{}",e.getMessage());
-//        }
-//        return result;
-
         Result result;
         try {
             commonVerify(req);
@@ -382,7 +273,6 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
             log.error("UserServiceImpl.verify Exception:{}",e.getMessage());
             result = failResult("");
         }
-
         return result;
     }
 
@@ -479,7 +369,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
                return;
             }
         }
-        throw new SystemException("身份验证错误");
+        throw new SystemException(ErrorMessageContants.AUTHENTICATION_ERROR);
     }
 
 
@@ -487,12 +377,6 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getQueryParam())){
             return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-//        String queryParam = userRequest.getQueryParam();
-//        if(isMobile(queryParam)){
-//            userRequest.setPhoneNumber(queryParam);
-//        }else {
-//            userRequest.setLoginAccount(queryParam);
-//        }
         User user = userDomainService.queryUserByqueryParam(userRequest);
         if(user==null){
             throw new SystemException("无此用户");
@@ -508,17 +392,17 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
         if(ObjectUtils.isEmpty(changePasswdReq) || ObjectUtils.isEmpty(changePasswdReq.getNewPassword())
                 || ObjectUtils.isEmpty(changePasswdReq.getRepeatPassword())||
                 ObjectUtils.isEmpty(changePasswdReq.getPhoneNumber())){
-            return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if(!changePasswdReq.getRepeatPassword().equals(changePasswdReq.getNewPassword())){
-            throw new SystemException("两次输入密码不一致");
+            throw new SystemException(PASSWORD_TWICE_INCONSISTENT);
         }
 
         UserRequest request = new UserRequest();
         request.setPhoneNumber(changePasswdReq.getPhoneNumber());
         User user = userDomainService.selectByCondition(request);
         if(user==null){
-            throw new SystemException("无用户与此电话号绑定");
+            throw new SystemException(NO_USER_BOUND_TEL);
         }
         UserRequest userRequest = new UserRequest();
         userRequest.setUserId(user.getUserId());
