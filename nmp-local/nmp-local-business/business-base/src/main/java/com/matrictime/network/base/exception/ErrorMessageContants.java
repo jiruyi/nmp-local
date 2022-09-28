@@ -88,4 +88,10 @@ public class ErrorMessageContants {
 
 	public static final String ADMIN_UPDATE_ERROR_MSG = "无法修改管理员";
 
+	public static final String IP_FORMAT_ERROR_MSG = "ip格式不正确";
+
+	public static final String PORT_FORMAT_ERROR_MSG = "端口格式不正确";
+
+	public static final String NOT_EXIST_VILLAGE ="小区不存在";
+
 }

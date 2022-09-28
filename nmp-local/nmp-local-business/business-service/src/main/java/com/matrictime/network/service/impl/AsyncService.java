@@ -298,7 +298,7 @@ public class AsyncService{
         String url = map.get(KEY_URL);
         String data = map.get(KEY_DATA);
         String postResp = HttpClientUtil.post(url,data);
-        log.info("AsyncService.httpPush deviceId:{},req:{} postResp:{}",deviceId, data,postResp);
+        log.info("AsyncService.httpPush url:{}, deviceId:{} , req:{}, postResp:{}",url,deviceId, data,postResp);
     }
 
     @Recover

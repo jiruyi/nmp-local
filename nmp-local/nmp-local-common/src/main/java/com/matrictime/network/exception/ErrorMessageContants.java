@@ -100,4 +100,10 @@ public class ErrorMessageContants {
 
 	public static final String ENCRYPT_FAIL_MSG = "加密失败";
 
+	public static final String PASSWORD_TWICE_INCONSISTENT="两次输入密码不一致";
+
+	public static final String NO_USER_BOUND_TEL = "无用户与此电话号绑定";
+
+	public static final String AUTHENTICATION_ERROR ="身份验证错误";
+
 }

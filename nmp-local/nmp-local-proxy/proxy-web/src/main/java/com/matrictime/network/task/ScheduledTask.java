@@ -17,8 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
-import static com.matrictime.network.base.constant.DataConstants.HEART_REPORT_URL;
-import static com.matrictime.network.base.constant.DataConstants.KEY_SPLIT;
+import static com.matrictime.network.base.constant.DataConstants.*;
 
 @Component
 @EnableAsync //开启多线程
@@ -45,8 +44,14 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
     }
 
+    @Scheduled(cron = "*/30 * * * * ?")
+    @Async
+    public void logPush(){
+        taskService.logPush(ip + KEY_SPLIT + port + LOG_PUSH_URL);
+    }
+
 //    @Scheduled(fixedDelay = 5000)
-//    @Async
+//    @Async·
 //    public void fixedDelay() throws InterruptedException {
 //        System.out.println(Thread.currentThread().getName() + "-fixedDelay:" + LocalDateTime.now().format(FORMATTER));
 //        TimeUnit.SECONDS.sleep(6);

@@ -1,12 +1,11 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.dao.mapper.NmplDeviceLogMapper;
 import com.matrictime.network.dao.mapper.NmplKeycenterHeartInfoMapper;
 import com.matrictime.network.dao.mapper.NmplStationHeartInfoMapper;
-import com.matrictime.network.dao.model.NmplKeycenterHeartInfo;
-import com.matrictime.network.dao.model.NmplKeycenterHeartInfoExample;
-import com.matrictime.network.dao.model.NmplStationHeartInfo;
-import com.matrictime.network.dao.model.NmplStationHeartInfoExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,16 +27,18 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private NmplKeycenterHeartInfoMapper nmplKeycenterHeartInfoMapper;
 
+    @Resource
+    private NmplDeviceLogMapper nmplDeviceLogMapper;
+
     @Override
     public void heartReport(String url) {
-        Date now = new Date();
         NmplStationHeartInfoExample stationExample = new NmplStationHeartInfoExample();
-        stationExample.createCriteria().andCreateTimeLessThanOrEqualTo(now);
+        stationExample.setOrderByClause("create_time desc");
         List<NmplStationHeartInfo> stationHeartInfos = nmplStationHeartInfoMapper.selectByExample(stationExample);
         if (!CollectionUtils.isEmpty(stationHeartInfos)){
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("deviceId",stationHeartInfos.get(0).getStationId());
-            jsonObject.put("status", NumberUtils.INTEGER_ONE);
+            jsonObject.put("status", stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getRemark());
             try {
                 HttpClientUtil.post(url,jsonObject.toJSONString());
             } catch (IOException e) {
@@ -49,12 +49,12 @@ public class TaskServiceImpl implements TaskService {
         }
 
         NmplKeycenterHeartInfoExample keycenterExample = new NmplKeycenterHeartInfoExample();
-        keycenterExample.createCriteria().andCreateTimeLessThanOrEqualTo(now);
+        keycenterExample.setOrderByClause("create_time desc");
         List<NmplKeycenterHeartInfo> keycenterHeartInfos = nmplKeycenterHeartInfoMapper.selectByExample(keycenterExample);
         if (!CollectionUtils.isEmpty(keycenterHeartInfos)){
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("deviceId",keycenterHeartInfos.get(0).getDeviceId());
-            jsonObject.put("status", NumberUtils.INTEGER_ONE);
+            jsonObject.put("status", keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getRemark());
             try {
                 HttpClientUtil.post(url,jsonObject.toJSONString());
             } catch (IOException e) {
@@ -62,6 +62,25 @@ public class TaskServiceImpl implements TaskService {
             }
             int deleteKeycenter = nmplKeycenterHeartInfoMapper.deleteByExample(keycenterExample);
             log.info("TaskServiceImpl.heartReport deleteKeycenter:{}"+deleteKeycenter);
+        }
+    }
+
+    @Override
+    public void logPush(String url) {
+        NmplDeviceLogExample nmplDeviceLogExample = new NmplDeviceLogExample();
+        NmplDeviceLogExample.Criteria criteria = nmplDeviceLogExample.createCriteria();
+        nmplDeviceLogExample.setOrderByClause("id desc");
+        List<NmplDeviceLog> nmplDeviceLogs = nmplDeviceLogMapper.selectByExample(nmplDeviceLogExample);
+        //删除已经推送的日志
+        criteria.andIdLessThan(nmplDeviceLogs.get(NumberUtils.INTEGER_ZERO).getId());
+        nmplDeviceLogMapper.deleteByExample(nmplDeviceLogExample);
+        if(!CollectionUtils.isEmpty(nmplDeviceLogs)){
+            try {
+                String post = HttpClientUtil.post(url, JSON.toJSONString(nmplDeviceLogs));
+            }catch (Exception e){
+                log.info("logPush:{}",e.getMessage());
+                throw new RuntimeException(e);
+            }
         }
     }
 }

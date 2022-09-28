@@ -4,6 +4,7 @@ import com.dianping.cat.Cat;
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.LoginStatusEnum;
 import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.context.RequestContext;
@@ -21,11 +22,11 @@ import com.matrictime.network.shiro.ShiroUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.util.NumberUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 用户信息相关
@@ -112,6 +114,8 @@ public class UserController {
                 return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             redisTemplate.delete(loginRequest.getUserId()+ DataConstants.USER_LOGIN_JWT_TOKEN);
+            //删除用户登录状态
+            redisTemplate.delete(loginRequest.getUserId()+DataConstants.USER_LOGIN_STATUS);
             log.info("用户:{}退出系统", RequestContext.getUser().getUserId());
             ShiroUtils.logout();
             return new Result(true, ErrorMessageContants.LOGOUT_SUCCESS_MSG);

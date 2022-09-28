@@ -142,4 +142,6 @@ public class DataConstants {
 
     public static final String INIT_URL = "/nmp-local-business/proxy/init";
 
+    public static final String LOG_PUSH_URL = "/nmp-local-business/log/device/save";
+
 }

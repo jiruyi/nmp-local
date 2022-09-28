@@ -5,6 +5,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.LoginStatusEnum;
 import com.matrictime.network.dao.domain.RoleDomainService;
 import com.matrictime.network.dao.mapper.NmplMenuMapper;
 import com.matrictime.network.dao.mapper.NmplRoleMapper;
@@ -17,8 +18,12 @@ import com.matrictime.network.request.RoleRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.RoleResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -26,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +45,11 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     NmplUserMapper nmplUserMapper;
     @Autowired
     NmplMenuMapper nmplMenuMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
+    @Value("${token.timeOut}")
+    private Integer timeOut;
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer save(RoleRequest roleRequest)throws Exception
@@ -131,6 +141,20 @@ public class RoleDomainServiceImpl implements RoleDomainService {
                 nmplRoleMenuRelation.setRoleId(nmplRole.getRoleId());
                 nmplRoleMenuRelation.setMenuId(meduId);
                 nmplRoleMenuRelationMapper.insert(nmplRoleMenuRelation);
+            }
+        }
+        NmplUserExample nmplUserExample = new NmplUserExample();
+        nmplUserExample.createCriteria().andRoleIdEqualTo(String.valueOf(roleRequest.getRoleId())).andIsExistEqualTo(true);
+        List<NmplUser> nmplUserList = nmplUserMapper.selectByExample(nmplUserExample);
+        for (NmplUser user : nmplUserList) {
+            if(redisTemplate.opsForValue().get(user.getUserId()+ DataConstants.USER_LOGIN_STATUS)!=null){
+                redisTemplate.opsForValue().set(user.getUserId()+DataConstants.USER_LOGIN_STATUS,
+                        LoginStatusEnum.UPDATE.getCode(),timeOut, TimeUnit.HOURS);
+                redisTemplate.delete(user.getUserId()+ DataConstants.USER_LOGIN_JWT_TOKEN);
+                Subject subject = (Subject) ThreadContext.get(user.getUserId()+"_SUBJECT_KEY");
+                if(subject!=null){
+                    subject.logout();
+                }
             }
         }
         return result;
