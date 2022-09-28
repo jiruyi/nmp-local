@@ -79,7 +79,7 @@
   </resultMap>
 
   <insert id="localBatchInsert" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-      insert into nmpl_device_info (id, device_id, device_name,
+      insert into nmpl_local_device_info (id, device_id, device_name,
       device_type, other_type, enter_network_time,
       device_admain, remark, public_network_ip,
       public_network_port, lan_ip, lan_port,

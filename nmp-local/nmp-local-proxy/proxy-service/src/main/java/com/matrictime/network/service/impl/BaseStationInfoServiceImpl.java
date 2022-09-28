@@ -96,36 +96,36 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
 
                 // 插入所有基站信息
-                int addBase = 0;
-                int updateBase = 0;
-                List<BaseStationInfoVo> stationVos = req.getStationInfoVos();
-                if (!CollectionUtils.isEmpty(stationVos)){
-                    for (int i=0;i<stationVos.size();i++){
-                        stationVos.get(i).setUpdateTime(createTime);
-                    }
-                    addBase = baseStationInfoDomainService.insertBaseStationInfo(stationVos);
-                    // 插入通知表通知base表更新
-                    updateInfo.setTableName(NMPL_BASE_STATION_INFO);
-                    updateBase = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-                }
-
-                int addDevice =0;
-                int updateDevice =0;
-                List<DeviceInfoVo> deviceInfoVos = req.getDeviceInfoVos();
-                if (!CollectionUtils.isEmpty(deviceInfoVos)){
-                    for (int i=0;i<deviceInfoVos.size();i++){
-                        deviceInfoVos.get(i).setUpdateTime(createTime);
-                    }
-                    addDevice = deviceInfoDomainService.insertDeviceInfo(deviceInfoVos);
-                    // 插入通知表通知base表更新
-                    updateInfo.setTableName(NMPL_DEVICE_INFO);
-
-                    updateDevice = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-                }
+//                int addBase = 0;
+//                int updateBase = 0;
+//                List<BaseStationInfoVo> stationVos = req.getStationInfoVos();
+//                if (!CollectionUtils.isEmpty(stationVos)){
+//                    for (int i=0;i<stationVos.size();i++){
+//                        stationVos.get(i).setUpdateTime(createTime);
+//                    }
+//                    addBase = baseStationInfoDomainService.insertBaseStationInfo(stationVos);
+//                    // 插入通知表通知base表更新
+//                    updateInfo.setTableName(NMPL_BASE_STATION_INFO);
+//                    updateBase = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+//                }
+//
+//                int addDevice =0;
+//                int updateDevice =0;
+//                List<DeviceInfoVo> deviceInfoVos = req.getDeviceInfoVos();
+//                if (!CollectionUtils.isEmpty(deviceInfoVos)){
+//                    for (int i=0;i<deviceInfoVos.size();i++){
+//                        deviceInfoVos.get(i).setUpdateTime(createTime);
+//                    }
+//                    addDevice = deviceInfoDomainService.insertDeviceInfo(deviceInfoVos);
+//                    // 插入通知表通知base表更新
+//                    updateInfo.setTableName(NMPL_DEVICE_INFO);
+//
+//                    updateDevice = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+//                }
 
                 log.info("BaseStationInfoServiceImpl.addBaseStationInfo：" +
-                                "addlocal:{},updateLocal:{},addBase:{},updateBase:{},addDevice:{},updateDevice:{}",
-                        addlocal,updateLocal,addBase,updateBase,addDevice,updateDevice);
+                                "addlocal:{},updateLocal:{}",
+                        addlocal,updateLocal);
             }else {
                 /* 其他基站的推送插入 */
 
