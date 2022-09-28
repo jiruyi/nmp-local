@@ -198,6 +198,13 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             BeanUtils.copyProperties(nmplLinkRelation,linkRelationVo);
             if(deviceTypeMap.get(linkRelationVo.getMainDeviceId())!=null){
                 linkRelationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getMainDeviceId()));
+                //当两种设备在同一个ip下并且有链路关系 此时多加一条数据推送
+                if(deviceTypeMap.get(linkRelationVo.getFollowDeviceId())!=null){
+                    ProxyLinkRelationVo relationVo = new ProxyLinkRelationVo();
+                    BeanUtils.copyProperties(linkRelationVo,relationVo);
+                    relationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getFollowDeviceId()));
+                    linkRelationVos.add(relationVo);
+                }
             }else {
                 linkRelationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getFollowDeviceId()));
             }

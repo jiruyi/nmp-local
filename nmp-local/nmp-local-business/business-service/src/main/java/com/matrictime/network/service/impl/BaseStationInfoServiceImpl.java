@@ -36,6 +36,9 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.matrictime.network.base.constant.DataConstants.INSERT_OR_UPDATE_SUCCESS;
+import static com.matrictime.network.base.exception.ErrorMessageContants.*;
+
 
 @Service
 @Slf4j
@@ -70,39 +73,20 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Integer insertFlag = null;
         BaseStationInfoRequest infoRequest = new BaseStationInfoRequest();
         try {
-            Integer stationNetworkId = nmplBaseStationInfoMapper.getSequenceId();
-            baseStationInfoRequest.setStationNetworkId(stationNetworkId.toString());
-            if(!CommonCheckUtil.checkStringLength(baseStationInfoRequest.getStationName(),null,16)){
-                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
-            }
+            baseStationInfoRequest.setStationNetworkId(getStationNetworkId());
             baseStationInfoRequest.setCreateTime(getFormatDate(date));
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
             baseStationInfoRequest.setStationId(SnowFlake.nextId_String());
             baseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             baseStationInfoRequest.setIsExist("1");
             baseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
-            //参数格式校验
-            boolean publicIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getPublicNetworkIp());
-            boolean lanIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getLanIp());
-            if(publicIpReg == false || lanIpReg == false){
-                return new Result<>(false,"ip格式不正确");
-            }
-            boolean publicPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getPublicNetworkPort());
-            boolean lanPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getLanPort());
-            if(publicPortReg == false || lanPortReg == false){
-                return new Result<>(false,"端口格式不正确");
-            }
-            //判断小区是否正确
-            String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
-            if(StringUtil.isEmpty(preBID)){
-                return new Result<>(false,"小区不存在");
-            }
-            String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
-            baseStationInfoRequest.setStationNetworkId(networkId);
+
+            //校验参数
+            checkParam(baseStationInfoRequest);
 
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
 
-            if(insertFlag == 1){
+            if(insertFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
                 result.setResultObj(insertFlag);
                 result.setSuccess(true);
                 //推送到代理
@@ -127,31 +111,12 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Date date = new Date();
         Integer updateFlag;
         try {
-            if(!CommonCheckUtil.checkStringLength(baseStationInfoRequest.getStationName(),null,16)){
-                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
-            }
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
-            baseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
-            boolean publicIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getPublicNetworkIp());
-            boolean lanIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getLanIp());
-            if(publicIpReg == false || lanIpReg == false){
-                return new Result<>(false,"ip格式不正确");
-            }
-            boolean publicPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getPublicNetworkPort());
-            boolean lanPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getLanPort());
-            if(publicPortReg == false || lanPortReg == false){
-                return new Result<>(false,"端口格式不正确");
-            }
-            //判断小区是否正确
-            String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
-            if(StringUtil.isEmpty(preBID)){
-                return new Result<>(false,"小区不存在");
-            }
-            String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
-            baseStationInfoRequest.setStationNetworkId(networkId);
+            //参数校验
+            checkParam(baseStationInfoRequest);
 
             updateFlag = baseStationInfoDomainService.updateBaseStationInfo(baseStationInfoRequest);
-            if(updateFlag == 1){
+            if(updateFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
                 result.setSuccess(true);
                 result.setResultObj(updateFlag);
                 //推送到代理
@@ -173,7 +138,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Integer deleteFlag;
         try {
             deleteFlag = baseStationInfoDomainService.deleteBaseStationInfo(baseStationInfoRequest);
-            if(deleteFlag == 1){
+            if(deleteFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
                 result.setSuccess(true);
                 result.setResultObj(deleteFlag);
                 //推送到代理
@@ -404,8 +369,44 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         return jsonObject.toJSONString();
     }
 
+    private String getStationNetworkId(){
+        String stationNetworkId = Integer.toHexString(nmplBaseStationInfoMapper.getSequenceId());
+        //八位数 高位补零
+        if(stationNetworkId.length()>8){
+            throw new SystemException(ErrorMessageContants.SYSTEM_ERROR);
+        }
 
+        int num=DataConstants.STATIONNETWORKID_LENTH-stationNetworkId.length();
+        while (num>0){
+            stationNetworkId = "0"+stationNetworkId;
+            num--;
+        }
+        return stationNetworkId.toUpperCase(Locale.ROOT);
+    }
 
+    private void checkParam(BaseStationInfoRequest baseStationInfoRequest){
+        if(!CommonCheckUtil.checkStringLength(baseStationInfoRequest.getStationName(),null,16)){
+           throw new SystemException(PARAM_LENTH_ERROR_MSG);
+        }
+        //参数格式校验
+        boolean publicIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getPublicNetworkIp());
+        boolean lanIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getLanIp());
+        if(publicIpReg == false || lanIpReg == false){
+           throw  new SystemException(IP_FORMAT_ERROR_MSG);
+        }
+        boolean publicPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getPublicNetworkPort());
+        boolean lanPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getLanPort());
+        if(publicPortReg == false || lanPortReg == false){
+            throw  new SystemException(PORT_FORMAT_ERROR_MSG);
+        }
+        //获取BID前缀信息
+        String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
+        if(StringUtil.isEmpty(preBID)){
+            throw  new SystemException(NOT_EXIST_VILLAGE);
+        }
+        String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
+        baseStationInfoRequest.setStationNetworkId(networkId);
 
+    }
 
 }
