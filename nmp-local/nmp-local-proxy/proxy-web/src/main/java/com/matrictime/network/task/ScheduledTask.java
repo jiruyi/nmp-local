@@ -44,7 +44,7 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
     }
 
-    @Scheduled(cron = "*/30 * * * * ?")
+    @Scheduled(cron = "*/120 * * * * ?")
     @Async
     public void logPush(){
         taskService.logPush(ip + KEY_SPLIT + port + LOG_PUSH_URL);

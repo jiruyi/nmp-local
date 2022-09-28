@@ -86,4 +86,6 @@ public class ErrorMessageContants {
 
 	public static final String EQUAL_PASSWORD_ERROR_MSG = "新旧密码不可相同";
 
+	public static final String DEVICE_ID_IS_NULL_MSG = "设备Id为空";
+
 }
