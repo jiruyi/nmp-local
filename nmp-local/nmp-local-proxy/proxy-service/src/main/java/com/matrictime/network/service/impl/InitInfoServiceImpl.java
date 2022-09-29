@@ -3,14 +3,9 @@ package com.matrictime.network.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
-import com.matrictime.network.modelVo.CenterBaseStationInfoVo;
-import com.matrictime.network.modelVo.CenterDeviceInfoVo;
-import com.matrictime.network.modelVo.CenterLinkRelationVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.base.enums.DeviceStatusEnum;
 import com.matrictime.network.dao.domain.OutlinePcDomainService;
-import com.matrictime.network.modelVo.BaseStationInfoVo;
-import com.matrictime.network.modelVo.CenterNmplOutlinePcInfoVo;
-import com.matrictime.network.modelVo.OutlinePcVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.InitInfoReq;
 import com.matrictime.network.request.OutlinePcReq;
@@ -113,11 +108,10 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                                 linkRelationService.initInfo(centerLinkRelationVos);
                             }
                             // 初始化一体机列表信息
-//                            if (!CollectionUtils.isEmpty(proxyResp.getNmplOutlinePcInfoVos())){
-//
-//                            }
-                            if (!CollectionUtils.isEmpty(proxyResp.getNmplOutlinePcInfoVos())){
-                                for(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo : proxyResp.getNmplOutlinePcInfoVos()){
+                            JSONArray nmplOutlinePcInfoList = resultObj.getJSONArray("nmplOutlinePcInfoVos");
+                            List<CenterNmplOutlinePcInfoVo> centerNmplOutlinePcInfoVos = nmplOutlinePcInfoList.toJavaList(CenterNmplOutlinePcInfoVo.class);
+                            if (!CollectionUtils.isEmpty(centerNmplOutlinePcInfoVos)){
+                                for(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo : centerNmplOutlinePcInfoVos){
                                     BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
                                     baseStationInfoRequest.setStationId(centerNmplOutlinePcInfoVo.getDeviceId());
                                     List<BaseStationInfoVo> baseStationInfoVos = outlinePcDomainService.
