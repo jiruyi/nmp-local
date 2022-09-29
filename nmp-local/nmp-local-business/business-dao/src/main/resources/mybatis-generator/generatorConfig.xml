@@ -49,11 +49,11 @@
         <!--               selectByExampleQueryId="true">-->
         <!--        </table>-->
 
-        <table tableName="nmpl_data_collect_for_load" domainObjectName="NmplDataCollectForLoad"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
+<!--        <table tableName="nmpl_data_collect_for_load" domainObjectName="NmplDataCollectForLoad"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
 <!--        <table tableName="nmpl_base_station_info" domainObjectName="NmplBaseStationInfo"-->
 <!--               enableCountByExample="true" enableUpdateByExample="true"-->
 <!--               enableDeleteByExample="true" enableSelectByExample="true"-->
@@ -84,5 +84,15 @@
         <!--               enableDeleteByExample="true" enableSelectByExample="true"-->
         <!--               selectByExampleQueryId="true">-->
         <!--        </table>-->
+                <table tableName="nmpl_business_route" domainObjectName="NmplBusinessRoute"
+                       enableCountByExample="true" enableUpdateByExample="true"
+                       enableDeleteByExample="true" enableSelectByExample="true"
+                       selectByExampleQueryId="true">
+                </table>
+        <table tableName="nmpl_internet_route" domainObjectName="NmplInternetRoute"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
     </context>
 </generatorConfiguration>

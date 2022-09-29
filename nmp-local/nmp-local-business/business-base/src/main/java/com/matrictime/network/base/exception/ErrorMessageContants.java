@@ -88,4 +88,9 @@ public class ErrorMessageContants {
 
 	public static final String ADMIN_UPDATE_ERROR_MSG = "无法修改管理员";
 
+	public static final String NETWORK_ID_IS_NULL_MSG = "入网Id不能为空";
+
+	public static final String ID_IS_NULL_MSG = "Id不能为空";
+
+
 }
