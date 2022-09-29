@@ -54,42 +54,6 @@ public class MyStartupRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("SpringBoot run appName:{},appId:{},appPort:{},FlowType:{},handleType:{}", appName, appId, appPort, FlowType, handleType);
-//        JServiceImpl.FlowType = FlowType;
-//        JServiceImpl.handleType = handleType;
-//        JServiceImpl.start(appName, appId, appPort, comOptApi);
-//        if (handleType == 1){
-//            int i=0;
-//            while (true && i < rzRetryTime){
-//                log.info("FD:"+JServiceImpl.getFD());
-//                if (JServiceImpl.getFD()!=-1){
-//                    JSONObject jsonObject = new JSONObject();
-//                    jsonObject.put("commonKey",stationip);
-//                    jsonObject.put("uuid",stationport);
-//                    try {
-//                        String post = HttpClientUtil.post("http://127.0.0.1:8006/user/zr", jsonObject.toJSONString());
-//                        if ("0".equals(post.trim())){
-//                            break;
-//                        }
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                    i++;
-//                    try {
-//                        log.info("认证重试第"+i+"次");
-//                        Thread.sleep(rzSleepTime);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }else {
-//                    try {
-//                        log.info("等待非密区程序启动后做认证");
-//                        Thread.sleep(rzSleepWaitTime);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
         userService.updateUserLogStatus();
 
     }

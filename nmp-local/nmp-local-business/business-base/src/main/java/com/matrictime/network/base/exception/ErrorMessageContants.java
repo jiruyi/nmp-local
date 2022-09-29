@@ -93,4 +93,10 @@ public class ErrorMessageContants {
 	public static final String ID_IS_NULL_MSG = "Id不能为空";
 
 
+	public static final String IP_FORMAT_ERROR_MSG = "ip格式不正确";
+
+	public static final String PORT_FORMAT_ERROR_MSG = "端口格式不正确";
+
+	public static final String NOT_EXIST_VILLAGE ="小区不存在";
+
 }

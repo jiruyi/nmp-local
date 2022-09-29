@@ -235,6 +235,7 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             for (CenterLinkRelationVo vo:linkRelationVos){
                 LinkRelationVo temp = new LinkRelationVo();
                 BeanUtils.copyProperties(vo,temp);
+                voList.add(temp);
             }
             addLinkRelation(voList);
         }else {// 链路表不为空，更新数据
