@@ -76,6 +76,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
      */
     public static final String REGEX_MOBILE = "0?(13|14|15|18)[0-9]{9}";
 
+    public static final Integer lastSix = 6;
+
 
     /**
      * 校验手机号
@@ -364,8 +366,8 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     }
 
     private void judgeAfterSix(String afterSix,String source){
-        if(source.length()>=6){
-            if(source.substring(source.length()-6,source.length()).equals(afterSix)){
+        if(source.length()>=lastSix){
+            if(source.substring(source.length()-lastSix,source.length()).equals(afterSix)){
                return;
             }
         }
