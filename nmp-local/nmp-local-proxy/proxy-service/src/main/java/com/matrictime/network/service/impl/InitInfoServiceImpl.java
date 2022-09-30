@@ -3,15 +3,19 @@ package com.matrictime.network.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
-import com.matrictime.network.modelVo.CenterBaseStationInfoVo;
-import com.matrictime.network.modelVo.CenterDeviceInfoVo;
-import com.matrictime.network.modelVo.CenterLinkRelationVo;
+import com.matrictime.network.modelVo.*;
+import com.matrictime.network.base.enums.DeviceStatusEnum;
+import com.matrictime.network.dao.domain.OutlinePcDomainService;
+import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.InitInfoReq;
+import com.matrictime.network.request.OutlinePcReq;
 import com.matrictime.network.response.ProxyResp;
 import com.matrictime.network.service.*;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.matrictime.network.base.constant.DataConstants.INIT_URL;
@@ -40,6 +47,9 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
 
     @Autowired
     private LinkRelationService linkRelationService;
+
+    @Resource
+    private OutlinePcDomainService outlinePcDomainService;
 
 
     @Value("${netmanage.ip}")
@@ -98,9 +108,26 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                                 linkRelationService.initInfo(centerLinkRelationVos);
                             }
                             // 初始化一体机列表信息
-//                            if (!CollectionUtils.isEmpty(proxyResp.getNmplOutlinePcInfoVos())){
-//
-//                            }
+                            JSONArray nmplOutlinePcInfoList = resultObj.getJSONArray("nmplOutlinePcInfoVos");
+                            List<CenterNmplOutlinePcInfoVo> centerNmplOutlinePcInfoVos = nmplOutlinePcInfoList.toJavaList(CenterNmplOutlinePcInfoVo.class);
+                            if (!CollectionUtils.isEmpty(centerNmplOutlinePcInfoVos)){
+                                for(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo : centerNmplOutlinePcInfoVos){
+                                    BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
+                                    baseStationInfoRequest.setStationId(centerNmplOutlinePcInfoVo.getDeviceId());
+                                    List<BaseStationInfoVo> baseStationInfoVos = outlinePcDomainService.
+                                            selectBaseStation(baseStationInfoRequest);
+                                    //station表中没有该数据
+                                    if(baseStationInfoVos.size() <= NumberUtils.INTEGER_ZERO ||
+                                            !isActive(baseStationInfoVos.get(NumberUtils.INTEGER_ZERO))){
+                                        outlinePcDomainService.insertOutlinePc(changeData(centerNmplOutlinePcInfoVo));
+                                    }
+                                    //station表中有该数据
+                                    if(baseStationInfoVos.size() > NumberUtils.INTEGER_ZERO &&
+                                            isActive(baseStationInfoVos.get(NumberUtils.INTEGER_ZERO))){
+                                        compareData(centerNmplOutlinePcInfoVo);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -109,5 +136,42 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             }
         }
+    }
+
+    /**
+     * 比较一体机中是否有该数据然后选择插入还是更新
+     * @param centerNmplOutlinePcInfoVo
+     */
+    private void compareData(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo){
+        List<OutlinePcVo> outlinePcVos = outlinePcDomainService.
+                selectOutlinePc(changeData(centerNmplOutlinePcInfoVo));
+        if(outlinePcVos.size() > NumberUtils.INTEGER_ZERO){
+            outlinePcDomainService.updateOutlinePc(changeData(centerNmplOutlinePcInfoVo));
+        }else {
+            outlinePcDomainService.insertOutlinePc(changeData(centerNmplOutlinePcInfoVo));
+        }
+    }
+
+    /**
+     * 判断station是否激活
+     * @param baseStationInfoVo
+     * @return
+     */
+    private boolean isActive(BaseStationInfoVo baseStationInfoVo){
+        if(DeviceStatusEnum.ACTIVE.equals(baseStationInfoVo.getStationStatus())){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 将CenterNmplOutlinePcInfoVo转换成OutlinePcReq
+     * @param centerNmplOutlinePcInfoVo
+     * @return
+     */
+    private OutlinePcReq changeData(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo){
+        OutlinePcReq outlinePcReq = new OutlinePcReq();
+        BeanUtils.copyProperties(centerNmplOutlinePcInfoVo,outlinePcReq);
+        return outlinePcReq;
     }
 }
