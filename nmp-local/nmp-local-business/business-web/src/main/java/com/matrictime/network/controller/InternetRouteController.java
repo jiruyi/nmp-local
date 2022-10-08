@@ -8,6 +8,7 @@ import com.matrictime.network.service.InternetRouteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +28,7 @@ public class InternetRouteController {
     private InternetRouteService internetRouteService;
 
     @RequestMapping(value = "/insertInternetRoute",method = RequestMethod.POST)
-    public Result<Integer> insertInternetRoute(InternetRouteRequest internetRouteRequest){
+    public Result<Integer> insertInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
             if(StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
@@ -43,7 +44,7 @@ public class InternetRouteController {
     }
 
     @RequestMapping(value = "/deleteInternetRoute",method = RequestMethod.POST)
-    public Result<Integer> deleteInternetRoute(InternetRouteRequest internetRouteRequest){
+    public Result<Integer> deleteInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
             if(ObjectUtils.isEmpty(internetRouteRequest.getId())){
                 return new Result<>(false, ErrorMessageContants.ID_IS_NULL_MSG);
@@ -56,7 +57,7 @@ public class InternetRouteController {
     }
 
     @RequestMapping(value = "/updateInternetRoute",method = RequestMethod.POST)
-    public Result<Integer> updateInternetRoute(InternetRouteRequest internetRouteRequest){
+    public Result<Integer> updateInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
             if(StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
@@ -72,7 +73,7 @@ public class InternetRouteController {
     }
 
     @RequestMapping(value = "/selectInternetRoute",method = RequestMethod.POST)
-    public Result<PageInfo> selectInternetRoute(InternetRouteRequest internetRouteRequest){
+    public Result<PageInfo> selectInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
             return internetRouteService.select(internetRouteRequest);
         }catch (Exception e){

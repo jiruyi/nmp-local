@@ -10,6 +10,7 @@ import com.matrictime.network.service.BusinessRouteService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +35,7 @@ public class BusinessRouteController {
      * @return
      */
     @RequestMapping(value = "/insertBusinessRoute",method = RequestMethod.POST)
-    public Result<Integer> insertBusinessRoute(BusinessRouteRequest businessRouteRequest){
+    public Result<Integer> insertBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
             if(StringUtils.isEmpty(businessRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
@@ -55,7 +56,7 @@ public class BusinessRouteController {
      * @return
      */
     @RequestMapping(value = "/deleteBusinessRoute",method = RequestMethod.POST)
-    public Result<Integer> deleteBusinessRoute(BusinessRouteRequest businessRouteRequest){
+    public Result<Integer> deleteBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
             if(ObjectUtils.isEmpty(businessRouteRequest.getId())){
                 return new Result<>(false, ErrorMessageContants.ID_IS_NULL_MSG);
@@ -73,7 +74,7 @@ public class BusinessRouteController {
      * @return
      */
     @RequestMapping(value = "/updateBusinessRoute",method = RequestMethod.POST)
-    public Result<Integer> updateBusinessRoute(BusinessRouteRequest businessRouteRequest){
+    public Result<Integer> updateBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
             if(StringUtils.isEmpty(businessRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
@@ -95,7 +96,7 @@ public class BusinessRouteController {
      * @return
      */
     @RequestMapping(value = "/selectBusinessRoute",method = RequestMethod.POST)
-    public Result<PageInfo> selectBusinessRoute(BusinessRouteRequest businessRouteRequest){
+    public Result<PageInfo> selectBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
             return businessRouteService.select(businessRouteRequest);
         }catch (Exception e){
@@ -110,7 +111,7 @@ public class BusinessRouteController {
      * @return
      */
     @RequestMapping(value = "/selectBaseStation",method = RequestMethod.POST)
-    public Result<BaseStationInfoResponse> selectBaseStation(BaseStationInfoRequest baseStationInfoRequest){
+    public Result<BaseStationInfoResponse> selectBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         try {
             return businessRouteService.selectBaseStation(baseStationInfoRequest);
         }catch (Exception e){
