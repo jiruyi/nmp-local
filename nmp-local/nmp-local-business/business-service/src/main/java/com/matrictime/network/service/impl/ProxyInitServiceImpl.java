@@ -173,9 +173,9 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      * @param proxyResp
      */
     private void getlinkRelationVoList(List<String>deviceIds,ProxyResp proxyResp){
+        //只推送主设备
         NmplLinkRelationExample nmplLinkRelationExample = new NmplLinkRelationExample();
         nmplLinkRelationExample.createCriteria().andMainDeviceIdIn(deviceIds);
-        nmplLinkRelationExample.or().andFollowDeviceIdIn(deviceIds);
         List<NmplLinkRelation> nmplLinkRelations = nmplLinkRelationMapper.selectByExample(nmplLinkRelationExample);
         /**
          * 创建设备ID映射设备类型 hash表
@@ -198,16 +198,17 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             BeanUtils.copyProperties(nmplLinkRelation,linkRelationVo);
             if(deviceTypeMap.get(linkRelationVo.getMainDeviceId())!=null){
                 linkRelationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getMainDeviceId()));
-                //当两种设备在同一个ip下并且有链路关系 此时多加一条数据推送
-                if(deviceTypeMap.get(linkRelationVo.getFollowDeviceId())!=null){
-                    ProxyLinkRelationVo relationVo = new ProxyLinkRelationVo();
-                    BeanUtils.copyProperties(linkRelationVo,relationVo);
-                    relationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getFollowDeviceId()));
-                    linkRelationVos.add(relationVo);
-                }
-            }else {
-                linkRelationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getFollowDeviceId()));
+//                //当两种设备在同一个ip下并且有链路关系 此时多加一条数据推送
+//                if(deviceTypeMap.get(linkRelationVo.getFollowDeviceId())!=null){
+//                    ProxyLinkRelationVo relationVo = new ProxyLinkRelationVo();
+//                    BeanUtils.copyProperties(linkRelationVo,relationVo);
+//                    relationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getFollowDeviceId()));
+//                    linkRelationVos.add(relationVo);
+//                }
             }
+//            else {
+//                linkRelationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getFollowDeviceId()));
+//            }
             linkRelationVos.add(linkRelationVo);
         }
         proxyResp.setLinkRelationVoList(linkRelationVos);

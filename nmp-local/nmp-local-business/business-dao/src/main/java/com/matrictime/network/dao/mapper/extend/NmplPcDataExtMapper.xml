@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplPcDataExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.NmplPcDataVo">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+        <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+        <result column="pc_network_id" jdbcType="VARCHAR" property="pcNetworkId" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="key_num" jdbcType="INTEGER" property="keyNum" />
+        <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, station_id, device_id, pc_network_id, status, key_num, report_time
+    </sql>
+
+    <select id="queryByCondition" resultType="com.matrictime.network.modelVo.NmplPcDataVo">
+        select <include refid="Base_Column_List" />
+        from nmpl_pc_data
+        <where>
+            <trim prefix="(" suffix=")" suffixOverrides="and">
+                <if test="stationId != null">
+                    station_id like concat('%', #{stationId,jdbcType=VARCHAR}, '%')  and
+                </if>
+                <if test="deviceId != null">
+                    device_id like concat('%', #{deviceId,jdbcType=VARCHAR}, '%')  and
+                </if>
+                <if test="pcNetworkId != null">
+                    pc_network_id like concat('%', #{pcNetworkId,jdbcType=VARCHAR}, '%')  and
+                </if>
+                <if test="status != null">
+                    status = #{status,jdbcType=TINYINT} and
+                </if>
+                <if test="keyNum != null">
+                    key_num = #{keyNum,jdbcType=INTEGER}  and
+                </if>
+                <if test="startTime != null">
+                    report_time &gt;= #{startTime,jdbcType=VARCHAR} and
+                </if>
+                <if test="endTime != null">
+                    report_time &lt;= #{endTime,jdbcType=VARCHAR}
+                </if>
+            </trim>
+        </where>
+        order by report_time desc
+    </select>
+
+    <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.NmplPcDataVo">
+        insert into nmpl_bill (station_id, device_id, pc_network_id, status, key_num) values
+            <foreach collection ="list" item="pcData" separator =",">
+            (#{pcData.station_id},#{pcData.device_id}, #{pcData.pc_network_id}, #{pcData.status}, #{pcData.keyNum})
+        </foreach >
+    </insert>
+
+
+</mapper>

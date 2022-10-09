@@ -61,7 +61,7 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
             NmplUser nmplUser = RequestContext.getUser();
             outlinePcReq.setCreateUser(nmplUser.getNickName());
             Integer num = outlinePcDomainService.save(outlinePcReq);
-            if(num>0){
+            if(num.equals(DataConstants.INSERT_OR_UPDATE_SUCCESS)){
                 result =  buildResult(num);
                 NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
                 nmplOutlinePcInfoExample.createCriteria().andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId());
@@ -93,7 +93,7 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
             NmplUser nmplUser = RequestContext.getUser();
             outlinePcReq.setUpdateUser(nmplUser.getNickName());
             Integer num = outlinePcDomainService.modify(outlinePcReq);
-            if(num>0){
+            if(num.equals(DataConstants.INSERT_OR_UPDATE_SUCCESS)){
                 result =  buildResult(num);
                 NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
                 nmplOutlinePcInfoExample.createCriteria().andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId());
@@ -123,7 +123,7 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
             NmplUser nmplUser = RequestContext.getUser();
             outlinePcReq.setUpdateUser(nmplUser.getNickName());
             Integer num = outlinePcDomainService.delete(outlinePcReq);
-            if(num>0){
+            if(num.equals(DataConstants.INSERT_OR_UPDATE_SUCCESS)){
                 result =  buildResult(num);
                 NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
                 nmplOutlinePcInfoExample.createCriteria().andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId());
@@ -174,7 +174,7 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
             List<NmplOutlinePcInfo> nmplOutlinePcInfoList = CsvUtils.readCsvToPc(tmp);
             tmp.delete();
             Integer num = outlinePcDomainService.batchInsert(nmplOutlinePcInfoList);
-            if(num>0){
+            if(num>DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result =  buildResult(num);
                 if(!CollectionUtils.isEmpty(nmplOutlinePcInfoList)){
                     Map<String,List<NmplOutlinePcInfo>> map = new HashMap<>();
