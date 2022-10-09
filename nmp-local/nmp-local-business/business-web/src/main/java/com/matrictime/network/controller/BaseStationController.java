@@ -4,23 +4,33 @@ import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.DataCollectVo;
+import com.matrictime.network.modelVo.NmplPcDataVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.request.PcDataReq;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.service.DeviceService;
+import com.matrictime.network.service.PcDataService;
+import com.matrictime.network.util.ListSplitUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 基站管理模块
@@ -36,6 +46,12 @@ public class BaseStationController {
 
     @Resource
     private DeviceService deviceService;
+
+    @Resource
+    PcDataService pcDataService;
+
+    @Value("${thread.batchMaxSize}")
+    Integer maxSize;
 
     /**
      * 基站插入
@@ -216,5 +232,48 @@ public class BaseStationController {
         }
         return result;
     }
+
+
+    @ApiOperation(value = "基站下挂一体机数据多条件查询接口",notes = "基站下挂一体机数据多条件查询接口")
+    @RequestMapping(value = "/queryPcDataByConditon",method = RequestMethod.POST)
+//    @RequiresPermissions("sys:stationData:query")
+    @SystemLog(opermodul = "基站管理模块",operDesc = "查询基站下挂一体机数据",operType = "查询")
+    public Result<PageInfo> queryPcDataByConditon(@RequestBody PcDataReq pcDataReq){
+        return pcDataService.queryByConditon(pcDataReq);
+    }
+
+
+    /**
+     * 基站下挂一体机数据上报
+     * @param pcDataReq
+     * @return
+     */
+    @RequestMapping(value = "/savePcData",method = RequestMethod.POST)
+    public Result savePcData(@RequestBody PcDataReq pcDataReq){
+        Result result = null;
+        try {
+            if (pcDataReq.getNmplPcDataVoList()!=null&&pcDataReq.getNmplPcDataVoList().size()>maxSize){
+                List<Result> resultList = new ArrayList<>();
+                List<List<NmplPcDataVo>> data = ListSplitUtil.split(pcDataReq.getNmplPcDataVoList(),maxSize);
+                for (List<NmplPcDataVo> datum : data) {
+                    PcDataReq req = new PcDataReq();
+                    req.setNmplPcDataVoList(datum);
+                    resultList.add(pcDataService.save(req).get());
+                }
+                result = new Result<>();
+                result.setSuccess(true);
+                result.setResultObj(resultList);
+            }else {
+                result = pcDataService.save(pcDataReq).get();
+            }
+        } catch (InterruptedException e) {
+            log.info(e.getMessage());
+        } catch (ExecutionException e) {
+            log.info(e.getMessage());
+        }finally {
+            return result;
+        }
+    }
+
 
 }

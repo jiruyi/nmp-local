@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.matrictime.network.base.constant.DataConstants.*;
+
 /**
  * 区域管理接口
  * @author zhangyunjie
@@ -37,7 +39,7 @@ public class CompanyController {
     @RequiresPermissions("sys:operator:save")
     @SystemLog(opermodul = "运营商管理模块",operDesc = "创建运营商",operType = "新增")
     public Result saveOperator(@RequestBody CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("00");
+        companyInfoRequest.setCompanyType(OPERATOR_TYPE);
         return companyService.save(companyInfoRequest);
     }
 
@@ -51,7 +53,7 @@ public class CompanyController {
     @RequiresPermissions("sys:operator:update")
     @SystemLog(opermodul = "运营商管理模块",operDesc = "修改运营商",operType = "编辑",operLevl = "2")
     public Result modifyOperator(@RequestBody CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("00");
+        companyInfoRequest.setCompanyType(OPERATOR_TYPE);
         return companyService.modify(companyInfoRequest);
     }
 
@@ -66,7 +68,7 @@ public class CompanyController {
     @RequiresPermissions("sys:operator:delete")
     @SystemLog(opermodul = "运营商管理模块",operDesc = "删除运营商",operType = "删除",operLevl = "2")
     public Result deleteOperator(@RequestBody  CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("00");
+        companyInfoRequest.setCompanyType(OPERATOR_TYPE);
         return companyService.delete(companyInfoRequest);
     }
 
@@ -80,7 +82,7 @@ public class CompanyController {
     @RequiresPermissions("sys:operator:query")
     @SystemLog(opermodul = "运营商管理模块",operDesc = "查询运营商",operType = "查询")
     public Result queryOperator(@RequestBody  CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("00");
+        companyInfoRequest.setCompanyType(OPERATOR_TYPE);
         return companyService.queryOperatorByConditon(companyInfoRequest);
     }
 
@@ -96,7 +98,7 @@ public class CompanyController {
     @RequiresPermissions("sys:region:save")
     @SystemLog(opermodul = "大区管理模块",operDesc = "创建大区",operType = "新增")
     public Result saveRegion(@RequestBody CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("01");
+        companyInfoRequest.setCompanyType(REGION_TYPE);
         return companyService.save(companyInfoRequest);
     }
 
@@ -110,7 +112,7 @@ public class CompanyController {
     @RequiresPermissions("sys:region:update")
     @SystemLog(opermodul = "大区管理模块",operDesc = "修改大区",operType = "编辑",operLevl = "2")
     public Result modifyRegion(@RequestBody CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("01");
+        companyInfoRequest.setCompanyType(REGION_TYPE);
         return companyService.modify(companyInfoRequest);
     }
 
@@ -125,7 +127,7 @@ public class CompanyController {
     @RequiresPermissions("sys:region:delete")
     @SystemLog(opermodul = "大区管理模块",operDesc = "删除大区",operType = "删除",operLevl = "2")
     public Result deleteRegion(@RequestBody  CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("01");
+        companyInfoRequest.setCompanyType(REGION_TYPE);
         return companyService.delete(companyInfoRequest);
     }
 
@@ -139,7 +141,7 @@ public class CompanyController {
     @RequiresPermissions("sys:region:query")
     @SystemLog(opermodul = "大区管理模块",operDesc = "查询大区",operType = "查询")
     public Result queryRegion(@RequestBody  CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("01");
+        companyInfoRequest.setCompanyType(REGION_TYPE);
         return companyService.queryByConditon(companyInfoRequest);
     }
 
@@ -169,7 +171,7 @@ public class CompanyController {
     @RequiresPermissions("sys:village:update")
     @SystemLog(opermodul = "小区管理模块",operDesc = "修改小区",operType = "编辑",operLevl = "2")
     public Result modifyVillage(@RequestBody CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("02");
+        companyInfoRequest.setCompanyType(VILLAGE_TYPE);
         return companyService.modify(companyInfoRequest);
     }
 
@@ -184,7 +186,7 @@ public class CompanyController {
     @RequiresPermissions("sys:village:delete")
     @SystemLog(opermodul = "小区管理模块",operDesc = "删除小区",operType = "删除",operLevl = "2")
     public Result deleteVillage(@RequestBody  CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("02");
+        companyInfoRequest.setCompanyType(VILLAGE_TYPE);
         return companyService.delete(companyInfoRequest);
     }
 
@@ -198,7 +200,7 @@ public class CompanyController {
     @RequiresPermissions("sys:village:query")
     @SystemLog(opermodul = "小区管理模块",operDesc = "查询小区",operType = "查询")
     public Result queryVillage(@RequestBody  CompanyInfoRequest companyInfoRequest){
-        companyInfoRequest.setCompanyType("02");
+        companyInfoRequest.setCompanyType(VILLAGE_TYPE);
         return companyService.queryByConditon(companyInfoRequest);
     }
 

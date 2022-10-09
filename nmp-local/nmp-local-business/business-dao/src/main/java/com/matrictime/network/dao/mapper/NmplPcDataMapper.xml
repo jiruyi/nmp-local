@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplPcDataMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplPcData">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="pc_network_id" jdbcType="VARCHAR" property="pcNetworkId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="key_num" jdbcType="INTEGER" property="keyNum" />
+    <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, station_id, device_id, pc_network_id, status, key_num, report_time
+  </sql>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplPcDataExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmpl_pc_data
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from nmpl_pc_data
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nmpl_pc_data
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplPcDataExample">
+    delete from nmpl_pc_data
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplPcData">
+    insert into nmpl_pc_data (id, station_id, device_id, 
+      pc_network_id, status, key_num, 
+      report_time)
+    values (#{id,jdbcType=BIGINT}, #{stationId,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, 
+      #{pcNetworkId,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{keyNum,jdbcType=INTEGER}, 
+      #{reportTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplPcData">
+    insert into nmpl_pc_data
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="stationId != null">
+        station_id,
+      </if>
+      <if test="deviceId != null">
+        device_id,
+      </if>
+      <if test="pcNetworkId != null">
+        pc_network_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="keyNum != null">
+        key_num,
+      </if>
+      <if test="reportTime != null">
+        report_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null">
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="pcNetworkId != null">
+        #{pcNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="keyNum != null">
+        #{keyNum,jdbcType=INTEGER},
+      </if>
+      <if test="reportTime != null">
+        #{reportTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplPcDataExample" resultType="java.lang.Long">
+    select count(*) from nmpl_pc_data
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmpl_pc_data
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.stationId != null">
+        station_id = #{record.stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deviceId != null">
+        device_id = #{record.deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pcNetworkId != null">
+        pc_network_id = #{record.pcNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.keyNum != null">
+        key_num = #{record.keyNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.reportTime != null">
+        report_time = #{record.reportTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmpl_pc_data
+    set id = #{record.id,jdbcType=BIGINT},
+      station_id = #{record.stationId,jdbcType=VARCHAR},
+      device_id = #{record.deviceId,jdbcType=VARCHAR},
+      pc_network_id = #{record.pcNetworkId,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=TINYINT},
+      key_num = #{record.keyNum,jdbcType=INTEGER},
+      report_time = #{record.reportTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplPcData">
+    update nmpl_pc_data
+    <set>
+      <if test="stationId != null">
+        station_id = #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null">
+        device_id = #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="pcNetworkId != null">
+        pc_network_id = #{pcNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="keyNum != null">
+        key_num = #{keyNum,jdbcType=INTEGER},
+      </if>
+      <if test="reportTime != null">
+        report_time = #{reportTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplPcData">
+    update nmpl_pc_data
+    set station_id = #{stationId,jdbcType=VARCHAR},
+      device_id = #{deviceId,jdbcType=VARCHAR},
+      pc_network_id = #{pcNetworkId,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      key_num = #{keyNum,jdbcType=INTEGER},
+      report_time = #{reportTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

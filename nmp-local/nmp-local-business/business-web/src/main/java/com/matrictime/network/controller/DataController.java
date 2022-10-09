@@ -8,9 +8,11 @@ import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.request.BillRequest;
 import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.MonitorReq;
+import com.matrictime.network.request.PcDataReq;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DataCollectService;
+import com.matrictime.network.service.PcDataService;
 import com.matrictime.network.util.ListSplitUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +50,7 @@ public class DataController {
      * @param dataCollectReq
      * @return
      */
-    @ApiOperation(value = "基站数据多条件查询接口",notes = "话单多条件查询接口")
+    @ApiOperation(value = "基站数据多条件查询接口",notes = "基站数据多条件查询接口")
     @RequestMapping(value = "/queryStationDataByConditon",method = RequestMethod.POST)
     @RequiresPermissions("sys:stationData:query")
     @SystemLog(opermodul = "统计管理模块",operDesc = "查询基站数据",operType = "查询")
@@ -61,7 +64,7 @@ public class DataController {
      * @param dataCollectReq
      * @return
      */
-    @ApiOperation(value = "分发机数据多条件查询接口",notes = "话单多条件查询接口")
+    @ApiOperation(value = "分发机数据多条件查询接口",notes = "分发机数据多条件查询接口")
     @RequestMapping(value = "/queryDispenserDataByConditon",method = RequestMethod.POST)
     @RequiresPermissions("sys:dispenserData:query")
     @SystemLog(opermodul = "统计管理模块",operDesc = "查询分发机数据",operType = "查询")
@@ -75,7 +78,7 @@ public class DataController {
      * @param dataCollectReq
      * @return
      */
-    @ApiOperation(value = "生成机数据多条件查询接口",notes = "话单多条件查询接口")
+    @ApiOperation(value = "生成机数据多条件查询接口",notes = "生成机数据多条件查询接口")
     @RequestMapping(value = "/queryGeneratorDataByConditon",method = RequestMethod.POST)
     @RequiresPermissions("sys:generatorData:query")
     @SystemLog(opermodul = "统计管理模块",operDesc = "查询生成机数据",operType = "查询")
@@ -89,7 +92,7 @@ public class DataController {
      * @param dataCollectReq
      * @return
      */
-    @ApiOperation(value = "缓存机数据多条件查询接口",notes = "话单多条件查询接口")
+    @ApiOperation(value = "缓存机数据多条件查询接口",notes = "缓存机数据多条件查询接口")
     @RequestMapping(value = "/queryCacheDataByConditon",method = RequestMethod.POST)
     @RequiresPermissions("sys:cacheData:query")
     @SystemLog(opermodul = "统计管理模块",operDesc = "查询缓存机数据",operType = "查询")
@@ -103,7 +106,7 @@ public class DataController {
      * @param dataCollectReq
      * @return
      */
-    @ApiOperation(value = "统计数据创建接口",notes = "话单多条件查询接口")
+    @ApiOperation(value = "统计数据创建接口",notes = "统计数据多条件查询接口")
     @RequestMapping(value = "/saveData",method = RequestMethod.POST)
     @SystemLog(opermodul = "统计管理模块",operDesc = "新增统计数据",operType = "新增")
     public Result saveData(@RequestBody DataCollectReq dataCollectReq){
