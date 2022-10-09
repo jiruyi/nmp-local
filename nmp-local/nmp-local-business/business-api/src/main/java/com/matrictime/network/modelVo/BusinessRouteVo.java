@@ -18,7 +18,7 @@ public class BusinessRouteVo {
     /**
      * 路由Id
      */
-    private String routId;
+    private String routeId;
 
     /**
      * 业务类型

@@ -2,6 +2,7 @@ package com.matrictime.network.dao.domain.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.dao.domain.InternetRouteDomainService;
 import com.matrictime.network.dao.mapper.NmplInternetRouteMapper;
 import com.matrictime.network.dao.model.NmplInternetRoute;
