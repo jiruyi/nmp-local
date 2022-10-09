@@ -144,4 +144,6 @@ public class DataConstants {
 
     public static final String LOG_PUSH_URL = "/nmp-local-business/log/device/save";
 
+    public static final String PC_DATA_URL = "/nmp-local-business/baseStation/savePcData";
+
 }
