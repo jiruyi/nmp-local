@@ -3,6 +3,7 @@ package com.matrictime.network.dao.domain.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.dao.domain.OutlinePcDomainService;
 import com.matrictime.network.dao.mapper.NmplOutlinePcInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplOutlinePcInfoExtMapper;
@@ -17,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -124,6 +123,19 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
     @Override
     @Transactional
     public Integer batchInsert(List<NmplOutlinePcInfo> nmplOutlinePcInfoList) {
+        NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
+        nmplOutlinePcInfoExample.createCriteria().andIsExistEqualTo(true);
+        List<NmplOutlinePcInfo> pcInfos = nmplOutlinePcInfoMapper.selectByExample(nmplOutlinePcInfoExample);
+        Set<String> stationNetworkIdSet = new HashSet<>();
+        for (NmplOutlinePcInfo pcInfo : pcInfos) {
+            stationNetworkIdSet.add(pcInfo.getStationNetworkId());
+        }
+        for (NmplOutlinePcInfo nmplOutlinePcInfo : nmplOutlinePcInfoList) {
+            if(stationNetworkIdSet.contains(nmplOutlinePcInfo.getStationNetworkId())){
+                throw new SystemException(ErrorMessageContants.DEVICEID_REPEAT+" 设备id:"+nmplOutlinePcInfo.getStationNetworkId());
+            }
+            stationNetworkIdSet.add(nmplOutlinePcInfo.getStationNetworkId());
+        }
         return nmplOutlinePcInfoExtMapper.batchInsert(nmplOutlinePcInfoList);
     }
 }

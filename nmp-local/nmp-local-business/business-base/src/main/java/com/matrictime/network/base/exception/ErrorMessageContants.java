@@ -99,4 +99,6 @@ public class ErrorMessageContants {
 
 	public static final String NOT_EXIST_VILLAGE ="小区不存在";
 
+	public static final String DEVICEID_REPEAT = "设备ID重复";
+
 }

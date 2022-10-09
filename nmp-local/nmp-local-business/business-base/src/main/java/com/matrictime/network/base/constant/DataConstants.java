@@ -154,4 +154,9 @@ public class DataConstants {
 
     public static final Integer INSERT_OR_UPDATE_SUCCESS = 1;
 
+
+    public static final String OPERATOR_TYPE = "00";
+    public static final String REGION_TYPE = "01";
+    public static final String VILLAGE_TYPE = "02";
+
 }
