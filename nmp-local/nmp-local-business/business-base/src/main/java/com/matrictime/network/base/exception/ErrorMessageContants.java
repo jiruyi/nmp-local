@@ -101,4 +101,6 @@ public class ErrorMessageContants {
 
 	public static final String DEVICEID_REPEAT = "设备ID重复";
 
+	public static final String IP_REPEAT = "设备IP重复";
+
 }

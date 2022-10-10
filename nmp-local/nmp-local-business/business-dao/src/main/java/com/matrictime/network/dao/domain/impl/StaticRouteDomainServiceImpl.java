@@ -55,8 +55,12 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
         List<StaticRouteVo> list = new ArrayList<>();
         NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
         NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
+        nmplStaticRouteExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
             criteria.andNetworkIdEqualTo(staticRouteRequest.getNetworkId());
+        }
+        if(!StringUtils.isEmpty(staticRouteRequest.getStationId())){
+            criteria.andStationIdEqualTo(staticRouteRequest.getStationId());
         }
         if(!StringUtils.isEmpty(staticRouteRequest.getServerIp())){
             criteria.andServerIpEqualTo(staticRouteRequest.getServerIp());

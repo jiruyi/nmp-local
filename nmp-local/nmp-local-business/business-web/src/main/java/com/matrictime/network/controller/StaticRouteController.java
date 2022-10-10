@@ -6,6 +6,7 @@ import com.matrictime.network.request.StaticRouteRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.StaticRouteService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,7 @@ public class StaticRouteController {
      * @param staticRouteRequest
      * @return
      */
+    @RequiresPermissions("sys:staticRoute:insert")
     @RequestMapping(value = "/insertStaticRoute",method = RequestMethod.POST)
     public Result<Integer> insertStaticRoute(@RequestBody StaticRouteRequest staticRouteRequest){
         try {
@@ -53,6 +55,7 @@ public class StaticRouteController {
      * @param staticRouteRequest
      * @return
      */
+    @RequiresPermissions("sys:staticRoute:delete")
     @RequestMapping(value = "/deleteStaticRoute",method = RequestMethod.POST)
     public Result<Integer> deleteStaticRoute(@RequestBody StaticRouteRequest staticRouteRequest){
         try {
@@ -71,6 +74,7 @@ public class StaticRouteController {
      * @param staticRouteRequest
      * @return
      */
+    @RequiresPermissions("sys:staticRoute:update")
     @RequestMapping(value = "/updateStaticRoute",method = RequestMethod.POST)
     public Result<Integer> updateStaticRoute(@RequestBody StaticRouteRequest staticRouteRequest){
         try {
@@ -92,6 +96,7 @@ public class StaticRouteController {
      * @param staticRouteRequest
      * @return
      */
+    @RequiresPermissions("sys:staticRoute:select")
     @RequestMapping(value = "/selectStaticRoute",method = RequestMethod.POST)
     public Result<PageInfo> selectStaticRoute(@RequestBody StaticRouteRequest staticRouteRequest){
         try {

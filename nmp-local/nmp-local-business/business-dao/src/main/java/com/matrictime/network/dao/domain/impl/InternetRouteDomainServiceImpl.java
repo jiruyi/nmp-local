@@ -56,6 +56,7 @@ public class InternetRouteDomainServiceImpl implements InternetRouteDomainServic
         List<InternetRouteVo> list = new ArrayList<>();
         NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
         NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
+        nmplInternetRouteExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
             criteria.andNetworkIdEqualTo(internetRouteRequest.getNetworkId());
         }

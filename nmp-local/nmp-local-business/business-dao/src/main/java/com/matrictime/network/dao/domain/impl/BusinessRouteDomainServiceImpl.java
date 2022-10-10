@@ -71,8 +71,12 @@ public class BusinessRouteDomainServiceImpl implements BusinessRouteDomainServic
         List<BusinessRouteVo> list = new ArrayList<>();
         NmplBusinessRouteExample nmplBusinessRouteExample = new NmplBusinessRouteExample();
         NmplBusinessRouteExample.Criteria criteria = nmplBusinessRouteExample.createCriteria();
+        nmplBusinessRouteExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(businessRouteRequest.getBusinessType())){
             criteria.andBusinessTypeEqualTo(businessRouteRequest.getBusinessType());
+        }
+        if(!StringUtils.isEmpty(businessRouteRequest.getIp())){
+            criteria.andIpEqualTo(businessRouteRequest.getIp());
         }
         //分页查询数据
         Page page = PageHelper.startPage(businessRouteRequest.getPageNo(),businessRouteRequest.getPageSize());

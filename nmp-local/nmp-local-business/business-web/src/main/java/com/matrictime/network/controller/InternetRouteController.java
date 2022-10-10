@@ -6,6 +6,7 @@ import com.matrictime.network.request.InternetRouteRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.InternetRouteService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ public class InternetRouteController {
     @Resource
     private InternetRouteService internetRouteService;
 
+    @RequiresPermissions("sys:internetRoute:insert")
     @RequestMapping(value = "/insertInternetRoute",method = RequestMethod.POST)
     public Result<Integer> insertInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
@@ -43,6 +45,7 @@ public class InternetRouteController {
         }
     }
 
+    @RequiresPermissions("sys:internetRoute:delete")
     @RequestMapping(value = "/deleteInternetRoute",method = RequestMethod.POST)
     public Result<Integer> deleteInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
@@ -56,6 +59,7 @@ public class InternetRouteController {
         }
     }
 
+    @RequiresPermissions("sys:internetRoute:update")
     @RequestMapping(value = "/updateInternetRoute",method = RequestMethod.POST)
     public Result<Integer> updateInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
@@ -72,6 +76,7 @@ public class InternetRouteController {
         }
     }
 
+    @RequiresPermissions("sys:internetRoute:select")
     @RequestMapping(value = "/selectInternetRoute",method = RequestMethod.POST)
     public Result<PageInfo> selectInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {

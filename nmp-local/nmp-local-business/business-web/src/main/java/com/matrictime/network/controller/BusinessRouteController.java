@@ -9,6 +9,7 @@ import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BusinessRouteService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ public class BusinessRouteController {
      * @param businessRouteRequest
      * @return
      */
+    @RequiresPermissions("sys:businessRoute:insert")
     @RequestMapping(value = "/insertBusinessRoute",method = RequestMethod.POST)
     public Result<Integer> insertBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
@@ -55,6 +57,7 @@ public class BusinessRouteController {
      * @param businessRouteRequest
      * @return
      */
+    @RequiresPermissions("sys:businessRoute:delete")
     @RequestMapping(value = "/deleteBusinessRoute",method = RequestMethod.POST)
     public Result<Integer> deleteBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
@@ -73,6 +76,7 @@ public class BusinessRouteController {
      * @param businessRouteRequest
      * @return
      */
+    @RequiresPermissions("sys:businessRoute:update")
     @RequestMapping(value = "/updateBusinessRoute",method = RequestMethod.POST)
     public Result<Integer> updateBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
@@ -95,6 +99,7 @@ public class BusinessRouteController {
      * @param businessRouteRequest
      * @return
      */
+    @RequiresPermissions("sys:businessRoute:select")
     @RequestMapping(value = "/selectBusinessRoute",method = RequestMethod.POST)
     public Result<PageInfo> selectBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
