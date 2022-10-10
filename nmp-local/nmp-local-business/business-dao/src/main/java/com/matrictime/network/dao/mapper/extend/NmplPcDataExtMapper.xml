@@ -46,9 +46,9 @@
     </select>
 
     <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.NmplPcDataVo">
-        insert into nmpl_bill (station_id, device_id, pc_network_id, status, key_num) values
+        insert into nmpl_pc_data (station_id, device_id, pc_network_id, status, key_num,report_time) values
             <foreach collection ="list" item="pcData" separator =",">
-            (#{pcData.station_id},#{pcData.device_id}, #{pcData.pc_network_id}, #{pcData.status}, #{pcData.keyNum})
+            (#{pcData.stationId},#{pcData.deviceId}, #{pcData.pcNetworkId}, #{pcData.status}, #{pcData.keyNum},#{pcData.reportTime})
         </foreach >
     </insert>
 

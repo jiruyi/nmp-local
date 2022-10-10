@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.mapper.NmplDeviceLogMapper;
 import com.matrictime.network.dao.mapper.NmplKeycenterHeartInfoMapper;
+import com.matrictime.network.dao.mapper.NmplPcDataMapper;
 import com.matrictime.network.dao.mapper.NmplStationHeartInfoMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.service.TaskService;
@@ -30,6 +31,9 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private NmplDeviceLogMapper nmplDeviceLogMapper;
 
+    @Resource
+    private NmplPcDataMapper nmplPcDataMapper;
+
     @Override
     public void heartReport(String url) {
         NmplStationHeartInfoExample stationExample = new NmplStationHeartInfoExample();
@@ -37,13 +41,14 @@ public class TaskServiceImpl implements TaskService {
         List<NmplStationHeartInfo> stationHeartInfos = nmplStationHeartInfoMapper.selectByExample(stationExample);
         if (!CollectionUtils.isEmpty(stationHeartInfos)){
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("deviceId",stationHeartInfos.get(0).getStationId());
+            jsonObject.put("deviceId",stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getStationId());
             jsonObject.put("status", stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getRemark());
             try {
                 HttpClientUtil.post(url,jsonObject.toJSONString());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            stationExample.createCriteria().andCreateTimeLessThanOrEqualTo(stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getCreateTime());
             int deleteStation = nmplStationHeartInfoMapper.deleteByExample(stationExample);
             log.info("TaskServiceImpl.heartReport deleteStation:{}"+deleteStation);
         }
@@ -53,13 +58,14 @@ public class TaskServiceImpl implements TaskService {
         List<NmplKeycenterHeartInfo> keycenterHeartInfos = nmplKeycenterHeartInfoMapper.selectByExample(keycenterExample);
         if (!CollectionUtils.isEmpty(keycenterHeartInfos)){
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("deviceId",keycenterHeartInfos.get(0).getDeviceId());
+            jsonObject.put("deviceId",keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getDeviceId());
             jsonObject.put("status", keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getRemark());
             try {
                 HttpClientUtil.post(url,jsonObject.toJSONString());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            keycenterExample.createCriteria().andCreateTimeLessThanOrEqualTo(keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getCreateTime());
             int deleteKeycenter = nmplKeycenterHeartInfoMapper.deleteByExample(keycenterExample);
             log.info("TaskServiceImpl.heartReport deleteKeycenter:{}"+deleteKeycenter);
         }
@@ -71,9 +77,7 @@ public class TaskServiceImpl implements TaskService {
         NmplDeviceLogExample.Criteria criteria = nmplDeviceLogExample.createCriteria();
         nmplDeviceLogExample.setOrderByClause("id desc");
         List<NmplDeviceLog> nmplDeviceLogs = nmplDeviceLogMapper.selectByExample(nmplDeviceLogExample);
-        //删除已经推送的日志
-        criteria.andIdLessThan(nmplDeviceLogs.get(NumberUtils.INTEGER_ZERO).getId());
-        nmplDeviceLogMapper.deleteByExample(nmplDeviceLogExample);
+
         if(!CollectionUtils.isEmpty(nmplDeviceLogs)){
             try {
                 String post = HttpClientUtil.post(url, JSON.toJSONString(nmplDeviceLogs));
@@ -81,6 +85,29 @@ public class TaskServiceImpl implements TaskService {
                 log.info("logPush:{}",e.getMessage());
                 throw new RuntimeException(e);
             }
+            //删除已经推送的日志
+            criteria.andIdLessThan(nmplDeviceLogs.get(NumberUtils.INTEGER_ZERO).getId());
+            nmplDeviceLogMapper.deleteByExample(nmplDeviceLogExample);
+        }
+    }
+
+    @Override
+    public void pcData(String url) {
+        NmplPcDataExample nmplPcDataExample = new NmplPcDataExample();
+        NmplPcDataExample.Criteria criteria = nmplPcDataExample.createCriteria();
+        nmplPcDataExample.setOrderByClause("id desc");
+        List<NmplPcData> nmplPcData = nmplPcDataMapper.selectByExample(nmplPcDataExample);
+        if (!CollectionUtils.isEmpty(nmplPcData)){
+            try {
+                JSONObject req = new JSONObject();
+                req.put("nmplPcDataVoList",nmplPcData);
+                String post = HttpClientUtil.post(url, req.toJSONString());
+            }catch (Exception e){
+                log.info("pcData:{}",e.getMessage());
+                throw new RuntimeException(e);
+            }
+//            criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());
+//            nmplPcDataMapper.deleteByExample(nmplPcDataExample);
         }
     }
 }

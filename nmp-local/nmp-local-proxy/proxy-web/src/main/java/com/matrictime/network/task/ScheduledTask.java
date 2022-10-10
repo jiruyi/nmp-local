@@ -50,6 +50,14 @@ public class ScheduledTask {
         taskService.logPush(ip + KEY_SPLIT + port + LOG_PUSH_URL);
     }
 
+    @Scheduled(cron = "*/30 * * * * ?")
+    @Async
+    public void pcData(){
+        log.info(Thread.currentThread().getName()+"======================pcData begin=============================");
+        taskService.pcData(ip + KEY_SPLIT + port + PC_DATA_URL);
+        log.info(Thread.currentThread().getName()+"======================pcData end=============================");
+    }
+
 //    @Scheduled(fixedDelay = 5000)
 //    @Async·
 //    public void fixedDelay() throws InterruptedException {

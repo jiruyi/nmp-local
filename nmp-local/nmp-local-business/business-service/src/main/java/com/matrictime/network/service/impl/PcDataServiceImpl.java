@@ -53,10 +53,10 @@ public class PcDataServiceImpl extends SystemBaseService implements PcDataServic
         try {
             result = buildResult(pcDataDomainService.batchInsert(pcDataReq));
         }catch (SystemException e){
-            log.info("创建话单异常",e.getMessage());
+            log.info("创建一体机数据异常",e.getMessage());
             result = failResult(e);
         }catch (Exception e){
-            log.info("创建话单异常",e.getMessage());
+            log.info("创建一体机数据异常",e.getMessage());
             result = failResult("e");
         }
         return new AsyncResult<>(result);

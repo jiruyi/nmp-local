@@ -126,7 +126,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         User user = new User();
         user.setLoginAccount(req.getLoginAccount());
         user.setNickName(req.getNickName());
-        if (REGISTER_TYPE_COM.equals(req.getRegisterType())){
+        if (REGISTER_TYPE_COM.equals(req.getRegisterType())){// 普通方式注册
             user.setUserId(req.getUserId());
             user.setPassword(req.getPassword());
             user.setEmail(req.getEmail());
@@ -136,7 +136,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             user.setIdNo(req.getIdNo());
             user.setLoginAppCode(SYSTEM_JZDQ);
             user.setSex(req.getSex());
-        }else if (REGISTER_TYPE_CA.equals(req.getRegisterType())){
+        }else if (REGISTER_TYPE_CA.equals(req.getRegisterType())){// CA用户注册
             CAVo caVo = req.getCaVo();
             String contents = caVo.getContents();
             String content_type = caVo.getContent_type();
@@ -708,20 +708,20 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     private boolean checkUserExist(RegisterReq req){
         UserExample userExample = new UserExample();
-        UserExample.Criteria criteria1 = userExample.createCriteria();
-        criteria1.andLoginAccountEqualTo(req.getLoginAccount()).andIsExistEqualTo(DataConstants.IS_EXIST);
-//        UserExample.Criteria criteria2 = userExample.createCriteria();
-//        criteria2.andEmailEqualTo(req.getEmail());
-//        userExample.or(criteria2);
+        UserExample.Criteria criteriaAcc = userExample.createCriteria();
+        criteriaAcc.andLoginAccountEqualTo(req.getLoginAccount()).andIsExistEqualTo(DataConstants.IS_EXIST);
+//        UserExample.Criteria criteriaEmail = userExample.createCriteria();
+//        criteriaEmail.andEmailEqualTo(req.getEmail());
+//        userExample.or(criteriaEmail);
         if (!ParamCheckUtil.checkVoStrBlank(req.getPhoneNumber())){
-            UserExample.Criteria criteria3 = userExample.createCriteria();
-            criteria3.andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
-            userExample.or(criteria3);
+            UserExample.Criteria criteriaPhone = userExample.createCriteria();
+            criteriaPhone.andPhoneNumberEqualTo(req.getPhoneNumber()).andIsExistEqualTo(DataConstants.IS_EXIST);
+            userExample.or(criteriaPhone);
         }
         if (!ParamCheckUtil.checkVoStrBlank(req.getIdType()) && !ParamCheckUtil.checkVoStrBlank(req.getIdNo())){
-            UserExample.Criteria criteria4 = userExample.createCriteria();
-            criteria4.andIdTypeEqualTo(req.getIdType()).andIdNoEqualTo(req.getIdNo()).andIsExistEqualTo(DataConstants.IS_EXIST);
-            userExample.or(criteria4);
+            UserExample.Criteria criteriaId = userExample.createCriteria();
+            criteriaId.andIdTypeEqualTo(req.getIdType()).andIdNoEqualTo(req.getIdNo()).andIsExistEqualTo(DataConstants.IS_EXIST);
+            userExample.or(criteriaId);
         }
 
         List<User> userList = userMapper.selectByExample(userExample);

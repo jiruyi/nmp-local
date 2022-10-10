@@ -50,6 +50,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/baseStation/selectByOperatorId")
                 .excludePathPatterns("/outlineSorter/auth")
                 .excludePathPatterns("/config/insertOrUpdate")
-                .excludePathPatterns("/proxy/init");
+                .excludePathPatterns("/proxy/init")
+                .excludePathPatterns("/baseStation/savePcData");
     }
 }
