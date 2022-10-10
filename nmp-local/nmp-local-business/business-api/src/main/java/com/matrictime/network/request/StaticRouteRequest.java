@@ -6,10 +6,10 @@ import java.util.Date;
 
 /**
  * @author by wangqiang
- * @date 2022/9/28.
+ * @date 2022/10/9.
  */
 @Data
-public class InternetRouteRequest extends BaseRequest{
+public class StaticRouteRequest extends BaseRequest{
     /**
      * 主键
      */
@@ -21,14 +21,24 @@ public class InternetRouteRequest extends BaseRequest{
     private String routeId;
 
     /**
+     * 基站id
+     */
+    private String stationId;
+
+    /**
      * 设备入网码
      */
     private String networkId;
 
     /**
-     * 边界基站ip
+     * 服务器ip
      */
-    private String boundaryStationIp;
+    private String serverIp;
+
+    /**
+     * 删除标志（1代表存在 0代表删除）
+     */
+    private Boolean isExist;
 
     /**
      * 创建者

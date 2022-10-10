@@ -5,8 +5,8 @@ import lombok.Data;
 
 /**
  * 业务服务路由
- * @author   wangqiang
- * @date   2022-09-28
+ * @author   hexu
+ * @date   2022-10-09
  */
 @Data
 public class NmplBusinessRoute {
@@ -18,7 +18,7 @@ public class NmplBusinessRoute {
     /**
      * 路由Id
      */
-    private String routId;
+    private String routeId;
 
     /**
      * 业务类型
@@ -68,12 +68,12 @@ public class NmplBusinessRoute {
         this.id = id;
     }
 
-    public String getRoutId() {
-        return routId;
+    public String getRouteId() {
+        return routeId;
     }
 
-    public void setRoutId(String routId) {
-        this.routId = routId == null ? null : routId.trim();
+    public void setRouteId(String routeId) {
+        this.routeId = routeId == null ? null : routeId.trim();
     }
 
     public String getBusinessType() {

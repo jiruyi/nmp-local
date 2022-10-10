@@ -165,73 +165,73 @@ public class NmplBusinessRouteExample {
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdIsNull() {
-            addCriterion("rout_id is null");
+        public Criteria andRouteIdIsNull() {
+            addCriterion("route_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdIsNotNull() {
-            addCriterion("rout_id is not null");
+        public Criteria andRouteIdIsNotNull() {
+            addCriterion("route_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdEqualTo(String value) {
-            addCriterion("rout_id =", value, "routId");
+        public Criteria andRouteIdEqualTo(String value) {
+            addCriterion("route_id =", value, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdNotEqualTo(String value) {
-            addCriterion("rout_id <>", value, "routId");
+        public Criteria andRouteIdNotEqualTo(String value) {
+            addCriterion("route_id <>", value, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdGreaterThan(String value) {
-            addCriterion("rout_id >", value, "routId");
+        public Criteria andRouteIdGreaterThan(String value) {
+            addCriterion("route_id >", value, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdGreaterThanOrEqualTo(String value) {
-            addCriterion("rout_id >=", value, "routId");
+        public Criteria andRouteIdGreaterThanOrEqualTo(String value) {
+            addCriterion("route_id >=", value, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdLessThan(String value) {
-            addCriterion("rout_id <", value, "routId");
+        public Criteria andRouteIdLessThan(String value) {
+            addCriterion("route_id <", value, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdLessThanOrEqualTo(String value) {
-            addCriterion("rout_id <=", value, "routId");
+        public Criteria andRouteIdLessThanOrEqualTo(String value) {
+            addCriterion("route_id <=", value, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdLike(String value) {
-            addCriterion("rout_id like", value, "routId");
+        public Criteria andRouteIdLike(String value) {
+            addCriterion("route_id like", value, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdNotLike(String value) {
-            addCriterion("rout_id not like", value, "routId");
+        public Criteria andRouteIdNotLike(String value) {
+            addCriterion("route_id not like", value, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdIn(List<String> values) {
-            addCriterion("rout_id in", values, "routId");
+        public Criteria andRouteIdIn(List<String> values) {
+            addCriterion("route_id in", values, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdNotIn(List<String> values) {
-            addCriterion("rout_id not in", values, "routId");
+        public Criteria andRouteIdNotIn(List<String> values) {
+            addCriterion("route_id not in", values, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdBetween(String value1, String value2) {
-            addCriterion("rout_id between", value1, value2, "routId");
+        public Criteria andRouteIdBetween(String value1, String value2) {
+            addCriterion("route_id between", value1, value2, "routeId");
             return (Criteria) this;
         }
 
-        public Criteria andRoutIdNotBetween(String value1, String value2) {
-            addCriterion("rout_id not between", value1, value2, "routId");
+        public Criteria andRouteIdNotBetween(String value1, String value2) {
+            addCriterion("route_id not between", value1, value2, "routeId");
             return (Criteria) this;
         }
 

@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NmplInternetRouteExample {
+public class NmplStaticRouteExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public NmplInternetRouteExample() {
+    public NmplStaticRouteExample() {
         oredCriteria = new ArrayList<>();
     }
 
@@ -305,73 +305,133 @@ public class NmplInternetRouteExample {
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpIsNull() {
-            addCriterion("boundary_station_ip is null");
+        public Criteria andServerIpIsNull() {
+            addCriterion("server_ip is null");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpIsNotNull() {
-            addCriterion("boundary_station_ip is not null");
+        public Criteria andServerIpIsNotNull() {
+            addCriterion("server_ip is not null");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpEqualTo(String value) {
-            addCriterion("boundary_station_ip =", value, "boundaryStationIp");
+        public Criteria andServerIpEqualTo(String value) {
+            addCriterion("server_ip =", value, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpNotEqualTo(String value) {
-            addCriterion("boundary_station_ip <>", value, "boundaryStationIp");
+        public Criteria andServerIpNotEqualTo(String value) {
+            addCriterion("server_ip <>", value, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpGreaterThan(String value) {
-            addCriterion("boundary_station_ip >", value, "boundaryStationIp");
+        public Criteria andServerIpGreaterThan(String value) {
+            addCriterion("server_ip >", value, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpGreaterThanOrEqualTo(String value) {
-            addCriterion("boundary_station_ip >=", value, "boundaryStationIp");
+        public Criteria andServerIpGreaterThanOrEqualTo(String value) {
+            addCriterion("server_ip >=", value, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpLessThan(String value) {
-            addCriterion("boundary_station_ip <", value, "boundaryStationIp");
+        public Criteria andServerIpLessThan(String value) {
+            addCriterion("server_ip <", value, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpLessThanOrEqualTo(String value) {
-            addCriterion("boundary_station_ip <=", value, "boundaryStationIp");
+        public Criteria andServerIpLessThanOrEqualTo(String value) {
+            addCriterion("server_ip <=", value, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpLike(String value) {
-            addCriterion("boundary_station_ip like", value, "boundaryStationIp");
+        public Criteria andServerIpLike(String value) {
+            addCriterion("server_ip like", value, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpNotLike(String value) {
-            addCriterion("boundary_station_ip not like", value, "boundaryStationIp");
+        public Criteria andServerIpNotLike(String value) {
+            addCriterion("server_ip not like", value, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpIn(List<String> values) {
-            addCriterion("boundary_station_ip in", values, "boundaryStationIp");
+        public Criteria andServerIpIn(List<String> values) {
+            addCriterion("server_ip in", values, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpNotIn(List<String> values) {
-            addCriterion("boundary_station_ip not in", values, "boundaryStationIp");
+        public Criteria andServerIpNotIn(List<String> values) {
+            addCriterion("server_ip not in", values, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpBetween(String value1, String value2) {
-            addCriterion("boundary_station_ip between", value1, value2, "boundaryStationIp");
+        public Criteria andServerIpBetween(String value1, String value2) {
+            addCriterion("server_ip between", value1, value2, "serverIp");
             return (Criteria) this;
         }
 
-        public Criteria andBoundaryStationIpNotBetween(String value1, String value2) {
-            addCriterion("boundary_station_ip not between", value1, value2, "boundaryStationIp");
+        public Criteria andServerIpNotBetween(String value1, String value2) {
+            addCriterion("server_ip not between", value1, value2, "serverIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistIsNull() {
+            addCriterion("is_exist is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistIsNotNull() {
+            addCriterion("is_exist is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistEqualTo(Boolean value) {
+            addCriterion("is_exist =", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistNotEqualTo(Boolean value) {
+            addCriterion("is_exist <>", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistGreaterThan(Boolean value) {
+            addCriterion("is_exist >", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("is_exist >=", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistLessThan(Boolean value) {
+            addCriterion("is_exist <", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistLessThanOrEqualTo(Boolean value) {
+            addCriterion("is_exist <=", value, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistIn(List<Boolean> values) {
+            addCriterion("is_exist in", values, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistNotIn(List<Boolean> values) {
+            addCriterion("is_exist not in", values, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistBetween(Boolean value1, Boolean value2) {
+            addCriterion("is_exist between", value1, value2, "isExist");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsExistNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("is_exist not between", value1, value2, "isExist");
             return (Criteria) this;
         }
 
@@ -635,63 +695,73 @@ public class NmplInternetRouteExample {
             return (Criteria) this;
         }
 
-        public Criteria andIsExistIsNull() {
-            addCriterion("is_exist is null");
+        public Criteria andStationIdIsNull() {
+            addCriterion("station_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistIsNotNull() {
-            addCriterion("is_exist is not null");
+        public Criteria andStationIdIsNotNull() {
+            addCriterion("station_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistEqualTo(Boolean value) {
-            addCriterion("is_exist =", value, "isExist");
+        public Criteria andStationIdEqualTo(String value) {
+            addCriterion("station_id =", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistNotEqualTo(Boolean value) {
-            addCriterion("is_exist <>", value, "isExist");
+        public Criteria andStationIdNotEqualTo(String value) {
+            addCriterion("station_id <>", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistGreaterThan(Boolean value) {
-            addCriterion("is_exist >", value, "isExist");
+        public Criteria andStationIdGreaterThan(String value) {
+            addCriterion("station_id >", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistGreaterThanOrEqualTo(Boolean value) {
-            addCriterion("is_exist >=", value, "isExist");
+        public Criteria andStationIdGreaterThanOrEqualTo(String value) {
+            addCriterion("station_id >=", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistLessThan(Boolean value) {
-            addCriterion("is_exist <", value, "isExist");
+        public Criteria andStationIdLessThan(String value) {
+            addCriterion("station_id <", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistLessThanOrEqualTo(Boolean value) {
-            addCriterion("is_exist <=", value, "isExist");
+        public Criteria andStationIdLessThanOrEqualTo(String value) {
+            addCriterion("station_id <=", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistIn(List<Boolean> values) {
-            addCriterion("is_exist in", values, "isExist");
+        public Criteria andStationIdLike(String value) {
+            addCriterion("station_id like", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistNotIn(List<Boolean> values) {
-            addCriterion("is_exist not in", values, "isExist");
+        public Criteria andStationIdNotLike(String value) {
+            addCriterion("station_id not like", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistBetween(Boolean value1, Boolean value2) {
-            addCriterion("is_exist between", value1, value2, "isExist");
+        public Criteria andStationIdIn(List<String> values) {
+            addCriterion("station_id in", values, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andIsExistNotBetween(Boolean value1, Boolean value2) {
-            addCriterion("is_exist not between", value1, value2, "isExist");
+        public Criteria andStationIdNotIn(List<String> values) {
+            addCriterion("station_id not in", values, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdBetween(String value1, String value2) {
+            addCriterion("station_id between", value1, value2, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdNotBetween(String value1, String value2) {
+            addCriterion("station_id not between", value1, value2, "stationId");
             return (Criteria) this;
         }
     }

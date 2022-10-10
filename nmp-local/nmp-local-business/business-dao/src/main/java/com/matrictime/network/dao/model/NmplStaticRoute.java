@@ -4,12 +4,12 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 出网路由
+ * 静态路由
  * @author   hexu
  * @date   2022-10-09
  */
 @Data
-public class NmplInternetRoute {
+public class NmplStaticRoute {
     /**
      * 主键
      */
@@ -26,9 +26,14 @@ public class NmplInternetRoute {
     private String networkId;
 
     /**
-     * 边界基站ip
+     * 服务器ip
      */
-    private String boundaryStationIp;
+    private String serverIp;
+
+    /**
+     * 删除标志（1代表存在 0代表删除）
+     */
+    private Boolean isExist;
 
     /**
      * 创建者
@@ -51,9 +56,9 @@ public class NmplInternetRoute {
     private Date updateTime;
 
     /**
-     * 1:存在 0:删除
+     * 基站id
      */
-    private Boolean isExist;
+    private String stationId;
 
     public Long getId() {
         return id;
@@ -79,12 +84,20 @@ public class NmplInternetRoute {
         this.networkId = networkId == null ? null : networkId.trim();
     }
 
-    public String getBoundaryStationIp() {
-        return boundaryStationIp;
+    public String getServerIp() {
+        return serverIp;
     }
 
-    public void setBoundaryStationIp(String boundaryStationIp) {
-        this.boundaryStationIp = boundaryStationIp == null ? null : boundaryStationIp.trim();
+    public void setServerIp(String serverIp) {
+        this.serverIp = serverIp == null ? null : serverIp.trim();
+    }
+
+    public Boolean getIsExist() {
+        return isExist;
+    }
+
+    public void setIsExist(Boolean isExist) {
+        this.isExist = isExist;
     }
 
     public String getCreateUser() {
@@ -119,11 +132,11 @@ public class NmplInternetRoute {
         this.updateTime = updateTime;
     }
 
-    public Boolean getIsExist() {
-        return isExist;
+    public String getStationId() {
+        return stationId;
     }
 
-    public void setIsExist(Boolean isExist) {
-        this.isExist = isExist;
+    public void setStationId(String stationId) {
+        this.stationId = stationId == null ? null : stationId.trim();
     }
 }

@@ -18,7 +18,7 @@ public class InternetRouteVo {
     /**
      * 路由Id
      */
-    private String routId;
+    private String routeId;
 
     /**
      * 设备入网码

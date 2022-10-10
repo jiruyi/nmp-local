@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.matrictime.network.dao.mapper.NmplBusinessRouteMapper">
-  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplBusinessRoute">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplStaticRouteMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplStaticRoute">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="route_id" jdbcType="VARCHAR" property="routeId" />
-    <result column="business_type" jdbcType="VARCHAR" property="businessType" />
     <result column="network_id" jdbcType="VARCHAR" property="networkId" />
-    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="server_ip" jdbcType="VARCHAR" property="serverIp" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -72,17 +72,17 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, route_id, business_type, network_id, ip, create_user, create_time, update_user, 
-    update_time, is_exist
+    id, route_id, network_id, server_ip, is_exist, create_user, create_time, update_user, 
+    update_time, station_id
   </sql>
-  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplBusinessRouteExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplStaticRouteExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from nmpl_business_route
+    from nmpl_static_route
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -93,31 +93,31 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from nmpl_business_route
+    from nmpl_static_route
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from nmpl_business_route
+    delete from nmpl_static_route
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplBusinessRouteExample">
-    delete from nmpl_business_route
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplStaticRouteExample">
+    delete from nmpl_static_route
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplBusinessRoute">
-    insert into nmpl_business_route (id, route_id, business_type, 
-      network_id, ip, create_user, 
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplStaticRoute">
+    insert into nmpl_static_route (id, route_id, network_id, 
+      server_ip, is_exist, create_user, 
       create_time, update_user, update_time, 
-      is_exist)
-    values (#{id,jdbcType=BIGINT}, #{routeId,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR}, 
-      #{networkId,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      station_id)
+    values (#{id,jdbcType=BIGINT}, #{routeId,jdbcType=VARCHAR}, #{networkId,jdbcType=VARCHAR}, 
+      #{serverIp,jdbcType=VARCHAR}, #{isExist,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{isExist,jdbcType=BIT})
+      #{stationId,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplBusinessRoute">
-    insert into nmpl_business_route
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplStaticRoute">
+    insert into nmpl_static_route
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -125,14 +125,14 @@
       <if test="routeId != null">
         route_id,
       </if>
-      <if test="businessType != null">
-        business_type,
-      </if>
       <if test="networkId != null">
         network_id,
       </if>
-      <if test="ip != null">
-        ip,
+      <if test="serverIp != null">
+        server_ip,
+      </if>
+      <if test="isExist != null">
+        is_exist,
       </if>
       <if test="createUser != null">
         create_user,
@@ -146,8 +146,8 @@
       <if test="updateTime != null">
         update_time,
       </if>
-      <if test="isExist != null">
-        is_exist,
+      <if test="stationId != null">
+        station_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -157,14 +157,14 @@
       <if test="routeId != null">
         #{routeId,jdbcType=VARCHAR},
       </if>
-      <if test="businessType != null">
-        #{businessType,jdbcType=VARCHAR},
-      </if>
       <if test="networkId != null">
         #{networkId,jdbcType=VARCHAR},
       </if>
-      <if test="ip != null">
-        #{ip,jdbcType=VARCHAR},
+      <if test="serverIp != null">
+        #{serverIp,jdbcType=VARCHAR},
+      </if>
+      <if test="isExist != null">
+        #{isExist,jdbcType=BIT},
       </if>
       <if test="createUser != null">
         #{createUser,jdbcType=VARCHAR},
@@ -178,19 +178,19 @@
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="isExist != null">
-        #{isExist,jdbcType=BIT},
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplBusinessRouteExample" resultType="java.lang.Long">
-    select count(*) from nmpl_business_route
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplStaticRouteExample" resultType="java.lang.Long">
+    select count(*) from nmpl_static_route
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update nmpl_business_route
+    update nmpl_static_route
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -198,14 +198,14 @@
       <if test="record.routeId != null">
         route_id = #{record.routeId,jdbcType=VARCHAR},
       </if>
-      <if test="record.businessType != null">
-        business_type = #{record.businessType,jdbcType=VARCHAR},
-      </if>
       <if test="record.networkId != null">
         network_id = #{record.networkId,jdbcType=VARCHAR},
       </if>
-      <if test="record.ip != null">
-        ip = #{record.ip,jdbcType=VARCHAR},
+      <if test="record.serverIp != null">
+        server_ip = #{record.serverIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isExist != null">
+        is_exist = #{record.isExist,jdbcType=BIT},
       </if>
       <if test="record.createUser != null">
         create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -219,8 +219,8 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.isExist != null">
-        is_exist = #{record.isExist,jdbcType=BIT},
+      <if test="record.stationId != null">
+        station_id = #{record.stationId,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -228,35 +228,35 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update nmpl_business_route
+    update nmpl_static_route
     set id = #{record.id,jdbcType=BIGINT},
       route_id = #{record.routeId,jdbcType=VARCHAR},
-      business_type = #{record.businessType,jdbcType=VARCHAR},
       network_id = #{record.networkId,jdbcType=VARCHAR},
-      ip = #{record.ip,jdbcType=VARCHAR},
+      server_ip = #{record.serverIp,jdbcType=VARCHAR},
+      is_exist = #{record.isExist,jdbcType=BIT},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      is_exist = #{record.isExist,jdbcType=BIT}
+      station_id = #{record.stationId,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplBusinessRoute">
-    update nmpl_business_route
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplStaticRoute">
+    update nmpl_static_route
     <set>
       <if test="routeId != null">
         route_id = #{routeId,jdbcType=VARCHAR},
       </if>
-      <if test="businessType != null">
-        business_type = #{businessType,jdbcType=VARCHAR},
-      </if>
       <if test="networkId != null">
         network_id = #{networkId,jdbcType=VARCHAR},
       </if>
-      <if test="ip != null">
-        ip = #{ip,jdbcType=VARCHAR},
+      <if test="serverIp != null">
+        server_ip = #{serverIp,jdbcType=VARCHAR},
+      </if>
+      <if test="isExist != null">
+        is_exist = #{isExist,jdbcType=BIT},
       </if>
       <if test="createUser != null">
         create_user = #{createUser,jdbcType=VARCHAR},
@@ -270,23 +270,23 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="isExist != null">
-        is_exist = #{isExist,jdbcType=BIT},
+      <if test="stationId != null">
+        station_id = #{stationId,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplBusinessRoute">
-    update nmpl_business_route
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplStaticRoute">
+    update nmpl_static_route
     set route_id = #{routeId,jdbcType=VARCHAR},
-      business_type = #{businessType,jdbcType=VARCHAR},
       network_id = #{networkId,jdbcType=VARCHAR},
-      ip = #{ip,jdbcType=VARCHAR},
+      server_ip = #{serverIp,jdbcType=VARCHAR},
+      is_exist = #{isExist,jdbcType=BIT},
       create_user = #{createUser,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      is_exist = #{isExist,jdbcType=BIT}
+      station_id = #{stationId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
