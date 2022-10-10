@@ -53,9 +53,9 @@ public class ScheduledTask {
     @Scheduled(cron = "*/30 * * * * ?")
     @Async
     public void pcData(){
-        log.info(Thread.currentThread().getName()+"======================heartReport begin=============================");
+        log.info(Thread.currentThread().getName()+"======================pcData begin=============================");
         taskService.pcData(ip + KEY_SPLIT + port + PC_DATA_URL);
-        log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
+        log.info(Thread.currentThread().getName()+"======================pcData end=============================");
     }
 
 //    @Scheduled(fixedDelay = 5000)

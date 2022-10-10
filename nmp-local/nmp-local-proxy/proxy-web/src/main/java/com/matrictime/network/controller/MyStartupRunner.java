@@ -27,7 +27,7 @@ public class MyStartupRunner implements CommandLineRunner {
         log.info("SpringBoot run localIp:{}", localIp);
         InitInfoReq req = new InitInfoReq();
         req.setLocalIp(localIp);
-        initInfoService.initInfo(req);
+//        initInfoService.initInfo(req);
     }
 
     @PreDestroy

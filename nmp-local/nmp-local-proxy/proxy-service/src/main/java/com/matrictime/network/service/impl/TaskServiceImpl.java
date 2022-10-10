@@ -77,9 +77,7 @@ public class TaskServiceImpl implements TaskService {
         NmplDeviceLogExample.Criteria criteria = nmplDeviceLogExample.createCriteria();
         nmplDeviceLogExample.setOrderByClause("id desc");
         List<NmplDeviceLog> nmplDeviceLogs = nmplDeviceLogMapper.selectByExample(nmplDeviceLogExample);
-        //删除已经推送的日志
-        criteria.andIdLessThan(nmplDeviceLogs.get(NumberUtils.INTEGER_ZERO).getId());
-        nmplDeviceLogMapper.deleteByExample(nmplDeviceLogExample);
+
         if(!CollectionUtils.isEmpty(nmplDeviceLogs)){
             try {
                 String post = HttpClientUtil.post(url, JSON.toJSONString(nmplDeviceLogs));
@@ -87,6 +85,9 @@ public class TaskServiceImpl implements TaskService {
                 log.info("logPush:{}",e.getMessage());
                 throw new RuntimeException(e);
             }
+            //删除已经推送的日志
+            criteria.andIdLessThan(nmplDeviceLogs.get(NumberUtils.INTEGER_ZERO).getId());
+            nmplDeviceLogMapper.deleteByExample(nmplDeviceLogExample);
         }
     }
 
@@ -97,8 +98,16 @@ public class TaskServiceImpl implements TaskService {
         nmplPcDataExample.setOrderByClause("id desc");
         List<NmplPcData> nmplPcData = nmplPcDataMapper.selectByExample(nmplPcDataExample);
         if (!CollectionUtils.isEmpty(nmplPcData)){
-            criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());
-            nmplPcDataMapper.deleteByExample(nmplPcDataExample);
+            try {
+                JSONObject req = new JSONObject();
+                req.put("nmplPcDataVoList",nmplPcData);
+                String post = HttpClientUtil.post(url, req.toJSONString());
+            }catch (Exception e){
+                log.info("pcData:{}",e.getMessage());
+                throw new RuntimeException(e);
+            }
+//            criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());
+//            nmplPcDataMapper.deleteByExample(nmplPcDataExample);
         }
     }
 }
