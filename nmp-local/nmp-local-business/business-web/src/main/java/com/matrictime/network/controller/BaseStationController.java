@@ -236,7 +236,7 @@ public class BaseStationController {
 
     @ApiOperation(value = "基站下挂一体机数据多条件查询接口",notes = "基站下挂一体机数据多条件查询接口")
     @RequestMapping(value = "/queryPcDataByConditon",method = RequestMethod.POST)
-//    @RequiresPermissions("sys:stationData:query")
+    @RequiresPermissions("sys:station:detail")
     @SystemLog(opermodul = "基站管理模块",operDesc = "查询基站下挂一体机数据",operType = "查询")
     public Result<PageInfo> queryPcDataByConditon(@RequestBody PcDataReq pcDataReq){
         return pcDataService.queryByConditon(pcDataReq);
