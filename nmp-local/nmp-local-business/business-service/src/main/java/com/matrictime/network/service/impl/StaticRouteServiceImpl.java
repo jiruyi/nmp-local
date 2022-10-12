@@ -71,7 +71,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int insert = staticRouteDomainService.insert(staticRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
-                sendRoute(staticRouteRequest,DataConstants.URL_ROUTE_INSERT);
+                sendRoute(staticRouteRequest,DataConstants.INSERT_STATIC_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -114,7 +114,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int update = staticRouteDomainService.update(staticRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                sendRoute(staticRouteRequest,DataConstants.URL_ROUTE_UPDATE);
+                sendRoute(staticRouteRequest,DataConstants.UPDATE_STATIC_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);

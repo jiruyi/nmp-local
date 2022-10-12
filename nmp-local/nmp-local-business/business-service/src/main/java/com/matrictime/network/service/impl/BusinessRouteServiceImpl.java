@@ -108,7 +108,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             int update = businessRouteDomainService.update(businessRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                sendRoute(businessRouteRequest,DataConstants.URL_ROUTE_UPDATE);
+                sendRoute(businessRouteRequest,DataConstants.UPDATE_BUSINESS_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);

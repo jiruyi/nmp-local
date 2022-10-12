@@ -71,7 +71,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int insert = internetRouteDomainService.insert(internetRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
-                sendRoute(internetRouteRequest,DataConstants.URL_ROUTE_INSERT);
+                sendRoute(internetRouteRequest,DataConstants.INSERT_INTERNET_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -113,7 +113,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int update = internetRouteDomainService.update(internetRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                sendRoute(internetRouteRequest,DataConstants.URL_ROUTE_UPDATE);
+                sendRoute(internetRouteRequest,DataConstants.UPDATE_INTERNET_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);

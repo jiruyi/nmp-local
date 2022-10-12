@@ -154,6 +154,16 @@ public class DataConstants {
 
     public static final Integer INSERT_OR_UPDATE_SUCCESS = 1;
 
+    public static final String UPDATE_STATIC_ROUTE = "/route/updateStaticRoute";
+
+    public static final String INSERT_STATIC_ROUTE = "/route/addStaticRoute";
+
+    public static final String UPDATE_INTERNET_ROUTE = "/route/updateInternetRoute";
+
+    public static final String INSERT_INTERNET_ROUTE = "/route/addInternetRoute";
+
+    public static final String UPDATE_BUSINESS_ROUTE = "/route/updateBusinessRoute";
+
 
     public static final String OPERATOR_TYPE = "00";
     public static final String REGION_TYPE = "01";
