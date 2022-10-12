@@ -6,6 +6,9 @@ import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.InternetRouteDomainService;
+import com.matrictime.network.dao.mapper.NmplInternetRouteMapper;
+import com.matrictime.network.dao.model.NmplInternetRoute;
+import com.matrictime.network.dao.model.NmplInternetRouteExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.BusinessRouteVo;
@@ -48,6 +51,9 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     private BusinessRouteService businessRouteService;
 
     @Resource
+    private NmplInternetRouteMapper nmplInternetRouteMapper;
+
+    @Resource
     private AsyncService asyncService;
 
     @Value("${proxy.port}")
@@ -71,9 +77,10 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int insert = internetRouteDomainService.insert(internetRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
-                PageInfo<InternetRouteVo> select = internetRouteDomainService.select(internetRouteRequest);
-                List<InternetRouteVo> list = select.getList();
-                sendRoute(list.get(NumberUtils.INTEGER_ZERO),DataConstants.INSERT_INTERNET_ROUTE);
+                NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
+                nmplInternetRouteExample.createCriteria().andRouteIdEqualTo(internetRouteRequest.getRouteId());
+                List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
+                sendRoute(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO),DataConstants.INSERT_INTERNET_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -115,9 +122,8 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int update = internetRouteDomainService.update(internetRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                PageInfo<InternetRouteVo> select = internetRouteDomainService.select(internetRouteRequest);
-                List<InternetRouteVo> list = select.getList();
-                sendRoute(list.get(NumberUtils.INTEGER_ZERO),DataConstants.UPDATE_INTERNET_ROUTE);
+                NmplInternetRoute nmplInternetRoute = nmplInternetRouteMapper.selectByPrimaryKey(internetRouteRequest.getId());
+                sendRoute(nmplInternetRoute,DataConstants.UPDATE_INTERNET_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -141,14 +147,14 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     }
 
     //路由推送到各个基站
-    private void sendRoute(InternetRouteVo internetRouteVo,String suffix) throws Exception {
+    private void sendRoute(NmplInternetRoute nmplInternetRoute,String suffix) throws Exception {
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         Result<BaseStationInfoResponse> baseStationInfoResponse = businessRouteService.selectBaseStation(baseStationInfoRequest);
         List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponse.getResultObj().getBaseStationInfoList();
         //开启多线程
         for (BaseStationInfoVo baseStationInfoVo : baseStationInfoList) {
             Map<String,String> map = new HashMap<>();
-            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(internetRouteVo));
+            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(nmplInternetRoute));
             String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
             map.put(DataConstants.KEY_URL,url);
             map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());

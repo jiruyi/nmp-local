@@ -6,6 +6,9 @@ import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.StaticRouteDomainService;
+import com.matrictime.network.dao.mapper.NmplStaticRouteMapper;
+import com.matrictime.network.dao.model.NmplStaticRoute;
+import com.matrictime.network.dao.model.NmplStaticRouteExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StaticRouteVo;
@@ -47,6 +50,9 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     private BusinessRouteService businessRouteService;
 
     @Resource
+    private NmplStaticRouteMapper nmplStaticRouteMapper;
+
+    @Resource
     private AsyncService asyncService;
 
     @Value("${proxy.port}")
@@ -71,9 +77,10 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int insert = staticRouteDomainService.insert(staticRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
-                PageInfo<StaticRouteVo> select = staticRouteDomainService.select(staticRouteRequest);
-                List<StaticRouteVo> list = select.getList();
-                sendRoute(list.get(NumberUtils.INTEGER_ZERO),DataConstants.INSERT_STATIC_ROUTE);
+                NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
+                nmplStaticRouteExample.createCriteria().andRouteIdEqualTo(staticRouteRequest.getRouteId());
+                List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
+                sendRoute(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO),DataConstants.INSERT_STATIC_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -116,9 +123,8 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int update = staticRouteDomainService.update(staticRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                PageInfo<StaticRouteVo> select = staticRouteDomainService.select(staticRouteRequest);
-                List<StaticRouteVo> list = select.getList();
-                sendRoute(list.get(NumberUtils.INTEGER_ZERO),DataConstants.UPDATE_STATIC_ROUTE);
+                NmplStaticRoute nmplStaticRoute = nmplStaticRouteMapper.selectByPrimaryKey(staticRouteRequest.getId());
+                sendRoute(nmplStaticRoute,DataConstants.UPDATE_STATIC_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -142,14 +148,14 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     }
 
     //路由推送到各个基站
-    private void sendRoute(StaticRouteVo staticRouteVo,String suffix) throws Exception {
+    private void sendRoute(NmplStaticRoute nmplStaticRoute,String suffix) throws Exception {
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         Result<BaseStationInfoResponse> baseStationInfoResponse = businessRouteService.selectBaseStation(baseStationInfoRequest);
         List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponse.getResultObj().getBaseStationInfoList();
         //开启多线程
         for (BaseStationInfoVo baseStationInfoVo : baseStationInfoList) {
             Map<String,String> map = new HashMap<>();
-            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(staticRouteVo));
+            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(nmplStaticRoute));
             String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
             map.put(DataConstants.KEY_URL,url);
             map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());

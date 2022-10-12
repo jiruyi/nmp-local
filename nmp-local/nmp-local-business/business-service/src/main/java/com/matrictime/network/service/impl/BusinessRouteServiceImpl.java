@@ -6,6 +6,8 @@ import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BusinessRouteDomainService;
+import com.matrictime.network.dao.mapper.NmplBusinessRouteMapper;
+import com.matrictime.network.dao.model.NmplBusinessRoute;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.BusinessRouteVo;
@@ -45,6 +47,9 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
     @Resource
     private AsyncService asyncService;
 
+    @Resource
+    private NmplBusinessRouteMapper nmplBusinessRouteMapper;
+
     @Value("${proxy.port}")
     private String port;
 
@@ -66,9 +71,6 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             int insert = businessRouteDomainService.insert(businessRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
-                PageInfo<BusinessRouteVo> select = businessRouteDomainService.select(businessRouteRequest);
-                List<BusinessRouteVo> list = select.getList();
-                sendRoute(list.get(NumberUtils.INTEGER_ZERO),DataConstants.URL_ROUTE_INSERT);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -110,9 +112,8 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             int update = businessRouteDomainService.update(businessRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                PageInfo<BusinessRouteVo> select = businessRouteDomainService.select(businessRouteRequest);
-                List<BusinessRouteVo> list = select.getList();
-                sendRoute(list.get(NumberUtils.INTEGER_ZERO),DataConstants.UPDATE_BUSINESS_ROUTE);
+                NmplBusinessRoute nmplBusinessRoute = nmplBusinessRouteMapper.selectByPrimaryKey(businessRouteRequest.getId());
+                sendRoute(nmplBusinessRoute,DataConstants.UPDATE_BUSINESS_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -149,14 +150,14 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
     }
 
     //路由推送到各个基站
-    private void sendRoute(BusinessRouteVo businessRouteVo,String suffix) throws Exception {
+    private void sendRoute(NmplBusinessRoute nmplBusinessRoute,String suffix) throws Exception {
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         Result<BaseStationInfoResponse> baseStationInfoResponse = selectBaseStation(baseStationInfoRequest);
         List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponse.getResultObj().getBaseStationInfoList();
         //开启多线程
         for (BaseStationInfoVo baseStationInfoVo : baseStationInfoList) {
             Map<String,String> map = new HashMap<>();
-            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(businessRouteVo));
+            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(nmplBusinessRoute));
             String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath + suffix;
             map.put(DataConstants.KEY_URL,url);
             map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());
