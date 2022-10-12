@@ -1,9 +1,7 @@
 package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.CenterDeviceInfoVo;
-import com.matrictime.network.modelVo.CenterRouteVo;
-import com.matrictime.network.modelVo.RouteVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.AddRouteRequest;
 import com.matrictime.network.request.UpdateRouteRequest;
 
@@ -13,7 +11,19 @@ public interface RouteService {
 
     Result<Integer> addRoute(List<RouteVo> voList);
 
-    Result<Integer> updateRoute(RouteVo req);
+    Result<Integer> updateRoute(RouteVo vo);
+
+    Result<Integer> addBusinessRoute(NmplBusinessRouteVo vo);
+
+    Result<Integer> updateBusinessRoute(NmplBusinessRouteVo vo);
+
+    Result<Integer> addInternetRoute(NmplInternetRouteVo vo);
+
+    Result<Integer> updateInternetRoute(NmplInternetRouteVo vo);
+
+    Result<Integer> addStaticRoute(NmplStaticRouteVo vo);
+
+    Result<Integer> updateStaticRoute(NmplStaticRouteVo vo);
 
     void initInfo(List<CenterRouteVo> centerRouteVos);
 }
