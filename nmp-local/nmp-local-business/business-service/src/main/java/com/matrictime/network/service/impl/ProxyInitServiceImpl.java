@@ -45,6 +45,14 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
     @Resource
     NmplOutlinePcInfoMapper nmplOutlinePcInfoMapper;
 
+    @Resource
+    NmplBusinessRouteMapper nmplBusinessRouteMapper;
+
+    @Resource
+    NmplStaticRouteMapper nmplStaticRouteMapper;
+
+    @Resource
+    NmplInternetRouteMapper nmplInternetRouteMapper;
 
     /**
      *  代理程序启动初始化获取该ip下的所有信息
@@ -157,14 +165,31 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      * @param proxyResp
      */
     private void getRoteVoList(ProxyResp proxyResp){
-        if(proxyResp.getLocalStation()==null){
-            return;
+        List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(null);
+
+        List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(null);
+
+        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(null);
+        //业务服务
+        for (NmplBusinessRoute nmplBusinessRoute : nmplBusinessRoutes) {
+            ProxyBusinessRouteVo proxyBusinessRouteVo = new ProxyBusinessRouteVo();
+            BeanUtils.copyProperties(nmplBusinessRoute,proxyBusinessRouteVo);
+            proxyResp.getBusinessRouteVoList().add(proxyBusinessRouteVo);
         }
-        RouteRequest routeRequest = new RouteRequest();
-        routeRequest.setAccessDeviceId(proxyResp.getLocalStation().getStationId());
-        routeRequest.setBoundaryDeviceId(proxyResp.getLocalStation().getStationId());
-        List<ProxyRouteInfoVo> roteVoList = nmplRouteMapper.selectByRelationId(routeRequest);
-        proxyResp.setRoteVoList(roteVoList);
+        //出网路由
+        for (NmplInternetRoute nmplInternetRoute : nmplInternetRoutes) {
+            ProxyInternetRouteVo proxyInternetRouteVo = new ProxyInternetRouteVo();
+            BeanUtils.copyProperties(nmplInternetRoute,proxyInternetRouteVo);
+            proxyResp.getInternetRouteVoList().add(proxyInternetRouteVo);
+        }
+        //静态分配
+        for (NmplStaticRoute nmplStaticRoute : nmplStaticRoutes) {
+            ProxyStaticRouteVo proxyStaticRouteVo =new ProxyStaticRouteVo();
+            BeanUtils.copyProperties(nmplStaticRoute,proxyStaticRouteVo);
+            proxyResp.getStaticRouteVoList().add(proxyStaticRouteVo);
+        }
+
+        log.info("route query sucess");
     }
 
     /**
@@ -212,6 +237,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             linkRelationVos.add(linkRelationVo);
         }
         proxyResp.setLinkRelationVoList(linkRelationVos);
+        log.info("link query sucess");
 
     }
 

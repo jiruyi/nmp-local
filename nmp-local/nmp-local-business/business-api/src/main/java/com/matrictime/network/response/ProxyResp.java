@@ -32,4 +32,10 @@ public class ProxyResp implements Serializable {
 
     private List<NmplOutlinePcInfoVo> nmplOutlinePcInfoVos = new ArrayList<>();
 
+    private List<ProxyBusinessRouteVo> businessRouteVoList = new ArrayList<>();
+
+    private List<ProxyInternetRouteVo> internetRouteVoList = new ArrayList<>();
+
+    private List<ProxyStaticRouteVo> staticRouteVoList = new ArrayList<>();
+
 }
