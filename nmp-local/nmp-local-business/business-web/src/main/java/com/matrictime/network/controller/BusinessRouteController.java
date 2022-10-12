@@ -35,7 +35,7 @@ public class BusinessRouteController {
      * @param businessRouteRequest
      * @return
      */
-    @RequiresPermissions("sys:businessRoute:insert")
+
     @RequestMapping(value = "/insertBusinessRoute",method = RequestMethod.POST)
     public Result<Integer> insertBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
@@ -79,6 +79,29 @@ public class BusinessRouteController {
     @RequiresPermissions("sys:businessRoute:update")
     @RequestMapping(value = "/updateBusinessRoute",method = RequestMethod.POST)
     public Result<Integer> updateBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
+        try {
+            if(StringUtils.isEmpty(businessRouteRequest.getNetworkId())){
+                return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
+            }
+            if(StringUtils.isEmpty(businessRouteRequest.getIp())){
+                return new Result<>(false, ErrorMessageContants.DEVICE_IP_IS_NULL_MSG);
+            }
+            return businessRouteService.update(businessRouteRequest);
+        }catch (Exception e){
+            log.info("updateBusinessRoute:{}",e.getMessage());
+            return new Result<>(false,"");
+
+        }
+    }
+
+    /**
+     * 填入接口
+     * @param businessRouteRequest
+     * @return
+     */
+    @RequiresPermissions("sys:businessRoute:insert")
+    @RequestMapping(value = "/fillBusinessRoute",method = RequestMethod.POST)
+    public Result<Integer> fillBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
             if(StringUtils.isEmpty(businessRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);

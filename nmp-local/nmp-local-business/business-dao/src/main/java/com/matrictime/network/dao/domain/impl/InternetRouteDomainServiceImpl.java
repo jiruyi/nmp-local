@@ -14,6 +14,7 @@ import com.matrictime.network.response.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -59,6 +60,9 @@ public class InternetRouteDomainServiceImpl implements InternetRouteDomainServic
         nmplInternetRouteExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
             criteria.andNetworkIdEqualTo(internetRouteRequest.getNetworkId());
+        }
+        if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
+            criteria.andIdNotEqualTo(internetRouteRequest.getId());
         }
         if(!StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
             criteria.andBoundaryStationIpEqualTo(internetRouteRequest.getBoundaryStationIp());

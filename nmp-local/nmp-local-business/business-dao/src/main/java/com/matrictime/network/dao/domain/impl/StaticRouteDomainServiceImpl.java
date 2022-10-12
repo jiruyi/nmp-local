@@ -13,6 +13,7 @@ import com.matrictime.network.response.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -61,6 +62,9 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
         }
         if(!StringUtils.isEmpty(staticRouteRequest.getStationId())){
             criteria.andStationIdEqualTo(staticRouteRequest.getStationId());
+        }
+        if(!ObjectUtils.isEmpty(staticRouteRequest.getId())){
+            criteria.andIdNotEqualTo(staticRouteRequest.getId());
         }
         if(!StringUtils.isEmpty(staticRouteRequest.getServerIp())){
             criteria.andServerIpEqualTo(staticRouteRequest.getServerIp());

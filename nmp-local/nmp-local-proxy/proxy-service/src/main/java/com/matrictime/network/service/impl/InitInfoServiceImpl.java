@@ -49,7 +49,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
     private LinkRelationService linkRelationService;
 
     @Resource
-    private OutlinePcDomainService outlinePcDomainService;
+    private OutlinePcService outlinePcService;
 
 
     @Value("${netmanage.ip}")
@@ -111,22 +111,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                             JSONArray nmplOutlinePcInfoList = resultObj.getJSONArray("nmplOutlinePcInfoVos");
                             List<CenterNmplOutlinePcInfoVo> centerNmplOutlinePcInfoVos = nmplOutlinePcInfoList.toJavaList(CenterNmplOutlinePcInfoVo.class);
                             if (!CollectionUtils.isEmpty(centerNmplOutlinePcInfoVos)){
-                                for(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo : centerNmplOutlinePcInfoVos){
-                                    BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
-                                    baseStationInfoRequest.setStationId(centerNmplOutlinePcInfoVo.getDeviceId());
-                                    List<BaseStationInfoVo> baseStationInfoVos = outlinePcDomainService.
-                                            selectBaseStation(baseStationInfoRequest);
-                                    //station表中没有该数据
-                                    if(baseStationInfoVos.size() <= NumberUtils.INTEGER_ZERO ||
-                                            !isActive(baseStationInfoVos.get(NumberUtils.INTEGER_ZERO))){
-                                        outlinePcDomainService.insertOutlinePc(changeData(centerNmplOutlinePcInfoVo));
-                                    }
-                                    //station表中有该数据
-                                    if(baseStationInfoVos.size() > NumberUtils.INTEGER_ZERO &&
-                                            isActive(baseStationInfoVos.get(NumberUtils.INTEGER_ZERO))){
-                                        compareData(centerNmplOutlinePcInfoVo);
-                                    }
-                                }
+                                outlinePcService.initInfo(centerNmplOutlinePcInfoVos);
                             }
                         }
                     }
@@ -138,40 +123,5 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
         }
     }
 
-    /**
-     * 比较一体机中是否有该数据然后选择插入还是更新
-     * @param centerNmplOutlinePcInfoVo
-     */
-    private void compareData(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo){
-        List<OutlinePcVo> outlinePcVos = outlinePcDomainService.
-                selectOutlinePc(changeData(centerNmplOutlinePcInfoVo));
-        if(outlinePcVos.size() > NumberUtils.INTEGER_ZERO){
-            outlinePcDomainService.updateOutlinePc(changeData(centerNmplOutlinePcInfoVo));
-        }else {
-            outlinePcDomainService.insertOutlinePc(changeData(centerNmplOutlinePcInfoVo));
-        }
-    }
 
-    /**
-     * 判断station是否激活
-     * @param baseStationInfoVo
-     * @return
-     */
-    private boolean isActive(BaseStationInfoVo baseStationInfoVo){
-        if(DeviceStatusEnum.ACTIVE.equals(baseStationInfoVo.getStationStatus())){
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 将CenterNmplOutlinePcInfoVo转换成OutlinePcReq
-     * @param centerNmplOutlinePcInfoVo
-     * @return
-     */
-    private OutlinePcReq changeData(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo){
-        OutlinePcReq outlinePcReq = new OutlinePcReq();
-        BeanUtils.copyProperties(centerNmplOutlinePcInfoVo,outlinePcReq);
-        return outlinePcReq;
-    }
 }

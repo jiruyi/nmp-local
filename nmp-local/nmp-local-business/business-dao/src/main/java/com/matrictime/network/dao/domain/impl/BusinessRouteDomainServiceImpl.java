@@ -20,6 +20,7 @@ import com.matrictime.network.response.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -74,6 +75,9 @@ public class BusinessRouteDomainServiceImpl implements BusinessRouteDomainServic
         nmplBusinessRouteExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(businessRouteRequest.getBusinessType())){
             criteria.andBusinessTypeEqualTo(businessRouteRequest.getBusinessType());
+        }
+        if(!ObjectUtils.isEmpty(businessRouteRequest.getId())){
+            criteria.andIdNotEqualTo(businessRouteRequest.getId());
         }
         if(!StringUtils.isEmpty(businessRouteRequest.getIp())){
             criteria.andIpEqualTo(businessRouteRequest.getIp());
