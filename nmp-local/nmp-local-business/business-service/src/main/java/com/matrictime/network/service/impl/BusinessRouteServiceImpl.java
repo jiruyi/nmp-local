@@ -23,6 +23,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -98,6 +99,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
         return result;
     }
 
+    @Transactional
     @Override
     public Result<Integer> update(BusinessRouteRequest businessRouteRequest) {
         Result<Integer> result = new Result<>();

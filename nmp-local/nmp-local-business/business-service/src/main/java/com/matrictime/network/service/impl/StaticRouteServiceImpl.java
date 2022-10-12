@@ -25,6 +25,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -61,6 +62,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     @Value("${proxy.context-path}")
     private String contextPath;
 
+    @Transactional
     @Override
     public Result<Integer> insert(StaticRouteRequest staticRouteRequest) {
         Result<Integer> result = new Result<>();
@@ -108,6 +110,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
         return result;
     }
 
+    @Transactional
     @Override
     public Result<Integer> update(StaticRouteRequest staticRouteRequest) {
         Result<Integer> result = new Result<>();

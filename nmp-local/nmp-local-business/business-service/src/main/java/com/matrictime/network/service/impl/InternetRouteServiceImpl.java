@@ -26,6 +26,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -62,6 +63,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     @Value("${proxy.context-path}")
     private String contextPath;
 
+    @Transactional
     @Override
     public Result<Integer> insert(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
@@ -108,6 +110,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
         return result;
     }
 
+    @Transactional
     @Override
     public Result<Integer> update(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
