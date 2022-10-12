@@ -354,7 +354,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             Date createTime = new Date();
             vo.setUpdateTime(createTime);
             Long id = vo.getId();
-            NmplInternetRoute nmplInternetRoute = nmplInternetRouteMapper.selectByPrimaryKey(id);
+            NmplStaticRoute nmplStaticRoute = nmplStaticRouteMapper.selectByPrimaryKey(id);
 
             int batchNum=0;
             int addNum=0;
@@ -362,7 +362,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             voList.add(vo);
 
             // 判断路由信息是否存在
-            if (nmplInternetRoute != null){// 路由已存在，则更新路由信息
+            if (nmplStaticRoute != null){// 路由已存在，则更新路由信息
                 batchNum = routeDomainService.updateStaticRoute(voList);
 
                 NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
