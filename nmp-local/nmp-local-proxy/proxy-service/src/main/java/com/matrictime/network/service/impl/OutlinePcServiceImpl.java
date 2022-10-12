@@ -59,7 +59,7 @@ public class OutlinePcServiceImpl implements OutlinePcService {
     public void initInfo(List<CenterNmplOutlinePcInfoVo> list) {
         for(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo : list){
             BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
-            baseStationInfoRequest.setStationId(centerNmplOutlinePcInfoVo.getDeviceId());
+            baseStationInfoRequest.setId(centerNmplOutlinePcInfoVo.getId());
             List<BaseStationInfoVo> baseStationInfoVos = outlinePcDomainService.
                     selectBaseStation(baseStationInfoRequest);
             //station表中没有该数据

@@ -14,4 +14,6 @@ public class BaseStationInfoRequest implements Serializable {
      * 设备id
      */
     private String stationId;
+
+    private Long id;
 }

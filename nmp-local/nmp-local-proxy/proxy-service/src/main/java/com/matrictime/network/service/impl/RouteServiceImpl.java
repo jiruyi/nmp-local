@@ -475,7 +475,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             BeanUtils.copyProperties(businessRouteVo,nmplBusinessRoute);
             NmplBusinessRouteExample nmplBusinessRouteExample = new NmplBusinessRouteExample();
             NmplBusinessRouteExample.Criteria criteria = nmplBusinessRouteExample.createCriteria();
-            criteria.andRouteIdEqualTo(businessRouteVo.getRouteId());
+            criteria.andIdEqualTo(businessRouteVo.getId());
             List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);
             if(nmplBusinessRoutes.size() > NumberUtils.INTEGER_ZERO &&
                     !StringUtils.isEmpty(nmplBusinessRoutes.get(0).getIp()) &&
@@ -497,7 +497,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             BeanUtils.copyProperties(internetRouteVo,nmplInternetRoute);
             NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
             NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
-            criteria.andRouteIdEqualTo(nmplInternetRoute.getRouteId());
+            criteria.andIdEqualTo(nmplInternetRoute.getId());
             List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
             if(nmplInternetRoutes.size() > NumberUtils.INTEGER_ZERO &&
                     !StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getNetworkId()) &&
@@ -518,7 +518,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             BeanUtils.copyProperties(staticRouteVo,nmplStaticRoute);
             NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
             NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
-            criteria.andRouteIdEqualTo(nmplStaticRoute.getRouteId());
+            criteria.andIdEqualTo(nmplStaticRoute.getId());
             List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
             if(nmplStaticRoutes.size() > NumberUtils.INTEGER_ZERO &&
                     !StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getNetworkId()) &&
