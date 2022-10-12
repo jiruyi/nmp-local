@@ -3,15 +3,11 @@ package com.matrictime.network.service.impl;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.dao.domain.RouteDomainService;
-import com.matrictime.network.dao.mapper.NmplRouteMapper;
-import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
+import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.RouteMapper;
-import com.matrictime.network.dao.model.NmplRoute;
-import com.matrictime.network.dao.model.NmplRouteExample;
-import com.matrictime.network.dao.model.NmplUpdateInfoBase;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.CenterRouteVo;
-import com.matrictime.network.modelVo.RouteVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.service.RouteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -26,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.matrictime.network.base.constant.DataConstants.NMPL_ROUTE;
+import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
 
 @Service
@@ -41,6 +37,15 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
 
     @Resource
     private NmplRouteMapper nmplRouteMapper;
+
+    @Resource
+    private NmplBusinessRouteMapper nmplBusinessRouteMapper;
+
+    @Resource
+    private NmplInternetRouteMapper nmplInternetRouteMapper;
+
+    @Resource
+    private NmplStaticRouteMapper nmplStaticRouteMapper;
 
     /**
      * 新增路由
@@ -123,6 +128,261 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             log.info("RouteServiceImpl.updateRoute：addNum:{},batchNum:{}",addNum,batchNum);
         }catch (Exception e){
             log.error("RouteServiceImpl.updateRoute：{}",e.getMessage());
+            result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return result;
+    }
+
+    /**
+     * 新增业务路由
+     * @param vo
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result<Integer> addBusinessRoute(NmplBusinessRouteVo vo) {
+        Result result = new Result<>();
+        try {
+            Date createTime = new Date();
+            vo.setUpdateTime(createTime);
+            List<NmplBusinessRouteVo> voList = new ArrayList<>(1);
+            voList.add(vo);
+
+            // 新增路由信息
+            int batchNum = routeDomainService.insertBusinessRoute(voList);
+
+            // 通知基站有路由信息变更
+            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+            updateInfo.setTableName(NMPL_BUSINESS_ROUTE);
+            updateInfo.setOperationType(EDIT_TYPE_ADD);
+            updateInfo.setCreateTime(createTime);
+            updateInfo.setCreateUser(SYSTEM_NM);
+            int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+
+            log.info("RouteServiceImpl.addBusinessRoute：addNum:{},batchNum:{}",addNum,batchNum);
+        }catch (Exception e){
+            log.error("RouteServiceImpl.addBusinessRoute：{}",e.getMessage());
+            result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return result;
+    }
+
+    /**
+     * 修改业务路由
+     * @param vo
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result<Integer> updateBusinessRoute(NmplBusinessRouteVo vo) {
+        Result result = new Result<>();
+        try {
+            Date createTime = new Date();
+            vo.setUpdateTime(createTime);
+            Long id = vo.getId();
+            NmplBusinessRoute nmplBusinessRoute = nmplBusinessRouteMapper.selectByPrimaryKey(id);
+
+            int batchNum=0;
+            int addNum=0;
+            List<NmplBusinessRouteVo> voList = new ArrayList<>(1);
+            voList.add(vo);
+
+            // 判断路由信息是否存在
+            if (nmplBusinessRoute != null){// 路由已存在，则更新路由信息
+                batchNum = routeDomainService.updateBusinessRoute(voList);
+
+                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+                updateInfo.setTableName(NMPL_BUSINESS_ROUTE);
+                updateInfo.setOperationType(EDIT_TYPE_UPD);
+                updateInfo.setCreateTime(createTime);
+                updateInfo.setCreateUser(SYSTEM_NM);
+                addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+            }else {// 路由不存在在插入路由信息
+                batchNum = routeDomainService.insertBusinessRoute(voList);
+
+                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+                updateInfo.setTableName(NMPL_BUSINESS_ROUTE);
+                updateInfo.setOperationType(EDIT_TYPE_ADD);
+                updateInfo.setCreateTime(createTime);
+                updateInfo.setCreateUser(SYSTEM_NM);
+                addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+            }
+
+            log.info("RouteServiceImpl.updateBusinessRoute：addNum:{},batchNum:{}",addNum,batchNum);
+        }catch (Exception e){
+            log.error("RouteServiceImpl.updateBusinessRoute：{}",e.getMessage());
+            result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return result;
+    }
+
+    /**
+     * 新增出网路由
+     * @param vo
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result<Integer> addInternetRoute(NmplInternetRouteVo vo) {
+        Result result = new Result<>();
+        try {
+            Date createTime = new Date();
+            vo.setUpdateTime(createTime);
+            List<NmplInternetRouteVo> voList = new ArrayList<>(1);
+            voList.add(vo);
+
+            // 新增路由信息
+            int batchNum = routeDomainService.insertInternetRoute(voList);
+
+            // 通知基站有路由信息变更
+            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+            updateInfo.setTableName(NMPL_INTERNET_ROUTE);
+            updateInfo.setOperationType(EDIT_TYPE_ADD);
+            updateInfo.setCreateTime(createTime);
+            updateInfo.setCreateUser(SYSTEM_NM);
+            int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+
+            log.info("RouteServiceImpl.addInternetRoute：addNum:{},batchNum:{}",addNum,batchNum);
+        }catch (Exception e){
+            log.error("RouteServiceImpl.addInternetRoute：{}",e.getMessage());
+            result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return result;
+    }
+
+    /**
+     * 修改出网路由
+     * @param vo
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result<Integer> updateInternetRoute(NmplInternetRouteVo vo) {
+        Result result = new Result<>();
+        try {
+            Date createTime = new Date();
+            vo.setUpdateTime(createTime);
+            Long id = vo.getId();
+            NmplInternetRoute nmplInternetRoute = nmplInternetRouteMapper.selectByPrimaryKey(id);
+
+            int batchNum=0;
+            int addNum=0;
+            List<NmplInternetRouteVo> voList = new ArrayList<>(1);
+            voList.add(vo);
+
+            // 判断路由信息是否存在
+            if (nmplInternetRoute != null){// 路由已存在，则更新路由信息
+                batchNum = routeDomainService.updateInternetRoute(voList);
+
+                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+                updateInfo.setTableName(NMPL_INTERNET_ROUTE);
+                updateInfo.setOperationType(EDIT_TYPE_UPD);
+                updateInfo.setCreateTime(createTime);
+                updateInfo.setCreateUser(SYSTEM_NM);
+                addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+            }else {// 路由不存在在插入路由信息
+                batchNum = routeDomainService.insertInternetRoute(voList);
+
+                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+                updateInfo.setTableName(NMPL_INTERNET_ROUTE);
+                updateInfo.setOperationType(EDIT_TYPE_ADD);
+                updateInfo.setCreateTime(createTime);
+                updateInfo.setCreateUser(SYSTEM_NM);
+                addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+            }
+
+            log.info("RouteServiceImpl.updateInternetRoute：addNum:{},batchNum:{}",addNum,batchNum);
+        }catch (Exception e){
+            log.error("RouteServiceImpl.updateInternetRoute：{}",e.getMessage());
+            result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return result;
+    }
+
+    /**
+     * 新增静态路由
+     * @param vo
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result<Integer> addStaticRoute(NmplStaticRouteVo vo) {
+        Result result = new Result<>();
+        try {
+            Date createTime = new Date();
+            vo.setUpdateTime(createTime);
+            List<NmplStaticRouteVo> voList = new ArrayList<>(1);
+            voList.add(vo);
+
+            // 新增路由信息
+            int batchNum = routeDomainService.insertStaticRoute(voList);
+
+            // 通知基站有路由信息变更
+            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+            updateInfo.setTableName(NMPL_STATIC_ROUTE);
+            updateInfo.setOperationType(EDIT_TYPE_ADD);
+            updateInfo.setCreateTime(createTime);
+            updateInfo.setCreateUser(SYSTEM_NM);
+            int addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+
+            log.info("RouteServiceImpl.addStaticRoute：addNum:{},batchNum:{}",addNum,batchNum);
+        }catch (Exception e){
+            log.error("RouteServiceImpl.addStaticRoute：{}",e.getMessage());
+            result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return result;
+    }
+
+    /**
+     * 修改静态路由
+     * @param vo
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result<Integer> updateStaticRoute(NmplStaticRouteVo vo) {
+        Result result = new Result<>();
+        try {
+            Date createTime = new Date();
+            vo.setUpdateTime(createTime);
+            Long id = vo.getId();
+            NmplInternetRoute nmplInternetRoute = nmplInternetRouteMapper.selectByPrimaryKey(id);
+
+            int batchNum=0;
+            int addNum=0;
+            List<NmplStaticRouteVo> voList = new ArrayList<>(1);
+            voList.add(vo);
+
+            // 判断路由信息是否存在
+            if (nmplInternetRoute != null){// 路由已存在，则更新路由信息
+                batchNum = routeDomainService.updateStaticRoute(voList);
+
+                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+                updateInfo.setTableName(NMPL_STATIC_ROUTE);
+                updateInfo.setOperationType(EDIT_TYPE_UPD);
+                updateInfo.setCreateTime(createTime);
+                updateInfo.setCreateUser(SYSTEM_NM);
+                addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+            }else {// 路由不存在在插入路由信息
+                batchNum = routeDomainService.insertStaticRoute(voList);
+
+                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+                updateInfo.setTableName(NMPL_STATIC_ROUTE);
+                updateInfo.setOperationType(EDIT_TYPE_ADD);
+                updateInfo.setCreateTime(createTime);
+                updateInfo.setCreateUser(SYSTEM_NM);
+                addNum = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+            }
+
+            log.info("RouteServiceImpl.updateStaticRoute：addNum:{},batchNum:{}",addNum,batchNum);
+        }catch (Exception e){
+            log.error("RouteServiceImpl.updateStaticRoute：{}",e.getMessage());
             result = failResult("");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
