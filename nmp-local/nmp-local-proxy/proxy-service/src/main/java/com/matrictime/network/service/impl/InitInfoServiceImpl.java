@@ -97,10 +97,24 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                             if (!CollectionUtils.isEmpty(centerDeviceInfoVoList)){
                                 deviceInfoService.initLocalInfo(centerDeviceInfoVoList);
                             }
-                            // 初始化路由列表信息
-//                            if (!CollectionUtils.isEmpty(proxyResp.getRouteVoList())){
-//                                routeService.initInfo(proxyResp.getRouteVoList());
-//                            }
+                            // 初始化业务路由列表信息
+                            JSONArray businessRouteVos = resultObj.getJSONArray("businessRouteVoList");
+                            List<NmplBusinessRouteVo> nmplBusinessRouteVos = businessRouteVos.toJavaList(NmplBusinessRouteVo.class);
+                            if (!CollectionUtils.isEmpty(nmplBusinessRouteVos)){
+                                routeService.businessRouteInitInfo(nmplBusinessRouteVos);
+                            }
+                            //初始化出网路由
+                            JSONArray internetRouteVos = resultObj.getJSONArray("internetRouteVoList");
+                            List<NmplInternetRouteVo> nmplInternetRouteVos = internetRouteVos.toJavaList(NmplInternetRouteVo.class);
+                            if (!CollectionUtils.isEmpty(nmplInternetRouteVos)){
+                                routeService.internetRouteInitInfo(nmplInternetRouteVos);
+                            }
+                            //初始化静态路由
+                            JSONArray staticRouteVos = resultObj.getJSONArray("staticRouteVoList");
+                            List<NmplStaticRouteVo> nmplStaticRouteVos = staticRouteVos.toJavaList(NmplStaticRouteVo.class);
+                            if (!CollectionUtils.isEmpty(nmplStaticRouteVos)){
+                                routeService.staticRouteInitInfo(nmplStaticRouteVos);
+                            }
                             // 初始化链路列表信息
                             JSONArray linkRelationVoList = resultObj.getJSONArray("linkRelationVoList");
                             List<CenterLinkRelationVo> centerLinkRelationVos = linkRelationVoList.toJavaList(CenterLinkRelationVo.class);

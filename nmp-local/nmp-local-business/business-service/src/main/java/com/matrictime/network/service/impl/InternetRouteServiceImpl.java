@@ -20,6 +20,7 @@ import com.matrictime.network.service.InternetRouteService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -158,7 +159,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
      */
     private List<InternetRouteVo> checkIp(InternetRouteRequest internetRouteRequest){
         InternetRouteRequest checkIp = new InternetRouteRequest();
-        checkIp.setBoundaryStationIp(internetRouteRequest.getBoundaryStationIp());
+        BeanUtils.copyProperties(internetRouteRequest,checkIp);
         PageInfo<InternetRouteVo> select = internetRouteDomainService.select(checkIp);
         return select.getList();
     }

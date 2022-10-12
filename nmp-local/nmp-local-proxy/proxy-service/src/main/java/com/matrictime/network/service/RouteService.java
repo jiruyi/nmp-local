@@ -29,7 +29,7 @@ public interface RouteService {
 
     void businessRouteInitInfo(List<NmplBusinessRouteVo> nmplBusinessRouteVo);
 
-    void InternetRouteInitInfo(List<NmplInternetRouteVo> nmplInternetRouteVo);
+    void internetRouteInitInfo(List<NmplInternetRouteVo> nmplInternetRouteVo);
 
-    void StaticRouteInitInfo(List<NmplStaticRouteVo> nmplStaticRouteVo);
+    void staticRouteInitInfo(List<NmplStaticRouteVo> nmplStaticRouteVo);
 }

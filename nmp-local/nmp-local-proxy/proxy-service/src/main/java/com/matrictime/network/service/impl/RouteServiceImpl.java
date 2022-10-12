@@ -491,7 +491,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
 
     @Transactional
     @Override
-    public void InternetRouteInitInfo(List<NmplInternetRouteVo> nmplInternetRouteVo) {
+    public void internetRouteInitInfo(List<NmplInternetRouteVo> nmplInternetRouteVo) {
         for (NmplInternetRouteVo internetRouteVo: nmplInternetRouteVo){
             NmplInternetRoute nmplInternetRoute = new NmplInternetRoute();
             BeanUtils.copyProperties(internetRouteVo,nmplInternetRoute);
@@ -512,7 +512,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
 
     @Transactional
     @Override
-    public void StaticRouteInitInfo(List<NmplStaticRouteVo> nmplStaticRouteVo) {
+    public void staticRouteInitInfo(List<NmplStaticRouteVo> nmplStaticRouteVo) {
         for (NmplStaticRouteVo staticRouteVo: nmplStaticRouteVo){
             NmplStaticRoute nmplStaticRoute = new NmplStaticRoute();
             BeanUtils.copyProperties(staticRouteVo,nmplStaticRoute);

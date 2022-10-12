@@ -18,6 +18,7 @@ import com.matrictime.network.service.BusinessRouteService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -166,7 +167,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
      */
     private List<BusinessRouteVo> checkIp(BusinessRouteRequest businessRouteRequest){
         BusinessRouteRequest checkIp = new BusinessRouteRequest();
-        checkIp.setIp(businessRouteRequest.getIp());
+        BeanUtils.copyProperties(businessRouteRequest,checkIp);
         PageInfo<BusinessRouteVo> select = businessRouteDomainService.select(checkIp);
         return select.getList();
     }
