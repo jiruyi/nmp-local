@@ -58,16 +58,13 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
         NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
         nmplStaticRouteExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
-            criteria.andNetworkIdEqualTo(staticRouteRequest.getNetworkId());
+            criteria.andNetworkIdLike("%"+staticRouteRequest.getNetworkId()+"%");
         }
         if(!StringUtils.isEmpty(staticRouteRequest.getStationId())){
             criteria.andStationIdEqualTo(staticRouteRequest.getStationId());
         }
-        if(!ObjectUtils.isEmpty(staticRouteRequest.getId())){
-            criteria.andIdNotEqualTo(staticRouteRequest.getId());
-        }
         if(!StringUtils.isEmpty(staticRouteRequest.getServerIp())){
-            criteria.andServerIpEqualTo(staticRouteRequest.getServerIp());
+            criteria.andServerIpLike("%"+staticRouteRequest.getServerIp()+"%");
         }
         criteria.andIsExistEqualTo(true);
         //分页查询数据

@@ -8,6 +8,7 @@ import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BusinessRouteDomainService;
 import com.matrictime.network.dao.mapper.NmplBusinessRouteMapper;
 import com.matrictime.network.dao.model.NmplBusinessRoute;
+import com.matrictime.network.dao.model.NmplBusinessRouteExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.BusinessRouteVo;
@@ -19,6 +20,7 @@ import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BusinessRouteService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,7 +91,8 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             int delete = businessRouteDomainService.delete(businessRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
-                //sendRoute(businessRouteRequest,DataConstants.URL_ROUTE_DELETE);
+                NmplBusinessRoute nmplBusinessRoute = nmplBusinessRouteMapper.selectByPrimaryKey(businessRouteRequest.getId());
+                sendRoute(nmplBusinessRoute,DataConstants.UPDATE_BUSINESS_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -172,11 +175,16 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
      * @param businessRouteRequest
      * @return
      */
-    private List<BusinessRouteVo> checkIp(BusinessRouteRequest businessRouteRequest){
+    private List<NmplBusinessRoute> checkIp(BusinessRouteRequest businessRouteRequest){
         BusinessRouteRequest checkIp = new BusinessRouteRequest();
         BeanUtils.copyProperties(businessRouteRequest,checkIp);
-        PageInfo<BusinessRouteVo> select = businessRouteDomainService.select(checkIp);
-        return select.getList();
+        NmplBusinessRouteExample nmplBusinessRouteExample = new NmplBusinessRouteExample();
+        nmplBusinessRouteExample.createCriteria().andIpEqualTo(businessRouteRequest.getIp());
+        if(!ObjectUtils.isEmpty(businessRouteRequest.getId())){
+            nmplBusinessRouteExample.createCriteria().andIdNotEqualTo(businessRouteRequest.getId());
+        }
+        List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);
+        return nmplBusinessRoutes;
     }
 
     /**
@@ -185,7 +193,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
      * @return
      */
     private Result<Integer> checkDataOnly(BusinessRouteRequest businessRouteRequest){
-        List<BusinessRouteVo> list = checkIp(businessRouteRequest);
+        List<NmplBusinessRoute> list = checkIp(businessRouteRequest);
         if(list.size() > NumberUtils.INTEGER_ZERO){
             return new Result<>(false, ErrorMessageContants.IP_REPEAT);
         }

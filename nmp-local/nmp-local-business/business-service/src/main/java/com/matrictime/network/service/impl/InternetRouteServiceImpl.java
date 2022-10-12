@@ -22,6 +22,7 @@ import com.matrictime.network.service.BusinessRouteService;
 import com.matrictime.network.service.InternetRouteService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -100,7 +101,8 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int delete = internetRouteDomainService.delete(internetRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
-                //sendRoute(internetRouteRequest,DataConstants.URL_ROUTE_DELETE);
+                NmplInternetRoute nmplInternetRoute = nmplInternetRouteMapper.selectByPrimaryKey(internetRouteRequest.getId());
+                sendRoute(nmplInternetRoute,DataConstants.UPDATE_INTERNET_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -170,11 +172,16 @@ public class InternetRouteServiceImpl implements InternetRouteService {
      * @param internetRouteRequest
      * @return
      */
-    private List<InternetRouteVo> checkIp(InternetRouteRequest internetRouteRequest){
+    private List<NmplInternetRoute> checkIp(InternetRouteRequest internetRouteRequest){
         InternetRouteRequest checkIp = new InternetRouteRequest();
         BeanUtils.copyProperties(internetRouteRequest,checkIp);
-        PageInfo<InternetRouteVo> select = internetRouteDomainService.select(checkIp);
-        return select.getList();
+        NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
+        nmplInternetRouteExample.createCriteria().andBoundaryStationIpEqualTo(internetRouteRequest.getBoundaryStationIp());
+        if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
+            nmplInternetRouteExample.createCriteria().andIdNotEqualTo(internetRouteRequest.getId());
+        }
+        List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
+        return nmplInternetRoutes;
     }
 
     /**
@@ -183,7 +190,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
      * @return
      */
     private Result<Integer> checkDataOnly(InternetRouteRequest internetRouteRequest){
-        List<InternetRouteVo> list = checkIp(internetRouteRequest);
+        List<NmplInternetRoute> list = checkIp(internetRouteRequest);
         if(list.size() > NumberUtils.INTEGER_ZERO){
             return new Result<>(false, ErrorMessageContants.IP_REPEAT);
         }

@@ -59,13 +59,10 @@ public class InternetRouteDomainServiceImpl implements InternetRouteDomainServic
         NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
         nmplInternetRouteExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
-            criteria.andNetworkIdEqualTo(internetRouteRequest.getNetworkId());
-        }
-        if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
-            criteria.andIdNotEqualTo(internetRouteRequest.getId());
+            criteria.andNetworkIdLike("%"+internetRouteRequest.getNetworkId()+"%");
         }
         if(!StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
-            criteria.andBoundaryStationIpEqualTo(internetRouteRequest.getBoundaryStationIp());
+            criteria.andBoundaryStationIpLike("%"+internetRouteRequest.getBoundaryStationIp()+"%");
         }
         criteria.andIsExistEqualTo(true);
         //分页查询数据

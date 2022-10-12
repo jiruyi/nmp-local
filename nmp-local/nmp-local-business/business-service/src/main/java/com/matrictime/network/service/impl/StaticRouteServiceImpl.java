@@ -100,7 +100,8 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int delete = staticRouteDomainService.delete(staticRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
-                //sendRoute(staticRouteRequest,DataConstants.URL_ROUTE_DELETE);
+                NmplStaticRoute nmplStaticRoute = nmplStaticRouteMapper.selectByPrimaryKey(staticRouteRequest.getId());
+                sendRoute(nmplStaticRoute,DataConstants.UPDATE_STATIC_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -183,11 +184,16 @@ public class StaticRouteServiceImpl implements StaticRouteService {
      * @param staticRouteRequest
      * @return
      */
-    private List<StaticRouteVo> checkIp(StaticRouteRequest staticRouteRequest){
+    private List<NmplStaticRoute> checkIp(StaticRouteRequest staticRouteRequest){
         StaticRouteRequest checkSeverIp = new StaticRouteRequest();
         BeanUtils.copyProperties(staticRouteRequest,checkSeverIp);
-        PageInfo<StaticRouteVo> checkIpList = staticRouteDomainService.select(checkSeverIp);
-        return checkIpList.getList();
+        NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
+        nmplStaticRouteExample.createCriteria().andServerIpEqualTo(staticRouteRequest.getServerIp());
+        if(ObjectUtils.isEmpty(staticRouteRequest.getId())){
+            nmplStaticRouteExample.createCriteria().andIdNotEqualTo(staticRouteRequest.getId());
+        }
+        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
+        return nmplStaticRoutes;
     }
 
     private Result<Integer> checkDataOnly(StaticRouteRequest staticRouteRequest){
