@@ -20,6 +20,7 @@ import com.matrictime.network.service.InternetRouteService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -48,6 +49,12 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     @Resource
     private AsyncService asyncService;
 
+    @Value("${proxy.port}")
+    private String port;
+
+    @Value("${proxy.context-path}")
+    private String contextPath;
+
     @Override
     public Result<Integer> insert(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
@@ -63,7 +70,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int insert = internetRouteDomainService.insert(internetRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
-                sendRoute(internetRouteRequest);
+                sendRoute(internetRouteRequest,DataConstants.URL_ROUTE_INSERT);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -81,7 +88,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int delete = internetRouteDomainService.delete(internetRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
-                sendRoute(internetRouteRequest);
+                sendRoute(internetRouteRequest,DataConstants.URL_ROUTE_DELETE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -105,7 +112,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int update = internetRouteDomainService.update(internetRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                sendRoute(internetRouteRequest);
+                sendRoute(internetRouteRequest,DataConstants.URL_ROUTE_UPDATE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -129,7 +136,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     }
 
     //路由推送到各个基站
-    private void sendRoute(InternetRouteRequest internetRouteRequest) throws Exception {
+    private void sendRoute(InternetRouteRequest internetRouteRequest,String suffix) throws Exception {
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         Result<BaseStationInfoResponse> baseStationInfoResponse = businessRouteService.selectBaseStation(baseStationInfoRequest);
         List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponse.getResultObj().getBaseStationInfoList();
@@ -137,7 +144,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
         for (BaseStationInfoVo baseStationInfoVo : baseStationInfoList) {
             Map<String,String> map = new HashMap<>();
             map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(internetRouteRequest));
-            String url = "http://"+baseStationInfoVo.getLanIp()+":"+baseStationInfoVo.getLanPort();
+            String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
             map.put(DataConstants.KEY_URL,url);
             map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());
             asyncService.httpPush(map);

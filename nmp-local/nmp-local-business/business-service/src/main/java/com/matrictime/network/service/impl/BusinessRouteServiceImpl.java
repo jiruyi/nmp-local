@@ -18,6 +18,7 @@ import com.matrictime.network.service.BusinessRouteService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -43,6 +44,12 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
     @Resource
     private AsyncService asyncService;
 
+    @Value("${proxy.port}")
+    private String port;
+
+    @Value("${proxy.context-path}")
+    private String contextPath;
+
     @Override
     public Result<Integer> insert(BusinessRouteRequest businessRouteRequest) {
         Result<Integer> result = new Result<>();
@@ -58,7 +65,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             int insert = businessRouteDomainService.insert(businessRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
-                sendRoute(businessRouteRequest);
+                sendRoute(businessRouteRequest,DataConstants.URL_ROUTE_INSERT);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -76,7 +83,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             int delete = businessRouteDomainService.delete(businessRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
-                sendRoute(businessRouteRequest);
+                sendRoute(businessRouteRequest,DataConstants.URL_ROUTE_DELETE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -100,7 +107,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             int update = businessRouteDomainService.update(businessRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                sendRoute(businessRouteRequest);
+                sendRoute(businessRouteRequest,DataConstants.URL_ROUTE_UPDATE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -137,7 +144,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
     }
 
     //路由推送到各个基站
-    private void sendRoute(BusinessRouteRequest businessRouteRequest) throws Exception {
+    private void sendRoute(BusinessRouteRequest businessRouteRequest,String suffix) throws Exception {
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         Result<BaseStationInfoResponse> baseStationInfoResponse = selectBaseStation(baseStationInfoRequest);
         List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponse.getResultObj().getBaseStationInfoList();
@@ -145,7 +152,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
         for (BaseStationInfoVo baseStationInfoVo : baseStationInfoList) {
             Map<String,String> map = new HashMap<>();
             map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(businessRouteRequest));
-            String url = "http://"+baseStationInfoVo.getLanIp()+":"+baseStationInfoVo.getLanPort();
+            String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath + suffix;
             map.put(DataConstants.KEY_URL,url);
             map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());
             asyncService.httpPush(map);

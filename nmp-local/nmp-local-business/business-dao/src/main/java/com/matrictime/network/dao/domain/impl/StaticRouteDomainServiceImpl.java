@@ -69,6 +69,7 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
         if(!StringUtils.isEmpty(staticRouteRequest.getServerIp())){
             criteria.andServerIpEqualTo(staticRouteRequest.getServerIp());
         }
+        criteria.andIsExistEqualTo(true);
         //分页查询数据
         Page page = PageHelper.startPage(staticRouteRequest.getPageNo(),staticRouteRequest.getPageSize());
         List<NmplStaticRoute> nmplInternetRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);

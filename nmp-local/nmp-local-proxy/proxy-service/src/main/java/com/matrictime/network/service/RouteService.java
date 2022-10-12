@@ -26,4 +26,10 @@ public interface RouteService {
     Result<Integer> updateStaticRoute(NmplStaticRouteVo vo);
 
     void initInfo(List<CenterRouteVo> centerRouteVos);
+
+    void businessRouteInitInfo(List<NmplBusinessRouteVo> nmplBusinessRouteVo);
+
+    void InternetRouteInitInfo(List<NmplInternetRouteVo> nmplInternetRouteVo);
+
+    void StaticRouteInitInfo(List<NmplStaticRouteVo> nmplStaticRouteVo);
 }

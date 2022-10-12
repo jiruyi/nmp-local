@@ -19,6 +19,8 @@ import com.matrictime.network.service.StaticRouteService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -47,6 +49,12 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     @Resource
     private AsyncService asyncService;
 
+    @Value("${proxy.port}")
+    private String port;
+
+    @Value("${proxy.context-path}")
+    private String contextPath;
+
     @Override
     public Result<Integer> insert(StaticRouteRequest staticRouteRequest) {
         Result<Integer> result = new Result<>();
@@ -63,7 +71,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int insert = staticRouteDomainService.insert(staticRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
-                sendRoute(staticRouteRequest);
+                sendRoute(staticRouteRequest,DataConstants.URL_ROUTE_INSERT);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -81,7 +89,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int delete = staticRouteDomainService.delete(staticRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
-                sendRoute(staticRouteRequest);
+                sendRoute(staticRouteRequest,DataConstants.URL_ROUTE_DELETE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -106,7 +114,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int update = staticRouteDomainService.update(staticRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                sendRoute(staticRouteRequest);
+                sendRoute(staticRouteRequest,DataConstants.URL_ROUTE_UPDATE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -130,7 +138,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     }
 
     //路由推送到各个基站
-    private void sendRoute(StaticRouteRequest staticRouteRequest) throws Exception {
+    private void sendRoute(StaticRouteRequest staticRouteRequest,String suffix) throws Exception {
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         Result<BaseStationInfoResponse> baseStationInfoResponse = businessRouteService.selectBaseStation(baseStationInfoRequest);
         List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponse.getResultObj().getBaseStationInfoList();
@@ -138,7 +146,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
         for (BaseStationInfoVo baseStationInfoVo : baseStationInfoList) {
             Map<String,String> map = new HashMap<>();
             map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(staticRouteRequest));
-            String url = "http://"+baseStationInfoVo.getLanIp()+":"+baseStationInfoVo.getLanPort();
+            String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
             map.put(DataConstants.KEY_URL,url);
             map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());
             asyncService.httpPush(map);
@@ -152,8 +160,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
      */
     private List<StaticRouteVo> checkStation(StaticRouteRequest staticRouteRequest){
         StaticRouteRequest checkStation = new StaticRouteRequest();
-        checkStation.setStationId(staticRouteRequest.getStationId());
-        checkStation.setNetworkId(staticRouteRequest.getNetworkId());
+        BeanUtils.copyProperties(staticRouteRequest,checkStation);
         PageInfo<StaticRouteVo> checkStationList = staticRouteDomainService.select(checkStation);
         return checkStationList.getList();
     }
@@ -165,8 +172,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
      */
     private List<StaticRouteVo> checkIp(StaticRouteRequest staticRouteRequest){
         StaticRouteRequest checkSeverIp = new StaticRouteRequest();
-        checkSeverIp.setNetworkId(staticRouteRequest.getNetworkId());
-        checkSeverIp.setServerIp(staticRouteRequest.getServerIp());
+        BeanUtils.copyProperties(staticRouteRequest,checkSeverIp);
         PageInfo<StaticRouteVo> checkIpList = staticRouteDomainService.select(checkSeverIp);
         return checkIpList.getList();
     }

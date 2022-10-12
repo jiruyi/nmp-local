@@ -67,6 +67,7 @@ public class InternetRouteDomainServiceImpl implements InternetRouteDomainServic
         if(!StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
             criteria.andBoundaryStationIpEqualTo(internetRouteRequest.getBoundaryStationIp());
         }
+        criteria.andIsExistEqualTo(true);
         //分页查询数据
         Page page = PageHelper.startPage(internetRouteRequest.getPageNo(),internetRouteRequest.getPageSize());
         List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);

@@ -10,6 +10,8 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.service.RouteService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -462,6 +464,70 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             updateInfo2.setCreateTime(insertTime);
             updateInfo2.setCreateUser(SYSTEM_NM);
             nmplUpdateInfoBaseMapper.insertSelective(updateInfo2);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void businessRouteInitInfo(List<NmplBusinessRouteVo> nmplBusinessRouteVo) {
+        for (NmplBusinessRouteVo businessRouteVo: nmplBusinessRouteVo){
+            NmplBusinessRoute nmplBusinessRoute = new NmplBusinessRoute();
+            BeanUtils.copyProperties(businessRouteVo,nmplBusinessRoute);
+            NmplBusinessRouteExample nmplBusinessRouteExample = new NmplBusinessRouteExample();
+            NmplBusinessRouteExample.Criteria criteria = nmplBusinessRouteExample.createCriteria();
+            criteria.andRouteIdEqualTo(businessRouteVo.getRouteId());
+            List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);
+            if(nmplBusinessRoutes.size() > NumberUtils.INTEGER_ZERO &&
+                    !StringUtils.isEmpty(nmplBusinessRoutes.get(0).getIp()) &&
+                    !StringUtils.isEmpty(nmplBusinessRoutes.get(0).getNetworkId())){
+                nmplBusinessRouteMapper.updateByExampleSelective(nmplBusinessRoute,nmplBusinessRouteExample);
+            }
+            if(nmplBusinessRoutes.size() <= NumberUtils.INTEGER_ZERO){
+                nmplBusinessRouteMapper.insertSelective(nmplBusinessRoute);
+            }
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public void InternetRouteInitInfo(List<NmplInternetRouteVo> nmplInternetRouteVo) {
+        for (NmplInternetRouteVo internetRouteVo: nmplInternetRouteVo){
+            NmplInternetRoute nmplInternetRoute = new NmplInternetRoute();
+            BeanUtils.copyProperties(internetRouteVo,nmplInternetRoute);
+            NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
+            NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
+            criteria.andRouteIdEqualTo(nmplInternetRoute.getRouteId());
+            List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
+            if(nmplInternetRoutes.size() > NumberUtils.INTEGER_ZERO &&
+                    !StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getNetworkId()) &&
+                    !StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getBoundaryStationIp())){
+                nmplInternetRouteMapper.updateByExampleSelective(nmplInternetRoute,nmplInternetRouteExample);
+            }
+            if(nmplInternetRoutes.size() > NumberUtils.INTEGER_ZERO){
+                nmplInternetRouteMapper.insertSelective(nmplInternetRoute);
+            }
+        }
+    }
+
+    @Transactional
+    @Override
+    public void StaticRouteInitInfo(List<NmplStaticRouteVo> nmplStaticRouteVo) {
+        for (NmplStaticRouteVo staticRouteVo: nmplStaticRouteVo){
+            NmplStaticRoute nmplStaticRoute = new NmplStaticRoute();
+            BeanUtils.copyProperties(staticRouteVo,nmplStaticRoute);
+            NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
+            NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
+            criteria.andRouteIdEqualTo(nmplStaticRoute.getRouteId());
+            List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
+            if(nmplStaticRoutes.size() > NumberUtils.INTEGER_ZERO &&
+                    !StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getNetworkId()) &&
+                    !StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getServerIp())){
+                nmplStaticRouteMapper.updateByExampleSelective(nmplStaticRoute,nmplStaticRouteExample);
+            }
+            if(nmplStaticRoutes.size() < NumberUtils.INTEGER_ZERO){
+                nmplStaticRouteMapper.insertSelective(nmplStaticRoute);
+            }
         }
     }
 }
