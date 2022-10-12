@@ -2,10 +2,12 @@ package com.matrictime.network.modelVo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class ProxyBaseStationInfoVo {
+public class ProxyBaseStationInfoVo implements Serializable {
+    private static final long serialVersionUID = -2893073001116091030L;
     /**
      * 主键
      */
