@@ -71,7 +71,9 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int insert = staticRouteDomainService.insert(staticRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
-                sendRoute(staticRouteRequest,DataConstants.INSERT_STATIC_ROUTE);
+                PageInfo<StaticRouteVo> select = staticRouteDomainService.select(staticRouteRequest);
+                List<StaticRouteVo> list = select.getList();
+                sendRoute(list.get(NumberUtils.INTEGER_ZERO),DataConstants.INSERT_STATIC_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -89,7 +91,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int delete = staticRouteDomainService.delete(staticRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
-                sendRoute(staticRouteRequest,DataConstants.URL_ROUTE_DELETE);
+                //sendRoute(staticRouteRequest,DataConstants.URL_ROUTE_DELETE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -114,7 +116,9 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             int update = staticRouteDomainService.update(staticRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                sendRoute(staticRouteRequest,DataConstants.UPDATE_STATIC_ROUTE);
+                PageInfo<StaticRouteVo> select = staticRouteDomainService.select(staticRouteRequest);
+                List<StaticRouteVo> list = select.getList();
+                sendRoute(list.get(NumberUtils.INTEGER_ZERO),DataConstants.UPDATE_STATIC_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -138,14 +142,14 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     }
 
     //路由推送到各个基站
-    private void sendRoute(StaticRouteRequest staticRouteRequest,String suffix) throws Exception {
+    private void sendRoute(StaticRouteVo staticRouteVo,String suffix) throws Exception {
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         Result<BaseStationInfoResponse> baseStationInfoResponse = businessRouteService.selectBaseStation(baseStationInfoRequest);
         List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponse.getResultObj().getBaseStationInfoList();
         //开启多线程
         for (BaseStationInfoVo baseStationInfoVo : baseStationInfoList) {
             Map<String,String> map = new HashMap<>();
-            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(staticRouteRequest));
+            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(staticRouteVo));
             String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
             map.put(DataConstants.KEY_URL,url);
             map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());

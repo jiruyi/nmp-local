@@ -71,7 +71,9 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int insert = internetRouteDomainService.insert(internetRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
-                sendRoute(internetRouteRequest,DataConstants.INSERT_INTERNET_ROUTE);
+                PageInfo<InternetRouteVo> select = internetRouteDomainService.select(internetRouteRequest);
+                List<InternetRouteVo> list = select.getList();
+                sendRoute(list.get(NumberUtils.INTEGER_ZERO),DataConstants.INSERT_INTERNET_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -89,7 +91,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int delete = internetRouteDomainService.delete(internetRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
-                sendRoute(internetRouteRequest,DataConstants.URL_ROUTE_DELETE);
+                //sendRoute(internetRouteRequest,DataConstants.URL_ROUTE_DELETE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -113,7 +115,9 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             int update = internetRouteDomainService.update(internetRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
-                sendRoute(internetRouteRequest,DataConstants.UPDATE_INTERNET_ROUTE);
+                PageInfo<InternetRouteVo> select = internetRouteDomainService.select(internetRouteRequest);
+                List<InternetRouteVo> list = select.getList();
+                sendRoute(list.get(NumberUtils.INTEGER_ZERO),DataConstants.UPDATE_INTERNET_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -137,14 +141,14 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     }
 
     //路由推送到各个基站
-    private void sendRoute(InternetRouteRequest internetRouteRequest,String suffix) throws Exception {
+    private void sendRoute(InternetRouteVo internetRouteVo,String suffix) throws Exception {
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         Result<BaseStationInfoResponse> baseStationInfoResponse = businessRouteService.selectBaseStation(baseStationInfoRequest);
         List<BaseStationInfoVo> baseStationInfoList = baseStationInfoResponse.getResultObj().getBaseStationInfoList();
         //开启多线程
         for (BaseStationInfoVo baseStationInfoVo : baseStationInfoList) {
             Map<String,String> map = new HashMap<>();
-            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(internetRouteRequest));
+            map.put(DataConstants.KEY_DATA, JSONObject.toJSONString(internetRouteVo));
             String url = "http://"+baseStationInfoVo.getLanIp()+":"+port+contextPath+suffix;
             map.put(DataConstants.KEY_URL,url);
             map.put(KEY_DEVICE_ID,baseStationInfoVo.getStationId());
