@@ -101,7 +101,7 @@ public class BusinessRouteDomainServiceImpl implements BusinessRouteDomainServic
         List<BaseStationInfoVo> list = new ArrayList<>();
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
-        if(StationTypeEnum.BOUNDARY.getCode().equals(baseStationInfoRequest.getStationType())){
+        if(StationTypeEnum.INSIDE.getCode().equals(baseStationInfoRequest.getStationType())){
             criteria.andStationTypeEqualTo(baseStationInfoRequest.getStationType());
         }
         criteria.andIsExistEqualTo(true);
