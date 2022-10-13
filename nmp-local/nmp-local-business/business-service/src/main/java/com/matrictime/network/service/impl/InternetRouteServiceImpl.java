@@ -176,10 +176,17 @@ public class InternetRouteServiceImpl implements InternetRouteService {
         InternetRouteRequest checkIp = new InternetRouteRequest();
         BeanUtils.copyProperties(internetRouteRequest,checkIp);
         NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
-        nmplInternetRouteExample.createCriteria().andBoundaryStationIpEqualTo(internetRouteRequest.getBoundaryStationIp());
-        if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
-            nmplInternetRouteExample.createCriteria().andIdNotEqualTo(internetRouteRequest.getId());
+        NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
+        if(!StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
+            criteria.andBoundaryStationIpEqualTo(internetRouteRequest.getBoundaryStationIp());
         }
+        if(!StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
+            criteria.andNetworkIdEqualTo(internetRouteRequest.getNetworkId());
+        }
+        if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
+            criteria.andIdNotEqualTo(internetRouteRequest.getId());
+        }
+
         List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
         return nmplInternetRoutes;
     }

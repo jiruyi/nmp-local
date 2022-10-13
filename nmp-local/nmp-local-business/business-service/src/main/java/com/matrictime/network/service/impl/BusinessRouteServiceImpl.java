@@ -179,10 +179,17 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
         BusinessRouteRequest checkIp = new BusinessRouteRequest();
         BeanUtils.copyProperties(businessRouteRequest,checkIp);
         NmplBusinessRouteExample nmplBusinessRouteExample = new NmplBusinessRouteExample();
-        nmplBusinessRouteExample.createCriteria().andIpEqualTo(businessRouteRequest.getIp());
-        if(!ObjectUtils.isEmpty(businessRouteRequest.getId())){
-            nmplBusinessRouteExample.createCriteria().andIdNotEqualTo(businessRouteRequest.getId());
+        NmplBusinessRouteExample.Criteria criteria = nmplBusinessRouteExample.createCriteria();
+        if(!StringUtils.isEmpty(businessRouteRequest.getNetworkId())){
+            criteria.andNetworkIdEqualTo(businessRouteRequest.getNetworkId());
         }
+        if(!ObjectUtils.isEmpty(businessRouteRequest.getId())){
+            criteria.andIdNotEqualTo(businessRouteRequest.getId());
+        }
+        if(!StringUtils.isEmpty(businessRouteRequest.getIp())){
+            criteria.andIpEqualTo(businessRouteRequest.getIp());
+        }
+
         List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);
         return nmplBusinessRoutes;
     }

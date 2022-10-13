@@ -21,6 +21,7 @@ import com.matrictime.network.service.InternetRouteService;
 import com.matrictime.network.service.StaticRouteService;
 import com.matrictime.network.util.CommonCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -168,18 +169,6 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     }
 
     /**
-     * 校验设备Id唯一性
-     * @param staticRouteRequest
-     * @return
-     */
-    private List<StaticRouteVo> checkStation(StaticRouteRequest staticRouteRequest){
-        StaticRouteRequest checkStation = new StaticRouteRequest();
-        BeanUtils.copyProperties(staticRouteRequest,checkStation);
-        PageInfo<StaticRouteVo> checkStationList = staticRouteDomainService.select(checkStation);
-        return checkStationList.getList();
-    }
-
-    /**
      * 校验Ip唯一性
      * @param staticRouteRequest
      * @return
@@ -188,19 +177,21 @@ public class StaticRouteServiceImpl implements StaticRouteService {
         StaticRouteRequest checkSeverIp = new StaticRouteRequest();
         BeanUtils.copyProperties(staticRouteRequest,checkSeverIp);
         NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
-        nmplStaticRouteExample.createCriteria().andServerIpEqualTo(staticRouteRequest.getServerIp());
+        NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
+        if(!StringUtils.isEmpty(staticRouteRequest.getServerIp())){
+            criteria.andServerIpEqualTo(staticRouteRequest.getServerIp());
+        }
+        if(!StringUtils.isEmpty(staticRouteRequest.getStationId())){
+            criteria.andNetworkIdEqualTo(staticRouteRequest.getNetworkId());
+        }
         if(!ObjectUtils.isEmpty(staticRouteRequest.getId())){
-            nmplStaticRouteExample.createCriteria().andIdNotEqualTo(staticRouteRequest.getId());
+            criteria.andIdNotEqualTo(staticRouteRequest.getId());
         }
         List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
         return nmplStaticRoutes;
     }
 
     private Result<Integer> checkDataOnly(StaticRouteRequest staticRouteRequest){
-        List listStation = checkStation(staticRouteRequest);
-        if(listStation.size() > NumberUtils.INTEGER_ZERO){
-            return new Result<>(false, ErrorMessageContants.DEVICEID_REPEAT);
-        }
         List listIp = checkIp(staticRouteRequest);
         if(listIp.size() > NumberUtils.INTEGER_ZERO){
             return new Result<>(false,ErrorMessageContants.IP_REPEAT);
