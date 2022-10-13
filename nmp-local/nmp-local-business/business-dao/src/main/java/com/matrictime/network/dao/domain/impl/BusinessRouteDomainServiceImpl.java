@@ -77,8 +77,9 @@ public class BusinessRouteDomainServiceImpl implements BusinessRouteDomainServic
             criteria.andBusinessTypeLike("%"+businessRouteRequest.getBusinessType()+"%");
         }
         if(!StringUtils.isEmpty(businessRouteRequest.getIp())){
-            criteria.andIpEqualTo(businessRouteRequest.getIp());
+            criteria.andIpLike("%"+businessRouteRequest.getIp()+"%");
         }
+        criteria.andIsExistEqualTo(true);
         //分页查询数据
         Page page = PageHelper.startPage(businessRouteRequest.getPageNo(),businessRouteRequest.getPageSize());
         List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);
