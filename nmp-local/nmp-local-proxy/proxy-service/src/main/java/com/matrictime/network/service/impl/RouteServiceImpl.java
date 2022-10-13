@@ -504,7 +504,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
                     !StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getBoundaryStationIp())){
                 nmplInternetRouteMapper.updateByExampleSelective(nmplInternetRoute,nmplInternetRouteExample);
             }
-            if(nmplInternetRoutes.size() > NumberUtils.INTEGER_ZERO){
+            if(nmplInternetRoutes.size() <= NumberUtils.INTEGER_ZERO){
                 nmplInternetRouteMapper.insertSelective(nmplInternetRoute);
             }
         }
@@ -525,7 +525,7 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
                     !StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getServerIp())){
                 nmplStaticRouteMapper.updateByExampleSelective(nmplStaticRoute,nmplStaticRouteExample);
             }
-            if(nmplStaticRoutes.size() < NumberUtils.INTEGER_ZERO){
+            if(nmplStaticRoutes.size() <= NumberUtils.INTEGER_ZERO){
                 nmplStaticRouteMapper.insertSelective(nmplStaticRoute);
             }
         }
