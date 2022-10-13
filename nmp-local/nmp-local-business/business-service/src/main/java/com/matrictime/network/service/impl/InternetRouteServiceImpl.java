@@ -180,13 +180,10 @@ public class InternetRouteServiceImpl implements InternetRouteService {
         if(!StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
             criteria.andBoundaryStationIpEqualTo(internetRouteRequest.getBoundaryStationIp());
         }
-        if(!StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
-            criteria.andNetworkIdEqualTo(internetRouteRequest.getNetworkId());
-        }
         if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
             criteria.andIdNotEqualTo(internetRouteRequest.getId());
         }
-
+        criteria.andIsExistEqualTo(true);
         List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
         return nmplInternetRoutes;
     }
