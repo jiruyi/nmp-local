@@ -189,7 +189,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
         BeanUtils.copyProperties(staticRouteRequest,checkSeverIp);
         NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
         nmplStaticRouteExample.createCriteria().andServerIpEqualTo(staticRouteRequest.getServerIp());
-        if(ObjectUtils.isEmpty(staticRouteRequest.getId())){
+        if(!ObjectUtils.isEmpty(staticRouteRequest.getId())){
             nmplStaticRouteExample.createCriteria().andIdNotEqualTo(staticRouteRequest.getId());
         }
         List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
