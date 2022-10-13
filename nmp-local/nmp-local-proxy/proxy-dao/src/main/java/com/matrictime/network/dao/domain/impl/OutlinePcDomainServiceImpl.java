@@ -101,10 +101,9 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
         List<BaseStationInfoVo> list = new ArrayList<>();
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
-        if(StringUtils.isEmpty(baseStationInfoRequest.getStationId())){
-            throw new RuntimeException(ErrorMessageContants.DEVICE_ID_IS_NULL_MSG);
+        if(!ObjectUtils.isEmpty(baseStationInfoRequest.getId())){
+            criteria.andIdEqualTo(baseStationInfoRequest.getId());
         }
-        criteria.andStationIdEqualTo(baseStationInfoRequest.getStationId());
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         for(NmplBaseStationInfo nmplBaseStationInfo: nmplBaseStationInfos){
             BaseStationInfoVo baseStationInfoVo = new BaseStationInfoVo();
