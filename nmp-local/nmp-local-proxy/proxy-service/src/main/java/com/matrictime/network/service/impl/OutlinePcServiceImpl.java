@@ -2,6 +2,8 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.enums.DeviceStatusEnum;
 import com.matrictime.network.dao.domain.OutlinePcDomainService;
+import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
+import com.matrictime.network.dao.model.NmplUpdateInfoBase;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.CenterNmplOutlinePcInfoVo;
@@ -16,7 +18,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
+
+import static com.matrictime.network.base.constant.DataConstants.NMPL_LOCAL_BASE_STATION_INFO;
+import static com.matrictime.network.base.constant.DataConstants.NMPL_OUTLINE_PC_INFO;
+import static com.matrictime.network.constant.DataConstants.*;
 
 /**
  * @author by wangqiang
@@ -28,6 +35,9 @@ public class OutlinePcServiceImpl implements OutlinePcService {
 
     @Resource
     private OutlinePcDomainService outlinePcDomainService;
+
+    @Resource
+    private NmplUpdateInfoBaseMapper nmplUpdateInfoBaseMapper;
 
     @Override
     public Result<Integer> updateOutlinePc(OutlinePcReq outlinePcReq) {
@@ -58,20 +68,21 @@ public class OutlinePcServiceImpl implements OutlinePcService {
     @Override
     public void initInfo(List<CenterNmplOutlinePcInfoVo> list) {
         for(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo : list){
-            BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
-            baseStationInfoRequest.setId(centerNmplOutlinePcInfoVo.getId());
-            List<BaseStationInfoVo> baseStationInfoVos = outlinePcDomainService.
-                    selectBaseStation(baseStationInfoRequest);
+//            BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
+//            baseStationInfoRequest.setId(centerNmplOutlinePcInfoVo.getId());
+//            List<BaseStationInfoVo> baseStationInfoVos = outlinePcDomainService.
+//                    selectBaseStation(baseStationInfoRequest);
             //station表中没有该数据
-            if(baseStationInfoVos.size() <= NumberUtils.INTEGER_ZERO ||
-                    !isActive(baseStationInfoVos.get(NumberUtils.INTEGER_ZERO))){
-                outlinePcDomainService.insertOutlinePc(changeData(centerNmplOutlinePcInfoVo));
-            }
+//            if(baseStationInfoVos.size() <= NumberUtils.INTEGER_ZERO ||
+//                    !isActive(baseStationInfoVos.get(NumberUtils.INTEGER_ZERO))){
+//                outlinePcDomainService.insertOutlinePc(changeData(centerNmplOutlinePcInfoVo));
+//            }
             //station表中有该数据
-            if(baseStationInfoVos.size() > NumberUtils.INTEGER_ZERO &&
-                    isActive(baseStationInfoVos.get(NumberUtils.INTEGER_ZERO))){
-                compareData(centerNmplOutlinePcInfoVo);
-            }
+//            if(baseStationInfoVos.size() > NumberUtils.INTEGER_ZERO &&
+//                    isActive(baseStationInfoVos.get(NumberUtils.INTEGER_ZERO))){
+//
+//            }
+            compareData(centerNmplOutlinePcInfoVo);
         }
     }
 
@@ -80,12 +91,26 @@ public class OutlinePcServiceImpl implements OutlinePcService {
      * @param centerNmplOutlinePcInfoVo
      */
     private void compareData(CenterNmplOutlinePcInfoVo centerNmplOutlinePcInfoVo){
+        Date createTime = new Date();
         List<OutlinePcVo> outlinePcVos = outlinePcDomainService.
                 selectOutlinePc(changeData(centerNmplOutlinePcInfoVo));
+        centerNmplOutlinePcInfoVo.setUpdateTime(createTime);
         if(outlinePcVos.size() > NumberUtils.INTEGER_ZERO){
             outlinePcDomainService.updateOutlinePc(changeData(centerNmplOutlinePcInfoVo));
+            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+            updateInfo.setTableName(NMPL_OUTLINE_PC_INFO);
+            updateInfo.setOperationType(EDIT_TYPE_ADD);
+            updateInfo.setCreateTime(createTime);
+            updateInfo.setCreateUser(SYSTEM_NM);
+            int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
         }else {
             outlinePcDomainService.insertOutlinePc(changeData(centerNmplOutlinePcInfoVo));
+            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+            updateInfo.setTableName(NMPL_OUTLINE_PC_INFO);
+            updateInfo.setOperationType(EDIT_TYPE_UPD);
+            updateInfo.setCreateTime(createTime);
+            updateInfo.setCreateUser(SYSTEM_NM);
+            int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
         }
     }
 

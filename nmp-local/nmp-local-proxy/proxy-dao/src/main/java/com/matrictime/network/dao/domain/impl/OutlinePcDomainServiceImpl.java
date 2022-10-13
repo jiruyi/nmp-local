@@ -83,10 +83,7 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
         List<OutlinePcVo> list = new ArrayList<>();
         NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
         NmplOutlinePcInfoExample.Criteria criteria = nmplOutlinePcInfoExample.createCriteria();
-        if(StringUtils.isEmpty(outlinePcReq.getDeviceId())){
-            throw new RuntimeException(ErrorMessageContants.DEVICE_ID_IS_NULL_MSG);
-        }
-        criteria.andDeviceIdEqualTo(outlinePcReq.getDeviceId());
+        criteria.andIdEqualTo(outlinePcReq.getId());
         List<NmplOutlinePcInfo> nmplOutlinePcInfos = outlinePcInfoMapper.selectByExample(nmplOutlinePcInfoExample);
         for(NmplOutlinePcInfo nmplOutlinePcInfo: nmplOutlinePcInfos){
             OutlinePcVo outlinePcVo = new OutlinePcVo();
