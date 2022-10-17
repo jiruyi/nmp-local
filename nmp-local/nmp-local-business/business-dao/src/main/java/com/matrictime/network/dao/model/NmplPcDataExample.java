@@ -435,63 +435,123 @@ public class NmplPcDataExample {
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumIsNull() {
-            addCriterion("key_num is null");
+        public Criteria andUpKeyNumIsNull() {
+            addCriterion("up_key_num is null");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumIsNotNull() {
-            addCriterion("key_num is not null");
+        public Criteria andUpKeyNumIsNotNull() {
+            addCriterion("up_key_num is not null");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumEqualTo(Integer value) {
-            addCriterion("key_num =", value, "keyNum");
+        public Criteria andUpKeyNumEqualTo(Integer value) {
+            addCriterion("up_key_num =", value, "upKeyNum");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumNotEqualTo(Integer value) {
-            addCriterion("key_num <>", value, "keyNum");
+        public Criteria andUpKeyNumNotEqualTo(Integer value) {
+            addCriterion("up_key_num <>", value, "upKeyNum");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumGreaterThan(Integer value) {
-            addCriterion("key_num >", value, "keyNum");
+        public Criteria andUpKeyNumGreaterThan(Integer value) {
+            addCriterion("up_key_num >", value, "upKeyNum");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumGreaterThanOrEqualTo(Integer value) {
-            addCriterion("key_num >=", value, "keyNum");
+        public Criteria andUpKeyNumGreaterThanOrEqualTo(Integer value) {
+            addCriterion("up_key_num >=", value, "upKeyNum");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumLessThan(Integer value) {
-            addCriterion("key_num <", value, "keyNum");
+        public Criteria andUpKeyNumLessThan(Integer value) {
+            addCriterion("up_key_num <", value, "upKeyNum");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumLessThanOrEqualTo(Integer value) {
-            addCriterion("key_num <=", value, "keyNum");
+        public Criteria andUpKeyNumLessThanOrEqualTo(Integer value) {
+            addCriterion("up_key_num <=", value, "upKeyNum");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumIn(List<Integer> values) {
-            addCriterion("key_num in", values, "keyNum");
+        public Criteria andUpKeyNumIn(List<Integer> values) {
+            addCriterion("up_key_num in", values, "upKeyNum");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumNotIn(List<Integer> values) {
-            addCriterion("key_num not in", values, "keyNum");
+        public Criteria andUpKeyNumNotIn(List<Integer> values) {
+            addCriterion("up_key_num not in", values, "upKeyNum");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumBetween(Integer value1, Integer value2) {
-            addCriterion("key_num between", value1, value2, "keyNum");
+        public Criteria andUpKeyNumBetween(Integer value1, Integer value2) {
+            addCriterion("up_key_num between", value1, value2, "upKeyNum");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNumNotBetween(Integer value1, Integer value2) {
-            addCriterion("key_num not between", value1, value2, "keyNum");
+        public Criteria andUpKeyNumNotBetween(Integer value1, Integer value2) {
+            addCriterion("up_key_num not between", value1, value2, "upKeyNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumIsNull() {
+            addCriterion("down_key_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumIsNotNull() {
+            addCriterion("down_key_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumEqualTo(Integer value) {
+            addCriterion("down_key_num =", value, "downKeyNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumNotEqualTo(Integer value) {
+            addCriterion("down_key_num <>", value, "downKeyNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumGreaterThan(Integer value) {
+            addCriterion("down_key_num >", value, "downKeyNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumGreaterThanOrEqualTo(Integer value) {
+            addCriterion("down_key_num >=", value, "downKeyNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumLessThan(Integer value) {
+            addCriterion("down_key_num <", value, "downKeyNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumLessThanOrEqualTo(Integer value) {
+            addCriterion("down_key_num <=", value, "downKeyNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumIn(List<Integer> values) {
+            addCriterion("down_key_num in", values, "downKeyNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumNotIn(List<Integer> values) {
+            addCriterion("down_key_num not in", values, "downKeyNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumBetween(Integer value1, Integer value2) {
+            addCriterion("down_key_num between", value1, value2, "downKeyNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownKeyNumNotBetween(Integer value1, Integer value2) {
+            addCriterion("down_key_num not between", value1, value2, "downKeyNum");
             return (Criteria) this;
         }
 
