@@ -60,4 +60,9 @@ public class NmplInternetRouteVo implements Serializable {
      */
     private Boolean isExist;
 
+    /**
+     * ip_v6
+     */
+    private String ipV6;
+
 }

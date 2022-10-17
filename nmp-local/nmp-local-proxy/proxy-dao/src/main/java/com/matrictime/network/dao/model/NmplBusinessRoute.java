@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 业务服务路由
  * @author   xxxx
- * @date   2022-10-11
+ * @date   2022-10-17
  */
 @Data
 public class NmplBusinessRoute {
@@ -59,6 +59,11 @@ public class NmplBusinessRoute {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * ip_v6
+     */
+    private String ipV6;
 
     public Long getId() {
         return id;
@@ -138,5 +143,13 @@ public class NmplBusinessRoute {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public String getIpV6() {
+        return ipV6;
+    }
+
+    public void setIpV6(String ipV6) {
+        this.ipV6 = ipV6 == null ? null : ipV6.trim();
     }
 }
