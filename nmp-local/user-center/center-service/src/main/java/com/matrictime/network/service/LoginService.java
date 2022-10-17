@@ -32,7 +32,7 @@ public interface LoginService {
      * @param bindReq
      * @return
      */
-    Result bind(BindReq bindReq);
+//    Result bind(BindReq bindReq);
 
 
     /**

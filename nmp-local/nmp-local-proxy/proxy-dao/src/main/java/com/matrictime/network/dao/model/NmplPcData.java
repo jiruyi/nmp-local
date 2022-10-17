@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 基站下一体机信息上报表
  * @author   hx
- * @date   2022-10-09
+ * @date   2022-10-17
  */
 @Data
 public class NmplPcData {

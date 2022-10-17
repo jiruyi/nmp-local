@@ -41,3 +41,6 @@ CREATE TABLE IF NOT EXISTS nmpl_static_route
     update_time datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间',
     station_id  varchar(128)                             not null comment '基站id'
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci comment '静态路由';
+
+INSERT INTO nmp_local.nmpl_business_route (route_id, business_type, network_id, ip) VALUES ('1', '根密钥服务', '', '');
+INSERT INTO nmp_local.nmpl_business_route (route_id, business_type, network_id, ip) VALUES ('2', '计费服务', '', '');
