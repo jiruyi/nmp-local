@@ -68,7 +68,8 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     public Result<Integer> insert(StaticRouteRequest staticRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            if(!CommonCheckUtil.isIpv4Legal(staticRouteRequest.getServerIp())){
+            if(!CommonCheckUtil.isIpv4Legal(staticRouteRequest.getServerIp()) &&
+                    !CommonCheckUtil.isIpv6Legal(staticRouteRequest.getIpV6())){
                 throw new RuntimeException(IP_FORMAT_ERROR_MSG);
             }
             //字段校验
@@ -117,7 +118,8 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     public Result<Integer> update(StaticRouteRequest staticRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            if(!CommonCheckUtil.isIpv4Legal(staticRouteRequest.getServerIp())){
+            if(!CommonCheckUtil.isIpv4Legal(staticRouteRequest.getServerIp()) &&
+                    !CommonCheckUtil.isIpv6Legal(staticRouteRequest.getIpV6())){
                 throw new RuntimeException(IP_FORMAT_ERROR_MSG);
             }
             //字段校验
@@ -202,6 +204,9 @@ public class StaticRouteServiceImpl implements StaticRouteService {
         }
         if(!StringUtils.isEmpty(staticRouteRequest.getServerIp())){
             criteria.andServerIpEqualTo(staticRouteRequest.getServerIp());
+        }
+        if(!StringUtils.isEmpty(staticRouteRequest.getIpV6())){
+            criteria.andIpV6EqualTo(staticRouteRequest.getIpV6());
         }
         criteria.andIsExistEqualTo(true);
         List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);

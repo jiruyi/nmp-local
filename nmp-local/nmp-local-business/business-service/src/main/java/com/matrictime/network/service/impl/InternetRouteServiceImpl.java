@@ -69,7 +69,8 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     public Result<Integer> insert(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            if(!CommonCheckUtil.isIpv4Legal(internetRouteRequest.getBoundaryStationIp())){
+            if(!CommonCheckUtil.isIpv4Legal(internetRouteRequest.getBoundaryStationIp()) &&
+                    !CommonCheckUtil.isIpv6Legal(internetRouteRequest.getIpV6())){
                 throw new RuntimeException(IP_FORMAT_ERROR_MSG);
             }
             if(!ObjectUtils.isEmpty(checkDataOnly(internetRouteRequest))){
@@ -117,7 +118,8 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     public Result<Integer> update(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            if(!CommonCheckUtil.isIpv4Legal(internetRouteRequest.getBoundaryStationIp())){
+            if(!CommonCheckUtil.isIpv4Legal(internetRouteRequest.getBoundaryStationIp()) &&
+                    !CommonCheckUtil.isIpv6Legal(internetRouteRequest.getIpV6())){
                 throw new RuntimeException(IP_FORMAT_ERROR_MSG);
             }
             if(!ObjectUtils.isEmpty(checkDataOnly(internetRouteRequest))){
@@ -179,6 +181,9 @@ public class InternetRouteServiceImpl implements InternetRouteService {
         NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
         if(!StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
             criteria.andBoundaryStationIpEqualTo(internetRouteRequest.getBoundaryStationIp());
+        }
+        if(!ObjectUtils.isEmpty(internetRouteRequest.getIpV6())){
+            criteria.andIpV6EqualTo(internetRouteRequest.getIpV6());
         }
         if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
             criteria.andIdNotEqualTo(internetRouteRequest.getId());

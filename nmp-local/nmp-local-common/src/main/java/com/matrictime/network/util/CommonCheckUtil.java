@@ -103,6 +103,21 @@ public class CommonCheckUtil {
     }
 
     /**
+     *
+     * @param str
+     * @return 正确返回true
+     */
+    public static boolean isIpv6Legal(String str){
+        try {
+            return isParamMatchPattern(str,REG_EXP_IPV6);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    /**
      * port端口号校验（1-65535）
      * @param str
      * @return 正确返回true
