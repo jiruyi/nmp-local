@@ -31,6 +31,11 @@ public class InternetRouteVo {
     private String boundaryStationIp;
 
     /**
+     * ipV6
+     */
+    private String ipV6;
+
+    /**
      * 创建者
      */
     private String createUser;

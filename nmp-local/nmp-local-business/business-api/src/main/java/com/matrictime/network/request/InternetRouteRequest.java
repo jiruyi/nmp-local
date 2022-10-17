@@ -31,6 +31,11 @@ public class InternetRouteRequest extends BaseRequest{
     private String boundaryStationIp;
 
     /**
+     * ipV6
+     */
+    private String ipV6;
+
+    /**
      * 创建者
      */
     private String createUser;

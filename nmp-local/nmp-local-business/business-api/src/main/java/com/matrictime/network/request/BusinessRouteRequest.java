@@ -36,6 +36,11 @@ public class BusinessRouteRequest extends BaseRequest{
     private String ip;
 
     /**
+     * ipV6
+     */
+    private String ipV6;
+
+    /**
      * 创建者
      */
     private String createUser;

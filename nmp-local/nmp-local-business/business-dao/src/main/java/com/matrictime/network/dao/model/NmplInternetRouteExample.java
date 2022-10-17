@@ -694,6 +694,76 @@ public class NmplInternetRouteExample {
             addCriterion("is_exist not between", value1, value2, "isExist");
             return (Criteria) this;
         }
+
+        public Criteria andIpV6IsNull() {
+            addCriterion("ip_v6 is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6IsNotNull() {
+            addCriterion("ip_v6 is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6EqualTo(String value) {
+            addCriterion("ip_v6 =", value, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6NotEqualTo(String value) {
+            addCriterion("ip_v6 <>", value, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6GreaterThan(String value) {
+            addCriterion("ip_v6 >", value, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6GreaterThanOrEqualTo(String value) {
+            addCriterion("ip_v6 >=", value, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6LessThan(String value) {
+            addCriterion("ip_v6 <", value, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6LessThanOrEqualTo(String value) {
+            addCriterion("ip_v6 <=", value, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6Like(String value) {
+            addCriterion("ip_v6 like", value, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6NotLike(String value) {
+            addCriterion("ip_v6 not like", value, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6In(List<String> values) {
+            addCriterion("ip_v6 in", values, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6NotIn(List<String> values) {
+            addCriterion("ip_v6 not in", values, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6Between(String value1, String value2) {
+            addCriterion("ip_v6 between", value1, value2, "ipV6");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpV6NotBetween(String value1, String value2) {
+            addCriterion("ip_v6 not between", value1, value2, "ipV6");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

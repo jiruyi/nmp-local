@@ -36,6 +36,11 @@ public class StaticRouteRequest extends BaseRequest{
     private String serverIp;
 
     /**
+     * ipV6
+     */
+    private String ipV6;
+
+    /**
      * 删除标志（1代表存在 0代表删除）
      */
     private Boolean isExist;
