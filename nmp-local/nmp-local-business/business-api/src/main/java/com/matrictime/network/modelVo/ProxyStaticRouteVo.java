@@ -57,4 +57,9 @@ public class ProxyStaticRouteVo implements Serializable {
      * 基站id
      */
     private String stationId;
+
+    /**
+     * ipV6
+     */
+    private String ipV6;
 }

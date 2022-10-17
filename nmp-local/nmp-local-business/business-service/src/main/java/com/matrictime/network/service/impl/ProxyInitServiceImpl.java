@@ -144,6 +144,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
         List<ProxyDeviceInfoVo> localDeviceInfoVos = getLocalDeviceInfoVo(req.getIp());
         if(localStation==null&&CollectionUtils.isEmpty(localDeviceInfoVos)){
             proxyResp.setExist(false);
+            log.info("this ip device is not exsit");
         }else {
             proxyResp.setLocalStation(localStation);
             proxyResp.setLocalDeviceInfoVos(localDeviceInfoVos);
@@ -285,5 +286,6 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             nmplOutlinePcInfoVos.add(nmplOutlinePcInfoVo);
         }
         proxyResp.setNmplOutlinePcInfoVos(nmplOutlinePcInfoVos);
+        log.info("OutlinePcInfo query sucess");
     }
 }
