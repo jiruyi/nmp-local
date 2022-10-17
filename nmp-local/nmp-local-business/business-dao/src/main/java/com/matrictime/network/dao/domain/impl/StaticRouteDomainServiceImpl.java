@@ -19,6 +19,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
+
 /**
  * @author by wangqiang
  * @date 2022/10/9.
@@ -66,7 +68,7 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
         if(!StringUtils.isEmpty(staticRouteRequest.getServerIp())){
             criteria.andServerIpLike("%"+staticRouteRequest.getServerIp()+"%");
         }
-        criteria.andIsExistEqualTo(true);
+        criteria.andIsExistEqualTo(IS_EXIST);
         //分页查询数据
         Page page = PageHelper.startPage(staticRouteRequest.getPageNo(),staticRouteRequest.getPageSize());
         List<NmplStaticRoute> nmplInternetRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);

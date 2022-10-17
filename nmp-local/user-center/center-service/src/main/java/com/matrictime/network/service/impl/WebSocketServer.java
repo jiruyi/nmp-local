@@ -2,11 +2,14 @@ package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.api.request.LogoutReq;
 import com.matrictime.network.base.UcConstants;
+import com.matrictime.network.service.LoginService;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -24,7 +27,7 @@ import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
  */
 @Component
 @Slf4j
-@ServerEndpoint("/webSocket/{userId}")
+@ServerEndpoint("/webSocket/{account}")
 public class WebSocketServer {
 
     /**静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。*/
@@ -34,31 +37,34 @@ public class WebSocketServer {
     /**与某个客户端的连接会话，需要通过它来给客户端发送数据*/
     private Session session;
     /**接收用户id*/
-    private String userId = "";
+    private String account = "";
 
     public static ConcurrentHashMap<String,WebSocketServer> getWebSocketMap() {
         return webSocketMap;
     }
+
+    @Autowired
+    private LoginService loginService;
 
     /**
      * 连接建立成
      * 功调用的方法
      */
     @OnOpen
-    public void onOpen(Session session,@PathParam("userId") String userId) {
+    public void onOpen(Session session,@PathParam("account") String account) {
         this.session = session;
-        this.userId=userId;
-        if(webSocketMap.containsKey(userId)){
-            webSocketMap.remove(userId);
+        this.account=account;
+        if(webSocketMap.containsKey(account)){
+            webSocketMap.remove(account);
             //加入set中
-            webSocketMap.put(userId,this);
+            webSocketMap.put(account,this);
         }else{
             //加入set中
-            webSocketMap.put(userId,this);
+            webSocketMap.put(account,this);
             //在线数加1
             addOnlineCount();
         }
-        log.info("连接:"+userId+",当前在线用户数为:" + getOnlineCount());
+        log.info("连接:"+account+",当前在线用户数为:" + getOnlineCount());
         for (String key : webSocketMap.keySet()) {
             log.info("当前在线用户:"+key);
         }
@@ -70,27 +76,23 @@ public class WebSocketServer {
      */
     @OnClose
     public void onClose() {
-        if(webSocketMap.containsKey(userId)){
-            webSocketMap.remove(userId);
+        if(webSocketMap.containsKey(account)){
+            webSocketMap.remove(account);
             //从set中删除
             subOnlineCount();
-            if (!ParamCheckUtil.checkVoStrBlank(userId)){
-                int i = userId.lastIndexOf(KEY_SPLIT_UNDERLINE);
-                if (i>0){
-                    String delUserId = userId.substring(0,i);
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("userId",delUserId);
-                    jsonObject.put("destination",UcConstants.DESTINATION_IN);
-                    try {
-                        log.info("websocket系统退出地址:{},信息:{}","http://127.0.0.1:8007"+ UcConstants.URL_SYSLOGOUT,jsonObject.toJSONString());
-                        HttpClientUtil.post("http://127.0.0.1:8007"+ UcConstants.URL_SYSLOGOUT, jsonObject.toJSONString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            if (!ParamCheckUtil.checkVoStrBlank(account)){
+                try {
+                    log.info("websocket系统退出信息:{}",account);
+                    LogoutReq req = new LogoutReq();
+                    req.setLoginAccount(account);
+                    loginService.syslogout(req);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
             }
         }
-        log.info("用户退出:"+userId+",当前在线用户数为:" + getOnlineCount());
+        log.info("用户退出:"+account+",当前在线用户数为:" + getOnlineCount());
         for (String key : webSocketMap.keySet()) {
             log.info("当前在线用户:"+key);
         }
@@ -104,7 +106,7 @@ public class WebSocketServer {
      **/
     @OnMessage
     public void onMessage(String message, Session session) {
-        log.info("用户消息:"+userId+",报文:"+message);
+        log.info("用户消息:"+account+",报文:"+message);
         //可以群发消息
         //消息保存到数据库、redis
         if(StringUtils.isNotBlank(message)){
@@ -112,7 +114,7 @@ public class WebSocketServer {
                 //解析发送的报文
                 JSONObject jsonObject = JSON.parseObject(message);
                 //追加发送人(防止串改)
-                jsonObject.put("fromUserId",this.userId);
+                jsonObject.put("fromUserId",this.account);
                 String toUserId=jsonObject.getString("toUserId");
                 //传送给对应toUserId用户的websocket
                 if(StringUtils.isNotBlank(toUserId)&&webSocketMap.containsKey(toUserId)){
@@ -135,7 +137,7 @@ public class WebSocketServer {
     @OnError
     public void onError(Session session, Throwable error) {
 
-        log.error("用户错误:"+this.userId+",原因:"+error.getMessage());
+        log.error("用户错误:"+this.account+",原因:"+error.getMessage());
         error.printStackTrace();
     }
 

@@ -37,6 +37,7 @@ import java.util.Map;
 
 import static com.matrictime.network.base.constant.DataConstants.KEY_DEVICE_ID;
 import static com.matrictime.network.base.exception.ErrorMessageContants.IP_FORMAT_ERROR_MSG;
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
 /**
  * @author by wangqiang
@@ -188,7 +189,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
         if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
             criteria.andIdNotEqualTo(internetRouteRequest.getId());
         }
-        criteria.andIsExistEqualTo(true);
+        criteria.andIsExistEqualTo(IS_EXIST);
         List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
         return nmplInternetRoutes;
     }

@@ -57,10 +57,6 @@ import static com.matrictime.network.constant.DataConstants.SYSTEM_UC;
 @Slf4j
 public class LoginServiceImpl extends SystemBaseService implements LoginService {
 
-
-    @Autowired
-    private CommonService commonService;
-
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -87,13 +83,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     @Value("${im.pushTokenUrl}")
     private String pushTokenUrl;
-
-
-    @Autowired(required = false)
-    private GroupInfoMapper groupInfoMapper;
-
-    @Autowired(required = false)
-    private UserFriendMapper userFriendMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -330,152 +319,40 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     }
 
-    private void commonLogout(LogoutReq req) throws Exception{
-        checkLogoutParam(req);
-        User user = new User();
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andUserIdEqualTo(req.getUserId());
-        user.setLoginStatus(DataConfig.LOGIN_STATUS_OUT);
-        userMapper.updateByExampleSelective(user,userExample);
-    }
 
-
-    private void webSocketOnClose(String userId){
+    private void webSocketOnClose(String account){
         try {
-            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(userId);
+            WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(account);
             if(webSocketServer != null){
                 webSocketServer.serverClose();
             }
         }catch (Exception e){
-            log.info("user:{},webSocketOnClose Exception:{}",userId,e.getMessage());
+            log.info("user:{},webSocketOnClose Exception:{}",account,e.getMessage());
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result bind(BindReq req) {
-        Result result;
-        String encryFlag = DESTINATION_OUT;
-        try {
-
-            ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
-            req = jsonUtil.jsonReqToDto(req);
-
-            switch (req.getDestination()){
-                case DESTINATION_OUT:
-                    commonBind(req);
-                    req.setDestination(UcConstants.DESTINATION_FOR_DES);
-                    result = buildResult(null);
-                    break;
-                case DESTINATION_IN:
-                    ReqModel reqModel = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                    req.setUrl(UcConstants.URL_BIND);
-                    String param = JSONObject.toJSONString(req);
-                    reqModel.setParam(param);
-                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    log.info("非密区接收返回值LoginServiceImpl.bind resModel:{},reqHashCode:{}",JSONObject.toJSONString(resModel),System.identityHashCode(req));
-
-                    Object returnValue = resModel.getReturnValue();
-
-                    if(returnValue != null && returnValue instanceof String){
-                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),Result.class);
-                        return returnRes;
-                    }else {
-                        throw new SystemException("LoginServiceImpl.bind"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-
-                case UcConstants.DESTINATION_OUT_TO_IN:
-
-                    encryFlag = DESTINATION_OUT_TO_IN;
-                    // 入参解密
-                    ReqUtil<BindReq> reqUtil = new ReqUtil<>(req);
-                    BindReq desReq = reqUtil.decryJsonToReq(req);
-                    commonBind(desReq);
-                    // 返回值加密
-                    result = buildResult(null);
-                    break;
-                default:
-                    throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-
-            }
-
-        }catch (SystemException e){
-            log.error("LoginServiceImpl.bind SystemException:{}",e.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult(e);
-        }catch (Exception e){
-            log.error("LoginServiceImpl.bind Exception:{}",e.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult("");
-        }
-
-        try {
-            result = commonService.encrypt(req.getCommonKey(), encryFlag, result);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = failResult("");
-            log.error("LoginServiceImpl.bind encrypt Exception:{}",e.getMessage());
-        }
-        return result;
-    }
-
-    @Override
     public Result syslogout(LogoutReq req) {
-        Result result;
         try {
-            switch (req.getDestination()){
-                case DESTINATION_OUT:
-                    commonLogout(req);
-//                    webSocketOnClose(req.getCommonKey());
-                    removeToken(req.getUserId(),req.getDestination());
-                    break;
-                case DESTINATION_IN:
-                    ReqModel reqModel = new ReqModel();
-                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
-                    req.setUrl(UcConstants.URL_SYSLOGOUT);
-                    String param = JSONObject.toJSONString(req);
-                    reqModel.setParam(param);
-                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
-                    log.info("非密区接收返回值LoginServiceImpl.logout resModel:{}",JSONObject.toJSONString(resModel));
+            // 参数校验
+            checkSysLogoutParam(req);
+            User user = new User();
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andLoginAccountEqualTo(req.getLoginAccount());
+            user.setLoginStatus(DataConfig.LOGIN_STATUS_OUT);
 
-                    Object returnValue = resModel.getReturnValue();
-                    if(returnValue != null && returnValue instanceof String){
-                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
-                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),Result.class);
-                        if(returnRes.isSuccess()){
-                            if (StringUtils.isNotBlank(returnRes.getExtendMsg())){
-                                removeToken(returnRes.getExtendMsg(),req.getDestination());
-                            }
-//                            webSocketOnClose(req.getCommonKey());
-                        }
-                        return returnRes;
-                    }else {
-                        throw new Exception("LoginServiceImpl.logout"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
-                    }
-
-                case UcConstants.DESTINATION_OUT_TO_IN:
-                    // 入参解密
-                    commonLogout(req);
-                    // 返回值加密
-
-                    return buildResult(null,null,null,req.getUserId());
-                default:
-                    throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-
+            List<User> users = userMapper.selectByExample(userExample);
+            if (!CollectionUtils.isEmpty(users)){
+                // 删除token
+                delToken(users.get(0).getUserId(),req.getDestination());
             }
 
-
-            result = buildResult(null);
-        }catch (SystemException e){
-            log.error("LoginServiceImpl.logout SystemException:{}",e.getMessage());
-            result = failResult(e);
+            return buildResult(userMapper.updateByExampleSelective(user,userExample));
         }catch (Exception e){
-            log.error("LoginServiceImpl.logout Exception:{}",e.getMessage());
-            result = failResult("");
+            log.info("syslogout:{}",e.getMessage());
         }
-        return result;
+        return buildResult(null);
     }
 
     @Override
@@ -590,6 +467,76 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 //            result = failResult("");
 //        }
 //
+//        return result;
+//    }
+
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public Result bind(BindReq req) {
+//        Result result;
+//        String encryFlag = DESTINATION_OUT;
+//        try {
+//
+//            ReqUtil<BindReq> jsonUtil = new ReqUtil<>(req);
+//            req = jsonUtil.jsonReqToDto(req);
+//
+//            switch (req.getDestination()){
+//                case DESTINATION_OUT:
+//                    commonBind(req);
+//                    req.setDestination(UcConstants.DESTINATION_FOR_DES);
+//                    result = buildResult(null);
+//                    break;
+//                case DESTINATION_IN:
+//                    ReqModel reqModel = new ReqModel();
+//                    req.setDestination(UcConstants.DESTINATION_OUT_TO_IN);
+//                    req.setUrl(UcConstants.URL_BIND);
+//                    String param = JSONObject.toJSONString(req);
+//                    reqModel.setParam(param);
+//                    ResModel resModel = JServiceImpl.syncSendMsg(reqModel);
+//                    log.info("非密区接收返回值LoginServiceImpl.bind resModel:{},reqHashCode:{}",JSONObject.toJSONString(resModel),System.identityHashCode(req));
+//
+//                    Object returnValue = resModel.getReturnValue();
+//
+//                    if(returnValue != null && returnValue instanceof String){
+//                        ResModel syncResModel = JSONObject.parseObject((String) returnValue, ResModel.class);
+//                        Result returnRes = JSONObject.parseObject(syncResModel.getReturnValue().toString(),Result.class);
+//                        return returnRes;
+//                    }else {
+//                        throw new SystemException("LoginServiceImpl.bind"+ErrorMessageContants.RPC_RETURN_ERROR_MSG);
+//                    }
+//
+//                case UcConstants.DESTINATION_OUT_TO_IN:
+//
+//                    encryFlag = DESTINATION_OUT_TO_IN;
+//                    // 入参解密
+//                    ReqUtil<BindReq> reqUtil = new ReqUtil<>(req);
+//                    BindReq desReq = reqUtil.decryJsonToReq(req);
+//                    commonBind(desReq);
+//                    // 返回值加密
+//                    result = buildResult(null);
+//                    break;
+//                default:
+//                    throw new Exception("Destination"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+//
+//            }
+//
+//        }catch (SystemException e){
+//            log.error("LoginServiceImpl.bind SystemException:{}",e.getMessage());
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            result = failResult(e);
+//        }catch (Exception e){
+//            log.error("LoginServiceImpl.bind Exception:{}",e.getMessage());
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            result = failResult("");
+//        }
+//
+//        try {
+//            result = commonService.encrypt(req.getCommonKey(), encryFlag, result);
+//        } catch (Exception e) {
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            result = failResult("");
+//            log.error("LoginServiceImpl.bind encrypt Exception:{}",e.getMessage());
+//        }
 //        return result;
 //    }
 
@@ -737,6 +684,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         }
     }
 
+    private void checkSysLogoutParam(LogoutReq req) throws Exception{
+        if(ParamCheckUtil.checkVoStrBlank(req.getLoginAccount())){
+            throw new Exception("loginAccount"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
     private void checkLoginParam(LoginReq req) throws Exception{
         if(null == req){
             throw new Exception("req"+ErrorMessageContants.PARAM_IS_NULL_MSG);
@@ -870,26 +823,5 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         pushToken(req);
     }
 
-    private List<String> getPushOnlineUsers(String userId, String destination){
-        List<String> resUsers = new ArrayList<>();
-        UserFriendExample example = new UserFriendExample();
-        example.createCriteria().andUserIdEqualTo(userId).andIsExistEqualTo(IS_EXIST);
-        List<UserFriend> userFriends = userFriendMapper.selectByExample(example);
-        for (UserFriend userFriend:userFriends){
-            UserExample userExample = new UserExample();
-            userExample.createCriteria().andUserIdEqualTo(userFriend.getFriendUserId()).andLoginStatusEqualTo(LOGIN_STATUS_IN).andIsExistEqualTo(IS_EXIST);
-            List<User> users = userMapper.selectByExample(userExample);
-            if (!CollectionUtils.isEmpty(users)){
-                resUsers.add(users.get(0).getUserId()+KEY_SPLIT_UNDERLINE+destination);
-            }
-        }
-        return  resUsers;
-    }
 
-    private PushUserVo getpushInfo(UserVo userVo){
-        PushUserVo pushUserVo = new PushUserVo();
-        BeanUtils.copyProperties(userVo,pushUserVo);
-        pushUserVo.setFriendUserId(pushUserVo.getUserId());
-        return pushUserVo;
-    }
 }

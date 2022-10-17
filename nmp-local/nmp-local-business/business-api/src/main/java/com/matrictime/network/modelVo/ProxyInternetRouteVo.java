@@ -52,4 +52,9 @@ public class ProxyInternetRouteVo implements Serializable {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * ipV6
+     */
+    private String ipV6;
 }

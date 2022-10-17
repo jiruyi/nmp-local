@@ -36,6 +36,7 @@ import java.util.Map;
 
 import static com.matrictime.network.base.constant.DataConstants.KEY_DEVICE_ID;
 import static com.matrictime.network.base.exception.ErrorMessageContants.IP_FORMAT_ERROR_MSG;
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
 /**
  * @author by wangqiang
@@ -184,7 +185,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
         if(!ObjectUtils.isEmpty(staticRouteRequest.getId())){
             criteria.andIdNotEqualTo(staticRouteRequest.getId());
         }
-        criteria.andIsExistEqualTo(true);
+        criteria.andIsExistEqualTo(IS_EXIST);
         List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
         return nmplStaticRoutes;
     }
@@ -208,7 +209,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
         if(!StringUtils.isEmpty(staticRouteRequest.getIpV6())){
             criteria.andIpV6EqualTo(staticRouteRequest.getIpV6());
         }
-        criteria.andIsExistEqualTo(true);
+        criteria.andIsExistEqualTo(IS_EXIST);
         List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
         return nmplStaticRoutes;
     }

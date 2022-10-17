@@ -35,6 +35,7 @@ import java.util.Map;
 
 import static com.matrictime.network.base.constant.DataConstants.KEY_DEVICE_ID;
 import static com.matrictime.network.base.exception.ErrorMessageContants.IP_FORMAT_ERROR_MSG;
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
 /**
  * @author by wangqiang
@@ -191,7 +192,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
         if(!StringUtils.isEmpty(businessRouteRequest.getIpV6())){
             criteria.andIpV6EqualTo(businessRouteRequest.getIpV6());
         }
-        criteria.andIsExistEqualTo(true);
+        criteria.andIsExistEqualTo(IS_EXIST);
         List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);
         return nmplBusinessRoutes;
     }
