@@ -64,7 +64,8 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
     public Result<Integer> insert(BusinessRouteRequest businessRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            if(!CommonCheckUtil.isIpv4Legal(businessRouteRequest.getIp())){
+            if(!CommonCheckUtil.isIpv4Legal(businessRouteRequest.getIp()) &&
+                    !CommonCheckUtil.isIpv6Legal(businessRouteRequest.getIpV6())){
                 throw new RuntimeException(IP_FORMAT_ERROR_MSG);
             }
             if(!ObjectUtils.isEmpty(checkDataOnly(businessRouteRequest))){
@@ -108,7 +109,8 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
     public Result<Integer> update(BusinessRouteRequest businessRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            if(!CommonCheckUtil.isIpv4Legal(businessRouteRequest.getIp())){
+            if(!CommonCheckUtil.isIpv4Legal(businessRouteRequest.getIp()) &&
+                    !CommonCheckUtil.isIpv6Legal(businessRouteRequest.getIpV6())){
                 throw new RuntimeException(IP_FORMAT_ERROR_MSG);
             }
             if(!ObjectUtils.isEmpty(checkDataOnly(businessRouteRequest))){
@@ -186,6 +188,9 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
         }
         if(!StringUtils.isEmpty(businessRouteRequest.getIp())){
             criteria.andIpEqualTo(businessRouteRequest.getIp());
+        }
+        if(!StringUtils.isEmpty(businessRouteRequest.getIpV6())){
+            criteria.andIpV6EqualTo(businessRouteRequest.getIpV6());
         }
         criteria.andIsExistEqualTo(IS_EXIST);
         List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);

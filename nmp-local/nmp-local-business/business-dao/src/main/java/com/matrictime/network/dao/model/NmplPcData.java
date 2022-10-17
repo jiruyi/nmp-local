@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 基站下一体机信息上报表
  * @author   hexu
- * @date   2022-10-09
+ * @date   2022-10-17
  */
 @Data
 public class NmplPcData {
@@ -36,9 +36,14 @@ public class NmplPcData {
     private Byte status;
 
     /**
-     * 消耗密钥量(单位byte)
+     * 上行消耗密钥量(单位byte)
      */
-    private Integer keyNum;
+    private Integer upKeyNum;
+
+    /**
+     * 下行消耗密钥量(单位byte)
+     */
+    private Integer downKeyNum;
 
     /**
      * 上报时间
@@ -85,12 +90,20 @@ public class NmplPcData {
         this.status = status;
     }
 
-    public Integer getKeyNum() {
-        return keyNum;
+    public Integer getUpKeyNum() {
+        return upKeyNum;
     }
 
-    public void setKeyNum(Integer keyNum) {
-        this.keyNum = keyNum;
+    public void setUpKeyNum(Integer upKeyNum) {
+        this.upKeyNum = upKeyNum;
+    }
+
+    public Integer getDownKeyNum() {
+        return downKeyNum;
+    }
+
+    public void setDownKeyNum(Integer downKeyNum) {
+        this.downKeyNum = downKeyNum;
     }
 
     public Date getReportTime() {

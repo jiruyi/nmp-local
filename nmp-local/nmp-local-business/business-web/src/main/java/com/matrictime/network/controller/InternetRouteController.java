@@ -35,7 +35,7 @@ public class InternetRouteController {
             if(StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
             }
-            if(StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
+            if(StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp()) && StringUtils.isEmpty(internetRouteRequest.getIpV6())){
                 return new Result<>(false,ErrorMessageContants.DEVICE_IP_IS_NULL_MSG);
             }
             return internetRouteService.insert(internetRouteRequest);
@@ -66,7 +66,7 @@ public class InternetRouteController {
             if(StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
             }
-            if(StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
+            if(StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp()) && StringUtils.isEmpty(internetRouteRequest.getIpV6())){
                 return new Result<>(false,ErrorMessageContants.DEVICE_IP_IS_NULL_MSG);
             }
             return internetRouteService.update(internetRouteRequest);

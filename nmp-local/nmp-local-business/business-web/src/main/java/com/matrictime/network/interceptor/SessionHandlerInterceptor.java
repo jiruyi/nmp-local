@@ -6,6 +6,7 @@ import com.matrictime.network.base.enums.LoginStatusEnum;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.UserDomainService;
 import com.matrictime.network.dao.model.NmplUser;
+import com.matrictime.network.shiro.ShiroUtils;
 import com.matrictime.network.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
