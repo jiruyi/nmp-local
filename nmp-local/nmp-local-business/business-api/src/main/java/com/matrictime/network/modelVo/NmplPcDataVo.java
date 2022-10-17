@@ -32,9 +32,14 @@ public class NmplPcDataVo {
     private Byte status;
 
     /**
-     * 消耗密钥量(单位byte)
+     * 上行消耗密钥量(单位byte)
      */
-    private Integer keyNum;
+    private double upKeyNum;
+
+    /**
+     * 下行消耗密钥量(单位byte)
+     */
+    private double downKeyNum;
 
     /**
      * 上报时间

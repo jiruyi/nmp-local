@@ -106,8 +106,8 @@ public class TaskServiceImpl implements TaskService {
                 log.info("pcData:{}",e.getMessage());
                 throw new RuntimeException(e);
             }
-//            criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());
-//            nmplPcDataMapper.deleteByExample(nmplPcDataExample);
+            criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());
+            nmplPcDataMapper.deleteByExample(nmplPcDataExample);
         }
     }
 }

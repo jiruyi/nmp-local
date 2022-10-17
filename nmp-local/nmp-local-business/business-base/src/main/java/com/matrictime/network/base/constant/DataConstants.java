@@ -169,4 +169,6 @@ public class DataConstants {
     public static final String REGION_TYPE = "01";
     public static final String VILLAGE_TYPE = "02";
 
+    public static final double BYTE_TO_KB = 128.0;
+
 }
