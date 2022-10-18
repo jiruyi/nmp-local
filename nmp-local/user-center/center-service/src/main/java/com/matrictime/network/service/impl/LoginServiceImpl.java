@@ -177,10 +177,6 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             throw new SystemException(ErrorMessageContants.USERNAME_NO_EXIST_MSG);
         }else {
             User user = users.get(0);
-            // 判断用户是否已登录
-            if (LOGIN_STATUS_IN.equals(user.getLoginStatus())){
-                throw new SystemException(ErrorMessageContants.USER_LOGIN_MSG);
-            }
             switch (req.getLoginType()){
                 case LOGIN_TYPE_ACCOUNT:
                     // 普通登录
@@ -194,6 +190,14 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                     break;
                 default:
                     throw new SystemException("登录方式"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
+            }
+
+            // 判断用户是否已登录
+            if (LOGIN_STATUS_IN.equals(user.getLoginStatus())){
+                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(req.getLoginAccount());
+                if(webSocketServer != null){
+                    webSocketServer.sendMessage(LOGOUT_MSG);
+                }
             }
 
             user.setDeviceId(req.getDeviceId());
