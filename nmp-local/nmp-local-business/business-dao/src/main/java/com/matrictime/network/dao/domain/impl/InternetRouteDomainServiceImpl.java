@@ -57,14 +57,19 @@ public class InternetRouteDomainServiceImpl implements InternetRouteDomainServic
         List<InternetRouteVo> list = new ArrayList<>();
         NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
         NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
+        NmplInternetRouteExample.Criteria criteria1 = nmplInternetRouteExample.createCriteria();
         nmplInternetRouteExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
             criteria.andNetworkIdLike("%"+internetRouteRequest.getNetworkId()+"%");
+            criteria1.andNetworkIdLike("%"+internetRouteRequest.getNetworkId()+"%");
         }
         if(!StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
             criteria.andBoundaryStationIpLike("%"+internetRouteRequest.getBoundaryStationIp()+"%");
+            criteria1.andIpV6Like("%"+internetRouteRequest.getBoundaryStationIp()+"%");
         }
+        criteria1.andIsExistEqualTo(true);
         criteria.andIsExistEqualTo(true);
+        nmplInternetRouteExample.or(criteria1);
         //分页查询数据
         Page page = PageHelper.startPage(internetRouteRequest.getPageNo(),internetRouteRequest.getPageSize());
         List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);

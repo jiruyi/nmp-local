@@ -58,17 +58,23 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
         List<StaticRouteVo> list = new ArrayList<>();
         NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
         NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
+        NmplStaticRouteExample.Criteria criteria1 = nmplStaticRouteExample.createCriteria();
         nmplStaticRouteExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
             criteria.andNetworkIdLike("%"+staticRouteRequest.getNetworkId()+"%");
+            criteria1.andNetworkIdLike("%"+staticRouteRequest.getNetworkId()+"%");
         }
         if(!StringUtils.isEmpty(staticRouteRequest.getStationId())){
             criteria.andStationIdEqualTo(staticRouteRequest.getStationId());
+            criteria1.andStationIdEqualTo(staticRouteRequest.getStationId());
         }
         if(!StringUtils.isEmpty(staticRouteRequest.getServerIp())){
             criteria.andServerIpLike("%"+staticRouteRequest.getServerIp()+"%");
+            criteria1.andIpV6Like("%"+staticRouteRequest.getServerIp()+"%");
         }
         criteria.andIsExistEqualTo(IS_EXIST);
+        criteria1.andIsExistEqualTo(IS_EXIST);
+        nmplStaticRouteExample.or(criteria1);
         //分页查询数据
         Page page = PageHelper.startPage(staticRouteRequest.getPageNo(),staticRouteRequest.getPageSize());
         List<NmplStaticRoute> nmplInternetRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);

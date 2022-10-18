@@ -1,16 +1,11 @@
-package com.matrictime.network.request;
+package com.matrictime.network.modelVo;
 
-import com.matrictime.network.modelVo.NmplBillVo;
-import com.matrictime.network.modelVo.NmplPcDataVo;
-import com.matrictime.network.modelVo.PcDataVo;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Data
-public class PcDataReq extends BaseRequest{
+public class PcDataVo {
     /**
      * 自增主键
      */
@@ -50,18 +45,4 @@ public class PcDataReq extends BaseRequest{
      * 上报时间
      */
     private Date reportTime;
-
-    /**
-     * 开始时间
-     */
-    private String startTime;
-
-    /**
-     * 结束时间
-     */
-    private String endTime;
-    /**
-     * 批量导入
-     */
-    List<PcDataVo> nmplPcDataVoList = new ArrayList<>();
 }
