@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,21 +177,35 @@ public class InternetRouteServiceImpl implements InternetRouteService {
      * @return
      */
     private List<NmplInternetRoute> checkIp(InternetRouteRequest internetRouteRequest){
-        InternetRouteRequest checkIp = new InternetRouteRequest();
-        BeanUtils.copyProperties(internetRouteRequest,checkIp);
-        NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
-        NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
+//        InternetRouteRequest checkIp = new InternetRouteRequest();
+//        BeanUtils.copyProperties(internetRouteRequest,checkIp);
+        List<NmplInternetRoute> nmplInternetRoutes = new ArrayList<>();
         if(!StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
+            NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
+            NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
+
             criteria.andBoundaryStationIpEqualTo(internetRouteRequest.getBoundaryStationIp());
+
+            if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
+                criteria.andIdNotEqualTo(internetRouteRequest.getId());
+            }
+            criteria.andIsExistEqualTo(IS_EXIST);
+            nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
         }
+
         if(!ObjectUtils.isEmpty(internetRouteRequest.getIpV6())){
-            criteria.andIpV6EqualTo(internetRouteRequest.getIpV6());
+            NmplInternetRouteExample nmplInternetRouteExample1 = new NmplInternetRouteExample();
+            NmplInternetRouteExample.Criteria criteria1 = nmplInternetRouteExample1.createCriteria();
+            criteria1.andIpV6EqualTo(internetRouteRequest.getIpV6());
+            if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
+                criteria1.andIdNotEqualTo(internetRouteRequest.getId());
+            }
+            criteria1.andIsExistEqualTo(IS_EXIST);
+            List<NmplInternetRoute> nmplInternetRoutes1 = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample1);
+
+            nmplInternetRoutes.addAll(nmplInternetRoutes1);
         }
-        if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
-            criteria.andIdNotEqualTo(internetRouteRequest.getId());
-        }
-        criteria.andIsExistEqualTo(IS_EXIST);
-        List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
+
         return nmplInternetRoutes;
     }
 

@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -182,6 +183,9 @@ public class StaticRouteServiceImpl implements StaticRouteService {
         if(!StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
             criteria.andNetworkIdEqualTo(staticRouteRequest.getNetworkId());
         }
+        if(!StringUtils.isEmpty(staticRouteRequest.getStationId())){
+            criteria.andStationIdEqualTo(staticRouteRequest.getStationId());
+        }
         if(!ObjectUtils.isEmpty(staticRouteRequest.getId())){
             criteria.andIdNotEqualTo(staticRouteRequest.getId());
         }
@@ -196,21 +200,31 @@ public class StaticRouteServiceImpl implements StaticRouteService {
      * @return
      */
     private List<NmplStaticRoute> checkIp(StaticRouteRequest staticRouteRequest){
-        StaticRouteRequest checkSeverIp = new StaticRouteRequest();
-        BeanUtils.copyProperties(staticRouteRequest,checkSeverIp);
-        NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
-        NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
-        if(!ObjectUtils.isEmpty(staticRouteRequest.getId())){
-            criteria.andIdNotEqualTo(staticRouteRequest.getId());
-        }
+//        StaticRouteRequest checkSeverIp = new StaticRouteRequest();
+//        BeanUtils.copyProperties(staticRouteRequest,checkSeverIp);
+        List<NmplStaticRoute> nmplStaticRoutes = new ArrayList<>();
         if(!StringUtils.isEmpty(staticRouteRequest.getServerIp())){
+            NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
+            NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
+            if(!ObjectUtils.isEmpty(staticRouteRequest.getId())){
+                criteria.andIdNotEqualTo(staticRouteRequest.getId());
+            }
             criteria.andServerIpEqualTo(staticRouteRequest.getServerIp());
+            criteria.andIsExistEqualTo(IS_EXIST);
+            nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
         }
         if(!StringUtils.isEmpty(staticRouteRequest.getIpV6())){
-            criteria.andIpV6EqualTo(staticRouteRequest.getIpV6());
+            NmplStaticRouteExample nmplStaticRouteExample1= new NmplStaticRouteExample();
+            NmplStaticRouteExample.Criteria criteria1 = nmplStaticRouteExample1.createCriteria();
+            if(!ObjectUtils.isEmpty(staticRouteRequest.getId())){
+                criteria1.andIdNotEqualTo(staticRouteRequest.getId());
+            }
+            criteria1.andIpV6EqualTo(staticRouteRequest.getIpV6());
+            criteria1.andIsExistEqualTo(IS_EXIST);
+            List<NmplStaticRoute> nmplStaticRoutes1 = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample1);
+            nmplStaticRoutes.addAll(nmplStaticRoutes1);
         }
-        criteria.andIsExistEqualTo(IS_EXIST);
-        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
+
         return nmplStaticRoutes;
     }
 

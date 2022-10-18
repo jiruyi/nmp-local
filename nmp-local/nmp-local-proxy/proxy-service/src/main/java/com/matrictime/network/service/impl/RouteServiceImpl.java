@@ -478,9 +478,10 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             criteria.andIdEqualTo(businessRouteVo.getId());
             List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);
             if(nmplBusinessRoutes.size() > NumberUtils.INTEGER_ZERO &&
-                    !StringUtils.isEmpty(nmplBusinessRoutes.get(0).getIp()) &&
                     !StringUtils.isEmpty(nmplBusinessRoutes.get(0).getNetworkId())){
-                nmplBusinessRouteMapper.updateByExampleSelective(nmplBusinessRoute,nmplBusinessRouteExample);
+                if(!StringUtils.isEmpty(nmplBusinessRoutes.get(0).getIp())||!StringUtils.isEmpty(nmplBusinessRoutes.get(0).getIpV6())){
+                    nmplBusinessRouteMapper.updateByExampleSelective(nmplBusinessRoute,nmplBusinessRouteExample);
+                }
             }
             if(nmplBusinessRoutes.size() <= NumberUtils.INTEGER_ZERO){
                 nmplBusinessRouteMapper.insertSelective(nmplBusinessRoute);
@@ -500,9 +501,11 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             criteria.andIdEqualTo(nmplInternetRoute.getId());
             List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
             if(nmplInternetRoutes.size() > NumberUtils.INTEGER_ZERO &&
-                    !StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getNetworkId()) &&
-                    !StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getBoundaryStationIp())){
-                nmplInternetRouteMapper.updateByExampleSelective(nmplInternetRoute,nmplInternetRouteExample);
+                    !StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getNetworkId())){
+                if(!StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getBoundaryStationIp())||
+                        !StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getIpV6())){
+                    nmplInternetRouteMapper.updateByExampleSelective(nmplInternetRoute,nmplInternetRouteExample);
+                }
             }
             if(nmplInternetRoutes.size() <= NumberUtils.INTEGER_ZERO){
                 nmplInternetRouteMapper.insertSelective(nmplInternetRoute);
@@ -521,9 +524,11 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             criteria.andIdEqualTo(nmplStaticRoute.getId());
             List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
             if(nmplStaticRoutes.size() > NumberUtils.INTEGER_ZERO &&
-                    !StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getNetworkId()) &&
-                    !StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getServerIp())){
-                nmplStaticRouteMapper.updateByExampleSelective(nmplStaticRoute,nmplStaticRouteExample);
+                    !StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getNetworkId())){
+                if(!StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getServerIp())
+                        ||!StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getIpV6())){
+                    nmplStaticRouteMapper.updateByExampleSelective(nmplStaticRoute,nmplStaticRouteExample);
+                }
             }
             if(nmplStaticRoutes.size() <= NumberUtils.INTEGER_ZERO){
                 nmplStaticRouteMapper.insertSelective(nmplStaticRoute);

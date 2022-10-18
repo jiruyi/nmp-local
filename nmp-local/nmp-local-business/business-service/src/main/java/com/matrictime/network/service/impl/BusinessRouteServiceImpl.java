@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,21 +180,32 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
      * @return
      */
     private List<NmplBusinessRoute> checkIp(BusinessRouteRequest businessRouteRequest){
-        BusinessRouteRequest checkIp = new BusinessRouteRequest();
-        BeanUtils.copyProperties(businessRouteRequest,checkIp);
-        NmplBusinessRouteExample nmplBusinessRouteExample = new NmplBusinessRouteExample();
-        NmplBusinessRouteExample.Criteria criteria = nmplBusinessRouteExample.createCriteria();
-        if(!ObjectUtils.isEmpty(businessRouteRequest.getId())){
-            criteria.andIdNotEqualTo(businessRouteRequest.getId());
-        }
+//        BusinessRouteRequest checkIp = new BusinessRouteRequest();
+//        BeanUtils.copyProperties(businessRouteRequest,checkIp);
+        List<NmplBusinessRoute> nmplBusinessRoutes = new ArrayList<>();
+
         if(!StringUtils.isEmpty(businessRouteRequest.getIp())){
+            NmplBusinessRouteExample nmplBusinessRouteExample = new NmplBusinessRouteExample();
+            NmplBusinessRouteExample.Criteria criteria = nmplBusinessRouteExample.createCriteria();
+            if(!ObjectUtils.isEmpty(businessRouteRequest.getId())){
+                criteria.andIdNotEqualTo(businessRouteRequest.getId());
+            }
             criteria.andIpEqualTo(businessRouteRequest.getIp());
+            criteria.andIsExistEqualTo(IS_EXIST);
+            nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);
         }
+
         if(!StringUtils.isEmpty(businessRouteRequest.getIpV6())){
-            criteria.andIpV6EqualTo(businessRouteRequest.getIpV6());
+            NmplBusinessRouteExample nmplBusinessRouteExample1 = new NmplBusinessRouteExample();
+            NmplBusinessRouteExample.Criteria criteria1 = nmplBusinessRouteExample1.createCriteria();
+            criteria1.andIpV6EqualTo(businessRouteRequest.getIpV6());
+            if(!ObjectUtils.isEmpty(businessRouteRequest.getId())){
+                criteria1.andIdNotEqualTo(businessRouteRequest.getId());
+            }
+            criteria1.andIsExistEqualTo(IS_EXIST);
+            List<NmplBusinessRoute> nmplBusinessRoutes1 = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample1);
+            nmplBusinessRoutes.addAll(nmplBusinessRoutes1);
         }
-        criteria.andIsExistEqualTo(IS_EXIST);
-        List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);
         return nmplBusinessRoutes;
     }
 
