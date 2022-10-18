@@ -6,6 +6,7 @@ import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.NmplPcDataVo;
+import com.matrictime.network.modelVo.PcDataVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.DataCollectReq;
@@ -254,8 +255,8 @@ public class BaseStationController {
         try {
             if (pcDataReq.getNmplPcDataVoList()!=null&&pcDataReq.getNmplPcDataVoList().size()>maxSize){
                 List<Result> resultList = new ArrayList<>();
-                List<List<NmplPcDataVo>> data = ListSplitUtil.split(pcDataReq.getNmplPcDataVoList(),maxSize);
-                for (List<NmplPcDataVo> datum : data) {
+                List<List<PcDataVo>> data = ListSplitUtil.split(pcDataReq.getNmplPcDataVoList(),maxSize);
+                for (List<PcDataVo> datum : data) {
                     PcDataReq req = new PcDataReq();
                     req.setNmplPcDataVoList(datum);
                     resultList.add(pcDataService.save(req).get());

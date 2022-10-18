@@ -49,10 +49,10 @@
         order by report_time desc
     </select>
 
-    <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.NmplPcDataVo">
+    <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.PcDataVo">
         insert into nmpl_pc_data (station_id, device_id, pc_network_id, status, up_key_num,down_key_num,report_time) values
             <foreach collection ="list" item="pcData" separator =",">
-            (#{pcData.stationId},#{pcData.deviceId}, #{pcData.pcNetworkId}, #{pcData.status}, #{PcData.upKeyNum},
+            (#{pcData.stationId},#{pcData.deviceId}, #{pcData.pcNetworkId}, #{pcData.status}, #{pcData.upKeyNum},
              #{pcData.downKeyNum},#{pcData.reportTime})
         </foreach >
     </insert>
