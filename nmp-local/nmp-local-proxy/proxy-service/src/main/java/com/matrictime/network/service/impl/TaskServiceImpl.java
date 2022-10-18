@@ -81,8 +81,9 @@ public class TaskServiceImpl implements TaskService {
         if(!CollectionUtils.isEmpty(nmplDeviceLogs)){
             try {
                 String post = HttpClientUtil.post(url, JSON.toJSONString(nmplDeviceLogs));
+                log.info("logPush result:{}",post);
             }catch (Exception e){
-                log.info("logPush:{}",e.getMessage());
+                log.info("logPush Exception:{}",e.getMessage());
                 throw new RuntimeException(e);
             }
             //删除已经推送的日志
@@ -102,8 +103,9 @@ public class TaskServiceImpl implements TaskService {
                 JSONObject req = new JSONObject();
                 req.put("nmplPcDataVoList",nmplPcData);
                 String post = HttpClientUtil.post(url, req.toJSONString());
+                log.info("pcData:{}",post);
             }catch (Exception e){
-                log.info("pcData:{}",e.getMessage());
+                log.info("pcData Exception:{}",e.getMessage());
                 throw new RuntimeException(e);
             }
             criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());

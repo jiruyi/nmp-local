@@ -7,7 +7,8 @@
     <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
     <result column="pc_network_id" jdbcType="VARCHAR" property="pcNetworkId" />
     <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="key_num" jdbcType="INTEGER" property="keyNum" />
+    <result column="up_key_num" jdbcType="INTEGER" property="upKeyNum" />
+    <result column="down_key_num" jdbcType="INTEGER" property="downKeyNum" />
     <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -69,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, station_id, device_id, pc_network_id, status, key_num, report_time
+    id, station_id, device_id, pc_network_id, status, up_key_num, down_key_num, report_time
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplPcDataExample" resultMap="BaseResultMap">
     select
@@ -104,11 +105,11 @@
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplPcData">
     insert into nmpl_pc_data (id, station_id, device_id, 
-      pc_network_id, status, key_num, 
-      report_time)
+      pc_network_id, status, up_key_num, 
+      down_key_num, report_time)
     values (#{id,jdbcType=BIGINT}, #{stationId,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, 
-      #{pcNetworkId,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{keyNum,jdbcType=INTEGER}, 
-      #{reportTime,jdbcType=TIMESTAMP})
+      #{pcNetworkId,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{upKeyNum,jdbcType=INTEGER}, 
+      #{downKeyNum,jdbcType=INTEGER}, #{reportTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplPcData">
     insert into nmpl_pc_data
@@ -128,8 +129,11 @@
       <if test="status != null">
         status,
       </if>
-      <if test="keyNum != null">
-        key_num,
+      <if test="upKeyNum != null">
+        up_key_num,
+      </if>
+      <if test="downKeyNum != null">
+        down_key_num,
       </if>
       <if test="reportTime != null">
         report_time,
@@ -151,8 +155,11 @@
       <if test="status != null">
         #{status,jdbcType=TINYINT},
       </if>
-      <if test="keyNum != null">
-        #{keyNum,jdbcType=INTEGER},
+      <if test="upKeyNum != null">
+        #{upKeyNum,jdbcType=INTEGER},
+      </if>
+      <if test="downKeyNum != null">
+        #{downKeyNum,jdbcType=INTEGER},
       </if>
       <if test="reportTime != null">
         #{reportTime,jdbcType=TIMESTAMP},
@@ -183,8 +190,11 @@
       <if test="record.status != null">
         status = #{record.status,jdbcType=TINYINT},
       </if>
-      <if test="record.keyNum != null">
-        key_num = #{record.keyNum,jdbcType=INTEGER},
+      <if test="record.upKeyNum != null">
+        up_key_num = #{record.upKeyNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.downKeyNum != null">
+        down_key_num = #{record.downKeyNum,jdbcType=INTEGER},
       </if>
       <if test="record.reportTime != null">
         report_time = #{record.reportTime,jdbcType=TIMESTAMP},
@@ -201,7 +211,8 @@
       device_id = #{record.deviceId,jdbcType=VARCHAR},
       pc_network_id = #{record.pcNetworkId,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=TINYINT},
-      key_num = #{record.keyNum,jdbcType=INTEGER},
+      up_key_num = #{record.upKeyNum,jdbcType=INTEGER},
+      down_key_num = #{record.downKeyNum,jdbcType=INTEGER},
       report_time = #{record.reportTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -222,8 +233,11 @@
       <if test="status != null">
         status = #{status,jdbcType=TINYINT},
       </if>
-      <if test="keyNum != null">
-        key_num = #{keyNum,jdbcType=INTEGER},
+      <if test="upKeyNum != null">
+        up_key_num = #{upKeyNum,jdbcType=INTEGER},
+      </if>
+      <if test="downKeyNum != null">
+        down_key_num = #{downKeyNum,jdbcType=INTEGER},
       </if>
       <if test="reportTime != null">
         report_time = #{reportTime,jdbcType=TIMESTAMP},
@@ -237,7 +251,8 @@
       device_id = #{deviceId,jdbcType=VARCHAR},
       pc_network_id = #{pcNetworkId,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
-      key_num = #{keyNum,jdbcType=INTEGER},
+      up_key_num = #{upKeyNum,jdbcType=INTEGER},
+      down_key_num = #{downKeyNum,jdbcType=INTEGER},
       report_time = #{reportTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
