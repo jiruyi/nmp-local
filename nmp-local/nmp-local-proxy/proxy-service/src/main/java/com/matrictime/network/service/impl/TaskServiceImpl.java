@@ -2,10 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.matrictime.network.dao.mapper.NmplDeviceLogMapper;
-import com.matrictime.network.dao.mapper.NmplKeycenterHeartInfoMapper;
-import com.matrictime.network.dao.mapper.NmplPcDataMapper;
-import com.matrictime.network.dao.mapper.NmplStationHeartInfoMapper;
+import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.HttpClientUtil;
@@ -33,6 +30,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private NmplPcDataMapper nmplPcDataMapper;
+
+    @Resource
+    private NmplDataCollectMapper nmplDataCollectMapper;
 
     @Override
     public void heartReport(String url) {
@@ -110,6 +110,30 @@ public class TaskServiceImpl implements TaskService {
             }
             criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());
             nmplPcDataMapper.deleteByExample(nmplPcDataExample);
+        }
+    }
+
+
+    @Override
+    public void dataCollectPush(String url) {
+        NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
+        NmplDataCollectExample.Criteria criteria = nmplDataCollectExample.createCriteria();
+        nmplDataCollectExample.setOrderByClause("id desc");
+
+        List<NmplDataCollect> nmplDataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+        if(!CollectionUtils.isEmpty(nmplDataCollectList)){
+            Long maxId = nmplDataCollectList.get(0).getId();
+            try {
+                JSONObject req = new JSONObject();
+                req.put("dataCollectVoList",nmplDataCollectList);
+                String post = HttpClientUtil.post(url, req.toJSONString());
+                log.info("nmplPcDataVoList:{}",post);
+            }catch (Exception e){
+                log.info("nmplPcDataVoList Exception:{}",e.getMessage());
+                throw new RuntimeException(e);
+            }
+            criteria.andIdLessThanOrEqualTo(maxId);
+            nmplDataCollectMapper.deleteByExample(nmplDataCollectExample);
         }
     }
 }

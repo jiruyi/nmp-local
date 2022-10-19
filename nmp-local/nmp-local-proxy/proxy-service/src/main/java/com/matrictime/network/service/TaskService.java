@@ -7,4 +7,7 @@ public interface TaskService {
     void logPush(String url);
 
     void pcData(String url);
+
+    void dataCollectPush(String url);
+
 }
