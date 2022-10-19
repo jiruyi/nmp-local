@@ -1,8 +1,10 @@
 package com.matrictime.network;
 
+import com.matrictime.network.service.impl.WebSocketServer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
@@ -12,6 +14,7 @@ public class UserCenterApplication
 {
 	public static void main(String[] args)
 	{
-		SpringApplication.run(UserCenterApplication.class, args);
+		ConfigurableApplicationContext applicationContext = SpringApplication.run(UserCenterApplication.class, args);
+		WebSocketServer.setApplicationContext(applicationContext);
 	}
 }

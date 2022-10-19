@@ -10,6 +10,7 @@ import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -18,6 +19,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.matrictime.network.base.UcConstants.LOGOUT_MSG;
 import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 
 /**
@@ -43,8 +45,11 @@ public class WebSocketServer {
         return webSocketMap;
     }
 
-    @Autowired
-    private LoginService loginService;
+    public static ApplicationContext applicationContext;
+
+    public static void setApplicationContext(ApplicationContext context){
+        applicationContext = context;
+    }
 
     /**
      * 连接建立成
@@ -55,9 +60,19 @@ public class WebSocketServer {
         this.session = session;
         this.account=account;
         if(webSocketMap.containsKey(account)){
+            WebSocketServer webSocketServer = webSocketMap.get(account);
+            webSocketServer.sendMessage(LOGOUT_MSG);
+            serverClose(webSocketServer.session);
+
+            LoginService loginService = applicationContext.getBean(LoginService.class);
+            LogoutReq req = new LogoutReq();
+            req.setLoginAccount(account);
+            loginService.syslogout(req);
             webSocketMap.remove(account);
+
             //加入set中
             webSocketMap.put(account,this);
+            addOnlineCount();
         }else{
             //加入set中
             webSocketMap.put(account,this);
@@ -83,6 +98,7 @@ public class WebSocketServer {
             if (!ParamCheckUtil.checkVoStrBlank(account)){
                 try {
                     log.info("websocket系统退出信息:{}",account);
+                    LoginService loginService = applicationContext.getBean(LoginService.class);
                     LogoutReq req = new LogoutReq();
                     req.setLoginAccount(account);
                     loginService.syslogout(req);
@@ -157,6 +173,19 @@ public class WebSocketServer {
 
     public void serverClose(){
         if (this.session.isOpen()){
+            try {
+                CloseReason closeReason = new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE,"鉴权失败！");
+                session.close(closeReason);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+        }
+    }
+
+    public void serverClose(Session session){
+        if (session.isOpen()){
             try {
                 CloseReason closeReason = new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE,"鉴权失败！");
                 session.close(closeReason);

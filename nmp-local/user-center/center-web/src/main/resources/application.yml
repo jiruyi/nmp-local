@@ -1,5 +1,5 @@
 server:
-  port: 8007
+  port: 8006
   servlet:
     context-path: /user-center
 

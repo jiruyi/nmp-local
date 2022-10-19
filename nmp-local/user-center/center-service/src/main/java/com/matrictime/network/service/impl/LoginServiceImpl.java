@@ -193,12 +193,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             }
 
             // 判断用户是否已登录
-            if (LOGIN_STATUS_IN.equals(user.getLoginStatus())){
-                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(req.getLoginAccount());
-                if(webSocketServer != null){
-                    webSocketServer.sendMessage(LOGOUT_MSG);
-                }
-            }
+//            if (LOGIN_STATUS_IN.equals(user.getLoginStatus())){
+//                WebSocketServer webSocketServer = WebSocketServer.getWebSocketMap().get(req.getLoginAccount());
+//                if(webSocketServer != null){
+//                    webSocketServer.sendMessage(LOGOUT_MSG);
+//                }
+//            }
 
             user.setDeviceId(req.getDeviceId());
             user.setDeviceIp(req.getDeviceIp());
