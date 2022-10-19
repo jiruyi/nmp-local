@@ -58,6 +58,17 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================pcData end=============================");
     }
 
+
+    @Scheduled(cron = "*/30 * * * * ?")
+    @Async
+    public void dataCollectPush(){
+        log.info(Thread.currentThread().getName()+"======================dataCollect begin=============================");
+        taskService.dataCollectPush(ip + KEY_SPLIT + port + DATA_COLLECT_URL);
+        log.info(Thread.currentThread().getName()+"======================dataCollect end=============================");
+    }
+
+
+
 //    @Scheduled(fixedDelay = 5000)
 //    @Async·
 //    public void fixedDelay() throws InterruptedException {
