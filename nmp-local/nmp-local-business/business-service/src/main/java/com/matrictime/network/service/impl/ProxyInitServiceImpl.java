@@ -100,7 +100,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      */
     private ProxyBaseStationInfoVo getLocalStationInfoVo(String ip){
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-        nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(ip);
+        nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(ip).andIsExistEqualTo(true);
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         if(!CollectionUtils.isEmpty(nmplBaseStationInfos)){
             ProxyBaseStationInfoVo infoVo = new ProxyBaseStationInfoVo();
@@ -119,7 +119,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      */
     private List<ProxyDeviceInfoVo> getLocalDeviceInfoVo(String ip){
         NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
-        nmplDeviceInfoExample.createCriteria().andLanIpEqualTo(ip);
+        nmplDeviceInfoExample.createCriteria().andLanIpEqualTo(ip).andIsExistEqualTo(true);
         List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
 
         List<ProxyDeviceInfoVo> res = new ArrayList<>();
