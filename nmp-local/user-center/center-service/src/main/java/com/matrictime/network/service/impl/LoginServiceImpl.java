@@ -84,6 +84,8 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Value("${im.pushTokenUrl}")
     private String pushTokenUrl;
 
+    private static final String CA_CODE = "code";
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result<RegisterResp> register(RegisterReq req) {
@@ -222,21 +224,33 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result logout(LogoutReq req) {
+        Result result;
         try {
             // 参数校验
             checkLogoutParam(req);
             User user = new User();
             UserExample userExample = new UserExample();
             userExample.createCriteria().andUserIdEqualTo(req.getUserId());
+
+            List<User> users = userMapper.selectByExample(userExample);
+            if(CollectionUtils.isEmpty(users)){
+                throw new SystemException(ErrorMessageContants.USER_NO_EXIST_MSG);
+            }
             user.setLoginStatus(DataConfig.LOGIN_STATUS_OUT);
 
             // 删除token
             delToken(req.getUserId(),req.getDestination());
-            return buildResult(userMapper.updateByExampleSelective(user,userExample));
+            result = buildResult(userMapper.updateByExampleSelective(user, userExample));
+        }catch (SystemException e){
+            log.info("logout SystemException:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result = failResult(e);
         }catch (Exception e){
-            log.info("logout:{}",e.getMessage());
+            log.info("logout Exception:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result = failResult("");
         }
-        return buildResult(null);
+        return result;
 
     }
 
@@ -310,13 +324,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         String savePost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + saveUrl, JSONObject.toJSONString(caVo));
         JSONObject saveRes = JSONObject.parseObject(savePost);
         log.info("ca保存签名结果："+saveRes.toJSONString());
+
+        // ca保存签名结果标志位
         boolean saveFlag = false;
-        if (saveRes != null) {
-            Object saveCode = saveRes.get("code");
-            if (saveCode != null && saveCode instanceof Integer) {
-                if (0 == (Integer)saveCode){
-                    saveFlag = true;
-                }
+        if (saveRes != null && saveRes.get(CA_CODE) instanceof Integer) {
+            if (0 == (Integer)saveRes.get(CA_CODE)){
+                saveFlag = true;
             }
         }
         if (saveFlag){
@@ -328,13 +341,12 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             String verifyPost = HttpClientUtil.post(signIp + KEY_SPLIT + signPort + verifyUrl, JSONObject.toJSONString(caVo));
             JSONObject verifyRes = JSONObject.parseObject(verifyPost);
             log.info("ca验签结果："+verifyRes.toJSONString());
+
+            // ca验签结果标志位
             boolean verifyFlag = false;
-            if (verifyRes != null) {
-                Object verifyCode = verifyRes.get("code");
-                if (verifyCode != null && verifyCode instanceof Integer) {
-                    if (0 == (Integer)verifyCode){
-                        verifyFlag = true;
-                    }
+            if (verifyRes != null && verifyRes.get(CA_CODE) instanceof Integer) {
+                if (0 == (Integer)verifyRes.get(CA_CODE)){
+                    verifyFlag = true;
                 }
             }
             if (!verifyFlag){

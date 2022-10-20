@@ -3,6 +3,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.aop.MonitorRequest;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.exception.ErrorMessageContants;
+import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.UserService;
 import io.swagger.annotations.Api;
@@ -45,9 +46,9 @@ public class UserController {
     public Result modifyUserInfo(@RequestBody UserRequest userRequest){
         try {
             Result result = userService.modifyUserInfo(userRequest);
-            return  result;
+            return result;
         }catch (Exception e){
-            log.error("modifyUserInfo exception:{}",e.getMessage());
+            log.error("modifyUserInfo Exception:{}",e.getMessage());
             return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
