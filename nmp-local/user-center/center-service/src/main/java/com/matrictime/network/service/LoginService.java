@@ -49,6 +49,8 @@ public interface LoginService {
      */
     Result syslogout(LogoutReq logoutReq);
 
+    Result syslogoutWithOutToken(LogoutReq logoutReq);
+
     Result pushToken(PushTokenReq req);
 
 

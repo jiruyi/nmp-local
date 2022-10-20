@@ -290,6 +290,25 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
         return buildResult(null);
     }
 
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result syslogoutWithOutToken(LogoutReq req) {
+        try {
+            // 参数校验
+            checkSysLogoutParam(req);
+            User user = new User();
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andLoginAccountEqualTo(req.getLoginAccount());
+            user.setLoginStatus(DataConfig.LOGIN_STATUS_OUT);
+
+            return buildResult(userMapper.updateByExampleSelective(user,userExample));
+        }catch (Exception e){
+            log.info("syslogout:{}",e.getMessage());
+        }
+        return buildResult(null);
+    }
+
     @Override
     public Result pushToken(PushTokenReq req){
         Result result;
