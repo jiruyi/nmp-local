@@ -100,7 +100,14 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     @Transactional(rollbackFor = Exception.class)
     public Result modifyUserInfo(UserRequest userRequest) {
         if(ObjectUtils.isEmpty(userRequest) || ObjectUtils.isEmpty(userRequest.getUserId())){
-            throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
+            return failResult(ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andUserIdEqualTo(userRequest.getUserId());
+
+        List<User> users = userMapper.selectByExample(userExample);
+        if(CollectionUtils.isEmpty(users)){
+            return failResult(ErrorMessageContants.USER_NO_EXIST_MSG);
         }
         int n = userDomainService.modifyUserInfo(userRequest);
         return  buildResult(n);

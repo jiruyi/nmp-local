@@ -233,7 +233,7 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
                     }
                     for (CenterDeviceInfoVo vo:infoVos){
                         Date createTime = new Date();
-                        if (ids.contains(vo.getDeviceId())){// 数据库已有本机信息则更新
+                        if (ids.contains(vo.getId())){// 数据库已有本机信息则更新
                             NmplLocalDeviceInfo nmplLocalDeviceInfo = new NmplLocalDeviceInfo();
                             BeanUtils.copyProperties(vo,nmplLocalDeviceInfo);
                             nmplLocalDeviceInfo.setUpdateTime(createTime);

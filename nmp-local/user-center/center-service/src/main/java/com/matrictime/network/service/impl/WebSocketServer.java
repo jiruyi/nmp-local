@@ -67,7 +67,7 @@ public class WebSocketServer {
             LoginService loginService = applicationContext.getBean(LoginService.class);
             LogoutReq req = new LogoutReq();
             req.setLoginAccount(account);
-            loginService.syslogout(req);
+            loginService.syslogoutWithOutToken(req);
             webSocketMap.remove(account);
 
             //加入set中
