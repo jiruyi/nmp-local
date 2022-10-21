@@ -4,7 +4,10 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.dao.domain.StaticRouteDomainService;
+import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplStaticRouteMapper;
+import com.matrictime.network.dao.model.NmplBaseStationInfo;
+import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
 import com.matrictime.network.dao.model.NmplStaticRoute;
 import com.matrictime.network.dao.model.NmplStaticRouteExample;
 import com.matrictime.network.modelVo.StaticRouteVo;
@@ -17,7 +20,9 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
@@ -30,6 +35,9 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
 
     @Resource
     private NmplStaticRouteMapper nmplStaticRouteMapper;
+
+    @Resource
+    private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
 
     @Override
     public int insert(StaticRouteRequest staticRouteRequest) {
@@ -79,9 +87,19 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
         Page page = PageHelper.startPage(staticRouteRequest.getPageNo(),staticRouteRequest.getPageSize());
         List<NmplStaticRoute> nmplInternetRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
         PageInfo<StaticRouteVo> pageInfo = new PageInfo<>();
+
+
+//        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+//        nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
+        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
+        Map<String,String> baseStationInfoMap = new HashMap<>();
+        for (int i = 0; i < nmplBaseStationInfos.size(); i++) {
+            baseStationInfoMap.put(nmplBaseStationInfos.get(i).getStationId(),nmplBaseStationInfos.get(i).getStationNetworkId());
+        }
         for(NmplStaticRoute nmplStaticRoute: nmplInternetRoutes){
             StaticRouteVo staticRouteVo = new StaticRouteVo();
             BeanUtils.copyProperties(nmplStaticRoute,staticRouteVo);
+            staticRouteVo.setRouteNetworkId(baseStationInfoMap.get(staticRouteVo.getStationId())+"-"+staticRouteVo.getNetworkId());
             list.add(staticRouteVo);
         }
         pageInfo.setList(list);

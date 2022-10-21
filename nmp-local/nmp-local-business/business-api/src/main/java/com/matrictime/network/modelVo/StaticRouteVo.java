@@ -64,4 +64,7 @@ public class StaticRouteVo {
      * 更新时间
      */
     private Date updateTime;
+
+
+    private String routeNetworkId;
 }
