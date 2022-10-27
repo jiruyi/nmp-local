@@ -8,6 +8,7 @@ import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceExtraInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDeviceMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
@@ -15,6 +16,7 @@ import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -34,11 +36,17 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
     @Resource
     private NmplDeviceExtraInfoMapper nmplDeviceExtraInfoMapper;
 
+    @Resource
+    private NmplDeviceMapper nmplDeviceMapper;
+
 
     @Override
     public int insertDevice(DeviceInfoRequest deviceInfoRequest) {
         InsertCheckUnique(deviceInfoRequest);
-        return nmplDeviceInfoMapper.insertDevice(deviceInfoRequest);
+        NmplDevice nmplDevice = new NmplDevice();
+        BeanUtils.copyProperties(deviceInfoRequest,nmplDevice);
+        return nmplDeviceMapper.insertSelective(nmplDevice);
+//        return nmplDeviceInfoMapper.insertDevice(deviceInfoRequest);
     }
 
     @Override

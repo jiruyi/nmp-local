@@ -31,10 +31,10 @@ import java.util.*;
 public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInitService {
 
     @Resource
-    NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
+    NmplBaseStationMapper nmplBaseStationMapper;
 
     @Resource
-    NmplDeviceInfoMapper nmplDeviceInfoMapper;
+    NmplDeviceMapper nmplDeviceMapper;
 
     @Resource
     NmplRouteMapper nmplRouteMapper;
@@ -99,9 +99,9 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      * @return
      */
     private ProxyBaseStationInfoVo getLocalStationInfoVo(String ip){
-        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-        nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(ip).andIsExistEqualTo(true);
-        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+        NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
+        nmplBaseStationExample.createCriteria().andLanIpEqualTo(ip).andIsExistEqualTo(true);
+        List<NmplBaseStation> nmplBaseStationInfos = nmplBaseStationMapper.selectByExampleWithBLOBs(nmplBaseStationExample);
         if(!CollectionUtils.isEmpty(nmplBaseStationInfos)){
             ProxyBaseStationInfoVo infoVo = new ProxyBaseStationInfoVo();
             BeanUtils.copyProperties(nmplBaseStationInfos.get(0),infoVo);
@@ -118,12 +118,12 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      * @return
      */
     private List<ProxyDeviceInfoVo> getLocalDeviceInfoVo(String ip){
-        NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
-        nmplDeviceInfoExample.createCriteria().andLanIpEqualTo(ip).andIsExistEqualTo(true);
-        List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+        NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
+        nmplDeviceExample.createCriteria().andLanIpEqualTo(ip).andIsExistEqualTo(true);
+        List<NmplDevice> nmplDeviceInfos = nmplDeviceMapper.selectByExampleWithBLOBs(nmplDeviceExample);
 
         List<ProxyDeviceInfoVo> res = new ArrayList<>();
-        for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+        for (NmplDevice nmplDeviceInfo : nmplDeviceInfos) {
             ProxyDeviceInfoVo deviceInfoVo = new ProxyDeviceInfoVo();
             BeanUtils.copyProperties(nmplDeviceInfo,deviceInfoVo);
             res.add(deviceInfoVo);
@@ -248,10 +248,10 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      */
     private void getStationInfoList(ProxyResp proxyResp){
         List<ProxyBaseStationInfoVo> stationInfoVos = new ArrayList<>();
-        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
-        for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+        List<NmplBaseStation> nmplBaseStationInfos = nmplBaseStationMapper.selectByExampleWithBLOBs(null);
+        for (NmplBaseStation nmplBaseStation : nmplBaseStationInfos) {
             ProxyBaseStationInfoVo infoVo = new ProxyBaseStationInfoVo();
-            BeanUtils.copyProperties(nmplBaseStationInfo,infoVo);
+            BeanUtils.copyProperties(nmplBaseStation,infoVo);
             stationInfoVos.add(infoVo);
         }
         proxyResp.setBaseStationInfoList(stationInfoVos);
@@ -263,10 +263,10 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      */
     private void getDeviceInfoList(ProxyResp proxyResp){
         List<ProxyDeviceInfoVo> deviceInfoVos = new ArrayList<>();
-        List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(null);
-        for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+        List<NmplDevice> nmplDeviceInfos = nmplDeviceMapper.selectByExampleWithBLOBs(null);
+        for (NmplDevice nmplDevice : nmplDeviceInfos) {
             ProxyDeviceInfoVo deviceInfoVo = new ProxyDeviceInfoVo();
-            BeanUtils.copyProperties(nmplDeviceInfo,deviceInfoVo);
+            BeanUtils.copyProperties(nmplDevice,deviceInfoVo);
             deviceInfoVos.add(deviceInfoVo);
         }
         proxyResp.setDeviceInfoVos(deviceInfoVos);

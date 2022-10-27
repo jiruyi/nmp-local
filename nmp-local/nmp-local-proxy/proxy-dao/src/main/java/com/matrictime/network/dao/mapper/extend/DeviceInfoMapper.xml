@@ -25,11 +25,12 @@
     <result column="is_exist" jdbcType="BIT" property="isExist" />
   </resultMap>
 
+
   <sql id="Base_Column_List">
     id, device_id, device_name, device_type, other_type, enter_network_time, device_admain, 
     remark, public_network_ip, public_network_port, lan_ip, lan_port, station_status, 
     station_network_id, station_random_seed, relation_operator_id, create_user, create_time, 
-    update_user, update_time, is_exist
+    update_user, update_time, is_exist,byte_network_id
   </sql>
 
   <insert id="batchInsert" parameterType="com.matrictime.network.dao.model.NmplDeviceInfo">
@@ -39,7 +40,7 @@
       public_network_port, lan_ip, lan_port,
       station_status, station_network_id, station_random_seed,
       relation_operator_id, create_user, create_time,
-      update_user, update_time, is_exist
+      update_user, update_time, is_exist,byte_network_id
       )
     values
   <foreach collection ="list" item="vo" separator =",">
@@ -49,7 +50,7 @@
     #{vo.publicNetworkPort,jdbcType=VARCHAR}, #{vo.lanIp,jdbcType=VARCHAR}, #{vo.lanPort,jdbcType=VARCHAR},
     #{vo.stationStatus,jdbcType=CHAR}, #{vo.stationNetworkId,jdbcType=VARCHAR}, #{vo.stationRandomSeed,jdbcType=VARCHAR},
     #{vo.relationOperatorId,jdbcType=VARCHAR}, #{vo.createUser,jdbcType=VARCHAR}, #{vo.createTime,jdbcType=TIMESTAMP},
-    #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT})
+    #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT}, #{vo.byteNetworkId,jdbcType=LONGVARBINARY})
   </foreach >
   </insert>
 
@@ -85,7 +86,7 @@
       public_network_port, lan_ip, lan_port,
       station_status, station_network_id, station_random_seed,
       relation_operator_id, create_user, create_time,
-      update_user, update_time, is_exist
+      update_user, update_time, is_exist,byte_network_id
     )
     values
     <foreach collection ="list" item="vo" separator =",">
@@ -95,7 +96,7 @@
       #{vo.publicNetworkPort,jdbcType=VARCHAR}, #{vo.lanIp,jdbcType=VARCHAR}, #{vo.lanPort,jdbcType=VARCHAR},
       #{vo.stationStatus,jdbcType=CHAR}, #{vo.stationNetworkId,jdbcType=VARCHAR}, #{vo.stationRandomSeed,jdbcType=VARCHAR},
       #{vo.relationOperatorId,jdbcType=VARCHAR}, #{vo.createUser,jdbcType=VARCHAR}, #{vo.createTime,jdbcType=TIMESTAMP},
-      #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT})
+      #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT}, #{vo.byteNetworkId,jdbcType=LONGVARBINARY})
     </foreach >
   </insert>
 

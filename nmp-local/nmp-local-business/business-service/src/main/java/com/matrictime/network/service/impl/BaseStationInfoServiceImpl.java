@@ -9,16 +9,16 @@ import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.DeviceStatusEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.base.util.DecimalConversionUtil;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplBaseStationMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
-import com.matrictime.network.dao.model.NmplBaseStationInfo;
-import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
-import com.matrictime.network.dao.model.NmplDeviceInfo;
-import com.matrictime.network.dao.model.NmplDeviceInfoExample;
+import com.matrictime.network.dao.mapper.NmplDeviceMapper;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
@@ -32,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -65,6 +67,11 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     @Resource
     private NmplDeviceInfoMapper nmplDeviceInfoMapper;
 
+    @Resource
+    private NmplBaseStationMapper nmplBaseStationMapper;
+
+    @Resource
+    private NmplDeviceMapper nmplDeviceMapper;
 
     @Override
     public Result<Integer> insertBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
@@ -83,6 +90,8 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
             //校验参数
             checkParam(baseStationInfoRequest);
+
+            baseStationInfoRequest.setByteNetworkId(DecimalConversionUtil.bidToByteArray(baseStationInfoRequest.getStationNetworkId()));
 
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
 
@@ -163,34 +172,38 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     @Override
     public void pushToProxy(String stationId, String suffix)throws Exception{
         //推送到代理
-        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-        nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(stationId);
-        List<NmplBaseStationInfo> nmplBaseStationInfoList = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-
-        Map<String,String> deviceMap = getAllUrl(nmplBaseStationInfoList.get(0).getRelationOperatorId());
-        deviceMap.put(nmplBaseStationInfoList.get(0).getLanIp(),nmplBaseStationInfoList.get(0).getStationId());
-        Set<String> set = deviceMap.keySet();
-        for (String lanIp : set) {
-            //默认为非本机
-            NmplBaseStationInfo request = new NmplBaseStationInfo();
-            BeanUtils.copyProperties(nmplBaseStationInfoList.get(0),request);
-            request.setLocal(false);
-            if(lanIp.equals(request.getLanIp())){
-                request.setLocal(true);
+        NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
+        nmplBaseStationExample.createCriteria().andStationIdEqualTo(stationId);
+        List<NmplBaseStation> nmplBaseStationInfoList = nmplBaseStationMapper.selectByExampleWithBLOBs(nmplBaseStationExample);
+        if(!CollectionUtils.isEmpty(nmplBaseStationInfoList)){
+            Map<String,String> deviceMap = getAllUrl(nmplBaseStationInfoList.get(0).getRelationOperatorId());
+            deviceMap.put(nmplBaseStationInfoList.get(0).getLanIp(),nmplBaseStationInfoList.get(0).getStationId());
+            Set<String> set = deviceMap.keySet();
+            for (String lanIp : set) {
+                //默认为非本机
+                NmplBaseStation request = new NmplBaseStation();
+                BeanUtils.copyProperties(nmplBaseStationInfoList.get(0),request);
+                request.setLocal(false);
+                if(lanIp.equals(request.getLanIp())){
+                    request.setLocal(true);
+                }
+                String data = "";
+                if(suffix.equals(DataConstants.URL_STATION_INSERT)){
+                    data = firstPushData(request);
+                }else {
+                    data = JSONObject.toJSONString(request);
+                }
+                Map<String,String> map = new HashMap<>();
+                map.put(DataConstants.KEY_DEVICE_ID,deviceMap.get(lanIp));
+                map.put(DataConstants.KEY_DATA,data);
+                String url = "http://"+lanIp+":"+port+contextPath+suffix;
+                map.put(DataConstants.KEY_URL,url);
+                asyncService.httpPush(map);
             }
-            String data = "";
-            if(suffix.equals(DataConstants.URL_STATION_INSERT)){
-                data = firstPushData(request);
-            }else {
-                data = JSONObject.toJSONString(request);
-            }
-            Map<String,String> map = new HashMap<>();
-            map.put(DataConstants.KEY_DEVICE_ID,deviceMap.get(lanIp));
-            map.put(DataConstants.KEY_DATA,data);
-            String url = "http://"+lanIp+":"+port+contextPath+suffix;
-            map.put(DataConstants.KEY_URL,url);
-            asyncService.httpPush(map);
+        }else {
+            log.info("stationId not found:"+stationId);
         }
+
     }
 
     @Override
@@ -355,17 +368,17 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         }
         return  map;
     }
-    private String firstPushData(NmplBaseStationInfo nmplBaseStationInfo){
+    private String firstPushData(NmplBaseStation nmplBaseStation){
         JSONObject jsonObject = new JSONObject();
-        if(nmplBaseStationInfo.getIsLocal()){
-            List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
-            NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
-            nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(nmplBaseStationInfo.getRelationOperatorId());
-            List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+        if(nmplBaseStation.getIsLocal()){
+            List<NmplBaseStation> nmplBaseStationInfos = nmplBaseStationMapper.selectByExampleWithBLOBs(null);
+            NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
+            nmplDeviceExample.createCriteria().andRelationOperatorIdEqualTo(nmplBaseStation.getRelationOperatorId());
+            List<NmplDevice> nmplDeviceInfos = nmplDeviceMapper.selectByExampleWithBLOBs(nmplDeviceExample);
             jsonObject.put("stationInfoVos",nmplBaseStationInfos);
             jsonObject.put("deviceInfoVos",nmplDeviceInfos);
         }
-        jsonObject.put("localBaseInfo",nmplBaseStationInfo);
+        jsonObject.put("localBaseInfo",nmplBaseStation);
         return jsonObject.toJSONString();
     }
 

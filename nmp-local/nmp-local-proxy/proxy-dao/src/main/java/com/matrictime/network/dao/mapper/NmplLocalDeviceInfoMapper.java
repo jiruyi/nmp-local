@@ -16,15 +16,21 @@ public interface NmplLocalDeviceInfoMapper {
 
     int insertSelective(NmplLocalDeviceInfo record);
 
+    List<NmplLocalDeviceInfo> selectByExampleWithBLOBs(NmplLocalDeviceInfoExample example);
+
     List<NmplLocalDeviceInfo> selectByExample(NmplLocalDeviceInfoExample example);
 
     NmplLocalDeviceInfo selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") NmplLocalDeviceInfo record, @Param("example") NmplLocalDeviceInfoExample example);
 
+    int updateByExampleWithBLOBs(@Param("record") NmplLocalDeviceInfo record, @Param("example") NmplLocalDeviceInfoExample example);
+
     int updateByExample(@Param("record") NmplLocalDeviceInfo record, @Param("example") NmplLocalDeviceInfoExample example);
 
     int updateByPrimaryKeySelective(NmplLocalDeviceInfo record);
+
+    int updateByPrimaryKeyWithBLOBs(NmplLocalDeviceInfo record);
 
     int updateByPrimaryKey(NmplLocalDeviceInfo record);
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 本机密钥分发和U盘
  * @author   xxxx
- * @date   2022-08-19
+ * @date   2022-10-26
  */
 @Data
 public class NmplLocalDeviceInfo {
@@ -114,6 +114,11 @@ public class NmplLocalDeviceInfo {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * 设备入网码
+     */
+    private byte[] byteNetworkId;
 
     public Long getId() {
         return id;
@@ -281,5 +286,13 @@ public class NmplLocalDeviceInfo {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public byte[] getByteNetworkId() {
+        return byteNetworkId;
+    }
+
+    public void setByteNetworkId(byte[] byteNetworkId) {
+        this.byteNetworkId = byteNetworkId;
     }
 }

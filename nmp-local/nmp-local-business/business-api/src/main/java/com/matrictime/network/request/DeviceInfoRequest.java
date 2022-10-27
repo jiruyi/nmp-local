@@ -44,6 +44,19 @@ public class DeviceInfoRequest extends BaseRequest{
 
     private Boolean isExist;
 
+    /**
+     * 设备入网码
+     */
+    private byte[] byteNetworkId;
+
+    public byte[] getByteNetworkId() {
+        return byteNetworkId;
+    }
+
+    public void setByteNetworkId(byte[] byteNetworkId) {
+        this.byteNetworkId = byteNetworkId;
+    }
+
     public String getId() {
         return id;
     }

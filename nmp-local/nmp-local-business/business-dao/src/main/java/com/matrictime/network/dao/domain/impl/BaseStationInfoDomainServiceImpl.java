@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplBaseStationMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceExtraInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.model.*;
@@ -33,10 +34,16 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     @Resource
     private NmplDeviceExtraInfoMapper nmplDeviceExtraInfoMapper;
 
+    @Resource
+    private NmplBaseStationMapper nmplbaseStationMapper;
+
     @Override
     public int insertBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
         InsertCheckUnique(baseStationInfoRequest);
-        return nmplBaseStationInfoMapper.insertBaseStationInfo(baseStationInfoRequest);
+        NmplBaseStation nmplbaseStation = new NmplBaseStation();
+        BeanUtils.copyProperties(baseStationInfoRequest,nmplbaseStation);
+//        return nmplBaseStationInfoMapper.insertBaseStationInfo(baseStationInfoRequest);
+        return nmplbaseStationMapper.insertSelective(nmplbaseStation);
     }
 
     @Override

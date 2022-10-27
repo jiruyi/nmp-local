@@ -43,6 +43,16 @@ public class BaseStationInfoRequest extends BaseRequest{
 
     private String isExist;
 
+    private byte[] byteNetworkId;
+
+    public byte[] getByteNetworkId() {
+        return byteNetworkId;
+    }
+
+    public void setByteNetworkId(byte[] byteNetworkId) {
+        this.byteNetworkId = byteNetworkId;
+    }
+
     public String getId() {
         return id;
     }

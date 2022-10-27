@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 密钥分发和U盘
  * @author   xxxx
- * @date   2022-08-22
+ * @date   2022-10-26
  */
 @Data
 public class NmplDeviceInfo {
@@ -26,7 +26,7 @@ public class NmplDeviceInfo {
     private String deviceName;
 
     /**
-     * 设备类型 01:密钥分发机 02:生成机 03:缓存机
+     * 设备类型 11:密钥中心 12:生成机 13:缓存机
      */
     private String deviceType;
 
@@ -114,6 +114,11 @@ public class NmplDeviceInfo {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * 设备入网码
+     */
+    private byte[] byteNetworkId;
 
     public Long getId() {
         return id;
@@ -281,5 +286,13 @@ public class NmplDeviceInfo {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public byte[] getByteNetworkId() {
+        return byteNetworkId;
+    }
+
+    public void setByteNetworkId(byte[] byteNetworkId) {
+        this.byteNetworkId = byteNetworkId;
     }
 }

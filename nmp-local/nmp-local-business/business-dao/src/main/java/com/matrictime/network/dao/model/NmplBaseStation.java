@@ -4,12 +4,12 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 基站信息表
- * @author   xxxx
- * @date   2022-10-26
+ * 
+ * @author   hexu
+ * @date   2022-10-25
  */
 @Data
-public class NmplBaseStationInfo {
+public class NmplBaseStation {
     /**
      * 主键
      */
@@ -114,6 +114,19 @@ public class NmplBaseStationInfo {
      * 设备入网码
      */
     private byte[] byteNetworkId;
+
+    /**
+     * true:是本机 false:不是本机
+     */
+    private Boolean isLocal;
+
+    public Boolean getLocal() {
+        return isLocal;
+    }
+
+    public void setLocal(Boolean local) {
+        isLocal = local;
+    }
 
     public Long getId() {
         return id;

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.matrictime.network.dao.mapper.NmplLocalDeviceInfoMapper">
-  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplBaseStationMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplBaseStation">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
-    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
-    <result column="device_type" jdbcType="CHAR" property="deviceType" />
-    <result column="other_type" jdbcType="CHAR" property="otherType" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="station_type" jdbcType="CHAR" property="stationType" />
     <result column="enter_network_time" jdbcType="TIMESTAMP" property="enterNetworkTime" />
-    <result column="device_admain" jdbcType="VARCHAR" property="deviceAdmain" />
+    <result column="station_admain" jdbcType="VARCHAR" property="stationAdmain" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="public_network_ip" jdbcType="VARCHAR" property="publicNetworkIp" />
     <result column="public_network_port" jdbcType="VARCHAR" property="publicNetworkPort" />
@@ -24,7 +23,7 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplBaseStation">
     <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -86,15 +85,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, device_id, device_name, device_type, other_type, enter_network_time, device_admain, 
-    remark, public_network_ip, public_network_port, lan_ip, lan_port, station_status, 
-    station_network_id, station_random_seed, relation_operator_id, create_user, create_time, 
-    update_user, update_time, is_exist
+    id, station_id, station_name, station_type, enter_network_time, station_admain, remark, 
+    public_network_ip, public_network_port, lan_ip, lan_port, station_status, station_network_id, 
+    station_random_seed, relation_operator_id, create_user, create_time, update_user, 
+    update_time, is_exist
   </sql>
   <sql id="Blob_Column_List">
     byte_network_id
   </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfoExample" resultMap="ResultMapWithBLOBs">
+  <select id="selectByExampleWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplBaseStationExample" resultMap="ResultMapWithBLOBs">
     select
     <if test="distinct">
       distinct
@@ -103,7 +102,7 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from nmpl_local_device_info
+    from nmpl_base_station_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -111,14 +110,14 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from nmpl_local_device_info
+    from nmpl_base_station_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -131,60 +130,57 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from nmpl_local_device_info
+    from nmpl_base_station_info
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from nmpl_local_device_info
+    delete from nmpl_base_station_info
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfoExample">
-    delete from nmpl_local_device_info
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationExample">
+    delete from nmpl_base_station_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-    insert into nmpl_local_device_info (id, device_id, device_name, 
-      device_type, other_type, enter_network_time, 
-      device_admain, remark, public_network_ip, 
-      public_network_port, lan_ip, lan_port, 
-      station_status, station_network_id, station_random_seed, 
-      relation_operator_id, create_user, create_time, 
-      update_user, update_time, is_exist, 
-      byte_network_id)
-    values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{deviceName,jdbcType=VARCHAR}, 
-      #{deviceType,jdbcType=CHAR}, #{otherType,jdbcType=CHAR}, #{enterNetworkTime,jdbcType=TIMESTAMP}, 
-      #{deviceAdmain,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{publicNetworkIp,jdbcType=VARCHAR}, 
-      #{publicNetworkPort,jdbcType=VARCHAR}, #{lanIp,jdbcType=VARCHAR}, #{lanPort,jdbcType=VARCHAR}, 
-      #{stationStatus,jdbcType=CHAR}, #{stationNetworkId,jdbcType=VARCHAR}, #{stationRandomSeed,jdbcType=VARCHAR}, 
-      #{relationOperatorId,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}, 
-      #{byteNetworkId,jdbcType=LONGVARBINARY})
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplBaseStation">
+    insert into nmpl_base_station_info (id, station_id, station_name, 
+      station_type, enter_network_time, station_admain, 
+      remark, public_network_ip, public_network_port, 
+      lan_ip, lan_port, station_status, 
+      station_network_id, station_random_seed, relation_operator_id, 
+      create_user, create_time, update_user, 
+      update_time, is_exist, byte_network_id
+      )
+    values (#{id,jdbcType=BIGINT}, #{stationId,jdbcType=VARCHAR}, #{stationName,jdbcType=VARCHAR}, 
+      #{stationType,jdbcType=CHAR}, #{enterNetworkTime,jdbcType=TIMESTAMP}, #{stationAdmain,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{publicNetworkIp,jdbcType=VARCHAR}, #{publicNetworkPort,jdbcType=VARCHAR}, 
+      #{lanIp,jdbcType=VARCHAR}, #{lanPort,jdbcType=VARCHAR}, #{stationStatus,jdbcType=CHAR}, 
+      #{stationNetworkId,jdbcType=VARCHAR}, #{stationRandomSeed,jdbcType=VARCHAR}, #{relationOperatorId,jdbcType=VARCHAR}, 
+      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}, #{byteNetworkId,jdbcType=LONGVARBINARY}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-    insert into nmpl_local_device_info
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplBaseStation">
+    insert into nmpl_base_station_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
       </if>
-      <if test="deviceId != null">
-        device_id,
+      <if test="stationId != null">
+        station_id,
       </if>
-      <if test="deviceName != null">
-        device_name,
+      <if test="stationName != null">
+        station_name,
       </if>
-      <if test="deviceType != null">
-        device_type,
-      </if>
-      <if test="otherType != null">
-        other_type,
+      <if test="stationType != null">
+        station_type,
       </if>
       <if test="enterNetworkTime != null">
         enter_network_time,
       </if>
-      <if test="deviceAdmain != null">
-        device_admain,
+      <if test="stationAdmain != null">
+        station_admain,
       </if>
       <if test="remark != null">
         remark,
@@ -236,23 +232,20 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="deviceId != null">
-        #{deviceId,jdbcType=VARCHAR},
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
       </if>
-      <if test="deviceName != null">
-        #{deviceName,jdbcType=VARCHAR},
+      <if test="stationName != null">
+        #{stationName,jdbcType=VARCHAR},
       </if>
-      <if test="deviceType != null">
-        #{deviceType,jdbcType=CHAR},
-      </if>
-      <if test="otherType != null">
-        #{otherType,jdbcType=CHAR},
+      <if test="stationType != null">
+        #{stationType,jdbcType=CHAR},
       </if>
       <if test="enterNetworkTime != null">
         #{enterNetworkTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="deviceAdmain != null">
-        #{deviceAdmain,jdbcType=VARCHAR},
+      <if test="stationAdmain != null">
+        #{stationAdmain,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
@@ -301,35 +294,32 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfoExample" resultType="java.lang.Long">
-    select count(*) from nmpl_local_device_info
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplBaseStationExample" resultType="java.lang.Long">
+    select count(*) from nmpl_base_station_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update nmpl_local_device_info
+    update nmpl_base_station_info
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.deviceId != null">
-        device_id = #{record.deviceId,jdbcType=VARCHAR},
+      <if test="record.stationId != null">
+        station_id = #{record.stationId,jdbcType=VARCHAR},
       </if>
-      <if test="record.deviceName != null">
-        device_name = #{record.deviceName,jdbcType=VARCHAR},
+      <if test="record.stationName != null">
+        station_name = #{record.stationName,jdbcType=VARCHAR},
       </if>
-      <if test="record.deviceType != null">
-        device_type = #{record.deviceType,jdbcType=CHAR},
-      </if>
-      <if test="record.otherType != null">
-        other_type = #{record.otherType,jdbcType=CHAR},
+      <if test="record.stationType != null">
+        station_type = #{record.stationType,jdbcType=CHAR},
       </if>
       <if test="record.enterNetworkTime != null">
         enter_network_time = #{record.enterNetworkTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.deviceAdmain != null">
-        device_admain = #{record.deviceAdmain,jdbcType=VARCHAR},
+      <if test="record.stationAdmain != null">
+        station_admain = #{record.stationAdmain,jdbcType=VARCHAR},
       </if>
       <if test="record.remark != null">
         remark = #{record.remark,jdbcType=VARCHAR},
@@ -382,14 +372,13 @@
     </if>
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map">
-    update nmpl_local_device_info
+    update nmpl_base_station_info
     set id = #{record.id,jdbcType=BIGINT},
-      device_id = #{record.deviceId,jdbcType=VARCHAR},
-      device_name = #{record.deviceName,jdbcType=VARCHAR},
-      device_type = #{record.deviceType,jdbcType=CHAR},
-      other_type = #{record.otherType,jdbcType=CHAR},
+      station_id = #{record.stationId,jdbcType=VARCHAR},
+      station_name = #{record.stationName,jdbcType=VARCHAR},
+      station_type = #{record.stationType,jdbcType=CHAR},
       enter_network_time = #{record.enterNetworkTime,jdbcType=TIMESTAMP},
-      device_admain = #{record.deviceAdmain,jdbcType=VARCHAR},
+      station_admain = #{record.stationAdmain,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       public_network_ip = #{record.publicNetworkIp,jdbcType=VARCHAR},
       public_network_port = #{record.publicNetworkPort,jdbcType=VARCHAR},
@@ -410,14 +399,13 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update nmpl_local_device_info
+    update nmpl_base_station_info
     set id = #{record.id,jdbcType=BIGINT},
-      device_id = #{record.deviceId,jdbcType=VARCHAR},
-      device_name = #{record.deviceName,jdbcType=VARCHAR},
-      device_type = #{record.deviceType,jdbcType=CHAR},
-      other_type = #{record.otherType,jdbcType=CHAR},
+      station_id = #{record.stationId,jdbcType=VARCHAR},
+      station_name = #{record.stationName,jdbcType=VARCHAR},
+      station_type = #{record.stationType,jdbcType=CHAR},
       enter_network_time = #{record.enterNetworkTime,jdbcType=TIMESTAMP},
-      device_admain = #{record.deviceAdmain,jdbcType=VARCHAR},
+      station_admain = #{record.stationAdmain,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       public_network_ip = #{record.publicNetworkIp,jdbcType=VARCHAR},
       public_network_port = #{record.publicNetworkPort,jdbcType=VARCHAR},
@@ -436,26 +424,23 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-    update nmpl_local_device_info
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplBaseStation">
+    update nmpl_base_station_info
     <set>
-      <if test="deviceId != null">
-        device_id = #{deviceId,jdbcType=VARCHAR},
+      <if test="stationId != null">
+        station_id = #{stationId,jdbcType=VARCHAR},
       </if>
-      <if test="deviceName != null">
-        device_name = #{deviceName,jdbcType=VARCHAR},
+      <if test="stationName != null">
+        station_name = #{stationName,jdbcType=VARCHAR},
       </if>
-      <if test="deviceType != null">
-        device_type = #{deviceType,jdbcType=CHAR},
-      </if>
-      <if test="otherType != null">
-        other_type = #{otherType,jdbcType=CHAR},
+      <if test="stationType != null">
+        station_type = #{stationType,jdbcType=CHAR},
       </if>
       <if test="enterNetworkTime != null">
         enter_network_time = #{enterNetworkTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="deviceAdmain != null">
-        device_admain = #{deviceAdmain,jdbcType=VARCHAR},
+      <if test="stationAdmain != null">
+        station_admain = #{stationAdmain,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
@@ -505,14 +490,13 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-    update nmpl_local_device_info
-    set device_id = #{deviceId,jdbcType=VARCHAR},
-      device_name = #{deviceName,jdbcType=VARCHAR},
-      device_type = #{deviceType,jdbcType=CHAR},
-      other_type = #{otherType,jdbcType=CHAR},
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplBaseStation">
+    update nmpl_base_station_info
+    set station_id = #{stationId,jdbcType=VARCHAR},
+      station_name = #{stationName,jdbcType=VARCHAR},
+      station_type = #{stationType,jdbcType=CHAR},
       enter_network_time = #{enterNetworkTime,jdbcType=TIMESTAMP},
-      device_admain = #{deviceAdmain,jdbcType=VARCHAR},
+      station_admain = #{stationAdmain,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
       public_network_port = #{publicNetworkPort,jdbcType=VARCHAR},
@@ -530,14 +514,13 @@
       byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-    update nmpl_local_device_info
-    set device_id = #{deviceId,jdbcType=VARCHAR},
-      device_name = #{deviceName,jdbcType=VARCHAR},
-      device_type = #{deviceType,jdbcType=CHAR},
-      other_type = #{otherType,jdbcType=CHAR},
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplBaseStation">
+    update nmpl_base_station_info
+    set station_id = #{stationId,jdbcType=VARCHAR},
+      station_name = #{stationName,jdbcType=VARCHAR},
+      station_type = #{stationType,jdbcType=CHAR},
       enter_network_time = #{enterNetworkTime,jdbcType=TIMESTAMP},
-      device_admain = #{deviceAdmain,jdbcType=VARCHAR},
+      station_admain = #{stationAdmain,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
       public_network_port = #{publicNetworkPort,jdbcType=VARCHAR},

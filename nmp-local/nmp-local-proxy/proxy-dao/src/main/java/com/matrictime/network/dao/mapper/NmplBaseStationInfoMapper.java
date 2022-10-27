@@ -16,15 +16,21 @@ public interface NmplBaseStationInfoMapper {
 
     int insertSelective(NmplBaseStationInfo record);
 
+    List<NmplBaseStationInfo> selectByExampleWithBLOBs(NmplBaseStationInfoExample example);
+
     List<NmplBaseStationInfo> selectByExample(NmplBaseStationInfoExample example);
 
     NmplBaseStationInfo selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") NmplBaseStationInfo record, @Param("example") NmplBaseStationInfoExample example);
 
+    int updateByExampleWithBLOBs(@Param("record") NmplBaseStationInfo record, @Param("example") NmplBaseStationInfoExample example);
+
     int updateByExample(@Param("record") NmplBaseStationInfo record, @Param("example") NmplBaseStationInfoExample example);
 
     int updateByPrimaryKeySelective(NmplBaseStationInfo record);
+
+    int updateByPrimaryKeyWithBLOBs(NmplBaseStationInfo record);
 
     int updateByPrimaryKey(NmplBaseStationInfo record);
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.matrictime.network.dao.mapper.NmplLocalDeviceInfoMapper">
-  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplDeviceMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplDevice">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
     <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
@@ -24,7 +24,7 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplDevice">
     <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -94,7 +94,7 @@
   <sql id="Blob_Column_List">
     byte_network_id
   </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfoExample" resultMap="ResultMapWithBLOBs">
+  <select id="selectByExampleWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplDeviceExample" resultMap="ResultMapWithBLOBs">
     select
     <if test="distinct">
       distinct
@@ -103,7 +103,7 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from nmpl_local_device_info
+    from nmpl_device_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -111,14 +111,14 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplDeviceExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from nmpl_local_device_info
+    from nmpl_device_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -131,21 +131,21 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from nmpl_local_device_info
+    from nmpl_device_info
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from nmpl_local_device_info
+    delete from nmpl_device_info
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfoExample">
-    delete from nmpl_local_device_info
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplDeviceExample">
+    delete from nmpl_device_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-    insert into nmpl_local_device_info (id, device_id, device_name, 
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplDevice">
+    insert into nmpl_device_info (id, device_id, device_name, 
       device_type, other_type, enter_network_time, 
       device_admain, remark, public_network_ip, 
       public_network_port, lan_ip, lan_port, 
@@ -162,8 +162,8 @@
       #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}, 
       #{byteNetworkId,jdbcType=LONGVARBINARY})
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-    insert into nmpl_local_device_info
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplDevice">
+    insert into nmpl_device_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -301,14 +301,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfoExample" resultType="java.lang.Long">
-    select count(*) from nmpl_local_device_info
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplDeviceExample" resultType="java.lang.Long">
+    select count(*) from nmpl_device_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update nmpl_local_device_info
+    update nmpl_device_info
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -382,7 +382,7 @@
     </if>
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map">
-    update nmpl_local_device_info
+    update nmpl_device_info
     set id = #{record.id,jdbcType=BIGINT},
       device_id = #{record.deviceId,jdbcType=VARCHAR},
       device_name = #{record.deviceName,jdbcType=VARCHAR},
@@ -410,7 +410,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update nmpl_local_device_info
+    update nmpl_device_info
     set id = #{record.id,jdbcType=BIGINT},
       device_id = #{record.deviceId,jdbcType=VARCHAR},
       device_name = #{record.deviceName,jdbcType=VARCHAR},
@@ -436,8 +436,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-    update nmpl_local_device_info
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplDevice">
+    update nmpl_device_info
     <set>
       <if test="deviceId != null">
         device_id = #{deviceId,jdbcType=VARCHAR},
@@ -505,8 +505,8 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-    update nmpl_local_device_info
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplDevice">
+    update nmpl_device_info
     set device_id = #{deviceId,jdbcType=VARCHAR},
       device_name = #{deviceName,jdbcType=VARCHAR},
       device_type = #{deviceType,jdbcType=CHAR},
@@ -530,8 +530,8 @@
       byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplLocalDeviceInfo">
-    update nmpl_local_device_info
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplDevice">
+    update nmpl_device_info
     set device_id = #{deviceId,jdbcType=VARCHAR},
       device_name = #{deviceName,jdbcType=VARCHAR},
       device_type = #{deviceType,jdbcType=CHAR},

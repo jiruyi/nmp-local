@@ -23,11 +23,14 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
   </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplBaseStationInfo">
+    <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
+  </resultMap>
   <sql id="Base_Column_List">
     id, station_id, station_name, station_type, enter_network_time, station_admain, remark, 
     public_network_ip, public_network_port, lan_ip, lan_port, station_status, station_network_id, 
     station_random_seed, relation_operator_id, create_user, create_time, update_user, 
-    update_time, is_exist
+    update_time, is_exist ,byte_network_id
   </sql>
 
 
@@ -38,7 +41,7 @@
     lan_ip, lan_port, station_status,
     station_network_id, station_random_seed, relation_operator_id,
     create_user, create_time, update_user,
-    update_time, is_exist)
+    update_time, is_exist,byte_network_id)
     values
     <foreach collection ="list" item="vo" separator =",">
       (#{vo.id,jdbcType=BIGINT}, #{vo.stationId,jdbcType=VARCHAR}, #{vo.stationName,jdbcType=VARCHAR},
@@ -47,7 +50,7 @@
       #{vo.lanIp,jdbcType=VARCHAR}, #{vo.lanPort,jdbcType=VARCHAR}, #{vo.stationStatus,jdbcType=CHAR},
       #{vo.stationNetworkId,jdbcType=VARCHAR}, #{vo.stationRandomSeed,jdbcType=VARCHAR}, #{vo.relationOperatorId,jdbcType=VARCHAR},
       #{vo.createUser,jdbcType=VARCHAR}, #{vo.createTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR},
-      #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT})
+      #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT}, #{vo.byteNetworkId,jdbcType=LONGVARBINARY})
     </foreach >
   </insert>
 
@@ -122,6 +125,9 @@
         </if>
         <if test="info.isExist != null">
           is_exist = #{info.isExist,jdbcType=BIT},
+        </if>
+        <if test="info.byteNetworkId != null">
+          byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
         </if>
       </set>
       where id = #{info.id,jdbcType=BIGINT}

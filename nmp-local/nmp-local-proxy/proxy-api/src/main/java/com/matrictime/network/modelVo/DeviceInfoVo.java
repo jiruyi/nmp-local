@@ -119,4 +119,9 @@ public class DeviceInfoVo implements Serializable {
      */
     private Boolean isLocal;
 
+    /**
+     * 设备入网码
+     */
+    private byte[] byteNetworkId;
+
 }

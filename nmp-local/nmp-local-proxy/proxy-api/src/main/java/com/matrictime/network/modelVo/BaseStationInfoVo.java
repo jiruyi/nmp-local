@@ -113,4 +113,9 @@ public class BaseStationInfoVo implements Serializable {
      * true:是本机 false:不是本机
      */
     private Boolean isLocal;
+
+    /**
+     * 设备入网码
+     */
+    private byte[] byteNetworkId;
 }
