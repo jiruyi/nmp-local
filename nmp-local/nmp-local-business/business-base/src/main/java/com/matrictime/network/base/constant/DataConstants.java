@@ -149,8 +149,6 @@ public class DataConstants {
 
     public static final String URL_OUTLINEPC_BATCHINSERT = "/outlinePc/batchInsertOutlinePc";
 
-    public static final Integer STATIONNETWORKID_LENTH = 8;
-
 
     public static final Integer INSERT_OR_UPDATE_SUCCESS = 1;
 

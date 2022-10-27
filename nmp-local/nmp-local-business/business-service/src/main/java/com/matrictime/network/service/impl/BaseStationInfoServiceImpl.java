@@ -80,7 +80,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Integer insertFlag = null;
         BaseStationInfoRequest infoRequest = new BaseStationInfoRequest();
         try {
-            baseStationInfoRequest.setStationNetworkId(getStationNetworkId());
+            baseStationInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
             baseStationInfoRequest.setCreateTime(getFormatDate(date));
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
             baseStationInfoRequest.setStationId(SnowFlake.nextId_String());
@@ -382,20 +382,6 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         return jsonObject.toJSONString();
     }
 
-    private String getStationNetworkId(){
-        String stationNetworkId = Integer.toHexString(nmplBaseStationInfoMapper.getSequenceId());
-        //八位数 高位补零
-        if(stationNetworkId.length()>8){
-            throw new SystemException(ErrorMessageContants.SYSTEM_ERROR);
-        }
-
-        int num=DataConstants.STATIONNETWORKID_LENTH-stationNetworkId.length();
-        while (num>0){
-            stationNetworkId = "0"+stationNetworkId;
-            num--;
-        }
-        return stationNetworkId.toUpperCase(Locale.ROOT);
-    }
 
     private void checkParam(BaseStationInfoRequest baseStationInfoRequest){
         if(!CommonCheckUtil.checkStringLength(baseStationInfoRequest.getStationName(),null,16)){
