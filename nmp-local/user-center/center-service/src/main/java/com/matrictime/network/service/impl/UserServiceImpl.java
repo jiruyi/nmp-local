@@ -326,6 +326,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
     private void commonVerifyToken(VerifyTokenReq req){
         checkVerifyTokenParam(req);
 
+        // 根据userId从缓存中获取token信息
         String token = getToken(req.getUserId());
         if (!token.equals(req.getToken())){
             throw new SystemException(ErrorMessageContants.TOKEN_ILLEGAL_MSG);
@@ -333,6 +334,7 @@ public class UserServiceImpl   extends SystemBaseService implements UserService 
 
         try{
             String userId = JwtUtils.getClaimByName(req.getToken(),"userId").asString();
+            // 校验token是否被别人窜用
             if (!req.getUserId().equals(userId)){
                 throw new SystemException(ErrorMessageContants.TOKEN_ILLEGAL_MSG);
             }

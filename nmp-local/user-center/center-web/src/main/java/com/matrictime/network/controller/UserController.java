@@ -70,17 +70,17 @@ public class UserController {
         return result;
     }
 
-    @RequestMapping (value = "/verify",method = RequestMethod.POST)
-    @MonitorRequest
-    public Result verify(@RequestBody VerifyReq req){
-        try {
-            Result result = userService.verify(req);
-            return result;
-        }catch (Exception e){
-            log.error("UserController.verify exception:{}",e.getMessage());
-            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
-        }
-    }
+//    @RequestMapping (value = "/verify",method = RequestMethod.POST)
+//    @MonitorRequest
+//    public Result verify(@RequestBody VerifyReq req){
+//        try {
+//            Result result = userService.verify(req);
+//            return result;
+//        }catch (Exception e){
+//            log.error("UserController.verify exception:{}",e.getMessage());
+//            return new Result(false,ErrorMessageContants.SYSTEM_ERROR_MSG);
+//        }
+//    }
 
     @RequestMapping (value = "/verifyToken",method = RequestMethod.POST)
     @MonitorRequest

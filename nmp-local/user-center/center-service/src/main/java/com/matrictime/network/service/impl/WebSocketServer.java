@@ -17,6 +17,8 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.matrictime.network.base.UcConstants.LOGOUT_MSG;
@@ -57,8 +59,13 @@ public class WebSocketServer {
      */
     @OnOpen
     public void onOpen(Session session,@PathParam("account") String account) {
+        try {
+            account = URLDecoder.decode(account,"Utf-8");
+        } catch (UnsupportedEncodingException e) {
+            log.warn("websocket.onOpen Exception:{}",e.getMessage());
+        }
         this.session = session;
-        this.account=account;
+        this.account = account;
         if(webSocketMap.containsKey(account)){
             WebSocketServer webSocketServer = webSocketMap.get(account);
             webSocketServer.sendMessage(LOGOUT_MSG);
