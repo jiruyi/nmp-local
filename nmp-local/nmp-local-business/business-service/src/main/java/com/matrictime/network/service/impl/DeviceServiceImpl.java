@@ -2,6 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.alibaba.csp.sentinel.util.StringUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.util.DecimalConversionUtil;
@@ -17,6 +18,7 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.StationVo;
+import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
@@ -33,9 +35,11 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.matrictime.network.base.exception.ErrorMessageContants.*;
+
 @Service
 @Slf4j
-public class DeviceServiceImpl implements DeviceService {
+public class DeviceServiceImpl  extends SystemBaseService implements DeviceService {
 
     @Resource
     private DeviceDomainService deviceDomainService;
@@ -68,32 +72,12 @@ public class DeviceServiceImpl implements DeviceService {
         Date date = new Date();
         DeviceInfoRequest infoRequest = new DeviceInfoRequest();
         try {
-            Integer stationNetworkId = nmplBaseStationInfoMapper.getSequenceId();
 
-            if(!CommonCheckUtil.checkStringLength(deviceInfoRequest.getDeviceName(),null,16)){
-                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
-            }
-            deviceInfoRequest.setCreateTime(getFormatDate(date));
-            deviceInfoRequest.setUpdateTime(getFormatDate(date));
+            deviceInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
             deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
             deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
-            boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getPublicNetworkIp());
-            boolean lanIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getLanIp());
-            if(publicIpReg == false || lanIpReg == false){
-                return new Result<>(false,"ip格式不正确");
-            }
-            boolean publicPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getPublicNetworkPort());
-            boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getLanPort());
-            if(publicPortReg == false || lanPortReg == false){
-                return new Result<>(false,"端口格式不正确");
-            }
-            //判断小区是否正确
-            String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
-            if(StringUtil.isEmpty(preBID)){
-                return new Result<>(false,"运营商不存在");
-            }
-            String NetworkId = preBID + "-" + stationNetworkId;
-            deviceInfoRequest.setStationNetworkId(NetworkId);
+
+            checkParam(deviceInfoRequest);
 
             deviceInfoRequest.setByteNetworkId(DecimalConversionUtil.bidToByteArray(deviceInfoRequest.getStationNetworkId()));
 
@@ -103,9 +87,12 @@ public class DeviceServiceImpl implements DeviceService {
                 result.setSuccess(true);
                 pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_INSERT);
             }
+        }catch (SystemException e){
+            log.info("设备新增异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg("参数异常");
-            result.setSuccess(false);
+            log.error("设备新增异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -121,9 +108,12 @@ public class DeviceServiceImpl implements DeviceService {
                 result.setSuccess(true);
                 pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_UPDATE);
             }
+        }catch (SystemException e){
+            log.info("设备删除异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg("参数异常");
-            result.setSuccess(false);
+            log.error("设备删除异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -133,36 +123,20 @@ public class DeviceServiceImpl implements DeviceService {
         Result<Integer> result = new Result<>();
         Integer updateFlag;
         try {
-            if(!CommonCheckUtil.checkStringLength(deviceInfoRequest.getDeviceName(),null,16)){
-                return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
-            }
-            deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
-            boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getPublicNetworkIp());
-            boolean lanIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getLanIp());
-            if(publicIpReg == false || lanIpReg == false){
-                return new Result<>(false,"ip格式不正确");
-            }
-            boolean publicPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getPublicNetworkPort());
-            boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getLanPort());
-            if(publicPortReg == false || lanPortReg == false){
-                return new Result<>(false,"端口格式不正确");
-            }
-            //判断小区是否正确
-            String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
-            if(StringUtil.isEmpty(preBID)){
-                return new Result<>(false,"运营商不存在");
-            }
-            String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
-            deviceInfoRequest.setStationNetworkId(NetworkId);
+            checkParam(deviceInfoRequest);
+
             updateFlag = deviceDomainService.updateDevice(deviceInfoRequest);
             if(updateFlag == 1){
                 result.setResultObj(updateFlag);
                 result.setSuccess(true);
                 pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_UPDATE);
             }
+        }catch (SystemException e){
+            log.info("设备修改异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg("参数异常");
-            result.setSuccess(false);
+            log.error("设备修改异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -174,9 +148,12 @@ public class DeviceServiceImpl implements DeviceService {
             PageInfo pageInfo = deviceDomainService.selectDevice(deviceInfoRequest);
             result.setResultObj(pageInfo);
             result.setSuccess(true);
+        }catch (SystemException e){
+            log.info("设备查询异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg("参数异常");
-            result.setSuccess(false);
+            log.error("设备查询异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -189,9 +166,12 @@ public class DeviceServiceImpl implements DeviceService {
             deviceResponse.setDeviceInfoVos(deviceDomainService.selectLinkDevice(deviceInfoRequest));
             result.setResultObj(deviceResponse);
             result.setSuccess(true);
+        }catch (SystemException e){
+            log.info("设备查询异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg("参数异常");
-            result.setSuccess(false);
+            log.error("设备查询异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -204,9 +184,12 @@ public class DeviceServiceImpl implements DeviceService {
             deviceResponse.setDeviceInfoVos(deviceDomainService.selectDeviceForLinkRelation(deviceInfoRequest));
             result.setResultObj(deviceResponse);
             result.setSuccess(true);
+        }catch (SystemException e){
+            log.info("设备查询异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg("参数异常");
-            result.setSuccess(false);
+            log.error("设备查询异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -225,9 +208,12 @@ public class DeviceServiceImpl implements DeviceService {
             deviceResponse.setDeviceInfoVos(deviceDomainService.selectActiveDevice(deviceInfoRequest));
             result.setResultObj(deviceResponse);
             result.setSuccess(true);
+        }catch (SystemException e){
+            log.info("设备查询异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg("参数异常");
-            result.setSuccess(false);
+            log.error("设备查询异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -239,9 +225,12 @@ public class DeviceServiceImpl implements DeviceService {
             StationVo stationVo = deviceDomainService.selectDeviceId(deviceInfoRequest);
             result.setResultObj(stationVo);
             result.setSuccess(true);
+        }catch (SystemException e){
+            log.info("设备查询异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg(e.getMessage());
-            result.setSuccess(false);
+            log.error("设备查询异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -253,9 +242,12 @@ public class DeviceServiceImpl implements DeviceService {
             PageInfo pageInfo = deviceDomainService.selectDeviceALl(deviceInfoRequest);
             result.setResultObj(pageInfo);
             result.setSuccess(true);
+        }catch (SystemException e){
+            log.info("设备查询异常",e.getMessage());
+            result = failResult(e);
         }catch (Exception e){
-            result.setErrorMsg("参数异常");
-            result.setSuccess(false);
+            log.error("设备查询异常：{}",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
@@ -312,6 +304,31 @@ public class DeviceServiceImpl implements DeviceService {
             log.info("deviceId not found:"+deviceId);
         }
 
+    }
+
+
+
+    private void checkParam(DeviceInfoRequest deviceInfoRequest){
+        if(!CommonCheckUtil.checkStringLength(deviceInfoRequest.getDeviceName(),null,16)){
+            throw new SystemException(DEVICENAME_LENTH_ERROR_MSG);
+        }
+        boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getPublicNetworkIp());
+        boolean lanIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getLanIp());
+        if(publicIpReg == false || lanIpReg == false){
+            throw  new SystemException(IP_FORMAT_ERROR_MSG);
+        }
+        boolean publicPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getPublicNetworkPort());
+        boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getLanPort());
+        if(publicPortReg == false || lanPortReg == false){
+            throw  new SystemException(PORT_FORMAT_ERROR_MSG);
+        }
+        //判断小区是否正确
+        String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
+        if(StringUtil.isEmpty(preBID)){
+            throw  new SystemException(NOT_EXIST_VILLAGE);
+        }
+        String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
+        deviceInfoRequest.setStationNetworkId(NetworkId);
     }
 
 
