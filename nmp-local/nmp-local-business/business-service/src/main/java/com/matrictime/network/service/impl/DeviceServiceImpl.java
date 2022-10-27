@@ -68,8 +68,8 @@ public class DeviceServiceImpl implements DeviceService {
         Date date = new Date();
         DeviceInfoRequest infoRequest = new DeviceInfoRequest();
         try {
-            //Integer stationNetworkId = nmplBaseStationInfoMapper.getSequenceId();
-            deviceInfoRequest.setStationNetworkId(getStationNetworkId());
+            Integer stationNetworkId = nmplBaseStationInfoMapper.getSequenceId();
+
             if(!CommonCheckUtil.checkStringLength(deviceInfoRequest.getDeviceName(),null,16)){
                 return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
             }
@@ -92,7 +92,7 @@ public class DeviceServiceImpl implements DeviceService {
             if(StringUtil.isEmpty(preBID)){
                 return new Result<>(false,"运营商不存在");
             }
-            String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
+            String NetworkId = preBID + "-" + stationNetworkId;
             deviceInfoRequest.setStationNetworkId(NetworkId);
 
             deviceInfoRequest.setByteNetworkId(DecimalConversionUtil.bidToByteArray(deviceInfoRequest.getStationNetworkId()));
@@ -312,21 +312,6 @@ public class DeviceServiceImpl implements DeviceService {
             log.info("deviceId not found:"+deviceId);
         }
 
-    }
-
-    private String getStationNetworkId(){
-        String stationNetworkId = Integer.toHexString(nmplBaseStationInfoMapper.getSequenceId());
-        //八位数 高位补零
-        if(stationNetworkId.length()>8){
-            throw new SystemException(com.matrictime.network.base.exception.ErrorMessageContants.SYSTEM_ERROR);
-        }
-
-        int num=DataConstants.STATIONNETWORKID_LENTH-stationNetworkId.length();
-        while (num>0){
-            stationNetworkId = "0"+stationNetworkId;
-            num--;
-        }
-        return stationNetworkId.toUpperCase(Locale.ROOT);
     }
 
 
