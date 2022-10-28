@@ -5,8 +5,8 @@ import lombok.Data;
 
 /**
  * 出网路由
- * @author   wangqiang
- * @date   2022-10-17
+ * @author   hexu
+ * @date   2022-10-27
  */
 @Data
 public class NmplInternetRoute {
@@ -26,7 +26,7 @@ public class NmplInternetRoute {
     private String networkId;
 
     /**
-     * 边界基站ip
+     * 边界基站ip_v4
      */
     private String boundaryStationIp;
 
@@ -56,9 +56,14 @@ public class NmplInternetRoute {
     private Boolean isExist;
 
     /**
-     * ipV6
+     * 边界基站ip_v6
      */
     private String ipV6;
+
+    /**
+     * 设备入网码
+     */
+    private byte[] byteNetworkId;
 
     public Long getId() {
         return id;
@@ -138,5 +143,13 @@ public class NmplInternetRoute {
 
     public void setIpV6(String ipV6) {
         this.ipV6 = ipV6 == null ? null : ipV6.trim();
+    }
+
+    public byte[] getByteNetworkId() {
+        return byteNetworkId;
+    }
+
+    public void setByteNetworkId(byte[] byteNetworkId) {
+        this.byteNetworkId = byteNetworkId;
     }
 }

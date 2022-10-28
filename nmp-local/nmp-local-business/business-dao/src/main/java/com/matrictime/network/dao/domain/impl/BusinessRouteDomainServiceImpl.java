@@ -3,7 +3,9 @@ package com.matrictime.network.dao.domain.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.enums.StationTypeEnum;
+import com.matrictime.network.base.util.DecimalConversionUtil;
 import com.matrictime.network.base.util.SnowFlake;
+import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.domain.BusinessRouteDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplBusinessRouteMapper;
@@ -43,6 +45,7 @@ public class BusinessRouteDomainServiceImpl implements BusinessRouteDomainServic
     public int insert(BusinessRouteRequest businessRouteRequest) {
         NmplBusinessRoute nmplBusinessRoute = new NmplBusinessRoute();
         BeanUtils.copyProperties(businessRouteRequest,nmplBusinessRoute);
+        nmplBusinessRoute.setByteNetworkId(DecimalConversionUtil.idToByteArray(businessRouteRequest.getNetworkId()));
         return nmplBusinessRouteMapper.insertSelective(nmplBusinessRoute);
     }
 
@@ -64,6 +67,7 @@ public class BusinessRouteDomainServiceImpl implements BusinessRouteDomainServic
         criteria.andIdEqualTo(businessRouteRequest.getId());
         NmplBusinessRoute nmplBusinessRoute = new NmplBusinessRoute();
         BeanUtils.copyProperties(businessRouteRequest,nmplBusinessRoute);
+        nmplBusinessRoute.setByteNetworkId(DecimalConversionUtil.idToByteArray(businessRouteRequest.getNetworkId()));
         return nmplBusinessRouteMapper.updateByExampleSelective(nmplBusinessRoute,nmplBusinessRouteExample);
     }
 

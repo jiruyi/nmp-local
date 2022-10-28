@@ -2,6 +2,7 @@ package com.matrictime.network.dao.domain.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.matrictime.network.base.util.DecimalConversionUtil;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.dao.domain.StaticRouteDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
@@ -43,6 +44,7 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
     public int insert(StaticRouteRequest staticRouteRequest) {
         NmplStaticRoute nmplStaticRoute = new NmplStaticRoute();
         BeanUtils.copyProperties(staticRouteRequest,nmplStaticRoute);
+        nmplStaticRoute.setByteNetworkId(DecimalConversionUtil.toLH(Integer.parseInt(staticRouteRequest.getNetworkId())));
         return nmplStaticRouteMapper.insertSelective(nmplStaticRoute);
     }
 
@@ -58,6 +60,7 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
     public int update(StaticRouteRequest staticRouteRequest) {
         NmplStaticRouteExample nmplStaticRouteExample = constructUpdateCondition(staticRouteRequest);
         NmplStaticRoute nmplStaticRoute = constructUpdateDate(staticRouteRequest);
+        nmplStaticRoute.setByteNetworkId(DecimalConversionUtil.toLH(Integer.parseInt(staticRouteRequest.getNetworkId())));
         return nmplStaticRouteMapper.updateByExampleSelective(nmplStaticRoute,nmplStaticRouteExample);
     }
 
