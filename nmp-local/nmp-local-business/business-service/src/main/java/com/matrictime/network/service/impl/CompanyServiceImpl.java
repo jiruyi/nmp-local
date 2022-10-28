@@ -116,10 +116,10 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
             pageResult = companyInfoDomainService.queryByConditions(companyInfoRequest);
             result = buildResult(pageResult);
         }catch (SystemException e){
-            log.error("查询角色异常：",e.getMessage());
+            log.info(map.get(companyInfoRequest.getCompanyType())+"查询异常",e.getMessage());
             result = failResult(e);
         }catch (Exception e){
-            log.error("查询角色异常：",e.getMessage());
+            log.info(map.get(companyInfoRequest.getCompanyType())+"查询异常",e.getMessage());
             result = failResult("");
         }
         return result;
@@ -140,11 +140,11 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
             companyResp.setList(nmplCompanyInfoVoList);
             result = buildResult(companyResp);
         }catch (SystemException e){
-            log.error("查询角色异常：",e.getMessage());
+            log.error("查询运营商异常：",e.getMessage());
             result = failResult(e);
         }
         catch (Exception e){
-            log.error("查询角色异常：",e.getMessage());
+            log.error("查询运营商异常：",e.getMessage());
             result = failResult("");
         }
         return result;
@@ -164,10 +164,10 @@ public class CompanyServiceImpl extends SystemBaseService implements CompanyServ
             companyResp.setNmplCompanyInfoVoList(nmplCompanyInfoVoList);
             result = buildResult(companyResp);
         }catch (SystemException e){
-            log.error("查询角色异常：",e.getMessage());
+            log.info(map.get(companyInfoRequest.getCompanyType())+"查询异常",e.getMessage());
             result = failResult(e);
         }catch (Exception e){
-            log.error("查询角色异常：",e.getMessage());
+            log.info(map.get(companyInfoRequest.getCompanyType())+"查询异常",e.getMessage());
             result = failResult("");
         }
         return result;

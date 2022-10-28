@@ -103,4 +103,6 @@ public class ErrorMessageContants {
 
 	public static final String IP_REPEAT = "设备IP重复";
 
+	public static final String DEVICENAME_LENTH_ERROR_MSG="设备名长度超过限制";
+
 }
