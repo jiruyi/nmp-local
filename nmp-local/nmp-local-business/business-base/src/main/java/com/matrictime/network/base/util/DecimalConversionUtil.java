@@ -18,7 +18,7 @@ public class DecimalConversionUtil {
 
 
     public static void main(String[] args) {
-        String a ="9999-25";
+        String a ="9999-25-1-1-1-1001";
 //        byte[]res = bidToByteArray(a);
 //        for (byte re : res) {
 //            System.out.println(re);
@@ -44,9 +44,9 @@ public class DecimalConversionUtil {
         String[] idArray = idToIdStringArray(id);
         int length = idArray.length;
         for (int i = 0; i < length; i++) {
-            if (i<4){
+            if (i<2){
                 result = splicingArrays(result,hexToByteLittle(idArray[i]));
-            }else if (i<7){
+            }else if (i<5){
                 result = splicingArrays(result,intToByteLittle(Integer.parseInt(idArray[i])));
             }else {
                 result = splicingArrays(result, toLH(Integer.parseInt(idArray[i])));
