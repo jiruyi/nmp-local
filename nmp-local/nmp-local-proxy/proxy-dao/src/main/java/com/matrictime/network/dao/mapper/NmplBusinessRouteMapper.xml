@@ -14,6 +14,9 @@
     <result column="is_exist" jdbcType="BIT" property="isExist" />
     <result column="ip_v6" jdbcType="VARCHAR" property="ipV6" />
   </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplBusinessRoute">
+    <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
+  </resultMap>
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -76,6 +79,26 @@
     id, route_id, business_type, network_id, ip, create_user, create_time, update_user, 
     update_time, is_exist, ip_v6
   </sql>
+  <sql id="Blob_Column_List">
+    byte_network_id
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplBusinessRouteExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from nmpl_business_route
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplBusinessRouteExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -91,9 +114,11 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
     from nmpl_business_route
     where id = #{id,jdbcType=BIGINT}
   </select>
@@ -111,11 +136,13 @@
     insert into nmpl_business_route (id, route_id, business_type, 
       network_id, ip, create_user, 
       create_time, update_user, update_time, 
-      is_exist, ip_v6)
+      is_exist, ip_v6, byte_network_id
+      )
     values (#{id,jdbcType=BIGINT}, #{routeId,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR}, 
       #{networkId,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{isExist,jdbcType=BIT}, #{ipV6,jdbcType=VARCHAR})
+      #{isExist,jdbcType=BIT}, #{ipV6,jdbcType=VARCHAR}, #{byteNetworkId,jdbcType=LONGVARBINARY}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplBusinessRoute">
     insert into nmpl_business_route
@@ -153,6 +180,9 @@
       <if test="ipV6 != null">
         ip_v6,
       </if>
+      <if test="byteNetworkId != null">
+        byte_network_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -187,6 +217,9 @@
       </if>
       <if test="ipV6 != null">
         #{ipV6,jdbcType=VARCHAR},
+      </if>
+      <if test="byteNetworkId != null">
+        #{byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
     </trim>
   </insert>
@@ -232,7 +265,28 @@
       <if test="record.ipV6 != null">
         ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
       </if>
+      <if test="record.byteNetworkId != null">
+        byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY},
+      </if>
     </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update nmpl_business_route
+    set id = #{record.id,jdbcType=BIGINT},
+      route_id = #{record.routeId,jdbcType=VARCHAR},
+      business_type = #{record.businessType,jdbcType=VARCHAR},
+      network_id = #{record.networkId,jdbcType=VARCHAR},
+      ip = #{record.ip,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{record.isExist,jdbcType=BIT},
+      ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
+      byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -287,7 +341,25 @@
       <if test="ipV6 != null">
         ip_v6 = #{ipV6,jdbcType=VARCHAR},
       </if>
+      <if test="byteNetworkId != null">
+        byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
+      </if>
     </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplBusinessRoute">
+    update nmpl_business_route
+    set route_id = #{routeId,jdbcType=VARCHAR},
+      business_type = #{businessType,jdbcType=VARCHAR},
+      network_id = #{networkId,jdbcType=VARCHAR},
+      ip = #{ip,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{isExist,jdbcType=BIT},
+      ip_v6 = #{ipV6,jdbcType=VARCHAR},
+      byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplBusinessRoute">

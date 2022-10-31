@@ -13,6 +13,7 @@ import com.matrictime.network.request.RouteRequest;
 import com.matrictime.network.response.ProxyResp;
 import com.matrictime.network.service.ProxyInitService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,7 +70,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             }
             getStationInfoList(proxyResp);
             getDeviceInfoList(proxyResp);
-            getRoteVoList(proxyResp);
+            getRouteVoList(proxyResp);
             getlinkRelationVoList(deviceIds,proxyResp);
             getOutlinePcInfoList(proxyResp);
             result = buildResult(proxyResp);
@@ -165,28 +166,34 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      * 获取该ip下所有关联的路由关系
      * @param proxyResp
      */
-    private void getRoteVoList(ProxyResp proxyResp){
-        List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(null);
+    private void getRouteVoList(ProxyResp proxyResp){
+        NmplBusinessRouteExample example = new NmplBusinessRouteExample();
+        example.createCriteria().andNetworkIdNotEqualTo("");
+        List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExampleWithBLOBs(example);
 
-        List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(null);
+        List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExampleWithBLOBs(null);
 
-        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(null);
+        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExampleWithBLOBs(null);
         //业务服务
         for (NmplBusinessRoute nmplBusinessRoute : nmplBusinessRoutes) {
             ProxyBusinessRouteVo proxyBusinessRouteVo = new ProxyBusinessRouteVo();
             BeanUtils.copyProperties(nmplBusinessRoute,proxyBusinessRouteVo);
+//            proxyBusinessRouteVo.setByteNetworkId(ArrayUtils.toObject(nmplBusinessRoute.getByteNetworkId()));
+            proxyBusinessRouteVo.setByteNetworkId(nmplBusinessRoute.getByteNetworkId());
             proxyResp.getBusinessRouteVoList().add(proxyBusinessRouteVo);
         }
         //出网路由
         for (NmplInternetRoute nmplInternetRoute : nmplInternetRoutes) {
             ProxyInternetRouteVo proxyInternetRouteVo = new ProxyInternetRouteVo();
             BeanUtils.copyProperties(nmplInternetRoute,proxyInternetRouteVo);
+//            proxyInternetRouteVo.setByteNetworkId(ArrayUtils.toObject(nmplInternetRoute.getByteNetworkId()));
             proxyResp.getInternetRouteVoList().add(proxyInternetRouteVo);
         }
         //静态分配
         for (NmplStaticRoute nmplStaticRoute : nmplStaticRoutes) {
             ProxyStaticRouteVo proxyStaticRouteVo =new ProxyStaticRouteVo();
             BeanUtils.copyProperties(nmplStaticRoute,proxyStaticRouteVo);
+//            proxyStaticRouteVo.setByteNetworkId(ArrayUtils.toObject(nmplStaticRoute.getByteNetworkId()));
             proxyResp.getStaticRouteVoList().add(proxyStaticRouteVo);
         }
 

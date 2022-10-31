@@ -16,15 +16,21 @@ public interface NmplStaticRouteMapper {
 
     int insertSelective(NmplStaticRoute record);
 
+    List<NmplStaticRoute> selectByExampleWithBLOBs(NmplStaticRouteExample example);
+
     List<NmplStaticRoute> selectByExample(NmplStaticRouteExample example);
 
     NmplStaticRoute selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") NmplStaticRoute record, @Param("example") NmplStaticRouteExample example);
 
+    int updateByExampleWithBLOBs(@Param("record") NmplStaticRoute record, @Param("example") NmplStaticRouteExample example);
+
     int updateByExample(@Param("record") NmplStaticRoute record, @Param("example") NmplStaticRouteExample example);
 
     int updateByPrimaryKeySelective(NmplStaticRoute record);
+
+    int updateByPrimaryKeyWithBLOBs(NmplStaticRoute record);
 
     int updateByPrimaryKey(NmplStaticRoute record);
 }

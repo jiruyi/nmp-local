@@ -50,13 +50,13 @@
     insert into nmpl_business_route (id, route_id, business_type,
     network_id, ip, create_user,
     create_time, update_user, update_time,
-    is_exist, ip_v6)
+    is_exist, ip_v6, byte_network_id)
     values
     <foreach collection ="list" item="vo" separator =",">
       (#{vo.id,jdbcType=BIGINT}, #{vo.routeId,jdbcType=VARCHAR}, #{vo.businessType,jdbcType=VARCHAR},
       #{vo.networkId,jdbcType=VARCHAR}, #{vo.ip,jdbcType=VARCHAR}, #{vo.createUser,jdbcType=VARCHAR},
       #{vo.createTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP},
-      #{vo.isExist,jdbcType=BIT}, #{vo.ipV6,jdbcType=VARCHAR})
+      #{vo.isExist,jdbcType=BIT}, #{vo.ipV6,jdbcType=VARCHAR}, #{vo.byteNetworkId,jdbcType=LONGVARBINARY})
     </foreach >
   </insert>
 
@@ -94,6 +94,9 @@
         <if test="info.ipV6 != null">
           ip_v6 = #{info.ipV6,jdbcType=VARCHAR},
         </if>
+        <if test="info.byteNetworkId != null">
+          byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
+        </if>
       </set>
       where id = #{info.id,jdbcType=BIGINT}
     </foreach>
@@ -106,14 +109,14 @@
     insert into nmpl_internet_route (id, route_id, network_id,
     boundary_station_ip, create_user, create_time,
     update_user, update_time, is_exist,
-    ip_v6
+    ip_v6, byte_network_id
     )
     values
     <foreach collection ="list" item="vo" separator =",">
       (#{vo.id,jdbcType=BIGINT}, #{vo.routeId,jdbcType=VARCHAR}, #{vo.networkId,jdbcType=VARCHAR},
       #{vo.boundaryStationIp,jdbcType=VARCHAR}, #{vo.createUser,jdbcType=VARCHAR}, #{vo.createTime,jdbcType=TIMESTAMP},
       #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT},
-      #{vo.ipV6,jdbcType=VARCHAR}
+      #{vo.ipV6,jdbcType=VARCHAR}, #{vo.byteNetworkId,jdbcType=LONGVARBINARY}
       )
     </foreach >
   </insert>
@@ -149,6 +152,9 @@
         <if test="info.ipV6 != null">
           ip_v6 = #{info.ipV6,jdbcType=VARCHAR},
         </if>
+        <if test="info.byteNetworkId != null">
+          byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
+        </if>
       </set>
       where id = #{info.id,jdbcType=BIGINT}
     </foreach>
@@ -162,13 +168,13 @@
     insert into nmpl_static_route (id, route_id, network_id,
     server_ip, is_exist, create_user,
     create_time, update_user, update_time,
-    station_id, ip_v6)
+    station_id, ip_v6, byte_network_id)
     values
     <foreach collection ="list" item="vo" separator =",">
       (#{vo.id,jdbcType=BIGINT}, #{vo.routeId,jdbcType=VARCHAR}, #{vo.networkId,jdbcType=VARCHAR},
       #{vo.serverIp,jdbcType=VARCHAR}, #{vo.isExist,jdbcType=BIT}, #{vo.createUser,jdbcType=VARCHAR},
       #{vo.createTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP},
-      #{vo.stationId,jdbcType=VARCHAR}, #{vo.ipV6,jdbcType=VARCHAR})
+      #{vo.stationId,jdbcType=VARCHAR}, #{vo.ipV6,jdbcType=VARCHAR}, #{vo.byteNetworkId,jdbcType=LONGVARBINARY})
     </foreach >
   </insert>
 
@@ -205,6 +211,9 @@
         </if>
         <if test="info.ipV6 != null">
           ip_v6 = #{info.ipV6,jdbcType=VARCHAR},
+        </if>
+        <if test="info.byteNetworkId != null">
+          byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
         </if>
       </set>
       where id = #{info.id,jdbcType=BIGINT}

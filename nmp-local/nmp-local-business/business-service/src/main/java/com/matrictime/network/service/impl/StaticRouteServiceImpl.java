@@ -85,7 +85,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
                 result.setResultObj(insert);
                 NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
                 nmplStaticRouteExample.createCriteria().andRouteIdEqualTo(staticRouteRequest.getRouteId());
-                List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
+                List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExampleWithBLOBs(nmplStaticRouteExample);
                 sendRoute(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO),DataConstants.INSERT_STATIC_ROUTE);
             }
         }catch (Exception e){

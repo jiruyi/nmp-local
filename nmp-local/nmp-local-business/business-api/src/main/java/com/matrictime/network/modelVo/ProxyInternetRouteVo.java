@@ -57,4 +57,6 @@ public class ProxyInternetRouteVo implements Serializable {
      * ipV6
      */
     private String ipV6;
+
+    private byte[] byteNetworkId;
 }

@@ -16,15 +16,21 @@ public interface NmplInternetRouteMapper {
 
     int insertSelective(NmplInternetRoute record);
 
+    List<NmplInternetRoute> selectByExampleWithBLOBs(NmplInternetRouteExample example);
+
     List<NmplInternetRoute> selectByExample(NmplInternetRouteExample example);
 
     NmplInternetRoute selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") NmplInternetRoute record, @Param("example") NmplInternetRouteExample example);
 
+    int updateByExampleWithBLOBs(@Param("record") NmplInternetRoute record, @Param("example") NmplInternetRouteExample example);
+
     int updateByExample(@Param("record") NmplInternetRoute record, @Param("example") NmplInternetRouteExample example);
 
     int updateByPrimaryKeySelective(NmplInternetRoute record);
+
+    int updateByPrimaryKeyWithBLOBs(NmplInternetRoute record);
 
     int updateByPrimaryKey(NmplInternetRoute record);
 }

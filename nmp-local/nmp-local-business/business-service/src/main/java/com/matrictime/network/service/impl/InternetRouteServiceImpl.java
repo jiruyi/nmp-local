@@ -85,7 +85,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
                 result.setResultObj(insert);
                 NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
                 nmplInternetRouteExample.createCriteria().andRouteIdEqualTo(internetRouteRequest.getRouteId());
-                List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
+                List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExampleWithBLOBs(nmplInternetRouteExample);
                 sendRoute(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO),DataConstants.INSERT_INTERNET_ROUTE);
             }
         }catch (Exception e){

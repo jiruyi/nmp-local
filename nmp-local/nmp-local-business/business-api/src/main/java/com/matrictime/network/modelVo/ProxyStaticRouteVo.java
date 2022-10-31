@@ -62,4 +62,6 @@ public class ProxyStaticRouteVo implements Serializable {
      * ipV6
      */
     private String ipV6;
+
+    private byte[] byteNetworkId;
 }

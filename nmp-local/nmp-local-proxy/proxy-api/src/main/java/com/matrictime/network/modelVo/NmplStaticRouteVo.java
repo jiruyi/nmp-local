@@ -70,4 +70,6 @@ public class NmplStaticRouteVo implements Serializable {
      */
     private String ipV6;
 
+    private byte[] byteNetworkId;
+
 }
