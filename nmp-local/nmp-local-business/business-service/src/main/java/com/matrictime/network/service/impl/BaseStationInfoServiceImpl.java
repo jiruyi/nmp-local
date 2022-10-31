@@ -91,7 +91,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             //校验参数
             checkParam(baseStationInfoRequest);
 
-            baseStationInfoRequest.setByteNetworkId(DecimalConversionUtil.bidToByteArray(baseStationInfoRequest.getStationNetworkId()));
+            baseStationInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(baseStationInfoRequest.getStationNetworkId()));
 
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
 
