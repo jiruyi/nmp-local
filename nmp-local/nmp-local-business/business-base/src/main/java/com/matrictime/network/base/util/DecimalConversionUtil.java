@@ -18,7 +18,7 @@ public class DecimalConversionUtil {
 
 
     public static void main(String[] args) {
-        String a ="11-25";
+        String a ="9999-25";
 //        byte[]res = bidToByteArray(a);
 //        for (byte re : res) {
 //            System.out.println(re);
@@ -45,7 +45,7 @@ public class DecimalConversionUtil {
         int length = idArray.length;
         for (int i = 0; i < length; i++) {
             if (i<4){
-                result = splicingArrays(result,shortToByteLittle(Short.parseShort(idArray[i])));
+                result = splicingArrays(result,hexToByteLittle(idArray[i]));
             }else if (i<7){
                 result = splicingArrays(result,intToByteLittle(Integer.parseInt(idArray[i])));
             }else {
@@ -61,15 +61,21 @@ public class DecimalConversionUtil {
         String first = split[0];
         char[] chars = first.toCharArray();
         int clength = chars.length;
-        int nationLength = 4;
-        String[] nation = new String[nationLength];
-        for (int i=0;i<nationLength;i++){
-            if (clength>(nationLength-1-i)){
-                nation[i] = String.valueOf(chars[i-(nationLength-clength)]);
+        int tempLength = 4;
+        String[] temp = new String[tempLength];
+        for (int i=0;i<tempLength;i++){
+            if (clength>(tempLength-1-i)){
+                temp[i] = String.valueOf(chars[i-(tempLength-clength)]);
             }else {
-                nation[i] = String.valueOf(0);
+                temp[i] = String.valueOf(0);
             }
         }
+        int nationLength = 2;
+
+        String[] nation = new String[nationLength];
+        nation[0] = temp[0] + temp[1];
+        nation[1] = temp[2] + temp[3];
+
         nation = Arrays.copyOf(nation,nationLength+slength-1);
         System.arraycopy(split,1,nation,nationLength,slength-1);
         return nation;
@@ -91,9 +97,13 @@ public class DecimalConversionUtil {
         return b;
     }
 
-    public static byte[] shortToByteLittle(short n) {
+    public static byte[] hexToByteLittle(String args) {
+        char[] chars = args.toCharArray();
+        int high = Integer.parseInt(String.valueOf(chars[0]));
+        high =  high << 4;
+        int low = Integer.parseInt(String.valueOf(chars[1]));
         byte[] b = new byte[1];
-        b[0] = (byte) (n & 0xff);
+        b[0] = (byte) ((high | low) & 0xff );
         return b;
     }
 
