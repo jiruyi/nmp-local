@@ -41,5 +41,5 @@ public class DataConstants {
     public static final String STR_SPLIT = ",";
     public static final String FILE_SPLIT = "\\.";
 
-
+    public static final String UNIFIED_PLATFORM= "unified_platform_";
 }

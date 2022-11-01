@@ -49,6 +49,18 @@ spring:
   instance:
     instance-id: unified-portal
     prefer-ip-address: true     #访问路径可以显示IP地址
+  redis:
+    database: 0
+    host: 192.168.72.14
+    port: 6379
+    password: 123456
+    timeout: 500
+    lettuce:
+      pool:
+        max-active: 100
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
  
 info: 
   app.name: unified-portal
@@ -62,3 +74,5 @@ logging:
     com.jzsg: info
 thread:
   batchMaxSize: 500
+token:
+  timeOut: 12
