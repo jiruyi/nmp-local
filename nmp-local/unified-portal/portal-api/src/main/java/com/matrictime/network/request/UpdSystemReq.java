@@ -6,9 +6,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class AddSystemReq implements Serializable {
+public class UpdSystemReq implements Serializable {
 
-    private static final long serialVersionUID = 4360173982408734804L;
+    private static final long serialVersionUID = 8111350368968347066L;
+
+    /**
+     * 系统ID
+     */
+    private Long id;
 
     /**
      * 系统名称

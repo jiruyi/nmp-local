@@ -5,7 +5,7 @@ import lombok.Data;
 
 /**
  * 应用系统信息表
- * @author   xxxx
+ * @author   hx
  * @date   2022-11-01
  */
 @Data

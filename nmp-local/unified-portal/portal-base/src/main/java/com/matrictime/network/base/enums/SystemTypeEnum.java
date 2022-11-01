@@ -9,13 +9,13 @@ package com.matrictime.network.base.enums;
  */
 public enum SystemTypeEnum {
 
-    YUNYING(1,"运营系统"),
-    YUNWEI(2,"运维系统"),
-    YUNKONG(3,"运控系统");
+    YUNYING("1","运营系统"),
+    YUNWEI("2","运维系统"),
+    YUNKONG("3","运控系统");
 
-    private int code;
+    private String code;
     private String conditionDesc;
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
@@ -23,7 +23,7 @@ public enum SystemTypeEnum {
         return conditionDesc;
     }
 
-    SystemTypeEnum(int code, String conditionDesc) {
+    SystemTypeEnum(String code, String conditionDesc) {
         this.code = code;
         this.conditionDesc = conditionDesc;
     }

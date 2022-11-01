@@ -47,36 +47,11 @@ public class ErrorMessageContants {
 
 	public static final String LOGOUT_SUCCESS_MSG = "成功退出";
 
-	public static final String DEVICE_LIST_IS_NULL_MSG = "上报列表不能为空";
-
-	public static final String DEVICE_IP_IS_NULL_MSG = "设备IP不能为空";
-
 	public static final String OPER_DESC_IS_NULL_MSG = "操作信息不能为空";
-	public static final String OPER_TYPE_IS_NULL_MSG = "设备类型不能为空";
-
-	public static final String OPER_TYPE_IS_ERROR_MSG = "设备类型有误";
-
-	public static final String DEVICE_NOT_EXIST_MSG = "设备不存在";
-
-	public static final String DEVICE_NOT_ACTIVE_MSG = "设备未激活或者设备非下线状态";
-
-	public static final String PHONE_SMS_COUNT_LIMIT = "您的手机短信发送过于频繁";
 
 	public static final String PHONE_IS_NOT_EXIST = "手机号不存在,请核对后再试";
 
-	public static final String DEVICE_IS_NOT_EXIST = "设备不存在";
-
-	public static final String PARENT_SON_RELATION_ERROR = "父子关系与设备等级不匹配";
-
-	public static final String NO_ROUTE_EXIST_ERROR = "没有路由路线可达";
-
-	public static final String DEVICE_AUTH_FAIL_MSG = "设备认证失败";
-
 	public static final String JSON_ERROR_FAIL_MSG = "JSON解析失败";
-
-	public static final String SIGNAL_I_EXCEPTION_MSG = "信令已开启追踪";
-
-	public static final String SIGNAL_O_EXCEPTION_MSG = "信令关闭参数校验有误";
 
 	public static final String NO_CREATEUSER_ERROR_MSG = "并非该用户的创始人,无权修改";
 
@@ -86,6 +61,10 @@ public class ErrorMessageContants {
 
 	public static final String EQUAL_PASSWORD_ERROR_MSG = "新旧密码不可相同";
 
-	public static final String DEVICE_ID_IS_NULL_MSG = "设备Id为空";
+	public static final String IMG_TOO_LARGE = "图片大于10M";
+
+	public static final String IMG_IS_NOT_PNG = "图片格式错误，请重新上传png格式图片";
+
+	public static final String UPLOAD_FILE_FAIL = "上传图片失败";
 
 }

@@ -41,6 +41,8 @@ public class DataConstants {
 
     public static final String KEY_SLASH = "/";
 
+    public static final String KEY_PERCENT = "%";
+
     public static final String LEFT_BRACKET = "(";
 
     public static final String RIGHT_BRACKET = ")";
@@ -90,5 +92,7 @@ public class DataConstants {
     public static final String KEY_SUCCESS_IDS = "successIds";
 
     public static final String KEY_FAIL_IDS = "failIds";
+
+    public static final String UPDTIME_DESC = "update_time desc";
 
 }

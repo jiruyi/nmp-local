@@ -1,4 +1,4 @@
-package com.matrictime.network.request;
+package com.matrictime.network.modelVo;
 
 import lombok.Data;
 
@@ -6,9 +6,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class AddSystemReq implements Serializable {
+public class PortalSystemVo implements Serializable {
 
-    private static final long serialVersionUID = 4360173982408734804L;
+    private static final long serialVersionUID = 6098797869760562698L;
+
+    /**
+     * 系统ID
+     */
+    private Long id;
 
     /**
      * 系统名称

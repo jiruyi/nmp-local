@@ -62,3 +62,7 @@ logging:
     com.jzsg: info
 thread:
   batchMaxSize: 500
+
+upload:
+  image:
+    path: /usr/local/portal/static/upload/image/
