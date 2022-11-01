@@ -41,6 +41,7 @@ public class DataConstants {
     public static final String STR_SPLIT = ",";
     public static final String FILE_SPLIT = "\\.";
 
+    public static final String UNIFIED_PLATFORM= "unified_platform_";
     public static final Integer FILE_SIZE = 1024 * 1024 * 10;
 
     public static final String IMG_TYPE_PNG = "png";
