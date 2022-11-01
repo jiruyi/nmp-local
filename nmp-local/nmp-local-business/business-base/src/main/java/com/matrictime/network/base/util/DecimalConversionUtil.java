@@ -18,24 +18,13 @@ public class DecimalConversionUtil {
 
 
     public static void main(String[] args) {
-        String a ="9999-25-1-1-1-1001";
+        String a ="9999-25-1-1-1";
 //        byte[]res = bidToByteArray(a);
 //        for (byte re : res) {
 //            System.out.println(re);
 //        }
         byte[] strings = idToByteArray(a);
         System.out.println(strings);
-    }
-
-    public static byte[] bidToByteArray(String bid){
-        byte[]result = new byte[0];
-        String[] split = bid.split(DataConstants.KEY_SPLIT_MIDLINE);
-        for (int i = 0; i < split.length-1; i++) {
-            byte[] bytes = intToByteLittle(Integer.parseInt(split[i]));
-            result = splicingArrays(result,bytes);
-        }
-        result = splicingArrays(result, toLH(Integer.parseInt(split[split.length-1])));
-        return result;
     }
 
 

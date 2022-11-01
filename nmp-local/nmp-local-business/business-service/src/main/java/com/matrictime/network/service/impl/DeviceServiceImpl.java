@@ -35,6 +35,7 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.matrictime.network.base.constant.DataConstants.INSERT_OR_UPDATE_SUCCESS;
 import static com.matrictime.network.base.exception.ErrorMessageContants.*;
 
 @Service
@@ -79,10 +80,10 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
 
             checkParam(deviceInfoRequest);
 
-            deviceInfoRequest.setByteNetworkId(DecimalConversionUtil.bidToByteArray(deviceInfoRequest.getStationNetworkId()));
+            deviceInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(deviceInfoRequest.getStationNetworkId()));
 
             insertFlag = deviceDomainService.insertDevice(deviceInfoRequest);
-            if(insertFlag == 1){
+            if(insertFlag.equals(INSERT_OR_UPDATE_SUCCESS) ){
                 result.setResultObj(insertFlag);
                 result.setSuccess(true);
                 pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_INSERT);
@@ -103,7 +104,7 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         Integer deleteFlag;
         try {
             deleteFlag = deviceDomainService.deleteDevice(deviceInfoRequest);
-            if(deleteFlag == 1){
+            if(deleteFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
                 result.setResultObj(deleteFlag);
                 result.setSuccess(true);
                 pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_UPDATE);
@@ -126,7 +127,7 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
             checkParam(deviceInfoRequest);
 
             updateFlag = deviceDomainService.updateDevice(deviceInfoRequest);
-            if(updateFlag == 1){
+            if(updateFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
                 result.setResultObj(updateFlag);
                 result.setSuccess(true);
                 pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_UPDATE);
