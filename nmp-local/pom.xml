@@ -16,6 +16,7 @@
         <module>nmp-local-common</module>
         <module>user-center</module>
         <module>nmp-local-proxy</module>
+        <module>unified-portal</module>
     </modules>
 
     <properties>

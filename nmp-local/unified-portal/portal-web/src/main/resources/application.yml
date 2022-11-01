@@ -1,0 +1,64 @@
+server:
+  port: 8010
+  servlet:
+      context-path: /unified-portal
+    
+spring:
+  application:
+   name: unified-portal
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+    driver-class-name: com.mysql.cj.jdbc.Driver              # mysql驱动包
+    url: jdbc:mysql://127.0.0.1:3306/unified-portal             # 数据库名称
+    username: root
+    password: Jzsg@2021
+    druid:
+      min-idle: 20                                           # 数据库连接池的最小维持连接数
+      initial-size: 5                                      # 初始化连接数
+      max-wait: 1000
+      max-active: 300
+      web-stat-filter:
+        enabled: true
+        profile-enable: true
+      stat-view-servlet:
+        enabled: true
+        login-username: druid
+        login-password: druid
+        url-pattern: /druid/*
+        allow: ""
+        deny: ""
+      filter:
+        stat:
+          enabled: true
+          log-slow-sql: true
+          slow-sql-millis: 3000
+      time-between-eviction-runs-millis: 10000
+      min-evictable-idle-time-millis: 30000
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 300MB
+      max-request-size: 215MB
+  jackson:
+    time-zone: "GMT+8"
+    date-format: "yyyy-MM-dd HH:mm:ss"
+  mvc:
+    async:
+      request-timeout: 60000
+  instance:
+    instance-id: unified-portal
+    prefer-ip-address: true     #访问路径可以显示IP地址
+ 
+info: 
+  app.name: unified-portal
+  company.name: www.matrictime.com
+  build.artifactId: $project.artifactId$
+  build.version: $project.version$
+logging:
+  file:
+    path: logs
+  level:
+    com.jzsg: info
+thread:
+  batchMaxSize: 500
