@@ -1,4 +1,4 @@
-package controller.aop;
+package com.matrictime.network.controller.aop;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class RequestAspect {
      *
      * @param joinPoint 连接点，就是被拦截点
      */
-    @Before(value = "@annotation(com.matrictime.network.aop.MonitorRequest)")
+    @Before(value = "@annotation(com.matrictime.network.controller.aop.MonitorRequest)")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
         //获取到请求的属性
         ServletRequestAttributes attributes =
@@ -55,7 +55,7 @@ public class RequestAspect {
 //
 //    }
 
-    @AfterReturning(value = "@annotation(com.matrictime.network.aop.MonitorRequest)", returning = "result")
+    @AfterReturning(value = "@annotation(com.matrictime.network.controller.aop.MonitorRequest)", returning = "result")
     public void doAfterReturning(JoinPoint joinPoint, Object result) throws Throwable {
         log.info("class={},method={},返回值={}",
                 joinPoint.getSignature().getDeclaringTypeName(),

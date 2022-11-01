@@ -1,5 +1,6 @@
-package controller.back;
+package com.matrictime.network.controller.back;
 
+import com.matrictime.network.controller.aop.MonitorRequest;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.AddSystemReq;
@@ -9,7 +10,6 @@ import com.matrictime.network.request.UpdSystemReq;
 import com.matrictime.network.response.UploadImgResp;
 import com.matrictime.network.service.FileService;
 import com.matrictime.network.service.PortalSystemService;
-import controller.aop.MonitorRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ import static com.matrictime.network.base.exception.ErrorMessageContants.UPLOAD_
 @RequestMapping(value = "/back/sys")
 @RestController
 @Slf4j
-public class SystemConfigController {
+public class BackSystemConfigController {
 
     @Value("${upload.image.path}")
     private String imagePath;
