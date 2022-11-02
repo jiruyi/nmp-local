@@ -46,9 +46,22 @@ public class UserController {
      */
     @MonitorRequest
     @RequestMapping(value = "/loginOut",method = RequestMethod.POST)
-    public Result loginOut(@RequestBody UserReq req){
+    public Result loginOut(){
         try {
-            Result result = userService.loginOut(req);
+            Result result = userService.loginOut();
+            return result;
+        }catch (Exception e){
+            log.error("UserController.loginOut exception:{}",e.getMessage());
+            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+
+    @MonitorRequest
+    @RequestMapping(value = "/test",method = RequestMethod.POST)
+    public Result test(@RequestBody UserReq req){
+        try {
+            Result result =new Result();
             return result;
         }catch (Exception e){
             log.error("UserController.loginOut exception:{}",e.getMessage());
