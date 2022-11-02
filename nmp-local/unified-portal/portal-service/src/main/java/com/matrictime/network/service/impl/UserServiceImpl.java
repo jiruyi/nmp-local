@@ -72,11 +72,8 @@ public class UserServiceImpl extends SystemBaseService implements UserService {
     }
 
     @Override
-    public Result loginOut(UserReq req) {
-        if(ObjectUtils.isEmpty(req) || ObjectUtils.isEmpty(req.getUserId())){
-            return new Result(false, ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        redisTemplate.delete(DataConstants.UNIFIED_PLATFORM +req.getUserId()+DataConstants.USER_LOGIN_JWT_TOKEN);
+    public Result loginOut() {
+        redisTemplate.delete(DataConstants.UNIFIED_PLATFORM + RequestContext.getUser().getUserId()+DataConstants.USER_LOGIN_JWT_TOKEN);
         log.info("用户:{}退出系统", RequestContext.getUser().getUserId());
         return new Result(true, ErrorMessageContants.LOGOUT_SUCCESS_MSG);
     }

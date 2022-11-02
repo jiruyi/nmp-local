@@ -8,6 +8,6 @@ public interface UserService {
     public Result login(UserReq req);
 
 
-    public Result loginOut(UserReq req);
+    public Result loginOut();
 
 }
