@@ -19,6 +19,7 @@ import java.util.Date;
 
 import static com.matrictime.network.base.constant.DataConstants.IMG_TYPE_PNG;
 import static com.matrictime.network.base.exception.ErrorMessageContants.IMG_IS_NOT_PNG;
+import static com.matrictime.network.constant.DataConstants.KEY_POINT;
 import static com.matrictime.network.constant.DataConstants.KEY_SLASH;
 
 @Slf4j
@@ -44,7 +45,7 @@ public class FileServiceImpl extends SystemBaseService implements FileService {
 
             //判断上传是否是图
             if(isImage(fileType)){
-                dest = new File(imagePath + datePath + KEY_SLASH + fileName);
+                dest = new File(imagePath + datePath + KEY_SLASH + fileName + KEY_POINT + fileType);
             }else {
                 throw new SystemException(IMG_IS_NOT_PNG);
             }
