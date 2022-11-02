@@ -34,6 +34,7 @@ spring:
           slow-sql-millis: 3000
       time-between-eviction-runs-millis: 10000
       min-evictable-idle-time-millis: 30000
+      async-init: true
   servlet:
     multipart:
       enabled: true
