@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `portal_system` (
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='应用系统信息表';
 
-INSERT INTO portal_user (login_account, password) VALUES ('admin', '123456');
+INSERT INTO portal_user (login_account, password) VALUES ('admin', 'j2sivmjjihBLggve6ed5lw==');
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
