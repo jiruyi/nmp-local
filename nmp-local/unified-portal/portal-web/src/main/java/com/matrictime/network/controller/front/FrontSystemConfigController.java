@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping(value = "/front/sys")
@@ -20,7 +21,7 @@ public class FrontSystemConfigController {
     private PortalSystemService systemService;
 
     @MonitorRequest
-    @RequestMapping(value = "/querySystem")
+    @RequestMapping(value = "/querySystem",method = RequestMethod.POST)
     public Result querySystem(@RequestBody QuerySystemReq req){
         try {
             Result result = systemService.querySystem(req);

@@ -53,7 +53,7 @@ public class BackSystemConfigController {
 
 
     @MonitorRequest
-    @RequestMapping(value = "/addSystem")
+    @RequestMapping(value = "/addSystem",method = RequestMethod.POST)
     public Result addSystem(@RequestBody AddSystemReq req){
         try {
             Result result = systemService.addSystem(req);
@@ -65,7 +65,7 @@ public class BackSystemConfigController {
     }
 
     @MonitorRequest
-    @RequestMapping(value = "/delSystem")
+    @RequestMapping(value = "/delSystem",method = RequestMethod.POST)
     public Result delSystem(@RequestBody DelSystemReq req){
         try {
             Result result = systemService.delSystem(req);
@@ -77,7 +77,7 @@ public class BackSystemConfigController {
     }
 
     @MonitorRequest
-    @RequestMapping(value = "/updSystem")
+    @RequestMapping(value = "/updSystem",method = RequestMethod.POST)
     public Result updSystem(@RequestBody UpdSystemReq req){
         try {
             Result result = systemService.updSystem(req);
@@ -89,7 +89,7 @@ public class BackSystemConfigController {
     }
 
     @MonitorRequest
-    @RequestMapping(value = "/querySystemByPage")
+    @RequestMapping(value = "/querySystemByPage",method = RequestMethod.POST)
     public Result querySystemByPage(@RequestBody QuerySystemByPageReq req){
         try {
             Result result = systemService.querySystemByPage(req);

@@ -8,6 +8,7 @@ import com.matrictime.network.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -22,7 +23,7 @@ public class UserController {
 
 
     @MonitorRequest
-    @RequestMapping(value = "/login")
+    @RequestMapping(value = "/login",method = RequestMethod.POST)
     public Result login(@RequestBody UserReq req){
         try {
             Result result = userService.login(req);
@@ -34,7 +35,7 @@ public class UserController {
     }
 
     @MonitorRequest
-    @RequestMapping(value = "/loginOut")
+    @RequestMapping(value = "/loginOut",method = RequestMethod.POST)
     public Result loginOut(@RequestBody UserReq req){
         try {
             Result result = userService.loginOut(req);

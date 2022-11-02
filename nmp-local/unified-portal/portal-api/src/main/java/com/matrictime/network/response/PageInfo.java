@@ -23,6 +23,9 @@ public class PageInfo<T> {
     private int pages;
 
 
+    /**
+     * 分页内容
+     */
     private List<T> list;
 
     public PageInfo() {
