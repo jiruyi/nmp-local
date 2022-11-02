@@ -20,6 +20,11 @@ public class FrontSystemConfigController {
     @Autowired
     private PortalSystemService systemService;
 
+    /**
+     * 按条件查询系统（前端不分页）
+     * @param req
+     * @return
+     */
     @MonitorRequest
     @RequestMapping(value = "/querySystem",method = RequestMethod.POST)
     public Result querySystem(@RequestBody QuerySystemReq req){

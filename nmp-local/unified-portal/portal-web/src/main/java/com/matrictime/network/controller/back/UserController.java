@@ -22,6 +22,11 @@ public class UserController {
     private UserService userService;
 
 
+    /**
+     * 用户登录
+     * @param req
+     * @return
+     */
     @MonitorRequest
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public Result login(@RequestBody UserReq req){
@@ -34,6 +39,11 @@ public class UserController {
         }
     }
 
+    /**
+     * 用户登出
+     * @param req
+     * @return
+     */
     @MonitorRequest
     @RequestMapping(value = "/loginOut",method = RequestMethod.POST)
     public Result loginOut(@RequestBody UserReq req){

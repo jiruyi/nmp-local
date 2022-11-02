@@ -52,6 +52,11 @@ public class BackSystemConfigController {
     }
 
 
+    /**
+     * 新增系统
+     * @param req
+     * @return
+     */
     @MonitorRequest
     @RequestMapping(value = "/addSystem",method = RequestMethod.POST)
     public Result addSystem(@RequestBody AddSystemReq req){
@@ -64,6 +69,11 @@ public class BackSystemConfigController {
         }
     }
 
+    /**
+     * 删除系统
+     * @param req
+     * @return
+     */
     @MonitorRequest
     @RequestMapping(value = "/delSystem",method = RequestMethod.POST)
     public Result delSystem(@RequestBody DelSystemReq req){
@@ -76,6 +86,11 @@ public class BackSystemConfigController {
         }
     }
 
+    /**
+     * 修改系统
+     * @param req
+     * @return
+     */
     @MonitorRequest
     @RequestMapping(value = "/updSystem",method = RequestMethod.POST)
     public Result updSystem(@RequestBody UpdSystemReq req){
@@ -88,6 +103,11 @@ public class BackSystemConfigController {
         }
     }
 
+    /**
+     * 分页查询系统
+     * @param req
+     * @return
+     */
     @MonitorRequest
     @RequestMapping(value = "/querySystemByPage",method = RequestMethod.POST)
     public Result querySystemByPage(@RequestBody QuerySystemByPageReq req){
