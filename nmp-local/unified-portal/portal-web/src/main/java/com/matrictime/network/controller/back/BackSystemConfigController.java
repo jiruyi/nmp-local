@@ -29,6 +29,9 @@ public class BackSystemConfigController {
     @Value("${upload.image.path}")
     private String imagePath;
 
+    @Value("${upload.image.dir}")
+    private String imageDir;
+
     @Autowired
     private PortalSystemService systemService;
 
@@ -43,7 +46,7 @@ public class BackSystemConfigController {
     @RequestMapping(value = "/uploadFile",method = RequestMethod.POST)
     public Result<UploadImgResp> uploadFile(MultipartFile file){
         try {
-            return fileService.uploadImg(file,imagePath);
+            return fileService.uploadImg(file,imagePath,imageDir);
         }catch (Exception e){
             log.info("SystemConfigController.uploadFile:{}",e.getMessage());
             return new Result<>(false, UPLOAD_FILE_FAIL);

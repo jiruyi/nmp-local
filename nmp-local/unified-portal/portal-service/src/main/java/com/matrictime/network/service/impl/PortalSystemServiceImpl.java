@@ -142,6 +142,7 @@ public class PortalSystemServiceImpl extends SystemBaseService implements Portal
             PortalSystemExample.Criteria criteria = example.createCriteria();
             example.setOrderByClause(UPDTIME_DESC);
             criteria.andIsExistEqualTo(IS_EXIST);
+            criteria.andIsDisplayEqualTo(IS_EXIST);
 
             if (!ParamCheckUtil.checkVoStrBlank(req.getSysType())){
                 criteria.andSysTypeEqualTo(req.getSysType());

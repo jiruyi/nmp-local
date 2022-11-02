@@ -47,6 +47,7 @@ spring:
   mvc:
     async:
       request-timeout: 60000
+    static-path-pattern: /static/**
   instance:
     instance-id: unified-portal
     prefer-ip-address: true     #访问路径可以显示IP地址
@@ -83,4 +84,5 @@ token:
 
 upload:
   image:
-    path: /usr/local/portal/static/upload/image/
+    path: /usr/local/portal/static/
+    dir: /upload/image/

@@ -27,7 +27,7 @@ import static com.matrictime.network.constant.DataConstants.KEY_SLASH;
 public class FileServiceImpl extends SystemBaseService implements FileService {
 
     @Override
-    public Result<UploadImgResp> uploadImg(MultipartFile file, String imagePath){
+    public Result<UploadImgResp> uploadImg(MultipartFile file, String imagePath, String imageDir){
         Result<UploadImgResp> result = new Result<>();
         UploadImgResp uploadImgResp = new UploadImgResp();
         File dest;
@@ -36,6 +36,7 @@ public class FileServiceImpl extends SystemBaseService implements FileService {
             String originalFilename = file.getOriginalFilename();
             String fileType = FilenameUtils.getExtension(originalFilename).toLowerCase();
             String fileName = SnowFlake.nextId_String();
+            StringBuffer filePath = new StringBuffer();
 
             // 判断单个文件大于10M
             long fileSize = file.getSize();
@@ -43,9 +44,11 @@ public class FileServiceImpl extends SystemBaseService implements FileService {
                 throw new SystemException(ErrorMessageContants.IMG_TOO_LARGE);
             }
 
+
             //判断上传是否是图
             if(isImage(fileType)){
-                dest = new File(imagePath + datePath + KEY_SLASH + fileName + KEY_POINT + fileType);
+                filePath.append(imageDir).append(datePath).append(KEY_SLASH).append(fileName).append(KEY_POINT).append(fileType);
+                dest = new File(imagePath + filePath.toString());
             }else {
                 throw new SystemException(IMG_IS_NOT_PNG);
             }
@@ -56,7 +59,7 @@ public class FileServiceImpl extends SystemBaseService implements FileService {
 
             // 将获取到的附件file,transferTo写入到指定的位置(即:创建dest时，指定的路径)
             file.transferTo(dest);
-            uploadImgResp.setFilePath(dest.getAbsolutePath());
+            uploadImgResp.setFilePath(filePath.toString());
             result.setResultObj(uploadImgResp);
         } catch (SystemException e){
             log.info("FileServiceImpl.uploadImg SystemException:{}",e.getMessage());
