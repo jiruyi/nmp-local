@@ -102,6 +102,9 @@ public class PortalSystemServiceImpl extends SystemBaseService implements Portal
             Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
             PortalSystemExample example = new PortalSystemExample();
             PortalSystemExample.Criteria criteria = example.createCriteria();
+            example.setOrderByClause(UPDTIME_DESC);
+            criteria.andIsExistEqualTo(IS_EXIST);
+
             if (!ParamCheckUtil.checkVoStrBlank(req.getSysName())){
                 StringBuffer sb = new StringBuffer(KEY_PERCENT);
                 sb.append(req.getSysName()).append(KEY_PERCENT);
@@ -116,7 +119,7 @@ public class PortalSystemServiceImpl extends SystemBaseService implements Portal
             if (req.getEndTime() != null){
                 criteria.andCreateTimeLessThanOrEqualTo(req.getEndTime());
             }
-            example.setOrderByClause(UPDTIME_DESC);
+
             List<PortalSystem> portalSystems = portalSystemMapper.selectByExample(example);
             PageInfo<PortalSystem> pageResult =  new PageInfo<>((int)page.getTotal(), page.getPages(), portalSystems);
 
@@ -137,11 +140,13 @@ public class PortalSystemServiceImpl extends SystemBaseService implements Portal
 
             PortalSystemExample example = new PortalSystemExample();
             PortalSystemExample.Criteria criteria = example.createCriteria();
+            example.setOrderByClause(UPDTIME_DESC);
+            criteria.andIsExistEqualTo(IS_EXIST);
 
             if (!ParamCheckUtil.checkVoStrBlank(req.getSysType())){
                 criteria.andSysTypeEqualTo(req.getSysType());
             }
-            example.setOrderByClause(UPDTIME_DESC);
+
             List<PortalSystem> portalSystems = portalSystemMapper.selectByExample(example);
             List<PortalSystemVo> portalSystemVos = new ArrayList<>();
             for (PortalSystem portalSystem : portalSystems){
