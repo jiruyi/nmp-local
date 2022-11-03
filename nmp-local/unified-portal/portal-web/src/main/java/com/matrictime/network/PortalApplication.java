@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @MapperScan(basePackages = "com.matrictime.network.dao.mapper")
+@EnableTransactionManagement
 public class PortalApplication {
     public static void main(String[] args)
     {

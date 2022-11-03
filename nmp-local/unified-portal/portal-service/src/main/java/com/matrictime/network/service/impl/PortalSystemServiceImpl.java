@@ -18,6 +18,8 @@ import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
 
@@ -34,6 +36,7 @@ public class PortalSystemServiceImpl extends SystemBaseService implements Portal
     private PortalSystemMapper portalSystemMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result addSystem(AddSystemReq req) {
         Result result;
         try {
@@ -44,9 +47,11 @@ public class PortalSystemServiceImpl extends SystemBaseService implements Portal
             result = buildResult(i);
         }catch (SystemException e){
             log.error("PortalSystemServiceImpl.addSystem SystemException:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
         }catch (Exception e){
             log.error("PortalSystemServiceImpl.addSystem Exception:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult("");
         }
 
@@ -54,6 +59,7 @@ public class PortalSystemServiceImpl extends SystemBaseService implements Portal
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result delSystem(DelSystemReq req) {
         Result result;
         try {
@@ -65,9 +71,11 @@ public class PortalSystemServiceImpl extends SystemBaseService implements Portal
             result = buildResult(i);
         }catch (SystemException e){
             log.error("PortalSystemServiceImpl.delSystem SystemException:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
         }catch (Exception e){
             log.error("PortalSystemServiceImpl.delSystem Exception:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult("");
         }
 
@@ -75,6 +83,7 @@ public class PortalSystemServiceImpl extends SystemBaseService implements Portal
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result updSystem(UpdSystemReq req) {
         Result result;
         try {
@@ -85,9 +94,11 @@ public class PortalSystemServiceImpl extends SystemBaseService implements Portal
             result = buildResult(i);
         }catch (SystemException e){
             log.error("PortalSystemServiceImpl.updSystem SystemException:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult(e);
         }catch (Exception e){
             log.error("PortalSystemServiceImpl.updSystem Exception:{}",e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result = failResult("");
         }
 
