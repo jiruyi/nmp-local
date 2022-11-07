@@ -48,7 +48,7 @@ public class FileServiceImpl extends SystemBaseService implements FileService {
             //判断上传是否是图
             if(isImage(fileType)){
                 filePath.append(imageDir).append(datePath).append(KEY_SLASH).append(fileName).append(KEY_POINT).append(fileType);
-                dest = new File(imagePath + filePath.toString());
+                dest = new File(imagePath + filePath);
             }else {
                 throw new SystemException(IMG_IS_NOT_PNG);
             }
