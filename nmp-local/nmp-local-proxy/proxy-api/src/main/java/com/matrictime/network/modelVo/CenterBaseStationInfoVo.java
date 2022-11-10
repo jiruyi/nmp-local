@@ -109,4 +109,14 @@ public class CenterBaseStationInfoVo {
      * 设备入网码
      */
     private byte[] byteNetworkId;
+
+    /**
+     * 入网码前缀
+     */
+    private Long prefixNetworkId;
+
+    /**
+     * 入网码后缀
+     */
+    private Long suffixNetworkId;
 }

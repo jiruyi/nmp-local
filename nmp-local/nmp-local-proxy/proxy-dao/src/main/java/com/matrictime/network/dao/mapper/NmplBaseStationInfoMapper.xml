@@ -22,6 +22,8 @@
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="prefix_network_id" jdbcType="BIGINT" property="prefixNetworkId" />
+    <result column="suffix_network_id" jdbcType="BIGINT" property="suffixNetworkId" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplBaseStationInfo">
     <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
@@ -88,7 +90,7 @@
     id, station_id, station_name, station_type, enter_network_time, station_admain, remark, 
     public_network_ip, public_network_port, lan_ip, lan_port, station_status, station_network_id, 
     station_random_seed, relation_operator_id, create_user, create_time, update_user, 
-    update_time, is_exist
+    update_time, is_exist, prefix_network_id, suffix_network_id
   </sql>
   <sql id="Blob_Column_List">
     byte_network_id
@@ -150,16 +152,16 @@
       lan_ip, lan_port, station_status, 
       station_network_id, station_random_seed, relation_operator_id, 
       create_user, create_time, update_user, 
-      update_time, is_exist, byte_network_id
-      )
+      update_time, is_exist, prefix_network_id, 
+      suffix_network_id, byte_network_id)
     values (#{id,jdbcType=BIGINT}, #{stationId,jdbcType=VARCHAR}, #{stationName,jdbcType=VARCHAR}, 
       #{stationType,jdbcType=CHAR}, #{enterNetworkTime,jdbcType=TIMESTAMP}, #{stationAdmain,jdbcType=VARCHAR}, 
       #{remark,jdbcType=VARCHAR}, #{publicNetworkIp,jdbcType=VARCHAR}, #{publicNetworkPort,jdbcType=VARCHAR}, 
       #{lanIp,jdbcType=VARCHAR}, #{lanPort,jdbcType=VARCHAR}, #{stationStatus,jdbcType=CHAR}, 
       #{stationNetworkId,jdbcType=VARCHAR}, #{stationRandomSeed,jdbcType=VARCHAR}, #{relationOperatorId,jdbcType=VARCHAR}, 
       #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}, #{byteNetworkId,jdbcType=LONGVARBINARY}
-      )
+      #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}, #{prefixNetworkId,jdbcType=BIGINT}, 
+      #{suffixNetworkId,jdbcType=BIGINT}, #{byteNetworkId,jdbcType=LONGVARBINARY})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplBaseStationInfo">
     insert into nmpl_base_station_info
@@ -223,6 +225,12 @@
       </if>
       <if test="isExist != null">
         is_exist,
+      </if>
+      <if test="prefixNetworkId != null">
+        prefix_network_id,
+      </if>
+      <if test="suffixNetworkId != null">
+        suffix_network_id,
       </if>
       <if test="byteNetworkId != null">
         byte_network_id,
@@ -288,6 +296,12 @@
       </if>
       <if test="isExist != null">
         #{isExist,jdbcType=BIT},
+      </if>
+      <if test="prefixNetworkId != null">
+        #{prefixNetworkId,jdbcType=BIGINT},
+      </if>
+      <if test="suffixNetworkId != null">
+        #{suffixNetworkId,jdbcType=BIGINT},
       </if>
       <if test="byteNetworkId != null">
         #{byteNetworkId,jdbcType=LONGVARBINARY},
@@ -363,6 +377,12 @@
       <if test="record.isExist != null">
         is_exist = #{record.isExist,jdbcType=BIT},
       </if>
+      <if test="record.prefixNetworkId != null">
+        prefix_network_id = #{record.prefixNetworkId,jdbcType=BIGINT},
+      </if>
+      <if test="record.suffixNetworkId != null">
+        suffix_network_id = #{record.suffixNetworkId,jdbcType=BIGINT},
+      </if>
       <if test="record.byteNetworkId != null">
         byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
@@ -393,6 +413,8 @@
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       is_exist = #{record.isExist,jdbcType=BIT},
+      prefix_network_id = #{record.prefixNetworkId,jdbcType=BIGINT},
+      suffix_network_id = #{record.suffixNetworkId,jdbcType=BIGINT},
       byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -419,7 +441,9 @@
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      is_exist = #{record.isExist,jdbcType=BIT}
+      is_exist = #{record.isExist,jdbcType=BIT},
+      prefix_network_id = #{record.prefixNetworkId,jdbcType=BIGINT},
+      suffix_network_id = #{record.suffixNetworkId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -484,6 +508,12 @@
       <if test="isExist != null">
         is_exist = #{isExist,jdbcType=BIT},
       </if>
+      <if test="prefixNetworkId != null">
+        prefix_network_id = #{prefixNetworkId,jdbcType=BIGINT},
+      </if>
+      <if test="suffixNetworkId != null">
+        suffix_network_id = #{suffixNetworkId,jdbcType=BIGINT},
+      </if>
       <if test="byteNetworkId != null">
         byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
@@ -511,6 +541,8 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       is_exist = #{isExist,jdbcType=BIT},
+      prefix_network_id = #{prefixNetworkId,jdbcType=BIGINT},
+      suffix_network_id = #{suffixNetworkId,jdbcType=BIGINT},
       byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -534,7 +566,9 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      is_exist = #{isExist,jdbcType=BIT}
+      is_exist = #{isExist,jdbcType=BIT},
+      prefix_network_id = #{prefixNetworkId,jdbcType=BIGINT},
+      suffix_network_id = #{suffixNetworkId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

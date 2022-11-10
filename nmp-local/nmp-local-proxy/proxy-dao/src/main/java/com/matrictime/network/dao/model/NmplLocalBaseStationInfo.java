@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 本机基站信息表
  * @author   xxxx
- * @date   2022-10-26
+ * @date   2022-11-10
  */
 @Data
 public class NmplLocalBaseStationInfo {
@@ -109,6 +109,16 @@ public class NmplLocalBaseStationInfo {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * 入网码前缀
+     */
+    private Long prefixNetworkId;
+
+    /**
+     * 入网码后缀
+     */
+    private Long suffixNetworkId;
 
     /**
      * 设备入网码
@@ -273,6 +283,22 @@ public class NmplLocalBaseStationInfo {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public Long getPrefixNetworkId() {
+        return prefixNetworkId;
+    }
+
+    public void setPrefixNetworkId(Long prefixNetworkId) {
+        this.prefixNetworkId = prefixNetworkId;
+    }
+
+    public Long getSuffixNetworkId() {
+        return suffixNetworkId;
+    }
+
+    public void setSuffixNetworkId(Long suffixNetworkId) {
+        this.suffixNetworkId = suffixNetworkId;
     }
 
     public byte[] getByteNetworkId() {

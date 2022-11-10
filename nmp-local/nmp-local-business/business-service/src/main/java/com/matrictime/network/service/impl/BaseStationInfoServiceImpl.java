@@ -92,6 +92,8 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             checkParam(baseStationInfoRequest);
 
             baseStationInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(baseStationInfoRequest.getStationNetworkId()));
+            baseStationInfoRequest.setPrefixNetworkId(DecimalConversionUtil.getPreBid(baseStationInfoRequest.getByteNetworkId()));
+            baseStationInfoRequest.setSuffixNetworkId(DecimalConversionUtil.getSuffBid(baseStationInfoRequest.getByteNetworkId()));
 
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
 
@@ -183,9 +185,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 //默认为非本机
                 NmplBaseStation request = new NmplBaseStation();
                 BeanUtils.copyProperties(nmplBaseStationInfoList.get(0),request);
-                request.setLocal(false);
+                request.setIsLocal(false);
                 if(lanIp.equals(request.getLanIp())){
-                    request.setLocal(true);
+                    request.setIsLocal(true);
                 }
                 String data = "";
                 if(suffix.equals(DataConstants.URL_STATION_INSERT)){
