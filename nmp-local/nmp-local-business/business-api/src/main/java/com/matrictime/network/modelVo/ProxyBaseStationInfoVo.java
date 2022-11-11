@@ -107,6 +107,17 @@ public class ProxyBaseStationInfoVo implements Serializable {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * 入网码前缀
+     */
+    private Long prefixNetworkId;
+
+    /**
+     * 入网码后缀
+     */
+    private Long suffixNetworkId;
+
     /**
      * 设备入网码
      */

@@ -22,6 +22,8 @@
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="prefix_network_id" jdbcType="BIGINT" property="prefixNetworkId" />
+    <result column="suffix_network_id" jdbcType="BIGINT" property="suffixNetworkId" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplBaseStationInfo">
     <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
@@ -30,7 +32,7 @@
     id, station_id, station_name, station_type, enter_network_time, station_admain, remark, 
     public_network_ip, public_network_port, lan_ip, lan_port, station_status, station_network_id, 
     station_random_seed, relation_operator_id, create_user, create_time, update_user, 
-    update_time, is_exist ,byte_network_id
+    update_time, is_exist ,byte_network_id, prefix_network_id, suffix_network_id
   </sql>
 
 
@@ -41,7 +43,7 @@
     lan_ip, lan_port, station_status,
     station_network_id, station_random_seed, relation_operator_id,
     create_user, create_time, update_user,
-    update_time, is_exist,byte_network_id)
+    update_time, is_exist,byte_network_id ,prefix_network_id, suffix_network_id)
     values
     <foreach collection ="list" item="vo" separator =",">
       (#{vo.id,jdbcType=BIGINT}, #{vo.stationId,jdbcType=VARCHAR}, #{vo.stationName,jdbcType=VARCHAR},
@@ -50,7 +52,8 @@
       #{vo.lanIp,jdbcType=VARCHAR}, #{vo.lanPort,jdbcType=VARCHAR}, #{vo.stationStatus,jdbcType=CHAR},
       #{vo.stationNetworkId,jdbcType=VARCHAR}, #{vo.stationRandomSeed,jdbcType=VARCHAR}, #{vo.relationOperatorId,jdbcType=VARCHAR},
       #{vo.createUser,jdbcType=VARCHAR}, #{vo.createTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR},
-      #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT}, #{vo.byteNetworkId,jdbcType=LONGVARBINARY})
+      #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT}, #{vo.byteNetworkId,jdbcType=LONGVARBINARY}, #{vo.prefixNetworkId,jdbcType=BIGINT},
+      #{vo.suffixNetworkId,jdbcType=BIGINT})
     </foreach >
   </insert>
 
@@ -127,7 +130,13 @@
           is_exist = #{info.isExist,jdbcType=BIT},
         </if>
         <if test="info.byteNetworkId != null">
-          byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
+          byte_network_id = #{info.byteNetworkId,jdbcType=LONGVARBINARY},
+        </if>
+        <if test="prefixNetworkId != null">
+          prefix_network_id = #{info.prefixNetworkId,jdbcType=BIGINT},
+        </if>
+        <if test="suffixNetworkId != null">
+          suffix_network_id = #{info.suffixNetworkId,jdbcType=BIGINT},
         </if>
       </set>
       where id = #{info.id,jdbcType=BIGINT}

@@ -42,8 +42,36 @@ public class BaseStationInfoRequest extends BaseRequest{
     private String updateTime;
 
     private String isExist;
-
+    /**
+     * 设备入网码
+     */
     private byte[] byteNetworkId;
+
+    /**
+     * 入网码前缀
+     */
+    private Long prefixNetworkId;
+
+    /**
+     * 入网码后缀
+     */
+    private Long suffixNetworkId;
+
+    public Long getPrefixNetworkId() {
+        return prefixNetworkId;
+    }
+
+    public void setPrefixNetworkId(Long prefixNetworkId) {
+        this.prefixNetworkId = prefixNetworkId;
+    }
+
+    public Long getSuffixNetworkId() {
+        return suffixNetworkId;
+    }
+
+    public void setSuffixNetworkId(Long suffixNetworkId) {
+        this.suffixNetworkId = suffixNetworkId;
+    }
 
     public byte[] getByteNetworkId() {
         return byteNetworkId;

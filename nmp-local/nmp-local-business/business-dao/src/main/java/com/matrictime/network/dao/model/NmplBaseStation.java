@@ -6,9 +6,9 @@ import lombok.Data;
 /**
  * 
  * @author   hexu
- * @date   2022-10-25
+ * @date   2022-11-09
  */
-@Data
+
 public class NmplBaseStation {
     /**
      * 主键
@@ -111,20 +111,29 @@ public class NmplBaseStation {
     private Boolean isExist;
 
     /**
+     * 入网码前缀
+     */
+    private Long prefixNetworkId;
+
+    /**
+     * 入网码后缀
+     */
+    private Long suffixNetworkId;
+
+    /**
      * 设备入网码
      */
     private byte[] byteNetworkId;
-
     /**
      * true:是本机 false:不是本机
      */
-    private Boolean isLocal;
+    private boolean isLocal;
 
-    public Boolean getLocal() {
+    public boolean getIsLocal() {
         return isLocal;
     }
 
-    public void setLocal(Boolean local) {
+    public void setIsLocal(boolean local) {
         isLocal = local;
     }
 
@@ -286,6 +295,22 @@ public class NmplBaseStation {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public Long getPrefixNetworkId() {
+        return prefixNetworkId;
+    }
+
+    public void setPrefixNetworkId(Long prefixNetworkId) {
+        this.prefixNetworkId = prefixNetworkId;
+    }
+
+    public Long getSuffixNetworkId() {
+        return suffixNetworkId;
+    }
+
+    public void setSuffixNetworkId(Long suffixNetworkId) {
+        this.suffixNetworkId = suffixNetworkId;
     }
 
     public byte[] getByteNetworkId() {

@@ -1,6 +1,7 @@
 package com.matrictime.network.base.util;
 
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.exception.SystemException;
 import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,12 +19,16 @@ public class DecimalConversionUtil {
 
 
     public static void main(String[] args) {
-        String a ="9999-25-1-1-1";
+        String a ="99-25-1-1-1";
 //        byte[]res = bidToByteArray(a);
 //        for (byte re : res) {
 //            System.out.println(re);
 //        }
         byte[] strings = idToByteArray(a);
+
+
+        long pre  = getPreBid(strings);
+        long suff = getSuffBid(strings);
         System.out.println(strings);
     }
 
@@ -110,5 +115,55 @@ public class DecimalConversionUtil {
         return result;
     }
 
+
+
+    /**
+     * 通过位移方式进行计算
+     * @param bs
+     * @return
+     */
+    static long bytes2long(byte[] bs)  {
+        int bytes = bs.length;
+
+        switch(bytes) {
+            case 0:
+                return 0;
+            case 1:
+                return (long)((bs[0] & 0xff));
+            case 2:
+                return (long)((bs[0] & 0xff) <<8 | (bs[1] & 0xff));
+            case 3:
+                return (long)((bs[0] & 0xff) <<16 | (bs[1] & 0xff) <<8 | (bs[2] & 0xff));
+            case 4:
+                return (long)((bs[0] & 0xffL) <<24 | (bs[1] & 0xffL) << 16 | (bs[2] & 0xffL) <<8 | (bs[3] & 0xffL));
+            case 5:
+                return (long)((bs[0] & 0xffL) <<32 | (bs[1] & 0xffL) <<24 | (bs[2] & 0xffL) << 16 | (bs[3] & 0xffL) <<8 | (bs[4] & 0xffL));
+            case 6:
+                return (long)((bs[0] & 0xffL) <<40 | (bs[1] & 0xffL) <<32 | (bs[2] & 0xffL) <<24 | (bs[3] & 0xffL) << 16 | (bs[4] & 0xffL) <<8 | (bs[5] & 0xffL));
+            case 7:
+                return (long)((bs[0] & 0xffL) <<48 | (bs[1] & 0xffL) <<40 | (bs[2] & 0xffL) <<32 | (bs[3] & 0xffL) <<24 | (bs[4] & 0xffL) << 16 | (bs[5] & 0xffL) <<8 | (bs[6] & 0xffL));
+            case 8:
+                return (long)((bs[0] & 0xffL) <<56 | (bs[1] & 0xffL) << 48 | (bs[2] & 0xffL) <<40 | (bs[3] & 0xffL)<<32 |
+                        (bs[4] & 0xffL) <<24 | (bs[5] & 0xffL) << 16 | (bs[6] & 0xffL) <<8 | (bs[7] & 0xffL));
+            default:
+                return 0;
+        }
+    }
+
+    public static long getPreBid(byte[]bytes){
+        byte[]res = new byte[8];
+        System.arraycopy(bytes, 0, res, 0, 8);
+        return bytes2long(res);
+    }
+
+    public static long getSuffBid(byte[]bytes){
+        if(bytes.length>16){
+            log.error("数组长度过长");
+            return 0;
+        }
+        byte[]res = new byte[bytes.length-8];
+        System.arraycopy(bytes, 8, res, 0, bytes.length-8);
+        return bytes2long(res);
+    }
 
 }
