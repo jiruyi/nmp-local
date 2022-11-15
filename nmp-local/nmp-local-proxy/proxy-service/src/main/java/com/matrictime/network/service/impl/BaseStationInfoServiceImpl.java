@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.enums.DeviceStatusEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.base.util.DataChangeUtil;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.domain.DeviceInfoDomainService;
 import com.matrictime.network.dao.mapper.*;
@@ -78,7 +79,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             Date createTime = new Date();
             BaseStationInfoVo infoVo = req.getLocalBaseInfo();
             infoVo.setUpdateTime(createTime);
-
+            //统一处理 将StationNetworkId转化为16进制形式
+            if(infoVo.getStationNetworkId()!=null){
+                infoVo.setStationNetworkId(DataChangeUtil.BidChange(infoVo.getStationNetworkId()));
+            }
             if (infoVo.getIsLocal()){
                 /* 本机基站信息插入 */
 
@@ -164,7 +168,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         try {
             Date createTime = new Date();
             infoVo.setUpdateTime(createTime);
-
+            //统一处理 将StationNetworkId转化为16进制形式
+            if(infoVo.getStationNetworkId()!=null){
+                infoVo.setStationNetworkId(DataChangeUtil.BidChange(infoVo.getStationNetworkId()));
+            }
             if (infoVo.getIsLocal()){
                 /* 本机基站信息更新 */
                 NmplLocalBaseStationInfo stationInfo = new NmplLocalBaseStationInfo();
@@ -209,6 +216,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
      * @param request
      * @return
      */
+    @Override
     public Result<Integer> deleteBaseStationInfo(DeleteBaseStationInfoRequest request) {
         Result result = new Result<>();
         try {
@@ -235,7 +243,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     public void initLocalInfo(CenterBaseStationInfoVo infoVo){
 
         List<NmplLocalBaseStationInfo> stationInfos = nmplLocalBaseStationInfoMapper.selectByExample(new NmplLocalBaseStationInfoExample());
-
+        //统一处理 将StationNetworkId转化为16进制形式
+        if(infoVo.getStationNetworkId()!=null){
+            infoVo.setStationNetworkId(DataChangeUtil.BidChange(infoVo.getStationNetworkId()));
+        }
         if (CollectionUtils.isEmpty(stationInfos)){// 本机没有基站数据
             // 插入本机基站信息
             Date createTime = new Date();
@@ -307,6 +318,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         List<BaseStationInfoVo> baseStationInfoVos = new ArrayList<>(baseStationInfoList.size());
         for (CenterBaseStationInfoVo vo : baseStationInfoList){
             BaseStationInfoVo baseStationInfoVo = new BaseStationInfoVo();
+            //统一处理 将StationNetworkId转化为16进制形式
+            if(vo.getStationNetworkId()!=null){
+                vo.setStationNetworkId(DataChangeUtil.BidChange(vo.getStationNetworkId()));
+            }
             BeanUtils.copyProperties(vo,baseStationInfoVo);
             baseStationInfoVo.setUpdateTime(createTime);
             baseStationInfoVos.add(baseStationInfoVo);
