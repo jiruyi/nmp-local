@@ -10,4 +10,6 @@ public interface TaskService {
 
     void dataCollectPush(String url);
 
+    void billPush(String url);
+
 }

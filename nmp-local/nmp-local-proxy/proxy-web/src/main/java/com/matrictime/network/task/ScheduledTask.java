@@ -67,6 +67,14 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================dataCollect end=============================");
     }
 
+    @Scheduled(cron = "*/30 * * * * ?")
+    @Async
+    public void billPush(){
+        log.info(Thread.currentThread().getName()+"======================bill begin=============================");
+        taskService.billPush(ip + KEY_SPLIT + port + BILL_URL);
+        log.info(Thread.currentThread().getName()+"======================bill end=============================");
+    }
+
 
 
 //    @Scheduled(fixedDelay = 5000)

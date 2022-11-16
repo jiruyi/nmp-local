@@ -34,6 +34,9 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private NmplDataCollectMapper nmplDataCollectMapper;
 
+    @Resource
+    private NmplBillMapper nmplBillMapper;
+
     @Override
     public void heartReport(String url) {
         NmplStationHeartInfoExample stationExample = new NmplStationHeartInfoExample();
@@ -127,13 +130,38 @@ public class TaskServiceImpl implements TaskService {
                 JSONObject req = new JSONObject();
                 req.put("dataCollectVoList",nmplDataCollectList);
                 String post = HttpClientUtil.post(url, req.toJSONString());
-                log.info("nmplPcDataVoList:{}",post);
+                log.info("dataCollect push result:{}",post);
             }catch (Exception e){
-                log.info("nmplPcDataVoList Exception:{}",e.getMessage());
+                log.info("ddataCollect push Exception:{}",e.getMessage());
                 throw new RuntimeException(e);
             }
             criteria.andIdLessThanOrEqualTo(maxId);
             nmplDataCollectMapper.deleteByExample(nmplDataCollectExample);
         }
+    }
+
+
+    @Override
+    public void billPush(String url) {
+        NmplBillExample nmplBillExample = new NmplBillExample();
+        NmplBillExample.Criteria criteria = nmplBillExample.createCriteria();
+        nmplBillExample.setOrderByClause("id desc");
+
+        List<NmplBill> nmplBills = nmplBillMapper.selectByExample(nmplBillExample);
+        if(!CollectionUtils.isEmpty(nmplBills)){
+            Long maxId = nmplBills.get(0).getId();
+            try {
+                JSONObject req = new JSONObject();
+                req.put("nmplBillVoList",nmplBills);
+                String post = HttpClientUtil.post(url, req.toJSONString());
+                log.info("Bill push result:{}",post);
+            }catch (Exception e){
+                log.info("Bill push Exception:{}",e.getMessage());
+                throw new RuntimeException(e);
+            }
+            criteria.andIdLessThanOrEqualTo(maxId);
+            nmplBillMapper.deleteByExample(nmplBillExample);
+        }
+
     }
 }

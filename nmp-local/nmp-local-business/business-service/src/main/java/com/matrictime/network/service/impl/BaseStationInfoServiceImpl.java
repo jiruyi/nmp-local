@@ -410,4 +410,17 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     }
 
+
+    @Override
+    public void initBaseStation() {
+        NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
+        nmplBaseStationExample.createCriteria().andStationStatusEqualTo(DeviceStatusEnum.ACTIVE.getCode()).andIsExistEqualTo(true);
+        nmplBaseStationExample.or().andStationStatusEqualTo(DeviceStatusEnum.NOAUDIT.getCode()).andIsExistEqualTo(true);
+        List<NmplBaseStation> nmplBaseStations = nmplBaseStationMapper.selectByExample(nmplBaseStationExample);
+        for (NmplBaseStation nmplBaseStation : nmplBaseStations) {
+            nmplBaseStation.setStationStatus(DeviceStatusEnum.OFFLINE.getCode());
+            log.info("baseStation init deviceId:"+nmplBaseStation.getStationId());
+            nmplBaseStationMapper.updateByPrimaryKeySelective(nmplBaseStation);
+        }
+    }
 }

@@ -156,4 +156,7 @@ public class DataConstants {
 
     public static final String DATA_COLLECT_URL="/nmp-local-business/data/saveData";
 
+
+    public static final String BILL_URL = "/nmp-local-business/bill/saveBill";
+
 }
