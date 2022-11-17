@@ -37,4 +37,6 @@ public interface BaseStationInfoService {
     Result<PageInfo> selectBaseStationList(BaseStationInfoRequest baseStationInfoRequest);
 
     public void pushToProxy(String stationId,String suffix)throws Exception;
+
+    void initBaseStation();
 }

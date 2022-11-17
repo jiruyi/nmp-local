@@ -340,6 +340,20 @@ CREATE TABLE IF NOT EXISTS `nmpl_static_route` (
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='静态路由';
 
+CREATE TABLE IF NOT EXISTS `nmpl_bill` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `owner_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '账单用户id',
+    `stream_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '流id',
+    `flow_number` varchar(32) DEFAULT NULL COMMENT '消耗流量',
+    `time_length` varchar(32) DEFAULT NULL COMMENT '时长',
+    `key_num` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '消耗密钥量',
+    `hybrid_factor` varchar(32) DEFAULT NULL COMMENT '杂糅因子',
+    `upload_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+    `start_time` varchar(30) DEFAULT NULL COMMENT '开始时间',
+    `end_time` varchar(30) DEFAULT NULL COMMENT '结束时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='话单上报表';
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

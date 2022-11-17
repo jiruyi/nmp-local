@@ -56,10 +56,10 @@
     
 
     <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.NmplBillVo">
-        insert into nmpl_bill (id, owner_id, stream_id,
+        insert into nmpl_bill ( owner_id, stream_id,
         flow_number, time_length, key_num,hybrid_factor, start_time,end_time) values
         <foreach collection ="list" item="bill" separator =",">
-            (#{bill.id}, #{bill.ownerId},#{bill.streamId}, #{bill.flowNumber}, #{bill.timeLength}, #{bill.keyNum}, #{bill.hybridFactor}
+            (#{bill.ownerId},#{bill.streamId}, #{bill.flowNumber}, #{bill.timeLength}, #{bill.keyNum}, #{bill.hybridFactor}
             ,#{bill.startTime}, #{bill.endTime})
         </foreach >
     </insert>
