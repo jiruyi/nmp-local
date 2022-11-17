@@ -60,9 +60,9 @@ public class DataConstants {
     public static final String DEVICE_BIG_TYPE_1 = "1";
 
     public static final String SYSTEM_ID_0 = "00";
-    public static final String SYSTEM_ID_1 = "01";
-    public static final String SYSTEM_ID_2 = "02";
-    public static final String SYSTEM_ID_3 = "03";
+    public static final String SYSTEM_ID_1 = "11";
+    public static final String SYSTEM_ID_2 = "12";
+    public static final String SYSTEM_ID_3 = "13";
 
     public static final String STATION_STATUS_UNACTIVE = "01";
     public static final String STATION_STATUS_ACTIVE = "02";

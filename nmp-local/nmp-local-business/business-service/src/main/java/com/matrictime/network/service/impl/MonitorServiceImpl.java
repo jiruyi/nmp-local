@@ -2,6 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
@@ -159,6 +160,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 for (NmplDeviceInfo deviceInfo : deviceInfos){
                     DeviceInfoRelVo deviceInfoRelVo = new DeviceInfoRelVo();
                     BeanUtils.copyProperties(deviceInfo,deviceInfoRelVo);
+
                     switch (deviceInfo.getDeviceType()){
                         case SYSTEM_ID_1:
                             deviceInfoRelVo.setDeviceType(CONFIG_DEVICE_TYPE_2);

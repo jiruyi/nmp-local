@@ -1,9 +1,6 @@
 package com.matrictime.network.base.util;
 
 import com.matrictime.network.constant.DataConstants;
-import org.apache.commons.lang3.math.NumberUtils;
-
-import java.util.Arrays;
 
 import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_MIDLINE;
 import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
@@ -63,6 +60,6 @@ public class DataChangeUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(BidChange("1-1-1-1-1"));
+        System.out.println(BidChange("1-1-1-1-65535"));
     }
 }

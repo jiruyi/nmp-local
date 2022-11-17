@@ -34,8 +34,8 @@
     <include refid="Query_Column_List" />,
     (case
     when device_type = '1' then '基站'
-    when device_type = '2' then '分发机'
-    when device_type = '3' then '生成机'
+    when device_type = '2' then '密钥中心'
+    when device_type = '3' then '密钥生成'
     when device_type = '4' then '缓存机'
     else ''
     end ) as device_type_name
