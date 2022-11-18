@@ -37,6 +37,9 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private NmplBillMapper nmplBillMapper;
 
+    @Resource
+    private NmplErrorPushLogMapper nmplErrorPushLogMapper;
+
     @Override
     public void heartReport(String url) {
         NmplStationHeartInfoExample stationExample = new NmplStationHeartInfoExample();
@@ -80,14 +83,21 @@ public class TaskServiceImpl implements TaskService {
         NmplDeviceLogExample.Criteria criteria = nmplDeviceLogExample.createCriteria();
         nmplDeviceLogExample.setOrderByClause("id desc");
         List<NmplDeviceLog> nmplDeviceLogs = nmplDeviceLogMapper.selectByExample(nmplDeviceLogExample);
-
         if(!CollectionUtils.isEmpty(nmplDeviceLogs)){
+            Boolean flag = false;
+            String post = null;
+            String data = "";
+            String msg= null;
             try {
-                String post = HttpClientUtil.post(url, JSON.toJSONString(nmplDeviceLogs));
+                data = JSON.toJSONString(nmplDeviceLogs);
+                post = HttpClientUtil.post(url, data);
                 log.info("logPush result:{}",post);
             }catch (Exception e){
+                msg = e.getMessage();
                 log.info("logPush Exception:{}",e.getMessage());
-                throw new RuntimeException(e);
+                flag = true;
+            }finally {
+                logError(post,url,data,flag,msg);
             }
             //删除已经推送的日志
             criteria.andIdLessThan(nmplDeviceLogs.get(NumberUtils.INTEGER_ZERO).getId());
@@ -102,14 +112,22 @@ public class TaskServiceImpl implements TaskService {
         nmplPcDataExample.setOrderByClause("id desc");
         List<NmplPcData> nmplPcData = nmplPcDataMapper.selectByExample(nmplPcDataExample);
         if (!CollectionUtils.isEmpty(nmplPcData)){
+            Boolean flag = false;
+            String post = null;
+            String data = "";
+            String msg = null;
             try {
                 JSONObject req = new JSONObject();
                 req.put("nmplPcDataVoList",nmplPcData);
-                String post = HttpClientUtil.post(url, req.toJSONString());
+                data = req.toJSONString();
+                post = HttpClientUtil.post(url,data);
                 log.info("pcData:{}",post);
             }catch (Exception e){
+                msg = e.getMessage();
                 log.info("pcData Exception:{}",e.getMessage());
-                throw new RuntimeException(e);
+                flag = true;
+            }finally {
+                logError(post,url,data,flag,msg);
             }
             criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());
             nmplPcDataMapper.deleteByExample(nmplPcDataExample);
@@ -126,14 +144,22 @@ public class TaskServiceImpl implements TaskService {
         List<NmplDataCollect> nmplDataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
         if(!CollectionUtils.isEmpty(nmplDataCollectList)){
             Long maxId = nmplDataCollectList.get(0).getId();
+            Boolean flag = false;
+            String post = null;
+            String data = "";
+            String msg =null;
             try {
                 JSONObject req = new JSONObject();
                 req.put("dataCollectVoList",nmplDataCollectList);
-                String post = HttpClientUtil.post(url, req.toJSONString());
+                data = req.toJSONString();
+                post = HttpClientUtil.post(url, data);
                 log.info("dataCollect push result:{}",post);
             }catch (Exception e){
+                flag = true;
+                msg =e.getMessage();
                 log.info("ddataCollect push Exception:{}",e.getMessage());
-                throw new RuntimeException(e);
+            }finally {
+                logError(post,url,data,flag,msg);
             }
             criteria.andIdLessThanOrEqualTo(maxId);
             nmplDataCollectMapper.deleteByExample(nmplDataCollectExample);
@@ -146,22 +172,60 @@ public class TaskServiceImpl implements TaskService {
         NmplBillExample nmplBillExample = new NmplBillExample();
         NmplBillExample.Criteria criteria = nmplBillExample.createCriteria();
         nmplBillExample.setOrderByClause("id desc");
-
         List<NmplBill> nmplBills = nmplBillMapper.selectByExample(nmplBillExample);
         if(!CollectionUtils.isEmpty(nmplBills)){
             Long maxId = nmplBills.get(0).getId();
+            Boolean flag = false;
+            String post = null;
+            String data = "";
+            String msg =null;
             try {
                 JSONObject req = new JSONObject();
                 req.put("nmplBillVoList",nmplBills);
-                String post = HttpClientUtil.post(url, req.toJSONString());
+                data = req.toJSONString();
+                post = HttpClientUtil.post(url,data);
                 log.info("Bill push result:{}",post);
             }catch (Exception e){
+                flag = true;
+                msg = e.getMessage();
                 log.info("Bill push Exception:{}",e.getMessage());
-                throw new RuntimeException(e);
+            }finally {
+                logError(post,url,data,flag,msg);
             }
             criteria.andIdLessThanOrEqualTo(maxId);
             nmplBillMapper.deleteByExample(nmplBillExample);
         }
 
     }
+
+    /**
+     * @param post http返回体
+     * @param url  推送路径
+     * @param data 推送数据
+     * @param flag 是否出现异常
+     * @param msg  异常信息
+     */
+    private void logError(String post,String url,String data,Boolean flag,String msg){
+        Boolean sucess = true;
+        if(post!=null){
+            JSONObject resp = JSONObject.parseObject(post);
+            if (resp.containsKey("success")){
+                sucess = (Boolean)resp.get("success");
+            }
+            if(null == msg){
+                if (resp.containsKey("errorMsg")){
+                    msg = (String) resp.get("errorMsg");
+                }
+            }
+        }
+        //推送失败或出现异常时记录
+        if(!sucess||flag){
+            NmplErrorPushLog nmplErrorPushLog = new NmplErrorPushLog();
+            nmplErrorPushLog.setUrl(url);
+            nmplErrorPushLog.setData(data);
+            nmplErrorPushLog.setErrorMsg(msg);
+            nmplErrorPushLogMapper.insertSelective(nmplErrorPushLog);
+        }
+    }
+
 }
