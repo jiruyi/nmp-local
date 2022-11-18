@@ -354,12 +354,12 @@ CREATE TABLE IF NOT EXISTS `nmpl_bill` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='话单上报表';
 
-CREATE TABLE `nmpl_error_push_log` (
-                                       `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-                                       `url` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '推送url',
-                                       `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '推送信息',
-                                       `error_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '异常信息',
-                                       PRIMARY KEY (`id`)
+CREATE TABLE IF NOT EXISTS `nmpl_error_push_log` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+    `url` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '推送url',
+    `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '推送信息',
+    `error_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '异常信息',
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='代理异常推送日志';
 
 
