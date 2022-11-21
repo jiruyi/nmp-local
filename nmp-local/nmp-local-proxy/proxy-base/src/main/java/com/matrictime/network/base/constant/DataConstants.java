@@ -159,4 +159,6 @@ public class DataConstants {
 
     public static final String BILL_URL = "/nmp-local-business/bill/saveBill";
 
+    public static final Integer ERROR_MSG_MAXLENGTH = 250;
+
 }

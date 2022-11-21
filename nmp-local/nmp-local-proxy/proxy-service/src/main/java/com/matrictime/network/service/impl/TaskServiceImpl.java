@@ -2,6 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.service.TaskService;
@@ -217,6 +218,9 @@ public class TaskServiceImpl implements TaskService {
                     msg = (String) resp.get("errorMsg");
                 }
             }
+        }
+        if(msg!=null&&msg.length()> DataConstants.ERROR_MSG_MAXLENGTH){
+            msg = msg.substring(DataConstants.ZERO,DataConstants.ERROR_MSG_MAXLENGTH);
         }
         //推送失败或出现异常时记录
         if(!sucess||flag){
