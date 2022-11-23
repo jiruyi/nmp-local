@@ -31,6 +31,8 @@ import com.matrictime.network.util.ParamCheckUtil;
 import com.matrictime.network.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +61,9 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedissonClient redisson;
 
     @Autowired(required = false)
     private UserMapper userMapper;
@@ -144,6 +149,22 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     public Result<LoginResp> login(LoginReq req) {
         Result result;
         String userId = "";
+        RLock rLock = redisson.getLock(REDIS_LOGIN_KEY+req.getLoginAccount());
+        log.info("-----get login lock object-----："+rLock);
+
+        boolean tryLock = false;
+        try {
+            tryLock = rLock.tryLock(10, 200, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            log.warn("get login lock exception");
+            e.printStackTrace();
+        }
+
+        if (!tryLock) {
+            log.info("get login lock failed");
+            return failResult("");
+        }
+
         try {
             result = buildResult(commonLogin(req));
 
@@ -161,6 +182,10 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
                 removeToken(userId,req.getDestination());
             }
             result = failResult("");
+        }finally {
+            if (rLock.isLocked() && rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
+            }
         }
 
         return result;
@@ -225,6 +250,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
     @Transactional(rollbackFor = Exception.class)
     public Result logout(LogoutReq req) {
         Result result;
+
         try {
             // 参数校验
             checkLogoutParam(req);

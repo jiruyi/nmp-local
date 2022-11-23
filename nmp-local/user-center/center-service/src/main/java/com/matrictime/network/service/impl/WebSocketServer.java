@@ -9,6 +9,8 @@ import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -20,8 +22,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.UcConstants.LOGOUT_MSG;
+import static com.matrictime.network.base.UcConstants.REDIS_LOGIN_KEY;
 import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 
 /**
@@ -66,30 +70,57 @@ public class WebSocketServer {
         }
         this.session = session;
         this.account = account;
-        if(webSocketMap.containsKey(account)){
-            WebSocketServer webSocketServer = webSocketMap.get(account);
-            webSocketServer.sendMessage(LOGOUT_MSG);
-            serverClose(webSocketServer.session);
 
-            LoginService loginService = applicationContext.getBean(LoginService.class);
-            LogoutReq req = new LogoutReq();
-            req.setLoginAccount(account);
-            loginService.syslogoutWithOutToken(req);
-            webSocketMap.remove(account);
+        RedissonClient redisson = applicationContext.getBean(RedissonClient.class);
+        RLock rLock = redisson.getLock(REDIS_LOGIN_KEY+account);
+        log.info("-----get onOpen lock object-----："+rLock);
 
-            //加入set中
-            webSocketMap.put(account,this);
-            addOnlineCount();
-        }else{
-            //加入set中
-            webSocketMap.put(account,this);
-            //在线数加1
-            addOnlineCount();
+        boolean tryLock = false;
+        try {
+            tryLock = rLock.tryLock(10, 15, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            log.warn("get onOpen lock exception");
+            e.printStackTrace();
         }
-        log.info("连接:"+account+",当前在线用户数为:" + getOnlineCount());
-        for (String key : webSocketMap.keySet()) {
-            log.info("当前在线用户:"+key);
+
+        if (!tryLock) {
+            log.info("get onOpen lock failed");
         }
+
+        try {
+            if(webSocketMap.containsKey(account)){
+                WebSocketServer webSocketServer = webSocketMap.get(account);
+                webSocketServer.sendMessage(LOGOUT_MSG);
+                serverClose(webSocketServer.session);
+
+                LoginService loginService = applicationContext.getBean(LoginService.class);
+                LogoutReq req = new LogoutReq();
+                req.setLoginAccount(account);
+                loginService.syslogoutWithOutToken(req);
+                webSocketMap.remove(account);
+
+                //加入set中
+                webSocketMap.put(account,this);
+                addOnlineCount();
+            }else{
+                //加入set中
+                webSocketMap.put(account,this);
+                //在线数加1
+                addOnlineCount();
+            }
+            log.info("连接:"+account+",当前在线用户数为:" + getOnlineCount());
+            for (String key : webSocketMap.keySet()) {
+                log.info("当前在线用户:"+key);
+            }
+        }catch (Exception e){
+            log.info("onOpen Exception:"+e.getMessage());
+            e.printStackTrace();
+        }finally {
+            if (rLock.isLocked() && rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
+            }
+        }
+
     }
 
     /**
