@@ -77,7 +77,7 @@ public class WebSocketServer {
 
         boolean tryLock = false;
         try {
-            tryLock = rLock.tryLock(10, 15, TimeUnit.SECONDS);
+            tryLock = rLock.tryLock(10, 10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             log.warn("get onOpen lock exception");
             e.printStackTrace();
@@ -129,27 +129,53 @@ public class WebSocketServer {
      */
     @OnClose
     public void onClose() {
-        if(webSocketMap.containsKey(account)){
-            webSocketMap.remove(account);
-            //从set中删除
-            subOnlineCount();
-            if (!ParamCheckUtil.checkVoStrBlank(account)){
-                try {
-                    log.info("websocket系统退出信息:{}",account);
-                    LoginService loginService = applicationContext.getBean(LoginService.class);
-                    LogoutReq req = new LogoutReq();
-                    req.setLoginAccount(account);
-                    loginService.syslogout(req);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        RedissonClient redisson = applicationContext.getBean(RedissonClient.class);
+        RLock rLock = redisson.getLock(REDIS_LOGIN_KEY+account);
+        log.info("-----get onClose lock object-----："+rLock);
 
+        boolean tryLock = false;
+        try {
+            tryLock = rLock.tryLock(10, 10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            log.warn("get onClose lock exception");
+            e.printStackTrace();
+        }
+
+        if (!tryLock) {
+            log.info("get onClose lock failed");
+        }
+
+        try {
+            if(webSocketMap.containsKey(account)){
+                webSocketMap.remove(account);
+                //从set中删除
+                subOnlineCount();
+                if (!ParamCheckUtil.checkVoStrBlank(account)){
+                    try {
+                        log.info("websocket系统退出信息:{}",account);
+                        LoginService loginService = applicationContext.getBean(LoginService.class);
+                        LogoutReq req = new LogoutReq();
+                        req.setLoginAccount(account);
+                        loginService.syslogoutWithOutToken(req);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+            log.info("用户退出:"+account+",当前在线用户数为:" + getOnlineCount());
+            for (String key : webSocketMap.keySet()) {
+                log.info("当前在线用户:"+key);
+            }
+        }catch (Exception e){
+            log.info("onClose Exception:"+e.getMessage());
+            e.printStackTrace();
+        }finally {
+            if (rLock.isLocked() && rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
             }
         }
-        log.info("用户退出:"+account+",当前在线用户数为:" + getOnlineCount());
-        for (String key : webSocketMap.keySet()) {
-            log.info("当前在线用户:"+key);
-        }
+
     }
 
     /**

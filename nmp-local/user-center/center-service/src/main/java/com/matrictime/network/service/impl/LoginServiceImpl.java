@@ -154,7 +154,7 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
 
         boolean tryLock = false;
         try {
-            tryLock = rLock.tryLock(10, 200, TimeUnit.SECONDS);
+            tryLock = rLock.tryLock(10, 10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             log.warn("get login lock exception");
             e.printStackTrace();
@@ -172,14 +172,14 @@ public class LoginServiceImpl extends SystemBaseService implements LoginService 
             log.error("LoginServiceImpl.login SystemException:{}",e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             if (StringUtils.isNotBlank(userId)){
-                removeToken(userId,req.getDestination());
+                delToken(userId,req.getDestination());
             }
             result = failResult(e);
         }catch (Exception e){
             log.error("LoginServiceImpl.login Exception:{}",e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             if (StringUtils.isNotBlank(userId)){
-                removeToken(userId,req.getDestination());
+                delToken(userId,req.getDestination());
             }
             result = failResult("");
         }finally {
