@@ -55,11 +55,11 @@ public class DataChangeUtil {
     }
 
     public static String changeIntToHex(Integer inter){
-        String hexString = Integer.toHexString(inter);
+        String hexString = Integer.toHexString(inter).toUpperCase();
         return hexString;
     }
 
     public static void main(String[] args) {
-        System.out.println(BidChange("1-1-1-1-65535"));
+        System.out.println(BidChange("999-100-999-999-65535"));
     }
 }

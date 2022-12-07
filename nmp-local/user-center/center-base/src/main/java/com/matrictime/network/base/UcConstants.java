@@ -55,4 +55,8 @@ public class UcConstants {
     public static final String URL_DELETEFRIEND="/deleteFriend";
 
     public static final String LOGOUT_MSG = "logout";
+
+    /** rediskey begin**/
+    public static final String REDIS_LOGIN_KEY = "redisson:uc:account:";
+    /** rediskey end**/
 }

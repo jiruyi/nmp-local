@@ -1,5 +1,9 @@
 package com.matrictime.network.service.config;
 
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -7,6 +11,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import static com.matrictime.network.constant.DataConstants.KEY_SPLIT;
 
 /**
  * @author jiruyi@goldengintech.com.cn
@@ -16,6 +22,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 public class MyRedisConfig {
+
+    @Value("${spring.redis.host}")
+    private String host;
+
+    @Value("${spring.redis.port}")
+    private String port;
+
+    @Value("${spring.redis.password}")
+    private String password;
 
     @Bean(name = "redisTemplate")
     public RedisTemplate<String,Object> getRedisTemplate(RedisConnectionFactory factory){
@@ -38,6 +53,17 @@ public class MyRedisConfig {
         container.setConnectionFactory(connectionFactory);
 //        container.addMessageListener(messageListener(),new ChannelTopic(DataConstants.DEVICE_LOG_REDIS_CHANNEL));
         return container;
+    }
+
+    @Bean
+    public RedissonClient redisson(){
+        Config config = new Config();
+        String address = new StringBuffer("redis://").append(host).append(KEY_SPLIT).append(port).toString();
+        config.useSingleServer().setAddress(address);
+        if (null != password && !"".equals(password.trim())){
+            config.useSingleServer().setPassword(password);
+        }
+        return Redisson.create(config);
     }
 
 }
