@@ -64,7 +64,7 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
             if(num.equals(DataConstants.INSERT_OR_UPDATE_SUCCESS)){
                 result =  buildResult(num);
                 NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
-                nmplOutlinePcInfoExample.createCriteria().andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId());
+                nmplOutlinePcInfoExample.createCriteria().andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId()).andIsExistEqualTo(true);
                 List<NmplOutlinePcInfo> nmplOutlinePcInfoList = nmplOutlinePcInfoMapper.selectByExample(nmplOutlinePcInfoExample);
                 if(!CollectionUtils.isEmpty(nmplOutlinePcInfoList)){
                     String data = JSONObject.toJSONString(nmplOutlinePcInfoList.get(0));
@@ -96,7 +96,7 @@ public class OutlinePcServiceImpl extends SystemBaseService implements OutlinePc
             if(num.equals(DataConstants.INSERT_OR_UPDATE_SUCCESS)){
                 result =  buildResult(num);
                 NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
-                nmplOutlinePcInfoExample.createCriteria().andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId());
+                nmplOutlinePcInfoExample.createCriteria().andStationNetworkIdEqualTo(outlinePcReq.getStationNetworkId()).andIsExistEqualTo(true);
                 List<NmplOutlinePcInfo> nmplOutlinePcInfoList = nmplOutlinePcInfoMapper.selectByExample(nmplOutlinePcInfoExample);
                 if(!CollectionUtils.isEmpty(nmplOutlinePcInfoList)){
                     String data = JSONObject.toJSONString(nmplOutlinePcInfoList.get(0));
