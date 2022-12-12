@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.enums.DeviceStatusEnum;
+import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.domain.OutlinePcDomainService;
 import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
 import com.matrictime.network.dao.model.NmplUpdateInfoBase;
@@ -42,8 +43,13 @@ public class OutlinePcServiceImpl implements OutlinePcService {
     @Override
     public Result<Integer> updateOutlinePc(OutlinePcReq outlinePcReq) {
         Result result = new Result<>();
+        Date createTime = new Date();
         try {
-            result.setResultObj(outlinePcDomainService.updateOutlinePc(outlinePcReq));
+            int i = outlinePcDomainService.updateOutlinePc(outlinePcReq);
+            result.setResultObj(i);
+            if(i == DataConstants.RETURN_SUCCESS){
+                noticeUpdateInfoBase(createTime);
+            }
         }catch (Exception e){
             result.setSuccess(false);
             result.setErrorMsg("系统异常");
@@ -55,8 +61,13 @@ public class OutlinePcServiceImpl implements OutlinePcService {
     @Override
     public Result<Integer> batchInsertOutlinePc(OutlinePcListRequest listRequest) {
         Result result = new Result<>();
+        Date createTime = new Date();
         try {
-            result.setResultObj(outlinePcDomainService.batchInsertOutlinePc(listRequest));
+            int i = outlinePcDomainService.batchInsertOutlinePc(listRequest);
+            result.setResultObj(i);
+            if(i == DataConstants.RETURN_SUCCESS){
+                noticeAddInfoBase(createTime);
+            }
         }catch (Exception e){
             result.setSuccess(false);
             result.setErrorMsg("系统异常");
@@ -97,21 +108,29 @@ public class OutlinePcServiceImpl implements OutlinePcService {
         centerNmplOutlinePcInfoVo.setUpdateTime(createTime);
         if(outlinePcVos.size() > NumberUtils.INTEGER_ZERO){
             outlinePcDomainService.updateOutlinePc(changeData(centerNmplOutlinePcInfoVo));
-            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-            updateInfo.setTableName(NMPL_OUTLINE_PC_INFO);
-            updateInfo.setOperationType(EDIT_TYPE_ADD);
-            updateInfo.setCreateTime(createTime);
-            updateInfo.setCreateUser(SYSTEM_NM);
-            int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+            noticeUpdateInfoBase(createTime);
         }else {
             outlinePcDomainService.insertOutlinePc(changeData(centerNmplOutlinePcInfoVo));
-            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-            updateInfo.setTableName(NMPL_OUTLINE_PC_INFO);
-            updateInfo.setOperationType(EDIT_TYPE_UPD);
-            updateInfo.setCreateTime(createTime);
-            updateInfo.setCreateUser(SYSTEM_NM);
-            int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+            noticeAddInfoBase(createTime);
         }
+    }
+
+    private void noticeUpdateInfoBase(Date createTime){
+        NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+        updateInfo.setTableName(NMPL_OUTLINE_PC_INFO);
+        updateInfo.setOperationType(EDIT_TYPE_ADD);
+        updateInfo.setCreateTime(createTime);
+        updateInfo.setCreateUser(SYSTEM_NM);
+        nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+    }
+
+    private void noticeAddInfoBase(Date createTime){
+        NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+        updateInfo.setTableName(NMPL_OUTLINE_PC_INFO);
+        updateInfo.setOperationType(EDIT_TYPE_UPD);
+        updateInfo.setCreateTime(createTime);
+        updateInfo.setCreateUser(SYSTEM_NM);
+        nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
     }
 
     /**
