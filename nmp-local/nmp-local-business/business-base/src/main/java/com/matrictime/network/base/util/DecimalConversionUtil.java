@@ -19,12 +19,17 @@ public class DecimalConversionUtil {
 
 
     public static void main(String[] args) {
-        String a ="99-25-1-1-1";
+        String a ="8600-1-1-1-1";
 //        byte[]res = bidToByteArray(a);
 //        for (byte re : res) {
 //            System.out.println(re);
 //        }
         byte[] strings = idToByteArray(a);
+
+        for (int i = 0; i < strings.length; i++) {
+            System.out.print(byteToBit((byte) strings[i]));
+            System.out.print(" ");
+        }
 
 
         long pre  = getPreBid(strings);
@@ -38,9 +43,7 @@ public class DecimalConversionUtil {
         String[] idArray = idToIdStringArray(id);
         int length = idArray.length;
         for (int i = 0; i < length; i++) {
-            if (i<2){
-                result = splicingArrays(result,hexToByteLittle(idArray[i]));
-            }else if (i<5){
+            if (i<4){
                 result = splicingArrays(result,intToByteLittle(Integer.parseInt(idArray[i])));
             }else {
                 result = splicingArrays(result, toLH(Integer.parseInt(idArray[i])));
@@ -51,28 +54,29 @@ public class DecimalConversionUtil {
 
     public static String[] idToIdStringArray(String id){
         String[] split = id.split(DataConstants.KEY_SPLIT_MIDLINE);
-        int slength = split.length;
-        String first = split[0];
-        char[] chars = first.toCharArray();
-        int clength = chars.length;
-        int tempLength = 4;
-        String[] temp = new String[tempLength];
-        for (int i=0;i<tempLength;i++){
-            if (clength>(tempLength-1-i)){
-                temp[i] = String.valueOf(chars[i-(tempLength-clength)]);
-            }else {
-                temp[i] = String.valueOf(0);
-            }
-        }
-        int nationLength = 2;
-
-        String[] nation = new String[nationLength];
-        nation[0] = temp[0] + temp[1];
-        nation[1] = temp[2] + temp[3];
-
-        nation = Arrays.copyOf(nation,nationLength+slength-1);
-        System.arraycopy(split,1,nation,nationLength,slength-1);
-        return nation;
+//        int slength = split.length;
+//        String first = split[0];
+//        char[] chars = first.toCharArray();
+//        int clength = chars.length;
+//        int tempLength = 4;
+//        String[] temp = new String[tempLength];
+//        for (int i=0;i<tempLength;i++){
+//            if (clength>(tempLength-1-i)){
+//                temp[i] = String.valueOf(chars[i-(tempLength-clength)]);
+//            }else {
+//                temp[i] = String.valueOf(0);
+//            }
+//        }
+//        int nationLength = 2;
+//
+//        String[] nation = new String[nationLength];
+//        nation[0] = temp[0] + temp[1];
+//        nation[1] = temp[2] + temp[3];
+//
+//        nation = Arrays.copyOf(nation,nationLength+slength-1);
+//        System.arraycopy(split,1,nation,nationLength,slength-1);
+//        return nation;
+        return split;
     }
 
     public static byte[] toLH(int n) {
@@ -164,6 +168,12 @@ public class DecimalConversionUtil {
         byte[]res = new byte[bytes.length-8];
         System.arraycopy(bytes, 8, res, 0, bytes.length-8);
         return bytes2long(res);
+    }
+
+    public static String byteToBit(byte b) {
+        return "" + (byte) ((b >> 7) & 0x1) + (byte) ((b >> 6) & 0x1) + (byte) ((b >> 5) & 0x1) + (byte) ((b >> 4) & 0x1)
+                + (byte) ((b >> 3) & 0x1) + (byte) ((b >> 2) & 0x1)
+                + (byte) ((b >> 1) & 0x1) + (byte) ((b >> 0) & 0x1);
     }
 
 }

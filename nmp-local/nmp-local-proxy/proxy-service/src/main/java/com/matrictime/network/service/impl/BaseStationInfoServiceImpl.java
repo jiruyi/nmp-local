@@ -130,23 +130,24 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 log.info("BaseStationInfoServiceImpl.addBaseStationInfo：" +
                                 "addlocal:{},updateLocal:{}",
                         addlocal,updateLocal);
-            }else {
-                /* 其他基站的推送插入 */
-
-                // 插入通知表通知base表更新
-                NmplUpdateInfoBase updateTable = new NmplUpdateInfoBase();
-                updateTable.setTableName(NMPL_BASE_STATION_INFO);
-                updateTable.setOperationType(EDIT_TYPE_ADD);
-                updateTable.setCreateTime(createTime);
-                updateTable.setCreateUser(SYSTEM_NM);
-
-                int addTable = nmplUpdateInfoBaseMapper.insertSelective(updateTable);
-
-                NmplBaseStationInfo baseStationInfo = new NmplBaseStationInfo();
-                BeanUtils.copyProperties(infoVo,baseStationInfo);
-                int addStation = baseStationInfoDomainService.insert(baseStationInfo);
-                log.info("BaseStationInfoServiceImpl.addBaseStationInfo：addTable:{},addStation:{}",addTable,addStation);
             }
+//            else {
+            /* 其他基站的推送插入 */
+
+            // 插入通知表通知base表更新
+            NmplUpdateInfoBase updateTable = new NmplUpdateInfoBase();
+            updateTable.setTableName(NMPL_BASE_STATION_INFO);
+            updateTable.setOperationType(EDIT_TYPE_ADD);
+            updateTable.setCreateTime(createTime);
+            updateTable.setCreateUser(SYSTEM_NM);
+
+            int addTable = nmplUpdateInfoBaseMapper.insertSelective(updateTable);
+
+            NmplBaseStationInfo baseStationInfo = new NmplBaseStationInfo();
+            BeanUtils.copyProperties(infoVo,baseStationInfo);
+            int addStation = baseStationInfoDomainService.insert(baseStationInfo);
+            log.info("BaseStationInfoServiceImpl.addBaseStationInfo：addTable:{},addStation:{}",addTable,addStation);
+//            }
         }catch (Exception e){
             log.error("BaseStationInfoServiceImpl.addBaseStationInfo：{}",e.getMessage());
             result = failResult("");

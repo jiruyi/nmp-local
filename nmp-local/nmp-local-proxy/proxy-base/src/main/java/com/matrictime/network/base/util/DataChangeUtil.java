@@ -14,8 +14,9 @@ public class DataChangeUtil {
         StringBuffer sb = new StringBuffer();
 
         String nation = split[0];
-        nation = fixZero(nation,4);
-        sb.append(nation);
+        String hexNation = changeIntToHex(Integer.parseInt(nation));
+        hexNation = fixZero(hexNation,4);
+        sb.append(hexNation);
         sb.append(KEY_SPLIT_MIDLINE);
 
         String operator = split[1];
