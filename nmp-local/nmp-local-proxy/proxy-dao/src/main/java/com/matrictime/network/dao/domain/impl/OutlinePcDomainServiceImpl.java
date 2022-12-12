@@ -1,10 +1,10 @@
 package com.matrictime.network.dao.domain.impl;
 
-import com.matrictime.network.base.exception.ErrorMessageContants;
+
+import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.domain.OutlinePcDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplOutlinePcInfoMapper;
-import com.matrictime.network.dao.mapper.extend.BaseStationInfoMapper;
 import com.matrictime.network.dao.model.NmplBaseStationInfo;
 import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
 import com.matrictime.network.dao.model.NmplOutlinePcInfo;
@@ -15,7 +15,6 @@ import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.OutlinePcListRequest;
 import com.matrictime.network.request.OutlinePcReq;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -68,7 +67,7 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
                 throw new RuntimeException("批量插入发生错误");
             }
         }
-        return 1;
+        return DataConstants.RETURN_SUCCESS;
     }
 
     @Override
