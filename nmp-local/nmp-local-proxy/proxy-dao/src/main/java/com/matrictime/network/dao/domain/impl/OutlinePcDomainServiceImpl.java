@@ -5,10 +5,8 @@ import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.domain.OutlinePcDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplOutlinePcInfoMapper;
-import com.matrictime.network.dao.model.NmplBaseStationInfo;
-import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
-import com.matrictime.network.dao.model.NmplOutlinePcInfo;
-import com.matrictime.network.dao.model.NmplOutlinePcInfoExample;
+import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.OutlinePcVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
@@ -24,7 +22,12 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static com.matrictime.network.base.constant.DataConstants.NMPL_OUTLINE_PC_INFO;
+import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.SYSTEM_NM;
 
 /**
  * @author by wangqiang
@@ -40,20 +43,51 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
     @Resource
     private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
 
+    @Resource
+    private NmplUpdateInfoBaseMapper nmplUpdateInfoBaseMapper;
+
     @Override
     public int updateOutlinePc(OutlinePcReq outlinePcReq) {
+        Date createTime = new Date();
         NmplOutlinePcInfoExample nmplOutlinePcInfoExample = new NmplOutlinePcInfoExample();
         NmplOutlinePcInfoExample.Criteria criteria = nmplOutlinePcInfoExample.createCriteria();
         NmplOutlinePcInfo nmplOutlinePcInfo = new NmplOutlinePcInfo();
         BeanUtils.copyProperties(outlinePcReq,nmplOutlinePcInfo);
+        nmplOutlinePcInfo.setCreateTime(createTime);
         //查询数据库判断数据库中是否有该数据
+        int i = 0;
         NmplOutlinePcInfo outlinePcInfo = outlinePcInfoMapper.selectByPrimaryKey(nmplOutlinePcInfo.getId());
         if(!ObjectUtils.isEmpty(outlinePcInfo)){
             criteria.andIdEqualTo(nmplOutlinePcInfo.getId());
-            return outlinePcInfoMapper.updateByExampleSelective(nmplOutlinePcInfo,nmplOutlinePcInfoExample);
+            i = outlinePcInfoMapper.updateByExampleSelective(nmplOutlinePcInfo, nmplOutlinePcInfoExample);
+            if(i == RETURN_SUCCESS){
+                noticeUpdateInfoBase(createTime);
+            }
         }else {
-            return outlinePcInfoMapper.insertSelective(nmplOutlinePcInfo);
+            i = outlinePcInfoMapper.insertSelective(nmplOutlinePcInfo);
+            if(i == RETURN_SUCCESS){
+                noticeAddInfoBase(createTime);
+            }
         }
+        return i;
+    }
+
+    private void noticeAddInfoBase(Date createTime){
+        NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+        updateInfo.setTableName(NMPL_OUTLINE_PC_INFO);
+        updateInfo.setOperationType(EDIT_TYPE_ADD);
+        updateInfo.setCreateTime(createTime);
+        updateInfo.setCreateUser(SYSTEM_NM);
+        nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+    }
+
+    private void noticeUpdateInfoBase(Date createTime){
+        NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+        updateInfo.setTableName(NMPL_OUTLINE_PC_INFO);
+        updateInfo.setOperationType(EDIT_TYPE_UPD);
+        updateInfo.setCreateTime(createTime);
+        updateInfo.setCreateUser(SYSTEM_NM);
+        nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

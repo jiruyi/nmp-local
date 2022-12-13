@@ -43,13 +43,8 @@ public class OutlinePcServiceImpl implements OutlinePcService {
     @Override
     public Result<Integer> updateOutlinePc(OutlinePcReq outlinePcReq) {
         Result result = new Result<>();
-        Date createTime = new Date();
         try {
-            int i = outlinePcDomainService.updateOutlinePc(outlinePcReq);
-            result.setResultObj(i);
-            if(i == DataConstants.RETURN_SUCCESS){
-                noticeUpdateInfoBase(createTime);
-            }
+            result.setResultObj(outlinePcDomainService.updateOutlinePc(outlinePcReq));
         }catch (Exception e){
             result.setSuccess(false);
             result.setErrorMsg("系统异常");
@@ -61,13 +56,8 @@ public class OutlinePcServiceImpl implements OutlinePcService {
     @Override
     public Result<Integer> batchInsertOutlinePc(OutlinePcListRequest listRequest) {
         Result result = new Result<>();
-        Date createTime = new Date();
         try {
-            int i = outlinePcDomainService.batchInsertOutlinePc(listRequest);
-            result.setResultObj(i);
-            if(i == DataConstants.RETURN_SUCCESS){
-                noticeAddInfoBase(createTime);
-            }
+            result.setResultObj(outlinePcDomainService.batchInsertOutlinePc(listRequest));
         }catch (Exception e){
             result.setSuccess(false);
             result.setErrorMsg("系统异常");
@@ -115,7 +105,7 @@ public class OutlinePcServiceImpl implements OutlinePcService {
         }
     }
 
-    private void noticeUpdateInfoBase(Date createTime){
+    private void noticeAddInfoBase(Date createTime){
         NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
         updateInfo.setTableName(NMPL_OUTLINE_PC_INFO);
         updateInfo.setOperationType(EDIT_TYPE_ADD);
@@ -124,7 +114,7 @@ public class OutlinePcServiceImpl implements OutlinePcService {
         nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
     }
 
-    private void noticeAddInfoBase(Date createTime){
+    private void noticeUpdateInfoBase(Date createTime){
         NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
         updateInfo.setTableName(NMPL_OUTLINE_PC_INFO);
         updateInfo.setOperationType(EDIT_TYPE_UPD);
