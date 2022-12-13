@@ -93,6 +93,8 @@ public class DataConstants {
 
     public static final String KEY_FAIL_IDS = "failIds";
 
+    public static final String UPDTIME_DESC = "update_time desc";
+
     public static final int RETURN_SUCCESS = 1;
 
 
