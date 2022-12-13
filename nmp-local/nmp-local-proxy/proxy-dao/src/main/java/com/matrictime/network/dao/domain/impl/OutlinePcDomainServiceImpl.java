@@ -53,7 +53,7 @@ public class OutlinePcDomainServiceImpl implements OutlinePcDomainService {
         NmplOutlinePcInfoExample.Criteria criteria = nmplOutlinePcInfoExample.createCriteria();
         NmplOutlinePcInfo nmplOutlinePcInfo = new NmplOutlinePcInfo();
         BeanUtils.copyProperties(outlinePcReq,nmplOutlinePcInfo);
-        nmplOutlinePcInfo.setCreateTime(createTime);
+        nmplOutlinePcInfo.setUpdateTime(createTime);
         //查询数据库判断数据库中是否有该数据
         int i = 0;
         NmplOutlinePcInfo outlinePcInfo = outlinePcInfoMapper.selectByPrimaryKey(nmplOutlinePcInfo.getId());
