@@ -17,6 +17,7 @@
         <module>user-center</module>
         <module>nmp-local-proxy</module>
         <module>unified-portal</module>
+        <module>security-server</module>
     </modules>
 
     <properties>
