@@ -45,7 +45,7 @@
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
                 <version>1.4.0</version>
                 <configuration>
-                    <configurationFile>../center-dao/src/main/resources/mybatis-generator/generatorConfig.xml
+                    <configurationFile>../security-dao/src/main/resources/mybatis-generator/generatorConfig.xml
                     </configurationFile>
                     <verbose>true</verbose>
                     <overwrite>true</overwrite>

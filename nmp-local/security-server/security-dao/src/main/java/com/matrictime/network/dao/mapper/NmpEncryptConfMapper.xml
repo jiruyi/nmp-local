@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmpEncryptConfMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmpEncryptConf">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="up_encrypt_ratio" jdbcType="VARCHAR" property="upEncryptRatio" />
+    <result column="up_extend_algorithm" jdbcType="VARCHAR" property="upExtendAlgorithm" />
+    <result column="up_encrypt_type" jdbcType="VARCHAR" property="upEncryptType" />
+    <result column="up_encrypt_algorithm" jdbcType="VARCHAR" property="upEncryptAlgorithm" />
+    <result column="up_max_value" jdbcType="BIGINT" property="upMaxValue" />
+    <result column="up_warn_value" jdbcType="BIGINT" property="upWarnValue" />
+    <result column="up_min_value" jdbcType="BIGINT" property="upMinValue" />
+    <result column="down_max_value" jdbcType="BIGINT" property="downMaxValue" />
+    <result column="down_warn_value" jdbcType="BIGINT" property="downWarnValue" />
+    <result column="down_min_value" jdbcType="BIGINT" property="downMinValue" />
+    <result column="random_max_value" jdbcType="BIGINT" property="randomMaxValue" />
+    <result column="random_warn_value" jdbcType="BIGINT" property="randomWarnValue" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, up_encrypt_ratio, up_extend_algorithm, up_encrypt_type, up_encrypt_algorithm, 
+    up_max_value, up_warn_value, up_min_value, down_max_value, down_warn_value, down_min_value, 
+    random_max_value, random_warn_value, is_exist, create_user, create_time, update_user, 
+    update_time, remark
+  </sql>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmpEncryptConfExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmp_encrypt_conf
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from nmp_encrypt_conf
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nmp_encrypt_conf
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmpEncryptConfExample">
+    delete from nmp_encrypt_conf
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmpEncryptConf">
+    insert into nmp_encrypt_conf (id, up_encrypt_ratio, up_extend_algorithm, 
+      up_encrypt_type, up_encrypt_algorithm, up_max_value, 
+      up_warn_value, up_min_value, down_max_value, 
+      down_warn_value, down_min_value, random_max_value, 
+      random_warn_value, is_exist, create_user, 
+      create_time, update_user, update_time, 
+      remark)
+    values (#{id,jdbcType=BIGINT}, #{upEncryptRatio,jdbcType=VARCHAR}, #{upExtendAlgorithm,jdbcType=VARCHAR}, 
+      #{upEncryptType,jdbcType=VARCHAR}, #{upEncryptAlgorithm,jdbcType=VARCHAR}, #{upMaxValue,jdbcType=BIGINT}, 
+      #{upWarnValue,jdbcType=BIGINT}, #{upMinValue,jdbcType=BIGINT}, #{downMaxValue,jdbcType=BIGINT}, 
+      #{downWarnValue,jdbcType=BIGINT}, #{downMinValue,jdbcType=BIGINT}, #{randomMaxValue,jdbcType=BIGINT}, 
+      #{randomWarnValue,jdbcType=BIGINT}, #{isExist,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmpEncryptConf">
+    insert into nmp_encrypt_conf
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="upEncryptRatio != null">
+        up_encrypt_ratio,
+      </if>
+      <if test="upExtendAlgorithm != null">
+        up_extend_algorithm,
+      </if>
+      <if test="upEncryptType != null">
+        up_encrypt_type,
+      </if>
+      <if test="upEncryptAlgorithm != null">
+        up_encrypt_algorithm,
+      </if>
+      <if test="upMaxValue != null">
+        up_max_value,
+      </if>
+      <if test="upWarnValue != null">
+        up_warn_value,
+      </if>
+      <if test="upMinValue != null">
+        up_min_value,
+      </if>
+      <if test="downMaxValue != null">
+        down_max_value,
+      </if>
+      <if test="downWarnValue != null">
+        down_warn_value,
+      </if>
+      <if test="downMinValue != null">
+        down_min_value,
+      </if>
+      <if test="randomMaxValue != null">
+        random_max_value,
+      </if>
+      <if test="randomWarnValue != null">
+        random_warn_value,
+      </if>
+      <if test="isExist != null">
+        is_exist,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="upEncryptRatio != null">
+        #{upEncryptRatio,jdbcType=VARCHAR},
+      </if>
+      <if test="upExtendAlgorithm != null">
+        #{upExtendAlgorithm,jdbcType=VARCHAR},
+      </if>
+      <if test="upEncryptType != null">
+        #{upEncryptType,jdbcType=VARCHAR},
+      </if>
+      <if test="upEncryptAlgorithm != null">
+        #{upEncryptAlgorithm,jdbcType=VARCHAR},
+      </if>
+      <if test="upMaxValue != null">
+        #{upMaxValue,jdbcType=BIGINT},
+      </if>
+      <if test="upWarnValue != null">
+        #{upWarnValue,jdbcType=BIGINT},
+      </if>
+      <if test="upMinValue != null">
+        #{upMinValue,jdbcType=BIGINT},
+      </if>
+      <if test="downMaxValue != null">
+        #{downMaxValue,jdbcType=BIGINT},
+      </if>
+      <if test="downWarnValue != null">
+        #{downWarnValue,jdbcType=BIGINT},
+      </if>
+      <if test="downMinValue != null">
+        #{downMinValue,jdbcType=BIGINT},
+      </if>
+      <if test="randomMaxValue != null">
+        #{randomMaxValue,jdbcType=BIGINT},
+      </if>
+      <if test="randomWarnValue != null">
+        #{randomWarnValue,jdbcType=BIGINT},
+      </if>
+      <if test="isExist != null">
+        #{isExist,jdbcType=BIT},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmpEncryptConfExample" resultType="java.lang.Long">
+    select count(*) from nmp_encrypt_conf
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmp_encrypt_conf
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.upEncryptRatio != null">
+        up_encrypt_ratio = #{record.upEncryptRatio,jdbcType=VARCHAR},
+      </if>
+      <if test="record.upExtendAlgorithm != null">
+        up_extend_algorithm = #{record.upExtendAlgorithm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.upEncryptType != null">
+        up_encrypt_type = #{record.upEncryptType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.upEncryptAlgorithm != null">
+        up_encrypt_algorithm = #{record.upEncryptAlgorithm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.upMaxValue != null">
+        up_max_value = #{record.upMaxValue,jdbcType=BIGINT},
+      </if>
+      <if test="record.upWarnValue != null">
+        up_warn_value = #{record.upWarnValue,jdbcType=BIGINT},
+      </if>
+      <if test="record.upMinValue != null">
+        up_min_value = #{record.upMinValue,jdbcType=BIGINT},
+      </if>
+      <if test="record.downMaxValue != null">
+        down_max_value = #{record.downMaxValue,jdbcType=BIGINT},
+      </if>
+      <if test="record.downWarnValue != null">
+        down_warn_value = #{record.downWarnValue,jdbcType=BIGINT},
+      </if>
+      <if test="record.downMinValue != null">
+        down_min_value = #{record.downMinValue,jdbcType=BIGINT},
+      </if>
+      <if test="record.randomMaxValue != null">
+        random_max_value = #{record.randomMaxValue,jdbcType=BIGINT},
+      </if>
+      <if test="record.randomWarnValue != null">
+        random_warn_value = #{record.randomWarnValue,jdbcType=BIGINT},
+      </if>
+      <if test="record.isExist != null">
+        is_exist = #{record.isExist,jdbcType=BIT},
+      </if>
+      <if test="record.createUser != null">
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null">
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmp_encrypt_conf
+    set id = #{record.id,jdbcType=BIGINT},
+      up_encrypt_ratio = #{record.upEncryptRatio,jdbcType=VARCHAR},
+      up_extend_algorithm = #{record.upExtendAlgorithm,jdbcType=VARCHAR},
+      up_encrypt_type = #{record.upEncryptType,jdbcType=VARCHAR},
+      up_encrypt_algorithm = #{record.upEncryptAlgorithm,jdbcType=VARCHAR},
+      up_max_value = #{record.upMaxValue,jdbcType=BIGINT},
+      up_warn_value = #{record.upWarnValue,jdbcType=BIGINT},
+      up_min_value = #{record.upMinValue,jdbcType=BIGINT},
+      down_max_value = #{record.downMaxValue,jdbcType=BIGINT},
+      down_warn_value = #{record.downWarnValue,jdbcType=BIGINT},
+      down_min_value = #{record.downMinValue,jdbcType=BIGINT},
+      random_max_value = #{record.randomMaxValue,jdbcType=BIGINT},
+      random_warn_value = #{record.randomWarnValue,jdbcType=BIGINT},
+      is_exist = #{record.isExist,jdbcType=BIT},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      remark = #{record.remark,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmpEncryptConf">
+    update nmp_encrypt_conf
+    <set>
+      <if test="upEncryptRatio != null">
+        up_encrypt_ratio = #{upEncryptRatio,jdbcType=VARCHAR},
+      </if>
+      <if test="upExtendAlgorithm != null">
+        up_extend_algorithm = #{upExtendAlgorithm,jdbcType=VARCHAR},
+      </if>
+      <if test="upEncryptType != null">
+        up_encrypt_type = #{upEncryptType,jdbcType=VARCHAR},
+      </if>
+      <if test="upEncryptAlgorithm != null">
+        up_encrypt_algorithm = #{upEncryptAlgorithm,jdbcType=VARCHAR},
+      </if>
+      <if test="upMaxValue != null">
+        up_max_value = #{upMaxValue,jdbcType=BIGINT},
+      </if>
+      <if test="upWarnValue != null">
+        up_warn_value = #{upWarnValue,jdbcType=BIGINT},
+      </if>
+      <if test="upMinValue != null">
+        up_min_value = #{upMinValue,jdbcType=BIGINT},
+      </if>
+      <if test="downMaxValue != null">
+        down_max_value = #{downMaxValue,jdbcType=BIGINT},
+      </if>
+      <if test="downWarnValue != null">
+        down_warn_value = #{downWarnValue,jdbcType=BIGINT},
+      </if>
+      <if test="downMinValue != null">
+        down_min_value = #{downMinValue,jdbcType=BIGINT},
+      </if>
+      <if test="randomMaxValue != null">
+        random_max_value = #{randomMaxValue,jdbcType=BIGINT},
+      </if>
+      <if test="randomWarnValue != null">
+        random_warn_value = #{randomWarnValue,jdbcType=BIGINT},
+      </if>
+      <if test="isExist != null">
+        is_exist = #{isExist,jdbcType=BIT},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmpEncryptConf">
+    update nmp_encrypt_conf
+    set up_encrypt_ratio = #{upEncryptRatio,jdbcType=VARCHAR},
+      up_extend_algorithm = #{upExtendAlgorithm,jdbcType=VARCHAR},
+      up_encrypt_type = #{upEncryptType,jdbcType=VARCHAR},
+      up_encrypt_algorithm = #{upEncryptAlgorithm,jdbcType=VARCHAR},
+      up_max_value = #{upMaxValue,jdbcType=BIGINT},
+      up_warn_value = #{upWarnValue,jdbcType=BIGINT},
+      up_min_value = #{upMinValue,jdbcType=BIGINT},
+      down_max_value = #{downMaxValue,jdbcType=BIGINT},
+      down_warn_value = #{downWarnValue,jdbcType=BIGINT},
+      down_min_value = #{downMinValue,jdbcType=BIGINT},
+      random_max_value = #{randomMaxValue,jdbcType=BIGINT},
+      random_warn_value = #{randomWarnValue,jdbcType=BIGINT},
+      is_exist = #{isExist,jdbcType=BIT},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

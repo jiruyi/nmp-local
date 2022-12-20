@@ -1,5 +1,5 @@
 server:
-  port: 8020
+  port: 8011
   servlet:
       context-path: /security-server
     
@@ -47,7 +47,6 @@ spring:
   mvc:
     async:
       request-timeout: 60000
-    static-path-pattern: /static/**
   instance:
     instance-id: security-server
     prefer-ip-address: true     #访问路径可以显示IP地址
