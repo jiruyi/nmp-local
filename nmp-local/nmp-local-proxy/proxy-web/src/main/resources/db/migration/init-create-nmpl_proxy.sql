@@ -101,12 +101,12 @@ CREATE TABLE IF NOT EXISTS `nmpl_keycenter_heart_info` (
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `nmpl_data_collect` (
                                                    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-                                                   `device_id` varchar(32) DEFAULT NULL COMMENT '设备id',
+                                                   `device_id` varchar(128) NOT NULL COMMENT '设备id',
     `device_name` varchar(30) DEFAULT NULL COMMENT '设备名字',
-    `device_type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '设备类别(01基站、02分发机、03生成机、04缓存机)',
-    `data_item_name` varchar(50) DEFAULT NULL COMMENT '统计项名',
-    `data_item_code` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '收集项编号',
-    `data_item_value` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '1' COMMENT '值',
+    `device_type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '设备类别(00基站、11密钥中心、12生成机、13缓存机)',
+    `data_item_name` varchar(50) NOT NULL COMMENT '统计项名(剩余秘钥量;使用秘钥量)',
+    `data_item_code` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收集项编号(10003;10001)',
+    `data_item_value` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '值',
     `unit` varchar(32) DEFAULT NULL COMMENT '单位',
     `upload_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
