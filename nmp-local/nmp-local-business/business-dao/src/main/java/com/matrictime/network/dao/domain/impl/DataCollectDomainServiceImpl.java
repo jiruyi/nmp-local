@@ -5,6 +5,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.DataCollectEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
@@ -25,9 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.matrictime.network.base.constant.DataConstants.INTERNET_BROADBAND_LOAD_CODE;
 import static com.matrictime.network.base.constant.DataConstants.INTRANET_BROADBAND_LOAD_CODE;
@@ -123,27 +123,36 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     @Override
     public List<DataCollectVo> queryTopTen(MonitorReq monitorReq) {
         List<String> ids = new ArrayList<>();
+        Map<String,String> deviceInfo = new HashMap<>();
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         nmplBaseStationInfoExample.createCriteria().andRelationOperatorIdEqualTo(monitorReq.getCompanyCode()).andIsExistEqualTo(true);
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
             ids.add(nmplBaseStationInfo.getStationId());
+            deviceInfo.put(nmplBaseStationInfo.getStationId(),nmplBaseStationInfo.getStationName());
         }
         NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
         nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(monitorReq.getCompanyCode()).andIsExistEqualTo(true);
         List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
         for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
             ids.add(nmplDeviceInfo.getDeviceId());
+            deviceInfo.put(nmplDeviceInfo.getDeviceId(),nmplDeviceInfo.getDeviceName());
         }
         if(CollectionUtils.isEmpty(ids)){
             log.info("该区域下无设备");
             return new ArrayList<>();
         }
-        if(monitorReq.getDataItemCode().equals("10001")){
-            return nmplDataCollectExtMapper.selectTopTenDesc(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
-        }else {
-            return nmplDataCollectExtMapper.selectTopTenAsc(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
-        }
 
+        List<DataCollectVo> resultList;
+        if(DataCollectEnum.USED_KEY.getCode().equals(monitorReq.getDataItemCode())){
+            resultList = nmplDataCollectExtMapper.selectTopTenDesc(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
+        }else {
+            resultList = nmplDataCollectExtMapper.selectTopTenAsc(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
+        }
+        for (DataCollectVo vo : resultList){
+            vo.setUnit(DataConstants.DATA_COLLECT_CONST.get(monitorReq.getDataItemCode()));
+            vo.setDeviceName(deviceInfo.get(vo.getDeviceId()));
+        }
+        return resultList;
     }
 }

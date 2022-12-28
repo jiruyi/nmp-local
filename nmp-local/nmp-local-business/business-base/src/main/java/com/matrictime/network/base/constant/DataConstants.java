@@ -1,5 +1,8 @@
 package com.matrictime.network.base.constant;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author jiruyi
  * @copyright www.matrictime.com
@@ -168,5 +171,18 @@ public class DataConstants {
     public static final String VILLAGE_TYPE = "02";
 
     public static final double BYTE_TO_KB = 128.0;
+
+    public static final Map<String, String> DATA_COLLECT_CONST = new HashMap<String, String>(){
+        {
+            put("10000","人");
+            put("10001","byte");
+            put("10002","byte");
+            put("10003","byte");
+            put("10004","bps");
+            put("10005","bps");
+            put("10006","bps");
+            put("10007","byte");
+        }
+    };
 
 }
