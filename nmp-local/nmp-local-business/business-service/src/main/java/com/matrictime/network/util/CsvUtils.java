@@ -30,8 +30,12 @@ public class CsvUtils {
                 String[] rows = row[0].split(",");
                 NmplOutlinePcInfo nmplOutlinePcInfo = new NmplOutlinePcInfo();
                 nmplOutlinePcInfo.setStationNetworkId(rows[0]);
-                nmplOutlinePcInfo.setDeviceName(rows[1]);
-                nmplOutlinePcInfo.setRemark(rows[2]);
+                if(rows.length>=2){
+                    nmplOutlinePcInfo.setDeviceName(rows[1]);
+                }
+                if(rows.length>=3){
+                    nmplOutlinePcInfo.setRemark(rows[2]);
+                }
                 nmplOutlinePcInfo.setDeviceId(SnowFlake.nextId_String());
                 nmplOutlinePcInfo.setCreateUser(user.getNickName());
                 list.add(nmplOutlinePcInfo);
@@ -62,8 +66,12 @@ public class CsvUtils {
                 }
                 NmplOutlineSorterInfo nmplOutlineSorterInfo = new NmplOutlineSorterInfo();
                 nmplOutlineSorterInfo.setStationNetworkId(rows[0]);
-                nmplOutlineSorterInfo.setDeviceName(rows[1]);
-                nmplOutlineSorterInfo.setRemark(rows[2]);
+                if(rows.length>=2){
+                    nmplOutlineSorterInfo.setDeviceName(rows[1]);
+                }
+                if(rows.length>=3){
+                    nmplOutlineSorterInfo.setRemark(rows[2]);
+                }
                 nmplOutlineSorterInfo.setDeviceId(SnowFlake.nextId_String());
                 nmplOutlineSorterInfo.setCreateUser(user.getNickName());
                 list.add(nmplOutlineSorterInfo);
