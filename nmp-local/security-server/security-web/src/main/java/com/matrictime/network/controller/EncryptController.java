@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
+/**
+ * 加密配置
+ * @author hx
+ */
 @RequestMapping(value = "/encrypt")
 @RestController
 @Slf4j
@@ -40,7 +44,6 @@ public class EncryptController {
 
     /**
      * 查询加密配置
-     * @param
      * @return
      */
     @MonitorRequest

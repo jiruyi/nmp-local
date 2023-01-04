@@ -16,12 +16,12 @@ public class UpdEncryptConfReq implements Serializable {
     private Long id;
 
     /**
-     * 上行加密比例（1：1:1 2：1:8 3：1:16 4：1:32 5：1:64 6：1:128）
+     * 上行加密比例（1：1:1    2：1:8    3：1:16    4：1:32    5：1:64    6：1:128）
      */
     private String upEncryptRatio;
 
     /**
-     * 上行加密扩展算法（1：1:1 2：1:8 3：1:16 4：1:32 5：1:64 6：1:128）
+     * 上行加密扩展算法（1：1:1    2：1:8    3：1:16    4：1:32    5：1:64    6：1:128）
      */
     private String upExtendAlgorithm;
 
