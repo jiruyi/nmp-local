@@ -48,7 +48,7 @@ public class BusinessRouteController {
             return businessRouteService.insert(businessRouteRequest);
         }catch (Exception e){
             log.info("insertBusinessRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 
@@ -67,7 +67,7 @@ public class BusinessRouteController {
             return businessRouteService.delete(businessRouteRequest);
         }catch (Exception e){
             log.info("deleteBusinessRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 
@@ -89,7 +89,7 @@ public class BusinessRouteController {
             return businessRouteService.update(businessRouteRequest);
         }catch (Exception e){
             log.info("updateBusinessRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
 
         }
     }
@@ -112,7 +112,7 @@ public class BusinessRouteController {
             return businessRouteService.update(businessRouteRequest);
         }catch (Exception e){
             log.info("updateBusinessRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
 
         }
     }
@@ -129,7 +129,7 @@ public class BusinessRouteController {
             return businessRouteService.select(businessRouteRequest);
         }catch (Exception e){
             log.info("selectBusinessRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 
@@ -144,7 +144,7 @@ public class BusinessRouteController {
             return businessRouteService.selectBaseStation(baseStationInfoRequest);
         }catch (Exception e){
             log.info("selectBaseStation:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 

@@ -46,7 +46,7 @@ public class StaticRouteController {
             return staticRouteService.insert(staticRouteRequest);
         }catch (Exception e){
             log.info("insertStaticRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 
@@ -65,7 +65,7 @@ public class StaticRouteController {
             return staticRouteService.delete(staticRouteRequest);
         }catch (Exception e){
             log.info("insertStaticRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 
@@ -87,7 +87,7 @@ public class StaticRouteController {
             return staticRouteService.update(staticRouteRequest);
         }catch (Exception e){
             log.info("updateStaticRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 
@@ -103,7 +103,7 @@ public class StaticRouteController {
             return staticRouteService.select(staticRouteRequest);
         }catch (Exception e){
             log.info("selectStaticRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 }
