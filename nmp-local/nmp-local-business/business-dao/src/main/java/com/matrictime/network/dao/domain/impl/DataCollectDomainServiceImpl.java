@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static com.matrictime.network.base.constant.DataConstants.INTERNET_BROADBAND_LOAD_CODE;
@@ -152,6 +153,8 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         for (DataCollectVo vo : resultList){
             vo.setUnit(DataConstants.DATA_COLLECT_CONST.get(monitorReq.getDataItemCode()));
             vo.setDeviceName(deviceInfo.get(vo.getDeviceId()));
+            BigDecimal bigDecimal = new BigDecimal(vo.getDataItemValue());
+            vo.setDataItemValue(String.valueOf(bigDecimal.divide(new BigDecimal(1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue()));
         }
         return resultList;
     }
