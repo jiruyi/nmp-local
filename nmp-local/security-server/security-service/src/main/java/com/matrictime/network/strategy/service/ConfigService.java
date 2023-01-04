@@ -6,7 +6,7 @@ import com.matrictime.network.req.ConfigReq;
 public interface ConfigService {
 
 
-    Result insertOrUpdate(ConfigReq configReq);
+    Result insertOrUpdate(ConfigReq configReq)throws Exception;
 
     Result query();
 

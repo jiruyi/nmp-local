@@ -41,7 +41,7 @@ public class InternetRouteController {
             return internetRouteService.insert(internetRouteRequest);
         }catch (Exception e){
             log.info("insertInternetRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 
@@ -55,7 +55,7 @@ public class InternetRouteController {
             return internetRouteService.delete(internetRouteRequest);
         }catch (Exception e){
             log.info("deleteInternetRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 
@@ -72,7 +72,7 @@ public class InternetRouteController {
             return internetRouteService.update(internetRouteRequest);
         }catch (Exception e){
             log.info("updateInternetRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 
@@ -83,7 +83,7 @@ public class InternetRouteController {
             return internetRouteService.select(internetRouteRequest);
         }catch (Exception e){
             log.info("selectInternetRoute:{}",e.getMessage());
-            return new Result<>(false,"");
+            return new Result<>(false,"系统异常，请稍后重试！");
         }
     }
 

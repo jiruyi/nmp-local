@@ -80,7 +80,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("insert:{}",e.getMessage());
         }
         return result;
@@ -99,7 +99,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("delete:{}",e.getMessage());
         }
         return result;
@@ -126,7 +126,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("update:{}",e.getMessage());
         }
         return result;
@@ -139,7 +139,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             result.setResultObj(businessRouteDomainService.select(businessRouteRequest));
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("select:{}",e.getMessage());
         }
         return result;
@@ -152,7 +152,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             result.setResultObj(businessRouteDomainService.selectBaseStation(baseStationInfoRequest));
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("selectBaseStation:{}",e.getMessage());
         }
         return result;

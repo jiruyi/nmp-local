@@ -90,7 +90,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("insert:{}",e.getMessage());
         }
         return result;
@@ -109,7 +109,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("delete:{}",e.getMessage());
         }
         return result;
@@ -137,7 +137,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("update:{}",e.getMessage());
         }
         return result;
@@ -150,7 +150,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             result.setResultObj(staticRouteDomainService.select(staticRouteRequest));
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("select:{}",e.getMessage());
         }
         return result;

@@ -90,7 +90,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("insert:{}",e.getMessage());
         }
         return result;
@@ -109,7 +109,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("delete:{}",e.getMessage());
         }
         return result;
@@ -136,7 +136,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             }
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("update:{}",e.getMessage());
         }
         return result;
@@ -149,7 +149,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             result.setResultObj(internetRouteDomainService.select(internetRouteRequest));
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg("系统异常，请稍后重试！");
             log.info("select:{}",e.getMessage());
         }
         return result;
