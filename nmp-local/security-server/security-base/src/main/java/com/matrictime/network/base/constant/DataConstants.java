@@ -46,5 +46,10 @@ public class DataConstants {
 
     public static final String IMG_TYPE_PNG = "png";
 
+    public static final String LAST_UP_DATA_VALUE = "1000";
+    public static final String USED_UP_DATA_VALUE = "1001";
+    public static final String LAST_DOWN_DATA_VALUE = "2000";
+    public static final String USED_DOWN_DATA_VALUE = "2001";
+
 
 }
