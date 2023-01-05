@@ -175,9 +175,9 @@ public class DataConstants {
     public static final Map<String, String> DATA_COLLECT_CONST = new HashMap<String, String>(){
         {
             put("10000","人");
-            put("10001","byte");
+            put("10001","MB");
             put("10002","byte");
-            put("10003","byte");
+            put("10003","MB");
             put("10004","bps");
             put("10005","bps");
             put("10006","bps");
