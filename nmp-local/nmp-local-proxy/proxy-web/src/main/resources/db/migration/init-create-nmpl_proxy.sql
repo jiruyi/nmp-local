@@ -316,7 +316,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_pc_data` (
                                               `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
                                               `station_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '基站设备id',
     `device_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机设备id',
-    `pc_network_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机设备入网码',
+    `pc_network_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机设备入网码',
     `status` tinyint NOT NULL COMMENT '设备状态 1:接入  2:未接入',
     `up_key_num` int unsigned NOT NULL COMMENT '上行消耗密钥量(单位byte)',
     `down_key_num` int unsigned NOT NULL COMMENT '下行消耗密钥量(单位byte)',
