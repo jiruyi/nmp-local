@@ -179,7 +179,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             ProxyBusinessRouteVo proxyBusinessRouteVo = new ProxyBusinessRouteVo();
             BeanUtils.copyProperties(nmplBusinessRoute,proxyBusinessRouteVo);
 //            proxyBusinessRouteVo.setByteNetworkId(ArrayUtils.toObject(nmplBusinessRoute.getByteNetworkId()));
-            proxyBusinessRouteVo.setByteNetworkId(nmplBusinessRoute.getByteNetworkId());
+//            proxyBusinessRouteVo.setByteNetworkId(nmplBusinessRoute.getByteNetworkId());
             proxyResp.getBusinessRouteVoList().add(proxyBusinessRouteVo);
         }
         //出网路由

@@ -44,7 +44,7 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
     public int insert(StaticRouteRequest staticRouteRequest) {
         NmplStaticRoute nmplStaticRoute = new NmplStaticRoute();
         BeanUtils.copyProperties(staticRouteRequest,nmplStaticRoute);
-        nmplStaticRoute.setByteNetworkId(DecimalConversionUtil.toLH(Integer.parseInt(staticRouteRequest.getNetworkId())));
+//        nmplStaticRoute.setByteNetworkId(DecimalConversionUtil.toLH(Integer.parseInt(staticRouteRequest.getNetworkId())));
         return nmplStaticRouteMapper.insertSelective(nmplStaticRoute);
     }
 
@@ -60,7 +60,7 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
     public int update(StaticRouteRequest staticRouteRequest) {
         NmplStaticRouteExample nmplStaticRouteExample = constructUpdateCondition(staticRouteRequest);
         NmplStaticRoute nmplStaticRoute = constructUpdateDate(staticRouteRequest);
-        nmplStaticRoute.setByteNetworkId(DecimalConversionUtil.toLH(Integer.parseInt(staticRouteRequest.getNetworkId())));
+//        nmplStaticRoute.setByteNetworkId(DecimalConversionUtil.toLH(Integer.parseInt(staticRouteRequest.getNetworkId())));
         return nmplStaticRouteMapper.updateByExampleSelective(nmplStaticRoute,nmplStaticRouteExample);
     }
 

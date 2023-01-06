@@ -35,7 +35,7 @@ public class InternetRouteDomainServiceImpl implements InternetRouteDomainServic
     public int insert(InternetRouteRequest internetRouteRequest) {
         NmplInternetRoute nmplInternetRoute = new NmplInternetRoute();
         BeanUtils.copyProperties(internetRouteRequest,nmplInternetRoute);
-        nmplInternetRoute.setByteNetworkId(DecimalConversionUtil.idToByteArray(internetRouteRequest.getNetworkId()));
+//        nmplInternetRoute.setByteNetworkId(DecimalConversionUtil.idToByteArray(internetRouteRequest.getNetworkId()));
         return nmplInternetRouteMapper.insertSelective(nmplInternetRoute);
     }
 
@@ -51,7 +51,7 @@ public class InternetRouteDomainServiceImpl implements InternetRouteDomainServic
     public int update(InternetRouteRequest internetRouteRequest) {
         NmplInternetRouteExample nmplInternetRouteExample = constructUpdateCondition(internetRouteRequest);
         NmplInternetRoute nmplInternetRoute = constructUpdateDate(internetRouteRequest);
-        nmplInternetRoute.setByteNetworkId(DecimalConversionUtil.idToByteArray(internetRouteRequest.getNetworkId()));
+//        nmplInternetRoute.setByteNetworkId(DecimalConversionUtil.idToByteArray(internetRouteRequest.getNetworkId()));
         return nmplInternetRouteMapper.updateByExampleSelective(nmplInternetRoute,nmplInternetRouteExample);
     }
 

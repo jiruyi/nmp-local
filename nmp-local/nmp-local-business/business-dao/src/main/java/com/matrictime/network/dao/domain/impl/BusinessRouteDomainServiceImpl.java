@@ -45,7 +45,7 @@ public class BusinessRouteDomainServiceImpl implements BusinessRouteDomainServic
     public int insert(BusinessRouteRequest businessRouteRequest) {
         NmplBusinessRoute nmplBusinessRoute = new NmplBusinessRoute();
         BeanUtils.copyProperties(businessRouteRequest,nmplBusinessRoute);
-        nmplBusinessRoute.setByteNetworkId(DecimalConversionUtil.idToByteArray(businessRouteRequest.getNetworkId()));
+//        nmplBusinessRoute.setByteNetworkId(DecimalConversionUtil.idToByteArray(businessRouteRequest.getNetworkId()));
         return nmplBusinessRouteMapper.insertSelective(nmplBusinessRoute);
     }
 
@@ -67,7 +67,7 @@ public class BusinessRouteDomainServiceImpl implements BusinessRouteDomainServic
         criteria.andIdEqualTo(businessRouteRequest.getId());
         NmplBusinessRoute nmplBusinessRoute = new NmplBusinessRoute();
         BeanUtils.copyProperties(businessRouteRequest,nmplBusinessRoute);
-        nmplBusinessRoute.setByteNetworkId(DecimalConversionUtil.idToByteArray(businessRouteRequest.getNetworkId()));
+//        nmplBusinessRoute.setByteNetworkId(DecimalConversionUtil.idToByteArray(businessRouteRequest.getNetworkId()));
         return nmplBusinessRouteMapper.updateByExampleSelective(nmplBusinessRoute,nmplBusinessRouteExample);
     }
 
