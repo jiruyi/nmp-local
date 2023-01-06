@@ -76,7 +76,7 @@ public class stationConfigServiceImpl extends SystemBaseService implements Confi
             if(configReq.getMainCommIp()==null){
                 throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
-            if(!CommonCheckUtil.isIpv4Legal(configReq.getMainCommIp())||!CommonCheckUtil.isIpv6Legal(configReq.getMainCommIp())){
+            if(!CommonCheckUtil.isIpv4Legal(configReq.getMainCommIp())&&!CommonCheckUtil.isIpv6Legal(configReq.getMainCommIp())){
                 throw new SystemException("主基站通信ip"+ErrorMessageContants.PARAM_FORMAT_ERROR_MSG);
             }
         }else {
