@@ -1,0 +1,15 @@
+{
+  "serverUrl": "http://127.0.0.1:8011/security-server/",
+  "isStrict": false,
+  "allInOne": true,
+  "outPath": "D://doc/security-server",
+  "coverOld": true,
+  "style":"xt256",
+  "createDebugPage": true,
+  "md5EncryptedHtmlName": false,
+  "appToken": "49e93fcd11214fbfb68d4945f43cbe37",
+  "openUrl": "http://127.0.0.1:7700/api",
+  "debugEnvName":"测试环境",
+  "replace": true,
+  "debugEnvUrl":"http://127.0.0.1:8011/security-server"
+}
