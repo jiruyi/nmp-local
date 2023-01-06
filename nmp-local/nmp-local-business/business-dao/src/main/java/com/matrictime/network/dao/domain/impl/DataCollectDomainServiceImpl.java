@@ -144,17 +144,51 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             return new ArrayList<>();
         }
 
-        List<DataCollectVo> resultList;
+        List<DataCollectVo> resultList=  new ArrayList<>();
         if(DataCollectEnum.USED_KEY.getCode().equals(monitorReq.getDataItemCode())){
-            resultList = nmplDataCollectExtMapper.selectTopTenDesc(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
+            NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
+            nmplDataCollectExample.createCriteria().andDeviceIdIn(ids).andDataItemCodeEqualTo(monitorReq.getDataItemCode());
+            List<NmplDataCollect> nmplDataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+            Map<String,Double> map = new HashMap<>();
+            for (NmplDataCollect nmplDataCollect : nmplDataCollectList) {
+                if(map.get(nmplDataCollect.getDeviceId())==null){
+                    map.put(nmplDataCollect.getDeviceId(), Double.valueOf(nmplDataCollect.getDataItemValue()));
+                }else {
+                    double value = map.get(nmplDataCollect.getDeviceId())+Double.valueOf(nmplDataCollect.getDataItemValue());
+                    map.put(nmplDataCollect.getDeviceId(),value);
+                }
+            }
+            List<Map.Entry<String,Double>> lstEntry=new ArrayList<>(map.entrySet());
+            Collections.sort(lstEntry,((o1, o2) -> {
+                return o2.getValue().compareTo(o1.getValue());
+            }));
+            int num = lstEntry.size()<10?lstEntry.size():10;
+            for (int i=0;i<num;i++){
+                DataCollectVo dataCollectVo = new DataCollectVo();
+                BeanUtils.copyProperties(nmplDataCollectList.get(0),dataCollectVo);
+                dataCollectVo.setDataItemValue(String.valueOf(lstEntry.get(i).getValue()));
+                dataCollectVo.setDeviceId(lstEntry.get(i).getKey());
+                resultList.add(dataCollectVo);
+            }
         }else {
             resultList = nmplDataCollectExtMapper.selectTopTenAsc(ids,monitorReq.getDataItemCode(),monitorReq.getCurrentTime());
         }
+
         for (DataCollectVo vo : resultList){
-            vo.setUnit(DataConstants.DATA_COLLECT_CONST.get(monitorReq.getDataItemCode()));
-            vo.setDeviceName(deviceInfo.get(vo.getDeviceId()));
             BigDecimal bigDecimal = new BigDecimal(vo.getDataItemValue());
-            vo.setDataItemValue(String.valueOf(bigDecimal.divide(new BigDecimal(1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue()));
+            double value = 0.0;
+            if(bigDecimal.divide(new BigDecimal(1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue()<999.0){
+                value = bigDecimal.divide(new BigDecimal(1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+                vo.setUnit("MB");
+            }else if(bigDecimal.divide(new BigDecimal(1024.0*1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue()<999.0){
+                value = bigDecimal.divide(new BigDecimal(1024.0*1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+                vo.setUnit("GB");
+            }else {
+                value = bigDecimal.divide(new BigDecimal(1024.0*1024.0*1024.0*1024),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+                vo.setUnit("TB");
+            }
+            vo.setDeviceName(deviceInfo.get(vo.getDeviceId()));
+            vo.setDataItemValue(String.valueOf(value));
         }
         return resultList;
     }
