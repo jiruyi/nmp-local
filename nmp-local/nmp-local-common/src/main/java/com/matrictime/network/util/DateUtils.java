@@ -370,13 +370,13 @@ public class DateUtils {
         return date;
     }
 
-    public static long getCurrentDayLastTime() {
+    public static Date getCurrentDayLastTime() {
         // 获取当天23点59分59秒Date
         Calendar calendar = Calendar.getInstance();
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
                 23, 59, 59);
         Date date = calendar.getTime();
-        return date.getTime();
+        return date;
     }
 
     /**
