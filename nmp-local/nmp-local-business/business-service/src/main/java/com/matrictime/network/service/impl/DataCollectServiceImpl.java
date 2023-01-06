@@ -117,6 +117,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             double dispenserSecretKey=0.0;
             double generatorSecretKey=0.0;
             double cacheSecretKey=0.0;
+            String totalBandwidthUnit;
 
             for (NmplDataCollect nmplDataCollect : dataCollectList) {
                 BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
@@ -175,7 +176,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             generatorSecretKey = dispenserSecretKey + v;
 
             //统一单位
-            String totalBandwidthStr = dataChange(totalBandwidth,1);
+            String [] totalBandwidthStr = dataChangeWithoutUnit(totalBandwidth,1);
 
             String dispenserSecretKeyStr = dataChange(dispenserSecretKey,0);
 
@@ -185,7 +186,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
 
 
             MonitorResp monitorResp = new MonitorResp
-                    (userNumber,totalBandwidthStr,dispenserSecretKeyStr,generatorSecretKeyStr,
+                    (userNumber,totalBandwidthStr[0],totalBandwidthStr[1],dispenserSecretKeyStr,generatorSecretKeyStr,
                             cacheSecretKeyStr,new ArrayList<>());
             result = buildResult(monitorResp);
         } catch (SystemException e) {
@@ -222,6 +223,31 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             return String.format("%.2f", data) + "GB";
         }
         return String.format("%.2f", data) + "MB";
+    }
+
+    private String[] dataChangeWithoutUnit(Double data, int countFlag){
+        String [] strings = new String[2];
+        //转换成MB
+        if(countFlag == 1){
+            data = data/(1024.0*1024.0);
+        }
+        //转换成GB
+        if(data >= 999.0){
+            data = data/1024.0;
+            //转换成TB
+            if(data >= 999.0){
+                data = data/1024.0;
+                strings[0] = String.format("%.2f", data);
+                strings[1] = "TB";
+                return strings;
+            }
+            strings[0] = String.format("%.2f", data);
+            strings[1] = "GB";
+            return strings;
+        }
+        strings[0] = String.format("%.2f", data);
+        strings[1] = "MB";
+        return strings;
     }
 
     @Override

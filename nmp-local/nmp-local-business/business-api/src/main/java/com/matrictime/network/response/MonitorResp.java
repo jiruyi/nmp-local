@@ -18,6 +18,10 @@ public class MonitorResp extends BaseResponse{
      */
     private String totalBandwidth;
     /**
+     * 单位
+     */
+    private String totalBandwidthUnit;
+    /**
      * 分发机秘钥量
      */
     private String dispenserSecretKey;

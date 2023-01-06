@@ -64,7 +64,7 @@
 
     <select id="sumDataItemValue" parameterType="com.matrictime.network.request.MonitorReq" resultType="java.lang.Double">
         SELECT
-            SUM(data_item_value)
+            COALESCE(SUM(data_item_value),0)
         FROM
             nmpl_data_collect
         WHERE
