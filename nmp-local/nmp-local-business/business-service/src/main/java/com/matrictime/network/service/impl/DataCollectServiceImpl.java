@@ -117,7 +117,6 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             double dispenserSecretKey=0.0;
             double generatorSecretKey=0.0;
             double cacheSecretKey=0.0;
-            String totalBandwidthUnit;
 
             for (NmplDataCollect nmplDataCollect : dataCollectList) {
                 BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
