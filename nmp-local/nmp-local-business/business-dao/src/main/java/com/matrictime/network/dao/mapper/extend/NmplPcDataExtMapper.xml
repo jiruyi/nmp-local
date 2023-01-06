@@ -49,6 +49,33 @@
         order by report_time desc
     </select>
 
+    <select id="countDeviceNumber" parameterType="com.matrictime.network.request.MonitorReq" resultType="java.lang.Integer">
+        SELECT
+            count(distinct device_id)
+        FROM
+             nmpl_pc_data
+        WHERE
+            station_id in (
+                select station_id from nmpl_base_station_info
+                WHERE relation_operator_id = #{companyCode,jdbcType=VARCHAR}
+            )
+        and status = 1
+    </select>
+
+    <select id="sumDataItemValue" parameterType="com.matrictime.network.request.MonitorReq" resultType="java.lang.Double">
+        SELECT
+            SUM(data_item_value)
+        FROM
+            nmpl_data_collect
+        WHERE
+            device_id in (
+                select station_id from nmpl_base_station_info
+                WHERE relation_operator_id = #{companyCode,jdbcType=VARCHAR}
+                AND nmpl_base_station_info.is_exist = 1
+            )
+        AND data_item_code = '10006'
+    </select>
+
     <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.PcDataVo">
         insert into nmpl_pc_data (station_id, device_id, pc_network_id, status, up_key_num,down_key_num,report_time) values
             <foreach collection ="list" item="pcData" separator =",">

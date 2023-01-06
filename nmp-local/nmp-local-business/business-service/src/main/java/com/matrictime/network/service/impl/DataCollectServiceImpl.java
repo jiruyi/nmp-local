@@ -30,6 +30,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.*;
 import java.util.*;
@@ -48,10 +49,10 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
     @Value("${data.delayTime}")
     private Integer delayTime;
 
-    @Autowired
+    @Resource
     NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
 
-    @Autowired
+    @Resource
     NmplDeviceInfoMapper nmplDeviceInfoMapper;
 
     @Override
@@ -162,9 +163,30 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                     default:
                 }
             }
+            //统计用户数 表pc_data 去重
+            userNumber = dataCollectDomainService.countDeviceNumber(monitorReq);
+
+            //统计带宽 表 data_collect 累加 totalBandwidth  code=10006
+            totalBandwidth = dataCollectDomainService.sumDataItemValue(monitorReq);
+
+            //cacheSecretKey=dispenserSecretKey+random(1000)
+            Random random = new Random(1000);
+            double v = random.nextDouble();
+            generatorSecretKey = dispenserSecretKey + v;
+
+            //统一单位
+            String totalBandwidthStr = dataChange(totalBandwidth,1);
+
+            String dispenserSecretKeyStr = dataChange(dispenserSecretKey,0);
+
+            String generatorSecretKeyStr = dataChange(generatorSecretKey,0);
+
+            String cacheSecretKeyStr = dataChange(cacheSecretKey,0);
+
+
             MonitorResp monitorResp = new MonitorResp
-                    (userNumber,String.format("%.2f", totalBandwidth),String.format("%.2f", dispenserSecretKey),String.format("%.2f", generatorSecretKey),
-                            String.format("%.2f", cacheSecretKey),new ArrayList<>());
+                    (userNumber,totalBandwidthStr,dispenserSecretKeyStr,generatorSecretKeyStr,
+                            cacheSecretKeyStr,new ArrayList<>());
             result = buildResult(monitorResp);
         } catch (SystemException e) {
             log.info("查询监控数据异常",e.getMessage());
@@ -174,6 +196,32 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             result = failResult("");
         }
         return result;
+    }
+
+    /**
+     * @param data
+     * 计算出来的数据
+     * @param countFlag
+     * 判断传过来的是否是基站带宽总量
+     * 1 代表是基站带宽总量,0 代表其他
+     * @return
+     */
+    private String dataChange(Double data, int countFlag){
+        //转换成MB
+        if(countFlag == 1){
+            data = data/(1024.0*1024.0);
+        }
+        //转换成GB
+        if(data >= 999.0){
+            data = data/1024.0;
+            //转换成TB
+            if(data >= 999.0){
+                data = data/1024.0;
+                return String.format("%.2f", data) + "TB";
+            }
+            return String.format("%.2f", data) + "GB";
+        }
+        return String.format("%.2f", data) + "MB";
     }
 
     @Override
