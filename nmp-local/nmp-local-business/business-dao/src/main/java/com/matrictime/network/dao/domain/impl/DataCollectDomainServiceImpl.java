@@ -3,17 +3,13 @@ package com.matrictime.network.dao.domain.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.matrictime.network.base.SystemBaseService;
-import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.DataCollectEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
-import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
-import com.matrictime.network.dao.mapper.NmplDataCollectForLoadMapper;
-import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
-import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
+import com.matrictime.network.dao.mapper.extend.NmplPcDataExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.request.DataCollectReq;
@@ -26,7 +22,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -36,16 +34,20 @@ import static com.matrictime.network.base.constant.DataConstants.INTRANET_BROADB
 @Service
 @Slf4j
 public class DataCollectDomainServiceImpl implements DataCollectDomainService {
-    @Autowired
+    @Resource
     NmplDataCollectExtMapper nmplDataCollectExtMapper;
-    @Autowired
+    @Resource
     NmplDataCollectMapper nmplDataCollectMapper;
-    @Autowired
+    @Resource
     NmplDeviceInfoMapper nmplDeviceInfoMapper;
-    @Autowired
+    @Resource
     NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
-    @Autowired
+    @Resource
     NmplDataCollectForLoadMapper nmplDataCollectForLoadMapper;
+
+    @Resource
+    private NmplPcDataExtMapper nmplPcDataExtMapper;
+
 
 
 
@@ -118,6 +120,27 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
         nmplDataCollectExample.createCriteria().andDeviceIdIn(ids).andUploadTimeGreaterThan(monitorReq.getCurrentTime());
         return nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+    }
+
+    /**
+     * 统计小区下在线人数
+     * @param monitorReq
+     * @return
+     */
+    @Override
+    public Integer countDeviceNumber(MonitorReq monitorReq) {
+        return nmplPcDataExtMapper.countDeviceNumber(monitorReq);
+    }
+
+    /**
+     * 统计带宽总量
+     * @param monitorReq
+     * @return
+     */
+    @Override
+    public Double sumDataItemValue(MonitorReq monitorReq) {
+
+        return nmplPcDataExtMapper.sumDataItemValue(monitorReq);
     }
 
 
