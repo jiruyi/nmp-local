@@ -1,0 +1,1 @@
+ALTER TABLE nmpl_pc_data modify column  `pc_network_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机设备入网码';
