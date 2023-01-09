@@ -142,12 +142,10 @@ CREATE TABLE IF NOT EXISTS `nmp_encrypt_conf` (
 
 
 CREATE TABLE IF NOT EXISTS `nmp_heart_report` (
-                                                  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
                                                   `status` tinyint(3) NOT NULL COMMENT '状态(1:正常)',
     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
-    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-    PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='安全服务器心跳上报';
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间'
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='安全服务器心跳上报';
 
 INSERT INTO nmp_user (login_account, password) VALUES ('admin', 'j2sivmjjihBLggve6ed5lw==');
 

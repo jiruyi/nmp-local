@@ -10,21 +10,13 @@ public interface NmpHeartReportMapper {
 
     int deleteByExample(NmpHeartReportExample example);
 
-    int deleteByPrimaryKey(Long id);
-
     int insert(NmpHeartReport record);
 
     int insertSelective(NmpHeartReport record);
 
     List<NmpHeartReport> selectByExample(NmpHeartReportExample example);
 
-    NmpHeartReport selectByPrimaryKey(Long id);
-
     int updateByExampleSelective(@Param("record") NmpHeartReport record, @Param("example") NmpHeartReportExample example);
 
     int updateByExample(@Param("record") NmpHeartReport record, @Param("example") NmpHeartReportExample example);
-
-    int updateByPrimaryKeySelective(NmpHeartReport record);
-
-    int updateByPrimaryKey(NmpHeartReport record);
 }

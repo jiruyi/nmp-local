@@ -5,16 +5,11 @@ import lombok.Data;
 
 /**
  * 安全服务器心跳上报
- * @author   hx
+ * @author   xxxx
  * @date   2023-01-09
  */
 @Data
 public class NmpHeartReport {
-    /**
-     * 自增主键ID
-     */
-    private Long id;
-
     /**
      * 状态(1:正常)
      */
@@ -29,14 +24,6 @@ public class NmpHeartReport {
      * 更新时间
      */
     private Date updateTime;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Integer getStatus() {
         return status;
