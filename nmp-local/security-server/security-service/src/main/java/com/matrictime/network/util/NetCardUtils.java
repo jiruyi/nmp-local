@@ -30,7 +30,8 @@ public class NetCardUtils {
                     for (InterfaceAddress ia : list) {
                         System.out.println(" Address = " + ia.getAddress().getHostAddress());
                         if(!ia.getAddress().getHostAddress().equals(netCardInfoVo.getIpv4())){
-                            netCardInfoVo.setIpv6(ia.getAddress().getHostAddress());
+                            String ipv6 = ia.getAddress().getHostAddress().replace("%"+ni.getName(),"");
+                            netCardInfoVo.setIpv6(ipv6);
                         }
                     }
                     netCardInfoVos.add(netCardInfoVo);
