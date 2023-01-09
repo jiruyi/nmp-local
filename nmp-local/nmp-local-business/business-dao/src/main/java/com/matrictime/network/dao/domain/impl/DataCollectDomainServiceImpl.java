@@ -28,8 +28,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.matrictime.network.base.constant.DataConstants.INTERNET_BROADBAND_LOAD_CODE;
-import static com.matrictime.network.base.constant.DataConstants.INTRANET_BROADBAND_LOAD_CODE;
+import static com.matrictime.network.base.constant.DataConstants.*;
 
 @Service
 @Slf4j
@@ -185,7 +184,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             Collections.sort(lstEntry,((o1, o2) -> {
                 return o2.getValue().compareTo(o1.getValue());
             }));
-            int num = lstEntry.size()<10?lstEntry.size():10;
+            int num = lstEntry.size()<TEN?lstEntry.size():TEN;
             for (int i=0;i<num;i++){
                 DataCollectVo dataCollectVo = new DataCollectVo();
                 BeanUtils.copyProperties(nmplDataCollectList.get(0),dataCollectVo);
@@ -200,14 +199,14 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         for (DataCollectVo vo : resultList){
             BigDecimal bigDecimal = new BigDecimal(vo.getDataItemValue());
             double value = 0.0;
-            if(bigDecimal.divide(new BigDecimal(1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue()<999.0){
-                value = bigDecimal.divide(new BigDecimal(1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+            if(bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER),2,BigDecimal.ROUND_HALF_UP).doubleValue()<MAX_SIZE){
+                value = bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER),2,BigDecimal.ROUND_HALF_UP).doubleValue();
                 vo.setUnit("MB");
-            }else if(bigDecimal.divide(new BigDecimal(1024.0*1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue()<999.0){
-                value = bigDecimal.divide(new BigDecimal(1024.0*1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+            }else if(bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*BASE_NUMBER),2,BigDecimal.ROUND_HALF_UP).doubleValue()<MAX_SIZE){
+                value = bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*BASE_NUMBER),2,BigDecimal.ROUND_HALF_UP).doubleValue();
                 vo.setUnit("GB");
             }else {
-                value = bigDecimal.divide(new BigDecimal(1024.0*1024.0*1024.0*1024),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+                value = bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*BASE_NUMBER*BASE_NUMBER),2,BigDecimal.ROUND_HALF_UP).doubleValue();
                 vo.setUnit("TB");
             }
             vo.setDeviceName(deviceInfo.get(vo.getDeviceId()));
