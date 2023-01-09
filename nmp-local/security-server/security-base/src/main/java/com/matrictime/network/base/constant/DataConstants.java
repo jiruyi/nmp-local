@@ -1,5 +1,8 @@
 package com.matrictime.network.base.constant;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author jiruyi
  * @copyright www.matrictime.com
@@ -50,6 +53,13 @@ public class DataConstants {
     public static final String USED_UP_DATA_VALUE = "1001";
     public static final String LAST_DOWN_DATA_VALUE = "2000";
     public static final String USED_DOWN_DATA_VALUE = "2001";
+
+    public static final Map<Integer,String> serverStatus = new HashMap<Integer, String>(){
+        {
+            put(1,"在线");
+            put(2,"离线");
+        }
+    };
 
 
 }

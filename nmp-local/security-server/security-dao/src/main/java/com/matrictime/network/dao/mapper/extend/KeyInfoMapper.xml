@@ -11,7 +11,7 @@
   <sql id="Base_Column_List">
     id, data_value, data_type, create_time, update_time
   </sql>
-  <select id="selectDataList" parameterType="com.matrictime.network.dao.model.NmpKeyInfoExample" resultMap="BaseResultMap">
+  <select id="selectDataList" resultMap="BaseResultMap">
     select
       data_value, create_time
     from nmp_key_info
@@ -20,5 +20,13 @@
     and create_time &gt;= #{beginTime,jdbcType=TIMESTAMP}
     and create_time &lt; #{endTime,jdbcType=TIMESTAMP}
     order by create_time
+  </select>
+
+  <select id="getDataValueSum" resultType="bigDecimal">
+    select
+      COALESCE(SUM(data_value),0)
+    from nmp_key_info
+    where
+      data_type = #{dataType,jdbcType=VARCHAR}
   </select>
 </mapper>

@@ -2,9 +2,11 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.dao.mapper.NmpEncryptConfMapper;
+import com.matrictime.network.dao.mapper.NmpKeyInfoMapper;
 import com.matrictime.network.dao.mapper.extend.KeyInfoMapper;
 import com.matrictime.network.dao.model.NmpEncryptConf;
 import com.matrictime.network.dao.model.NmpKeyInfo;
+import com.matrictime.network.dao.model.NmpKeyInfoExample;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
@@ -23,10 +25,14 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.UPDTIME_DESC;
 
 @Slf4j
 @Service
@@ -37,6 +43,9 @@ public class EncryptManageSeviceImpl extends SystemBaseService implements Encryp
 
     @Resource
     private KeyInfoMapper keyInfoMapper;
+
+    @Resource
+    private NmpKeyInfoMapper nmpKeyInfoMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -102,7 +111,8 @@ public class EncryptManageSeviceImpl extends SystemBaseService implements Encryp
             if (req.getEndTime() == null){
                 req.setEndTime(DateUtils.getCurrentDayLastTime());
             }
-            String titleValue = "1846";
+
+            String titleValue = getTitleValue(req.getDataType());
             List<NmpKeyInfo> nmpKeyInfos = keyInfoMapper.selectDataList(req.getDataType(), req.getBeginTime(), req.getEndTime());
             if (!CollectionUtils.isEmpty(nmpKeyInfos)){
                 for (NmpKeyInfo info:nmpKeyInfos){
@@ -124,6 +134,28 @@ public class EncryptManageSeviceImpl extends SystemBaseService implements Encryp
         }
 
         return result;
+    }
+
+    private String getTitleValue(String dataType){
+        String titleValue = "";
+        switch (dataType){
+            case LAST_UP_DATA_VALUE:
+            case LAST_DOWN_DATA_VALUE:
+                NmpKeyInfoExample example = new NmpKeyInfoExample();
+                example.setOrderByClause(UPDTIME_DESC);
+                example.createCriteria().andDataTypeEqualTo(dataType).andUpdateTimeGreaterThanOrEqualTo(DateUtils.addMinuteForDate(new Date(),-15));
+                List<NmpKeyInfo> nmpKeyInfos = nmpKeyInfoMapper.selectByExample(example);
+                if (!CollectionUtils.isEmpty(nmpKeyInfos)){
+                    titleValue = dataChange(nmpKeyInfos.get(0).getDataValue());
+                }
+                break;
+            case USED_UP_DATA_VALUE:
+            case USED_DOWN_DATA_VALUE:
+                BigDecimal dataValueSum = keyInfoMapper.getDataValueSum(dataType);
+                titleValue = dataChangeBigDecimal(dataValueSum);
+                break;
+        }
+        return titleValue;
     }
 
     @Override
@@ -152,4 +184,38 @@ public class EncryptManageSeviceImpl extends SystemBaseService implements Encryp
             throw new Exception("dataType"+ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
         }
     }
+
+    private String dataChange(Long data){
+        //转换成GB
+        Double resData = data/(1024.0*1024.0);
+        if(resData >= 999.9){
+            resData = resData/1024.0;
+            //转换成TB
+            if(resData >= 999.9){
+                resData = resData/1024.0;
+                return String.format("%.2f", resData) + "TB";
+            }
+            return String.format("%.2f", resData) + "GB";
+        }
+        return String.format("%.2f", resData) + "MB";
+    }
+
+    private String dataChangeBigDecimal(BigDecimal data){
+        //转换成GB
+        BigDecimal divideNum = new BigDecimal(1024);
+        BigDecimal compare = new BigDecimal("999.9");
+        BigDecimal resData = data.divide(divideNum).divide(divideNum).setScale(2, RoundingMode.DOWN);
+        if(resData.compareTo(compare) == 1){
+            resData = resData.divide(divideNum).setScale(2, RoundingMode.DOWN);
+            //转换成TB
+            if(resData.compareTo(compare) == 1){
+                resData = resData.divide(divideNum).setScale(2, RoundingMode.DOWN);
+                return resData.toPlainString() + "TB";
+            }
+            return resData.toPlainString() + "GB";
+        }
+        return resData.toPlainString() + "MB";
+    }
+
+
 }
