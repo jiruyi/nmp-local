@@ -185,4 +185,10 @@ public class DataConstants {
         }
     };
 
+    public static final double BASE_NUMBER = 1024.0;
+
+    public static final double MAX_SIZE = 999.9;
+
+    public static final int TEN=10;
+
 }
