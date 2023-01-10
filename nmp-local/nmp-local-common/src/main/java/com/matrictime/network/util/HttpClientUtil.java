@@ -40,8 +40,6 @@ public class HttpClientUtil {
 
     private static final String HTTP_TITLE = "http://";
 
-    private static CloseableHttpClient httpClient;
-
 
     private HttpClientUtil() {
     }
@@ -54,9 +52,6 @@ public class HttpClientUtil {
         }
     }
 
-    static {
-        httpClient = HttpClients.custom().setMaxConnTotal(MAX_CONN_TOTAL).build();
-    }
 
     /**
      * 封装HTTP POST方法
@@ -131,6 +126,7 @@ public class HttpClientUtil {
      */
     public static String post(String url, String data) throws ClientProtocolException, IOException {
         String httpEntityContent = "";
+        CloseableHttpClient httpClient =  HttpClients.custom().setMaxConnTotal(MAX_CONN_TOTAL).build();
         try {
             HttpPost httpPost = new HttpPost(url);
             //设置请求和传输超时时间
