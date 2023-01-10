@@ -51,8 +51,7 @@
                 <includes>
                     <include>**/*.sql</include>
                     <include>**/*.xml</include>
-                    <!-- 本地开发时使用，不要提交 -->
-<!--                    <include>**/application.yml</include>-->
+                    <include>**/application.yml</include>
                 </includes>
             </resource>
         </resources>

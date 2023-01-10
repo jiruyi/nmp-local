@@ -84,5 +84,5 @@ token:
 
 upload:
   image:
-    path: /usr/local/portal/static/
+    path: /usr/local/src/portal/static/
     dir: /upload/image/
