@@ -18,7 +18,9 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.util.CollectionUtils;
 
@@ -34,7 +36,12 @@ public class HttpClientUtil {
 
     private static final Integer CONNECT_TIME_OUT = 1000;
 
+    private static final Integer MAX_CONN_TOTAL = 200;
+
     private static final String HTTP_TITLE = "http://";
+
+    private static CloseableHttpClient httpClient;
+
 
     private HttpClientUtil() {
     }
@@ -45,6 +52,10 @@ public class HttpClientUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    static {
+        httpClient = HttpClients.custom().setMaxConnTotal(MAX_CONN_TOTAL).build();
     }
 
     /**
@@ -119,16 +130,24 @@ public class HttpClientUtil {
      * @throws IOException
      */
     public static String post(String url, String data) throws ClientProtocolException, IOException {
-        HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(url);
-        //设置请求和传输超时时间
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
-        httpPost.setConfig(requestConfig);
-        httpPost.setHeader("Content-Type", "application/json; charset=utf-8");
-        httpPost.setEntity(new StringEntity(data, "UTF-8"));
-        HttpResponse response = httpClient.execute(httpPost);
-        String httpEntityContent = getHttpEntityContent(response);
-        httpPost.abort();
+        String httpEntityContent = "";
+        try {
+            HttpPost httpPost = new HttpPost(url);
+            //设置请求和传输超时时间
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
+            httpPost.setConfig(requestConfig);
+            httpPost.setHeader("Content-Type", "application/json; charset=utf-8");
+            httpPost.setEntity(new StringEntity(data, "UTF-8"));
+            HttpResponse response = httpClient.execute(httpPost);
+            httpEntityContent = getHttpEntityContent(response);
+            httpPost.abort();
+        }catch (ClientProtocolException e){
+            httpClient.close();
+            throw new ClientProtocolException(e);
+        }catch (IOException e){
+            httpClient.close();
+            throw new IOException(e);
+        }
         return httpEntityContent;
     }
 
