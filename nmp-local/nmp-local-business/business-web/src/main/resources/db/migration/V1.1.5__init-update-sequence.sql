@@ -1,0 +1,1 @@
+update sys_sequence set max_value=2000000000 where seq_name='seq_name1';
