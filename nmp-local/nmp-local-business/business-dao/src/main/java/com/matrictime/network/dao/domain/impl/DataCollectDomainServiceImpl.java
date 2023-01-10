@@ -26,6 +26,8 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
@@ -55,6 +57,11 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     public PageInfo<DataCollectVo> queryByConditions(DataCollectReq dataCollectReq) {
         Page page = null;
         List<DataCollectVo> dataCollectVos = new ArrayList<>();
+        //性能考虑 如果不传时间范围 默认查最近一个月的时间
+        if(dataCollectReq.getStartTime()==null&&dataCollectReq.getEndTime()==null){
+            dataCollectReq.setStartTime(LocalDateTime.now().minusDays(90).toString());
+            dataCollectReq.setEndTime(LocalDateTime.now().toString());
+        }
         if(dataCollectReq.getDeviceType().equals(StationTypeEnum.BASE.getCode())){
             page = PageHelper.startPage(dataCollectReq.getPageNo(),dataCollectReq.getPageSize());
             dataCollectVos = nmplDataCollectExtMapper.stationLinkQuery(dataCollectReq);
