@@ -283,7 +283,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_business_route` (
                                                      `id` bigint NOT NULL COMMENT '主键',
                                                      `route_id` varchar(128) NOT NULL COMMENT '路由Id',
     `business_type` varchar(90) NOT NULL COMMENT '业务类型',
-    `network_id` varchar(32) NOT NULL COMMENT '设备入网码',
+    `network_id` varchar(50) NOT NULL COMMENT '设备入网码',
     `ip` varchar(32) NOT NULL COMMENT 'ip',
     `create_user` varchar(64) DEFAULT NULL COMMENT '创建者',
     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
@@ -299,7 +299,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_business_route` (
 CREATE TABLE IF NOT EXISTS `nmpl_internet_route` (
                                                      `id` bigint NOT NULL COMMENT '主键',
                                                      `route_id` varchar(128) NOT NULL COMMENT '路由Id',
-    `network_id` varchar(32) NOT NULL COMMENT '设备入网码',
+    `network_id` varchar(50) NOT NULL COMMENT '设备入网码',
     `boundary_station_ip` varchar(32) NOT NULL COMMENT '边界基站ip',
     `create_user` varchar(64) DEFAULT NULL COMMENT '创建者',
     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
@@ -327,7 +327,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_pc_data` (
 CREATE TABLE IF NOT EXISTS `nmpl_static_route` (
                                                    `id` bigint NOT NULL COMMENT '主键',
                                                    `route_id` varchar(128) NOT NULL COMMENT '路由Id',
-    `network_id` varchar(32) NOT NULL COMMENT '设备入网码',
+    `network_id` varchar(50) NOT NULL COMMENT '设备入网码',
     `server_ip` varchar(32) NOT NULL COMMENT '服务器ip',
     `is_exist` tinyint(1) NOT NULL DEFAULT '1' COMMENT '删除标志（1代表存在 0代表删除）',
     `create_user` varchar(64) DEFAULT NULL COMMENT '创建者',

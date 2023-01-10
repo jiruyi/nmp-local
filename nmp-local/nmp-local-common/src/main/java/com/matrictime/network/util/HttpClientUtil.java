@@ -9,10 +9,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
@@ -29,6 +26,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.*;
 
+
 public class HttpClientUtil {
 
     // TODO: 2022/4/1 上线需确认超时时间 
@@ -40,6 +38,8 @@ public class HttpClientUtil {
 
     private static final String HTTP_TITLE = "http://";
 
+    private static CloseableHttpClient httpClient;
+
 
     private HttpClientUtil() {
     }
@@ -50,6 +50,10 @@ public class HttpClientUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    static{
+        httpClient =  HttpClients.custom().setConnectionManagerShared(true).setMaxConnTotal(MAX_CONN_TOTAL).build();
     }
 
 
@@ -126,7 +130,6 @@ public class HttpClientUtil {
      */
     public static String post(String url, String data) throws ClientProtocolException, IOException {
         String httpEntityContent = "";
-        CloseableHttpClient httpClient =  HttpClients.custom().setMaxConnTotal(MAX_CONN_TOTAL).build();
         try {
             HttpPost httpPost = new HttpPost(url);
             //设置请求和传输超时时间
@@ -134,7 +137,7 @@ public class HttpClientUtil {
             httpPost.setConfig(requestConfig);
             httpPost.setHeader("Content-Type", "application/json; charset=utf-8");
             httpPost.setEntity(new StringEntity(data, "UTF-8"));
-            HttpResponse response = httpClient.execute(httpPost);
+            CloseableHttpResponse response = httpClient.execute(httpPost);
             httpEntityContent = getHttpEntityContent(response);
             httpPost.abort();
         }catch (ClientProtocolException e){
