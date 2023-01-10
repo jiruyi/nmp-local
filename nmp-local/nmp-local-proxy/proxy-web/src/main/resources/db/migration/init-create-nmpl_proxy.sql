@@ -291,7 +291,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_business_route` (
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
     `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
     `ip_v6` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'ip_v6',
-    `byte_network_id` blob NOT NULL comment '设备入网码(字节存储)',
+    `byte_network_id` blob DEFAULT NULL comment '设备入网码(字节存储)',
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='业务服务路由';
 
@@ -307,7 +307,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_internet_route` (
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
     `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
     `ip_v6` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '边界基站ip_v6',
-    `byte_network_id` blob NOT NULL comment '设备入网码(字节存储)',
+    `byte_network_id` blob DEFAULT NULL comment '设备入网码(字节存储)',
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='出网路由';
 
@@ -336,7 +336,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_static_route` (
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
     `station_id` varchar(128) NOT NULL COMMENT '基站id',
     `ip_v6` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '服务器ip_v6',
-    `byte_network_id` blob NOT NULL comment '设备入网码(字节存储)',
+    `byte_network_id` blob DEFAULT NULL comment '设备入网码(字节存储)',
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='静态路由';
 
