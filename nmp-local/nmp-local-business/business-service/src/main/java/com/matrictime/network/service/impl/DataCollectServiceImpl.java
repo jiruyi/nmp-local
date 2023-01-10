@@ -81,10 +81,29 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         try {
             if(dataCollectReq.getDataCollectVoList()!=null){
                 List<DataCollectVo> dataCollectVoLoadList = new ArrayList<>();
+                Map<String,String> deviceMap = new HashMap<>();
+                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+                nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
+                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+
+                NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+                nmplDeviceInfoExample.createCriteria().andIsExistEqualTo(true);
+                List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+
+                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+                    deviceMap.put(nmplBaseStationInfo.getStationId(),nmplBaseStationInfo.getStationName());
+                }
+                for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+                    deviceMap.put(nmplDeviceInfo.getDeviceId(),nmplDeviceInfo.getDeviceName());
+                }
+
                 Map<String,String> map = PropertiesUtil.paramMap;
                 for (DataCollectVo dataCollectVo : dataCollectReq.getDataCollectVoList()) {
                     String name = "data."+dataCollectVo.getDataItemCode()+".name";
                     String unit = "data."+dataCollectVo.getDataItemCode()+".unit";
+                    if(deviceMap.get(dataCollectVo.getDeviceId())!=null){
+                        dataCollectVo.setDeviceName(deviceMap.get(dataCollectVo.getDeviceId()));
+                    }
                     dataCollectVo.setDataItemName(map.get(name));
                     dataCollectVo.setUnit(map.get(unit));
                     if (INTRANET_BROADBAND_LOAD_CODE.equals(dataCollectVo.getDataItemCode()) || INTERNET_BROADBAND_LOAD_CODE.equals(dataCollectVo.getDataItemCode())) {
