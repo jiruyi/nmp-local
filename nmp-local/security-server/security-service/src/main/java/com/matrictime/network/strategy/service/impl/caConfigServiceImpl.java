@@ -4,6 +4,7 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.ConfigModeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.base.util.DecimalConversionUtil;
 import com.matrictime.network.dao.mapper.NmpCaConfMapper;
 import com.matrictime.network.dao.model.NmpCaConf;
 import com.matrictime.network.exception.SystemException;
@@ -39,6 +40,10 @@ public class caConfigServiceImpl extends SystemBaseService implements ConfigServ
             checkReq(configReq);
             NmpCaConf nmpCaConf = new NmpCaConf();
             BeanUtils.copyProperties(configReq,nmpCaConf);
+            if(nmpCaConf.getNetworkId()!=null){
+                nmpCaConf.setPrefixNetworkId(DecimalConversionUtil.getPreBid(DecimalConversionUtil.idToByteArray(nmpCaConf.getNetworkId())));
+                nmpCaConf.setSuffixNetworkId(DecimalConversionUtil.getSuffBid(DecimalConversionUtil.idToByteArray(nmpCaConf.getNetworkId())));
+            }
             List<NmpCaConf> nmpCaConfs = nmpCaConfMapper.selectByExample(null);
             Integer num;
             if(CollectionUtils.isEmpty(nmpCaConfs)){

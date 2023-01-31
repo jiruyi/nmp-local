@@ -3,6 +3,7 @@ package com.matrictime.network.strategy.service.impl;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.enums.ConfigModeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.base.util.DecimalConversionUtil;
 import com.matrictime.network.dao.mapper.NmpSecretAreaConfMapper;
 import com.matrictime.network.dao.model.NmpDnsConf;
 import com.matrictime.network.dao.model.NmpSecretAreaConf;
@@ -38,7 +39,8 @@ public class secretConfigServiceImpl extends SystemBaseService implements Config
             checkReq(configReq);
             NmpSecretAreaConf nmpSecretAreaConf = new NmpSecretAreaConf();
             BeanUtils.copyProperties(configReq, nmpSecretAreaConf);
-
+            nmpSecretAreaConf.setPrefixNetworkId(DecimalConversionUtil.getPreBid(DecimalConversionUtil.idToByteArray(nmpSecretAreaConf.getNetworkId())));
+            nmpSecretAreaConf.setSuffixNetworkId(DecimalConversionUtil.getSuffBid(DecimalConversionUtil.idToByteArray(nmpSecretAreaConf.getNetworkId())));
             List<NmpSecretAreaConf> nmpSecretAreaConfs = nmpSecretAreaConfMapper.selectByExample(null);
             Integer num;
             if (CollectionUtils.isEmpty(nmpSecretAreaConfs)) {
