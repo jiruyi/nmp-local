@@ -904,6 +904,126 @@ public class NmpSecretAreaConfExample {
             addCriterion("remark not between", value1, value2, "remark");
             return (Criteria) this;
         }
+
+        public Criteria andPrefixNetworkIdIsNull() {
+            addCriterion("prefix_network_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdIsNotNull() {
+            addCriterion("prefix_network_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdEqualTo(Long value) {
+            addCriterion("prefix_network_id =", value, "prefixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdNotEqualTo(Long value) {
+            addCriterion("prefix_network_id <>", value, "prefixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdGreaterThan(Long value) {
+            addCriterion("prefix_network_id >", value, "prefixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("prefix_network_id >=", value, "prefixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdLessThan(Long value) {
+            addCriterion("prefix_network_id <", value, "prefixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdLessThanOrEqualTo(Long value) {
+            addCriterion("prefix_network_id <=", value, "prefixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdIn(List<Long> values) {
+            addCriterion("prefix_network_id in", values, "prefixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdNotIn(List<Long> values) {
+            addCriterion("prefix_network_id not in", values, "prefixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdBetween(Long value1, Long value2) {
+            addCriterion("prefix_network_id between", value1, value2, "prefixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrefixNetworkIdNotBetween(Long value1, Long value2) {
+            addCriterion("prefix_network_id not between", value1, value2, "prefixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdIsNull() {
+            addCriterion("suffix_network_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdIsNotNull() {
+            addCriterion("suffix_network_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdEqualTo(Long value) {
+            addCriterion("suffix_network_id =", value, "suffixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdNotEqualTo(Long value) {
+            addCriterion("suffix_network_id <>", value, "suffixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdGreaterThan(Long value) {
+            addCriterion("suffix_network_id >", value, "suffixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("suffix_network_id >=", value, "suffixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdLessThan(Long value) {
+            addCriterion("suffix_network_id <", value, "suffixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdLessThanOrEqualTo(Long value) {
+            addCriterion("suffix_network_id <=", value, "suffixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdIn(List<Long> values) {
+            addCriterion("suffix_network_id in", values, "suffixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdNotIn(List<Long> values) {
+            addCriterion("suffix_network_id not in", values, "suffixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdBetween(Long value1, Long value2) {
+            addCriterion("suffix_network_id between", value1, value2, "suffixNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuffixNetworkIdNotBetween(Long value1, Long value2) {
+            addCriterion("suffix_network_id not between", value1, value2, "suffixNetworkId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -3,6 +3,7 @@ package com.matrictime.network.strategy.service.impl;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.enums.ConfigModeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.base.util.DecimalConversionUtil;
 import com.matrictime.network.dao.mapper.NmpDnsConfMapper;
 import com.matrictime.network.dao.model.NmpCommAreaConf;
 import com.matrictime.network.dao.model.NmpDnsConf;
@@ -38,7 +39,8 @@ public class dnsConfigServiceImpl extends SystemBaseService implements ConfigSer
             checkReq(configReq);
             NmpDnsConf nmpDnsConf = new NmpDnsConf();
             BeanUtils.copyProperties(configReq, nmpDnsConf);
-
+            nmpDnsConf.setPrefixNetworkId(DecimalConversionUtil.getPreBid(DecimalConversionUtil.idToByteArray(nmpDnsConf.getNetworkId())));
+            nmpDnsConf.setSuffixNetworkId(DecimalConversionUtil.getSuffBid(DecimalConversionUtil.idToByteArray(nmpDnsConf.getNetworkId())));
             List<NmpDnsConf> nmpDnsConfs = nmpDnsConfMapper.selectByExample(null);
             Integer num;
             if (CollectionUtils.isEmpty(nmpDnsConfs)) {

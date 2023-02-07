@@ -5,8 +5,8 @@ import lombok.Data;
 
 /**
  * ca信息配置表
- * @author   hx
- * @date   2022-12-20
+ * @author   xxxx
+ * @date   2023-01-13
  */
 @Data
 public class NmpCaConf {
@@ -74,6 +74,16 @@ public class NmpCaConf {
      * 备注
      */
     private String remark;
+
+    /**
+     * 入网码前缀
+     */
+    private Long prefixNetworkId;
+
+    /**
+     * 入网码后缀
+     */
+    private Long suffixNetworkId;
 
     public Long getId() {
         return id;
@@ -177,5 +187,21 @@ public class NmpCaConf {
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public Long getPrefixNetworkId() {
+        return prefixNetworkId;
+    }
+
+    public void setPrefixNetworkId(Long prefixNetworkId) {
+        this.prefixNetworkId = prefixNetworkId;
+    }
+
+    public Long getSuffixNetworkId() {
+        return suffixNetworkId;
+    }
+
+    public void setSuffixNetworkId(Long suffixNetworkId) {
+        this.suffixNetworkId = suffixNetworkId;
     }
 }
