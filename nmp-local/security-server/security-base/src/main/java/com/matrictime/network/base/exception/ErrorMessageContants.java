@@ -67,4 +67,6 @@ public class ErrorMessageContants {
 
 	public static final String UPLOAD_FILE_FAIL = "上传图片失败";
 
+	public static final String PLEASE_WAIT = "操作进行中，请稍后再试！";
+
 }

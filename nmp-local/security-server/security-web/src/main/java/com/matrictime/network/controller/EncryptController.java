@@ -5,6 +5,7 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.QueryKeyDataReq;
 import com.matrictime.network.request.UpdEncryptConfReq;
+import com.matrictime.network.resp.FlushKeyStatusResp;
 import com.matrictime.network.resp.QueryKeyDataResp;
 import com.matrictime.network.service.EncryptManageSevice;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public class EncryptController {
             Result result = encryptManageSevice.updEncryptConf(req);
             return result;
         }catch (Exception e){
-            log.error("EncryptController.updEncryptConf exception:{}",e.getMessage());
+            log.error("EncryptController.upd exception:{}",e.getMessage());
             return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
@@ -55,7 +56,7 @@ public class EncryptController {
             Result result = encryptManageSevice.queryEncryptConf();
             return result;
         }catch (Exception e){
-            log.error("EncryptController.queryEncryptConf exception:{}",e.getMessage());
+            log.error("EncryptController.query exception:{}",e.getMessage());
             return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
@@ -73,7 +74,7 @@ public class EncryptController {
             Result result = encryptManageSevice.queryKeyData(req);
             return result;
         }catch (Exception e){
-            log.error("EncryptController.queryEncryptConf exception:{}",e.getMessage());
+            log.error("EncryptController.queryKeyData exception:{}",e.getMessage());
             return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
@@ -89,7 +90,19 @@ public class EncryptController {
             Result result = encryptManageSevice.flushKey();
             return result;
         }catch (Exception e){
-            log.error("EncryptController.queryEncryptConf exception:{}",e.getMessage());
+            log.error("EncryptController.flushKey exception:{}",e.getMessage());
+            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    @MonitorRequest
+    @RequestMapping(value = "/getFlushKeyStatus",method = RequestMethod.POST)
+    public Result<FlushKeyStatusResp> getFlushKeyStatus(){
+        try {
+            Result<FlushKeyStatusResp> result = encryptManageSevice.getFlushKeyStatus();
+            return result;
+        }catch (Exception e){
+            log.error("EncryptController.getFlushKeyStatus exception:{}",e.getMessage());
             return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }

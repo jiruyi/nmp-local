@@ -8,4 +8,6 @@ public interface ServerService {
     Result<GetServerStatusResp> getStatus();
 
     Result start();
+
+    Result getStartStatus();
 }

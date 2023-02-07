@@ -89,6 +89,8 @@ public class DataConstants {
 
     public static final String SYSTEM_NM = "nm";
 
+    public static final String SYSTEM_SS = "ss";
+
     public static final String KEY_SUCCESS_IDS = "successIds";
 
     public static final String KEY_FAIL_IDS = "failIds";

@@ -80,3 +80,5 @@ thread:
   batchMaxSize: 500
 token:
   timeOut: 12
+task:
+  saveDays: 7

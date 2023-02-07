@@ -35,7 +35,7 @@ public class ServerController {
             Result result = serverService.getStatus();
             return result;
         }catch (Exception e){
-            log.error("ServerController.getServerStatus exception:{}",e.getMessage());
+            log.error("ServerController.getStatus exception:{}",e.getMessage());
             return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
@@ -51,7 +51,23 @@ public class ServerController {
             Result result = serverService.start();
             return result;
         }catch (Exception e){
-            log.error("ServerController.startServer exception:{}",e.getMessage());
+            log.error("ServerController.start exception:{}",e.getMessage());
+            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    /**
+     * 获取启动按钮状态
+     * @return
+     */
+    @MonitorRequest
+    @RequestMapping(value = "/getStartStatus",method = RequestMethod.POST)
+    public Result getStartStatus(){
+        try {
+            Result result = serverService.getStartStatus();
+            return result;
+        }catch (Exception e){
+            log.error("ServerController.getStartStatus exception:{}",e.getMessage());
             return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }

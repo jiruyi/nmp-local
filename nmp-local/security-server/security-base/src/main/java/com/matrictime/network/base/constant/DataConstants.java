@@ -1,6 +1,8 @@
 package com.matrictime.network.base.constant;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,12 +56,54 @@ public class DataConstants {
     public static final String LAST_DOWN_DATA_VALUE = "2000";
     public static final String USED_DOWN_DATA_VALUE = "2001";
 
-    public static final Map<Integer,String> serverStatus = new HashMap<Integer, String>(){
+    public static final Map<Integer,String> SERVER_STATUS = new HashMap<Integer, String>(){
         {
             put(1,"在线");
             put(2,"离线");
         }
     };
 
+    public static final List<String> KEY_DATA_TIME = new ArrayList<String>(){
+        {
+            add("00:30");
+            add("01:00");add("01:30");
+            add("02:00");add("02:30");
+            add("03:00");add("03:30");
+            add("04:00");add("04:30");
+            add("05:00");add("05:30");
+            add("06:00");add("06:30");
+            add("07:00");add("07:30");
+            add("08:00");add("08:30");
+            add("09:00");add("09:30");
+            add("10:00");add("10:30");
+            add("11:00");add("11:30");
+            add("12:00");add("12:30");
+            add("13:00");add("13:30");
+            add("14:00");add("14:30");
+            add("15:00");add("15:30");
+            add("16:00");add("16:30");
+            add("17:00");add("17:30");
+            add("18:00");add("18:30");
+            add("19:00");add("19:30");
+            add("20:00");add("20:30");
+            add("21:00");add("21:30");
+            add("22:00");add("22:30");
+            add("23:00");add("23:30");
+            add("24:00");
+        }
+    };
+
+    public static final Integer KEY_INFO_DISPLAY_GAP = 30;
+
+    public static final String END_DATE_TIME = "END_DATE_TIME";
+
+    public static final String VALUE_LIST = "VALUE_LIST";
+
+    public static final Short OPERATE_TYPE_START_SERVER = 1000;
+
+    public static final Short OPERATE_TYPE_UPDATE_KEY = 1001;
+    public static final Short OPERATE_STATUS_INIT = 9999;
+    public static final Short OPERATE_STATUS_WAIT = 1000;
+    public static final Short OPERATE_STATUS_FINISH = 1001;
 
 }

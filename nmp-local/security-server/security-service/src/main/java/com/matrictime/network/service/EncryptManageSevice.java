@@ -4,6 +4,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.EncryptConfVo;
 import com.matrictime.network.request.QueryKeyDataReq;
 import com.matrictime.network.request.UpdEncryptConfReq;
+import com.matrictime.network.resp.FlushKeyStatusResp;
 import com.matrictime.network.resp.QueryKeyDataResp;
 
 public interface EncryptManageSevice {
@@ -15,4 +16,6 @@ public interface EncryptManageSevice {
     Result<QueryKeyDataResp> queryKeyData(QueryKeyDataReq req);
 
     Result flushKey();
+
+    Result<FlushKeyStatusResp> getFlushKeyStatus();
 }

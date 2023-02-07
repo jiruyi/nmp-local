@@ -106,4 +106,6 @@ public class ErrorMessageContants {
 
 	public static final String AUTHENTICATION_ERROR ="身份验证错误";
 
+	public static final String CONFIG_IS_NOT_EXIST = "配置不存在";
+
 }

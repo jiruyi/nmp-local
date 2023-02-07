@@ -773,4 +773,19 @@ public class DateUtils {
         }
         return false;
     }
+
+    /**
+     * 判断两个时间分钟差是否大于value
+     * @param date1 起始时间
+     * @param date2 终止时间
+     * @param value 时间差
+     * @return
+     */
+    public static boolean checkTimeGreaterValue(Date date1, Date date2, int value){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date1);
+        calendar.add(Calendar.MINUTE,value);
+        Date time = calendar.getTime();
+        return date2.after(time);
+    }
 }

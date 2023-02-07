@@ -13,13 +13,13 @@
   </sql>
   <select id="selectDataList" resultMap="BaseResultMap">
     select
-      data_value, create_time
+      data_value, update_time
     from nmp_key_info
     where
         data_type = #{dataType,jdbcType=VARCHAR}
-    and create_time &gt;= #{beginTime,jdbcType=TIMESTAMP}
-    and create_time &lt; #{endTime,jdbcType=TIMESTAMP}
-    order by create_time
+    and update_time &gt;= #{beginTime,jdbcType=TIMESTAMP}
+    and update_time &lt; #{endTime,jdbcType=TIMESTAMP}
+    order by update_time
   </select>
 
   <select id="getDataValueSum" resultType="bigDecimal">
