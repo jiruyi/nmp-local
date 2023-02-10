@@ -64,8 +64,8 @@ public class EncryptManageSeviceImpl extends SystemBaseService implements Encryp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result updEncryptConf(UpdEncryptConfReq req) {
-        Result result;
+    public Result<Integer> updEncryptConf(UpdEncryptConfReq req) {
+        Result<Integer> result;
         try {
             int i;
             NmpEncryptConf nmpEncryptConf = new NmpEncryptConf();
@@ -246,6 +246,7 @@ public class EncryptManageSeviceImpl extends SystemBaseService implements Encryp
             example.createCriteria().andOperateTypeEqualTo(OPERATE_TYPE_UPDATE_KEY);
             NmpOperateServerInfo serverInfo = new NmpOperateServerInfo();
             serverInfo.setOperateStatus(OPERATE_STATUS_WAIT);
+            serverInfo.setOperateRate(NumberUtils.SHORT_ZERO);
             serverInfo.setCreateTime(new Date());
             result = buildResult(nmpOperateServerInfoMapper.updateByExampleSelective(serverInfo,example));
         }catch (SystemException e){
@@ -271,15 +272,15 @@ public class EncryptManageSeviceImpl extends SystemBaseService implements Encryp
             }else {
                 FlushKeyStatusResp resp = new FlushKeyStatusResp();
                 NmpOperateServerInfo serverInfo = nmpOperateServerInfos.get(0);
-                if (serverInfo.getOperateStatus() == null){
-                    resp.setOperateRate(NumberUtils.SHORT_ZERO);
-                    resp.setOperateStatus(OPERATE_STATUS_INIT);
-                    resp.setCreateTime(null);
-                }else {
+//                if (serverInfo.getOperateRate() == null){
+//                    resp.setOperateRate(NumberUtils.SHORT_ZERO);
+//                    resp.setOperateStatus(OPERATE_STATUS_INIT);
+//                    resp.setCreateTime(null);
+//                }else {
                     resp.setOperateStatus(serverInfo.getOperateStatus());
                     resp.setOperateRate(serverInfo.getOperateRate());
                     resp.setCreateTime(serverInfo.getCreateTime());
-                }
+//                }
                 result = buildResult(resp);
             }
 
@@ -301,7 +302,7 @@ public class EncryptManageSeviceImpl extends SystemBaseService implements Encryp
             throw new Exception(CONFIG_IS_NOT_EXIST);
         }else {
             NmpOperateServerInfo serverInfo = nmpOperateServerInfos.get(0);
-            if (OPERATE_STATUS_WAIT == serverInfo.getOperateStatus()){
+            if (OPERATE_STATUS_WAIT.compareTo(serverInfo.getOperateStatus()) == 0){
                 throw new SystemException(PLEASE_WAIT);
             }
         }

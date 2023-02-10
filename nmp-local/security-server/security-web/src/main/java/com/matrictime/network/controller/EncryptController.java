@@ -3,6 +3,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.controller.aop.MonitorRequest;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.EncryptConfVo;
 import com.matrictime.network.request.QueryKeyDataReq;
 import com.matrictime.network.request.UpdEncryptConfReq;
 import com.matrictime.network.resp.FlushKeyStatusResp;
@@ -35,7 +36,7 @@ public class EncryptController {
      */
     @MonitorRequest
     @RequestMapping(value = "/upd",method = RequestMethod.POST)
-    public Result updEncryptConf(@RequestBody UpdEncryptConfReq req){
+    public Result<Integer> updEncryptConf(@RequestBody UpdEncryptConfReq req){
         try {
             Result result = encryptManageSevice.updEncryptConf(req);
             return result;
@@ -51,9 +52,9 @@ public class EncryptController {
      */
     @MonitorRequest
     @RequestMapping(value = "/query",method = RequestMethod.POST)
-    public Result queryEncryptConf(){
+    public Result<EncryptConfVo> queryEncryptConf(){
         try {
-            Result result = encryptManageSevice.queryEncryptConf();
+            Result<EncryptConfVo> result = encryptManageSevice.queryEncryptConf();
             return result;
         }catch (Exception e){
             log.error("EncryptController.query exception:{}",e.getMessage());
@@ -95,6 +96,10 @@ public class EncryptController {
         }
     }
 
+    /**
+     * 轮询获取更新密钥按钮的状态
+     * @return
+     */
     @MonitorRequest
     @RequestMapping(value = "/getFlushKeyStatus",method = RequestMethod.POST)
     public Result<FlushKeyStatusResp> getFlushKeyStatus(){
