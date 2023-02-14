@@ -108,4 +108,6 @@ public class ErrorMessageContants {
 
 	public static final String CONFIG_IS_NOT_EXIST = "配置不存在";
 
+	public static final String DEVICE_IS_ASSOCIATED = "设备有关联子集";
+
 }

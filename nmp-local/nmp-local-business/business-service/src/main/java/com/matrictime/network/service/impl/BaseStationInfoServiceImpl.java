@@ -148,6 +148,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Result<Integer> result = new Result<>();
         Integer deleteFlag;
         try {
+            if(RequestContext.getUser().getRoleId().equals(DataConstants.SUPER_ADMIN)){
+                throw new SystemException(NO_ADMIN_ERROR_MSG);
+            }
             deleteFlag = baseStationInfoDomainService.deleteBaseStationInfo(baseStationInfoRequest);
             if(deleteFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
                 result.setSuccess(true);

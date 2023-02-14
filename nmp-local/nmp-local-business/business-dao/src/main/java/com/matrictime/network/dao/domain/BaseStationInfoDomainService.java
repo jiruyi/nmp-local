@@ -36,7 +36,9 @@ public interface BaseStationInfoDomainService {
 
     List<BaseStationInfoVo> selectBaseStation(BaseStationInfoRequest baseStationInfoRequest);
 
-    void InsertCheckUnique(BaseStationInfoRequest baseStationInfoRequest);
+    void insertCheckUnique(BaseStationInfoRequest baseStationInfoRequest);
 
-    void UpdateCheckUnique(BaseStationInfoRequest baseStationInfoRequest);
+    void updateCheckUnique(BaseStationInfoRequest baseStationInfoRequest);
+
+    void deleteCheck(BaseStationInfoRequest baseStationInfoRequest);
 }
