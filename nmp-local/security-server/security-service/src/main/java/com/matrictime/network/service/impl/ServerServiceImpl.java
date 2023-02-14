@@ -15,6 +15,7 @@ import com.matrictime.network.service.ServerService;
 import com.matrictime.network.util.DateUtils;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -116,7 +117,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
             throw new Exception(CONFIG_IS_NOT_EXIST);
         }else {
             NmpOperateServerInfo serverInfo = nmpOperateServerInfos.get(0);
-            if (OPERATE_STATUS_WAIT == serverInfo.getOperateStatus()){
+            if (OPERATE_STATUS_WAIT.compareTo(serverInfo.getOperateStatus()) == 0){
                 throw new SystemException(PLEASE_WAIT);
             }
         }

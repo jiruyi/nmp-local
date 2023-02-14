@@ -9,7 +9,7 @@ import com.matrictime.network.resp.QueryKeyDataResp;
 
 public interface EncryptManageSevice {
 
-    Result updEncryptConf(UpdEncryptConfReq req);
+    Result<Integer> updEncryptConf(UpdEncryptConfReq req);
 
     Result<EncryptConfVo> queryEncryptConf();
 
