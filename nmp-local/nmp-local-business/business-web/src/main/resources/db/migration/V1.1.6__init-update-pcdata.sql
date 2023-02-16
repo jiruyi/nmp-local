@@ -1,0 +1,1 @@
+ALTER TABLE nmpl_pc_data ADD device_type VARCHAR(2) COMMENT '设备类型';
