@@ -4,11 +4,9 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
-import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
-import com.matrictime.network.dao.mapper.NmplBaseStationMapper;
-import com.matrictime.network.dao.mapper.NmplDeviceExtraInfoMapper;
-import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
@@ -37,9 +35,19 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     @Resource
     private NmplBaseStationMapper nmplbaseStationMapper;
 
+    @Resource
+    private NmplLinkRelationMapper nmplLinkRelationMapper;
+
+    @Resource
+    private NmplPcDataMapper nmplPcDataMapper;
+
+    @Resource
+    private NmplStaticRouteMapper nmplStaticRouteMapper;
+
+
     @Override
     public int insertBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
-        InsertCheckUnique(baseStationInfoRequest);
+        insertCheckUnique(baseStationInfoRequest);
         NmplBaseStation nmplbaseStation = new NmplBaseStation();
         BeanUtils.copyProperties(baseStationInfoRequest,nmplbaseStation);
 //        return nmplBaseStationInfoMapper.insertBaseStationInfo(baseStationInfoRequest);
@@ -49,7 +57,7 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     @Override
     public int updateBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
         //查询bid是否重复
-        UpdateCheckUnique(baseStationInfoRequest);
+        updateCheckUnique(baseStationInfoRequest);
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfo nmplBaseStationInfo = new NmplBaseStationInfo();
         BeanUtils.copyProperties(baseStationInfoRequest,nmplBaseStationInfo);
@@ -64,6 +72,7 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         /**
          * 基站的删除逻辑暂未定，现在支持逻辑删除
          */
+        deleteCheck(baseStationInfoRequest);
         return nmplBaseStationInfoMapper.deleteBaseStationInfo(baseStationInfoRequest);
     }
 
@@ -132,7 +141,7 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
 
 
     @Override
-    public void InsertCheckUnique(BaseStationInfoRequest baseStationInfoRequest) {
+    public void insertCheckUnique(BaseStationInfoRequest baseStationInfoRequest) {
         //同设备ip不可相同
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(baseStationInfoRequest.getLanIp()).andIsExistEqualTo(true);
@@ -167,7 +176,7 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
 
 
     @Override
-    public void UpdateCheckUnique(BaseStationInfoRequest baseStationInfoRequest) {
+    public void updateCheckUnique(BaseStationInfoRequest baseStationInfoRequest) {
         //修改时不能修改设备号 以及ip
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         nmplBaseStationInfoExample.createCriteria().andStationNetworkIdEqualTo(baseStationInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
@@ -202,5 +211,34 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         if(!CollectionUtils.isEmpty(nmplDeviceInfos)||!CollectionUtils.isEmpty(nmplDeviceExtraInfos)){
             throw new SystemException("不同设备ip+端口或入网码重复");
         }
+    }
+
+    @Override
+    public void deleteCheck(BaseStationInfoRequest baseStationInfoRequest) {
+
+        String stationId = baseStationInfoRequest.getStationId();
+
+        NmplLinkRelationExample nmplLinkRelationExample = new NmplLinkRelationExample();
+        NmplLinkRelationExample.Criteria criteria = nmplLinkRelationExample.createCriteria();
+        criteria.andMainDeviceIdEqualTo(stationId).andIsExistEqualTo("1");
+        nmplLinkRelationExample.or().andFollowDeviceIdEqualTo(stationId).andIsExistEqualTo("1");
+
+
+        NmplPcDataExample nmplPcDataExample = new NmplPcDataExample();
+        nmplPcDataExample.createCriteria().andStationIdEqualTo(stationId);
+
+        NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
+        nmplStaticRouteExample.createCriteria().andStationIdEqualTo(stationId).andIsExistEqualTo(true);
+
+        List<NmplLinkRelation> nmplLinkRelations = nmplLinkRelationMapper.selectByExample(nmplLinkRelationExample);
+
+        List<NmplPcData> nmplPcData = nmplPcDataMapper.selectByExample(nmplPcDataExample);
+
+        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
+
+        if(!CollectionUtils.isEmpty(nmplLinkRelations)||!CollectionUtils.isEmpty(nmplPcData)||!CollectionUtils.isEmpty(nmplStaticRoutes)){
+            throw new SystemException(ErrorMessageContants.DEVICE_IS_ASSOCIATED);
+        }
+
     }
 }

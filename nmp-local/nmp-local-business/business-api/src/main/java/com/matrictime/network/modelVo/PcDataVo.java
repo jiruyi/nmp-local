@@ -45,4 +45,9 @@ public class PcDataVo {
      * 上报时间
      */
     private Date reportTime;
+
+    /**
+     * 设备类型
+     */
+    private String deviceType;
 }

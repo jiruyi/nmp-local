@@ -10,9 +10,10 @@
         <result column="up_key_num" jdbcType="INTEGER" property="upKeyNum" />
         <result column="down_key_num" jdbcType="INTEGER" property="downKeyNum" />
         <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
+        <result column="device_type" jdbcType="VARCHAR" property="deviceType" />
     </resultMap>
     <sql id="Base_Column_List">
-        id, station_id, device_id, pc_network_id, status, up_key_num,down_key_num, report_time
+        id, station_id, device_id, pc_network_id, status, up_key_num,down_key_num, report_time,device_type
     </sql>
 
     <select id="queryByCondition" resultType="com.matrictime.network.modelVo.NmplPcDataVo">
@@ -77,10 +78,10 @@
     </select>
 
     <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.PcDataVo">
-        insert into nmpl_pc_data (station_id, device_id, pc_network_id, status, up_key_num,down_key_num,report_time) values
+        insert into nmpl_pc_data (station_id, device_id, pc_network_id, status, up_key_num,down_key_num,report_time,device_type) values
             <foreach collection ="list" item="pcData" separator =",">
             (#{pcData.stationId},#{pcData.deviceId}, #{pcData.pcNetworkId}, #{pcData.status}, #{pcData.upKeyNum},
-             #{pcData.downKeyNum},#{pcData.reportTime})
+             #{pcData.downKeyNum},#{pcData.reportTime},#{pcData.deviceType})
         </foreach >
     </insert>
 
