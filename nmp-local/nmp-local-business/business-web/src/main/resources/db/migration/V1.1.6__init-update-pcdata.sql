@@ -1,1 +1,1 @@
-ALTER TABLE nmpl_pc_data ADD device_type VARCHAR(2) COMMENT '设备类型';
+ALTER TABLE nmpl_pc_data ADD device_type VARCHAR(2) COMMENT '设备类型 01:一体机  02:安全服务器';
