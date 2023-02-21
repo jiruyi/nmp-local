@@ -216,7 +216,7 @@ public class EncryptManageSeviceImpl extends SystemBaseService implements Encryp
     }
 
     private String getTitleValue(String dataType){
-        String titleValue = "";
+        String titleValue = "0MB";
         switch (dataType){
             case LAST_UP_DATA_VALUE:
             case LAST_DOWN_DATA_VALUE:
