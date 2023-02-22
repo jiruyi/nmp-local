@@ -216,54 +216,7 @@ public class WebSocketServer {
      */
     @OnError
     public void onError(Session session, Throwable error) {
-        RedissonClient redisson = applicationContext.getBean(RedissonClient.class);
-        RLock rLock = redisson.getLock(REDIS_LOGIN_KEY+account);
-        log.info("-----get onClose lock object-----："+rLock);
-
-        boolean tryLock = false;
-        try {
-            tryLock = rLock.tryLock(10, 10, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            log.warn("get onClose lock exception");
-            e.printStackTrace();
-        }
-
-        if (!tryLock) {
-            log.info("get onClose lock failed");
-        }
-
-        try {
-            if(webSocketMap.containsKey(account)){
-                webSocketMap.remove(account);
-                //从set中删除
-                subOnlineCount();
-                if (!ParamCheckUtil.checkVoStrBlank(account)){
-                    try {
-                        log.info("websocket系统退出信息:{}",account);
-                        LoginService loginService = applicationContext.getBean(LoginService.class);
-                        LogoutReq req = new LogoutReq();
-                        req.setLoginAccount(account);
-                        loginService.syslogoutWithOutToken(req);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-            log.info("连接退出:"+account+",当前连接数为:" + getOnlineCount());
-            for (String key : webSocketMap.keySet()) {
-                log.info("当前连接:"+key);
-            }
-        }catch (Exception e){
-            log.info("onClose Exception:"+e.getMessage());
-            e.printStackTrace();
-        }finally {
-            if (rLock.isLocked() && rLock.isHeldByCurrentThread()) {
-                rLock.unlock();
-            }
-        }
-
-        log.error("连接错误:"+this.account+",原因:"+error.getMessage());
+        log.error("连接错误:"+this.account+",原因:"+error);
         error.printStackTrace();
     }
 
