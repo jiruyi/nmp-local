@@ -45,7 +45,7 @@ public class UserController {
     @ApiOperation(value = "用户信息修改",notes = "用户信息")
     @RequestMapping (value = "/modifyUserInfo",method = RequestMethod.POST)
     @MonitorRequest
-    @AesDecrypt(key = "loginAccount,phoneNumber")
+    //@AesDecrypt(key = "loginAccount,phoneNumber")
     public Result modifyUserInfo(@RequestBody UserRequest userRequest){
         try {
             Result result = userService.modifyUserInfo(userRequest);
@@ -60,7 +60,7 @@ public class UserController {
     @ApiOperation(value = "修改密码",notes = "修改密码")
     @RequestMapping (value = "/changePasswd",method = RequestMethod.POST)
     @MonitorRequest
-    @AesDecrypt(key = "phoneNumber")
+    //@AesDecrypt(key = "phoneNumber")
     public Result changePasswd(@RequestBody ChangePasswdReq changePasswdReq) {
         Result result = userService.changePasswd(changePasswdReq);
         return result;
@@ -69,7 +69,7 @@ public class UserController {
     @ApiOperation(value = "查询单个用户",notes = "查询单个用户")
     @RequestMapping (value = "/queryUserInfo",method = RequestMethod.POST)
     @MonitorRequest
-    @AesEncry(key = "loginAccount,phoneNumber")
+    //@AesEncry(key = "loginAccount,phoneNumber")
     public Result queryUserInfo(@RequestBody UserRequest userRequest) {
         Result result = userService.queryUser(userRequest);
         return result;
