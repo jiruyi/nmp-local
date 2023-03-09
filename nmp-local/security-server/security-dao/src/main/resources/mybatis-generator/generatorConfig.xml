@@ -38,53 +38,70 @@
         </javaClientGenerator>
 
 
-        <table tableName="nmp_user" domainObjectName="NmpUser"
+<!--        <table tableName="nmp_user" domainObjectName="NmpUser"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+
+<!--        <table tableName="nmp_secret_area_conf" domainObjectName="NmpSecretAreaConf"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+
+<!--        <table tableName="nmp_comm_area_conf" domainObjectName="NmpCommAreaConf"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+
+<!--        <table tableName="nmp_station_conf" domainObjectName="NmpStationConf"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+
+<!--        <table tableName="nmp_ca_conf" domainObjectName="NmpCaConf"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+
+<!--        <table tableName="nmp_dns_conf" domainObjectName="NmpDnsConf"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+
+<!--        <table tableName="nmp_key_info" domainObjectName="NmpKeyInfo"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+
+<!--        <table tableName="nmp_encrypt_conf" domainObjectName="NmpEncryptConf"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+
+<!--        <table tableName="nmp_heart_report" domainObjectName="NmpHeartReport"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--            <columnOverride column="status" property="status" javaType="java.lang.Integer"></columnOverride>-->
+<!--        </table>-->
+
+        <table tableName="nmp_operate_server_info" domainObjectName="NmpOperateServerInfo"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
         </table>
 
-        <table tableName="nmp_secret_area_conf" domainObjectName="NmpSecretAreaConf"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
 
-        <table tableName="nmp_comm_area_conf" domainObjectName="NmpCommAreaConf"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
 
-        <table tableName="nmp_station_conf" domainObjectName="NmpStationConf"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
 
-        <table tableName="nmp_ca_conf" domainObjectName="NmpCaConf"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
-
-        <table tableName="nmp_dns_conf" domainObjectName="NmpDnsConf"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
-
-        <table tableName="nmp_key_info" domainObjectName="NmpKeyInfo"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
-
-        <table tableName="nmp_encrypt_conf" domainObjectName="NmpEncryptConf"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
 
     </context>
 </generatorConfiguration>
