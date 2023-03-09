@@ -2,6 +2,8 @@ package com.matrictime.network.controller;
 
 import com.jzsg.bussiness.JServiceImpl;
 import com.jzsg.bussiness.util.EdException;
+import com.matrictime.network.annotation.AesDecrypt;
+import com.matrictime.network.annotation.AesEncry;
 import com.matrictime.network.aop.MonitorRequest;
 import com.matrictime.network.api.request.*;
 import com.matrictime.network.api.response.LoginResp;
@@ -33,6 +35,7 @@ public class LoginController {
      */
     @MonitorRequest
     @RequestMapping(value = "/login")
+    //@AesDecrypt(key = "loginAccount,phoneNumber")
     public Result login(@RequestBody LoginReq req){
         try {
             Result<LoginResp> result = loginService.login(req);
@@ -49,6 +52,7 @@ public class LoginController {
      */
     @MonitorRequest
     @RequestMapping(value = "/register")
+    //@AesDecrypt(key = "loginAccount,phoneNumber")
     public Result register(@RequestBody RegisterReq req){
         try {
             Result<RegisterResp> result = loginService.register(req);
@@ -66,6 +70,7 @@ public class LoginController {
     @ApiOperation(value = "用户退出",notes = "用户退出")
     @MonitorRequest
     @RequestMapping(value = "/logout")
+    //@AesEncry(key = "phoneNumber")
     public Result logout(@RequestBody LogoutReq req){
         try {
             Result result = loginService.logout(req);
@@ -82,6 +87,7 @@ public class LoginController {
      * @return
      */
     @RequestMapping(value = "/syslogout")
+    //@AesEncry(key = "phoneNumber")
     public Result syslogout(@RequestBody LogoutReq req){
         try {
             Result result = loginService.syslogout(req);
