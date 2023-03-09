@@ -5,11 +5,13 @@ import com.google.gson.JsonObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.request.ShellReq;
 import com.matrictime.network.request.UploadSingleFileReq;
 import com.matrictime.network.response.UploadSingleFileResp;
 import com.matrictime.network.service.UploadFileService;
 import com.matrictime.network.service.impl.AsyncService;
 import com.matrictime.network.util.HttpClientUtil;
+import com.matrictime.network.util.ShellUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -105,5 +108,19 @@ public class TestController extends SystemBaseService {
             log.error("VersionController.redis exception:{}",e.getMessage());
         }
     }
+
+
+    @RequestMapping(value = "/shell",method = RequestMethod.POST)
+    public void shell(@RequestBody ShellReq shellReq){
+        try {
+            List<String> commands = shellReq.getCommands();
+            Integer integer = ShellUtil.runShell(commands);
+            log.info(String.valueOf(integer));
+        }catch (Exception e){
+            log.error("shell exception:{}",e.getMessage());
+        }
+    }
+
+
 
 }
