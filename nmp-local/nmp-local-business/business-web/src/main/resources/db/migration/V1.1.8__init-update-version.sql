@@ -1,4 +1,4 @@
-DROP TABLE IF NOT EXISTS `nmpl_version`
+DROP TABLE IF EXISTS `nmpl_version`;
 DROP TABLE IF EXISTS `nmpl_version_file`;
 CREATE TABLE IF NOT EXISTS `nmpl_version` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -17,14 +17,14 @@ CREATE TABLE IF NOT EXISTS `nmpl_version` (
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='版本文件表';
 
-ALTER TABLE nmpl_base_station_info add column `version_id` bigint DEFAULT NULL COMMENT '版本文件id';
-ALTER TABLE nmpl_base_station_info add column `version_no` varchar(16) DEFAULT NULL COMMENT '版本号',
-ALTER TABLE nmpl_base_station_info add column `file_name` varchar(32) DEFAULT NULL COMMENT '文件名称',
-ALTER TABLE nmpl_base_station_info add column `version_status` varchar(2) DEFAULT '1' COMMENT '1:未加载 2:已加载 3:运行中 4:已停止';
-ALTER TABLE nmpl_base_station_info add column `version_oper_time` datetime(2) DEFAULT NULL TIMESTAMP(2) COMMENT '版本修改时间',
+ALTER TABLE `nmpl_base_station_info` add column `version_id` bigint  COMMENT '版本文件id';
+ALTER TABLE `nmpl_base_station_info` add column `version_no` varchar(16) DEFAULT NULL COMMENT '版本号';
+ALTER TABLE `nmpl_base_station_info` add column `file_name` varchar(32) DEFAULT NULL COMMENT '文件名称';
+ALTER TABLE `nmpl_base_station_info` add column `version_status` varchar(2) DEFAULT '1' COMMENT '1:未加载 2:已加载 3:运行中 4:已停止';
+ALTER TABLE `nmpl_base_station_info` add column `version_oper_time` TIMESTAMP(2) NULL COMMENT '版本修改时间';
 
-ALTER TABLE nmpl_device_info add column `version_id` bigint DEFAULT NULL COMMENT '版本文件id';
-ALTER TABLE nmpl_device_info add column `version_no` varchar(16) DEFAULT NULL COMMENT '版本号',
-ALTER TABLE nmpl_device_info add column `file_name` varchar(32) DEFAULT NULL COMMENT '文件名称',
-ALTER TABLE nmpl_device_info add column `version_status` varchar(2) DEFAULT '1' COMMENT '1:未加载 2:已加载 3:运行中 4:已停止';
-ALTER TABLE nmpl_device_info add column `version_oper_time` datetime(2) DEFAULT NULL TIMESTAMP(2) COMMENT '版本修改时间',
+ALTER TABLE `nmpl_device_info` add column `version_id` bigint  COMMENT '版本文件id';
+ALTER TABLE `nmpl_device_info` add column `version_no` varchar(16) DEFAULT NULL COMMENT '版本号';
+ALTER TABLE `nmpl_device_info` add column `file_name` varchar(32) DEFAULT NULL COMMENT '文件名称';
+ALTER TABLE `nmpl_device_info` add column `version_status` varchar(2) DEFAULT '1' COMMENT '1:未加载 2:已加载 3:运行中 4:已停止';
+ALTER TABLE `nmpl_device_info` add column `version_oper_time` TIMESTAMP(2) NULL COMMENT '版本修改时间';
