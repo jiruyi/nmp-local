@@ -6,59 +6,93 @@ import com.matrictime.network.response.*;
 
 public interface VersionService {
 
-    /**
-     * 编辑版本信息
-     * @param req
-     * @return
-     */
-    Result<EditVersionResp> editVersion(EditVersionReq req);
+//    /**
+//     * 编辑版本信息
+//     * @param req
+//     * @return
+//     */
+//    Result<EditVersionResp> editVersion(EditVersionReq req);
+//
+//    /**
+//     * 上传版本文件
+//     * @param req
+//     * @return
+//     */
+//    Result<UploadVersionFileResp> uploadVersionFile(UploadVersionFileReq req);
+//
+//    /**
+//     * 删除版本文件
+//     * @param req
+//     * @return
+//     */
+//    Result<DeleteVersionFileResp> deleteVersionFile(DeleteVersionFileReq req);
+//
+//    /**
+//     * 根据系统查询版本文件列表
+//     * @param req
+//     * @return
+//     */
+//    Result<QueryVersionFileResp> queryVersionFile(QueryVersionFileReq req);
+//
+//
+//    /**
+//     * 根据系统查询版本列表
+//     * @return
+//     */
+//    Result<QueryVersionResp> queryVersion();
+//
+//    /**
+//     * 查询推送设备/详情
+//     * @param req
+//     * @return
+//     */
+//    Result<QueryVersionFileDetailResp> queryVersionFileDetail(QueryVersionFileDetailReq req);
+//
+//    /**
+//     * 推送设备
+//     * @param req
+//     * @return
+//     */
+//    Result<PushVersionFileResp> pushVersionFile(PushVersionFileReq req);
+//
+//    /**
+//     * 启动版本文件
+//     * @param req
+//     * @return
+//     */
+//    Result<StartVersionFileResp> startVersionFile(StartVersionFileReq req);
 
-    /**
-     * 上传版本文件
-     * @param req
-     * @return
-     */
-    Result<UploadVersionFileResp> uploadVersionFile(UploadVersionFileReq req);
+    Result<Integer> insertVersionFile(UploadVersionFileReq uploadVersionFileReq);
 
-    /**
-     * 删除版本文件
-     * @param req
-     * @return
-     */
-    Result<DeleteVersionFileResp> deleteVersionFile(DeleteVersionFileReq req);
+    Result<Integer> updateVersionFile(UploadVersionFileReq uploadVersionFileReq);
 
-    /**
-     * 根据系统查询版本文件列表
-     * @param req
-     * @return
-     */
-    Result<QueryVersionFileResp> queryVersionFile(QueryVersionFileReq req);
+    Result<Integer> deleteVersionFile(UploadVersionFileReq uploadVersionFileReq);
+
+    Result<VersionFileResponse> selectVersionFile(UploadVersionFileReq uploadVersionFileReq);
 
 
-    /**
-     * 根据系统查询版本列表
-     * @return
-     */
-    Result<QueryVersionResp> queryVersion();
 
-    /**
-     * 查询推送设备/详情
-     * @param req
-     * @return
-     */
-    Result<QueryVersionFileDetailResp> queryVersionFileDetail(QueryVersionFileDetailReq req);
 
-    /**
-     * 推送设备
-     * @param req
-     * @return
-     */
-    Result<PushVersionFileResp> pushVersionFile(PushVersionFileReq req);
 
-    /**
-     * 启动版本文件
-     * @param req
-     * @return
-     */
-    Result<StartVersionFileResp> startVersionFile(StartVersionFileReq req);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

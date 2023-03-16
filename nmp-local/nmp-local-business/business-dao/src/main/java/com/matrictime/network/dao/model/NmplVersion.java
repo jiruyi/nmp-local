@@ -4,9 +4,9 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 
+ * 版本文件表
  * @author   hexu
- * @date   2022-03-09
+ * @date   2023-03-15
  */
 @Data
 public class NmplVersion {
@@ -16,9 +16,9 @@ public class NmplVersion {
     private Long id;
 
     /**
-     * 系统标识
+     * QIBS:基站 QEBS:边界基站 QKC:密钥中心 QNMP:网管代理
      */
-    private String systemId;
+    private String systemType;
 
     /**
      * 版本号
@@ -26,9 +26,19 @@ public class NmplVersion {
     private String versionNo;
 
     /**
-     * 版本名称
+     * 文件路径
      */
-    private String versionName;
+    private String filePath;
+
+    /**
+     * 文件名称
+     */
+    private String fileName;
+
+    /**
+     * 文件大小（mb）
+     */
+    private String fileSize;
 
     /**
      * 版本描述
@@ -36,14 +46,14 @@ public class NmplVersion {
     private String versionDesc;
 
     /**
-     * 描述
-     */
-    private String remark;
-
-    /**
      * 1存在 0删除
      */
     private Boolean isDelete;
+
+    /**
+     * 上传时间
+     */
+    private Date uploadTime;
 
     /**
      * 创建时间
@@ -73,12 +83,12 @@ public class NmplVersion {
         this.id = id;
     }
 
-    public String getSystemId() {
-        return systemId;
+    public String getSystemType() {
+        return systemType;
     }
 
-    public void setSystemId(String systemId) {
-        this.systemId = systemId == null ? null : systemId.trim();
+    public void setSystemType(String systemType) {
+        this.systemType = systemType == null ? null : systemType.trim();
     }
 
     public String getVersionNo() {
@@ -89,12 +99,28 @@ public class NmplVersion {
         this.versionNo = versionNo == null ? null : versionNo.trim();
     }
 
-    public String getVersionName() {
-        return versionName;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setVersionName(String versionName) {
-        this.versionName = versionName == null ? null : versionName.trim();
+    public void setFilePath(String filePath) {
+        this.filePath = filePath == null ? null : filePath.trim();
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName == null ? null : fileName.trim();
+    }
+
+    public String getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(String fileSize) {
+        this.fileSize = fileSize == null ? null : fileSize.trim();
     }
 
     public String getVersionDesc() {
@@ -105,20 +131,20 @@ public class NmplVersion {
         this.versionDesc = versionDesc == null ? null : versionDesc.trim();
     }
 
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark == null ? null : remark.trim();
-    }
-
     public Boolean getIsDelete() {
         return isDelete;
     }
 
     public void setIsDelete(Boolean isDelete) {
         this.isDelete = isDelete;
+    }
+
+    public Date getUploadTime() {
+        return uploadTime;
+    }
+
+    public void setUploadTime(Date uploadTime) {
+        this.uploadTime = uploadTime;
     }
 
     public Date getCreateTime() {
