@@ -161,4 +161,6 @@ public class DataConstants {
 
     public static final Integer ERROR_MSG_MAXLENGTH = 250;
 
+    public static final long FILE_SIZE = 1024*1024*100;
+
 }

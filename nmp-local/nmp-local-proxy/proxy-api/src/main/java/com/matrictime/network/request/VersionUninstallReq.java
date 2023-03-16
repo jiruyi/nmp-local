@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.Serializable;
 
 @Data
-public class UploadVersionFileReq implements Serializable {
+public class VersionUninstallReq implements Serializable {
     private static final long serialVersionUID = -5300073025540384824L;
 
     /**
