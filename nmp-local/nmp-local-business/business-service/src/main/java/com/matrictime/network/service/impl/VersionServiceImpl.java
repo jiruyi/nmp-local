@@ -26,9 +26,11 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         Result<Integer> result = new Result<>();
         try {
             //生成文件路径
-            String filePath = DataConstants.LINUX_VERSION_FILE_PATH + uploadVersionFileReq.getSystemType() +
-                    DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getVersionNo() +
-                    DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getFile().getOriginalFilename();
+//            String filePath = DataConstants.LINUX_VERSION_FILE_PATH + uploadVersionFileReq.getSystemType() +
+//                    DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getVersionNo() +
+//                    DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getFile().getOriginalFilename();
+            String filePath = "C:\\Users\\LENOVO\\Desktop\\" + uploadVersionFileReq.getSystemType() + "\\" +
+                    uploadVersionFileReq.getVersionNo() + "\\" + uploadVersionFileReq.getFile().getOriginalFilename();
             uploadVersionFileReq.setFilePath(filePath);
             //操作数据库文件表
             int insertFlag = fileVersionDomainService.insertFileVersion(uploadVersionFileReq);
@@ -50,9 +52,11 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         Result result = new Result<>();
         try {
             //生成文件路径
-            String filePath = DataConstants.LINUX_VERSION_FILE_PATH + uploadVersionFileReq.getSystemType() +
-                    DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getVersionNo() +
-                    DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getFile().getOriginalFilename();
+//            String filePath = DataConstants.LINUX_VERSION_FILE_PATH + uploadVersionFileReq.getSystemType() +
+//                    DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getVersionNo() +
+//                    DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getFile().getOriginalFilename();
+            String filePath = "C:\\Users\\LENOVO\\Desktop\\" + uploadVersionFileReq.getSystemType() + "\\" +
+                    uploadVersionFileReq.getVersionNo() + "\\" + uploadVersionFileReq.getFile().getOriginalFilename();
             uploadVersionFileReq.setFilePath(filePath);
             int updateFlag = fileVersionDomainService.updateFileVersion(uploadVersionFileReq);
             UploadFileUtils uploadFileUtils = new UploadFileUtils();
@@ -71,7 +75,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
     public Result<Integer> deleteVersionFile(UploadVersionFileReq uploadVersionFileReq) {
         Result result = new Result<>();
         try {
-            int deleteFlag = fileVersionDomainService.updateFileVersion(uploadVersionFileReq);
+            int deleteFlag = fileVersionDomainService.deleteFileVersion(uploadVersionFileReq);
             result.setSuccess(true);
             result.setResultObj(deleteFlag);
         }catch (Exception e){

@@ -8,7 +8,7 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.FileIsExistReq;
 import com.matrictime.network.response.FileIsExistResp;
-import com.matrictime.network.response.QueryVersionFileResp;
+
 import com.matrictime.network.response.UploadSingleFileResp;
 import com.matrictime.network.service.UploadFileService;
 import com.matrictime.network.util.ParamCheckUtil;

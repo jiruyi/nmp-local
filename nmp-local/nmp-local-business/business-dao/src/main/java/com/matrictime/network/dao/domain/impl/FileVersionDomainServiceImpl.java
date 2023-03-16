@@ -42,7 +42,7 @@ public class FileVersionDomainServiceImpl implements FileVersionDomainService {
         }
         NmplVersion nmplVersion = new NmplVersion();
         BeanUtils.copyProperties(uploadVersionFileReq,nmplVersion);
-        return nmplVersionMapper.insert(nmplVersion);
+        return nmplVersionMapper.insertSelective(nmplVersion);
     }
 
     @Transactional
@@ -50,8 +50,11 @@ public class FileVersionDomainServiceImpl implements FileVersionDomainService {
     public int updateFileVersion(UploadVersionFileReq uploadVersionFileReq) {
         NmplVersionExample nmplVersionExample = new NmplVersionExample();
         NmplVersionExample.Criteria criteria = nmplVersionExample.createCriteria();
-        if(uploadVersionFileReq.getId() != null){
-            criteria.andIdEqualTo(uploadVersionFileReq.getId());
+        if(!StringUtils.isEmpty(uploadVersionFileReq.getVersionNo())){
+            criteria.andVersionNoEqualTo(uploadVersionFileReq.getVersionNo());
+        }
+        if(!StringUtils.isEmpty(uploadVersionFileReq.getSystemType())){
+            criteria.andSystemTypeEqualTo(uploadVersionFileReq.getSystemType());
         }
         //原纪录逻辑删除
         NmplVersion updateNmplVersion = new NmplVersion();
@@ -73,10 +76,13 @@ public class FileVersionDomainServiceImpl implements FileVersionDomainService {
         NmplVersionExample nmplVersionExample = new NmplVersionExample();
         NmplVersionExample.Criteria criteria = nmplVersionExample.createCriteria();
         NmplVersion nmplVersion = new NmplVersion();
-        if(uploadVersionFileReq.getId()!= null){
-            criteria.andIdEqualTo(uploadVersionFileReq.getId());
-            nmplVersion.setIsDelete(false);
+        if(!StringUtils.isEmpty(uploadVersionFileReq.getVersionNo())){
+            criteria.andVersionNoEqualTo(uploadVersionFileReq.getVersionNo());
         }
+        if(!StringUtils.isEmpty(uploadVersionFileReq.getSystemType())){
+            criteria.andSystemTypeEqualTo(uploadVersionFileReq.getSystemType());
+        }
+        nmplVersion.setIsDelete(false);
         int i = nmplVersionMapper.updateByExampleSelective(nmplVersion, nmplVersionExample);
         return i;
     }

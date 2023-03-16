@@ -25,7 +25,7 @@ public class VersionController {
     private VersionService versionService;
 
     @RequestMapping(value = "/uploadVersionFile",method = RequestMethod.POST)
-    public Result<Integer> uploadVersionFile(@RequestBody UploadVersionFileReq uploadVersionFileReq) {
+    public Result<Integer> uploadVersionFile(UploadVersionFileReq uploadVersionFileReq) {
         try {
             return versionService.insertVersionFile(uploadVersionFileReq);
         } catch (Exception e) {
@@ -34,7 +34,7 @@ public class VersionController {
     }
 
     @RequestMapping(value = "/updateVersionFile",method = RequestMethod.POST)
-    public Result<Integer> updateVersionFile(@RequestBody UploadVersionFileReq uploadVersionFileReq){
+    public Result<Integer> updateVersionFile(UploadVersionFileReq uploadVersionFileReq){
         try {
             return versionService.updateVersionFile(uploadVersionFileReq);
         }catch (Exception e){
