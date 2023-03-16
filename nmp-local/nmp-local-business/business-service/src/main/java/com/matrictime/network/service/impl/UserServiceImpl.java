@@ -258,6 +258,8 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
                         roleName+=role.getRoleName()+",";
                     }
                     user.setRoleName(roleName);
+//                    user.setLoginAccount(AesEncryptUtil.aesDecrypt(user.getLoginAccount()));
+//                    user.setPhoneNumber(AesEncryptUtil.aesDecrypt(user.getPhoneNumber()));
                 }
             }
             pageInfo.setList(list);
