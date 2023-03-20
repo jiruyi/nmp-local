@@ -9,5 +9,5 @@ import java.util.List;
 @Data
 public class ShellReq {
     List<String> commands;
-
+    String path;
 }

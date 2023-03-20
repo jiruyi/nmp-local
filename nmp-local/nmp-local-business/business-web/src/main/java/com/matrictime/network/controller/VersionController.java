@@ -7,6 +7,7 @@ import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
+import com.matrictime.network.service.VersionControlService;
 import com.matrictime.network.service.VersionService;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +37,9 @@ public class VersionController {
 
     @Autowired(required = false)
     private NmplVersionFileMapper nmplVersionFileMapper;
+
+    @Resource
+    private VersionControlService versionControlService;
 
 
     /**
@@ -229,5 +234,101 @@ public class VersionController {
             log.error("VersionController.startVersionFile exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
+    }
+
+    //-------------------------------------------------------------------
+
+
+    /**
+     * 加载版本文件
+     * @author zyj
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/loadVersionFile",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "加载版本文件",operType = "加载版本")
+    //@RequiresPermissions("sys:loadVersion:load")
+    public Result loadVersionFile(@RequestBody VersionReq req){
+        return versionControlService.loadVersionFile(req);
+    }
+
+    /**
+     * 查询加载版本列表
+     * @author zyj
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/queryLoadVersion",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "查询加载版本列表",operType = "查询加载版本")
+    //@RequiresPermissions("sys:loadVersion:query")
+    public Result<PageInfo> queryLoadVersion(@RequestBody VersionReq req){
+        return versionControlService.queryLoadVersion(req);
+    }
+
+    /**
+     * 启动加载版本文件
+     * @author zyj
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/runLoadVersionFile",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "启动已加载文件",operType = "启动已记载版本")
+    //@RequiresPermissions("sys:loadVersion:run")
+    public Result runLoadVersionFile(@RequestBody VersionReq req){
+        return versionControlService.runLoadVersionFile(req);
+    }
+
+    //--------------------------------------------------------------------------
+
+    /**
+     * 启动版本
+     * @author zyj
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/runVersion",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "启动已停止版本",operType = "启动版本")
+    //@RequiresPermissions("sys:runVersion:run")
+    public Result runVersion(@RequestBody VersionReq req){
+        return versionControlService.runVersion(req);
+    }
+
+    /**
+     * 查询运行版本列表
+     * @author zyj
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/queryRunVersion",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "查询运行版本列表",operType = "查询运行版本列表")
+//    @RequiresPermissions("sys:runVersion:query")
+    public Result<PageInfo> queryRunVersion(@RequestBody VersionReq req){
+        return versionControlService.queryRunVersion(req);
+    }
+
+    /**
+     * 停止运行版本文件
+     * @author zyj
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/stopRunVersion",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "停止已运行版本",operType = "停止版本")
+    //@RequiresPermissions("sys:runVersion:stop")
+    public Result stopRunVersion(@RequestBody VersionReq req){
+        return versionControlService.stopRunVersion(req);
+    }
+
+    /**
+     * 停止运行版本文件
+     * @author zyj
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/uninstallRunVersion",method = RequestMethod.POST)
+    @SystemLog(opermodul = "版本模块",operDesc = "卸载已停止版本",operType = "卸载版本")
+    //@RequiresPermissions("sys:runVersion:uninstall")
+    public Result uninstallRunVersion(@RequestBody VersionReq req){
+        return versionControlService.uninstallRunVersion(req);
     }
 }

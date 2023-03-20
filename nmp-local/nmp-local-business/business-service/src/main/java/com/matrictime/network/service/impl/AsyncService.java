@@ -1,14 +1,12 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.constant.DataConstants;
-import com.matrictime.network.dao.mapper.NmplFileDeviceRelMapper;
-import com.matrictime.network.dao.mapper.NmplSignalIoMapper;
-import com.matrictime.network.dao.model.NmplFileDeviceRel;
-import com.matrictime.network.dao.model.NmplFileDeviceRelExample;
-import com.matrictime.network.dao.model.NmplSignalIo;
-import com.matrictime.network.dao.model.NmplSignalIoExample;
+import com.matrictime.network.dao.mapper.*;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.util.FileHahUtil;
 import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,11 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.Future;
 
@@ -39,8 +41,20 @@ public class AsyncService{
     @Autowired(required = false)
     private NmplFileDeviceRelMapper nmplFileDeviceRelMapper;
 
+    @Resource
+    private NmplVersionInfoMapper nmplVersionInfoMapper;
+
+    @Resource
+    private NmplDeviceMapper nmplDeviceMapper;
+
+    @Resource
+    private NmplBaseStationMapper nmplBaseStationMapper;
+
+
     @Value("${asynservice.isremote}")
     private Integer isremote;
+
+
 
 
     @Async("taskExecutor")
@@ -306,6 +320,134 @@ public class AsyncService{
         String deviceId = map.get(KEY_DEVICE_ID);
         log.warn("httpPush.retry error  deviceId:{} Exception:{} ",deviceId,e.getMessage());
     }
+
+    /**
+     *
+     * @param url url后缀路径
+     * @param versionId 版本文件id
+     * @param ipmap 设备id ip 映射map
+     * @throws Exception
+     */
+    @Async("taskExecutor")
+    public void httpPushLoadFile(String url,String versionId,Map<String,String>ipmap) {
+        try {
+            NmplVersionInfo nmplVersionInfo = nmplVersionInfoMapper.selectByPrimaryKey(Long.valueOf(versionId));
+            Map<String,String> map = new HashMap<>();
+            File file = new File(nmplVersionInfo.getFilePath()+File.separator+nmplVersionInfo.getFileName());
+            String hashCode = FileHahUtil.md5HashCode(new FileInputStream(file));
+            map.put("uploadPath",nmplVersionInfo.getFilePath());
+            map.put("fileName",nmplVersionInfo.getFileName());
+            map.put("checkCode",hashCode);
+            Set<String> set = ipmap.keySet();
+            for (String s : set) {
+                String httpUrl = "http://"+ipmap.get(s)+":"+url;
+                Map<String,String> fileMap = new HashMap<>();
+                fileMap.put("file",nmplVersionInfo.getFilePath()+File.separator+nmplVersionInfo.getFileName());
+                String post = HttpClientUtil.sendPost(httpUrl, null, map, fileMap, "UTF-8", "UTF-8");
+                JSONObject jsonObject = JSONObject.parseObject(post);
+                if (jsonObject != null) {
+                    Object success = jsonObject.get(KEY_SUCCESS);
+                    if (success != null && success instanceof Boolean) {
+                        if ((Boolean) success) {
+                            //根据设备类别更新表
+                            if(nmplVersionInfo.getSystemType().equals("QKC")){
+                                NmplDevice nmplDevice = new NmplDevice();
+                                nmplDevice.setDeviceId(s);
+                                nmplDevice.setLoadVersionId(nmplVersionInfo.getId());
+                                nmplDevice.setLoadVersionNo(nmplVersionInfo.getVersionNo());
+                                nmplDevice.setLoadVersionOperTime(new Date());
+                                NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
+                                nmplDeviceExample.createCriteria().andDeviceIdEqualTo(s);
+                                nmplDeviceMapper.updateByExampleSelective(nmplDevice,nmplDeviceExample);
+                            }else {
+                                NmplBaseStation nmplBaseStation = new NmplBaseStation();
+                                nmplBaseStation.setStationId(s);
+                                nmplBaseStation.setLoadVersionId(nmplVersionInfo.getId());
+                                nmplBaseStation.setLoadVersionNo(nmplVersionInfo.getVersionNo());
+                                nmplBaseStation.setLoadVersionOperTime(new Date());
+                                NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
+                                nmplBaseStationExample.createCriteria().andStationIdEqualTo(s);
+                                nmplBaseStationMapper.updateByExampleSelective(nmplBaseStation,nmplBaseStationExample);
+                            }
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+    }
+
+
+    @Async("taskExecutor")
+    public <T> Future<Map<String,Boolean>>httpUpdateVersionStatus(String url,Map<String,String> ipmap,Map<String,Long> versionMap,String updateStatus ){
+        Map<String,Boolean> result = new HashMap<>();
+        Set<String> set = ipmap.keySet();
+        for (String s : set) {
+            try {
+                Long versionId = versionMap.get(s);
+                NmplVersionInfo nmplVersionInfo = nmplVersionInfoMapper.selectByPrimaryKey(versionId);
+                Map<String, String> data = new HashMap<>();
+                data.put("uploadPath", nmplVersionInfo.getFilePath());
+                data.put("fileName", nmplVersionInfo.getFileName());
+                String httpUrl = "http://" + ipmap.get(s) + ":" + url;
+                String post = HttpClientUtil.post(httpUrl, JSON.toJSONString(data));
+                JSONObject jsonObject = JSONObject.parseObject(post);
+                if (jsonObject != null) {
+                    Object success = jsonObject.get(KEY_SUCCESS);
+                    if (success != null && success instanceof Boolean) {
+                        if ((Boolean) success) {
+                            //根据设备类别更新表
+                            if (nmplVersionInfo.getSystemType().equals("QKC")) {
+                                NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
+                                nmplDeviceExample.createCriteria().andDeviceIdEqualTo(s);
+                                NmplDevice nmplDevice = nmplDeviceMapper.selectByExample(nmplDeviceExample).get(0);
+                                nmplDevice.setRunVersionStatus(updateStatus);
+                                if (updateStatus.equals(VERSION_INIT_STATUS)) {
+                                    nmplDevice.setRunVersionNo(null);
+                                    nmplDevice.setRunFileName(null);
+                                    nmplDevice.setRunVersionId(null);
+                                } else {
+                                    nmplDevice.setRunVersionNo(nmplVersionInfo.getVersionNo());
+                                    nmplDevice.setRunFileName(nmplVersionInfo.getFileName());
+                                    nmplDevice.setRunVersionId(nmplVersionInfo.getId());
+                                }
+                                nmplDevice.setRunVersionOperTime(new Date());
+                                nmplDeviceMapper.updateByPrimaryKey(nmplDevice);
+                            } else {
+                                NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
+                                nmplBaseStationExample.createCriteria().andStationIdEqualTo(s);
+                                NmplBaseStation nmplBaseStation = nmplBaseStationMapper.selectByExample(nmplBaseStationExample).get(0);
+                                nmplBaseStation.setRunVersionStatus(updateStatus);
+                                if (updateStatus.equals(VERSION_INIT_STATUS)) {
+                                    nmplBaseStation.setRunVersionNo(null);
+                                    nmplBaseStation.setRunFileName(null);
+                                    nmplBaseStation.setRunVersionId(null);
+                                } else {
+                                    nmplBaseStation.setRunVersionNo(nmplVersionInfo.getVersionNo());
+                                    nmplBaseStation.setRunFileName(nmplVersionInfo.getFileName());
+                                    nmplBaseStation.setRunVersionId(nmplVersionInfo.getId());
+                                }
+                                nmplBaseStation.setRunVersionOperTime(new Date());
+                                nmplBaseStationMapper.updateByPrimaryKey(nmplBaseStation);
+                            }
+                        }
+                        result.put(s, true);
+                    } else {
+                        result.put(s, false);
+                    }
+                }
+            } catch (Exception e) {
+                result.put(s, false);
+                log.error(e.getMessage());
+            }
+        }
+        return new AsyncResult<>(result);
+    }
+
+
+
+
 
 
 }
