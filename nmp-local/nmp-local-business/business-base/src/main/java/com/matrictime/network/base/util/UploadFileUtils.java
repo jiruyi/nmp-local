@@ -14,6 +14,7 @@ import java.io.IOException;
  * @author by wangqiang
  * @date 2023/3/15.
  */
+
 @Slf4j
 public class UploadFileUtils {
 
@@ -22,8 +23,10 @@ public class UploadFileUtils {
         String filePath = uploadVersionFileReq.getFilePath();
         File dest = new File(filePath);
         try{
+            String substring = uploadVersionFileReq.getFileSize().
+                    substring(0, (uploadVersionFileReq.getFileSize().length() - 2));
             // 判断单个文件大于100M
-            if(Integer.parseInt(uploadVersionFileReq.getFileSize()) > DataConstants.FILE_SIZE){
+            if(Float.parseFloat(substring) > DataConstants.FILE_SIZE){
                 throw new SystemException("文件太大");
             }
             //更新文件操作

@@ -21,12 +21,6 @@ public class DataConstants {
     public static final String USER_LOGIN_SMS_CODE= "login_sms_code:";
     public static final String USER_ROUTE_SMS_CODE= "route_sms_code:";
 
-    public static final String VERSION_FILE_PATH = "F:\\aaa";
-
-    public static final String LINUX_VERSION_FILE_PATH = "/home/ruyiji/versionFile/";
-
-    public static final String LINUX_SEPARATOR = "/";
-
     public static final Integer FILE_SIZE = 1024 * 1024 * 100;
 
     public static final Integer FILE_IS_EXIT = 4;
