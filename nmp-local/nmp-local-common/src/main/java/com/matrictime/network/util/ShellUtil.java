@@ -52,7 +52,7 @@ public class ShellUtil {
                 log.info(s);
             }
             while ((s = stdError.readLine()) != null) {
-                log.error(s);
+                log.warn(s);
             }
             runningStatus = p.waitFor();
         } catch (IOException e) {
