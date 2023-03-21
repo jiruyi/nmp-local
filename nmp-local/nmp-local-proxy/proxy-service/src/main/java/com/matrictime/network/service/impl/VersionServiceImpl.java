@@ -85,18 +85,18 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             String operDir = getOpenDir(request.getUploadPath(), request.getFileName());
 
             // 安装
-            String installFileName = operDir+OPER_INSTALL;
-            File installFile = new File(installFileName);
-            if (!installFile.exists()){
-                throw new SystemException(installFileName+FILE_NOT_EXIST);
-            }
-
-            List<String> install = getShellList();
-            install.add(installFileName);
-            Integer installRes = ShellUtil.runShell(install);
-            if (!installRes.equals(NumberUtils.INTEGER_ZERO)){
-                throw new SystemException(INSTALL_FAIL);
-            }
+//            String installFileName = operDir+OPER_INSTALL;
+//            File installFile = new File(installFileName);
+//            if (!installFile.exists()){
+//                throw new SystemException(installFileName+FILE_NOT_EXIST);
+//            }
+//
+//            List<String> install = getShellList();
+//            install.add(installFileName);
+//            Integer installRes = ShellUtil.runShell(install);
+//            if (!installRes.equals(NumberUtils.INTEGER_ZERO)){
+//                throw new SystemException(INSTALL_FAIL);
+//            }
 
             // 启动
             String runFileName = operDir+OPER_RUN;
