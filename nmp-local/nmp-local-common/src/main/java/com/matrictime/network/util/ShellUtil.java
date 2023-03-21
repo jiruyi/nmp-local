@@ -42,7 +42,7 @@ public class ShellUtil {
 
     public static Integer runShell(List<String> commands){
         ProcessBuilder pb = new ProcessBuilder(commands);
-        int runningStatus = 0;
+        int runningStatus = 1;
         String s;
         try {
             Process p = pb.start();
@@ -52,7 +52,7 @@ public class ShellUtil {
                 log.info(s);
             }
             while ((s = stdError.readLine()) != null) {
-                log.error(s);
+                log.warn(s);
             }
             runningStatus = p.waitFor();
         } catch (IOException e) {

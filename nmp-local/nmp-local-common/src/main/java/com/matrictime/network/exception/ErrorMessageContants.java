@@ -114,4 +114,14 @@ public class ErrorMessageContants {
 
 	public static final String FILE_IS_DIFF = "文件已损坏";
 
+	public static final String INSTALL_FAIL = "安装失败";
+
+	public static final String RUN_FAIL = "运行失败";
+
+	public static final String UPDATE_FAIL = "升级失败";
+
+	public static final String STOP_FAIL = "停止失败";
+
+	public static final String UNINSTALL_FAIL = "卸载失败";
+
 }
