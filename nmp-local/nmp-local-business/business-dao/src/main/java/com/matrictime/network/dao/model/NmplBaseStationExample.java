@@ -2094,6 +2094,76 @@ public class NmplBaseStationExample {
             addCriterion("load_version_oper_time not between", value1, value2, "loadVersionOperTime");
             return (Criteria) this;
         }
+
+        public Criteria andLoadFileNameIsNull() {
+            addCriterion("load_file_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameIsNotNull() {
+            addCriterion("load_file_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameEqualTo(String value) {
+            addCriterion("load_file_name =", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameNotEqualTo(String value) {
+            addCriterion("load_file_name <>", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameGreaterThan(String value) {
+            addCriterion("load_file_name >", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameGreaterThanOrEqualTo(String value) {
+            addCriterion("load_file_name >=", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameLessThan(String value) {
+            addCriterion("load_file_name <", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameLessThanOrEqualTo(String value) {
+            addCriterion("load_file_name <=", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameLike(String value) {
+            addCriterion("load_file_name like", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameNotLike(String value) {
+            addCriterion("load_file_name not like", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameIn(List<String> values) {
+            addCriterion("load_file_name in", values, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameNotIn(List<String> values) {
+            addCriterion("load_file_name not in", values, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameBetween(String value1, String value2) {
+            addCriterion("load_file_name between", value1, value2, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameNotBetween(String value1, String value2) {
+            addCriterion("load_file_name not between", value1, value2, "loadFileName");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -356,6 +356,7 @@ public class AsyncService{
                                 nmplDevice.setLoadVersionId(nmplVersionInfo.getId());
                                 nmplDevice.setLoadVersionNo(nmplVersionInfo.getVersionNo());
                                 nmplDevice.setLoadVersionOperTime(new Date());
+                                nmplDevice.setLoadFileName(nmplVersionInfo.getFileName());
                                 NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
                                 nmplDeviceExample.createCriteria().andDeviceIdEqualTo(s);
                                 nmplDeviceMapper.updateByExampleSelective(nmplDevice,nmplDeviceExample);
@@ -365,6 +366,7 @@ public class AsyncService{
                                 nmplBaseStation.setLoadVersionId(nmplVersionInfo.getId());
                                 nmplBaseStation.setLoadVersionNo(nmplVersionInfo.getVersionNo());
                                 nmplBaseStation.setLoadVersionOperTime(new Date());
+                                nmplBaseStation.setLoadFileName(nmplVersionInfo.getFileName());
                                 NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
                                 nmplBaseStationExample.createCriteria().andStationIdEqualTo(s);
                                 nmplBaseStationMapper.updateByExampleSelective(nmplBaseStation,nmplBaseStationExample);

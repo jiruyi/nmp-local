@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 
  * @author   hexu
- * @date   2023-03-16
+ * @date   2023-03-21
  */
 @Data
 public class NmplBaseStation {
@@ -161,11 +161,14 @@ public class NmplBaseStation {
     private Date loadVersionOperTime;
 
     /**
+     * 加载版本文件名称
+     */
+    private String loadFileName;
+
+    /**
      * 设备入网码
      */
     private byte[] byteNetworkId;
-
-
 
     private boolean isLocal;
 
@@ -415,6 +418,14 @@ public class NmplBaseStation {
 
     public void setLoadVersionOperTime(Date loadVersionOperTime) {
         this.loadVersionOperTime = loadVersionOperTime;
+    }
+
+    public String getLoadFileName() {
+        return loadFileName;
+    }
+
+    public void setLoadFileName(String loadFileName) {
+        this.loadFileName = loadFileName == null ? null : loadFileName.trim();
     }
 
     public byte[] getByteNetworkId() {

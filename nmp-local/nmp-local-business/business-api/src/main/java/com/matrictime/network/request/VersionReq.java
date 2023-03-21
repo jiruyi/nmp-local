@@ -13,7 +13,7 @@ public class VersionReq extends BaseRequest{
     /**
      * 设备id
      */
-    private String id;
+    private String stationNetworkId;
     /**
      * 设备名称
      */

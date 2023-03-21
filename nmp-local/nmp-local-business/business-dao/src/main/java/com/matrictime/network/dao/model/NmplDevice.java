@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 密钥分发和U盘
  * @author   hexu
- * @date   2023-03-16
+ * @date   2023-03-21
  */
 @Data
 public class NmplDevice {
@@ -156,9 +156,15 @@ public class NmplDevice {
     private Date loadVersionOperTime;
 
     /**
+     * 加载版本文件名称
+     */
+    private String loadFileName;
+
+    /**
      * 设备入网码
      */
     private byte[] byteNetworkId;
+
 
     private Boolean isLocal;
 
@@ -400,6 +406,14 @@ public class NmplDevice {
 
     public void setLoadVersionOperTime(Date loadVersionOperTime) {
         this.loadVersionOperTime = loadVersionOperTime;
+    }
+
+    public String getLoadFileName() {
+        return loadFileName;
+    }
+
+    public void setLoadFileName(String loadFileName) {
+        this.loadFileName = loadFileName == null ? null : loadFileName.trim();
     }
 
     public byte[] getByteNetworkId() {
