@@ -1,5 +1,6 @@
 package com.matrictime.network.base.constant;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,12 @@ public class DataConstants {
     public static final String USER_LOGIN_JWT_TOKEN = "_jwt_token";
     public static final String USER_LOGIN_SMS_CODE= "login_sms_code:";
     public static final String USER_ROUTE_SMS_CODE= "route_sms_code:";
+
+    public static final Integer FILE_SIZE = 1024 * 1024 * 100;
+
+    public static final Integer FILE_IS_EXIT = 4;
+
+    public static final Integer FILE_UPDATE_SUCCESS = 5;
 
     public static final String USER_LOGIN_STATUS = "_login_status";
 

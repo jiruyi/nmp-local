@@ -3,12 +3,14 @@
 <mapper namespace="com.matrictime.network.dao.mapper.NmplVersionMapper">
   <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplVersion">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="system_id" jdbcType="VARCHAR" property="systemId" />
+    <result column="system_type" jdbcType="VARCHAR" property="systemType" />
     <result column="version_no" jdbcType="VARCHAR" property="versionNo" />
-    <result column="version_name" jdbcType="VARCHAR" property="versionName" />
+    <result column="file_path" jdbcType="VARCHAR" property="filePath" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="file_size" jdbcType="VARCHAR" property="fileSize" />
     <result column="version_desc" jdbcType="VARCHAR" property="versionDesc" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="is_delete" jdbcType="BIT" property="isDelete" />
+    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
@@ -73,8 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, system_id, version_no, version_name, version_desc, remark, is_delete, create_time, 
-    update_time, create_user, update_user
+    id, system_type, version_no, file_path, file_name, file_size, version_desc, is_delete, 
+    upload_time, create_time, update_time, create_user, update_user
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplVersionExample" resultMap="BaseResultMap">
     select
@@ -108,14 +110,16 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplVersion">
-    insert into nmpl_version (id, system_id, version_no, 
-      version_name, version_desc, remark, 
-      is_delete, create_time, update_time, 
-      create_user, update_user)
-    values (#{id,jdbcType=BIGINT}, #{systemId,jdbcType=VARCHAR}, #{versionNo,jdbcType=VARCHAR}, 
-      #{versionName,jdbcType=VARCHAR}, #{versionDesc,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
-      #{isDelete,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=VARCHAR}, #{updateUser,jdbcType=VARCHAR})
+    insert into nmpl_version (id, system_type, version_no, 
+      file_path, file_name, file_size, 
+      version_desc, is_delete, upload_time, 
+      create_time, update_time, create_user, 
+      update_user)
+    values (#{id,jdbcType=BIGINT}, #{systemType,jdbcType=VARCHAR}, #{versionNo,jdbcType=VARCHAR}, 
+      #{filePath,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, #{fileSize,jdbcType=VARCHAR}, 
+      #{versionDesc,jdbcType=VARCHAR}, #{isDelete,jdbcType=BIT}, #{uploadTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{updateUser,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplVersion">
     insert into nmpl_version
@@ -123,23 +127,29 @@
       <if test="id != null">
         id,
       </if>
-      <if test="systemId != null">
-        system_id,
+      <if test="systemType != null">
+        system_type,
       </if>
       <if test="versionNo != null">
         version_no,
       </if>
-      <if test="versionName != null">
-        version_name,
+      <if test="filePath != null">
+        file_path,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="fileSize != null">
+        file_size,
       </if>
       <if test="versionDesc != null">
         version_desc,
       </if>
-      <if test="remark != null">
-        remark,
-      </if>
       <if test="isDelete != null">
         is_delete,
+      </if>
+      <if test="uploadTime != null">
+        upload_time,
       </if>
       <if test="createTime != null">
         create_time,
@@ -158,23 +168,29 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="systemId != null">
-        #{systemId,jdbcType=VARCHAR},
+      <if test="systemType != null">
+        #{systemType,jdbcType=VARCHAR},
       </if>
       <if test="versionNo != null">
         #{versionNo,jdbcType=VARCHAR},
       </if>
-      <if test="versionName != null">
-        #{versionName,jdbcType=VARCHAR},
+      <if test="filePath != null">
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        #{fileSize,jdbcType=VARCHAR},
       </if>
       <if test="versionDesc != null">
         #{versionDesc,jdbcType=VARCHAR},
       </if>
-      <if test="remark != null">
-        #{remark,jdbcType=VARCHAR},
-      </if>
       <if test="isDelete != null">
         #{isDelete,jdbcType=BIT},
+      </if>
+      <if test="uploadTime != null">
+        #{uploadTime,jdbcType=TIMESTAMP},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -202,23 +218,29 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.systemId != null">
-        system_id = #{record.systemId,jdbcType=VARCHAR},
+      <if test="record.systemType != null">
+        system_type = #{record.systemType,jdbcType=VARCHAR},
       </if>
       <if test="record.versionNo != null">
         version_no = #{record.versionNo,jdbcType=VARCHAR},
       </if>
-      <if test="record.versionName != null">
-        version_name = #{record.versionName,jdbcType=VARCHAR},
+      <if test="record.filePath != null">
+        file_path = #{record.filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fileName != null">
+        file_name = #{record.fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fileSize != null">
+        file_size = #{record.fileSize,jdbcType=VARCHAR},
       </if>
       <if test="record.versionDesc != null">
         version_desc = #{record.versionDesc,jdbcType=VARCHAR},
       </if>
-      <if test="record.remark != null">
-        remark = #{record.remark,jdbcType=VARCHAR},
-      </if>
       <if test="record.isDelete != null">
         is_delete = #{record.isDelete,jdbcType=BIT},
+      </if>
+      <if test="record.uploadTime != null">
+        upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -240,12 +262,14 @@
   <update id="updateByExample" parameterType="map">
     update nmpl_version
     set id = #{record.id,jdbcType=BIGINT},
-      system_id = #{record.systemId,jdbcType=VARCHAR},
+      system_type = #{record.systemType,jdbcType=VARCHAR},
       version_no = #{record.versionNo,jdbcType=VARCHAR},
-      version_name = #{record.versionName,jdbcType=VARCHAR},
+      file_path = #{record.filePath,jdbcType=VARCHAR},
+      file_name = #{record.fileName,jdbcType=VARCHAR},
+      file_size = #{record.fileSize,jdbcType=VARCHAR},
       version_desc = #{record.versionDesc,jdbcType=VARCHAR},
-      remark = #{record.remark,jdbcType=VARCHAR},
       is_delete = #{record.isDelete,jdbcType=BIT},
+      upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -257,23 +281,29 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplVersion">
     update nmpl_version
     <set>
-      <if test="systemId != null">
-        system_id = #{systemId,jdbcType=VARCHAR},
+      <if test="systemType != null">
+        system_type = #{systemType,jdbcType=VARCHAR},
       </if>
       <if test="versionNo != null">
         version_no = #{versionNo,jdbcType=VARCHAR},
       </if>
-      <if test="versionName != null">
-        version_name = #{versionName,jdbcType=VARCHAR},
+      <if test="filePath != null">
+        file_path = #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        file_size = #{fileSize,jdbcType=VARCHAR},
       </if>
       <if test="versionDesc != null">
         version_desc = #{versionDesc,jdbcType=VARCHAR},
       </if>
-      <if test="remark != null">
-        remark = #{remark,jdbcType=VARCHAR},
-      </if>
       <if test="isDelete != null">
         is_delete = #{isDelete,jdbcType=BIT},
+      </if>
+      <if test="uploadTime != null">
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -292,12 +322,14 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplVersion">
     update nmpl_version
-    set system_id = #{systemId,jdbcType=VARCHAR},
+    set system_type = #{systemType,jdbcType=VARCHAR},
       version_no = #{versionNo,jdbcType=VARCHAR},
-      version_name = #{versionName,jdbcType=VARCHAR},
+      file_path = #{filePath,jdbcType=VARCHAR},
+      file_name = #{fileName,jdbcType=VARCHAR},
+      file_size = #{fileSize,jdbcType=VARCHAR},
       version_desc = #{versionDesc,jdbcType=VARCHAR},
-      remark = #{remark,jdbcType=VARCHAR},
       is_delete = #{isDelete,jdbcType=BIT},
+      upload_time = #{uploadTime,jdbcType=TIMESTAMP},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},

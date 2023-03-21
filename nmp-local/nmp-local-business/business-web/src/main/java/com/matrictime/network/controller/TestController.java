@@ -29,11 +29,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
@@ -50,35 +48,6 @@ public class TestController extends SystemBaseService {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @Autowired
-    private AsyncService asyncService;
-
-    /**
-     * 上传版本文件
-     * @return
-     */
-    @RequestMapping(value = "/uploadTest",method = RequestMethod.POST)
-    public Result uploadVersionFile(@RequestParam("file") MultipartFile file){
-        Result<UploadSingleFileResp> result;
-        try {
-            UploadSingleFileReq req = new UploadSingleFileReq();
-
-            String originalFilename = file.getOriginalFilename();
-            String suffix = originalFilename.substring(originalFilename.lastIndexOf(DataConstants.KEY_POINT));
-            String fileName = UUID.randomUUID()+suffix;
-
-            req.setFile(file);
-            req.setModuleName("moduleName");
-            req.setFileName(fileName);
-            req.setUploadPath("test"+KEY_SLASH);
-
-            result = uploadFileService.uploadSingleFile(req);
-        }catch (Exception e){
-            log.error("VersionController.uploadVersionFile exception:{}",e.getMessage());
-            result = failResult(e);
-        }
-        return result;
-    }
 
     @RequestMapping(value = "/redis",method = RequestMethod.POST)
     public void redis(){
@@ -122,31 +91,6 @@ public class TestController extends SystemBaseService {
     }
 
 
-    @RequestMapping(value = "/shell",method = RequestMethod.POST)
-    public void shell(@RequestBody ShellReq shellReq){
-        try {
-            List<String> commands = shellReq.getCommands();
-            Integer integer = ShellUtil.runShell(commands);
-            log.info(String.valueOf(integer));
-        }catch (Exception e){
-            log.error("shell exception:{}",e.getMessage());
-        }
-    }
-
-    @RequestMapping(value = "/upload",method = RequestMethod.POST)
-    public void upload(@RequestBody ShellReq shellReq){
-        try {
-            String path = shellReq.getPath();
-            String url = "http://192.168.72.34:8008/nmp-local-proxy/baseStation/uploadVersionFile";
-            Map<String,String> map = new HashMap<>();
-            map.put("systemId", "1");
-            Map<String,String> fileMap = new HashMap<>();
-            fileMap.put("file",path);
-            String post = HttpClientUtil.sendPost(url, null, map, fileMap, "UTF-8", "UTF-8");
-        }catch (Exception e){
-            log.error("shell exception:{}",e.getMessage());
-        }
-    }
 
 
 

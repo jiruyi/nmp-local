@@ -257,6 +257,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                             device.setLoadVersionNo(null);
                             device.setLoadVersionId(null);
                             device.setLoadVersionOperTime(new Date());
+                            device.setLoadFileName(null);
                             nmplDeviceMapper.updateByPrimaryKey(device);
                         }
                     }
@@ -299,6 +300,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                             station.setLoadVersionNo(null);
                             station.setLoadVersionId(null);
                             station.setLoadVersionOperTime(new Date());
+                            station.setLoadFileName(null);
                             nmplBaseStationMapper.updateByPrimaryKey(station);
                         }
                     }

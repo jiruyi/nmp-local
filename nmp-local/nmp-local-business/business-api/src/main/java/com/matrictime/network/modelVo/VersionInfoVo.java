@@ -12,7 +12,7 @@ public class VersionInfoVo implements Serializable {
     /**
      * 主键
      */
-    private Long id;
+    private String stationNetworkId;
 
     /**
      * 设备id
@@ -74,4 +74,8 @@ public class VersionInfoVo implements Serializable {
      * 加载版本操作时间
      */
     private Date loadVersionOperTime;
+    /**
+     * 加载版本文件名
+     */
+    private String loadFileName;
 }

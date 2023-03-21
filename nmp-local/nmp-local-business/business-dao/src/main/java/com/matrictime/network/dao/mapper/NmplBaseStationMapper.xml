@@ -32,6 +32,7 @@
     <result column="load_version_no" jdbcType="VARCHAR" property="loadVersionNo" />
     <result column="load_version_id" jdbcType="BIGINT" property="loadVersionId" />
     <result column="load_version_oper_time" jdbcType="TIMESTAMP" property="loadVersionOperTime" />
+    <result column="load_file_name" jdbcType="VARCHAR" property="loadFileName" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplBaseStation">
     <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
@@ -100,7 +101,7 @@
     station_random_seed, relation_operator_id, create_user, create_time, update_user, 
     update_time, is_exist, prefix_network_id, suffix_network_id, run_version_id, run_version_no, 
     run_file_name, run_version_status, run_version_oper_time, load_version_no, load_version_id, 
-    load_version_oper_time
+    load_version_oper_time, load_file_name
   </sql>
   <sql id="Blob_Column_List">
     byte_network_id
@@ -166,7 +167,7 @@
       suffix_network_id, run_version_id, run_version_no, 
       run_file_name, run_version_status, run_version_oper_time, 
       load_version_no, load_version_id, load_version_oper_time, 
-      byte_network_id)
+      load_file_name, byte_network_id)
     values (#{id,jdbcType=BIGINT}, #{stationId,jdbcType=VARCHAR}, #{stationName,jdbcType=VARCHAR}, 
       #{stationType,jdbcType=CHAR}, #{enterNetworkTime,jdbcType=TIMESTAMP}, #{stationAdmain,jdbcType=VARCHAR}, 
       #{remark,jdbcType=VARCHAR}, #{publicNetworkIp,jdbcType=VARCHAR}, #{publicNetworkPort,jdbcType=VARCHAR}, 
@@ -177,7 +178,7 @@
       #{suffixNetworkId,jdbcType=BIGINT}, #{runVersionId,jdbcType=BIGINT}, #{runVersionNo,jdbcType=VARCHAR}, 
       #{runFileName,jdbcType=VARCHAR}, #{runVersionStatus,jdbcType=VARCHAR}, #{runVersionOperTime,jdbcType=TIMESTAMP}, 
       #{loadVersionNo,jdbcType=VARCHAR}, #{loadVersionId,jdbcType=BIGINT}, #{loadVersionOperTime,jdbcType=TIMESTAMP}, 
-      #{byteNetworkId,jdbcType=LONGVARBINARY})
+      #{loadFileName,jdbcType=VARCHAR}, #{byteNetworkId,jdbcType=LONGVARBINARY})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplBaseStation">
     insert into nmpl_base_station_info
@@ -271,6 +272,9 @@
       </if>
       <if test="loadVersionOperTime != null">
         load_version_oper_time,
+      </if>
+      <if test="loadFileName != null">
+        load_file_name,
       </if>
       <if test="byteNetworkId != null">
         byte_network_id,
@@ -366,6 +370,9 @@
       </if>
       <if test="loadVersionOperTime != null">
         #{loadVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="loadFileName != null">
+        #{loadFileName,jdbcType=VARCHAR},
       </if>
       <if test="byteNetworkId != null">
         #{byteNetworkId,jdbcType=LONGVARBINARY},
@@ -471,6 +478,9 @@
       <if test="record.loadVersionOperTime != null">
         load_version_oper_time = #{record.loadVersionOperTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.loadFileName != null">
+        load_file_name = #{record.loadFileName,jdbcType=VARCHAR},
+      </if>
       <if test="record.byteNetworkId != null">
         byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
@@ -511,6 +521,7 @@
       load_version_no = #{record.loadVersionNo,jdbcType=VARCHAR},
       load_version_id = #{record.loadVersionId,jdbcType=BIGINT},
       load_version_oper_time = #{record.loadVersionOperTime,jdbcType=TIMESTAMP},
+      load_file_name = #{record.loadFileName,jdbcType=VARCHAR},
       byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -547,7 +558,8 @@
       run_version_oper_time = #{record.runVersionOperTime,jdbcType=TIMESTAMP},
       load_version_no = #{record.loadVersionNo,jdbcType=VARCHAR},
       load_version_id = #{record.loadVersionId,jdbcType=BIGINT},
-      load_version_oper_time = #{record.loadVersionOperTime,jdbcType=TIMESTAMP}
+      load_version_oper_time = #{record.loadVersionOperTime,jdbcType=TIMESTAMP},
+      load_file_name = #{record.loadFileName,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -642,6 +654,9 @@
       <if test="loadVersionOperTime != null">
         load_version_oper_time = #{loadVersionOperTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="loadFileName != null">
+        load_file_name = #{loadFileName,jdbcType=VARCHAR},
+      </if>
       <if test="byteNetworkId != null">
         byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
@@ -679,6 +694,7 @@
       load_version_no = #{loadVersionNo,jdbcType=VARCHAR},
       load_version_id = #{loadVersionId,jdbcType=BIGINT},
       load_version_oper_time = #{loadVersionOperTime,jdbcType=TIMESTAMP},
+      load_file_name = #{loadFileName,jdbcType=VARCHAR},
       byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -712,7 +728,8 @@
       run_version_oper_time = #{runVersionOperTime,jdbcType=TIMESTAMP},
       load_version_no = #{loadVersionNo,jdbcType=VARCHAR},
       load_version_id = #{loadVersionId,jdbcType=BIGINT},
-      load_version_oper_time = #{loadVersionOperTime,jdbcType=TIMESTAMP}
+      load_version_oper_time = #{loadVersionOperTime,jdbcType=TIMESTAMP},
+      load_file_name = #{loadFileName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

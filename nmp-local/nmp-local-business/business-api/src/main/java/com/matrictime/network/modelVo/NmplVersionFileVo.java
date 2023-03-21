@@ -1,6 +1,7 @@
 package com.matrictime.network.modelVo;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -9,15 +10,21 @@ import java.util.Date;
 public class NmplVersionFileVo implements Serializable {
     private static final long serialVersionUID = 8583688845746896233L;
 
+
     /**
      * 主键
      */
     private Long id;
 
     /**
-     * 版本主键
+     * QIBS:基站 QEBS:边界基站 QKC:密钥中心 QNMP:网管代理
      */
-    private Long versionId;
+    private String systemType;
+
+    /**
+     * 版本号
+     */
+    private String versionNo;
 
     /**
      * 文件路径
@@ -30,24 +37,14 @@ public class NmplVersionFileVo implements Serializable {
     private String fileName;
 
     /**
-     * 1 已推送 0未推送
+     * 文件大小（mb）
      */
-    private Boolean isPush;
+    private String fileSize;
 
     /**
-     * 1 正常 0失效
+     * 版本描述
      */
-    private Boolean status;
-
-    /**
-     * 1 启动 0未启动
-     */
-    private Boolean isStarted;
-
-    /**
-     * 描述
-     */
-    private String remark;
+    private String versionDesc;
 
     /**
      * 1存在 0删除
@@ -78,4 +75,5 @@ public class NmplVersionFileVo implements Serializable {
      *
      */
     private String updateUser;
+
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.matrictime.network.dao.mapper.extend.NmplBaseStationExtMapper">
     <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.VersionInfoVo">
-        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
         <result column="station_id" jdbcType="VARCHAR" property="deviceId" />
         <result column="station_name" jdbcType="VARCHAR" property="deviceName" />
         <result column="station_type" jdbcType="CHAR" property="deviceType" />
@@ -15,55 +15,61 @@
         <result column="load_version_no" jdbcType="VARCHAR" property="loadVersionNo" />
         <result column="load_version_id" jdbcType="BIGINT" property="loadVersionId" />
         <result column="load_version_oper_time" jdbcType="TIMESTAMP" property="loadVersionOperTime" />
+        <result column="load_file_name" jdbcType="VARCHAR" property="loadFileName" />
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplBaseStation">
         <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, station_id, station_name, station_type,is_exist,run_version_id, run_version_no,
+        station_network_id , station_id, station_name, station_type,is_exist,run_version_id, run_version_no,
     run_file_name, run_version_status, run_version_oper_time, load_version_no, load_version_id,
-    load_version_oper_time
+    load_version_oper_time,load_file_name
     </sql>
 
     <select id="queryLoadDataByCondition" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
-        from nmpl_base_station_info
+        from (
+        select SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id , station_id, station_name, station_type,is_exist,run_version_id, run_version_no,
+        run_file_name, run_version_status, run_version_oper_time, load_version_no, load_version_id,
+        load_version_oper_time,load_file_name from nmpl_base_station_info
+            <where>
+                <trim prefix="(" suffix=")" suffixOverrides="and">
+                    <if test="deviceName != null">
+                        station_name = #{deviceName,jdbcType=VARCHAR} and
+                    </if>
+                    <if test="deviceType != null">
+                        station_type = #{deviceType,jdbcType=CHAR} and
+                    </if>
+                    <if test="isExist != null">
+                        is_exist = #{isExist,jdbcType=BIT} and
+                    </if>
+                    <if test="loadVersionNo != null">
+                        load_version_no = #{loadVersionNo,jdbcType=VARCHAR} and
+                    </if>
+                    <if test="runVersionStatus != null">
+                        run_version_status = #{runVersionStatus,jdbcType=VARCHAR} and
+                    </if>
+                </trim>
+            </where>
+        order by load_version_oper_time desc) as temp
         <where>
-            <trim prefix="(" suffix=")" suffixOverrides="and">
-                <if test="id != null">
-                    id = #{id,jdbcType=VARCHAR} and
-                </if>
-                <if test="deviceName != null">
-                    station_name = #{deviceName,jdbcType=VARCHAR} and
-                </if>
-                <if test="deviceType != null">
-                    station_type = #{deviceType,jdbcType=CHAR} and
-                </if>
-                <if test="isExist != null">
-                    is_exist = #{isExist,jdbcType=BIT} and
-                </if>
-                <if test="loadVersionNo != null">
-                    load_version_no = #{loadVersionNo,jdbcType=VARCHAR} and
-                </if>
-                <if test="runVersionStatus != null">
-                    run_version_status = #{runVersionStatus,jdbcType=VARCHAR} and
-                </if>
-            </trim>
+            <if test="stationNetworkId != null and stationNetworkId != ''">
+                and station_network_id like concat ('%',#{stationNetworkId,jdbcType=CHAR},'%')
+            </if>
         </where>
-        order by load_version_oper_time desc
     </select>
 
     <select id="queryRunDataByCondition" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
-        from nmpl_base_station_info
+        from (
+        select SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id , station_id, station_name, station_type,is_exist,run_version_id, run_version_no,
+        run_file_name, run_version_status, run_version_oper_time, load_version_no, load_version_id,
+        load_version_oper_time,load_file_name from nmpl_base_station_info
         <where>
             <trim prefix="(" suffix=")" suffixOverrides="and">
-                <if test="id != null">
-                    id = #{id,jdbcType=VARCHAR} and
-                </if>
                 <if test="deviceName != null">
                     station_name = #{deviceName,jdbcType=VARCHAR} and
                 </if>
@@ -81,6 +87,11 @@
                 </if>
             </trim>
         </where>
-        order by run_version_oper_time desc
+        order by run_version_oper_time desc) as temp
+        <where>
+            <if test="stationNetworkId != null and stationNetworkId != ''">
+                and station_network_id like concat ('%',#{stationNetworkId,jdbcType=CHAR},'%')
+            </if>
+        </where>
     </select>
 </mapper>

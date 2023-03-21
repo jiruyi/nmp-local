@@ -1,0 +1,2 @@
+ALTER TABLE `nmpl_device_info` add column `load_file_name` varchar(32) DEFAULT NULL COMMENT '加载版本文件名称';
+ALTER TABLE `nmpl_base_station_info` add column `load_file_name` varchar(32) DEFAULT NULL COMMENT '加载版本文件名称';
