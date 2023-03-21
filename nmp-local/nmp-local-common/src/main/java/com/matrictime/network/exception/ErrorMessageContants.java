@@ -112,4 +112,6 @@ public class ErrorMessageContants {
 
 	public static final String FILE_IS_TOO_LARGE = "文件过大";
 
+	public static final String FILE_IS_DIFF = "文件已损坏";
+
 }

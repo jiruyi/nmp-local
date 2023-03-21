@@ -5,7 +5,7 @@ import com.matrictime.network.request.*;
 
 public interface VersionService {
 
-    Result<Integer> load(VersionLoadReq request);
+    Result load(VersionLoadReq request);
 
     Result<Integer> start(VersionStartReq request);
 

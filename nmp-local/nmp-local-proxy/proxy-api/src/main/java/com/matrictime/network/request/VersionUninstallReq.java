@@ -10,17 +10,12 @@ public class VersionUninstallReq implements Serializable {
     private static final long serialVersionUID = -5300073025540384824L;
 
     /**
-     * 文件
+     * 上传文件路径
      */
-    private MultipartFile file;
+    private String uploadPath;
 
     /**
-     * 所属系统id
+     * 文件名称
      */
-    private String systemId;
-
-    /**
-     * 版本id
-     */
-    private Long versionId;
+    private String fileName;
 }

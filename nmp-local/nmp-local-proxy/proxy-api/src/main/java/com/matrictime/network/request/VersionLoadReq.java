@@ -1,11 +1,9 @@
 package com.matrictime.network.request;
 
-import com.matrictime.network.modelVo.NmplVersionVo;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 public class VersionLoadReq implements Serializable {
@@ -27,7 +25,7 @@ public class VersionLoadReq implements Serializable {
     private String fileName;
 
     /**
-     * 文件的md5值
+     * 文件校验值
      */
-    private String md5;
+    private String checkCode;
 }

@@ -9,8 +9,14 @@ public class VersionStartReq implements Serializable {
     private static final long serialVersionUID = 1789476846632554229L;
 
     /**
-     * 版本文件Id
+     * 上传文件路径
      */
-    private Long versionFileId;
+    private String uploadPath;
+
+    /**
+     * 文件名称
+     */
+    private String fileName;
+
 
 }

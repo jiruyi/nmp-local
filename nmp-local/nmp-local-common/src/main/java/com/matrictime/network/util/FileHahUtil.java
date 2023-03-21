@@ -78,7 +78,7 @@ public class FileHahUtil {
     public static void main(String[] args) {
 
         try {
-            File file = new File("E:\\nmp_local.7z");
+            File file = new File("C:\\Users\\Administrator\\Desktop\\test\\zk.tar.gz");
             String md5HashCode = FileHahUtil.md5HashCode(new FileInputStream(file));
             System.out.println(md5HashCode);
             System.out.println(FileHahUtil.hashFile(file));

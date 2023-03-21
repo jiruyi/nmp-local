@@ -30,12 +30,12 @@ public class VersionController extends SystemBaseService {
      * @return
      */
     @RequestMapping(value = "/load",method = RequestMethod.POST)
-    public Result<Integer> load(@RequestBody VersionLoadReq request){
-        Result<Integer> result;
+    public Result load(VersionLoadReq request){
+        Result result;
         try {
             result = versionService.load(request);
         }catch (Exception e){
-            log.info("VersionController.load{}",e.getMessage());
+            log.warn("VersionController.load{}",e);
             result = failResult("");
         }
         return result;

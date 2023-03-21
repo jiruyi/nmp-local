@@ -163,4 +163,11 @@ public class DataConstants {
 
     public static final long FILE_SIZE = 1024*1024*100;
 
+    public static final String OPER_INSTALL = "install.sh";
+    public static final String OPER_UPDATE = "update.sh";
+    public static final String OPER_RUN = "run.sh";
+    public static final String OPER_STOP = "stop.sh";
+    public static final String OPER_UNINSTALL = "uninstall.sh";
+
+
 }
