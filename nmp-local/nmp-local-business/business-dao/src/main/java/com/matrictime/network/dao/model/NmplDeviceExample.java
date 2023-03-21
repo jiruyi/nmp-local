@@ -1524,6 +1524,596 @@ public class NmplDeviceExample {
             addCriterion("is_exist not between", value1, value2, "isExist");
             return (Criteria) this;
         }
+
+        public Criteria andRunVersionIdIsNull() {
+            addCriterion("run_version_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdIsNotNull() {
+            addCriterion("run_version_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdEqualTo(Long value) {
+            addCriterion("run_version_id =", value, "runVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdNotEqualTo(Long value) {
+            addCriterion("run_version_id <>", value, "runVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdGreaterThan(Long value) {
+            addCriterion("run_version_id >", value, "runVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("run_version_id >=", value, "runVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdLessThan(Long value) {
+            addCriterion("run_version_id <", value, "runVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdLessThanOrEqualTo(Long value) {
+            addCriterion("run_version_id <=", value, "runVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdIn(List<Long> values) {
+            addCriterion("run_version_id in", values, "runVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdNotIn(List<Long> values) {
+            addCriterion("run_version_id not in", values, "runVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdBetween(Long value1, Long value2) {
+            addCriterion("run_version_id between", value1, value2, "runVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionIdNotBetween(Long value1, Long value2) {
+            addCriterion("run_version_id not between", value1, value2, "runVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoIsNull() {
+            addCriterion("run_version_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoIsNotNull() {
+            addCriterion("run_version_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoEqualTo(String value) {
+            addCriterion("run_version_no =", value, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoNotEqualTo(String value) {
+            addCriterion("run_version_no <>", value, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoGreaterThan(String value) {
+            addCriterion("run_version_no >", value, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoGreaterThanOrEqualTo(String value) {
+            addCriterion("run_version_no >=", value, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoLessThan(String value) {
+            addCriterion("run_version_no <", value, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoLessThanOrEqualTo(String value) {
+            addCriterion("run_version_no <=", value, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoLike(String value) {
+            addCriterion("run_version_no like", value, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoNotLike(String value) {
+            addCriterion("run_version_no not like", value, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoIn(List<String> values) {
+            addCriterion("run_version_no in", values, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoNotIn(List<String> values) {
+            addCriterion("run_version_no not in", values, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoBetween(String value1, String value2) {
+            addCriterion("run_version_no between", value1, value2, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionNoNotBetween(String value1, String value2) {
+            addCriterion("run_version_no not between", value1, value2, "runVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameIsNull() {
+            addCriterion("run_file_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameIsNotNull() {
+            addCriterion("run_file_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameEqualTo(String value) {
+            addCriterion("run_file_name =", value, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameNotEqualTo(String value) {
+            addCriterion("run_file_name <>", value, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameGreaterThan(String value) {
+            addCriterion("run_file_name >", value, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameGreaterThanOrEqualTo(String value) {
+            addCriterion("run_file_name >=", value, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameLessThan(String value) {
+            addCriterion("run_file_name <", value, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameLessThanOrEqualTo(String value) {
+            addCriterion("run_file_name <=", value, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameLike(String value) {
+            addCriterion("run_file_name like", value, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameNotLike(String value) {
+            addCriterion("run_file_name not like", value, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameIn(List<String> values) {
+            addCriterion("run_file_name in", values, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameNotIn(List<String> values) {
+            addCriterion("run_file_name not in", values, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameBetween(String value1, String value2) {
+            addCriterion("run_file_name between", value1, value2, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunFileNameNotBetween(String value1, String value2) {
+            addCriterion("run_file_name not between", value1, value2, "runFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusIsNull() {
+            addCriterion("run_version_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusIsNotNull() {
+            addCriterion("run_version_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusEqualTo(String value) {
+            addCriterion("run_version_status =", value, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusNotEqualTo(String value) {
+            addCriterion("run_version_status <>", value, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusGreaterThan(String value) {
+            addCriterion("run_version_status >", value, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusGreaterThanOrEqualTo(String value) {
+            addCriterion("run_version_status >=", value, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusLessThan(String value) {
+            addCriterion("run_version_status <", value, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusLessThanOrEqualTo(String value) {
+            addCriterion("run_version_status <=", value, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusLike(String value) {
+            addCriterion("run_version_status like", value, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusNotLike(String value) {
+            addCriterion("run_version_status not like", value, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusIn(List<String> values) {
+            addCriterion("run_version_status in", values, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusNotIn(List<String> values) {
+            addCriterion("run_version_status not in", values, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusBetween(String value1, String value2) {
+            addCriterion("run_version_status between", value1, value2, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionStatusNotBetween(String value1, String value2) {
+            addCriterion("run_version_status not between", value1, value2, "runVersionStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeIsNull() {
+            addCriterion("run_version_oper_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeIsNotNull() {
+            addCriterion("run_version_oper_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeEqualTo(Date value) {
+            addCriterion("run_version_oper_time =", value, "runVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeNotEqualTo(Date value) {
+            addCriterion("run_version_oper_time <>", value, "runVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeGreaterThan(Date value) {
+            addCriterion("run_version_oper_time >", value, "runVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("run_version_oper_time >=", value, "runVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeLessThan(Date value) {
+            addCriterion("run_version_oper_time <", value, "runVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeLessThanOrEqualTo(Date value) {
+            addCriterion("run_version_oper_time <=", value, "runVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeIn(List<Date> values) {
+            addCriterion("run_version_oper_time in", values, "runVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeNotIn(List<Date> values) {
+            addCriterion("run_version_oper_time not in", values, "runVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeBetween(Date value1, Date value2) {
+            addCriterion("run_version_oper_time between", value1, value2, "runVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRunVersionOperTimeNotBetween(Date value1, Date value2) {
+            addCriterion("run_version_oper_time not between", value1, value2, "runVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoIsNull() {
+            addCriterion("load_version_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoIsNotNull() {
+            addCriterion("load_version_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoEqualTo(String value) {
+            addCriterion("load_version_no =", value, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoNotEqualTo(String value) {
+            addCriterion("load_version_no <>", value, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoGreaterThan(String value) {
+            addCriterion("load_version_no >", value, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoGreaterThanOrEqualTo(String value) {
+            addCriterion("load_version_no >=", value, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoLessThan(String value) {
+            addCriterion("load_version_no <", value, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoLessThanOrEqualTo(String value) {
+            addCriterion("load_version_no <=", value, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoLike(String value) {
+            addCriterion("load_version_no like", value, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoNotLike(String value) {
+            addCriterion("load_version_no not like", value, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoIn(List<String> values) {
+            addCriterion("load_version_no in", values, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoNotIn(List<String> values) {
+            addCriterion("load_version_no not in", values, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoBetween(String value1, String value2) {
+            addCriterion("load_version_no between", value1, value2, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionNoNotBetween(String value1, String value2) {
+            addCriterion("load_version_no not between", value1, value2, "loadVersionNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdIsNull() {
+            addCriterion("load_version_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdIsNotNull() {
+            addCriterion("load_version_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdEqualTo(Long value) {
+            addCriterion("load_version_id =", value, "loadVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdNotEqualTo(Long value) {
+            addCriterion("load_version_id <>", value, "loadVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdGreaterThan(Long value) {
+            addCriterion("load_version_id >", value, "loadVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("load_version_id >=", value, "loadVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdLessThan(Long value) {
+            addCriterion("load_version_id <", value, "loadVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdLessThanOrEqualTo(Long value) {
+            addCriterion("load_version_id <=", value, "loadVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdIn(List<Long> values) {
+            addCriterion("load_version_id in", values, "loadVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdNotIn(List<Long> values) {
+            addCriterion("load_version_id not in", values, "loadVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdBetween(Long value1, Long value2) {
+            addCriterion("load_version_id between", value1, value2, "loadVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionIdNotBetween(Long value1, Long value2) {
+            addCriterion("load_version_id not between", value1, value2, "loadVersionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeIsNull() {
+            addCriterion("load_version_oper_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeIsNotNull() {
+            addCriterion("load_version_oper_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeEqualTo(Date value) {
+            addCriterion("load_version_oper_time =", value, "loadVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeNotEqualTo(Date value) {
+            addCriterion("load_version_oper_time <>", value, "loadVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeGreaterThan(Date value) {
+            addCriterion("load_version_oper_time >", value, "loadVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("load_version_oper_time >=", value, "loadVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeLessThan(Date value) {
+            addCriterion("load_version_oper_time <", value, "loadVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeLessThanOrEqualTo(Date value) {
+            addCriterion("load_version_oper_time <=", value, "loadVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeIn(List<Date> values) {
+            addCriterion("load_version_oper_time in", values, "loadVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeNotIn(List<Date> values) {
+            addCriterion("load_version_oper_time not in", values, "loadVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeBetween(Date value1, Date value2) {
+            addCriterion("load_version_oper_time between", value1, value2, "loadVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadVersionOperTimeNotBetween(Date value1, Date value2) {
+            addCriterion("load_version_oper_time not between", value1, value2, "loadVersionOperTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameIsNull() {
+            addCriterion("load_file_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameIsNotNull() {
+            addCriterion("load_file_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameEqualTo(String value) {
+            addCriterion("load_file_name =", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameNotEqualTo(String value) {
+            addCriterion("load_file_name <>", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameGreaterThan(String value) {
+            addCriterion("load_file_name >", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameGreaterThanOrEqualTo(String value) {
+            addCriterion("load_file_name >=", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameLessThan(String value) {
+            addCriterion("load_file_name <", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameLessThanOrEqualTo(String value) {
+            addCriterion("load_file_name <=", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameLike(String value) {
+            addCriterion("load_file_name like", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameNotLike(String value) {
+            addCriterion("load_file_name not like", value, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameIn(List<String> values) {
+            addCriterion("load_file_name in", values, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameNotIn(List<String> values) {
+            addCriterion("load_file_name not in", values, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameBetween(String value1, String value2) {
+            addCriterion("load_file_name between", value1, value2, "loadFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoadFileNameNotBetween(String value1, String value2) {
+            addCriterion("load_file_name not between", value1, value2, "loadFileName");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

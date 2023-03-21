@@ -110,4 +110,8 @@ public class ErrorMessageContants {
 
 	public static final String DEVICE_IS_ASSOCIATED = "设备有关联子集";
 
+	public static final String FILE_IS_TOO_LARGE = "文件过大";
+
+	public static final String FILE_IS_DIFF = "文件已损坏";
+
 }

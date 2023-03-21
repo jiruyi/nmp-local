@@ -3,15 +3,20 @@ package com.matrictime.network.request;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
-public class StartVersionFileReq implements Serializable {
+public class VersionStartReq implements Serializable {
     private static final long serialVersionUID = 1789476846632554229L;
 
     /**
-     * 版本文件Id
+     * 上传文件路径
      */
-    private Long versionFileId;
+    private String uploadPath;
+
+    /**
+     * 文件名称
+     */
+    private String fileName;
+
 
 }

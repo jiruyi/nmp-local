@@ -1,12 +1,13 @@
 package com.matrictime.network.request;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 
 @Data
-public class FileIsExistReq implements Serializable {
-    private static final long serialVersionUID = -1616692961107463418L;
+public class VersionUninstallReq implements Serializable {
+    private static final long serialVersionUID = -5300073025540384824L;
 
     /**
      * 上传文件路径
@@ -17,9 +18,4 @@ public class FileIsExistReq implements Serializable {
      * 文件名称
      */
     private String fileName;
-
-    /**
-     * 模块名称
-     */
-    private String moduleName;
 }

@@ -83,7 +83,94 @@
     nbsi.station_random_seed,
     nbsi.relation_operator_id
   </sql>
+  <sql id="Base_Version_List">
+    station_network_id, device_id, device_name, device_type,is_exist, run_version_id, run_version_no, run_file_name,
+    run_version_status, run_version_oper_time, load_version_no, load_version_id, load_version_oper_time,load_file_name
+  </sql>
+  <resultMap id="BaseVersionMap" type="com.matrictime.network.modelVo.VersionInfoVo">
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_type" jdbcType="CHAR" property="deviceType" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="run_version_id" jdbcType="BIGINT" property="runVersionId" />
+    <result column="run_version_no" jdbcType="VARCHAR" property="runVersionNo" />
+    <result column="run_file_name" jdbcType="VARCHAR" property="runFileName" />
+    <result column="run_version_status" jdbcType="VARCHAR" property="runVersionStatus" />
+    <result column="run_version_oper_time" jdbcType="TIMESTAMP" property="runVersionOperTime" />
+    <result column="load_version_no" jdbcType="VARCHAR" property="loadVersionNo" />
+    <result column="load_version_id" jdbcType="BIGINT" property="loadVersionId" />
+    <result column="load_version_oper_time" jdbcType="TIMESTAMP" property="loadVersionOperTime" />
+    <result column="load_file_name" jdbcType="VARCHAR" property="loadFileName" />
+  </resultMap>
 
+  <select id="queryLoadDataByCondition" resultMap="BaseVersionMap">
+    select
+    <include refid="Base_Version_List" />
+    from (
+    select SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id ,device_id, device_name, device_type,is_exist,run_version_id, run_version_no,
+    run_file_name, run_version_status, run_version_oper_time, load_version_no, load_version_id,
+    load_version_oper_time,load_file_name from nmpl_device_info
+    <where>
+      <trim prefix="(" suffix=")" suffixOverrides="and">
+        <if test="deviceName != null">
+          device_name = #{deviceName,jdbcType=VARCHAR} and
+        </if>
+        <if test="deviceType != null">
+          device_type = #{deviceType,jdbcType=CHAR} and
+        </if>
+        <if test="isExist != null">
+          is_exist = #{isExist,jdbcType=BIT} and
+        </if>
+        <if test="loadVersionNo != null">
+          load_version_no = #{loadVersionNo,jdbcType=VARCHAR} and
+        </if>
+        <if test="runVersionStatus != null">
+          run_version_status = #{runVersionStatus,jdbcType=VARCHAR} and
+        </if>
+      </trim>
+    </where>
+    order by load_version_oper_time desc) as temp
+    <where>
+      <if test="stationNetworkId != null and stationNetworkId != ''">
+        and station_network_id like concat ('%',#{stationNetworkId,jdbcType=CHAR},'%')
+      </if>
+    </where>
+  </select>
+
+  <select id="queryRunDataByCondition" resultMap="BaseVersionMap">
+    select
+    <include refid="Base_Version_List" />
+    from (
+    select SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id , device_id, device_name, device_type,is_exist,run_version_id, run_version_no,
+    run_file_name, run_version_status, run_version_oper_time, load_version_no, load_version_id,
+    load_version_oper_time,load_file_name from nmpl_device_info
+    <where>
+      <trim prefix="(" suffix=")" suffixOverrides="and">
+        <if test="deviceName != null">
+          device_name = #{deviceName,jdbcType=VARCHAR} and
+        </if>
+        <if test="deviceType != null">
+          device_type = #{deviceType,jdbcType=CHAR} and
+        </if>
+        <if test="isExist != null">
+          is_exist = #{isExist,jdbcType=BIT} and
+        </if>
+        <if test="loadVersionNo != null">
+          load_version_no = #{loadVersionNo,jdbcType=VARCHAR} and
+        </if>
+        <if test="runVersionStatus != null">
+          run_version_status = #{runVersionStatus,jdbcType=VARCHAR} and
+        </if>
+      </trim>
+    </where>
+    order by run_version_oper_time desc) as temp
+    <where>
+      <if test="stationNetworkId != null and stationNetworkId != ''">
+        and station_network_id like concat ('%',#{stationNetworkId,jdbcType=CHAR},'%')
+      </if>
+    </where>
+  </select>
 
   <select id="selectDeviceListByMainDeviceId" parameterType="java.lang.String" resultMap="DeviceInfoMap">
     select

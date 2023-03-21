@@ -4,9 +4,10 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+
 @Data
-public class UploadSingleFileReq implements Serializable {
-    private static final long serialVersionUID = 460668760649310704L;
+public class VersionLoadReq implements Serializable {
+    private static final long serialVersionUID = 7745821562103671169L;
 
     /**
      * 单个文件
@@ -24,7 +25,7 @@ public class UploadSingleFileReq implements Serializable {
     private String fileName;
 
     /**
-     * 模块名称
+     * 文件校验值
      */
-    private String moduleName;
+    private String checkCode;
 }

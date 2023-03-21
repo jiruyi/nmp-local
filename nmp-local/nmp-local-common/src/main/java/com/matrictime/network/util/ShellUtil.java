@@ -41,12 +41,9 @@ public class ShellUtil {
     }
 
     public static Integer runShell(List<String> commands){
-//        ProcessBuilder pb = new ProcessBuilder( runningShellFile, keyword.trim()
-//                );
         ProcessBuilder pb = new ProcessBuilder(commands);
-//        pb.directory(new File(fileDir));
         int runningStatus = 0;
-        String s = null;
+        String s;
         try {
             Process p = pb.start();
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
