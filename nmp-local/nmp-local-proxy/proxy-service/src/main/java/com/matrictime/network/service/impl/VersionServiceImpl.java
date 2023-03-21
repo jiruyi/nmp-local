@@ -24,7 +24,7 @@ import java.util.List;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.KEY_SLASH;
-import static com.matrictime.network.exception.ErrorMessageContants.FILE_NOT_EXIST;
+import static com.matrictime.network.exception.ErrorMessageContants.*;
 
 @Service
 @Slf4j
@@ -94,6 +94,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             List<String> install = getShellList();
             install.add(installFileName);
             Integer installRes = ShellUtil.runShell(install);
+            if (!installRes.equals(NumberUtils.INTEGER_ZERO)){
+                throw new SystemException(INSTALL_FAIL);
+            }
 
             // 启动
             String runFileName = operDir+OPER_RUN;
@@ -104,6 +107,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             List<String> run = getShellList();
             run.add(runFileName);
             Integer runRes = ShellUtil.runShell(run);
+            if (!runRes.equals(NumberUtils.INTEGER_ZERO)){
+                throw new SystemException(RUN_FAIL);
+            }
 
         }catch (SystemException e){
             log.warn("VersionServiceImpl.start SystemException:{}",e.getMessage());
@@ -131,6 +137,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             List<String> run = getShellList();
             run.add(runFileName);
             Integer runRes = ShellUtil.runShell(run);
+            if (!runRes.equals(NumberUtils.INTEGER_ZERO)){
+                throw new SystemException(RUN_FAIL);
+            }
 
         }catch (SystemException e){
             log.warn("VersionServiceImpl.run SystemException:{}",e.getMessage());
@@ -158,6 +167,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             List<String> stop = getShellList();
             stop.add(stopFileName);
             Integer stopRes = ShellUtil.runShell(stop);
+            if (!stopRes.equals(NumberUtils.INTEGER_ZERO)){
+                throw new SystemException(STOP_FAIL);
+            }
 
         }catch (SystemException e){
             log.warn("VersionServiceImpl.stop SystemException:{}",e.getMessage());
@@ -186,12 +198,18 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             uninstall.add(uninstallFileName);
             Integer stopRes = ShellUtil.runShell(uninstall);
 
+
             if (stopRes.equals(NumberUtils.INTEGER_ZERO)){
                 List<String> rmrf = new ArrayList<>();
                 rmrf.add("rm");
                 rmrf.add("-rf");
                 rmrf.add(request.getUploadPath());
                 Integer rmrfRes = ShellUtil.runShell(rmrf);
+                if (!rmrfRes.equals(NumberUtils.INTEGER_ZERO)){
+                    throw new SystemException(UNINSTALL_FAIL);
+                }
+            }else {
+                throw new SystemException(UNINSTALL_FAIL);
             }
 
         }catch (SystemException e){

@@ -42,7 +42,7 @@ public class ShellUtil {
 
     public static Integer runShell(List<String> commands){
         ProcessBuilder pb = new ProcessBuilder(commands);
-        int runningStatus = 0;
+        int runningStatus = 1;
         String s;
         try {
             Process p = pb.start();
