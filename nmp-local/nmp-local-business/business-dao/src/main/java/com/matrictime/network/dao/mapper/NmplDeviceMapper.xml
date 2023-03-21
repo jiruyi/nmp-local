@@ -23,6 +23,14 @@
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="run_version_id" jdbcType="BIGINT" property="runVersionId" />
+    <result column="run_version_no" jdbcType="VARCHAR" property="runVersionNo" />
+    <result column="run_file_name" jdbcType="VARCHAR" property="runFileName" />
+    <result column="run_version_status" jdbcType="VARCHAR" property="runVersionStatus" />
+    <result column="run_version_oper_time" jdbcType="TIMESTAMP" property="runVersionOperTime" />
+    <result column="load_version_no" jdbcType="VARCHAR" property="loadVersionNo" />
+    <result column="load_version_id" jdbcType="BIGINT" property="loadVersionId" />
+    <result column="load_version_oper_time" jdbcType="TIMESTAMP" property="loadVersionOperTime" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplDevice">
     <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
@@ -89,7 +97,8 @@
     id, device_id, device_name, device_type, other_type, enter_network_time, device_admain, 
     remark, public_network_ip, public_network_port, lan_ip, lan_port, station_status, 
     station_network_id, station_random_seed, relation_operator_id, create_user, create_time, 
-    update_user, update_time, is_exist
+    update_user, update_time, is_exist, run_version_id, run_version_no, run_file_name, 
+    run_version_status, run_version_oper_time, load_version_no, load_version_id, load_version_oper_time
   </sql>
   <sql id="Blob_Column_List">
     byte_network_id
@@ -152,6 +161,9 @@
       station_status, station_network_id, station_random_seed, 
       relation_operator_id, create_user, create_time, 
       update_user, update_time, is_exist, 
+      run_version_id, run_version_no, run_file_name, 
+      run_version_status, run_version_oper_time, 
+      load_version_no, load_version_id, load_version_oper_time, 
       byte_network_id)
     values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{deviceName,jdbcType=VARCHAR}, 
       #{deviceType,jdbcType=CHAR}, #{otherType,jdbcType=CHAR}, #{enterNetworkTime,jdbcType=TIMESTAMP}, 
@@ -160,6 +172,9 @@
       #{stationStatus,jdbcType=CHAR}, #{stationNetworkId,jdbcType=VARCHAR}, #{stationRandomSeed,jdbcType=VARCHAR}, 
       #{relationOperatorId,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}, 
+      #{runVersionId,jdbcType=BIGINT}, #{runVersionNo,jdbcType=VARCHAR}, #{runFileName,jdbcType=VARCHAR}, 
+      #{runVersionStatus,jdbcType=VARCHAR}, #{runVersionOperTime,jdbcType=TIMESTAMP}, 
+      #{loadVersionNo,jdbcType=VARCHAR}, #{loadVersionId,jdbcType=BIGINT}, #{loadVersionOperTime,jdbcType=TIMESTAMP}, 
       #{byteNetworkId,jdbcType=LONGVARBINARY})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplDevice">
@@ -228,6 +243,30 @@
       <if test="isExist != null">
         is_exist,
       </if>
+      <if test="runVersionId != null">
+        run_version_id,
+      </if>
+      <if test="runVersionNo != null">
+        run_version_no,
+      </if>
+      <if test="runFileName != null">
+        run_file_name,
+      </if>
+      <if test="runVersionStatus != null">
+        run_version_status,
+      </if>
+      <if test="runVersionOperTime != null">
+        run_version_oper_time,
+      </if>
+      <if test="loadVersionNo != null">
+        load_version_no,
+      </if>
+      <if test="loadVersionId != null">
+        load_version_id,
+      </if>
+      <if test="loadVersionOperTime != null">
+        load_version_oper_time,
+      </if>
       <if test="byteNetworkId != null">
         byte_network_id,
       </if>
@@ -295,6 +334,30 @@
       </if>
       <if test="isExist != null">
         #{isExist,jdbcType=BIT},
+      </if>
+      <if test="runVersionId != null">
+        #{runVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="runVersionNo != null">
+        #{runVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="runFileName != null">
+        #{runFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="runVersionStatus != null">
+        #{runVersionStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="runVersionOperTime != null">
+        #{runVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="loadVersionNo != null">
+        #{loadVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="loadVersionId != null">
+        #{loadVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="loadVersionOperTime != null">
+        #{loadVersionOperTime,jdbcType=TIMESTAMP},
       </if>
       <if test="byteNetworkId != null">
         #{byteNetworkId,jdbcType=LONGVARBINARY},
@@ -373,6 +436,30 @@
       <if test="record.isExist != null">
         is_exist = #{record.isExist,jdbcType=BIT},
       </if>
+      <if test="record.runVersionId != null">
+        run_version_id = #{record.runVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="record.runVersionNo != null">
+        run_version_no = #{record.runVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.runFileName != null">
+        run_file_name = #{record.runFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.runVersionStatus != null">
+        run_version_status = #{record.runVersionStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.runVersionOperTime != null">
+        run_version_oper_time = #{record.runVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.loadVersionNo != null">
+        load_version_no = #{record.loadVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loadVersionId != null">
+        load_version_id = #{record.loadVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="record.loadVersionOperTime != null">
+        load_version_oper_time = #{record.loadVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
       <if test="record.byteNetworkId != null">
         byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
@@ -404,6 +491,14 @@
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       is_exist = #{record.isExist,jdbcType=BIT},
+      run_version_id = #{record.runVersionId,jdbcType=BIGINT},
+      run_version_no = #{record.runVersionNo,jdbcType=VARCHAR},
+      run_file_name = #{record.runFileName,jdbcType=VARCHAR},
+      run_version_status = #{record.runVersionStatus,jdbcType=VARCHAR},
+      run_version_oper_time = #{record.runVersionOperTime,jdbcType=TIMESTAMP},
+      load_version_no = #{record.loadVersionNo,jdbcType=VARCHAR},
+      load_version_id = #{record.loadVersionId,jdbcType=BIGINT},
+      load_version_oper_time = #{record.loadVersionOperTime,jdbcType=TIMESTAMP},
       byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -431,7 +526,15 @@
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      is_exist = #{record.isExist,jdbcType=BIT}
+      is_exist = #{record.isExist,jdbcType=BIT},
+      run_version_id = #{record.runVersionId,jdbcType=BIGINT},
+      run_version_no = #{record.runVersionNo,jdbcType=VARCHAR},
+      run_file_name = #{record.runFileName,jdbcType=VARCHAR},
+      run_version_status = #{record.runVersionStatus,jdbcType=VARCHAR},
+      run_version_oper_time = #{record.runVersionOperTime,jdbcType=TIMESTAMP},
+      load_version_no = #{record.loadVersionNo,jdbcType=VARCHAR},
+      load_version_id = #{record.loadVersionId,jdbcType=BIGINT},
+      load_version_oper_time = #{record.loadVersionOperTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -499,6 +602,30 @@
       <if test="isExist != null">
         is_exist = #{isExist,jdbcType=BIT},
       </if>
+      <if test="runVersionId != null">
+        run_version_id = #{runVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="runVersionNo != null">
+        run_version_no = #{runVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="runFileName != null">
+        run_file_name = #{runFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="runVersionStatus != null">
+        run_version_status = #{runVersionStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="runVersionOperTime != null">
+        run_version_oper_time = #{runVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="loadVersionNo != null">
+        load_version_no = #{loadVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="loadVersionId != null">
+        load_version_id = #{loadVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="loadVersionOperTime != null">
+        load_version_oper_time = #{loadVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
       <if test="byteNetworkId != null">
         byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
@@ -527,6 +654,14 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       is_exist = #{isExist,jdbcType=BIT},
+      run_version_id = #{runVersionId,jdbcType=BIGINT},
+      run_version_no = #{runVersionNo,jdbcType=VARCHAR},
+      run_file_name = #{runFileName,jdbcType=VARCHAR},
+      run_version_status = #{runVersionStatus,jdbcType=VARCHAR},
+      run_version_oper_time = #{runVersionOperTime,jdbcType=TIMESTAMP},
+      load_version_no = #{loadVersionNo,jdbcType=VARCHAR},
+      load_version_id = #{loadVersionId,jdbcType=BIGINT},
+      load_version_oper_time = #{loadVersionOperTime,jdbcType=TIMESTAMP},
       byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -551,7 +686,15 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      is_exist = #{isExist,jdbcType=BIT}
+      is_exist = #{isExist,jdbcType=BIT},
+      run_version_id = #{runVersionId,jdbcType=BIGINT},
+      run_version_no = #{runVersionNo,jdbcType=VARCHAR},
+      run_file_name = #{runFileName,jdbcType=VARCHAR},
+      run_version_status = #{runVersionStatus,jdbcType=VARCHAR},
+      run_version_oper_time = #{runVersionOperTime,jdbcType=TIMESTAMP},
+      load_version_no = #{loadVersionNo,jdbcType=VARCHAR},
+      load_version_id = #{loadVersionId,jdbcType=BIGINT},
+      load_version_oper_time = #{loadVersionOperTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

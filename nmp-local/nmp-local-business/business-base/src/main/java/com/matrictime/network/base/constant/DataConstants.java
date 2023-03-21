@@ -128,6 +128,7 @@ public class DataConstants {
 
 
 
+    public static final String KEY_SUCCESS ="success";
     public static final String URL_STATION_INSERT="/baseStation/insert";
     public static final String URL_STATION_UPDATE="/baseStation/update";
     public static final String URL_DEVICE_INSERT="/device/insert";
@@ -190,5 +191,16 @@ public class DataConstants {
     public static final double MAX_SIZE = 999.9;
 
     public static final int TEN=10;
+
+    public static final String LOAD_FILE = "/version/load";
+    public static final String LOAD_RUN_FILE = "/version/start";
+    public static final String RUN_FILE = "/version/run";
+    public static final String STOP_FILE = "/version/stop";
+    public static final String UNINSTALL_FILE = "/version/uninstall";
+
+
+    public static final String VERSION_INIT_STATUS = "1";
+    public static final String VERSION_RUN_STATUS = "2";
+    public static final String VERSION_STOP_STATUS = "3";
 
 }

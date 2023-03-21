@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 密钥分发和U盘
  * @author   hexu
- * @date   2022-10-25
+ * @date   2023-03-16
  */
 @Data
 public class NmplDevice {
@@ -116,13 +116,50 @@ public class NmplDevice {
     private Boolean isExist;
 
     /**
+     * 运行版本文件id
+     */
+    private Long runVersionId;
+
+    /**
+     * 运行版本号
+     */
+    private String runVersionNo;
+
+    /**
+     * 运行版本文件名称
+     */
+    private String runFileName;
+
+    /**
+     * 运行状态 1:未运行 2:运行中 3:已停止
+     */
+    private String runVersionStatus;
+
+    /**
+     * 运行版本操作时间
+     */
+    private Date runVersionOperTime;
+
+    /**
+     * 加载版本号
+     */
+    private String loadVersionNo;
+
+    /**
+     * 加载版本文件id
+     */
+    private Long loadVersionId;
+
+    /**
+     * 加载版本操作时间
+     */
+    private Date loadVersionOperTime;
+
+    /**
      * 设备入网码
      */
     private byte[] byteNetworkId;
 
-    /**
-     * true:是本机 false:不是本机
-     */
     private Boolean isLocal;
 
     public Boolean getLocal() {
@@ -299,6 +336,70 @@ public class NmplDevice {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public Long getRunVersionId() {
+        return runVersionId;
+    }
+
+    public void setRunVersionId(Long runVersionId) {
+        this.runVersionId = runVersionId;
+    }
+
+    public String getRunVersionNo() {
+        return runVersionNo;
+    }
+
+    public void setRunVersionNo(String runVersionNo) {
+        this.runVersionNo = runVersionNo == null ? null : runVersionNo.trim();
+    }
+
+    public String getRunFileName() {
+        return runFileName;
+    }
+
+    public void setRunFileName(String runFileName) {
+        this.runFileName = runFileName == null ? null : runFileName.trim();
+    }
+
+    public String getRunVersionStatus() {
+        return runVersionStatus;
+    }
+
+    public void setRunVersionStatus(String runVersionStatus) {
+        this.runVersionStatus = runVersionStatus == null ? null : runVersionStatus.trim();
+    }
+
+    public Date getRunVersionOperTime() {
+        return runVersionOperTime;
+    }
+
+    public void setRunVersionOperTime(Date runVersionOperTime) {
+        this.runVersionOperTime = runVersionOperTime;
+    }
+
+    public String getLoadVersionNo() {
+        return loadVersionNo;
+    }
+
+    public void setLoadVersionNo(String loadVersionNo) {
+        this.loadVersionNo = loadVersionNo == null ? null : loadVersionNo.trim();
+    }
+
+    public Long getLoadVersionId() {
+        return loadVersionId;
+    }
+
+    public void setLoadVersionId(Long loadVersionId) {
+        this.loadVersionId = loadVersionId;
+    }
+
+    public Date getLoadVersionOperTime() {
+        return loadVersionOperTime;
+    }
+
+    public void setLoadVersionOperTime(Date loadVersionOperTime) {
+        this.loadVersionOperTime = loadVersionOperTime;
     }
 
     public byte[] getByteNetworkId() {

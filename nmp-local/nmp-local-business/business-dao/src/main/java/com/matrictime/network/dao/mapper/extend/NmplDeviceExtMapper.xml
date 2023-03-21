@@ -83,7 +83,83 @@
     nbsi.station_random_seed,
     nbsi.relation_operator_id
   </sql>
+  <sql id="Base_Version_List">
+    id, device_id, device_name, device_type,is_exist, run_version_id, run_version_no, run_file_name,
+    run_version_status, run_version_oper_time, load_version_no, load_version_id, load_version_oper_time
+  </sql>
+  <resultMap id="BaseVersionMap" type="com.matrictime.network.modelVo.VersionInfoVo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_type" jdbcType="CHAR" property="deviceType" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="run_version_id" jdbcType="BIGINT" property="runVersionId" />
+    <result column="run_version_no" jdbcType="VARCHAR" property="runVersionNo" />
+    <result column="run_file_name" jdbcType="VARCHAR" property="runFileName" />
+    <result column="run_version_status" jdbcType="VARCHAR" property="runVersionStatus" />
+    <result column="run_version_oper_time" jdbcType="TIMESTAMP" property="runVersionOperTime" />
+    <result column="load_version_no" jdbcType="VARCHAR" property="loadVersionNo" />
+    <result column="load_version_id" jdbcType="BIGINT" property="loadVersionId" />
+    <result column="load_version_oper_time" jdbcType="TIMESTAMP" property="loadVersionOperTime" />
+  </resultMap>
 
+  <select id="queryLoadDataByCondition" resultMap="BaseVersionMap">
+    select
+    <include refid="Base_Version_List" />
+    from nmpl_device_info
+    <where>
+      <trim prefix="(" suffix=")" suffixOverrides="and">
+        <if test="id != null">
+          id = #{id,jdbcType=VARCHAR} and
+        </if>
+        <if test="deviceName != null">
+          device_name = #{deviceName,jdbcType=VARCHAR} and
+        </if>
+        <if test="deviceType != null">
+          device_type = #{deviceType,jdbcType=CHAR} and
+        </if>
+        <if test="isExist != null">
+          is_exist = #{isExist,jdbcType=BIT} and
+        </if>
+        <if test="loadVersionNo != null">
+          load_version_no = #{loadVersionNo,jdbcType=VARCHAR} and
+        </if>
+        <if test="runVersionStatus != null">
+          run_version_status = #{runVersionStatus,jdbcType=VARCHAR} and
+        </if>
+      </trim>
+    </where>
+    order by load_version_oper_time desc
+  </select>
+
+  <select id="queryRunDataByCondition" resultMap="BaseVersionMap">
+    select
+    <include refid="Base_Version_List" />
+    from nmpl_device_info
+    <where>
+      <trim prefix="(" suffix=")" suffixOverrides="and">
+        <if test="id != null">
+          id = #{id,jdbcType=VARCHAR} and
+        </if>
+        <if test="deviceName != null">
+          device_name = #{deviceName,jdbcType=VARCHAR} and
+        </if>
+        <if test="deviceType != null">
+          device_type = #{deviceType,jdbcType=CHAR} and
+        </if>
+        <if test="isExist != null">
+          is_exist = #{isExist,jdbcType=BIT} and
+        </if>
+        <if test="loadVersionNo != null">
+          load_version_no = #{loadVersionNo,jdbcType=VARCHAR} and
+        </if>
+        <if test="runVersionStatus != null">
+          run_version_status = #{runVersionStatus,jdbcType=VARCHAR} and
+        </if>
+      </trim>
+    </where>
+    order by run_version_oper_time desc
+  </select>
 
   <select id="selectDeviceListByMainDeviceId" parameterType="java.lang.String" resultMap="DeviceInfoMap">
     select

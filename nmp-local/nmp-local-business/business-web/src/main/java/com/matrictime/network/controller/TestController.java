@@ -2,26 +2,38 @@ package com.matrictime.network.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.ShellReq;
 import com.matrictime.network.request.UploadSingleFileReq;
+import com.matrictime.network.request.UploadVersionFileReq;
 import com.matrictime.network.response.UploadSingleFileResp;
+import com.matrictime.network.response.UploadVersionFileResp;
 import com.matrictime.network.service.UploadFileService;
 import com.matrictime.network.service.impl.AsyncService;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ShellUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
@@ -120,6 +132,22 @@ public class TestController extends SystemBaseService {
             log.error("shell exception:{}",e.getMessage());
         }
     }
+
+    @RequestMapping(value = "/upload",method = RequestMethod.POST)
+    public void upload(@RequestBody ShellReq shellReq){
+        try {
+            String path = shellReq.getPath();
+            String url = "http://192.168.72.34:8008/nmp-local-proxy/baseStation/uploadVersionFile";
+            Map<String,String> map = new HashMap<>();
+            map.put("systemId", "1");
+            Map<String,String> fileMap = new HashMap<>();
+            fileMap.put("file",path);
+            String post = HttpClientUtil.sendPost(url, null, map, fileMap, "UTF-8", "UTF-8");
+        }catch (Exception e){
+            log.error("shell exception:{}",e.getMessage());
+        }
+    }
+
 
 
 

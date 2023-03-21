@@ -105,4 +105,7 @@ public class ErrorMessageContants {
 
 	public static final String DEVICENAME_LENTH_ERROR_MSG="设备名长度超过限制";
 
+	public static final String NO_LOAD_VERSION = "所选设备已运行或无加载版本";
+
+	public static final String NO_DEVICE_CAN_RUN = "所选设备都无法执行命令";
 }
