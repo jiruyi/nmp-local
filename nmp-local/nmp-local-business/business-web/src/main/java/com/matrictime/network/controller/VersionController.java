@@ -34,9 +34,6 @@ public class VersionController {
     @Resource
     private VersionService versionService;
 
-    @Autowired(required = false)
-    private NmplVersionFileMapper nmplVersionFileMapper;
-
     @Resource
     private VersionControlService versionControlService;
 
@@ -44,11 +41,9 @@ public class VersionController {
     /**
      * 编辑版本信息
      * @author hexu
-     * @param req
+     * @param
      * @return
      */
-    @RequestMapping (value = "/editVersion",method = RequestMethod.POST)
-    @SystemLog(opermodul = "版本模块",operDesc = "编辑版本信息",operType = "操作",operLevl = "2")
     @RequiresPermissions("sys:version:save")
     @SystemLog(opermodul = "版本文件",operDesc = "上传版本文件",operType = "基站插入")
     @RequestMapping(value = "/uploadVersionFile",method = RequestMethod.POST)
@@ -90,37 +85,6 @@ public class VersionController {
             return versionService.deleteVersionFile(uploadVersionFileReq);
         }catch (Exception e){
             return new Result<>(false,e.getMessage());
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * 启动版本文件
-     * @author hexu
-     * @param req
-     * @return
-     */
-    @RequestMapping (value = "/startVersionFile",method = RequestMethod.POST)
-    @SystemLog(opermodul = "版本模块",operDesc = "启动版本文件",operType = "操作")
-    @RequiresPermissions("sys:version:start")
-    public Result<StartVersionFileResp> startVersionFile(@RequestBody StartVersionFileReq req){
-        try {
-            return  versionService.startVersionFile(req);
-        }catch (Exception e){
-            log.error("VersionController.startVersionFile exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
         }
     }
 
