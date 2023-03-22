@@ -433,10 +433,10 @@ public class AsyncService{
                                 nmplBaseStation.setRunVersionOperTime(new Date());
                                 nmplBaseStationMapper.updateByPrimaryKey(nmplBaseStation);
                             }
+                            result.put(s, true);
+                        }else {
+                            result.put(s, false);
                         }
-                        result.put(s, true);
-                    } else {
-                        result.put(s, false);
                     }
                 }
             } catch (Exception e) {

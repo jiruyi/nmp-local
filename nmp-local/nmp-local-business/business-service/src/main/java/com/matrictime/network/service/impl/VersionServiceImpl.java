@@ -31,9 +31,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         Result<Integer> result = new Result<>();
         try {
             //生成文件路径
-            //String filePath = getFilePath(uploadVersionFileReq);
-            String filePath = "C:\\Users\\LENOVO\\Desktop\\" + uploadVersionFileReq.getSystemType() + "\\" +
-                    uploadVersionFileReq.getVersionNo() + "\\" + uploadVersionFileReq.getFile().getOriginalFilename();
+            String filePath = getFilePath(uploadVersionFileReq);
+//            String filePath = "C:\\Users\\LENOVO\\Desktop\\" + uploadVersionFileReq.getSystemType() + "\\" +
+//                    uploadVersionFileReq.getVersionNo() + "\\" + uploadVersionFileReq.getFile().getOriginalFilename();
             uploadVersionFileReq.setFilePath(filePath);
             //操作数据库文件表
             int insertFlag = fileVersionDomainService.insertFileVersion(uploadVersionFileReq);
@@ -55,9 +55,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         Result result = new Result<>();
         try {
             //生成文件路径
-            //String filePath = getFilePath(uploadVersionFileReq);
-            String filePath = "C:\\Users\\LENOVO\\Desktop\\" + uploadVersionFileReq.getSystemType() + "\\" +
-                    uploadVersionFileReq.getVersionNo() + "\\" + uploadVersionFileReq.getFile().getOriginalFilename();
+            String filePath = getFilePath(uploadVersionFileReq);
+//            String filePath = "C:\\Users\\LENOVO\\Desktop\\" + uploadVersionFileReq.getSystemType() + "\\" +
+//                    uploadVersionFileReq.getVersionNo() + "\\" + uploadVersionFileReq.getFile().getOriginalFilename();
             uploadVersionFileReq.setFilePath(filePath);
             int updateFlag = fileVersionDomainService.updateFileVersion(uploadVersionFileReq);
             UploadFileUtils uploadFileUtils = new UploadFileUtils();

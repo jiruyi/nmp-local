@@ -88,7 +88,7 @@ public class VersionController {
         }
     }
 
-    //-------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------
 
 
     /**
@@ -99,7 +99,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/loadVersionFile",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "加载版本文件",operType = "加载版本")
-    //@RequiresPermissions("sys:loadVersion:load")
+    @RequiresPermissions("sys:versionControl:load")
     public Result loadVersionFile(@RequestBody VersionReq req){
         return versionControlService.loadVersionFile(req);
     }
@@ -112,7 +112,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/queryLoadVersion",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "查询加载版本列表",operType = "查询加载版本")
-    //@RequiresPermissions("sys:loadVersion:query")
+    @RequiresPermissions("sys:versionControl:queryLoadVersion")
     public Result<PageInfo> queryLoadVersion(@RequestBody VersionReq req){
         return versionControlService.queryLoadVersion(req);
     }
@@ -125,7 +125,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/runLoadVersionFile",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "启动已加载文件",operType = "启动已记载版本")
-    //@RequiresPermissions("sys:loadVersion:run")
+    @RequiresPermissions("sys:versionControl:loadAndRun")
     public Result runLoadVersionFile(@RequestBody VersionReq req){
         return versionControlService.runLoadVersionFile(req);
     }
@@ -140,7 +140,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/runVersion",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "启动已停止版本",operType = "启动版本")
-    //@RequiresPermissions("sys:runVersion:run")
+    @RequiresPermissions("sys:versionControl:run")
     public Result runVersion(@RequestBody VersionReq req){
         return versionControlService.runVersion(req);
     }
@@ -153,7 +153,7 @@ public class VersionController {
      */
     @RequestMapping (value = "/queryRunVersion",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "查询运行版本列表",operType = "查询运行版本列表")
-//    @RequiresPermissions("sys:runVersion:query")
+    @RequiresPermissions("sys:versionControl:queryRunVersion")
     public Result<PageInfo> queryRunVersion(@RequestBody VersionReq req){
         return versionControlService.queryRunVersion(req);
     }
@@ -166,20 +166,20 @@ public class VersionController {
      */
     @RequestMapping (value = "/stopRunVersion",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "停止已运行版本",operType = "停止版本")
-    //@RequiresPermissions("sys:runVersion:stop")
+    @RequiresPermissions("sys:versionControl:stop")
     public Result stopRunVersion(@RequestBody VersionReq req){
         return versionControlService.stopRunVersion(req);
     }
 
     /**
-     * 停止运行版本文件
+     * 卸载运行版本文件
      * @author zyj
      * @param req
      * @return
      */
     @RequestMapping (value = "/uninstallRunVersion",method = RequestMethod.POST)
     @SystemLog(opermodul = "版本模块",operDesc = "卸载已停止版本",operType = "卸载版本")
-    //@RequiresPermissions("sys:runVersion:uninstall")
+    @RequiresPermissions("sys:versionControl:uninstall")
     public Result uninstallRunVersion(@RequestBody VersionReq req){
         return versionControlService.uninstallRunVersion(req);
     }
