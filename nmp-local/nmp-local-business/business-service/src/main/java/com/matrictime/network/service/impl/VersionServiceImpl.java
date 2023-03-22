@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.util.UploadFileUtils;
 import com.matrictime.network.dao.domain.FileVersionDomainService;
 import com.matrictime.network.model.Result;
@@ -106,8 +107,8 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
 
     private String getFilePath(UploadVersionFileReq uploadVersionFileReq){
         return versionPath + uploadVersionFileReq.getSystemType() +
-                File.pathSeparator + uploadVersionFileReq.getVersionNo() +
-                File.pathSeparator + uploadVersionFileReq.getFileName();
+                DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getVersionNo() +
+                DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getFileName();
     }
 
 }

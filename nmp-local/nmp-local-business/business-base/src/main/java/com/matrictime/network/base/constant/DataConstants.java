@@ -27,6 +27,8 @@ public class DataConstants {
 
     public static final Integer FILE_UPDATE_SUCCESS = 5;
 
+    public static final String LINUX_SEPARATOR = "/";
+
     public static final String USER_LOGIN_STATUS = "_login_status";
 
     public static final String PASSWORD_ERROR_INIT_VALUE = "1:N";
