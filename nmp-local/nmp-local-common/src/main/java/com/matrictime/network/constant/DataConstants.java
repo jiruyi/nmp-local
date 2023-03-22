@@ -99,6 +99,11 @@ public class DataConstants {
 
     public static final int RETURN_SUCCESS = 1;
 
+    public static final String VERSION_SHELL_RES_KEY = "action_result:";
 
+    public static final String VERSION_SHELL_RES_SUCCESS = "success";
+    public static final String VERSION_SHELL_RES_FAIL = "fail";
+
+    public static final String VERSION_SHELL_ERR_KEY = "action_err_msg:";
 
 }
