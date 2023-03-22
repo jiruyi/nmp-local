@@ -108,7 +108,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
     private String getFilePath(UploadVersionFileReq uploadVersionFileReq){
         return versionPath + uploadVersionFileReq.getSystemType() +
                 DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getVersionNo() +
-                DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getFileName();
+                DataConstants.LINUX_SEPARATOR;
     }
 
 }
