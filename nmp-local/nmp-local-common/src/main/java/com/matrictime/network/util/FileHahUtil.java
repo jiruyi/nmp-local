@@ -78,7 +78,7 @@ public class FileHahUtil {
     public static void main(String[] args) {
 
         try {
-            File file = new File("C:\\Users\\Administrator\\Desktop\\test\\zk.tar.gz");
+            File file = new File("C:\\Users\\Administrator\\Desktop\\test\\QKC.Pri-3.0.15.20230309.tar.gz");
             String md5HashCode = FileHahUtil.md5HashCode(new FileInputStream(file));
             System.out.println(md5HashCode);
             System.out.println(FileHahUtil.hashFile(file));

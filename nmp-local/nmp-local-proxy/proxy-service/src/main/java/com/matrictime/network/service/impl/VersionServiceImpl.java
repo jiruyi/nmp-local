@@ -85,18 +85,24 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             String operDir = getOpenDir(request.getUploadPath(), request.getFileName());
 
             // 安装
-//            String installFileName = operDir+OPER_INSTALL;
-//            File installFile = new File(installFileName);
-//            if (!installFile.exists()){
-//                throw new SystemException(installFileName+FILE_NOT_EXIST);
-//            }
-//
-//            List<String> install = getShellList();
-//            install.add(installFileName);
-//            Integer installRes = ShellUtil.runShell(install);
-//            if (!installRes.equals(NumberUtils.INTEGER_ZERO)){
-//                throw new SystemException(INSTALL_FAIL);
-//            }
+            String installFileName = operDir+OPER_INSTALL;
+            File installFile = new File(installFileName);
+            if (!installFile.exists()){
+                throw new SystemException(installFileName+FILE_NOT_EXIST);
+            }
+
+            List<String> install = getShellList();
+            install.add(installFileName);
+            install.add(operDir);
+            Result installRes = ShellUtil.runShell(install);
+            if (!installRes.isSuccess()){
+                StringBuffer errorMsg = new StringBuffer(INSTALL_FAIL);
+                if (!ParamCheckUtil.checkVoStrBlank(installRes.getErrorMsg())){
+                    errorMsg.append(KEY_SPLIT);
+                    errorMsg.append(installRes.getErrorMsg());
+                }
+                throw new SystemException(errorMsg.toString());
+            }
 
             // 启动
             String runFileName = operDir+OPER_RUN;
@@ -106,9 +112,14 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             }
             List<String> run = getShellList();
             run.add(runFileName);
-            Integer runRes = ShellUtil.runShell(run);
-            if (!runRes.equals(NumberUtils.INTEGER_ZERO)){
-                throw new SystemException(RUN_FAIL);
+            Result runRes = ShellUtil.runShell(run);
+            if (!runRes.isSuccess()){
+                StringBuffer errorMsg = new StringBuffer(RUN_FAIL);
+                if (!ParamCheckUtil.checkVoStrBlank(runRes.getErrorMsg())){
+                    errorMsg.append(KEY_SPLIT);
+                    errorMsg.append(runRes.getErrorMsg());
+                }
+                throw new SystemException(errorMsg.toString());
             }
 
         }catch (SystemException e){
@@ -136,9 +147,14 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             }
             List<String> run = getShellList();
             run.add(runFileName);
-            Integer runRes = ShellUtil.runShell(run);
-            if (!runRes.equals(NumberUtils.INTEGER_ZERO)){
-                throw new SystemException(RUN_FAIL);
+            Result runRes = ShellUtil.runShell(run);
+            if (!runRes.isSuccess()){
+                StringBuffer errorMsg = new StringBuffer(RUN_FAIL);
+                if (!ParamCheckUtil.checkVoStrBlank(runRes.getErrorMsg())){
+                    errorMsg.append(KEY_SPLIT);
+                    errorMsg.append(runRes.getErrorMsg());
+                }
+                throw new SystemException(errorMsg.toString());
             }
 
         }catch (SystemException e){
@@ -166,9 +182,14 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             }
             List<String> stop = getShellList();
             stop.add(stopFileName);
-            Integer stopRes = ShellUtil.runShell(stop);
-            if (!stopRes.equals(NumberUtils.INTEGER_ZERO)){
-                throw new SystemException(STOP_FAIL);
+            Result stopRes = ShellUtil.runShell(stop);
+            if (!stopRes.isSuccess()){
+                StringBuffer errorMsg = new StringBuffer(STOP_FAIL);
+                if (!ParamCheckUtil.checkVoStrBlank(stopRes.getErrorMsg())){
+                    errorMsg.append(KEY_SPLIT);
+                    errorMsg.append(stopRes.getErrorMsg());
+                }
+                throw new SystemException(errorMsg.toString());
             }
 
         }catch (SystemException e){
@@ -196,20 +217,25 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             }
             List<String> uninstall = getShellList();
             uninstall.add(uninstallFileName);
-            Integer stopRes = ShellUtil.runShell(uninstall);
+            Result uninstallRes = ShellUtil.runShell(uninstall);
 
 
-            if (stopRes.equals(NumberUtils.INTEGER_ZERO)){
+            if (uninstallRes.isSuccess()){
                 List<String> rmrf = new ArrayList<>();
                 rmrf.add("rm");
                 rmrf.add("-rf");
                 rmrf.add(request.getUploadPath());
-                Integer rmrfRes = ShellUtil.runShell(rmrf);
-                if (!rmrfRes.equals(NumberUtils.INTEGER_ZERO)){
-                    throw new SystemException(UNINSTALL_FAIL);
+                Result rmrfRes = ShellUtil.baseRunShell(rmrf);
+                if (!rmrfRes.isSuccess()){
+                    log.warn("移除目录{}失败",request.getUploadPath());
                 }
             }else {
-                throw new SystemException(UNINSTALL_FAIL);
+                StringBuffer errorMsg = new StringBuffer(UNINSTALL_FAIL);
+                if (!ParamCheckUtil.checkVoStrBlank(uninstallRes.getErrorMsg())){
+                    errorMsg.append(KEY_SPLIT);
+                    errorMsg.append(uninstallRes.getErrorMsg());
+                }
+                throw new SystemException(errorMsg.toString());
             }
 
         }catch (SystemException e){

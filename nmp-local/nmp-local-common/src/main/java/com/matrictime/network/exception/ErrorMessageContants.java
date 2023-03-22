@@ -124,4 +124,6 @@ public class ErrorMessageContants {
 
 	public static final String UNINSTALL_FAIL = "卸载失败";
 
+	public static final String RUN_SHELL_EXCEPTION = "运行脚本异常";
+
 }
