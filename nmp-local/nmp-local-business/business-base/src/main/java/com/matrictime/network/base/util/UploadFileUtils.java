@@ -20,7 +20,7 @@ public class UploadFileUtils {
 
     public Result<Integer> uploadFile(UploadVersionFileReq uploadVersionFileReq, Integer fileIsExit){
         Result result = new Result<>();
-        String filePath = uploadVersionFileReq.getFilePath();
+        String filePath = uploadVersionFileReq.getFilePath() + uploadVersionFileReq.getFileName();
         File dest = new File(filePath);
         try{
             String substring = uploadVersionFileReq.getFileSize().
