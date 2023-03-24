@@ -212,4 +212,8 @@ public class DataConstants {
     public static final String VERSION_RUN_STATUS = "2";
     public static final String VERSION_STOP_STATUS = "3";
 
+    public static final String SYSTEM_QIBS = "QIBS";
+    public static final String SYSTEM_QEBS = "QEBS";
+    public static final String SYSTEM_QKC = "QKC";
+
 }

@@ -349,28 +349,7 @@ public class AsyncService{
                     Object success = jsonObject.get(KEY_SUCCESS);
                     if (success != null && success instanceof Boolean) {
                         if ((Boolean) success) {
-                            //根据设备类别更新表
-                            if(nmplVersionInfo.getSystemType().equals("QKC")){
-                                NmplDevice nmplDevice = new NmplDevice();
-                                nmplDevice.setDeviceId(s);
-                                nmplDevice.setLoadVersionId(nmplVersionInfo.getId());
-                                nmplDevice.setLoadVersionNo(nmplVersionInfo.getVersionNo());
-                                nmplDevice.setLoadVersionOperTime(new Date());
-                                nmplDevice.setLoadFileName(nmplVersionInfo.getFileName());
-                                NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
-                                nmplDeviceExample.createCriteria().andDeviceIdEqualTo(s);
-                                nmplDeviceMapper.updateByExampleSelective(nmplDevice,nmplDeviceExample);
-                            }else {
-                                NmplBaseStation nmplBaseStation = new NmplBaseStation();
-                                nmplBaseStation.setStationId(s);
-                                nmplBaseStation.setLoadVersionId(nmplVersionInfo.getId());
-                                nmplBaseStation.setLoadVersionNo(nmplVersionInfo.getVersionNo());
-                                nmplBaseStation.setLoadVersionOperTime(new Date());
-                                nmplBaseStation.setLoadFileName(nmplVersionInfo.getFileName());
-                                NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
-                                nmplBaseStationExample.createCriteria().andStationIdEqualTo(s);
-                                nmplBaseStationMapper.updateByExampleSelective(nmplBaseStation,nmplBaseStationExample);
-                            }
+                            updateDeviceLoadStatus(nmplVersionInfo,s);
                         }
                     }
                 }
@@ -399,40 +378,7 @@ public class AsyncService{
                     Object success = jsonObject.get(KEY_SUCCESS);
                     if (success != null && success instanceof Boolean) {
                         if ((Boolean) success) {
-                            //根据设备类别更新表
-                            if (nmplVersionInfo.getSystemType().equals("QKC")) {
-                                NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
-                                nmplDeviceExample.createCriteria().andDeviceIdEqualTo(s);
-                                NmplDevice nmplDevice = nmplDeviceMapper.selectByExample(nmplDeviceExample).get(0);
-                                nmplDevice.setRunVersionStatus(updateStatus);
-                                if (updateStatus.equals(VERSION_INIT_STATUS)) {
-                                    nmplDevice.setRunVersionNo(null);
-                                    nmplDevice.setRunFileName(null);
-                                    nmplDevice.setRunVersionId(null);
-                                } else {
-                                    nmplDevice.setRunVersionNo(nmplVersionInfo.getVersionNo());
-                                    nmplDevice.setRunFileName(nmplVersionInfo.getFileName());
-                                    nmplDevice.setRunVersionId(nmplVersionInfo.getId());
-                                }
-                                nmplDevice.setRunVersionOperTime(new Date());
-                                nmplDeviceMapper.updateByPrimaryKey(nmplDevice);
-                            } else {
-                                NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
-                                nmplBaseStationExample.createCriteria().andStationIdEqualTo(s);
-                                NmplBaseStation nmplBaseStation = nmplBaseStationMapper.selectByExample(nmplBaseStationExample).get(0);
-                                nmplBaseStation.setRunVersionStatus(updateStatus);
-                                if (updateStatus.equals(VERSION_INIT_STATUS)) {
-                                    nmplBaseStation.setRunVersionNo(null);
-                                    nmplBaseStation.setRunFileName(null);
-                                    nmplBaseStation.setRunVersionId(null);
-                                } else {
-                                    nmplBaseStation.setRunVersionNo(nmplVersionInfo.getVersionNo());
-                                    nmplBaseStation.setRunFileName(nmplVersionInfo.getFileName());
-                                    nmplBaseStation.setRunVersionId(nmplVersionInfo.getId());
-                                }
-                                nmplBaseStation.setRunVersionOperTime(new Date());
-                                nmplBaseStationMapper.updateByPrimaryKey(nmplBaseStation);
-                            }
+                            updateDeviceRunStatus(nmplVersionInfo,updateStatus,s);
                             result.put(s, true);
                         }else {
                             result.put(s, false);
@@ -448,8 +394,78 @@ public class AsyncService{
     }
 
 
+    /**
+     *
+     * @param nmplVersionInfo 版本信息
+     * @param updateStatus 更新的设备运行状态
+     * @param deviceId 设备id
+     */
+    private void updateDeviceRunStatus(NmplVersionInfo nmplVersionInfo,String updateStatus,String deviceId){
+        //根据设备类别更新表
+        if (nmplVersionInfo.getSystemType().equals(SYSTEM_QKC)) {
+            NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
+            nmplDeviceExample.createCriteria().andDeviceIdEqualTo(deviceId);
+            NmplDevice nmplDevice = nmplDeviceMapper.selectByExample(nmplDeviceExample).get(0);
+            nmplDevice.setRunVersionStatus(updateStatus);
+            if (updateStatus.equals(VERSION_INIT_STATUS)) {
+                nmplDevice.setRunVersionNo(null);
+                nmplDevice.setRunFileName(null);
+                nmplDevice.setRunVersionId(null);
+            } else {
+                nmplDevice.setRunVersionNo(nmplVersionInfo.getVersionNo());
+                nmplDevice.setRunFileName(nmplVersionInfo.getFileName());
+                nmplDevice.setRunVersionId(nmplVersionInfo.getId());
+            }
+            nmplDevice.setRunVersionOperTime(new Date());
+            nmplDeviceMapper.updateByPrimaryKey(nmplDevice);
+        } else {
+            NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
+            nmplBaseStationExample.createCriteria().andStationIdEqualTo(deviceId);
+            NmplBaseStation nmplBaseStation = nmplBaseStationMapper.selectByExample(nmplBaseStationExample).get(0);
+            nmplBaseStation.setRunVersionStatus(updateStatus);
+            if (updateStatus.equals(VERSION_INIT_STATUS)) {
+                nmplBaseStation.setRunVersionNo(null);
+                nmplBaseStation.setRunFileName(null);
+                nmplBaseStation.setRunVersionId(null);
+            } else {
+                nmplBaseStation.setRunVersionNo(nmplVersionInfo.getVersionNo());
+                nmplBaseStation.setRunFileName(nmplVersionInfo.getFileName());
+                nmplBaseStation.setRunVersionId(nmplVersionInfo.getId());
+            }
+            nmplBaseStation.setRunVersionOperTime(new Date());
+            nmplBaseStationMapper.updateByPrimaryKey(nmplBaseStation);
+        }
+    }
 
 
-
+    /**
+     *
+     * @param nmplVersionInfo 版本信息
+     * @param deviceId 设备id
+     */
+    private void updateDeviceLoadStatus(NmplVersionInfo nmplVersionInfo,String deviceId){
+        //根据设备类别更新表
+        if(nmplVersionInfo.getSystemType().equals(SYSTEM_QKC)){
+            NmplDevice nmplDevice = new NmplDevice();
+            nmplDevice.setDeviceId(deviceId);
+            nmplDevice.setLoadVersionId(nmplVersionInfo.getId());
+            nmplDevice.setLoadVersionNo(nmplVersionInfo.getVersionNo());
+            nmplDevice.setLoadVersionOperTime(new Date());
+            nmplDevice.setLoadFileName(nmplVersionInfo.getFileName());
+            NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
+            nmplDeviceExample.createCriteria().andDeviceIdEqualTo(deviceId);
+            nmplDeviceMapper.updateByExampleSelective(nmplDevice,nmplDeviceExample);
+        }else {
+            NmplBaseStation nmplBaseStation = new NmplBaseStation();
+            nmplBaseStation.setStationId(deviceId);
+            nmplBaseStation.setLoadVersionId(nmplVersionInfo.getId());
+            nmplBaseStation.setLoadVersionNo(nmplVersionInfo.getVersionNo());
+            nmplBaseStation.setLoadVersionOperTime(new Date());
+            nmplBaseStation.setLoadFileName(nmplVersionInfo.getFileName());
+            NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
+            nmplBaseStationExample.createCriteria().andStationIdEqualTo(deviceId);
+            nmplBaseStationMapper.updateByExampleSelective(nmplBaseStation,nmplBaseStationExample);
+        }
+    }
 
 }
