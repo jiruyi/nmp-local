@@ -36,6 +36,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.Future;
 
+import static com.matrictime.network.base.constant.DataConstants.SYSTEM_ID_1;
+import static com.matrictime.network.base.exception.ErrorMessageContants.PARAM_IS_NULL_MSG;
 import static com.matrictime.network.base.exception.ErrorMessageContants.PARAM_LENTH_ERROR_MSG;
 
 @Slf4j
@@ -97,7 +99,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                throw new SystemException("版本文件不存在,请重新上传版本文件");
             }
 
-            if(req.getDeviceType().equals("11")){
+            if(SYSTEM_ID_1.equals(req.getDeviceType())){
                 //设备表更新 全部推送或选择推送
                 List<NmplDevice> nmplDevices = new ArrayList<>();
                 if(!req.getTotal()){
@@ -167,20 +169,20 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
      */
     @Override
     public Result<PageInfo> queryLoadVersion(VersionReq req) {
+        checkParam(req);
         PageInfo<VersionInfoVo> pageResult =  new PageInfo<>();
-        if(!req.getDeviceType().equals("11")){
-            Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
-            List<VersionInfoVo> versionInfoVoList = nmplBaseStationExtMapper.queryLoadDataByCondition(req);
-            pageResult.setList(versionInfoVoList);
-            pageResult.setCount((int) page.getTotal());
-            pageResult.setPages(page.getPages());
+        Page page;
+        List<VersionInfoVo> versionInfoVoList = new ArrayList<>();
+        if(!SYSTEM_ID_1.equals(req.getDeviceType())){
+            page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
+            versionInfoVoList = nmplBaseStationExtMapper.queryLoadDataByCondition(req);
         }else {
-            Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
-            List<VersionInfoVo> versionInfoVoList = nmplDeviceExtMapper.queryLoadDataByCondition(req);
-            pageResult.setList(versionInfoVoList);
-            pageResult.setCount((int) page.getTotal());
-            pageResult.setPages(page.getPages());
+            page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
+            versionInfoVoList = nmplDeviceExtMapper.queryLoadDataByCondition(req);
         }
+        pageResult.setList(versionInfoVoList);
+        pageResult.setCount((int) page.getTotal());
+        pageResult.setPages(page.getPages());
         return buildResult(pageResult);
     }
 
@@ -191,20 +193,20 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
      */
     @Override
     public Result<PageInfo> queryRunVersion(VersionReq req) {
+        checkParam(req);
         PageInfo<VersionInfoVo> pageResult =  new PageInfo<>();
-        if(!req.getDeviceType().equals("11")){
-            Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
-            List<VersionInfoVo> versionInfoVoList = nmplBaseStationExtMapper.queryRunDataByCondition(req);
-            pageResult.setList(versionInfoVoList);
-            pageResult.setCount((int) page.getTotal());
-            pageResult.setPages(page.getPages());
+        Page page;
+        List<VersionInfoVo> versionInfoVoList = new ArrayList<>();
+        if(!SYSTEM_ID_1.equals(req.getDeviceType())){
+            page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
+            versionInfoVoList = nmplBaseStationExtMapper.queryRunDataByCondition(req);
         }else {
-            Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
-            List<VersionInfoVo> versionInfoVoList = nmplDeviceExtMapper.queryRunDataByCondition(req);
-            pageResult.setList(versionInfoVoList);
-            pageResult.setCount((int) page.getTotal());
-            pageResult.setPages(page.getPages());
+            page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
+            versionInfoVoList = nmplDeviceExtMapper.queryRunDataByCondition(req);
         }
+        pageResult.setList(versionInfoVoList);
+        pageResult.setCount((int) page.getTotal());
+        pageResult.setPages(page.getPages());
         return buildResult(pageResult);
     }
 
@@ -220,7 +222,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
             checkParam(req);
             String updateRunStatus = DataConstants.VERSION_RUN_STATUS;
             Map<String,Boolean> result =  new HashMap<>();
-            if(req.getDeviceType().equals("11")){
+            if(SYSTEM_ID_1.equals(req.getDeviceType())){
                 //设备表更新 全部或选择加载启动
                 List<NmplDevice> nmplDevices = new ArrayList<>();
                 if(!req.getTotal()){
@@ -393,15 +395,18 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
 
 
     private void checkParam(VersionReq req){
-        if(req.getDeviceName()!=null){
+        if(!StringUtils.isEmpty(req.getDeviceName())){
             if(!CommonCheckUtil.checkStringLength(req.getDeviceName(),null,16)){
                 throw new com.matrictime.network.base.SystemException(PARAM_LENTH_ERROR_MSG);
             }
         }
-        if(req.getLoadVersionNo()!=null){
+        if(!StringUtils.isEmpty(req.getLoadVersionNo())){
             if(!CommonCheckUtil.checkStringLength(req.getLoadVersionNo(),null,16)){
                 throw new com.matrictime.network.base.SystemException(PARAM_LENTH_ERROR_MSG);
             }
+        }
+        if(StringUtils.isEmpty(req.getDeviceType())){
+            throw new com.matrictime.network.base.SystemException(PARAM_IS_NULL_MSG);
         }
     }
 
@@ -465,7 +470,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
      */
     private Result flowStatus(VersionReq req,String updateRunStatus,String filterStatus,String urlSuffix)throws Exception{
         Map<String,Boolean> result =  new HashMap<>();
-        if(req.getDeviceType().equals("11")){
+        if(SYSTEM_ID_1.equals(req.getDeviceType())){
             //设备表更新 全部或选择加载启动
             List<NmplDevice> nmplDevices = new ArrayList<>();
             if(!req.getTotal()){
