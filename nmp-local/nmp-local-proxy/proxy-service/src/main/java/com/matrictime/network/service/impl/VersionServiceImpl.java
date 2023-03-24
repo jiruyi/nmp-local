@@ -13,7 +13,6 @@ import com.matrictime.network.util.ParamCheckUtil;
 import com.matrictime.network.util.ShellUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +28,12 @@ import static com.matrictime.network.exception.ErrorMessageContants.*;
 @Service
 @Slf4j
 public class VersionServiceImpl extends SystemBaseService implements VersionService {
+
+    /**
+     * 加载版本
+     * @param request
+     * @return
+     */
     @Override
     public Result load(VersionLoadReq request) {
         Result result = new Result<>();
@@ -44,6 +49,8 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             }
 
             dest = new File(request.getUploadPath() + request.getFileName());
+            boolean b = dest.setExecutable(true);
+            log.info("setExecutable result:{}",b);
             // 如果pathAll路径不存在，则创建相关该路径涉及的文件夹;
             if (!dest.getParentFile().exists()) {
                 dest.getParentFile().mkdirs();
@@ -68,58 +75,53 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         return result;
     }
 
+    /**
+     * 加载运行版本
+     * @param request
+     * @return
+     */
     @Override
     public Result<Integer> start(VersionStartReq request) {
         Result result = new Result<>();
         try{
             checkStartParam(request);
 
+            // 判断解压文件是否存在
             String tarGzFileName = request.getUploadPath()+request.getFileName();
             File tarGzFile = new File(tarGzFileName);
-            if (!tarGzFile.exists()){
-                throw new SystemException(tarGzFileName+FILE_NOT_EXIST);
-            }
+            fileIsExist(tarGzFile,tarGzFileName);
 
             // 解压
-            FileUtils.decompressTarGz(tarGzFile,request.getUploadPath());
+//            FileUtils.decompressTarGz(tarGzFile,request.getUploadPath());
+            List<String> tarGz = getShellParam(request.getFileName(),OPER_TARGZ);
+            int tarGzRes = ShellUtil.runShell(tarGz,request.getUploadPath());
+            if (tarGzRes != 0){
+                log.warn(tarGzFileName+UNZIP_FAIL);
+                throw new SystemException(INSTALL_FAIL);
+            }
+
             String operDir = getOpenDir(request.getUploadPath(), request.getFileName());
 
             // 安装
             String installFileName = operDir+OPER_INSTALL;
             File installFile = new File(installFileName);
-            if (!installFile.exists()){
-                throw new SystemException(installFileName+FILE_NOT_EXIST);
-            }
+            fileIsExist(installFile,installFileName);
 
-            List<String> install = getShellList();
-            install.add(installFileName);
-            install.add(operDir);
-            Result installRes = ShellUtil.runShell(install);
-            if (!installRes.isSuccess()){
-                StringBuffer errorMsg = new StringBuffer(INSTALL_FAIL);
-                if (!ParamCheckUtil.checkVoStrBlank(installRes.getErrorMsg())){
-                    errorMsg.append(KEY_SPLIT);
-                    errorMsg.append(installRes.getErrorMsg());
-                }
-                throw new SystemException(errorMsg.toString());
+            List<String> install = getShellParam(operDir,OPER_INSTALL);
+            int installRes = ShellUtil.runShell(install,operDir);
+            if (installRes != 0){
+                throw new SystemException(INSTALL_FAIL);
             }
 
             // 启动
             String runFileName = operDir+OPER_RUN;
             File runFile = new File(runFileName);
-            if (!runFile.exists()){
-                throw new SystemException(runFileName+FILE_NOT_EXIST);
-            }
-            List<String> run = getShellList();
-            run.add(runFileName);
-            Result runRes = ShellUtil.runShell(run);
-            if (!runRes.isSuccess()){
-                StringBuffer errorMsg = new StringBuffer(RUN_FAIL);
-                if (!ParamCheckUtil.checkVoStrBlank(runRes.getErrorMsg())){
-                    errorMsg.append(KEY_SPLIT);
-                    errorMsg.append(runRes.getErrorMsg());
-                }
-                throw new SystemException(errorMsg.toString());
+            fileIsExist(runFile,runFileName);
+
+            List<String> run = getShellParam(operDir,OPER_RUN);
+            int runRes = ShellUtil.runShell(run,null);
+            if (runRes != 0){
+                throw new SystemException(RUN_FAIL);
             }
 
         }catch (SystemException e){
@@ -132,6 +134,11 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         return result;
     }
 
+    /**
+     * 运行
+     * @param request
+     * @return
+     */
     @Override
     public Result<Integer> run(VersionRunReq request) {
         Result result = new Result<>();
@@ -142,19 +149,12 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             String operDir = getOpenDir(request.getUploadPath(), request.getFileName());
             String runFileName = operDir+OPER_RUN;
             File runFile = new File(runFileName);
-            if (!runFile.exists()){
-                throw new SystemException(runFileName+FILE_NOT_EXIST);
-            }
-            List<String> run = getShellList();
-            run.add(runFileName);
-            Result runRes = ShellUtil.runShell(run);
-            if (!runRes.isSuccess()){
-                StringBuffer errorMsg = new StringBuffer(RUN_FAIL);
-                if (!ParamCheckUtil.checkVoStrBlank(runRes.getErrorMsg())){
-                    errorMsg.append(KEY_SPLIT);
-                    errorMsg.append(runRes.getErrorMsg());
-                }
-                throw new SystemException(errorMsg.toString());
+            fileIsExist(runFile,runFileName);
+
+            List<String> run = getShellParam(operDir,OPER_RUN);
+            int runRes = ShellUtil.runShell(run,null);
+            if (runRes != 0){
+                throw new SystemException(RUN_FAIL);
             }
 
         }catch (SystemException e){
@@ -167,6 +167,11 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         return result;
     }
 
+    /**
+     * 停止
+     * @param request
+     * @return
+     */
     @Override
     public Result<Integer> stop(VersionStopReq request) {
         Result result = new Result<>();
@@ -177,19 +182,12 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             String operDir = getOpenDir(request.getUploadPath(), request.getFileName());
             String stopFileName = operDir+OPER_STOP;
             File stopFile = new File(stopFileName);
-            if (!stopFile.exists()){
-                throw new SystemException(stopFileName+FILE_NOT_EXIST);
-            }
-            List<String> stop = getShellList();
-            stop.add(stopFileName);
-            Result stopRes = ShellUtil.runShell(stop);
-            if (!stopRes.isSuccess()){
-                StringBuffer errorMsg = new StringBuffer(STOP_FAIL);
-                if (!ParamCheckUtil.checkVoStrBlank(stopRes.getErrorMsg())){
-                    errorMsg.append(KEY_SPLIT);
-                    errorMsg.append(stopRes.getErrorMsg());
-                }
-                throw new SystemException(errorMsg.toString());
+            fileIsExist(stopFile,stopFileName);
+
+            List<String> stop = getShellParam(operDir,OPER_STOP);
+            int stopRes = ShellUtil.runShell(stop,null);
+            if (stopRes != 0){
+                throw new SystemException(STOP_FAIL);
             }
 
         }catch (SystemException e){
@@ -202,6 +200,11 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         return result;
     }
 
+    /**
+     * 卸载
+     * @param request
+     * @return
+     */
     @Override
     public Result<Integer> uninstall(VersionUninstallReq request) {
         Result result = new Result<>();
@@ -212,31 +215,14 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
             String operDir = getOpenDir(request.getUploadPath(), request.getFileName());
             String uninstallFileName = operDir+OPER_UNINSTALL;
             File uninstallFile = new File(uninstallFileName);
-            if (!uninstallFile.exists()){
-                throw new SystemException(uninstallFileName+FILE_NOT_EXIST);
-            }
-            List<String> uninstall = getShellList();
-            uninstall.add(uninstallFileName);
-            Result uninstallRes = ShellUtil.runShell(uninstall);
+            fileIsExist(uninstallFile,uninstallFileName);
 
-
-            if (uninstallRes.isSuccess()){
-                List<String> rmrf = new ArrayList<>();
-                rmrf.add("rm");
-                rmrf.add("-rf");
-                rmrf.add(request.getUploadPath());
-                Result rmrfRes = ShellUtil.baseRunShell(rmrf);
-                if (!rmrfRes.isSuccess()){
-                    log.warn("移除目录{}失败",request.getUploadPath());
-                }
-            }else {
-                StringBuffer errorMsg = new StringBuffer(UNINSTALL_FAIL);
-                if (!ParamCheckUtil.checkVoStrBlank(uninstallRes.getErrorMsg())){
-                    errorMsg.append(KEY_SPLIT);
-                    errorMsg.append(uninstallRes.getErrorMsg());
-                }
-                throw new SystemException(errorMsg.toString());
+            List<String> uninstall = getShellParam(operDir,OPER_UNINSTALL);
+            int uninstallRes = ShellUtil.runShell(uninstall,null);
+            if (uninstallRes != 0){
+                throw new SystemException(UNINSTALL_FAIL);
             }
+
 
         }catch (SystemException e){
             log.warn("VersionServiceImpl.uninstall SystemException:{}",e.getMessage());
@@ -322,9 +308,41 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         }
     }
 
-    private List<String> getShellList(){
+//    private List<String> getShellList(){
+//        List<String> list = new ArrayList<>();
+//        list.add("sh");
+//        return list;
+//    }
+
+    private List<String> getShellParam(String operDir,String operType){
         List<String> list = new ArrayList<>();
-        list.add("sh");
+        switch (operType){
+            case OPER_INSTALL:
+            case OPER_RUN:
+            case OPER_UPDATE:
+            case OPER_STOP:
+            case OPER_UNINSTALL:
+                list.add("sh");
+                list.add(operDir+operType);
+                break;
+            case OPER_TARGZ:
+                list.add("tar");
+                list.add("xvf");
+                list.add(operDir);
+            default:
+                throw new SystemException(OPER_TYPE_IS_ILLEGAL);
+        }
         return list;
+    }
+
+    /**
+     * 判断文件是否存在
+     * @param file
+     * @param fileName
+     */
+    private void fileIsExist(File file, String fileName){
+        if (!file.exists()){
+            throw new SystemException(fileName+FILE_NOT_EXIST);
+        }
     }
 }

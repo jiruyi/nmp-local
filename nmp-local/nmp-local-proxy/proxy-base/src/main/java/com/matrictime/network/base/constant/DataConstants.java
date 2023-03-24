@@ -169,5 +169,7 @@ public class DataConstants {
     public static final String OPER_STOP = "stop.sh";
     public static final String OPER_UNINSTALL = "uninstall.sh";
 
+    public static final String OPER_TARGZ = "targz.sh";
+
 
 }
