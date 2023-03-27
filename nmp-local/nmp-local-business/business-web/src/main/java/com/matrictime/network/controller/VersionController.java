@@ -9,6 +9,7 @@ import com.matrictime.network.service.VersionControlService;
 import com.matrictime.network.request.UploadVersionFileReq;
 import com.matrictime.network.response.VersionFileResponse;
 import com.matrictime.network.service.VersionService;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -37,35 +38,49 @@ public class VersionController {
     @Resource
     private VersionControlService versionControlService;
 
-
     /**
-     * 编辑版本信息
-     * @author hexu
-     * @param
+     * 上传版本文件
+     * @param uploadVersionFileReq
      * @return
      */
-    @RequiresPermissions("sys:version:save")
-    @SystemLog(opermodul = "版本文件",operDesc = "上传版本文件",operType = "基站插入")
+    //@RequiresPermissions("sys:version:save")
+    @SystemLog(opermodul = "版本文件",operDesc = "上传版本文件",operType = "上传版本文件")
     @RequestMapping(value = "/uploadVersionFile",method = RequestMethod.POST)
     public Result<Integer> uploadVersionFile(UploadVersionFileReq uploadVersionFileReq) {
         try {
+            if(versionParamCheck(uploadVersionFileReq)){
+                return new Result<>(false,"参数异常");
+            }
             return versionService.insertVersionFile(uploadVersionFileReq);
         } catch (Exception e) {
             return new Result<>(false, e.getMessage());
         }
     }
 
+    /**
+     * 更新版本文件
+     * @param uploadVersionFileReq
+     * @return
+     */
     @RequiresPermissions("sys:version:updateFile")
     @SystemLog(opermodul = "版本文件",operDesc = "更新版本文件",operType = "更新版本文件")
     @RequestMapping(value = "/updateVersionFile",method = RequestMethod.POST)
     public Result<Integer> updateVersionFile(UploadVersionFileReq uploadVersionFileReq){
         try {
+            if(versionParamCheck(uploadVersionFileReq)){
+                return new Result<>(false,"参数异常");
+            }
             return versionService.updateVersionFile(uploadVersionFileReq);
         }catch (Exception e){
             return new Result<>(false,e.getMessage());
         }
     }
 
+    /**
+     * 查询版本文件
+     * @param uploadVersionFileReq
+     * @return
+     */
     @RequiresPermissions("sys:version:list")
     @SystemLog(opermodul = "版本文件",operDesc = "查询版本文件",operType = "查询版本文件")
     @RequestMapping(value = "/selectVersionFile",method = RequestMethod.POST)
@@ -77,15 +92,40 @@ public class VersionController {
         }
     }
 
+    /**
+     * 删除版本文件
+     * @param uploadVersionFileReq
+     * @return
+     */
     @RequiresPermissions("sys:version:deleteFile")
     @SystemLog(opermodul = "版本文件",operDesc = "删除版本文件",operType = "删除版本文件")
     @RequestMapping(value = "/deleteVersionFile",method = RequestMethod.POST)
     public Result<Integer> deleteVersionFile(@RequestBody UploadVersionFileReq uploadVersionFileReq){
         try {
+            if(versionParamCheck(uploadVersionFileReq)){
+                return new Result<>(false,"参数异常");
+            }
             return versionService.deleteVersionFile(uploadVersionFileReq);
         }catch (Exception e){
             return new Result<>(false,e.getMessage());
         }
+    }
+
+    /**
+     * 参数校验
+     * @param uploadVersionFileReq
+     * @return
+     */
+    private boolean versionParamCheck(UploadVersionFileReq uploadVersionFileReq){
+        if(StringUtil.isEmpty(uploadVersionFileReq.getSystemType()) ||
+                StringUtil.isEmpty(uploadVersionFileReq.getVersionNo())){
+            return true;
+        }
+        if(StringUtil.isEmpty(uploadVersionFileReq.getVersionNo()) &&
+                StringUtil.isEmpty(uploadVersionFileReq.getSystemType())){
+            return true;
+        }
+        return false;
     }
 
     //-----------------------------------------------------------------------------------------------

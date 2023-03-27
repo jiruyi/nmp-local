@@ -6,68 +6,32 @@ import com.matrictime.network.response.*;
 
 public interface VersionService {
 
-//    /**
-//     * 编辑版本信息
-//     * @param req
-//     * @return
-//     */
-//    Result<EditVersionResp> editVersion(EditVersionReq req);
-//
-//    /**
-//     * 上传版本文件
-//     * @param req
-//     * @return
-//     */
-//    Result<UploadVersionFileResp> uploadVersionFile(UploadVersionFileReq req);
-//
-//    /**
-//     * 删除版本文件
-//     * @param req
-//     * @return
-//     */
-//    Result<DeleteVersionFileResp> deleteVersionFile(DeleteVersionFileReq req);
-//
-//    /**
-//     * 根据系统查询版本文件列表
-//     * @param req
-//     * @return
-//     */
-//    Result<QueryVersionFileResp> queryVersionFile(QueryVersionFileReq req);
-//
-//
-//    /**
-//     * 根据系统查询版本列表
-//     * @return
-//     */
-//    Result<QueryVersionResp> queryVersion();
-//
-//    /**
-//     * 查询推送设备/详情
-//     * @param req
-//     * @return
-//     */
-//    Result<QueryVersionFileDetailResp> queryVersionFileDetail(QueryVersionFileDetailReq req);
-//
-//    /**
-//     * 推送设备
-//     * @param req
-//     * @return
-//     */
-//    Result<PushVersionFileResp> pushVersionFile(PushVersionFileReq req);
-//
-//    /**
-//     * 启动版本文件
-//     * @param req
-//     * @return
-//     */
-//    Result<StartVersionFileResp> startVersionFile(StartVersionFileReq req);
+    /**
+     * 上传版本
+     * @param uploadVersionFileReq
+     * @return
+     */
+    Result<Integer> insertVersionFile(UploadVersionFileReq uploadVersionFileReq) throws Exception;
 
-    Result<Integer> insertVersionFile(UploadVersionFileReq uploadVersionFileReq);
-
+    /**
+     * 更新版本
+     * @param uploadVersionFileReq
+     * @return
+     */
     Result<Integer> updateVersionFile(UploadVersionFileReq uploadVersionFileReq);
 
+    /**
+     * 删除版本
+     * @param uploadVersionFileReq
+     * @return
+     */
     Result<Integer> deleteVersionFile(UploadVersionFileReq uploadVersionFileReq);
 
+    /**
+     * 查询版本文件
+     * @param uploadVersionFileReq
+     * @return
+     */
     Result<VersionFileResponse> selectVersionFile(UploadVersionFileReq uploadVersionFileReq);
 
 

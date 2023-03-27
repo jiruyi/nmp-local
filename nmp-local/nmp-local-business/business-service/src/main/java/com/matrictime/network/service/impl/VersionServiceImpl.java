@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -27,27 +28,20 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
     @Value("${version.path}")
     private String versionPath;
 
+    @Transactional
     @Override
-    public Result<Integer> insertVersionFile(UploadVersionFileReq uploadVersionFileReq) {
+    public Result<Integer> insertVersionFile(UploadVersionFileReq uploadVersionFileReq) throws Exception {
         Result<Integer> result = new Result<>();
-        try {
-            //生成文件路径
-            String filePath = getFilePath(uploadVersionFileReq);
-//            String filePath = "C:\\Users\\LENOVO\\Desktop\\" + uploadVersionFileReq.getSystemType() + "\\" +
-//                    uploadVersionFileReq.getVersionNo() + "\\" + uploadVersionFileReq.getFile().getOriginalFilename();
-            uploadVersionFileReq.setFilePath(filePath);
-            //操作数据库文件表
-            int insertFlag = fileVersionDomainService.insertFileVersion(uploadVersionFileReq);
-            //文件上传到本地
-            UploadFileUtils uploadFileUtils = new UploadFileUtils();
-            uploadFileUtils.uploadFile(uploadVersionFileReq,insertFlag);
-            result.setResultObj(insertFlag);
-            result.setSuccess(true);
-        }catch (Exception e){
-            log.info("insertVersionFile:{}",e.getMessage());
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
+        //生成文件路径
+        String filePath = getFilePath(uploadVersionFileReq);
+        uploadVersionFileReq.setFilePath(filePath);
+        //操作数据库文件表
+        int insertFlag = fileVersionDomainService.insertFileVersion(uploadVersionFileReq);
+        //文件上传到本地
+        UploadFileUtils uploadFileUtils = new UploadFileUtils();
+        uploadFileUtils.uploadFile(uploadVersionFileReq,insertFlag);
+        result.setResultObj(insertFlag);
+        result.setSuccess(true);
         return result;
     }
 
@@ -57,8 +51,6 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         try {
             //生成文件路径
             String filePath = getFilePath(uploadVersionFileReq);
-//            String filePath = "C:\\Users\\LENOVO\\Desktop\\" + uploadVersionFileReq.getSystemType() + "\\" +
-//                    uploadVersionFileReq.getVersionNo() + "\\" + uploadVersionFileReq.getFile().getOriginalFilename();
             uploadVersionFileReq.setFilePath(filePath);
             int updateFlag = fileVersionDomainService.updateFileVersion(uploadVersionFileReq);
             UploadFileUtils uploadFileUtils = new UploadFileUtils();
