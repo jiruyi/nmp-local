@@ -5,6 +5,7 @@ import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.UploadVersionFileReq;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import java.io.File;
@@ -24,6 +25,11 @@ public class UploadFileUtils {
         File dest = new File(filePath);
         String substring = uploadVersionFileReq.getFileSize().
                 substring(0, (uploadVersionFileReq.getFileSize().length() - 2));
+        int len = uploadVersionFileReq.getFile().getOriginalFilename().length();
+        String fileType = uploadVersionFileReq.getFile().getOriginalFilename().substring((len-6),len);
+        if(!("tar.gz".equals(fileType))){
+            throw new SystemException("文件后缀名不匹配");
+        }
         // 判断单个文件大于100M
         if(Float.parseFloat(substring) > DataConstants.FILE_SIZE){
             throw new SystemException("文件太大");
