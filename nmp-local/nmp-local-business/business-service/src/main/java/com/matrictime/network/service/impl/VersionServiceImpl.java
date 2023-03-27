@@ -4,6 +4,7 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.util.UploadFileUtils;
 import com.matrictime.network.dao.domain.FileVersionDomainService;
+import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.VersionFileResponse;
@@ -12,9 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Service
@@ -27,27 +31,23 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
     @Value("${version.path}")
     private String versionPath;
 
+    @Transactional
     @Override
-    public Result<Integer> insertVersionFile(UploadVersionFileReq uploadVersionFileReq) {
+    public Result<Integer> insertVersionFile(UploadVersionFileReq uploadVersionFileReq) throws Exception {
         Result<Integer> result = new Result<>();
-        try {
-            //生成文件路径
-            String filePath = getFilePath(uploadVersionFileReq);
-//            String filePath = "C:\\Users\\LENOVO\\Desktop\\" + uploadVersionFileReq.getSystemType() + "\\" +
-//                    uploadVersionFileReq.getVersionNo() + "\\" + uploadVersionFileReq.getFile().getOriginalFilename();
-            uploadVersionFileReq.setFilePath(filePath);
-            //操作数据库文件表
-            int insertFlag = fileVersionDomainService.insertFileVersion(uploadVersionFileReq);
-            //文件上传到本地
-            UploadFileUtils uploadFileUtils = new UploadFileUtils();
-            uploadFileUtils.uploadFile(uploadVersionFileReq,insertFlag);
-            result.setResultObj(insertFlag);
-            result.setSuccess(true);
-        }catch (Exception e){
-            log.info("insertVersionFile:{}",e.getMessage());
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+        if(checkParamLength(uploadVersionFileReq.getVersionDesc())){
+            throw new SystemException("版本描述内容过长");
         }
+        //生成文件路径
+        String filePath = getFilePath(uploadVersionFileReq);
+        uploadVersionFileReq.setFilePath(filePath);
+        //操作数据库文件表
+        int insertFlag = fileVersionDomainService.insertFileVersion(uploadVersionFileReq);
+        //文件上传到本地
+        UploadFileUtils uploadFileUtils = new UploadFileUtils();
+        uploadFileUtils.uploadFile(uploadVersionFileReq,insertFlag);
+        result.setResultObj(insertFlag);
+        result.setSuccess(true);
         return result;
     }
 
@@ -57,8 +57,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         try {
             //生成文件路径
             String filePath = getFilePath(uploadVersionFileReq);
-//            String filePath = "C:\\Users\\LENOVO\\Desktop\\" + uploadVersionFileReq.getSystemType() + "\\" +
-//                    uploadVersionFileReq.getVersionNo() + "\\" + uploadVersionFileReq.getFile().getOriginalFilename();
+            if(checkParamLength(uploadVersionFileReq.getVersionDesc())){
+                throw new SystemException("版本描述内容过长");
+            }
             uploadVersionFileReq.setFilePath(filePath);
             int updateFlag = fileVersionDomainService.updateFileVersion(uploadVersionFileReq);
             UploadFileUtils uploadFileUtils = new UploadFileUtils();
@@ -105,10 +106,32 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         return result;
     }
 
+    /**
+     * 获取文件路径
+     * @param uploadVersionFileReq
+     * @return
+     */
     private String getFilePath(UploadVersionFileReq uploadVersionFileReq){
         return versionPath + uploadVersionFileReq.getSystemType() +
                 DataConstants.LINUX_SEPARATOR + uploadVersionFileReq.getVersionNo() +
                 DataConstants.LINUX_SEPARATOR;
+    }
+
+    /**
+     * 校验版本描述字段长度
+     * @param param
+     * @return
+     */
+    private boolean checkParamLength(String param){
+        try {
+            int paramLength = param.getBytes("UTF-8").length;
+            if(paramLength > DataConstants.VERSION_DES_MAX_LENGTH){
+                return true;
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

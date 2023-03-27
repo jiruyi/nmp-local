@@ -38,7 +38,7 @@ public class FileVersionDomainServiceImpl implements FileVersionDomainService {
         criteria.andIsDeleteEqualTo(true);
         List<NmplVersion> nmplVersions = nmplVersionMapper.selectByExample(nmplVersionExample);
         if(nmplVersions.size() > NumberUtils.INTEGER_ZERO){
-            return DataConstants.FILE_IS_EXIT;
+            throw new SystemException("此版本已经存在");
         }
         NmplVersion nmplVersion = new NmplVersion();
         BeanUtils.copyProperties(uploadVersionFileReq,nmplVersion);
@@ -50,12 +50,6 @@ public class FileVersionDomainServiceImpl implements FileVersionDomainService {
     public int updateFileVersion(UploadVersionFileReq uploadVersionFileReq) {
         NmplVersionExample nmplVersionExample = new NmplVersionExample();
         NmplVersionExample.Criteria criteria = nmplVersionExample.createCriteria();
-        if(!StringUtils.isEmpty(uploadVersionFileReq.getVersionNo())){
-            criteria.andVersionNoEqualTo(uploadVersionFileReq.getVersionNo());
-        }
-        if(!StringUtils.isEmpty(uploadVersionFileReq.getSystemType())){
-            criteria.andSystemTypeEqualTo(uploadVersionFileReq.getSystemType());
-        }
         //原纪录逻辑删除
         NmplVersion updateNmplVersion = new NmplVersion();
         updateNmplVersion.setIsDelete(false);
@@ -76,12 +70,6 @@ public class FileVersionDomainServiceImpl implements FileVersionDomainService {
         NmplVersionExample nmplVersionExample = new NmplVersionExample();
         NmplVersionExample.Criteria criteria = nmplVersionExample.createCriteria();
         NmplVersion nmplVersion = new NmplVersion();
-        if(!StringUtils.isEmpty(uploadVersionFileReq.getVersionNo())){
-            criteria.andVersionNoEqualTo(uploadVersionFileReq.getVersionNo());
-        }
-        if(!StringUtils.isEmpty(uploadVersionFileReq.getSystemType())){
-            criteria.andSystemTypeEqualTo(uploadVersionFileReq.getSystemType());
-        }
         nmplVersion.setIsDelete(false);
         int i = nmplVersionMapper.updateByExampleSelective(nmplVersion, nmplVersionExample);
         return i;

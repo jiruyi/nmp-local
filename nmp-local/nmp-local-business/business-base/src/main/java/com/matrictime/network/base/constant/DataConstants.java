@@ -23,6 +23,8 @@ public class DataConstants {
 
     public static final Integer FILE_SIZE = 1024 * 1024 * 100;
 
+    public static int VERSION_DES_MAX_LENGTH = 1000;
+
     public static final Integer FILE_IS_EXIT = 4;
 
     public static final Integer FILE_UPDATE_SUCCESS = 5;
