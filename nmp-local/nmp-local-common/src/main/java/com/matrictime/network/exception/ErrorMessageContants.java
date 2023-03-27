@@ -115,6 +115,8 @@ public class ErrorMessageContants {
 
 	public static final String FILE_IS_DIFF = "文件已损坏";
 
+	public static final String LOAD_FAIL = "加载失败";
+
 	public static final String UNZIP_FAIL = "解压失败";
 
 	public static final String INSTALL_FAIL = "安装失败";

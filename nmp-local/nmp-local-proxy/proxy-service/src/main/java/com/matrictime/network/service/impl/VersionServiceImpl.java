@@ -48,7 +48,9 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                 throw new SystemException(ErrorMessageContants.FILE_IS_TOO_LARGE);
             }
 
-            dest = new File(request.getUploadPath() + request.getFileName());
+            String tarGzFileName = request.getUploadPath() + request.getFileName();
+
+            dest = new File(tarGzFileName);
             boolean b = dest.setExecutable(true);
             log.info("setExecutable result:{}",b);
             // 如果pathAll路径不存在，则创建相关该路径涉及的文件夹;
@@ -65,6 +67,15 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                 }
                 throw new SystemException(ErrorMessageContants.FILE_IS_DIFF);
             }
+
+            // 解压文件
+            List<String> tarGz = getShellParam(request.getFileName(),OPER_TARGZ);
+            int tarGzRes = ShellUtil.runShell(tarGz,request.getUploadPath());
+            if (tarGzRes != 0){
+                log.warn(tarGzFileName+UNZIP_FAIL);
+                throw new SystemException(LOAD_FAIL);
+            }
+
         }catch (SystemException e){
             log.warn("VersionServiceImpl.load SystemException:{}",e.getMessage());
             result = failResult(e);
@@ -85,20 +96,6 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         Result result = new Result<>();
         try{
             checkStartParam(request);
-
-            // 判断解压文件是否存在
-            String tarGzFileName = request.getUploadPath()+request.getFileName();
-            File tarGzFile = new File(tarGzFileName);
-            fileIsExist(tarGzFile,tarGzFileName);
-
-            // 解压
-//            FileUtils.decompressTarGz(tarGzFile,request.getUploadPath());
-            List<String> tarGz = getShellParam(request.getFileName(),OPER_TARGZ);
-            int tarGzRes = ShellUtil.runShell(tarGz,request.getUploadPath());
-            if (tarGzRes != 0){
-                log.warn(tarGzFileName+UNZIP_FAIL);
-                throw new SystemException(INSTALL_FAIL);
-            }
 
             String operDir = getOpenDir(request.getUploadPath(), request.getFileName());
 
@@ -329,6 +326,7 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
                 list.add("tar");
                 list.add("xvf");
                 list.add(operDir);
+                break;
             default:
                 throw new SystemException(OPER_TYPE_IS_ILLEGAL);
         }
