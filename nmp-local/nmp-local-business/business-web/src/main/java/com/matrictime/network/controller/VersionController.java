@@ -43,7 +43,7 @@ public class VersionController {
      * @param uploadVersionFileReq
      * @return
      */
-    //@RequiresPermissions("sys:version:save")
+    @RequiresPermissions("sys:version:save")
     @SystemLog(opermodul = "版本文件",operDesc = "上传版本文件",operType = "上传版本文件")
     @RequestMapping(value = "/uploadVersionFile",method = RequestMethod.POST)
     public Result<Integer> uploadVersionFile(UploadVersionFileReq uploadVersionFileReq) {
