@@ -65,6 +65,7 @@ public class ErrorMessageContants {
 
 	public static final String OPER_DESC_IS_NULL_MSG = "操作信息不能为空";
 	public static final String OPER_TYPE_IS_NULL_MSG = "操作类型不能为空";
+	public static final String OPER_TYPE_IS_ILLEGAL = "操作类型不合法";
 
 	public static final String DEVICE_NOT_EXIST_MSG = "设备不存在";
 
@@ -113,6 +114,8 @@ public class ErrorMessageContants {
 	public static final String FILE_IS_TOO_LARGE = "文件过大";
 
 	public static final String FILE_IS_DIFF = "文件已损坏";
+
+	public static final String UNZIP_FAIL = "解压失败";
 
 	public static final String INSTALL_FAIL = "安装失败";
 

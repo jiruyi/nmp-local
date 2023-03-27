@@ -61,6 +61,8 @@ public class FileUtils {
                 parent.mkdirs();
             }
             IOUtils.copy(tarArchiveInputStream,Files.newOutputStream(targetFile.toPath()));
+            boolean b = targetFile.setExecutable(true);
+            System.out.println("setExecutable:"+b);
         }
     }
 

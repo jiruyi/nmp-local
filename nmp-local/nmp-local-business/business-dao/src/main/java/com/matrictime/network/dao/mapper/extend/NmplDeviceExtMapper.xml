@@ -133,7 +133,7 @@
     order by load_version_oper_time desc) as temp
     <where>
       <if test="stationNetworkId != null and stationNetworkId != ''">
-        and station_network_id like concat ('%',#{stationNetworkId,jdbcType=CHAR},'%')
+        and station_network_id =#{stationNetworkId,jdbcType=VARCHAR}
       </if>
     </where>
   </select>
@@ -167,7 +167,7 @@
     order by run_version_oper_time desc) as temp
     <where>
       <if test="stationNetworkId != null and stationNetworkId != ''">
-        and station_network_id like concat ('%',#{stationNetworkId,jdbcType=CHAR},'%')
+        and station_network_id =#{stationNetworkId,jdbcType=VARCHAR}
       </if>
     </where>
   </select>
