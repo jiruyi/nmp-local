@@ -383,6 +383,8 @@ public class AsyncService{
                         }else {
                             result.put(s, false);
                         }
+                    }else {
+                        result.put(s,false);
                     }
                 }
             } catch (Exception e) {
