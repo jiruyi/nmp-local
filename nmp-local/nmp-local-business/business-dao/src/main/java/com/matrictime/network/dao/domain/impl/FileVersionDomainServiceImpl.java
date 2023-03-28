@@ -52,6 +52,8 @@ public class FileVersionDomainServiceImpl implements FileVersionDomainService {
         NmplVersionExample.Criteria criteria = nmplVersionExample.createCriteria();
         //原纪录逻辑删除
         NmplVersion updateNmplVersion = new NmplVersion();
+        criteria.andSystemTypeEqualTo(uploadVersionFileReq.getSystemType());
+        criteria.andVersionNoEqualTo(uploadVersionFileReq.getVersionNo());
         updateNmplVersion.setIsDelete(false);
         int updateFlag = nmplVersionMapper.updateByExampleSelective(updateNmplVersion, nmplVersionExample);
         //增加一条新纪录
@@ -69,6 +71,8 @@ public class FileVersionDomainServiceImpl implements FileVersionDomainService {
     public int deleteFileVersion(UploadVersionFileReq uploadVersionFileReq) {
         NmplVersionExample nmplVersionExample = new NmplVersionExample();
         NmplVersionExample.Criteria criteria = nmplVersionExample.createCriteria();
+        criteria.andSystemTypeEqualTo(uploadVersionFileReq.getSystemType());
+        criteria.andVersionNoEqualTo(uploadVersionFileReq.getVersionNo());
         NmplVersion nmplVersion = new NmplVersion();
         nmplVersion.setIsDelete(false);
         int i = nmplVersionMapper.updateByExampleSelective(nmplVersion, nmplVersionExample);
