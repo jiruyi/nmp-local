@@ -18,7 +18,7 @@ public interface VersionService {
      * @param uploadVersionFileReq
      * @return
      */
-    Result<Integer> updateVersionFile(UploadVersionFileReq uploadVersionFileReq);
+    Result<Integer> updateVersionFile(UploadVersionFileReq uploadVersionFileReq) throws Exception;
 
     /**
      * 删除版本

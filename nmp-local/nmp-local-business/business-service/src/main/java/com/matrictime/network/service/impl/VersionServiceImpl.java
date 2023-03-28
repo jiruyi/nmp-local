@@ -51,26 +51,21 @@ public class VersionServiceImpl extends SystemBaseService implements VersionServ
         return result;
     }
 
+    @Transactional
     @Override
-    public Result<Integer> updateVersionFile(UploadVersionFileReq uploadVersionFileReq) {
+    public Result<Integer> updateVersionFile(UploadVersionFileReq uploadVersionFileReq) throws Exception {
         Result result = new Result<>();
-        try {
-            //生成文件路径
-            String filePath = getFilePath(uploadVersionFileReq);
-            if(checkParamLength(uploadVersionFileReq.getVersionDesc())){
-                throw new SystemException("版本描述内容过长");
-            }
-            uploadVersionFileReq.setFilePath(filePath);
-            int updateFlag = fileVersionDomainService.updateFileVersion(uploadVersionFileReq);
-            UploadFileUtils uploadFileUtils = new UploadFileUtils();
-            uploadFileUtils.uploadFile(uploadVersionFileReq,updateFlag);
-            result.setResultObj(updateFlag);
-            result.setSuccess(true);
-        }catch (Exception e){
-            log.info("updateVersionFile:{}",e.getMessage());
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
+        //生成文件路径
+        String filePath = getFilePath(uploadVersionFileReq);
+        if(checkParamLength(uploadVersionFileReq.getVersionDesc())){
+            throw new SystemException("版本描述内容过长");
         }
+        uploadVersionFileReq.setFilePath(filePath);
+        int updateFlag = fileVersionDomainService.updateFileVersion(uploadVersionFileReq);
+        UploadFileUtils uploadFileUtils = new UploadFileUtils();
+        uploadFileUtils.uploadFile(uploadVersionFileReq,updateFlag);
+        result.setResultObj(updateFlag);
+        result.setSuccess(true);
         return result;
     }
 
