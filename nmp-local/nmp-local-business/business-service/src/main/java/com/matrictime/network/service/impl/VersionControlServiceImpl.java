@@ -18,6 +18,7 @@ import com.matrictime.network.modelVo.NmplBillVo;
 import com.matrictime.network.modelVo.VersionInfoVo;
 import com.matrictime.network.request.VersionReq;
 import com.matrictime.network.response.PageInfo;
+import com.matrictime.network.response.VersionHttpResultRes;
 import com.matrictime.network.service.VersionControlService;
 import com.matrictime.network.service.VersionService;
 import com.matrictime.network.util.CommonCheckUtil;
@@ -221,7 +222,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
             //校验字段长度以及必传字段
             checkParam(req);
             String updateRunStatus = DataConstants.VERSION_RUN_STATUS;
-            Map<String,Boolean> result =  new HashMap<>();
+            List<VersionHttpResultRes> result =  new ArrayList<>();
             if(SYSTEM_ID_1.equals(req.getDeviceType())){
                 //设备表更新 全部或选择加载启动
                 List<NmplDevice> nmplDevices = new ArrayList<>();
@@ -254,7 +255,11 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                     //清空版本加载信息
                     Map<String, Boolean> stringBooleanMap = mapFuture.get();
                     for (NmplDevice nmplDevice : list) {
-                        if(stringBooleanMap.get(nmplDevice.getDeviceId())){
+                        VersionHttpResultRes versionHttpResultRes = new VersionHttpResultRes();
+                        versionHttpResultRes.setDeviceId(nmplDevice.getDeviceId());
+                        versionHttpResultRes.setDeviceName(nmplDevice.getDeviceName());
+                        versionHttpResultRes.setSuccess(stringBooleanMap.get(nmplDevice.getDeviceId()));
+                        if(stringBooleanMap.get(nmplDevice.getDeviceId())) {
                             NmplDevice device = nmplDeviceMapper.selectByPrimaryKey(nmplDevice.getId());
                             device.setLoadVersionNo(null);
                             device.setLoadVersionId(null);
@@ -262,8 +267,8 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                             device.setLoadFileName(null);
                             nmplDeviceMapper.updateByPrimaryKey(device);
                         }
+                        result.add(versionHttpResultRes);
                     }
-                    result.putAll(stringBooleanMap);
                 }
             }else {
                 //基站表 全部或选择加载启动
@@ -297,6 +302,11 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                     //清空版本加载信息
                     Map<String, Boolean> stringBooleanMap = mapFuture.get();
                     for (NmplBaseStation nmplBaseStation : list) {
+                        VersionHttpResultRes versionHttpResultRes = new VersionHttpResultRes();
+                        versionHttpResultRes.setDeviceId(nmplBaseStation.getStationId());
+                        versionHttpResultRes.setDeviceName(nmplBaseStation.getStationName());
+                        versionHttpResultRes.setSuccess(stringBooleanMap.get(nmplBaseStation.getStationId()));
+                        result.add(versionHttpResultRes);
                         if (stringBooleanMap.get(nmplBaseStation.getStationId())) {
                             NmplBaseStation station = nmplBaseStationMapper.selectByPrimaryKey(nmplBaseStation.getId());
                             station.setLoadVersionNo(null);
@@ -306,7 +316,6 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                             nmplBaseStationMapper.updateByPrimaryKey(station);
                         }
                     }
-                    result.putAll(stringBooleanMap);
                 }
             }
             return buildResult(result);
@@ -469,7 +478,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
      * @throws Exception
      */
     private Result flowStatus(VersionReq req,String updateRunStatus,String filterStatus,String urlSuffix)throws Exception{
-        Map<String,Boolean> result =  new HashMap<>();
+        List<VersionHttpResultRes> result =  new ArrayList<>();
         if(SYSTEM_ID_1.equals(req.getDeviceType())){
             //设备表更新 全部或选择加载启动
             List<NmplDevice> nmplDevices = new ArrayList<>();
@@ -499,7 +508,15 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                 Future<Map<String, Boolean>> mapFuture = asyncService.httpUpdateVersionStatus
                         (port + contextPath + urlSuffix, ipmap, versionMap, updateRunStatus);
                 Map<String, Boolean> stringBooleanMap = mapFuture.get();
-                result.putAll(stringBooleanMap);
+
+                for (NmplDevice nmplDevice : list) {
+                    VersionHttpResultRes versionHttpResultRes = new VersionHttpResultRes();
+                    versionHttpResultRes.setDeviceId(nmplDevice.getDeviceId());
+                    versionHttpResultRes.setDeviceName(nmplDevice.getDeviceName());
+                    versionHttpResultRes.setSuccess(stringBooleanMap.get(nmplDevice.getDeviceName()));
+                    result.add(versionHttpResultRes);
+                }
+
             }
         }else {
             //基站表 全部或选择加载启动
@@ -530,7 +547,13 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                 Future<Map<String, Boolean>> mapFuture = asyncService.httpUpdateVersionStatus
                         (port + contextPath + urlSuffix, ipmap, versionMap, updateRunStatus);
                 Map<String, Boolean> stringBooleanMap = mapFuture.get();
-                result.putAll(stringBooleanMap);
+                for (NmplBaseStation nmplBaseStation : list) {
+                    VersionHttpResultRes versionHttpResultRes = new VersionHttpResultRes();
+                    versionHttpResultRes.setDeviceId(nmplBaseStation.getStationId());
+                    versionHttpResultRes.setDeviceName(nmplBaseStation.getStationName());
+                    versionHttpResultRes.setSuccess(stringBooleanMap.get(nmplBaseStation.getStationId()));
+                    result.add(versionHttpResultRes);
+                }
             }
         }
         return buildResult(result);
