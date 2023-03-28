@@ -81,6 +81,7 @@ public class FileVersionDomainServiceImpl implements FileVersionDomainService {
         VersionFileResponse versionFileResponse = new VersionFileResponse();
         NmplVersionExample nmplVersionExample = new NmplVersionExample();
         NmplVersionExample.Criteria criteria = nmplVersionExample.createCriteria();
+        nmplVersionExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(uploadVersionFileReq.getSystemType())){
             criteria.andSystemTypeEqualTo(uploadVersionFileReq.getSystemType());
         }
