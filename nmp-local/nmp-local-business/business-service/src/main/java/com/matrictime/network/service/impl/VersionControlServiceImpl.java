@@ -100,6 +100,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
             if(!file.exists()){
                throw new SystemException("版本文件不存在,请重新上传版本文件");
             }
+            CountDownLatch  countDownLatch = null;
             if(SYSTEM_ID_1.equals(req.getDeviceType())){
                 //设备表更新 全部推送或选择推送
                 List<NmplDevice> nmplDevices = new ArrayList<>();
@@ -117,7 +118,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                     throw new SystemException("不存在设备信息");
                 }
                 List<List<NmplDevice>> data = ListSplitUtil.split(nmplDevices,pushPoolSize);
-                CountDownLatch  countDownLatch = new CountDownLatch(data.size());
+                countDownLatch = new CountDownLatch(data.size());
                 for (List<NmplDevice> list : data) {
                   //文件推送，通过获取版本文件id获取文件路径，
                     Map<String,String> map = new HashMap<>();
@@ -144,7 +145,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                     throw new SystemException("不存在基站信息");
                 }
                 List<List<NmplBaseStation>> data = ListSplitUtil.split(nmplBaseStations,pushPoolSize);
-                CountDownLatch  countDownLatch = new CountDownLatch(data.size());
+                countDownLatch = new CountDownLatch(data.size());
                 for (List<NmplBaseStation> list : data) {
                     //文件推送，通过获取版本文件id获取文件路径，
                     Map<String,String> map = new HashMap<>();
