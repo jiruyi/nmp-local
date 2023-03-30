@@ -100,7 +100,6 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
             if(!file.exists()){
                throw new SystemException("版本文件不存在,请重新上传版本文件");
             }
-            CountDownLatch  countDownLatch =  null;
             if(SYSTEM_ID_1.equals(req.getDeviceType())){
                 //设备表更新 全部推送或选择推送
                 List<NmplDevice> nmplDevices = new ArrayList<>();
@@ -118,7 +117,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                     throw new SystemException("不存在设备信息");
                 }
                 List<List<NmplDevice>> data = ListSplitUtil.split(nmplDevices,pushPoolSize);
-                countDownLatch = new CountDownLatch(data.size());
+                CountDownLatch  countDownLatch = new CountDownLatch(data.size());
                 for (List<NmplDevice> list : data) {
                   //文件推送，通过获取版本文件id获取文件路径，
                     Map<String,String> map = new HashMap<>();
@@ -128,6 +127,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                     asyncService.httpPushLoadFile(port+contextPath+DataConstants.LOAD_FILE,req.getVersionId(),map);
                     countDownLatch.countDown();
                 }
+                countDownLatch.await();
             }else {
                 //基站表 全部推送或选择推送
                 List< NmplBaseStation> nmplBaseStations = new ArrayList<>();
@@ -145,7 +145,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                     throw new SystemException("不存在基站信息");
                 }
                 List<List<NmplBaseStation>> data = ListSplitUtil.split(nmplBaseStations,pushPoolSize);
-                countDownLatch = new CountDownLatch(data.size());
+                CountDownLatch  countDownLatch = new CountDownLatch(data.size());
                 for (List<NmplBaseStation> list : data) {
                     //文件推送，通过获取版本文件id获取文件路径，
                     Map<String,String> map = new HashMap<>();
@@ -155,8 +155,8 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                     asyncService.httpPushLoadFile(port+contextPath+DataConstants.LOAD_FILE,req.getVersionId(),map);
                     countDownLatch.countDown();
                 }
+                countDownLatch.await();
             }
-            countDownLatch.await();
             return buildResult("后台正在推送中，请稍等");
         }catch (SystemException e){
             log.error("VersionControlServiceImpl.loadVersionFile SystemException:{}",e.getMessage());
