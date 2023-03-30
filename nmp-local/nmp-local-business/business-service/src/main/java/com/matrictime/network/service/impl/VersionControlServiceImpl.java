@@ -124,8 +124,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                     for (NmplDevice nmplDevice : list) {
                         map.put(nmplDevice.getDeviceId(),nmplDevice.getLanIp());
                     }
-                    asyncService.httpPushLoadFile(port+contextPath+DataConstants.LOAD_FILE,req.getVersionId(),map);
-                    countDownLatch.countDown();
+                    asyncService.httpPushLoadFile(port+contextPath+DataConstants.LOAD_FILE,req.getVersionId(),map,countDownLatch);
                 }
                 countDownLatch.await();
             }else {
@@ -152,8 +151,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                     for (NmplBaseStation nmplBaseStation : list) {
                         map.put(nmplBaseStation.getStationId(),nmplBaseStation.getLanIp());
                     }
-                    asyncService.httpPushLoadFile(port+contextPath+DataConstants.LOAD_FILE,req.getVersionId(),map);
-                    countDownLatch.countDown();
+                    asyncService.httpPushLoadFile(port+contextPath+DataConstants.LOAD_FILE,req.getVersionId(),map,countDownLatch);
                 }
                 countDownLatch.await();
             }

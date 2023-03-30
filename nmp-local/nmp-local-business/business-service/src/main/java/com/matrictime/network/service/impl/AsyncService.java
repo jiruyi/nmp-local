@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
@@ -329,7 +330,7 @@ public class AsyncService{
      * @throws Exception
      */
     @Async("taskExecutor")
-    public void httpPushLoadFile(String url,String versionId,Map<String,String>ipmap) {
+    public void httpPushLoadFile(String url, String versionId, Map<String,String>ipmap, CountDownLatch countDownLatch) {
         try {
             NmplVersionInfo nmplVersionInfo = nmplVersionInfoMapper.selectByPrimaryKey(Long.valueOf(versionId));
             Map<String,String> map = new HashMap<>();
@@ -354,7 +355,9 @@ public class AsyncService{
                     }
                 }
             }
+            countDownLatch.countDown();
         }catch (Exception e){
+            countDownLatch.countDown();
             log.error(e.getMessage());
         }
     }
