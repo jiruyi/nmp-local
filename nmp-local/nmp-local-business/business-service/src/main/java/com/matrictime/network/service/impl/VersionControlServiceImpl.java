@@ -157,6 +157,7 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                 }
             }
             countDownLatch.await();
+            return buildResult("后台正在推送中，请稍等");
         }catch (SystemException e){
             log.error("VersionControlServiceImpl.loadVersionFile SystemException:{}",e.getMessage());
             return failResult(e.getMessage());
@@ -165,7 +166,6 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
             log.error("VersionControlServiceImpl.loadVersionFile SystemException:{}",e.getMessage());
             return failResult("");
         }
-        return buildResult("后台正在推送中，请稍等");
     }
 
 
