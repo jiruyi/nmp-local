@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.base.util.NetUtil;
 import com.matrictime.network.dao.mapper.NmplBaseStationMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceMapper;
 import com.matrictime.network.dao.mapper.NmplVersionInfoMapper;
@@ -17,6 +18,7 @@ import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.NmplBillVo;
 import com.matrictime.network.modelVo.VersionInfoVo;
 import com.matrictime.network.request.VersionReq;
+import com.matrictime.network.response.NetErrResp;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.VersionHttpResultRes;
 import com.matrictime.network.service.VersionControlService;
@@ -117,6 +119,16 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                 if(CollectionUtils.isEmpty(nmplDevices)){
                     throw new SystemException("不存在设备信息");
                 }
+                //校验对端代理程序状态
+                Map<String,String> netMap = new HashMap<>();
+                for (NmplDevice nmplDevice : nmplDevices) {
+                    netMap.put(nmplDevice.getLanIp(),nmplDevice.getDeviceName());
+                }
+                List<NetErrResp> netErrResps = checkNetConn(netMap);
+                if(!CollectionUtils.isEmpty(netErrResps)){
+                    return netErrResult(netErrResps);
+                }
+
                 List<List<NmplDevice>> data = ListSplitUtil.split(nmplDevices,pushPoolSize);
                 countDownLatch = new CountDownLatch(data.size());
                 for (List<NmplDevice> list : data) {
@@ -144,6 +156,16 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                 if(CollectionUtils.isEmpty(nmplBaseStations)){
                     throw new SystemException("不存在基站信息");
                 }
+                //校验对端代理程序状态
+                Map<String,String> netMap = new HashMap<>();
+                for (NmplBaseStation nmplBaseStation : nmplBaseStations) {
+                    netMap.put(nmplBaseStation.getLanIp(),nmplBaseStation.getStationName());
+                }
+                List<NetErrResp> netErrResps = checkNetConn(netMap);
+                if(!CollectionUtils.isEmpty(netErrResps)){
+                    return netErrResult(netErrResps);
+                }
+
                 List<List<NmplBaseStation>> data = ListSplitUtil.split(nmplBaseStations,pushPoolSize);
                 countDownLatch = new CountDownLatch(data.size());
                 for (List<NmplBaseStation> list : data) {
@@ -246,6 +268,16 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                 if(CollectionUtils.isEmpty(nmplDeviceList)){
                     throw new SystemException(ErrorMessageContants.NO_LOAD_VERSION);
                 }
+                //校验对端代理程序状态
+                Map<String,String> netMap = new HashMap<>();
+                for (NmplDevice nmplDevice : nmplDeviceList) {
+                    netMap.put(nmplDevice.getLanIp(),nmplDevice.getDeviceName());
+                }
+                List<NetErrResp> netErrResps = checkNetConn(netMap);
+                if(!CollectionUtils.isEmpty(netErrResps)){
+                    return netErrResult(netErrResps);
+                }
+
                 List<List<NmplDevice>> data = ListSplitUtil.split(nmplDeviceList,maxPoolSize);
                 for (List<NmplDevice> list : data) {
                     //文件推送，通过获取版本文件id获取文件路径，
@@ -293,6 +325,16 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
                 if(CollectionUtils.isEmpty(nmplBaseStationList)){
                     throw new SystemException(ErrorMessageContants.NO_LOAD_VERSION);
                 }
+                //校验对端代理程序状态
+                Map<String,String> netMap = new HashMap<>();
+                for (NmplBaseStation nmplBaseStation : nmplBaseStationList) {
+                    netMap.put(nmplBaseStation.getLanIp(),nmplBaseStation.getStationName());
+                }
+                List<NetErrResp> netErrResps = checkNetConn(netMap);
+                if(!CollectionUtils.isEmpty(netErrResps)){
+                    return netErrResult(netErrResps);
+                }
+
                 List<List<NmplBaseStation>> data = ListSplitUtil.split(nmplBaseStationList, maxPoolSize);
                 for (List<NmplBaseStation> list : data) {
                     //文件推送，通过获取版本文件id获取文件路径，
@@ -501,6 +543,17 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
             if(CollectionUtils.isEmpty(nmplDeviceList)){
                 throw new SystemException(ErrorMessageContants.NO_DEVICE_CAN_RUN);
             }
+
+            //校验对端代理程序状态
+            Map<String,String> netMap = new HashMap<>();
+            for (NmplDevice nmplDevice : nmplDeviceList) {
+                netMap.put(nmplDevice.getLanIp(),nmplDevice.getDeviceName());
+            }
+            List<NetErrResp> netErrResps = checkNetConn(netMap);
+            if(!CollectionUtils.isEmpty(netErrResps)){
+                return netErrResult(netErrResps);
+            }
+
             List<List<NmplDevice>> data = ListSplitUtil.split(nmplDeviceList,maxPoolSize);
             for (List<NmplDevice> list : data) {
                 //文件推送，通过获取版本文件id获取文件路径，
@@ -540,6 +593,17 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
             if(CollectionUtils.isEmpty(nmplBaseStationList)){
                 throw new SystemException(ErrorMessageContants.NO_DEVICE_CAN_RUN);
             }
+
+            //校验对端代理程序状态
+            Map<String,String> netMap = new HashMap<>();
+            for (NmplBaseStation nmplBaseStation : nmplBaseStationList) {
+                netMap.put(nmplBaseStation.getLanIp(),nmplBaseStation.getStationName());
+            }
+            List<NetErrResp> netErrResps = checkNetConn(netMap);
+            if(!CollectionUtils.isEmpty(netErrResps)){
+                return netErrResult(netErrResps);
+            }
+
             List<List<NmplBaseStation>> data = ListSplitUtil.split(nmplBaseStationList, maxPoolSize);
             for (List<NmplBaseStation> list : data) {
                 //文件推送，通过获取版本文件id获取文件路径，
@@ -562,6 +626,33 @@ public class VersionControlServiceImpl extends SystemBaseService implements Vers
             }
         }
         return buildResult(result);
+    }
+
+    /**
+     * 检查代理网络是否异常
+     * @param checkMap
+     * @return
+     */
+    private List<NetErrResp> checkNetConn(Map<String,String>checkMap){
+        List<NetErrResp> result = new ArrayList<>();
+        Set<String> set = checkMap.keySet();
+        for (String s : set) {
+            if(!NetUtil.testIpAndPort(s, Integer.parseInt(port),100)){
+                NetErrResp resp = new NetErrResp();
+                resp.setIp(s);
+                resp.setDeviceName(checkMap.get(s));
+                result.add(resp);
+            }
+        }
+        return result;
+    }
+
+    private Result netErrResult(List<NetErrResp> netErrRespList){
+        Result result = new Result<>();
+        result.setSuccess(false);
+        result.setErrorMsg("以下设备网络异常");
+        result.setResultObj(netErrRespList);
+        return result;
     }
 
 }
