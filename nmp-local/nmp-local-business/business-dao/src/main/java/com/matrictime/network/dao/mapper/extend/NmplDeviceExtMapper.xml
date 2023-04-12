@@ -114,7 +114,7 @@
     <where>
       <trim prefix="(" suffix=")" suffixOverrides="and">
         <if test="deviceName != null">
-          device_name = #{deviceName,jdbcType=VARCHAR} and
+          device_name like concat  ('%', #{deviceName,jdbcType=VARCHAR},'%') and
         </if>
         <if test="deviceType != null">
           device_type = #{deviceType,jdbcType=CHAR} and
@@ -133,7 +133,7 @@
     order by load_version_oper_time desc) as temp
     <where>
       <if test="stationNetworkId != null and stationNetworkId != ''">
-        and station_network_id =#{stationNetworkId,jdbcType=VARCHAR}
+        and station_network_id like concat ('%',#{stationNetworkId,jdbcType=VARCHAR},'%')
       </if>
     </where>
   </select>
@@ -148,7 +148,7 @@
     <where>
       <trim prefix="(" suffix=")" suffixOverrides="and">
         <if test="deviceName != null">
-          device_name = #{deviceName,jdbcType=VARCHAR} and
+          device_name  like concat  ('%',#{deviceName,jdbcType=VARCHAR},'%') and
         </if>
         <if test="deviceType != null">
           device_type = #{deviceType,jdbcType=CHAR} and
@@ -167,7 +167,7 @@
     order by run_version_oper_time desc) as temp
     <where>
       <if test="stationNetworkId != null and stationNetworkId != ''">
-        and station_network_id =#{stationNetworkId,jdbcType=VARCHAR}
+        and station_network_id like concat ('%',#{stationNetworkId,jdbcType=VARCHAR},'%')
       </if>
     </where>
   </select>
