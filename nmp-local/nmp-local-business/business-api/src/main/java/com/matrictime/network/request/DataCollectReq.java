@@ -27,7 +27,12 @@ public class DataCollectReq extends BaseRequest implements Serializable {
     private String deviceName;
 
     /**
-     * 设备类别(01基站、02分发机、03生成机、04缓存机)
+     * 设备ip
+     */
+    private String deviceIp;
+
+    /**
+     * 设备类别(01接入基站、02边界基站、11密钥中心、12生成机、13缓存机)
      */
     private String deviceType;
 
