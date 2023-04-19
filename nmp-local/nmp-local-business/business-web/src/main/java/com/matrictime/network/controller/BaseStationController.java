@@ -13,6 +13,7 @@ import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.request.PcDataReq;
 import com.matrictime.network.response.BaseStationInfoResponse;
+import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BaseStationInfoService;
@@ -273,6 +274,20 @@ public class BaseStationController {
             log.info(e.getMessage());
         }finally {
             return result;
+        }
+    }
+
+    /**
+     * 查询归属信息
+     * @return
+     */
+    @SystemLog(opermodul = "基站管理模块",operDesc = "查询归属信息",operType = "查询")
+    @RequestMapping(value = "/selectBelongInformation",method = RequestMethod.POST)
+    public Result<BelongInformationResponse> selectBelongInformation(){
+        try {
+            return baseStationInfoService.selectBelongInformation();
+        }catch (Exception e){
+            return new Result<>(false,"");
         }
     }
 

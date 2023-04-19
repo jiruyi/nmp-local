@@ -5,6 +5,7 @@ import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
+import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.PageInfo;
 
 import java.util.List;
@@ -39,4 +40,6 @@ public interface BaseStationInfoService {
     public void pushToProxy(String stationId,String suffix)throws Exception;
 
     void initBaseStation();
+
+    Result<BelongInformationResponse> selectBelongInformation();
 }

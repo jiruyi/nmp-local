@@ -7,16 +7,18 @@ import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorMessageContants;
-import com.matrictime.network.modelVo.BaseStationInfoVo;
-import com.matrictime.network.modelVo.StationVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,6 +45,9 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
 
     @Resource
     private NmplStaticRouteMapper nmplStaticRouteMapper;
+
+    @Resource
+    private NmplCompanyInfoMapper nmplCompanyInfoMapper;
 
 
     @Override
@@ -241,4 +246,91 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         }
 
     }
+
+    @Override
+    public BelongInformationResponse selectBelongInformation() {
+        //查询运营商
+        NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
+        NmplCompanyInfoExample.Criteria criteria = nmplCompanyInfoExample.createCriteria();
+        criteria.andIsExistEqualTo(true);
+        criteria.andParentCodeIsNull();
+        List<NmplCompanyInfo> nmplCompanyInfos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
+        BelongInformationResponse belongInformationResponse = new BelongInformationResponse();
+
+        List<RegionBelongVo> operatorList = new ArrayList<>();
+        for(NmplCompanyInfo nmplCompanyInfo: nmplCompanyInfos){
+            nmplCompanyInfo.getCompanyId();
+            NmplCompanyInfoExample nmplCompanyInfoExample1 = new NmplCompanyInfoExample();
+            NmplCompanyInfoExample.Criteria criteria1 = nmplCompanyInfoExample1.createCriteria();
+            criteria1.andParentCodeEqualTo(nmplCompanyInfo.getCompanyId().toString());
+            criteria1.andIsExistEqualTo(true);
+            //查询运营商下的大区
+            List<NmplCompanyInfo> nmplCompanyInfos1 = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample1);
+            List<CommunityBelongVo> list = new ArrayList<>();
+            RegionBelongVo regionBelongVo = new RegionBelongVo();
+            for(NmplCompanyInfo nmplCompanyInfo1: nmplCompanyInfos1){
+                NmplCompanyInfoExample nmplCompanyInfoExample2 = new NmplCompanyInfoExample();
+                NmplCompanyInfoExample.Criteria criteria2 = nmplCompanyInfoExample2.createCriteria();
+                criteria2.andParentCodeEqualTo(nmplCompanyInfo1.getCompanyId().toString());
+                criteria2.andIsExistEqualTo(true);
+                List<NmplCompanyInfo> nmplCompanyInfos2 = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample2);
+                //查询大区下面的小区
+                CommunityBelongVo communityBelongVo = getCommunity(nmplCompanyInfos2);
+                list.add(communityBelongVo);
+            }
+            regionBelongVo.setRegionBelong(nmplCompanyInfo.getCompanyId().toString());
+            regionBelongVo.setRegionList(list);
+            operatorList.add(regionBelongVo);
+        }
+        belongInformationResponse.setOperatorList(operatorList);
+        return belongInformationResponse;
+    }
+
+
+    /**
+     * 获取小区下面基站信息
+     * @param list
+     * @return
+     */
+    private BaseStationBelongVo getBaseStation(List<NmplBaseStationInfo> list){
+        BaseStationBelongVo baseStationBelongVo = new BaseStationBelongVo();
+        if(!CollectionUtils.isEmpty(list)){
+            List<CommunityBaseStationVo> baseStationInfoVoList = new ArrayList<>();
+            for(NmplBaseStationInfo nmplBaseStationInfo: list){
+                CommunityBaseStationVo communityBaseStationVo = new CommunityBaseStationVo();
+                BeanUtils.copyProperties(nmplBaseStationInfo,communityBaseStationVo);
+                baseStationInfoVoList.add(communityBaseStationVo);
+            }
+            baseStationBelongVo.setBelongSpace(list.get(0).getRelationOperatorId());
+            baseStationBelongVo.setBaseStationInfoVoList(baseStationInfoVoList);
+        }
+        return baseStationBelongVo;
+    }
+
+    /**
+     * 获取大区下面的小区
+     * @param nmplCompanyInfos
+     * @return
+     */
+    private CommunityBelongVo getCommunity(List<NmplCompanyInfo> nmplCompanyInfos){
+        CommunityBelongVo communityBelongVo = new CommunityBelongVo();
+        if(!CollectionUtils.isEmpty(nmplCompanyInfos)){
+            List<BaseStationBelongVo> list = new ArrayList<>();
+            for (NmplCompanyInfo nmplCompanyInfo : nmplCompanyInfos){
+                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+                NmplBaseStationInfoExample.Criteria criteria3 = nmplBaseStationInfoExample.createCriteria();
+                criteria3.andIsExistEqualTo(true);
+                criteria3.andRelationOperatorIdEqualTo(nmplCompanyInfo.getCompanyId().toString());
+                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+                //获取小区下面基站信息
+                BaseStationBelongVo baseStationBelongVo = getBaseStation(nmplBaseStationInfos);
+                list.add(baseStationBelongVo);
+            }
+            communityBelongVo.setCommunityBelong(nmplCompanyInfos.get(0).getParentCode());
+            communityBelongVo.setCommunityList(list);
+        }
+        return communityBelongVo;
+    }
+
+
 }

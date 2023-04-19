@@ -3,6 +3,7 @@ package com.matrictime.network.dao.domain;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.PageInfo;
 
 import java.util.List;
@@ -41,4 +42,6 @@ public interface BaseStationInfoDomainService {
     void updateCheckUnique(BaseStationInfoRequest baseStationInfoRequest);
 
     void deleteCheck(BaseStationInfoRequest baseStationInfoRequest);
+
+    BelongInformationResponse selectBelongInformation();
 }
