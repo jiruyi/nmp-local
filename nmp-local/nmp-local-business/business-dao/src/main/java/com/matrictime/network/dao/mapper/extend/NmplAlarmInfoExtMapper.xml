@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplAlarmInfoExtMapper">
+
+    <sql id="Base_Column_List">
+    alarm_id, alarm_source_id, alarm_source_ip, alarm_content, alarm_level, alarm_upload_time,
+    alarm_source_type, alarm_content_type, create_time, update_time
+    </sql>
+
+    <insert id="batchInsert" parameterType="com.matrictime.network.model.AlarmInfo">
+        insert into nmpl_alarm_info (alarm_source_id, alarm_source_ip,
+        alarm_content, alarm_level, alarm_upload_time,
+        alarm_source_type, alarm_content_type, create_time,
+        update_time) values
+        <foreach collection ="alarmInfoList" item="alarm" separator =",">
+            (#{alarmSourceId,jdbcType=VARCHAR}, #{alarmSourceIp,jdbcType=VARCHAR},
+            #{alarmContent,jdbcType=VARCHAR}, #{alarmLevel,jdbcType=CHAR}, #{alarmUploadTime,jdbcType=TIMESTAMP},
+            #{alarmSourceType,jdbcType=CHAR}, #{alarmContentType,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP},
+            #{updateTime,jdbcType=TIMESTAMP})
+        </foreach >
+    </insert>
+</mapper>

@@ -1,8 +1,11 @@
 package com.matrictime.network.task;
 
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.service.DataPushService;
 import com.matrictime.network.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.time.DateUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
@@ -28,6 +32,9 @@ public class ScheduledTask {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private DataPushService dataPushService;
 
     @Value("${netmanage.ip}")
     private String ip;
@@ -44,10 +51,21 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
     }
 
-    @Scheduled(cron = "*/120 * * * * ?")
+
+    /**
+      * @title alarmPush
+      * @param []
+      * @return void
+      * @description  告警信息定时任务
+      * @author jiruyi
+      * @create 2023/4/19 0019 17:25
+      */
+    @Scheduled(cron = "* 0/10 * * * ? ")
     @Async
-    public void logPush(){
-        taskService.logPush(ip + KEY_SPLIT + port + LOG_PUSH_URL);
+    public void alarmPush(){
+        log.info(Thread.currentThread().getName()+ new Date()+"======================alarmPush begin=============================");
+        dataPushService.alarmPush();
+        log.info(Thread.currentThread().getName()+new Date()+"======================alarmPush end=============================");
     }
 
     @Scheduled(cron = "*/30 * * * * ?")
