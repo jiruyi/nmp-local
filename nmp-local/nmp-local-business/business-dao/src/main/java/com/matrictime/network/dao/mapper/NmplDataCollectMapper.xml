@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
     <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_ip" jdbcType="VARCHAR" property="deviceIp" />
     <result column="device_type" jdbcType="VARCHAR" property="deviceType" />
     <result column="data_item_name" jdbcType="VARCHAR" property="dataItemName" />
     <result column="data_item_code" jdbcType="VARCHAR" property="dataItemCode" />
@@ -73,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, device_id, device_name, device_type, data_item_name, data_item_code, data_item_value, 
-    unit, upload_time, create_time, update_time
+    id, device_id, device_name, device_ip, device_type, data_item_name, data_item_code, 
+    data_item_value, unit, upload_time, create_time, update_time
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplDataCollectExample" resultMap="BaseResultMap">
     select
@@ -109,13 +110,15 @@
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplDataCollect">
     insert into nmpl_data_collect (id, device_id, device_name, 
-      device_type, data_item_name, data_item_code, 
-      data_item_value, unit, upload_time, 
-      create_time, update_time)
+      device_ip, device_type, data_item_name, 
+      data_item_code, data_item_value, unit, 
+      upload_time, create_time, update_time
+      )
     values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{deviceName,jdbcType=VARCHAR}, 
-      #{deviceType,jdbcType=VARCHAR}, #{dataItemName,jdbcType=VARCHAR}, #{dataItemCode,jdbcType=VARCHAR}, 
-      #{dataItemValue,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, #{uploadTime,jdbcType=TIMESTAMP}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+      #{deviceIp,jdbcType=VARCHAR}, #{deviceType,jdbcType=VARCHAR}, #{dataItemName,jdbcType=VARCHAR}, 
+      #{dataItemCode,jdbcType=VARCHAR}, #{dataItemValue,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, 
+      #{uploadTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplDataCollect">
     insert into nmpl_data_collect
@@ -128,6 +131,9 @@
       </if>
       <if test="deviceName != null">
         device_name,
+      </if>
+      <if test="deviceIp != null">
+        device_ip,
       </if>
       <if test="deviceType != null">
         device_type,
@@ -163,6 +169,9 @@
       </if>
       <if test="deviceName != null">
         #{deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceIp != null">
+        #{deviceIp,jdbcType=VARCHAR},
       </if>
       <if test="deviceType != null">
         #{deviceType,jdbcType=VARCHAR},
@@ -208,6 +217,9 @@
       <if test="record.deviceName != null">
         device_name = #{record.deviceName,jdbcType=VARCHAR},
       </if>
+      <if test="record.deviceIp != null">
+        device_ip = #{record.deviceIp,jdbcType=VARCHAR},
+      </if>
       <if test="record.deviceType != null">
         device_type = #{record.deviceType,jdbcType=VARCHAR},
       </if>
@@ -242,6 +254,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       device_id = #{record.deviceId,jdbcType=VARCHAR},
       device_name = #{record.deviceName,jdbcType=VARCHAR},
+      device_ip = #{record.deviceIp,jdbcType=VARCHAR},
       device_type = #{record.deviceType,jdbcType=VARCHAR},
       data_item_name = #{record.dataItemName,jdbcType=VARCHAR},
       data_item_code = #{record.dataItemCode,jdbcType=VARCHAR},
@@ -262,6 +275,9 @@
       </if>
       <if test="deviceName != null">
         device_name = #{deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceIp != null">
+        device_ip = #{deviceIp,jdbcType=VARCHAR},
       </if>
       <if test="deviceType != null">
         device_type = #{deviceType,jdbcType=VARCHAR},
@@ -294,6 +310,7 @@
     update nmpl_data_collect
     set device_id = #{deviceId,jdbcType=VARCHAR},
       device_name = #{deviceName,jdbcType=VARCHAR},
+      device_ip = #{deviceIp,jdbcType=VARCHAR},
       device_type = #{deviceType,jdbcType=VARCHAR},
       data_item_name = #{dataItemName,jdbcType=VARCHAR},
       data_item_code = #{dataItemCode,jdbcType=VARCHAR},

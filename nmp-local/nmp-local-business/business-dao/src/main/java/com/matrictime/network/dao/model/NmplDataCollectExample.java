@@ -305,6 +305,76 @@ public class NmplDataCollectExample {
             return (Criteria) this;
         }
 
+        public Criteria andDeviceIpIsNull() {
+            addCriterion("device_ip is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpIsNotNull() {
+            addCriterion("device_ip is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpEqualTo(String value) {
+            addCriterion("device_ip =", value, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpNotEqualTo(String value) {
+            addCriterion("device_ip <>", value, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpGreaterThan(String value) {
+            addCriterion("device_ip >", value, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpGreaterThanOrEqualTo(String value) {
+            addCriterion("device_ip >=", value, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpLessThan(String value) {
+            addCriterion("device_ip <", value, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpLessThanOrEqualTo(String value) {
+            addCriterion("device_ip <=", value, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpLike(String value) {
+            addCriterion("device_ip like", value, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpNotLike(String value) {
+            addCriterion("device_ip not like", value, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpIn(List<String> values) {
+            addCriterion("device_ip in", values, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpNotIn(List<String> values) {
+            addCriterion("device_ip not in", values, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpBetween(String value1, String value2) {
+            addCriterion("device_ip between", value1, value2, "deviceIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIpNotBetween(String value1, String value2) {
+            addCriterion("device_ip not between", value1, value2, "deviceIp");
+            return (Criteria) this;
+        }
+
         public Criteria andDeviceTypeIsNull() {
             addCriterion("device_type is null");
             return (Criteria) this;
