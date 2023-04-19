@@ -12,10 +12,7 @@ import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.DeviceInfoRequest;
 import com.matrictime.network.request.PcDataReq;
-import com.matrictime.network.response.BaseStationInfoResponse;
-import com.matrictime.network.response.BelongInformationResponse;
-import com.matrictime.network.response.DeviceResponse;
-import com.matrictime.network.response.PageInfo;
+import com.matrictime.network.response.*;
 import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.service.DeviceService;
 import com.matrictime.network.service.PcDataService;
@@ -286,6 +283,20 @@ public class BaseStationController {
     public Result<BelongInformationResponse> selectBelongInformation(){
         try {
             return baseStationInfoService.selectBelongInformation();
+        }catch (Exception e){
+            return new Result<>(false,"");
+        }
+    }
+
+    /**
+     * 查询基站总数
+     * @return
+     */
+    @SystemLog(opermodul = "基站管理模块",operDesc = "查询基站总数",operType = "查询")
+    @RequestMapping(value = "/countBaseStation",method = RequestMethod.POST)
+    public Result<CountBaseStationResponse> countBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
+        try {
+            return baseStationInfoService.countBaseStation(baseStationInfoRequest);
         }catch (Exception e){
             return new Result<>(false,"");
         }

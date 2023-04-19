@@ -6,6 +6,7 @@ import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.BelongInformationResponse;
+import com.matrictime.network.response.CountBaseStationResponse;
 import com.matrictime.network.response.PageInfo;
 
 import java.util.List;
@@ -42,4 +43,6 @@ public interface BaseStationInfoService {
     void initBaseStation();
 
     Result<BelongInformationResponse> selectBelongInformation();
+
+    Result<CountBaseStationResponse> countBaseStation(BaseStationInfoRequest baseStationInfoRequest);
 }

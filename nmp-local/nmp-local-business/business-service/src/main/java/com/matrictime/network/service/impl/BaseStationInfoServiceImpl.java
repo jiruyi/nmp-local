@@ -25,6 +25,7 @@ import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.BelongInformationResponse;
+import com.matrictime.network.response.CountBaseStationResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.util.CommonCheckUtil;
@@ -444,32 +445,19 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         return result;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public Result<CountBaseStationResponse> countBaseStation(BaseStationInfoRequest baseStationInfoRequest) {
+        Result<CountBaseStationResponse> result = new Result<>();
+        try {
+            result.setResultObj(baseStationInfoDomainService.countBaseStation(baseStationInfoRequest));
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg("");
+            log.info("countBaseStation:{}",e.getMessage());
+        }
+        return result;
+    }
 
 
 }

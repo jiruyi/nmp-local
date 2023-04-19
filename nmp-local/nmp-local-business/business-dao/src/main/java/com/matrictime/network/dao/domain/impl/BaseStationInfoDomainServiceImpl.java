@@ -3,6 +3,7 @@ package com.matrictime.network.dao.domain.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
@@ -10,6 +11,7 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BelongInformationResponse;
+import com.matrictime.network.response.CountBaseStationResponse;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
@@ -284,6 +286,25 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         }
         belongInformationResponse.setOperatorList(operatorList);
         return belongInformationResponse;
+    }
+
+    @Override
+    public CountBaseStationResponse countBaseStation(BaseStationInfoRequest baseStationInfoRequest) {
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
+        criteria.andStationTypeEqualTo(baseStationInfoRequest.getStationType());
+        CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
+        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+        if(!CollectionUtils.isEmpty(nmplBaseStationInfos)){
+            int currentConnectCount = 0;
+            for(int i = 0;i< nmplBaseStationInfos.size();i++){
+                currentConnectCount = currentConnectCount +
+                        Integer.parseInt(nmplBaseStationInfos.get(i).getCurrentConnectCount());
+            }
+            countBaseStationResponse.setCountBaseStation(nmplBaseStationInfos.size());
+            countBaseStationResponse.setUserCount(currentConnectCount);
+        }
+        return countBaseStationResponse;
     }
 
 
