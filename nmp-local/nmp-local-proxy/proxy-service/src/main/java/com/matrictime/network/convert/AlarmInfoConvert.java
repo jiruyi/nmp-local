@@ -12,5 +12,7 @@ import org.mapstruct.Mapper;
  * @desc
  */
 @Mapper(componentModel = "spring")
-public interface AlarmInfoConvert extends  BasicObjectMapper<NmplAlarmInfo , AlarmInfo>{
+public interface AlarmInfoConvert extends  BasicObjectMapper<com.matrictime.network.dao.model.NmplAlarmInfo , com.matrictime.network.model.AlarmInfo>{
+    @Override
+    AlarmInfo to(NmplAlarmInfo var1);
 }

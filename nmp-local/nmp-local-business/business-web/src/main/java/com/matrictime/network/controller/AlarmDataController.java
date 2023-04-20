@@ -7,9 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,7 +37,7 @@ public class AlarmDataController {
       */
     @ApiOperation(value = "查询网关日志记录",notes = "查询网关日志记录")
     @RequestMapping(value = "/accept",method = RequestMethod.POST)
-    public Result acceptAlarmData(List<AlarmInfo> alarmInfoList){
+    public Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList){
         return  alarmDataService.acceptAlarmData(alarmInfoList);
     }
 }

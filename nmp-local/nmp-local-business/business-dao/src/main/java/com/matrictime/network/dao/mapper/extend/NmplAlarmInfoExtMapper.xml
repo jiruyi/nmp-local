@@ -13,10 +13,10 @@
         alarm_source_type, alarm_content_type, create_time,
         update_time) values
         <foreach collection ="alarmInfoList" item="alarm" separator =",">
-            (#{alarmSourceId,jdbcType=VARCHAR}, #{alarmSourceIp,jdbcType=VARCHAR},
-            #{alarmContent,jdbcType=VARCHAR}, #{alarmLevel,jdbcType=CHAR}, #{alarmUploadTime,jdbcType=TIMESTAMP},
-            #{alarmSourceType,jdbcType=CHAR}, #{alarmContentType,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP},
-            #{updateTime,jdbcType=TIMESTAMP})
+            (#{alarm.alarmSourceId,jdbcType=VARCHAR}, #{alarm.alarmSourceIp,jdbcType=VARCHAR},
+            #{alarm.alarmContent,jdbcType=VARCHAR}, #{alarm.alarmLevel,jdbcType=CHAR}, #{alarm.alarmUploadTime,jdbcType=TIMESTAMP},
+            #{alarm.alarmSourceType,jdbcType=CHAR}, #{alarm.alarmContentType,jdbcType=CHAR}, #{alarm.createTime,jdbcType=TIMESTAMP},
+            #{alarm.updateTime,jdbcType=TIMESTAMP})
         </foreach >
     </insert>
 </mapper>

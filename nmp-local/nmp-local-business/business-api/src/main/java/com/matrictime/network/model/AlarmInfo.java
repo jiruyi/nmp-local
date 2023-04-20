@@ -2,6 +2,7 @@ package com.matrictime.network.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Date;
  * @date 2023/4/19 0019 15:44
  * @desc
  */
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

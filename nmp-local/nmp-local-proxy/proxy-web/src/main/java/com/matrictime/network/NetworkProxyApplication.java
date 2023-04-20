@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableScheduling
 @MapperScan(basePackages = "com.matrictime.network.dao.mapper")
 @EnableEurekaClient
-@EnableFeignClients
+@EnableFeignClients(basePackages = "com.matrictime.network")
 public class NetworkProxyApplication
 {
     public static void main(String[] args)

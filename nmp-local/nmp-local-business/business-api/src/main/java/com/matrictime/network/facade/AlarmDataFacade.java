@@ -15,8 +15,8 @@ import java.util.List;
  * @date 2023/4/19 0019 16:37
  * @desc 告警数据接口
  */
-@FeignClient(value = "nmp-local-business")
+@FeignClient(value = "nmp-local-business",path = "nmp-local-business")
 public interface AlarmDataFacade {
-    @RequestMapping(value= "/user/getUser",method = RequestMethod.GET)
+    @RequestMapping(value= "/alarm/accept",method = RequestMethod.POST)
     Result acceptAlarmData(List<AlarmInfo> alarmInfoList);
 }

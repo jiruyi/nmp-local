@@ -2,6 +2,7 @@ package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.dao.model.NmplAlarmInfo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,4 +15,5 @@ import java.util.List;
 public interface AlarmDomainService {
 
     List<NmplAlarmInfo> queryAlarmList();
+    int deleteThisTimePushData(Date uploadTime);
 }
