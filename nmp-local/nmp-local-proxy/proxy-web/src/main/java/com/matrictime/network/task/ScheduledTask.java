@@ -5,6 +5,7 @@ import com.matrictime.network.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -32,13 +33,13 @@ public class ScheduledTask {
     private String port;
 
 
-//    @Scheduled(cron = "*/30 * * * * ?")
-//    @Async
-////    public void heartReport(){
-////        log.info(Thread.currentThread().getName()+"======================heartReport begin=============================");
-////        taskService.heartReport(ip + KEY_SPLIT + port + HEART_REPORT_URL);
-////        log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
-////    }
+    @Scheduled(cron = "*/30 * * * * ?")
+    @Async
+    public void heartReport(){
+        log.info(Thread.currentThread().getName()+"======================heartReport begin=============================");
+        taskService.heartReport(ip + KEY_SPLIT + port + HEART_REPORT_URL);
+        log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
+    }
 
 
     /**
