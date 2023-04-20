@@ -1,5 +1,7 @@
 package com.matrictime.network.service;
 
+import java.util.Date;
+
 public interface TaskService {
 
     void heartReport(String url);
@@ -11,5 +13,26 @@ public interface TaskService {
     void dataCollectPush(String url);
 
     void billPush(String url);
+
+    /**
+     * 物理设备心跳上报服务
+     * @param uploadTime
+     * @param url
+     */
+    void physicalDeviceHeartbeat(Date uploadTime, String url);
+
+    /**
+     * 物理设备资源情况上报服务
+     * @param uploadTime
+     * @param url
+     */
+    void physicalDeviceHeartResource(Date uploadTime,String url);
+
+    /**
+     * 运行系统资源上报服务
+     * @param uploadTime
+     * @param url
+     */
+    void systemResource(Date uploadTime,String url);
 
 }

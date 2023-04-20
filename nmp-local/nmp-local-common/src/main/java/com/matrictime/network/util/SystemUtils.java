@@ -30,7 +30,7 @@ public class SystemUtils {
     }
 
     /**
-     * 获取cpu使用率(四舍五入保留两位)
+     * 获取cpu使用率(四舍五入保留整数)
      */
     public static String getCPUusePercent(){
         SystemInfo si = new SystemInfo();
@@ -101,7 +101,7 @@ public class SystemUtils {
      * 获取逻辑磁盘可使用量
      * @return
      */
-    public static long getUseFileSys(){
+    public static long getUsableFileSys(){
         SystemInfo si = new SystemInfo();
         OperatingSystem op = si.getOperatingSystem();
         FileSystem fileSystem = op.getFileSystem();

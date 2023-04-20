@@ -60,10 +60,15 @@ public class FormatUtil {
         }
     }
 
-    private static String[] formatUnits(long value, long prefix, String unit) {
+    public static String[] formatUnits(long value, long prefix, String unit) {
         String [] res = new String[2];
-        res[0] = String.format("%.2f", (double) value / prefix);
+        res[0] = String.format("%.0f", (double) value / prefix);
         res[1] = unit;
+        return res;
+    }
+
+    public static String formatUnits(long value, long prefix) {
+        String res = String.format("%.2f", (double) value / prefix);
         return res;
     }
 }
