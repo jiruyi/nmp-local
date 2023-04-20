@@ -1,5 +1,5 @@
 -- jry
-CREATE TABLE IF NOT EXISTS `nmpl_device_alarm` (
+CREATE TABLE IF NOT EXISTS `nmpl_alarm_info` (
     `alarm_id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
     `alarm_source_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '业务系统id  物理设备无',
     `alarm_source_ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '设备ip',
@@ -114,4 +114,6 @@ CREATE TABLE IF NOT EXISTS `nmpl_terminal_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='终端用户表';
 
 ALTER TABLE `nmpl_base_station_info` add column `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '当前用户数';
+
+
 -- wq
