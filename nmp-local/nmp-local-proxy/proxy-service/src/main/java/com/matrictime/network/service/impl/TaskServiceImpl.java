@@ -289,14 +289,14 @@ public class TaskServiceImpl implements TaskService {
      * @param url
      */
     @Override
-    public void physicalDeviceHeartResource(Date uploadTime,String url) {
+    public void physicalDeviceResource(Date uploadTime,String url) {
         Boolean flag = false;
         String post = null;
         String data = "";
         String msg =null;
         try {
             JSONObject req = new JSONObject();
-            req.put("pdhrList",getPdhrList(uploadTime));
+            req.put("pdrList",getPdrList(uploadTime));
             data = req.toJSONString();
             post = HttpClientUtil.post(url,data);
         }catch (Exception e){
@@ -329,7 +329,7 @@ public class TaskServiceImpl implements TaskService {
         String msg =null;
         try {
             JSONObject req = new JSONObject();
-            req.put("pdhrList",getSrList(uploadTime,infos));
+            req.put("srList",getSrList(uploadTime,infos));
             data = req.toJSONString();
             post = HttpClientUtil.post(url,data);
         }catch (Exception e){
@@ -415,8 +415,8 @@ public class TaskServiceImpl implements TaskService {
      * @param uploadTime
      * @return
      */
-    private List<NmplPhysicalDeviceResource> getPdhrList(Date uploadTime){
-        List<NmplPhysicalDeviceResource> pdhrList = new ArrayList<>();
+    private List<NmplPhysicalDeviceResource> getPdrList(Date uploadTime){
+        List<NmplPhysicalDeviceResource> pdrList = new ArrayList<>();
 
         // 获取cpu信息
         NmplPhysicalDeviceResource cpu = new NmplPhysicalDeviceResource();
@@ -425,7 +425,7 @@ public class TaskServiceImpl implements TaskService {
         cpu.setResourceValue(String.valueOf(SystemUtils.getCPUcores()));
         cpu.setResourcePercent(SystemUtils.getCPUusePercent());
         cpu.setUploadTime(uploadTime);
-        pdhrList.add(cpu);
+        pdrList.add(cpu);
 
         // 获取内存信息
         NmplPhysicalDeviceResource memory = new NmplPhysicalDeviceResource();
@@ -438,7 +438,7 @@ public class TaskServiceImpl implements TaskService {
         memory.setResourceUnit(totalMemArray[1]);
         memory.setResourcePercent(FormatUtil.formatUnits(totalMemory-availMemory,totalMemory));
         memory.setUploadTime(uploadTime);
-        pdhrList.add(memory);
+        pdrList.add(memory);
 
         // 获取磁盘信息
         NmplPhysicalDeviceResource disk = new NmplPhysicalDeviceResource();
@@ -451,9 +451,9 @@ public class TaskServiceImpl implements TaskService {
         disk.setResourceUnit(totalDiskArray[1]);
         disk.setResourcePercent(FormatUtil.formatUnits(totalDisk-availDisk,totalDisk));
         disk.setUploadTime(uploadTime);
-        pdhrList.add(disk);
+        pdrList.add(disk);
 
-        return pdhrList;
+        return pdrList;
     }
 
     /**

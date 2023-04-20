@@ -2,6 +2,7 @@ package com.matrictime.network.task;
 
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.service.TaskService;
+import com.matrictime.network.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
@@ -73,6 +75,30 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================bill begin=============================");
         taskService.billPush(ip + KEY_SPLIT + port + BILL_URL);
         log.info(Thread.currentThread().getName()+"======================bill end=============================");
+    }
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    @Async
+    public void physicalDeviceHeartbeat(){
+        log.info(Thread.currentThread().getName()+"======================physicalDeviceHeartbeat begin=============================");
+        taskService.physicalDeviceHeartbeat(DateUtils.changeDate(new Date()),ip + KEY_SPLIT + port + PHYSICAL_DEVICE_HEARTBEAT_URL);
+        log.info(Thread.currentThread().getName()+"======================physicalDeviceHeartbeat end=============================");
+    }
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    @Async
+    public void physicalDeviceResource(){
+        log.info(Thread.currentThread().getName()+"======================physicalDeviceResource begin=============================");
+        taskService.physicalDeviceResource(DateUtils.changeDate(new Date()),ip + KEY_SPLIT + port + PHYSICAL_DEVICE_RESOURCE_URL);
+        log.info(Thread.currentThread().getName()+"======================physicalDeviceResource end=============================");
+    }
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    @Async
+    public void systemResource(){
+        log.info(Thread.currentThread().getName()+"======================systemResource begin=============================");
+        taskService.systemResource(DateUtils.changeDate(new Date()),ip + KEY_SPLIT + port + SYSTEM_RESOURCE_URL);
+        log.info(Thread.currentThread().getName()+"======================systemResource end=============================");
     }
 
 

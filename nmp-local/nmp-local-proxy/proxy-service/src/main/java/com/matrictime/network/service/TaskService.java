@@ -26,7 +26,7 @@ public interface TaskService {
      * @param uploadTime
      * @param url
      */
-    void physicalDeviceHeartResource(Date uploadTime,String url);
+    void physicalDeviceResource(Date uploadTime,String url);
 
     /**
      * 运行系统资源上报服务

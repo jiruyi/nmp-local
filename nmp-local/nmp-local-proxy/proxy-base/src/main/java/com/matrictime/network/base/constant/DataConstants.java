@@ -159,6 +159,12 @@ public class DataConstants {
 
     public static final String BILL_URL = "/nmp-local-business/bill/saveBill";
 
+    public static final String PHYSICAL_DEVICE_HEARTBEAT_URL = "/nmp-local-business/monitor/devHeartbeat";
+
+    public static final String PHYSICAL_DEVICE_RESOURCE_URL = "/nmp-local-business/monitor/devResource";
+
+    public static final String SYSTEM_RESOURCE_URL = "/nmp-local-business/monitor/sysResource";
+
     public static final Integer ERROR_MSG_MAXLENGTH = 250;
 
     public static final long FILE_SIZE = 1024*1024*100;

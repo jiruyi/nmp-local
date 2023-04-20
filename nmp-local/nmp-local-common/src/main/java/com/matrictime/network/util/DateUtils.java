@@ -788,4 +788,17 @@ public class DateUtils {
         Date time = calendar.getTime();
         return date2.after(time);
     }
+
+    /**
+     * 改变date
+     * @param date
+     * @return
+     */
+    public static Date changeDate(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.MILLISECOND,0);
+        return calendar.getTime();
+    }
 }

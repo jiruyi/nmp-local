@@ -4,20 +4,15 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.constant.DataConstants;
-import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
-import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
-import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
 import com.matrictime.network.dao.mapper.extend.NmplDeviceExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.DeviceInfoRelVo;
-import com.matrictime.network.modelVo.TotalLoadVo;
-import com.matrictime.network.request.CheckHeartReq;
-import com.matrictime.network.request.QueryMonitorReq;
-import com.matrictime.network.request.TotalLoadChangeReq;
+import com.matrictime.network.modelVo.*;
+import com.matrictime.network.request.*;
 import com.matrictime.network.response.CheckHeartResp;
 import com.matrictime.network.response.QueryMonitorResp;
 import com.matrictime.network.response.TotalLoadChangeResp;
@@ -35,6 +30,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -74,6 +70,14 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     @Autowired
     private DeviceService deviceService;
 
+    @Resource
+    private NmplPhysicalDeviceHeartbeatMapper nmplPhysicalDeviceHeartbeatMapper;
+
+    @Resource
+    private NmplPhysicalDeviceResourceMapper nmplPhysicalDeviceResourceMapper;
+
+    @Resource
+    private NmplSystemResourceMapper nmplSystemResourceMapper;
 
 
     private static final String USER_COUNT_CODE = "userNumber";
@@ -116,6 +120,85 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             result = failResult(e);
         }
 
+        return result;
+    }
+
+    /**
+     * 物理设备心跳上报
+     * @param req
+     * @return
+     */
+    @Override
+    public Result physicalDeviceHeartbeat(PhysicalDeviceHeartbeatReq req) {
+        Result result;
+        try{
+            List<PhysicalDeviceHeartbeatVo> heartbeatList = req.getHeartbeatList();
+            for (PhysicalDeviceHeartbeatVo vo : heartbeatList){
+                NmplPhysicalDeviceHeartbeat dto = new NmplPhysicalDeviceHeartbeat();
+                BeanUtils.copyProperties(vo,dto);
+                NmplPhysicalDeviceHeartbeat heartbeat = nmplPhysicalDeviceHeartbeatMapper.selectByPrimaryKey(vo.getIp1Ip2());
+                if (heartbeat !=null){
+                    nmplPhysicalDeviceHeartbeatMapper.updateByPrimaryKeySelective(dto);
+                }else {
+                    nmplPhysicalDeviceHeartbeatMapper.insertSelective(dto);
+                }
+            }
+            result = buildResult(null);
+        }catch (Exception e){
+            log.error("MonitorServiceImpl.physicalDeviceHeartbeat Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    /**
+     * 物理设备资源情况信息上报
+     * @param req
+     * @return
+     */
+    @Override
+    public Result physicalDeviceResource(PhysicalDeviceResourceReq req) {
+        Result result;
+        try{
+            List<PhysicalDeviceResourceVo> pdrList = req.getPdrList();
+            for (PhysicalDeviceResourceVo vo : pdrList){
+                NmplPhysicalDeviceResource dto = new NmplPhysicalDeviceResource();
+                BeanUtils.copyProperties(vo,dto);
+                nmplPhysicalDeviceResourceMapper.insertSelective(dto);
+            }
+            result = buildResult(null);
+        }catch (Exception e){
+            log.error("MonitorServiceImpl.physicalDeviceResource Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
+        return result;
+    }
+
+    /**
+     * 运行系统资源信息上报
+     * @param req
+     * @return
+     */
+    @Override
+    public Result systemResource(SystemResourceReq req) {
+        Result result;
+        try{
+            List<SystemResourceVo> srList = req.getSrList();
+            for (SystemResourceVo vo : srList){
+                NmplSystemResource dto = new NmplSystemResource();
+                BeanUtils.copyProperties(vo,dto);
+                NmplSystemResource systemResource = nmplSystemResourceMapper.selectByPrimaryKey(vo.getSystemId());
+                if (systemResource !=null){
+                    nmplSystemResourceMapper.updateByPrimaryKeySelective(dto);
+                }else {
+                    nmplSystemResourceMapper.insertSelective(dto);
+                }
+            }
+            result = buildResult(null);
+        }catch (Exception e){
+            log.error("MonitorServiceImpl.systemResource Exception:{}",e.getMessage());
+            result = failResult(e);
+        }
         return result;
     }
 
