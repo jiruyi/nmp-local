@@ -10,7 +10,7 @@ public interface NmplSystemResourceMapper {
 
     int deleteByExample(NmplSystemResourceExample example);
 
-    int deleteByPrimaryKey(String systemId);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(NmplSystemResource record);
 
@@ -18,7 +18,7 @@ public interface NmplSystemResourceMapper {
 
     List<NmplSystemResource> selectByExample(NmplSystemResourceExample example);
 
-    NmplSystemResource selectByPrimaryKey(String systemId);
+    NmplSystemResource selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") NmplSystemResource record, @Param("example") NmplSystemResourceExample example);
 

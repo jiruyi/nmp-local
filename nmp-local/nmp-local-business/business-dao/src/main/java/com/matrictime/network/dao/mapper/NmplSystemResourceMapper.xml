@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.matrictime.network.dao.mapper.NmplSystemResourceMapper">
   <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplSystemResource">
-    <id column="system_id" jdbcType="VARCHAR" property="systemId" />
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="system_id" jdbcType="VARCHAR" property="systemId" />
     <result column="system_type" jdbcType="VARCHAR" property="systemType" />
     <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
     <result column="run_time" jdbcType="BIGINT" property="runTime" />
@@ -71,7 +72,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    system_id, system_type, start_time, run_time, cpu_percent, memory_percent, upload_time, 
+    id, system_id, system_type, start_time, run_time, cpu_percent, memory_percent, upload_time, 
     create_time, update_time
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplSystemResourceExample" resultMap="BaseResultMap">
@@ -89,15 +90,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from nmpl_system_resource
-    where system_id = #{systemId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from nmpl_system_resource
-    where system_id = #{systemId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplSystemResourceExample">
     delete from nmpl_system_resource
@@ -106,18 +107,21 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplSystemResource">
-    insert into nmpl_system_resource (system_id, system_type, start_time, 
-      run_time, cpu_percent, memory_percent, 
-      upload_time, create_time, update_time
-      )
-    values (#{systemId,jdbcType=VARCHAR}, #{systemType,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
-      #{runTime,jdbcType=BIGINT}, #{cpuPercent,jdbcType=VARCHAR}, #{memoryPercent,jdbcType=VARCHAR}, 
-      #{uploadTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+    insert into nmpl_system_resource (id, system_id, system_type, 
+      start_time, run_time, cpu_percent, 
+      memory_percent, upload_time, create_time, 
+      update_time)
+    values (#{id,jdbcType=INTEGER}, #{systemId,jdbcType=VARCHAR}, #{systemType,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{runTime,jdbcType=BIGINT}, #{cpuPercent,jdbcType=VARCHAR}, 
+      #{memoryPercent,jdbcType=VARCHAR}, #{uploadTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplSystemResource">
     insert into nmpl_system_resource
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
       <if test="systemId != null">
         system_id,
       </if>
@@ -147,6 +151,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="systemId != null">
         #{systemId,jdbcType=VARCHAR},
       </if>
@@ -185,6 +192,9 @@
   <update id="updateByExampleSelective" parameterType="map">
     update nmpl_system_resource
     <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
       <if test="record.systemId != null">
         system_id = #{record.systemId,jdbcType=VARCHAR},
       </if>
@@ -219,7 +229,8 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update nmpl_system_resource
-    set system_id = #{record.systemId,jdbcType=VARCHAR},
+    set id = #{record.id,jdbcType=INTEGER},
+      system_id = #{record.systemId,jdbcType=VARCHAR},
       system_type = #{record.systemType,jdbcType=VARCHAR},
       start_time = #{record.startTime,jdbcType=TIMESTAMP},
       run_time = #{record.runTime,jdbcType=BIGINT},
@@ -235,6 +246,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplSystemResource">
     update nmpl_system_resource
     <set>
+      <if test="systemId != null">
+        system_id = #{systemId,jdbcType=VARCHAR},
+      </if>
       <if test="systemType != null">
         system_type = #{systemType,jdbcType=VARCHAR},
       </if>
@@ -260,11 +274,12 @@
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where system_id = #{systemId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplSystemResource">
     update nmpl_system_resource
-    set system_type = #{systemType,jdbcType=VARCHAR},
+    set system_id = #{systemId,jdbcType=VARCHAR},
+      system_type = #{systemType,jdbcType=VARCHAR},
       start_time = #{startTime,jdbcType=TIMESTAMP},
       run_time = #{runTime,jdbcType=BIGINT},
       cpu_percent = #{cpuPercent,jdbcType=VARCHAR},
@@ -272,6 +287,6 @@
       upload_time = #{uploadTime,jdbcType=TIMESTAMP},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where system_id = #{systemId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

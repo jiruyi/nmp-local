@@ -10,7 +10,7 @@ public interface NmplPhysicalDeviceResourceMapper {
 
     int deleteByExample(NmplPhysicalDeviceResourceExample example);
 
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(@Param("deviceIp") String deviceIp, @Param("resourceType") String resourceType);
 
     int insert(NmplPhysicalDeviceResource record);
 
@@ -18,7 +18,7 @@ public interface NmplPhysicalDeviceResourceMapper {
 
     List<NmplPhysicalDeviceResource> selectByExample(NmplPhysicalDeviceResourceExample example);
 
-    NmplPhysicalDeviceResource selectByPrimaryKey(Integer id);
+    NmplPhysicalDeviceResource selectByPrimaryKey(@Param("deviceIp") String deviceIp, @Param("resourceType") String resourceType);
 
     int updateByExampleSelective(@Param("record") NmplPhysicalDeviceResource record, @Param("example") NmplPhysicalDeviceResourceExample example);
 

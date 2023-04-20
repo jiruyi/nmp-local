@@ -12,7 +12,12 @@ import java.util.Date;
 @Data
 public class SystemResourceVo {
     /**
-     * 主键（系统id，关联基站和设备表）
+     * 自增主键
+     */
+    private Integer id;
+
+    /**
+     * 系统id:关联基站和设备表
      */
     private String systemId;
 
@@ -55,6 +60,14 @@ public class SystemResourceVo {
      * 更新时间
      */
     private Date updateTime;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getSystemId() {
         return systemId;

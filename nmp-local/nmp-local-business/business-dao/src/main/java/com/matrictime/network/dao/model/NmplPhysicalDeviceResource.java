@@ -11,11 +11,6 @@ import lombok.Data;
 @Data
 public class NmplPhysicalDeviceResource {
     /**
-     * 自增主键
-     */
-    private Integer id;
-
-    /**
      * 物理设备ip
      */
     private String deviceIp;
@@ -54,14 +49,6 @@ public class NmplPhysicalDeviceResource {
      * 更新时间
      */
     private Date updateTime;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getDeviceIp() {
         return deviceIp;

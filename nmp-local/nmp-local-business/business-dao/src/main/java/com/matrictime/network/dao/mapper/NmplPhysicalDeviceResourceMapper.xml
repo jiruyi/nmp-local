@@ -2,9 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.matrictime.network.dao.mapper.NmplPhysicalDeviceResourceMapper">
   <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplPhysicalDeviceResource">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="device_ip" jdbcType="VARCHAR" property="deviceIp" />
-    <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
+    <id column="device_ip" jdbcType="VARCHAR" property="deviceIp" />
+    <id column="resource_type" jdbcType="VARCHAR" property="resourceType" />
     <result column="resource_value" jdbcType="VARCHAR" property="resourceValue" />
     <result column="resource_unit" jdbcType="VARCHAR" property="resourceUnit" />
     <result column="resource_percent" jdbcType="VARCHAR" property="resourcePercent" />
@@ -71,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, device_ip, resource_type, resource_value, resource_unit, resource_percent, upload_time, 
+    device_ip, resource_type, resource_value, resource_unit, resource_percent, upload_time, 
     create_time, update_time
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplPhysicalDeviceResourceExample" resultMap="BaseResultMap">
@@ -89,15 +88,17 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from nmpl_physical_device_resource
-    where id = #{id,jdbcType=INTEGER}
+    where device_ip = #{deviceIp,jdbcType=VARCHAR}
+      and resource_type = #{resourceType,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="map">
     delete from nmpl_physical_device_resource
-    where id = #{id,jdbcType=INTEGER}
+    where device_ip = #{deviceIp,jdbcType=VARCHAR}
+      and resource_type = #{resourceType,jdbcType=VARCHAR}
   </delete>
   <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplPhysicalDeviceResourceExample">
     delete from nmpl_physical_device_resource
@@ -106,21 +107,16 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplPhysicalDeviceResource">
-    insert into nmpl_physical_device_resource (id, device_ip, resource_type, 
-      resource_value, resource_unit, resource_percent, 
-      upload_time, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{deviceIp,jdbcType=VARCHAR}, #{resourceType,jdbcType=VARCHAR}, 
-      #{resourceValue,jdbcType=VARCHAR}, #{resourceUnit,jdbcType=VARCHAR}, #{resourcePercent,jdbcType=VARCHAR}, 
-      #{uploadTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+    insert into nmpl_physical_device_resource (device_ip, resource_type, resource_value, 
+      resource_unit, resource_percent, upload_time, 
+      create_time, update_time)
+    values (#{deviceIp,jdbcType=VARCHAR}, #{resourceType,jdbcType=VARCHAR}, #{resourceValue,jdbcType=VARCHAR}, 
+      #{resourceUnit,jdbcType=VARCHAR}, #{resourcePercent,jdbcType=VARCHAR}, #{uploadTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplPhysicalDeviceResource">
     insert into nmpl_physical_device_resource
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="deviceIp != null">
         device_ip,
       </if>
@@ -147,9 +143,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="deviceIp != null">
         #{deviceIp,jdbcType=VARCHAR},
       </if>
@@ -185,9 +178,6 @@
   <update id="updateByExampleSelective" parameterType="map">
     update nmpl_physical_device_resource
     <set>
-      <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
-      </if>
       <if test="record.deviceIp != null">
         device_ip = #{record.deviceIp,jdbcType=VARCHAR},
       </if>
@@ -219,8 +209,7 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update nmpl_physical_device_resource
-    set id = #{record.id,jdbcType=INTEGER},
-      device_ip = #{record.deviceIp,jdbcType=VARCHAR},
+    set device_ip = #{record.deviceIp,jdbcType=VARCHAR},
       resource_type = #{record.resourceType,jdbcType=VARCHAR},
       resource_value = #{record.resourceValue,jdbcType=VARCHAR},
       resource_unit = #{record.resourceUnit,jdbcType=VARCHAR},
@@ -235,12 +224,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplPhysicalDeviceResource">
     update nmpl_physical_device_resource
     <set>
-      <if test="deviceIp != null">
-        device_ip = #{deviceIp,jdbcType=VARCHAR},
-      </if>
-      <if test="resourceType != null">
-        resource_type = #{resourceType,jdbcType=VARCHAR},
-      </if>
       <if test="resourceValue != null">
         resource_value = #{resourceValue,jdbcType=VARCHAR},
       </if>
@@ -260,18 +243,18 @@
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where device_ip = #{deviceIp,jdbcType=VARCHAR}
+      and resource_type = #{resourceType,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplPhysicalDeviceResource">
     update nmpl_physical_device_resource
-    set device_ip = #{deviceIp,jdbcType=VARCHAR},
-      resource_type = #{resourceType,jdbcType=VARCHAR},
-      resource_value = #{resourceValue,jdbcType=VARCHAR},
+    set resource_value = #{resourceValue,jdbcType=VARCHAR},
       resource_unit = #{resourceUnit,jdbcType=VARCHAR},
       resource_percent = #{resourcePercent,jdbcType=VARCHAR},
       upload_time = #{uploadTime,jdbcType=TIMESTAMP},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
+    where device_ip = #{deviceIp,jdbcType=VARCHAR}
+      and resource_type = #{resourceType,jdbcType=VARCHAR}
   </update>
 </mapper>

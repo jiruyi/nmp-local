@@ -12,11 +12,6 @@ import java.util.Date;
 @Data
 public class PhysicalDeviceResourceVo {
     /**
-     * 自增主键
-     */
-    private Integer id;
-
-    /**
      * 物理设备ip
      */
     private String deviceIp;
@@ -55,14 +50,6 @@ public class PhysicalDeviceResourceVo {
      * 更新时间
      */
     private Date updateTime;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getDeviceIp() {
         return deviceIp;

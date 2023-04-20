@@ -164,7 +164,12 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             for (PhysicalDeviceResourceVo vo : pdrList){
                 NmplPhysicalDeviceResource dto = new NmplPhysicalDeviceResource();
                 BeanUtils.copyProperties(vo,dto);
-                nmplPhysicalDeviceResourceMapper.insertSelective(dto);
+                NmplPhysicalDeviceResource resource = nmplPhysicalDeviceResourceMapper.selectByPrimaryKey(vo.getDeviceIp(), vo.getResourceType());
+                if (resource != null){
+                    nmplPhysicalDeviceResourceMapper.updateByPrimaryKeySelective(dto);
+                }else {
+                    nmplPhysicalDeviceResourceMapper.insertSelective(dto);
+                }
             }
             result = buildResult(null);
         }catch (Exception e){
@@ -187,12 +192,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             for (SystemResourceVo vo : srList){
                 NmplSystemResource dto = new NmplSystemResource();
                 BeanUtils.copyProperties(vo,dto);
-                NmplSystemResource systemResource = nmplSystemResourceMapper.selectByPrimaryKey(vo.getSystemId());
-                if (systemResource !=null){
-                    nmplSystemResourceMapper.updateByPrimaryKeySelective(dto);
-                }else {
-                    nmplSystemResourceMapper.insertSelective(dto);
-                }
+                nmplSystemResourceMapper.insertSelective(dto);
             }
             result = buildResult(null);
         }catch (Exception e){
