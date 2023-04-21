@@ -14,21 +14,32 @@ public interface DataCollectService {
 
     Future<Result> save(DataCollectReq dataCollectReq);
 
-
+    /**
+     * 状态监控统计数据（已废弃）
+     */
     Result monitorData(MonitorReq monitorReq);
-
+    /**
+     * 状态监控top10（已废弃）
+     */
     Result monitorDataTopTen(MonitorReq monitorReq);
 
 
     Result selectAllDevice(DataCollectReq dataCollectReq);
 
 
-    //3.0.18版本的监控管理
+    /**
+     * 流量变化
+     */
     Result flowTransformation(DataCollectReq dataCollectReq);
 
-
+    /**
+     * 最新流量
+     */
     Result currentIpFlow(DataCollectReq dataCollectReq);
 
+    /**
+     * 处理新增数据放入redis
+     */
     void handleAddData(String code,String ip);
 
 }

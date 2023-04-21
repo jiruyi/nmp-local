@@ -368,40 +368,51 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
      */
     @Override
     public Result flowTransformation(DataCollectReq dataCollectReq) {
-        //参数校验
-        checkParam(dataCollectReq);
-        // 查询redis获取最近12小时的数据
-        String key = DataConstants.FLOW_TRANSFOR
-                +dataCollectReq.getDeviceIp()+"_" +dataCollectReq.getDataItemCode();
-        Map<String, TimeDataVo> cache = getRedisHash(key);
-        Map<String, Double> map = new HashMap<>();
-        if(cache.isEmpty()) {
-            // 如果redis查询为空 或者redis查询异常 则通过mysql获取24小时历史数据
-            NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
-            nmplDataCollectExample.createCriteria().andDataItemCodeEqualTo(dataCollectReq.getDataItemCode())
-                    .andDeviceIpEqualTo(dataCollectReq.getDeviceIp())
-                    .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(24,0));
-            List<NmplDataCollect> dataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+        Result result;
+        try {
+            //参数校验
+            checkParam(dataCollectReq);
+            // 查询redis获取最近12小时的数据
+            String key = DataConstants.FLOW_TRANSFOR
+                    +dataCollectReq.getDeviceIp()+"_" +dataCollectReq.getDataItemCode();
+            Map<String, TimeDataVo> cache = getRedisHash(key);
+            Map<String, Double> map = new HashMap<>();
+            if(cache.isEmpty()) {
+                // 如果redis查询为空 或者redis查询异常 则通过mysql获取24小时历史数据
+                NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
+                nmplDataCollectExample.createCriteria().andDataItemCodeEqualTo(dataCollectReq.getDataItemCode())
+                        .andDeviceIpEqualTo(dataCollectReq.getDeviceIp())
+                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(24,0));
+                List<NmplDataCollect> dataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
 
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-            for (NmplDataCollect nmplDataCollect : dataCollectList) {
-                BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
-                if (cache.containsKey(formatter.format(nmplDataCollect.getUploadTime()))) {
-                    TimeDataVo timeDataVo = cache.get(formatter.format(nmplDataCollect.getUploadTime()));
-                    timeDataVo.setValue(timeDataVo.getValue() + bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
-                } else {
-                    TimeDataVo timeDataVo = new TimeDataVo();
-                    timeDataVo.setDate(nmplDataCollect.getUploadTime());
-                    timeDataVo.setValue(bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
-                    cache.put(formatter.format(nmplDataCollect.getUploadTime()), timeDataVo);
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                for (NmplDataCollect nmplDataCollect : dataCollectList) {
+                    BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
+                    if (cache.containsKey(formatter.format(nmplDataCollect.getUploadTime()))) {
+                        TimeDataVo timeDataVo = cache.get(formatter.format(nmplDataCollect.getUploadTime()));
+                        timeDataVo.setValue( + bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getValue())).doubleValue());
+                    } else {
+                        TimeDataVo timeDataVo = new TimeDataVo();
+                        timeDataVo.setDate(nmplDataCollect.getUploadTime());
+                        timeDataVo.setValue(bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
+                        cache.put(formatter.format(nmplDataCollect.getUploadTime()), timeDataVo);
+                    }
                 }
+                //将数据放入redis缓存
+                redisTemplate.opsForHash().putAll(key, cache);
             }
-            //将数据放入redis缓存
-            redisTemplate.opsForHash().putAll(key, cache);
+            supplementaryData(cache);
+            map =filterData(cache);
+            return buildResult(map);
+        }catch (SystemException e) {
+            log.info("查询服务器流量变化数据异常",e.getMessage());
+            result = failResult(e);
+        } catch (Exception e) {
+            log.info("查询服务器流量变化数据异常",e.getMessage());
+            result = failResult("");
         }
-        supplementaryData(cache);
-        map =filterData(cache);
-        return buildResult(map);
+        return result;
+
     }
 
     /**
@@ -411,29 +422,42 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
      */
     @Override
     public Result currentIpFlow(DataCollectReq dataCollectReq) {
-        //校验参数
-        checkParam(dataCollectReq);
-        //从redis中获取值
-        String key = DataConstants.CURRENT_FLOW+dataCollectReq.getDeviceIp()+"_" +dataCollectReq.getDataItemCode();
-        Object value = redisTemplate.opsForValue().get(key);
-        String time = TimeUtil.getOnTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-        if(value == null){
-            double result =0.0;
-            List<DataCollectVo> dataCollectVos = nmplDataCollectExtMapper.selectCurrentIpFlow(dataCollectReq);
-            for (DataCollectVo dataCollectVo : dataCollectVos) {
-                if(time.equals(formatter.format(dataCollectVo.getUploadTime()))){
-                    BigDecimal bigDecimal = new BigDecimal(dataCollectVo.getDataItemValue());
-                    // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
-                    result += bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+        Result result;
+        try {
+            //校验参数
+            checkParam(dataCollectReq);
+            //从redis中获取值
+            String key = DataConstants.CURRENT_FLOW+dataCollectReq.getDeviceIp()+"_" +dataCollectReq.getDataItemCode();
+            Object value = redisTemplate.opsForValue().get(key);
+            String time = TimeUtil.getOnTime();
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            if(value == null){
+                double res =0.0;
+                List<DataCollectVo> dataCollectVos = nmplDataCollectExtMapper.selectCurrentIpFlow(dataCollectReq);
+                for (DataCollectVo dataCollectVo : dataCollectVos) {
+                    if(time.equals(formatter.format(dataCollectVo.getUploadTime()))){
+                        BigDecimal bigDecimal = new BigDecimal(dataCollectVo.getDataItemValue());
+                        // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
+                        res = bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(res)).doubleValue();
+                    }
                 }
+                value = String.valueOf(res);
+                redisTemplate.opsForValue().set(key,value);
             }
-            value = String.valueOf(result);
-            redisTemplate.opsForValue().set(key,value);
+            return buildResult(value);
+        }catch (SystemException e) {
+            log.info("查询服务器最新流量数据异常",e.getMessage());
+            result = failResult(e);
+        } catch (Exception e) {
+            log.info("查询服务器最新流量数据异常",e.getMessage());
+            result = failResult("");
         }
-        return buildResult(value);
+        return result;
     }
 
+    /**
+     * 处理新增数据放入redis
+     */
     @Override
     public void handleAddData(String code,String ip){
         DataCollectReq dataCollectReq = new DataCollectReq();
@@ -449,13 +473,14 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             if(time.equals(formatter.format(dataCollectVo.getUploadTime()))){
                 BigDecimal bigDecimal = new BigDecimal(dataCollectVo.getDataItemValue());
                 // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
-                result += bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+                result = bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(result)).doubleValue();
             }
         }
         TimeDataVo timeDataVo = new TimeDataVo();
         timeDataVo.setDate(new Date());
         timeDataVo.setValue(result);
         redisTemplate.opsForValue().set(currentKey,result);
+        redisTemplate.expire(currentKey,30,TimeUnit.MINUTES);
         redisTemplate.opsForHash().put(transforKey,time,timeDataVo);
     }
 
@@ -513,14 +538,23 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         return sortedMap;
     }
 
-
+    /**
+     * 补充map缺失的节点数据
+     */
     private Map<String,TimeDataVo> supplementaryData(Map<String, TimeDataVo> map){
         TimeDataVo timeDataVo = new TimeDataVo();
         timeDataVo.setDate(new Date());
         timeDataVo.setValue(0.0);
         for (int i = 0; i < 24; i++) {
-            String time1 = i+":00";
-            String time2 = i+":30";
+            String time1 = null;
+            String time2 = null;
+            if(i<10){
+                time1 = "0"+ i +":00";
+                time2 = "0"+ i +":30";
+            }else {
+                time1 =  i +":00";
+                time2 =  i +":30";
+            }
             if(!map.containsKey(time1)){
                 map.put(time1,timeDataVo);
             }

@@ -74,41 +74,52 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
 
     @Override
     public Result flowTransformation(TerminalDataReq terminalDataReq) {
-        checkParam(terminalDataReq);
-        String key = DataConstants.FLOW_TRANSFOR
-                +terminalDataReq.getTerminalNetworkId()+"_" +terminalDataReq.getDataType();
-        Map<String, TimeDataVo> cache = getRedisHash(key);
-        Map<String, JSONObject> map = new HashMap<>();
-        if(cache.isEmpty()) {
-            // 如果redis查询为空 或者redis查询异常 则通过mysql获取24小时历史数据
-            NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
-            nmplTerminalDataExample.createCriteria().andDataTypeEqualTo(terminalDataReq.getDataType())
-                    .andTerminalNetworkIdEqualTo(terminalDataReq.getTerminalNetworkId())
-                    .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(24,0));
-            List<NmplTerminalData> nmplTerminalData = nmplTerminalDataMapper.selectByExample(nmplTerminalDataExample);
+        Result result;
+        try {
+            checkParam(terminalDataReq);
+            String key = DataConstants.FLOW_TRANSFOR
+                    +terminalDataReq.getTerminalNetworkId()+"_" +terminalDataReq.getDataType();
+            Map<String, TimeDataVo> cache = getRedisHash(key);
+            Map<String, JSONObject> map = new HashMap<>();
+            if(cache.isEmpty()) {
+                // 如果redis查询为空 或者redis查询异常 则通过mysql获取24小时历史数据
+                NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
+                nmplTerminalDataExample.createCriteria().andDataTypeEqualTo(terminalDataReq.getDataType())
+                        .andTerminalNetworkIdEqualTo(terminalDataReq.getTerminalNetworkId())
+                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(24,30));
+                List<NmplTerminalData> nmplTerminalData = nmplTerminalDataMapper.selectByExample(nmplTerminalDataExample);
 
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-            for (NmplTerminalData nmplTerminalDatum : nmplTerminalData) {
-                BigDecimal upValue = new BigDecimal(nmplTerminalDatum.getUpValue());
-                BigDecimal downValue = new BigDecimal(nmplTerminalDatum.getDownValue());
-                if (cache.containsKey(formatter.format(nmplTerminalDatum.getUploadTime()))) {
-                    TimeDataVo timeDataVo = cache.get(formatter.format(nmplTerminalDatum.getUploadTime()));
-                    timeDataVo.setUpValue(timeDataVo.getUpValue() +upValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
-                    timeDataVo.setDownValue(timeDataVo.getDownValue() + downValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
-                } else {
-                    TimeDataVo timeDataVo = new TimeDataVo();
-                    timeDataVo.setDate(nmplTerminalDatum.getUploadTime());
-                    timeDataVo.setUpValue(upValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
-                    timeDataVo.setDownValue(downValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
-                    cache.put(formatter.format(nmplTerminalDatum.getUploadTime()), timeDataVo);
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                for (NmplTerminalData nmplTerminalDatum : nmplTerminalData) {
+                    BigDecimal upValue = new BigDecimal(nmplTerminalDatum.getUpValue());
+                    BigDecimal downValue = new BigDecimal(nmplTerminalDatum.getDownValue());
+                    if (cache.containsKey(formatter.format(nmplTerminalDatum.getUploadTime()))) {
+                        TimeDataVo timeDataVo = cache.get(formatter.format(nmplTerminalDatum.getUploadTime()));
+                        timeDataVo.setUpValue( upValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getUpValue())).doubleValue());
+                        timeDataVo.setDownValue( downValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getDownValue())).doubleValue());
+                    } else {
+                        TimeDataVo timeDataVo = new TimeDataVo();
+                        timeDataVo.setDate(nmplTerminalDatum.getUploadTime());
+                        timeDataVo.setUpValue(upValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
+                        timeDataVo.setDownValue(downValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
+                        cache.put(formatter.format(nmplTerminalDatum.getUploadTime()), timeDataVo);
+                    }
                 }
+                //将数据放入redis缓存
+                redisTemplate.opsForHash().putAll(key, cache);
             }
-            //将数据放入redis缓存
-            redisTemplate.opsForHash().putAll(key, cache);
+            supplementaryData(cache);
+            map = filterData(cache);
+            return buildResult(map);
+        }catch (SystemException e) {
+            log.info("查询终端流量变化数据异常",e.getMessage());
+            result = failResult(e);
+        } catch (Exception e) {
+            log.info("查询终端流量变化数据异常",e.getMessage());
+            result = failResult("");
         }
-        supplementaryData(cache);
-        map = filterData(cache);
-       return buildResult(map);
+        return result;
+
     }
 
 
@@ -121,13 +132,16 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         String key = DataConstants.FLOW_TRANSFOR
                 +terminalDataReq.getTerminalNetworkId()+"_" +terminalDataReq.getDataType();
         TimeDataVo timeDataVo = new TimeDataVo();
-
+        timeDataVo.setUpValue(0.0);
+        timeDataVo.setDownValue(0.0);
         for (TerminalDataVo terminalDataVo : terminalDataVoList) {
             if(time.equals(formatter.format(terminalDataVo.getUploadTime()))){
                 BigDecimal upValue = new BigDecimal(terminalDataVo.getUpValue());
                 BigDecimal downValue = new BigDecimal(terminalDataVo.getDownValue());
-                timeDataVo.setUpValue(upValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
-                timeDataVo.setDownValue(downValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
+                timeDataVo.setUpValue(upValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).
+                        add(BigDecimal.valueOf(timeDataVo.getUpValue())).doubleValue());
+                timeDataVo.setDownValue(downValue.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).
+                        add(BigDecimal.valueOf(timeDataVo.getDownValue())).doubleValue());
                 // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
             }
         }
@@ -194,8 +208,15 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         timeDataVo.setUpValue(0.0);
         timeDataVo.setDownValue(0.0);
         for (int i = 0; i < 24; i++) {
-            String time1 = i+":00";
-            String time2 = i+":30";
+            String time1 = null;
+            String time2 = null;
+            if(i<10){
+                time1 = "0"+ i +":00";
+                time2 = "0"+ i +":30";
+            }else {
+                time1 =  i +":00";
+                time2 =  i +":30";
+            }
             if(!map.containsKey(time1)){
                 map.put(time1,timeDataVo);
             }
