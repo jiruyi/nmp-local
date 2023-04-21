@@ -8,10 +8,7 @@ import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.NmplPcDataVo;
 import com.matrictime.network.modelVo.PcDataVo;
 import com.matrictime.network.modelVo.StationVo;
-import com.matrictime.network.request.BaseStationInfoRequest;
-import com.matrictime.network.request.DataCollectReq;
-import com.matrictime.network.request.DeviceInfoRequest;
-import com.matrictime.network.request.PcDataReq;
+import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
 import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.service.DeviceService;
@@ -19,6 +16,7 @@ import com.matrictime.network.service.PcDataService;
 import com.matrictime.network.util.ListSplitUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -284,6 +282,7 @@ public class BaseStationController {
         try {
             return baseStationInfoService.selectBelongInformation();
         }catch (Exception e){
+            log.info("selectBelongInformation:{}",e.getMessage());
             return new Result<>(false,"");
         }
     }
@@ -292,12 +291,35 @@ public class BaseStationController {
      * 查询基站总数
      * @return
      */
-    @SystemLog(opermodul = "基站管理模块",operDesc = "查询基站总数",operType = "查询")
+    @SystemLog(opermodul = "设备管理模块",operDesc = "查询设备总数",operType = "查询")
     @RequestMapping(value = "/countBaseStation",method = RequestMethod.POST)
-    public Result<CountBaseStationResponse> countBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
+    public Result<CountBaseStationResponse> countBaseStation(@RequestBody DeviceInfoRequest deviceInfoRequest){
         try {
-            return baseStationInfoService.countBaseStation(baseStationInfoRequest);
+            if(StringUtils.isEmpty(deviceInfoRequest.getDeviceType())){
+                throw new RuntimeException("缺少必传参数");
+            }
+            return deviceService.countBaseStation(deviceInfoRequest);
         }catch (Exception e){
+            log.info("countBaseStation:{}",e.getMessage());
+            return new Result<>(false,"");
+        }
+    }
+
+    /**
+     * 更新基站下的用户数
+     * @return
+     */
+    @SystemLog(opermodul = "设备管理模块",operDesc = "更新设备下的用户数",operType = "更新")
+    @RequestMapping(value = "/updateConnectCount",method = RequestMethod.POST)
+    public Result<Integer> updateConnectCount(@RequestBody BaseStationCountRequest baseStationCountRequest){
+        try {
+            if(StringUtils.isEmpty(baseStationCountRequest.getDeviceId()) &&
+                    StringUtils.isEmpty(baseStationCountRequest.getCurrentConnectCount())){
+                throw new RuntimeException("缺少必传参数");
+            }
+            return deviceService.updateConnectCount(baseStationCountRequest);
+        }catch (Exception e){
+            log.info("updateConnectCount:{}",e.getMessage());
             return new Result<>(false,"");
         }
     }

@@ -33,6 +33,9 @@ public class TerminalUserController {
     public Result<Integer> updateTerminalUser(@RequestBody TerminalUserResquest terminalUserResquest){
         Result<Integer> result = new Result<>();
         try {
+            if(StringUtils.isEmpty(terminalUserResquest.getTerminalStatus())){
+                throw new RuntimeException("缺少必传参数");
+            }
             if(StringUtils.isEmpty(terminalUserResquest.getTerminalNetworkId())){
                 throw new RuntimeException("缺少必传参数");
             }

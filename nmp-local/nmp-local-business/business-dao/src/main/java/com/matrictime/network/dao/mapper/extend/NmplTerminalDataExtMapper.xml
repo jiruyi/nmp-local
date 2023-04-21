@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplTerminalDataExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplTerminalData">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="terminal_network_id" jdbcType="VARCHAR" property="terminalNetworkId" />
+        <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+        <result column="data_type" jdbcType="CHAR" property="dataType" />
+        <result column="up_value" jdbcType="INTEGER" property="upValue" />
+        <result column="down_value" jdbcType="INTEGER" property="downValue" />
+        <result column="terminal_ip" jdbcType="VARCHAR" property="terminalIp" />
+        <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <select id="distinctTerminalData" parameterType="com.matrictime.network.request.TerminalDataRequest" resultMap="BaseResultMap">
+        select distinct terminal_network_id from nmpl_terminal_data
+        where data_type = #{dataType,jdbcType=VARCHAR} and parent_id = #{parentId,jdbcType=VARCHAR}
+    </select>
+</mapper>

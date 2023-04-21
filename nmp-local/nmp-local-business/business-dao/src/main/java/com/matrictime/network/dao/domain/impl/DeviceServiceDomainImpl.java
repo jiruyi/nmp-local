@@ -5,15 +5,14 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.DeviceDomainService;
-import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
-import com.matrictime.network.dao.mapper.NmplDeviceExtraInfoMapper;
-import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
-import com.matrictime.network.dao.mapper.NmplDeviceMapper;
+import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.StationVo;
+import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.response.CountBaseStationResponse;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -38,6 +37,9 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
 
     @Resource
     private NmplDeviceMapper nmplDeviceMapper;
+
+    @Resource
+    private NmplDeviceCountMapper nmplDeviceCountMapper;
 
 
     @Override
@@ -190,5 +192,34 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
                 || !CollectionUtils.isEmpty(nmplDeviceInfos1)){
             throw new SystemException("不同设备ip+端口或入网码重复");
         }
+    }
+
+    @Override
+    public CountBaseStationResponse countBaseStation(DeviceInfoRequest deviceInfoRequest) {
+        NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
+        NmplDeviceCountExample.Criteria criteria = nmplDeviceCountExample.createCriteria();
+        criteria.andDeviceTypeEqualTo(deviceInfoRequest.getDeviceType());
+        List<NmplDeviceCount> nmplDeviceCounts = nmplDeviceCountMapper.selectByExample(nmplDeviceCountExample);
+        CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
+        if(!CollectionUtils.isEmpty(nmplDeviceCounts)){
+            int currentConnectCount = 0;
+            for (int i = 0;i < nmplDeviceCounts.size();i++){
+                currentConnectCount = currentConnectCount +
+                        Integer.parseInt(currentConnectCount + nmplDeviceCounts.get(i).getCurrentConnectCount());
+            }
+            countBaseStationResponse.setCountBaseStation(nmplDeviceCounts.size());
+            countBaseStationResponse.setUserCount(currentConnectCount);
+        }
+        return countBaseStationResponse;
+    }
+
+    @Override
+    public int updateConnectCount(BaseStationCountRequest baseStationCountRequest) {
+        NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
+        NmplDeviceCountExample.Criteria criteria = nmplDeviceCountExample.createCriteria();
+        criteria.andDeviceIdEqualTo(baseStationCountRequest.getDeviceId());
+        NmplDeviceCount nmplDeviceCount = new NmplDeviceCount();
+        BeanUtils.copyProperties(baseStationCountRequest,nmplDeviceCount);
+        return nmplDeviceCountMapper.updateByExampleSelective(nmplDeviceCount,nmplDeviceCountExample);
     }
 }

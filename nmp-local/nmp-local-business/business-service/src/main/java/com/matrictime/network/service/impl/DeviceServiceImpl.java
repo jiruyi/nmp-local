@@ -18,8 +18,10 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.StationVo;
+import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.response.CountBaseStationResponse;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceService;
@@ -307,6 +309,31 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
 
     }
 
+    @Override
+    public Result<CountBaseStationResponse> countBaseStation(DeviceInfoRequest deviceInfoRequest) {
+        Result<CountBaseStationResponse> result = new Result<>();
+        try {
+            result.setResultObj(deviceDomainService.countBaseStation(deviceInfoRequest));
+        }catch (Exception e){
+            result.setErrorMsg("");
+            result.setSuccess(false);
+            log.info("countBaseStation:{}",e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public Result<Integer> updateConnectCount(BaseStationCountRequest baseStationCountRequest) {
+        Result<Integer> result = new Result<>();
+        try {
+            result.setResultObj(deviceDomainService.updateConnectCount(baseStationCountRequest));
+        }catch (Exception e){
+            result.setErrorMsg("");
+            result.setSuccess(false);
+            log.info("updateConnectCount:{}",e.getMessage());
+        }
+        return result;
+    }
 
 
     private void checkParam(DeviceInfoRequest deviceInfoRequest){

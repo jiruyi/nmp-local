@@ -9,6 +9,7 @@ import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.modelVo.*;
+import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.CountBaseStationResponse;
@@ -293,6 +294,7 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
         criteria.andStationTypeEqualTo(baseStationInfoRequest.getStationType());
+        criteria.andIsExistEqualTo(true);
         CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         if(!CollectionUtils.isEmpty(nmplBaseStationInfos)){
@@ -305,6 +307,16 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
             countBaseStationResponse.setUserCount(currentConnectCount);
         }
         return countBaseStationResponse;
+    }
+
+    @Override
+    public int updateConnectCount(BaseStationCountRequest baseStationCountRequest) {
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
+        criteria.andStationIdEqualTo(baseStationCountRequest.getStationId());
+        NmplBaseStationInfo nmplBaseStationInfo = new NmplBaseStationInfo();
+        BeanUtils.copyProperties(baseStationCountRequest,nmplBaseStationInfo);
+        return nmplBaseStationInfoMapper.updateByExampleSelective(nmplBaseStationInfo,nmplBaseStationInfoExample);
     }
 
 
