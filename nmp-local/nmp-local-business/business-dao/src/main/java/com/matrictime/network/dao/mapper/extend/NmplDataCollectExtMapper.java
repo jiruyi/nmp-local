@@ -26,4 +26,7 @@ public interface NmplDataCollectExtMapper {
 
     // TODO: 2022/4/1 sql中有临时写死值需要在上前确认清
     BigDecimal countLoad(@Param("deviceId") String deviceId, @Param("dataItemCode") String dataItemCode, @Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
+
+
+    List<DataCollectVo>selectCurrentIpFlow(DataCollectReq dataCollectReq);
 }
