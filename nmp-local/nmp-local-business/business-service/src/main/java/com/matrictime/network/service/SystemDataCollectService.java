@@ -4,6 +4,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationDataVo;
 import com.matrictime.network.modelVo.BorderBaseStationDataVo;
 import com.matrictime.network.modelVo.KeyCenterDataVo;
+import com.matrictime.network.request.DataCollectReq;
 
 /**
  * @author by wangqiang
@@ -15,4 +16,6 @@ public interface SystemDataCollectService {
     Result<BorderBaseStationDataVo> selectBorderBaseStationData();
 
     Result<KeyCenterDataVo> selectKeyCenterData();
+
+    Result<Integer> insertSystemData(DataCollectReq dataCollectReq);
 }

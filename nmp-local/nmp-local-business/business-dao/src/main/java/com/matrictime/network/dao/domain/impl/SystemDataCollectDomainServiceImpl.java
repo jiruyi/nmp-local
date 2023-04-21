@@ -1,5 +1,6 @@
 package com.matrictime.network.dao.domain.impl;
 
+import com.matrictime.network.base.enums.DataCollectEnum;
 import com.matrictime.network.dao.domain.SystemDataCollectDomainService;
 import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
 import com.matrictime.network.dao.mapper.extend.NmplSystemDataCollectExtMapper;
@@ -7,10 +8,13 @@ import com.matrictime.network.dao.model.NmplDataCollect;
 import com.matrictime.network.dao.model.NmplDataCollectExample;
 import com.matrictime.network.modelVo.BaseStationDataVo;
 import com.matrictime.network.modelVo.BorderBaseStationDataVo;
+import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.KeyCenterDataVo;
 import com.matrictime.network.request.DataCollectReq;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -34,7 +38,11 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     public BaseStationDataVo selectBaseStationData() {
         BaseStationDataVo baseStationDataVo = new BaseStationDataVo();
         List<String> list = new ArrayList<>();
-        list.add("01");list.add("04");list.add("02");list.add("05");list.add("03");list.add("06");
+        //创建枚举list
+        list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
+        list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
+        list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
+
         List<Double> dataList = getData(list, "01");
         baseStationDataVo.setCommunicationsLoadUp(dataList.get(0) / 1800);
         baseStationDataVo.setCommunicationsLoadDown(dataList.get(1) / 1800);
@@ -49,7 +57,11 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     public BorderBaseStationDataVo selectBorderBaseStationData() {
         BorderBaseStationDataVo borderBaseStationDataVo = new BorderBaseStationDataVo();
         List<String> list = new ArrayList<>();
-        list.add("01");list.add("04");list.add("02");list.add("05");list.add("03");list.add("06");
+        //创建枚举list
+        list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
+        list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
+        list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
+
         List<Double> dataList = getData(list, "02");
         borderBaseStationDataVo.setCommunicationsLoadUp(dataList.get(0) / 1800);
         borderBaseStationDataVo.setCommunicationsLoadDown(dataList.get(1) / 1800);
@@ -64,7 +76,11 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     public KeyCenterDataVo selectKeyCenterData() {
         KeyCenterDataVo keyCenterDataVo = new KeyCenterDataVo();
         List<String> list = new ArrayList<>();
-        list.add("01");list.add("04");list.add("02");list.add("05");list.add("07");list.add("08");
+        //创建枚举list
+        list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
+        list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
+        list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
+
         List<Double> dataList = getData(list, "11");
         keyCenterDataVo.setCommunicationsLoadUp(dataList.get(0) / 1800);
         keyCenterDataVo.setCommunicationsLoadDown(dataList.get(1) / 1800);
@@ -73,6 +89,18 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         keyCenterDataVo.setKeyDistributionPayloadUp(dataList.get(4) / 1800);
         keyCenterDataVo.setKeyDistributionPayloadDown(dataList.get(5) / 1800);
         return keyCenterDataVo;
+    }
+
+    @Transactional
+    @Override
+    public int insertSystemData(DataCollectReq dataCollectReq) {
+        List<DataCollectVo> dataCollectVoList = dataCollectReq.getDataCollectVoList();
+        for(DataCollectVo dataCollectVo: dataCollectVoList){
+            NmplDataCollect nmplDataCollect = new NmplDataCollect();
+            BeanUtils.copyProperties(dataCollectVo,nmplDataCollect);
+            nmplDataCollectMapper.insertSelective(nmplDataCollect);
+        }
+        return 1;
     }
 
     /**
