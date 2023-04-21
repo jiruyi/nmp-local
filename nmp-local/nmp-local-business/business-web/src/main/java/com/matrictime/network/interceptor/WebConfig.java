@@ -51,6 +51,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/outlineSorter/auth")
                 .excludePathPatterns("/config/insertOrUpdate")
                 .excludePathPatterns("/proxy/init")
+                .excludePathPatterns("/alarm/accept")
                 .excludePathPatterns("/baseStation/savePcData");
     }
 }

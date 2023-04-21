@@ -5,14 +5,12 @@ import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataCollectVo;
-import com.matrictime.network.request.BillRequest;
-import com.matrictime.network.request.DataCollectReq;
-import com.matrictime.network.request.MonitorReq;
-import com.matrictime.network.request.PcDataReq;
+import com.matrictime.network.request.*;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DataCollectService;
 import com.matrictime.network.service.PcDataService;
+import com.matrictime.network.service.TerminalDataService;
 import com.matrictime.network.util.ListSplitUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +43,8 @@ public class DataController {
     DataCollectService dataCollectService;
     @Value("${thread.batchMaxSize}")
     Integer maxSize;
+    @Autowired
+    TerminalDataService terminalDataService;
     /**
      * 基站数据多条件查询接口
      * @param dataCollectReq
@@ -163,6 +163,32 @@ public class DataController {
     @RequestMapping(value = "/selectAllDevice",method = RequestMethod.POST)
     public Result selectAllDevice(@RequestBody DataCollectReq dataCollectReq){
         return dataCollectService.selectAllDevice(dataCollectReq);
+    }
+
+
+
+    /**
+     * 流量变化
+     */
+    @RequestMapping(value = "/flowTransformation",method = RequestMethod.POST)
+    public Result flowTransformation(@RequestBody DataCollectReq dataCollectReq){
+        return dataCollectService.flowTransformation(dataCollectReq);
+    }
+
+    /**
+     * 当前流量
+     */
+    @RequestMapping(value = "/currentIpFlow",method = RequestMethod.POST)
+    public Result currentIpFlow(@RequestBody DataCollectReq dataCollectReq){
+        return dataCollectService.currentIpFlow(dataCollectReq);
+    }
+
+    /**
+     * 终端流量变化
+     */
+    @RequestMapping(value = "/TerminalflowTransfor",method = RequestMethod.POST)
+    public Result TerminalflowTransfor(@RequestBody TerminalDataReq terminalDataReq){
+        return terminalDataService.flowTransformation(terminalDataReq);
     }
 
 }

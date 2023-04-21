@@ -218,4 +218,10 @@ public class DataConstants {
     public static final String SYSTEM_QEBS = "QEBS";
     public static final String SYSTEM_QKC = "QKC";
 
+
+
+    public static final String FLOW_TRANSFOR = "transfor_flow_";
+
+    public static final String CURRENT_FLOW ="current_flow_";
+
 }

@@ -22,4 +22,13 @@ public interface DataCollectService {
 
     Result selectAllDevice(DataCollectReq dataCollectReq);
 
+
+    //3.0.18版本的监控管理
+    Result flowTransformation(DataCollectReq dataCollectReq);
+
+
+    Result currentIpFlow(DataCollectReq dataCollectReq);
+
+    void handleAddData(String code,String ip);
+
 }

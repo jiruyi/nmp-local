@@ -1,5 +1,5 @@
 -- jry
-CREATE TABLE IF NOT EXISTS `nmpl_device_alarm` (
+CREATE TABLE IF NOT EXISTS `nmpl_alarm_info` (
     `alarm_id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
     `alarm_source_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '业务系统id  物理设备无',
     `alarm_source_ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '设备ip',
@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS `nmpl_physical_device_heartbeat` (
 
 
 CREATE TABLE IF NOT EXISTS `nmpl_physical_device_resource` (
-    `id` int NOT NULL AUTO_INCREMENT COMMENT '自增主键',
     `device_ip` varchar(16) NOT NULL COMMENT '物理设备ip',
     `resource_type` varchar(2) NOT NULL COMMENT '资源类型 1: cpu 2 内存 3 磁盘 4流量 5 其他',
     `resource_value` varchar(64) NOT NULL COMMENT '资源value',
@@ -38,12 +37,13 @@ CREATE TABLE IF NOT EXISTS `nmpl_physical_device_resource` (
     `upload_time` datetime(2) NOT NULL COMMENT '上报时间',
     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-    PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci comment '物理设备资源情况信息表';
+    PRIMARY KEY (`device_ip`,`resource_type`)
+    ) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci comment '物理设备资源情况信息表';
 
 
 CREATE TABLE IF NOT EXISTS `nmpl_system_resource` (
-    `system_id`  varchar(64) NOT NULL COMMENT '主键（系统id，关联基站和设备表）',
+    `id` int NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+    `system_id`  varchar(64) NOT NULL COMMENT '系统id:关联基站和设备表',
     `system_type` varchar(50) DEFAULT NULL COMMENT '系统类别',
     `start_time` datetime(2) DEFAULT NULL COMMENT '启动时间',
     `run_time` bigint DEFAULT 0 COMMENT '运行时长，以秒为单位',
@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS `nmpl_system_resource` (
     `upload_time` datetime(2) NOT NULL COMMENT '上报时间',
     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-    PRIMARY KEY (`system_id`)
-    )ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci comment '运行系统资源信息表';
+    PRIMARY KEY (`id`)
+    )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci comment '运行系统资源信息表';
 
 -- hx
 
