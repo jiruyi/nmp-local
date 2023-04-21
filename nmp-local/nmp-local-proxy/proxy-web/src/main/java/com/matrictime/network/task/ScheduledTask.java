@@ -37,6 +37,9 @@ public class ScheduledTask {
     @Value("${netmanage.port}")
     private String port;
 
+    @Value("${local.ip}")
+    private String localIp;
+
 
     @Scheduled(cron = "*/30 * * * * ?")
     @Async
@@ -71,13 +74,13 @@ public class ScheduledTask {
 ////    }
 
 
-//    @Scheduled(cron = "*/30 * * * * ?")
-//    @Async
-//    public void dataCollectPush(){
-//        log.info(Thread.currentThread().getName()+"======================dataCollect begin=============================");
-//        taskService.dataCollectPush(ip + KEY_SPLIT + port + DATA_COLLECT_URL);
-//        log.info(Thread.currentThread().getName()+"======================dataCollect end=============================");
-//    }
+    @Scheduled(cron = "0 0/30 * * * ?")
+    @Async
+    public void dataCollectPush(){
+        log.info(Thread.currentThread().getName()+"======================dataCollect begin=============================");
+        taskService.dataCollectPush(ip + KEY_SPLIT + port + DATA_COLLECT_URL,localIp);
+        log.info(Thread.currentThread().getName()+"======================dataCollect end=============================");
+    }
 
 //    @Scheduled(cron = "*/30 * * * * ?")
 //    @Async
@@ -101,7 +104,7 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================physicalDeviceResource begin=============================");
         taskService.physicalDeviceResource(DateUtils.changeDate(new Date()),ip + KEY_SPLIT + port + PHYSICAL_DEVICE_RESOURCE_URL);
         log.info(Thread.currentThread().getName()+"======================physicalDeviceResource end=============================");
-    }
+        }
 
     @Scheduled(cron = "0 0/30 * * * ?")
     @Async
