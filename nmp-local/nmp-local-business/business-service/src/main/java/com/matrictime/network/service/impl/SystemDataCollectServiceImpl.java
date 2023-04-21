@@ -5,6 +5,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationDataVo;
 import com.matrictime.network.modelVo.BorderBaseStationDataVo;
 import com.matrictime.network.modelVo.KeyCenterDataVo;
+import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.service.SystemDataCollectService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,20 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
             result.setErrorMsg("");
             result.setSuccess(false);
             log.info("selectKeyCenterData:{}",e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public Result<Integer> insertSystemData(DataCollectReq dataCollectReq) {
+        Result<Integer> result = new Result<>();
+        try {
+            result.setResultObj(systemDataCollectDomainService.insertSystemData(dataCollectReq));
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setErrorMsg("");
+            result.setSuccess(false);
+            log.info("insertSystemData:{}",e.getMessage());
         }
         return result;
     }
