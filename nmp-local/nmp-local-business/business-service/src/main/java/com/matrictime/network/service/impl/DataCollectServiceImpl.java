@@ -48,8 +48,7 @@ import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static com.matrictime.network.base.constant.DataConstants.INTERNET_BROADBAND_LOAD_CODE;
-import static com.matrictime.network.base.constant.DataConstants.INTRANET_BROADBAND_LOAD_CODE;
+import static com.matrictime.network.base.constant.DataConstants.*;
 
 @Service
 @Slf4j
@@ -374,7 +373,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             checkParam(dataCollectReq);
             // 查询redis获取最近12小时的数据
             String key = DataConstants.FLOW_TRANSFOR
-                    +dataCollectReq.getDeviceIp()+"_" +dataCollectReq.getDataItemCode();
+                    +dataCollectReq.getDeviceIp()+UNDERLINE +dataCollectReq.getDataItemCode();
             Map<String, TimeDataVo> cache = getRedisHash(key);
             Map<String, Double> map = new HashMap<>();
             if(cache.isEmpty()) {
@@ -382,7 +381,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                 NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
                 nmplDataCollectExample.createCriteria().andDataItemCodeEqualTo(dataCollectReq.getDataItemCode())
                         .andDeviceIpEqualTo(dataCollectReq.getDeviceIp())
-                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(24,0));
+                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWENTY_FOUR,THIRTY));
                 List<NmplDataCollect> dataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
 
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -390,11 +389,12 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                     BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
                     if (cache.containsKey(formatter.format(nmplDataCollect.getUploadTime()))) {
                         TimeDataVo timeDataVo = cache.get(formatter.format(nmplDataCollect.getUploadTime()));
-                        timeDataVo.setValue( + bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getValue())).doubleValue());
+                        // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
+                        timeDataVo.setValue( + bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getValue())).doubleValue());
                     } else {
                         TimeDataVo timeDataVo = new TimeDataVo();
                         timeDataVo.setDate(nmplDataCollect.getUploadTime());
-                        timeDataVo.setValue(bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).doubleValue());
+                        timeDataVo.setValue(bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).doubleValue());
                         cache.put(formatter.format(nmplDataCollect.getUploadTime()), timeDataVo);
                     }
                 }
@@ -427,7 +427,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             //校验参数
             checkParam(dataCollectReq);
             //从redis中获取值
-            String key = DataConstants.CURRENT_FLOW+dataCollectReq.getDeviceIp()+"_" +dataCollectReq.getDataItemCode();
+            String key = DataConstants.CURRENT_FLOW+dataCollectReq.getDeviceIp()+UNDERLINE +dataCollectReq.getDataItemCode();
             Object value = redisTemplate.opsForValue().get(key);
             String time = TimeUtil.getOnTime();
             SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -438,7 +438,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                     if(time.equals(formatter.format(dataCollectVo.getUploadTime()))){
                         BigDecimal bigDecimal = new BigDecimal(dataCollectVo.getDataItemValue());
                         // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
-                        res = bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(res)).doubleValue();
+                        res = bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(res)).doubleValue();
                     }
                 }
                 value = String.valueOf(res);
@@ -473,14 +473,14 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             if(time.equals(formatter.format(dataCollectVo.getUploadTime()))){
                 BigDecimal bigDecimal = new BigDecimal(dataCollectVo.getDataItemValue());
                 // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
-                result = bigDecimal.divide(new BigDecimal(1024.0*1024.0*225),2,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(result)).doubleValue();
+                result = bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(result)).doubleValue();
             }
         }
         TimeDataVo timeDataVo = new TimeDataVo();
         timeDataVo.setDate(new Date());
         timeDataVo.setValue(result);
         redisTemplate.opsForValue().set(currentKey,result);
-        redisTemplate.expire(currentKey,30,TimeUnit.MINUTES);
+        redisTemplate.expire(currentKey,THIRTY,TimeUnit.MINUTES);
         redisTemplate.opsForHash().put(transforKey,time,timeDataVo);
     }
 
@@ -519,7 +519,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
     private  Map<String,Double> filterData(Map<String, TimeDataVo> map){
         Map<String,Double> res = new HashMap<>();
         Set<String> set = map.keySet();
-        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(12,30);
+        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,THIRTY);
         for (String s : set) {
             if(TimeUtil.checkTime(s)){
                 TimeDataVo timeDataVo = map.get(s);
@@ -545,7 +545,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         TimeDataVo timeDataVo = new TimeDataVo();
         timeDataVo.setDate(new Date());
         timeDataVo.setValue(0.0);
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < TWENTY_FOUR; i++) {
             String time1 = null;
             String time2 = null;
             if(i<10){

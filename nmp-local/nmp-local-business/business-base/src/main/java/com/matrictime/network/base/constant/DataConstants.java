@@ -224,4 +224,18 @@ public class DataConstants {
 
     public static final String CURRENT_FLOW ="current_flow_";
 
+    public static final int BYTE_TO_BPS = 8;
+
+    public static final int HALF_HOUR_SECONDS = 1800;
+
+    public static final int RESERVE_DIGITS  = 2;
+
+    public static final int TWENTY_FOUR = 24;
+
+    public static final int TWELVE = 12;
+
+    public static final int THIRTY = 30;
+
+    public static final String UNDERLINE ="_";
+
 }
