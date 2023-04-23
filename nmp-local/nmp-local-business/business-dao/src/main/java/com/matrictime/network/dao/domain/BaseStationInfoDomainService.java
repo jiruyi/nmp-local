@@ -2,6 +2,7 @@ package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
+import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.CountBaseStationResponse;
@@ -47,4 +48,6 @@ public interface BaseStationInfoDomainService {
     BelongInformationResponse selectBelongInformation();
 
     CountBaseStationResponse countBaseStation(BaseStationInfoRequest baseStationInfoRequest);
+
+    int updateConnectCount(BaseStationCountRequest baseStationCountRequest);
 }

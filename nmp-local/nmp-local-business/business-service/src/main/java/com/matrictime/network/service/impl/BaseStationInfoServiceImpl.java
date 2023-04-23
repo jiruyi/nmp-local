@@ -22,6 +22,7 @@ import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
+import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.BelongInformationResponse;
@@ -455,6 +456,20 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             result.setSuccess(false);
             result.setErrorMsg("");
             log.info("countBaseStation:{}",e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public Result<Integer> updateConnectCount(BaseStationCountRequest baseStationCountRequest) {
+        Result<Integer> result = new Result<>();
+        try {
+            result.setResultObj(baseStationInfoDomainService.updateConnectCount(baseStationCountRequest));
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg("");
+            log.info("updateConnectCount:{}",e.getMessage());
         }
         return result;
     }

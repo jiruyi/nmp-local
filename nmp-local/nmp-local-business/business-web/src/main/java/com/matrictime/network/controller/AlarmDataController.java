@@ -28,16 +28,22 @@ public class AlarmDataController {
     private AlarmDataService alarmDataService;
 
     /**
-      * @title acceptAlarmData
-      * @param []
-      * @return void
-      * @description  接受代理数据推送
-      * @author jiruyi
-      * @create 2023/4/19 0019 14:57
-      */
+     * @title acceptAlarmData
+     * @param []
+     * @return void
+     * @description  接受代理数据推送
+     * @author jiruyi
+     * @create 2023/4/19 0019 14:57
+     */
     @ApiOperation(value = "查询网关日志记录",notes = "查询网关日志记录")
     @RequestMapping(value = "/accept",method = RequestMethod.POST)
     public Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList){
         return  alarmDataService.acceptAlarmData(alarmInfoList);
     }
+
+    @RequestMapping(value = "/query",method = RequestMethod.POST)
+    public Result queryAlarmDataList(){
+        return null;
+    }
+
 }

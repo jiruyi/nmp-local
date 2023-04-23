@@ -3,6 +3,7 @@ package com.matrictime.network.service;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
+import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.BelongInformationResponse;
@@ -45,4 +46,6 @@ public interface BaseStationInfoService {
     Result<BelongInformationResponse> selectBelongInformation();
 
     Result<CountBaseStationResponse> countBaseStation(BaseStationInfoRequest baseStationInfoRequest);
+
+    Result<Integer> updateConnectCount(BaseStationCountRequest baseStationCountRequest);
 }

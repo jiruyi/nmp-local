@@ -1,17 +1,26 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
-import com.matrictime.network.base.enums.DeviceTypeEnum;
+import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.AlarmConTypeEnum;
+import com.matrictime.network.base.enums.DataCollectEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
+import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.base.util.TimeUtil;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
+import com.matrictime.network.dao.mapper.NmplAlarmInfoMapper;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
-import com.matrictime.network.modelVo.NmplBillVo;
+
+import com.matrictime.network.modelVo.TimeDataVo;
 import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.MonitorReq;
 import com.matrictime.network.response.DeviceResponse;
@@ -19,12 +28,14 @@ import com.matrictime.network.response.MonitorResp;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DataCollectService;
 import com.matrictime.network.util.PropertiesUtil;
-import lombok.Data;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -32,12 +43,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import static com.matrictime.network.base.constant.DataConstants.INTERNET_BROADBAND_LOAD_CODE;
-import static com.matrictime.network.base.constant.DataConstants.INTRANET_BROADBAND_LOAD_CODE;
+import static com.matrictime.network.base.constant.DataConstants.*;
 
 @Service
 @Slf4j
@@ -54,6 +67,18 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
 
     @Resource
     NmplDeviceInfoMapper nmplDeviceInfoMapper;
+
+    @Resource
+    RedisTemplate redisTemplate;
+
+    @Resource
+    NmplDataCollectMapper nmplDataCollectMapper;
+
+    @Resource
+    NmplDataCollectExtMapper nmplDataCollectExtMapper;
+
+    @Resource
+    NmplAlarmInfoMapper nmplAlarmInfoMapper;
 
     @Override
     public Result<PageInfo> queryByConditon(DataCollectReq dataCollectReq) {
@@ -97,15 +122,14 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                     deviceMap.put(nmplDeviceInfo.getDeviceId(),nmplDeviceInfo.getDeviceName());
                 }
 
-                Map<String,String> map = PropertiesUtil.paramMap;
                 for (DataCollectVo dataCollectVo : dataCollectReq.getDataCollectVoList()) {
-                    String name = "data."+dataCollectVo.getDataItemCode()+".name";
-                    String unit = "data."+dataCollectVo.getDataItemCode()+".unit";
+                    String name = DataCollectEnum.getMap().get(dataCollectVo.getDataItemCode()).getConditionDesc();
+                    String unit = DataCollectEnum.getMap().get(dataCollectVo.getDataItemCode()).getUnit();
                     if(deviceMap.get(dataCollectVo.getDeviceId())!=null){
                         dataCollectVo.setDeviceName(deviceMap.get(dataCollectVo.getDeviceId()));
                     }
-                    dataCollectVo.setDataItemName(map.get(name));
-                    dataCollectVo.setUnit(map.get(unit));
+                    dataCollectVo.setDataItemName(name);
+                    dataCollectVo.setUnit(unit);
                     if (INTRANET_BROADBAND_LOAD_CODE.equals(dataCollectVo.getDataItemCode()) || INTERNET_BROADBAND_LOAD_CODE.equals(dataCollectVo.getDataItemCode())) {
                         dataCollectVoLoadList.add(dataCollectVo);
                     }
@@ -337,4 +361,237 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         }
        return result;
     }
+
+
+    //3.0.18版本的监控管理
+
+    /**
+     * 流量变化
+     * @param dataCollectReq
+     * @return
+     */
+    @Override
+    public Result flowTransformation(DataCollectReq dataCollectReq) {
+        Result result;
+        try {
+            //参数校验
+            checkParam(dataCollectReq);
+            // 查询redis获取最近12小时的数据
+            String key = DataConstants.FLOW_TRANSFOR
+                    +dataCollectReq.getDeviceIp()+UNDERLINE +dataCollectReq.getDataItemCode();
+            Map<String, TimeDataVo> cache = getRedisHash(key);
+            Map<String, Double> map = new HashMap<>();
+            if(cache.isEmpty()) {
+                // 如果redis查询为空 或者redis查询异常 则通过mysql获取24小时历史数据
+                NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
+                nmplDataCollectExample.createCriteria().andDataItemCodeEqualTo(dataCollectReq.getDataItemCode())
+                        .andDeviceIpEqualTo(dataCollectReq.getDeviceIp())
+                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWENTY_FOUR,ZERO));
+                List<NmplDataCollect> dataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                for (NmplDataCollect nmplDataCollect : dataCollectList) {
+                    BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
+                    if (cache.containsKey(formatter.format(nmplDataCollect.getUploadTime()))) {
+                        TimeDataVo timeDataVo = cache.get(formatter.format(nmplDataCollect.getUploadTime()));
+                        // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
+                        timeDataVo.setValue( + bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getValue())).doubleValue());
+                    } else {
+                        TimeDataVo timeDataVo = new TimeDataVo();
+                        timeDataVo.setDate(nmplDataCollect.getUploadTime());
+                        timeDataVo.setValue(bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).doubleValue());
+                        cache.put(formatter.format(nmplDataCollect.getUploadTime()), timeDataVo);
+                    }
+                }
+                //将数据放入redis缓存
+                redisTemplate.opsForHash().putAll(key, cache);
+            }
+            supplementaryData(cache);
+            map =filterData(cache);
+            return buildResult(map);
+        }catch (SystemException e) {
+            log.info("查询服务器流量变化数据异常",e.getMessage());
+            result = failResult(e);
+        } catch (Exception e) {
+            log.info("查询服务器流量变化数据异常",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+
+    }
+
+    /**
+     * 当前流量
+     * @param dataCollectReq
+     * @return
+     */
+    @Override
+    public Result currentIpFlow(DataCollectReq dataCollectReq) {
+        Result result;
+        try {
+            //校验参数
+            checkParam(dataCollectReq);
+            //从redis中获取值
+            String key = DataConstants.CURRENT_FLOW+dataCollectReq.getDeviceIp()+UNDERLINE +dataCollectReq.getDataItemCode();
+            Object value = redisTemplate.opsForValue().get(key);
+            String time = TimeUtil.getOnTime();
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            if(value == null){
+                double res =0.0;
+                //获取根据device_id,data_item_code分组最新上报的数据
+                List<DataCollectVo> dataCollectVos = nmplDataCollectExtMapper.selectCurrentIpFlow(dataCollectReq);
+                for (DataCollectVo dataCollectVo : dataCollectVos) {
+                    //判断数据是否是当天以及时刻是否是当前时刻的
+                    if(time.equals(formatter.format(dataCollectVo.getUploadTime()))&& TimeUtil.IsTodayDate(dataCollectVo.getUploadTime())){
+                        BigDecimal bigDecimal = new BigDecimal(dataCollectVo.getDataItemValue());
+                        // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
+                        res = bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(res)).doubleValue();
+                    }
+                }
+                value = String.valueOf(res);
+                redisTemplate.opsForValue().set(key,value);
+            }
+            return buildResult(value);
+        }catch (SystemException e) {
+            log.info("查询服务器最新流量数据异常",e.getMessage());
+            result = failResult(e);
+        } catch (Exception e) {
+            log.info("查询服务器最新流量数据异常",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+    /**
+     * 处理新增数据放入redis
+     */
+    @Override
+    public void handleAddData(String code,String ip){
+        DataCollectReq dataCollectReq = new DataCollectReq();
+        dataCollectReq.setDataItemCode(code);
+        dataCollectReq.setDeviceIp(ip);
+        //获取根据device_id,data_item_code分组最新上报的数据
+        List<DataCollectVo> dataCollectVos = nmplDataCollectExtMapper.selectCurrentIpFlow(dataCollectReq);
+        String time = TimeUtil.getOnTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+        String transforKey = DataConstants.FLOW_TRANSFOR + ip +"_" + code;
+        String currentKey = DataConstants.CURRENT_FLOW + ip +"_" + code;
+        double result = 0.0;
+        for (DataCollectVo dataCollectVo : dataCollectVos) {
+            //判断数据是否是当天以及时刻是否是当前时刻的
+            if(time.equals(formatter.format(dataCollectVo.getUploadTime()))&& TimeUtil.IsTodayDate(dataCollectVo.getUploadTime())){
+                BigDecimal bigDecimal = new BigDecimal(dataCollectVo.getDataItemValue());
+                // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
+                result = bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(result)).doubleValue();
+            }
+        }
+        //当前流量大于xxx时增加告警信息
+
+        TimeDataVo timeDataVo = new TimeDataVo();
+        timeDataVo.setDate(new Date());
+        timeDataVo.setValue(result);
+        redisTemplate.opsForValue().set(currentKey,result);
+        redisTemplate.expire(currentKey,THIRTY,TimeUnit.MINUTES);
+        redisTemplate.opsForHash().put(transforKey,time,timeDataVo);
+    }
+
+
+
+    /**
+     * 校验参数
+     * @param dataCollectReq
+     */
+    private void checkParam(DataCollectReq dataCollectReq){
+        if(StringUtil.isEmpty(dataCollectReq.getDeviceIp())||StringUtil.isEmpty(dataCollectReq.getDataItemCode())){
+            throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+
+    /**
+     * 新增流量过载告警
+     */
+    private void addFlowAlarm(String ip){
+        NmplAlarmInfo nmplAlarmInfo = new NmplAlarmInfo();
+        nmplAlarmInfo.setAlarmSourceIp(ip);
+        nmplAlarmInfo.setAlarmLevel("1");
+        nmplAlarmInfo.setAlarmContentType(AlarmConTypeEnum.FLOW.getCode());
+        nmplAlarmInfo.setAlarmUploadTime(new Date());
+        nmplAlarmInfo.setAlarmContent(AlarmConTypeEnum.FLOW.getConditionDesc());
+        nmplAlarmInfoMapper.insert(nmplAlarmInfo);
+    }
+
+    /**
+     * redis获取hash数据
+     * @param key
+     * @return
+     */
+    private Map<String, TimeDataVo> getRedisHash(String key) {
+        HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
+        Map<String, Object> entries = hashOps.entries(key);
+        Map<String,TimeDataVo> res = new HashMap<>();
+        for (String s : entries.keySet()) {
+            res.put(s,JSONObject.parseObject(JSONObject.toJSONString(entries.get(s)),TimeDataVo.class));
+        }
+        return res;
+    }
+
+    /**
+     * 过滤12小时以外的数据
+     * @param map
+     * @return
+     */
+    private  Map<String,Double> filterData(Map<String, TimeDataVo> map){
+        Map<String,Double> res = new HashMap<>();
+        Set<String> set = map.keySet();
+        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
+        for (String s : set) {
+            if(TimeUtil.checkTime(s)){
+                TimeDataVo timeDataVo = map.get(s);
+                if(timeDataVo.getDate().after(timeBeforeHours)){
+                    res.put(s,timeDataVo.getValue());
+                }else {
+                    res.put(s,0.0);
+                }
+            }
+        }
+        //排序
+        List<Map.Entry<String, Double>> list = new ArrayList<>(res.entrySet());
+        Collections.sort(list, (o1, o2) -> timeChange(o1.getKey()).compareTo(timeChange(o2.getKey())));
+        Map<String, Double> sortedMap = new LinkedHashMap<>();
+        list.forEach(item -> sortedMap.put(item.getKey(), item.getValue()));
+        return sortedMap;
+    }
+
+    /**
+     * 补充map缺失的节点数据
+     */
+    private Map<String,TimeDataVo> supplementaryData(Map<String, TimeDataVo> map){
+        TimeDataVo timeDataVo = new TimeDataVo();
+        timeDataVo.setDate(new Date());
+        timeDataVo.setValue(0.0);
+        for (int i = 0; i < TWENTY_FOUR; i++) {
+            String time1 = null;
+            String time2 = null;
+            if(i<10){
+                time1 = "0"+ i +":00";
+                time2 = "0"+ i +":30";
+            }else {
+                time1 =  i +":00";
+                time2 =  i +":30";
+            }
+            if(!map.containsKey(time1)){
+                map.put(time1,timeDataVo);
+            }
+            if(!map.containsKey(time2)){
+                map.put(time2,timeDataVo);
+            }
+        }
+        return map;
+    }
+
+    private Integer timeChange(String string){
+       return Integer.valueOf(string.replaceAll(":",""));
+    }
+
 }

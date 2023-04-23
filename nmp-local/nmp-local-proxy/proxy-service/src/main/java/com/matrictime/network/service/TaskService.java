@@ -10,7 +10,7 @@ public interface TaskService {
 
     void pcData(String url);
 
-    void dataCollectPush(String url);
+    void dataCollectPush(String url,String localIp);
 
     void billPush(String url);
 

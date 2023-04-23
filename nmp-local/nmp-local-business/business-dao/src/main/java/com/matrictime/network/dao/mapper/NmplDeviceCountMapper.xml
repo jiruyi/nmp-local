@@ -1,0 +1,737 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplDeviceCountMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplDeviceCount">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_type" jdbcType="CHAR" property="deviceType" />
+    <result column="other_type" jdbcType="CHAR" property="otherType" />
+    <result column="enter_network_time" jdbcType="TIMESTAMP" property="enterNetworkTime" />
+    <result column="device_admain" jdbcType="VARCHAR" property="deviceAdmain" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="public_network_ip" jdbcType="VARCHAR" property="publicNetworkIp" />
+    <result column="public_network_port" jdbcType="VARCHAR" property="publicNetworkPort" />
+    <result column="lan_ip" jdbcType="VARCHAR" property="lanIp" />
+    <result column="lan_port" jdbcType="VARCHAR" property="lanPort" />
+    <result column="station_status" jdbcType="CHAR" property="stationStatus" />
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+    <result column="station_random_seed" jdbcType="VARCHAR" property="stationRandomSeed" />
+    <result column="relation_operator_id" jdbcType="VARCHAR" property="relationOperatorId" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="run_version_id" jdbcType="BIGINT" property="runVersionId" />
+    <result column="run_version_no" jdbcType="VARCHAR" property="runVersionNo" />
+    <result column="run_file_name" jdbcType="VARCHAR" property="runFileName" />
+    <result column="run_version_status" jdbcType="VARCHAR" property="runVersionStatus" />
+    <result column="run_version_oper_time" jdbcType="TIMESTAMP" property="runVersionOperTime" />
+    <result column="load_version_no" jdbcType="VARCHAR" property="loadVersionNo" />
+    <result column="load_version_id" jdbcType="BIGINT" property="loadVersionId" />
+    <result column="load_version_oper_time" jdbcType="TIMESTAMP" property="loadVersionOperTime" />
+    <result column="load_file_name" jdbcType="VARCHAR" property="loadFileName" />
+    <result column="current_connect_count" jdbcType="VARCHAR" property="currentConnectCount" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplDeviceCount">
+    <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, device_id, device_name, device_type, other_type, enter_network_time, device_admain, 
+    remark, public_network_ip, public_network_port, lan_ip, lan_port, station_status, 
+    station_network_id, station_random_seed, relation_operator_id, create_user, create_time, 
+    update_user, update_time, is_exist, run_version_id, run_version_no, run_file_name, 
+    run_version_status, run_version_oper_time, load_version_no, load_version_id, load_version_oper_time, 
+    load_file_name, current_connect_count
+  </sql>
+  <sql id="Blob_Column_List">
+    byte_network_id
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplDeviceCountExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from nmpl_device_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplDeviceCountExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmpl_device_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from nmpl_device_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nmpl_device_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplDeviceCountExample">
+    delete from nmpl_device_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplDeviceCount">
+    insert into nmpl_device_info (id, device_id, device_name, 
+      device_type, other_type, enter_network_time, 
+      device_admain, remark, public_network_ip, 
+      public_network_port, lan_ip, lan_port, 
+      station_status, station_network_id, station_random_seed, 
+      relation_operator_id, create_user, create_time, 
+      update_user, update_time, is_exist, 
+      run_version_id, run_version_no, run_file_name, 
+      run_version_status, run_version_oper_time, 
+      load_version_no, load_version_id, load_version_oper_time, 
+      load_file_name, current_connect_count, byte_network_id
+      )
+    values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{deviceName,jdbcType=VARCHAR}, 
+      #{deviceType,jdbcType=CHAR}, #{otherType,jdbcType=CHAR}, #{enterNetworkTime,jdbcType=TIMESTAMP}, 
+      #{deviceAdmain,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{publicNetworkIp,jdbcType=VARCHAR}, 
+      #{publicNetworkPort,jdbcType=VARCHAR}, #{lanIp,jdbcType=VARCHAR}, #{lanPort,jdbcType=VARCHAR}, 
+      #{stationStatus,jdbcType=CHAR}, #{stationNetworkId,jdbcType=VARCHAR}, #{stationRandomSeed,jdbcType=VARCHAR}, 
+      #{relationOperatorId,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}, 
+      #{runVersionId,jdbcType=BIGINT}, #{runVersionNo,jdbcType=VARCHAR}, #{runFileName,jdbcType=VARCHAR}, 
+      #{runVersionStatus,jdbcType=VARCHAR}, #{runVersionOperTime,jdbcType=TIMESTAMP}, 
+      #{loadVersionNo,jdbcType=VARCHAR}, #{loadVersionId,jdbcType=BIGINT}, #{loadVersionOperTime,jdbcType=TIMESTAMP}, 
+      #{loadFileName,jdbcType=VARCHAR}, #{currentConnectCount,jdbcType=VARCHAR}, #{byteNetworkId,jdbcType=LONGVARBINARY}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplDeviceCount">
+    insert into nmpl_device_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="deviceId != null">
+        device_id,
+      </if>
+      <if test="deviceName != null">
+        device_name,
+      </if>
+      <if test="deviceType != null">
+        device_type,
+      </if>
+      <if test="otherType != null">
+        other_type,
+      </if>
+      <if test="enterNetworkTime != null">
+        enter_network_time,
+      </if>
+      <if test="deviceAdmain != null">
+        device_admain,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="publicNetworkIp != null">
+        public_network_ip,
+      </if>
+      <if test="publicNetworkPort != null">
+        public_network_port,
+      </if>
+      <if test="lanIp != null">
+        lan_ip,
+      </if>
+      <if test="lanPort != null">
+        lan_port,
+      </if>
+      <if test="stationStatus != null">
+        station_status,
+      </if>
+      <if test="stationNetworkId != null">
+        station_network_id,
+      </if>
+      <if test="stationRandomSeed != null">
+        station_random_seed,
+      </if>
+      <if test="relationOperatorId != null">
+        relation_operator_id,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="isExist != null">
+        is_exist,
+      </if>
+      <if test="runVersionId != null">
+        run_version_id,
+      </if>
+      <if test="runVersionNo != null">
+        run_version_no,
+      </if>
+      <if test="runFileName != null">
+        run_file_name,
+      </if>
+      <if test="runVersionStatus != null">
+        run_version_status,
+      </if>
+      <if test="runVersionOperTime != null">
+        run_version_oper_time,
+      </if>
+      <if test="loadVersionNo != null">
+        load_version_no,
+      </if>
+      <if test="loadVersionId != null">
+        load_version_id,
+      </if>
+      <if test="loadVersionOperTime != null">
+        load_version_oper_time,
+      </if>
+      <if test="loadFileName != null">
+        load_file_name,
+      </if>
+      <if test="currentConnectCount != null">
+        current_connect_count,
+      </if>
+      <if test="byteNetworkId != null">
+        byte_network_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="deviceId != null">
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceName != null">
+        #{deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        #{deviceType,jdbcType=CHAR},
+      </if>
+      <if test="otherType != null">
+        #{otherType,jdbcType=CHAR},
+      </if>
+      <if test="enterNetworkTime != null">
+        #{enterNetworkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deviceAdmain != null">
+        #{deviceAdmain,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="publicNetworkIp != null">
+        #{publicNetworkIp,jdbcType=VARCHAR},
+      </if>
+      <if test="publicNetworkPort != null">
+        #{publicNetworkPort,jdbcType=VARCHAR},
+      </if>
+      <if test="lanIp != null">
+        #{lanIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lanPort != null">
+        #{lanPort,jdbcType=VARCHAR},
+      </if>
+      <if test="stationStatus != null">
+        #{stationStatus,jdbcType=CHAR},
+      </if>
+      <if test="stationNetworkId != null">
+        #{stationNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationRandomSeed != null">
+        #{stationRandomSeed,jdbcType=VARCHAR},
+      </if>
+      <if test="relationOperatorId != null">
+        #{relationOperatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isExist != null">
+        #{isExist,jdbcType=BIT},
+      </if>
+      <if test="runVersionId != null">
+        #{runVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="runVersionNo != null">
+        #{runVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="runFileName != null">
+        #{runFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="runVersionStatus != null">
+        #{runVersionStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="runVersionOperTime != null">
+        #{runVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="loadVersionNo != null">
+        #{loadVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="loadVersionId != null">
+        #{loadVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="loadVersionOperTime != null">
+        #{loadVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="loadFileName != null">
+        #{loadFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="currentConnectCount != null">
+        #{currentConnectCount,jdbcType=VARCHAR},
+      </if>
+      <if test="byteNetworkId != null">
+        #{byteNetworkId,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplDeviceCountExample" resultType="java.lang.Long">
+    select count(*) from nmpl_device_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmpl_device_info
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.deviceId != null">
+        device_id = #{record.deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deviceName != null">
+        device_name = #{record.deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deviceType != null">
+        device_type = #{record.deviceType,jdbcType=CHAR},
+      </if>
+      <if test="record.otherType != null">
+        other_type = #{record.otherType,jdbcType=CHAR},
+      </if>
+      <if test="record.enterNetworkTime != null">
+        enter_network_time = #{record.enterNetworkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deviceAdmain != null">
+        device_admain = #{record.deviceAdmain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.publicNetworkIp != null">
+        public_network_ip = #{record.publicNetworkIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.publicNetworkPort != null">
+        public_network_port = #{record.publicNetworkPort,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lanIp != null">
+        lan_ip = #{record.lanIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lanPort != null">
+        lan_port = #{record.lanPort,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stationStatus != null">
+        station_status = #{record.stationStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.stationNetworkId != null">
+        station_network_id = #{record.stationNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stationRandomSeed != null">
+        station_random_seed = #{record.stationRandomSeed,jdbcType=VARCHAR},
+      </if>
+      <if test="record.relationOperatorId != null">
+        relation_operator_id = #{record.relationOperatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createUser != null">
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null">
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isExist != null">
+        is_exist = #{record.isExist,jdbcType=BIT},
+      </if>
+      <if test="record.runVersionId != null">
+        run_version_id = #{record.runVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="record.runVersionNo != null">
+        run_version_no = #{record.runVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.runFileName != null">
+        run_file_name = #{record.runFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.runVersionStatus != null">
+        run_version_status = #{record.runVersionStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.runVersionOperTime != null">
+        run_version_oper_time = #{record.runVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.loadVersionNo != null">
+        load_version_no = #{record.loadVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loadVersionId != null">
+        load_version_id = #{record.loadVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="record.loadVersionOperTime != null">
+        load_version_oper_time = #{record.loadVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.loadFileName != null">
+        load_file_name = #{record.loadFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.currentConnectCount != null">
+        current_connect_count = #{record.currentConnectCount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.byteNetworkId != null">
+        byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update nmpl_device_info
+    set id = #{record.id,jdbcType=BIGINT},
+      device_id = #{record.deviceId,jdbcType=VARCHAR},
+      device_name = #{record.deviceName,jdbcType=VARCHAR},
+      device_type = #{record.deviceType,jdbcType=CHAR},
+      other_type = #{record.otherType,jdbcType=CHAR},
+      enter_network_time = #{record.enterNetworkTime,jdbcType=TIMESTAMP},
+      device_admain = #{record.deviceAdmain,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      public_network_ip = #{record.publicNetworkIp,jdbcType=VARCHAR},
+      public_network_port = #{record.publicNetworkPort,jdbcType=VARCHAR},
+      lan_ip = #{record.lanIp,jdbcType=VARCHAR},
+      lan_port = #{record.lanPort,jdbcType=VARCHAR},
+      station_status = #{record.stationStatus,jdbcType=CHAR},
+      station_network_id = #{record.stationNetworkId,jdbcType=VARCHAR},
+      station_random_seed = #{record.stationRandomSeed,jdbcType=VARCHAR},
+      relation_operator_id = #{record.relationOperatorId,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{record.isExist,jdbcType=BIT},
+      run_version_id = #{record.runVersionId,jdbcType=BIGINT},
+      run_version_no = #{record.runVersionNo,jdbcType=VARCHAR},
+      run_file_name = #{record.runFileName,jdbcType=VARCHAR},
+      run_version_status = #{record.runVersionStatus,jdbcType=VARCHAR},
+      run_version_oper_time = #{record.runVersionOperTime,jdbcType=TIMESTAMP},
+      load_version_no = #{record.loadVersionNo,jdbcType=VARCHAR},
+      load_version_id = #{record.loadVersionId,jdbcType=BIGINT},
+      load_version_oper_time = #{record.loadVersionOperTime,jdbcType=TIMESTAMP},
+      load_file_name = #{record.loadFileName,jdbcType=VARCHAR},
+      current_connect_count = #{record.currentConnectCount,jdbcType=VARCHAR},
+      byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmpl_device_info
+    set id = #{record.id,jdbcType=BIGINT},
+      device_id = #{record.deviceId,jdbcType=VARCHAR},
+      device_name = #{record.deviceName,jdbcType=VARCHAR},
+      device_type = #{record.deviceType,jdbcType=CHAR},
+      other_type = #{record.otherType,jdbcType=CHAR},
+      enter_network_time = #{record.enterNetworkTime,jdbcType=TIMESTAMP},
+      device_admain = #{record.deviceAdmain,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      public_network_ip = #{record.publicNetworkIp,jdbcType=VARCHAR},
+      public_network_port = #{record.publicNetworkPort,jdbcType=VARCHAR},
+      lan_ip = #{record.lanIp,jdbcType=VARCHAR},
+      lan_port = #{record.lanPort,jdbcType=VARCHAR},
+      station_status = #{record.stationStatus,jdbcType=CHAR},
+      station_network_id = #{record.stationNetworkId,jdbcType=VARCHAR},
+      station_random_seed = #{record.stationRandomSeed,jdbcType=VARCHAR},
+      relation_operator_id = #{record.relationOperatorId,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{record.isExist,jdbcType=BIT},
+      run_version_id = #{record.runVersionId,jdbcType=BIGINT},
+      run_version_no = #{record.runVersionNo,jdbcType=VARCHAR},
+      run_file_name = #{record.runFileName,jdbcType=VARCHAR},
+      run_version_status = #{record.runVersionStatus,jdbcType=VARCHAR},
+      run_version_oper_time = #{record.runVersionOperTime,jdbcType=TIMESTAMP},
+      load_version_no = #{record.loadVersionNo,jdbcType=VARCHAR},
+      load_version_id = #{record.loadVersionId,jdbcType=BIGINT},
+      load_version_oper_time = #{record.loadVersionOperTime,jdbcType=TIMESTAMP},
+      load_file_name = #{record.loadFileName,jdbcType=VARCHAR},
+      current_connect_count = #{record.currentConnectCount,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplDeviceCount">
+    update nmpl_device_info
+    <set>
+      <if test="deviceId != null">
+        device_id = #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceName != null">
+        device_name = #{deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        device_type = #{deviceType,jdbcType=CHAR},
+      </if>
+      <if test="otherType != null">
+        other_type = #{otherType,jdbcType=CHAR},
+      </if>
+      <if test="enterNetworkTime != null">
+        enter_network_time = #{enterNetworkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deviceAdmain != null">
+        device_admain = #{deviceAdmain,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="publicNetworkIp != null">
+        public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
+      </if>
+      <if test="publicNetworkPort != null">
+        public_network_port = #{publicNetworkPort,jdbcType=VARCHAR},
+      </if>
+      <if test="lanIp != null">
+        lan_ip = #{lanIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lanPort != null">
+        lan_port = #{lanPort,jdbcType=VARCHAR},
+      </if>
+      <if test="stationStatus != null">
+        station_status = #{stationStatus,jdbcType=CHAR},
+      </if>
+      <if test="stationNetworkId != null">
+        station_network_id = #{stationNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationRandomSeed != null">
+        station_random_seed = #{stationRandomSeed,jdbcType=VARCHAR},
+      </if>
+      <if test="relationOperatorId != null">
+        relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isExist != null">
+        is_exist = #{isExist,jdbcType=BIT},
+      </if>
+      <if test="runVersionId != null">
+        run_version_id = #{runVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="runVersionNo != null">
+        run_version_no = #{runVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="runFileName != null">
+        run_file_name = #{runFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="runVersionStatus != null">
+        run_version_status = #{runVersionStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="runVersionOperTime != null">
+        run_version_oper_time = #{runVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="loadVersionNo != null">
+        load_version_no = #{loadVersionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="loadVersionId != null">
+        load_version_id = #{loadVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="loadVersionOperTime != null">
+        load_version_oper_time = #{loadVersionOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="loadFileName != null">
+        load_file_name = #{loadFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="currentConnectCount != null">
+        current_connect_count = #{currentConnectCount,jdbcType=VARCHAR},
+      </if>
+      <if test="byteNetworkId != null">
+        byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplDeviceCount">
+    update nmpl_device_info
+    set device_id = #{deviceId,jdbcType=VARCHAR},
+      device_name = #{deviceName,jdbcType=VARCHAR},
+      device_type = #{deviceType,jdbcType=CHAR},
+      other_type = #{otherType,jdbcType=CHAR},
+      enter_network_time = #{enterNetworkTime,jdbcType=TIMESTAMP},
+      device_admain = #{deviceAdmain,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
+      public_network_port = #{publicNetworkPort,jdbcType=VARCHAR},
+      lan_ip = #{lanIp,jdbcType=VARCHAR},
+      lan_port = #{lanPort,jdbcType=VARCHAR},
+      station_status = #{stationStatus,jdbcType=CHAR},
+      station_network_id = #{stationNetworkId,jdbcType=VARCHAR},
+      station_random_seed = #{stationRandomSeed,jdbcType=VARCHAR},
+      relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{isExist,jdbcType=BIT},
+      run_version_id = #{runVersionId,jdbcType=BIGINT},
+      run_version_no = #{runVersionNo,jdbcType=VARCHAR},
+      run_file_name = #{runFileName,jdbcType=VARCHAR},
+      run_version_status = #{runVersionStatus,jdbcType=VARCHAR},
+      run_version_oper_time = #{runVersionOperTime,jdbcType=TIMESTAMP},
+      load_version_no = #{loadVersionNo,jdbcType=VARCHAR},
+      load_version_id = #{loadVersionId,jdbcType=BIGINT},
+      load_version_oper_time = #{loadVersionOperTime,jdbcType=TIMESTAMP},
+      load_file_name = #{loadFileName,jdbcType=VARCHAR},
+      current_connect_count = #{currentConnectCount,jdbcType=VARCHAR},
+      byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplDeviceCount">
+    update nmpl_device_info
+    set device_id = #{deviceId,jdbcType=VARCHAR},
+      device_name = #{deviceName,jdbcType=VARCHAR},
+      device_type = #{deviceType,jdbcType=CHAR},
+      other_type = #{otherType,jdbcType=CHAR},
+      enter_network_time = #{enterNetworkTime,jdbcType=TIMESTAMP},
+      device_admain = #{deviceAdmain,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR},
+      public_network_port = #{publicNetworkPort,jdbcType=VARCHAR},
+      lan_ip = #{lanIp,jdbcType=VARCHAR},
+      lan_port = #{lanPort,jdbcType=VARCHAR},
+      station_status = #{stationStatus,jdbcType=CHAR},
+      station_network_id = #{stationNetworkId,jdbcType=VARCHAR},
+      station_random_seed = #{stationRandomSeed,jdbcType=VARCHAR},
+      relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{isExist,jdbcType=BIT},
+      run_version_id = #{runVersionId,jdbcType=BIGINT},
+      run_version_no = #{runVersionNo,jdbcType=VARCHAR},
+      run_file_name = #{runFileName,jdbcType=VARCHAR},
+      run_version_status = #{runVersionStatus,jdbcType=VARCHAR},
+      run_version_oper_time = #{runVersionOperTime,jdbcType=TIMESTAMP},
+      load_version_no = #{loadVersionNo,jdbcType=VARCHAR},
+      load_version_id = #{loadVersionId,jdbcType=BIGINT},
+      load_version_oper_time = #{loadVersionOperTime,jdbcType=TIMESTAMP},
+      load_file_name = #{loadFileName,jdbcType=VARCHAR},
+      current_connect_count = #{currentConnectCount,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

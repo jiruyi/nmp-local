@@ -77,6 +77,8 @@ public class TaskServiceImpl implements TaskService {
     @Value("${local.ip}")
     private String localIp;
 
+
+
     @Override
     public void heartReport(String url) {
         NmplStationHeartInfoExample stationExample = new NmplStationHeartInfoExample();
@@ -173,12 +175,15 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public void dataCollectPush(String url) {
+    public void dataCollectPush(String url,String localIp) {
         NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
         NmplDataCollectExample.Criteria criteria = nmplDataCollectExample.createCriteria();
         nmplDataCollectExample.setOrderByClause("id desc");
 
         List<NmplDataCollect> nmplDataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+        for (NmplDataCollect nmplDataCollect : nmplDataCollectList) {
+            nmplDataCollect.setDeviceIp(localIp);
+        }
         if(!CollectionUtils.isEmpty(nmplDataCollectList)){
             Long maxId = nmplDataCollectList.get(0).getId();
             Boolean flag = false;

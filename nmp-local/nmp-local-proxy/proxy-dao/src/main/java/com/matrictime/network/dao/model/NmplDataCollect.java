@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 
  * @author   xxxx
- * @date   2022-10-19
+ * @date   2023-04-20
  */
 @Data
 public class NmplDataCollect {
@@ -26,7 +26,12 @@ public class NmplDataCollect {
     private String deviceName;
 
     /**
-     * 设备类别(01基站、02分发机、03生成机、04缓存机)
+     * 设备ip
+     */
+    private String deviceIp;
+
+    /**
+     * 设备类别(01接入基站、02边界基站、11密钥中心、12生成机、13缓存机)
      */
     private String deviceType;
 
@@ -87,6 +92,14 @@ public class NmplDataCollect {
 
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName == null ? null : deviceName.trim();
+    }
+
+    public String getDeviceIp() {
+        return deviceIp;
+    }
+
+    public void setDeviceIp(String deviceIp) {
+        this.deviceIp = deviceIp == null ? null : deviceIp.trim();
     }
 
     public String getDeviceType() {

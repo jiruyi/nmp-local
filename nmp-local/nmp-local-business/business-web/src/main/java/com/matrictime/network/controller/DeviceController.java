@@ -4,7 +4,9 @@ package com.matrictime.network.controller;
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.response.CountBaseStationResponse;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceService;
@@ -307,6 +309,43 @@ public class DeviceController {
         return result;
     }
 
+    /**
+     * 查询密钥生成机总数
+     * @param deviceInfoRequest
+     * @return
+     */
+    @SystemLog(opermodul = "非基站管理模块",operDesc = "查询基站总数",operType = "查询")
+    @RequestMapping(value = "/countBaseStation",method = RequestMethod.POST)
+    public Result<CountBaseStationResponse> countBaseStation(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<CountBaseStationResponse> result = new Result<>();
+        try {
+            result = deviceService.countBaseStation(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("countBaseStation:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("系统异常，请稍后再试");
+        }
+        return result;
+    }
+
+    /**
+     * 更新基站下的用户数
+     * @param baseStationCountRequest
+     * @return
+     */
+    @SystemLog(opermodul = "更新基站下的用户数",operDesc = "更新基站下的用户数",operType = "更新")
+    @RequestMapping(value = "/updateConnectCount",method = RequestMethod.POST)
+    public Result<Integer> updateConnectCount(@RequestBody BaseStationCountRequest baseStationCountRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            result = deviceService.updateConnectCount(baseStationCountRequest);
+        }catch (Exception e){
+            log.info("updateConnectCount:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("系统异常，请稍后再试");
+        }
+        return result;
+    }
 
 
 
