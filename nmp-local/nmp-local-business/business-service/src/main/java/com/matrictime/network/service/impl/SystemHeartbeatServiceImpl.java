@@ -2,14 +2,18 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.dao.domain.SystemHeartbeatDomainService;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.SystemHeartbeatVo;
 import com.matrictime.network.request.SystemHeartbeatRequest;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.service.SystemHeartbeatService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author by wangqiang
@@ -22,25 +26,24 @@ public class SystemHeartbeatServiceImpl implements SystemHeartbeatService {
     @Resource
     private SystemHeartbeatDomainService systemHeartbeatDomainService;
 
+    @Transactional
     @Override
-    public Result<Integer> updateSystemHeartbeat(SystemHeartbeatRequest systemHeartbeatRequest) {
+    public Result<Integer> updateSystemHeartbeat(SystemHeartbeatResponse systemHeartbeatResponse) {
         Result<Integer> result = new Result<>();
         int i = 0;
-        try {
-            SystemHeartbeatResponse systemHeartbeatResponse =
-                    systemHeartbeatDomainService.selectSystemHeartbeat(systemHeartbeatRequest);
-            if(CollectionUtils.isEmpty(systemHeartbeatResponse.getList())){
+        List<SystemHeartbeatVo> list = systemHeartbeatResponse.getList();
+        for(SystemHeartbeatVo systemHeartbeatVo: list){
+            SystemHeartbeatRequest systemHeartbeatRequest = new SystemHeartbeatRequest();
+            BeanUtils.copyProperties(systemHeartbeatVo,systemHeartbeatRequest);
+            SystemHeartbeatResponse heartbeatResponse = systemHeartbeatDomainService.selectSystemHeartbeat(systemHeartbeatRequest);
+            if(CollectionUtils.isEmpty(heartbeatResponse.getList())){
                 i = systemHeartbeatDomainService.insertSystemHeartbeat(systemHeartbeatRequest);
             }else {
                 i = systemHeartbeatDomainService.updateSystemHeartbeat(systemHeartbeatRequest);
             }
-            result.setResultObj(i);
-            result.setSuccess(true);
-        }catch (Exception e){
-            result.setErrorMsg("");
-            result.setSuccess(false);
-            log.info("updateSystemHeartbeat:{}",e.getMessage());
         }
+        result.setResultObj(i);
+        result.setSuccess(true);
         return result;
     }
 

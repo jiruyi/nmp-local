@@ -2,6 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.request.TerminalDataListRequest;
 import com.matrictime.network.request.TerminalDataRequest;
 import com.matrictime.network.response.TerminalDataResponse;
 import com.alibaba.fastjson.JSONObject;
@@ -31,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -68,6 +70,19 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
             result.setErrorMsg("");
             log.info("selectTerminalData:{}",e.getMessage());
         }
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public Result<Integer> collectTerminalData(TerminalDataListRequest terminalDataListRequest) {
+        Result<Integer> result = new Result<>();
+        int i = 0;
+        for (TerminalDataVo terminalDataVo: terminalDataListRequest.getList()){
+            i = terminalDataDomainService.collectTerminalData(terminalDataVo);
+        }
+        result.setResultObj(i);
+        result.setSuccess(true);
         return result;
     }
 
