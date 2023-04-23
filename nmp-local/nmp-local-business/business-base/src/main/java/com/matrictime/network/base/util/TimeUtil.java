@@ -1,9 +1,12 @@
 package com.matrictime.network.base.util;
 
 import com.matrictime.network.modelVo.TimeDataVo;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -60,6 +63,21 @@ public class TimeUtil {
         }
         //格式化
         return DateTimeFormatter.ofPattern("HH:mm").format(now);
+    }
+
+    public static boolean IsTodayDate(Date date){
+        // 将Date对象转换为LocalDate对象
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // 获取今天的日期
+        LocalDate today = LocalDate.now();
+
+        // 判断是否是今天
+        if (localDate.equals(today)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

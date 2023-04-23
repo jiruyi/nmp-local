@@ -88,7 +88,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
                 NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
                 nmplTerminalDataExample.createCriteria().andDataTypeEqualTo(terminalDataReq.getDataType())
                         .andTerminalNetworkIdEqualTo(terminalDataReq.getTerminalNetworkId())
-                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWENTY_FOUR,THIRTY));
+                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWENTY_FOUR,ZERO));
                 List<NmplTerminalData> nmplTerminalData = nmplTerminalDataMapper.selectByExample(nmplTerminalDataExample);
 
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -128,6 +128,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
     @Override
     public void handleAddData(TerminalDataReq terminalDataReq) {
         checkParam(terminalDataReq);
+        //获取根据terminal_network_id,data_type分组最新上报的数据
         List<TerminalDataVo> terminalDataVoList = nmplTerminalDataExtMapper.selectCurrentIpFlow(terminalDataReq);
         String time = TimeUtil.getOnTime();
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -137,7 +138,8 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         timeDataVo.setUpValue(0.0);
         timeDataVo.setDownValue(0.0);
         for (TerminalDataVo terminalDataVo : terminalDataVoList) {
-            if(time.equals(formatter.format(terminalDataVo.getUploadTime()))){
+            //判断数据是否是当天以及时刻是否是当前时刻的
+            if(time.equals(formatter.format(terminalDataVo.getUploadTime()))&& TimeUtil.IsTodayDate(terminalDataVo.getUploadTime())){
                 BigDecimal upValue = new BigDecimal(terminalDataVo.getUpValue());
                 BigDecimal downValue = new BigDecimal(terminalDataVo.getDownValue());
                 timeDataVo.setUpValue(upValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).
@@ -181,7 +183,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         Map<String,JSONObject> res = new HashMap<>();
         Set<String> set = map.keySet();
 
-        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,THIRTY);
+        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
         for (String s : set) {
             if(TimeUtil.checkTime(s)){
                 TimeDataVo timeDataVo = map.get(s);
