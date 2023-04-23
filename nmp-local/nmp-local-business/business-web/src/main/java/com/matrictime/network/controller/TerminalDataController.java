@@ -2,6 +2,7 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.request.TerminalDataListRequest;
 import com.matrictime.network.request.TerminalDataRequest;
 import com.matrictime.network.response.TerminalDataResponse;
 import com.matrictime.network.service.TerminalDataService;
@@ -41,6 +42,20 @@ public class TerminalDataController {
             log.info("selectTerminalData:{}",e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg("");
+        }
+        return result;
+    }
+
+    @SystemLog(opermodul = "终端流量",operDesc = "终端流量流量收集",operType = "插入")
+    @RequestMapping(value = "/collectTerminalData",method = RequestMethod.POST)
+    public Result<Integer> collectTerminalData(@RequestBody TerminalDataListRequest terminalDataListRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            result = terminalDataService.collectTerminalData(terminalDataListRequest);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+            log.info("collectTerminalData:{}",e.getMessage());
         }
         return result;
     }

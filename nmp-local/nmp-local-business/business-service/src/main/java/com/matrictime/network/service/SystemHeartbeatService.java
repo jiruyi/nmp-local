@@ -10,7 +10,7 @@ import com.matrictime.network.response.SystemHeartbeatResponse;
  */
 public interface SystemHeartbeatService {
 
-    Result<Integer> updateSystemHeartbeat(SystemHeartbeatRequest systemHeartbeatRequest);
+    Result<Integer> updateSystemHeartbeat(SystemHeartbeatResponse systemHeartbeatResponse);
 
     Result<SystemHeartbeatResponse> selectSystemHeartbeat(SystemHeartbeatRequest systemHeartbeatRequest);
 }

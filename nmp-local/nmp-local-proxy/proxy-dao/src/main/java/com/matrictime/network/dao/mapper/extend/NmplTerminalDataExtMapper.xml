@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplTerminalDataExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.TerminalDataVo">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="terminal_network_id" jdbcType="VARCHAR" property="terminalNetworkId" />
+        <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+        <result column="data_type" jdbcType="CHAR" property="dataType" />
+        <result column="up_value" jdbcType="INTEGER" property="upValue" />
+        <result column="down_value" jdbcType="INTEGER" property="downValue" />
+        <result column="terminal_ip" jdbcType="VARCHAR" property="terminalIp" />
+        <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <select id="collectTerminalData" resultMap="BaseResultMap">
+        select max(upload_time) as upload_time,terminal_network_id,parent_id,data_type,up_value,down_value,terminal_ip
+        from nmpl_terminal_data where GROUP BY terminal_network_id,data_type
+    </select>
+</mapper>

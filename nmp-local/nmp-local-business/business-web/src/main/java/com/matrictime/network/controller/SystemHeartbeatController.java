@@ -31,17 +31,10 @@ public class SystemHeartbeatController {
 
     @SystemLog(opermodul = "业务心跳管理",operDesc = "更新心跳状态",operType = "更新")
     @RequestMapping(value = "/updateSystemHeartbeat",method = RequestMethod.POST)
-    public Result<Integer> updateSystemHeartbeat(@RequestBody SystemHeartbeatRequest systemHeartbeatRequest){
+    public Result<Integer> updateSystemHeartbeat(@RequestBody SystemHeartbeatResponse systemHeartbeatResponse){
         Result<Integer> result = new Result<>();
         try {
-            if(StringUtils.isEmpty(systemHeartbeatRequest.getStatus())){
-                throw new RuntimeException("缺少必传参数");
-            }
-            if(StringUtils.isEmpty(systemHeartbeatRequest.getSourceId()) &&
-                    StringUtils.isEmpty(systemHeartbeatRequest.getTargetId())){
-                throw new RuntimeException("缺少必传参数");
-            }
-            result = systemHeartbeatService.updateSystemHeartbeat(systemHeartbeatRequest);
+            result = systemHeartbeatService.updateSystemHeartbeat(systemHeartbeatResponse);
         }catch (Exception e){
             log.info("updateSystemHeartbeat:{}",e.getMessage());
             result.setSuccess(false);

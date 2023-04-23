@@ -3,6 +3,7 @@ package com.matrictime.network.service;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.TerminalUserResquest;
 import com.matrictime.network.response.TerminalUserCountResponse;
+import com.matrictime.network.response.TerminalUserResponse;
 
 /**
  * @author by wangqiang
@@ -10,7 +11,7 @@ import com.matrictime.network.response.TerminalUserCountResponse;
  */
 
 public interface TerminalUserService {
-    Result<Integer> updateTerminalUser(TerminalUserResquest terminalUserResquest);
+    Result<Integer> updateTerminalUser(TerminalUserResponse terminalUserResponse);
 
     Result<TerminalUserCountResponse> countTerminalUser(TerminalUserResquest terminalUserResquest);
 }

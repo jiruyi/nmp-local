@@ -165,6 +165,12 @@ public class DataConstants {
 
     public static final String SYSTEM_RESOURCE_URL = "/nmp-local-business/monitor/sysResource";
 
+    public static final String SYSTEM_HEARTBEAT_URL = "/nmp-local-business/systemHeartbeat/updateSystemHeartbeat";
+
+    public static final String TERMINAL_USER_URL = "/nmp-local-business/terminalUser/updateTerminalUser";
+
+    public static final String TERMINAL_DATA_URL = "/nmp-local-business/terminalData/updateTerminalUser";
+
     public static final Integer ERROR_MSG_MAXLENGTH = 250;
 
     public static final long FILE_SIZE = 1024*1024*100;

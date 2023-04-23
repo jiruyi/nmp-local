@@ -2,6 +2,7 @@ package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.DataCollectReq;
+import com.matrictime.network.request.TerminalDataListRequest;
 import com.matrictime.network.request.TerminalDataReq;
 
 import com.matrictime.network.model.Result;
@@ -14,6 +15,8 @@ import com.matrictime.network.response.TerminalDataResponse;
  */
 public interface TerminalDataService {
     Result<TerminalDataResponse> selectTerminalData(TerminalDataRequest terminalDataRequest);
+
+    Result<Integer> collectTerminalData(TerminalDataListRequest terminalDataListRequest);
 
     Result flowTransformation(TerminalDataReq terminalDataReq);
 

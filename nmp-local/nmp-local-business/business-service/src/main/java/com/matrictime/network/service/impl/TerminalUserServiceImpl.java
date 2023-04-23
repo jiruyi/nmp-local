@@ -5,9 +5,13 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.TerminalUserVo;
 import com.matrictime.network.request.TerminalUserResquest;
 import com.matrictime.network.response.TerminalUserCountResponse;
+import com.matrictime.network.response.TerminalUserResponse;
 import com.matrictime.network.service.TerminalUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -24,24 +28,27 @@ public class TerminalUserServiceImpl implements TerminalUserService {
     @Resource
     private TerminalUserDomainService terminalUserDomainService;
 
+    @Resource
+    RedisTemplate redisTemplate;
+
+    @Transactional
     @Override
-    public Result<Integer> updateTerminalUser(TerminalUserResquest terminalUserResquest) {
+    public Result<Integer> updateTerminalUser(TerminalUserResponse terminalUserResponse) {
         Result<Integer> result = new Result<>();
         int i = 0;
-        try {
-            List<TerminalUserVo> list = terminalUserDomainService.selectTerminalUser(terminalUserResquest);
-            if(CollectionUtils.isEmpty(list)){
+        List<TerminalUserVo> list = terminalUserResponse.getList();
+        for(TerminalUserVo terminalUserVo: list){
+            TerminalUserResquest terminalUserResquest = new TerminalUserResquest();
+            BeanUtils.copyProperties(terminalUserVo,terminalUserResquest);
+            List<TerminalUserVo> terminalUserVoList = terminalUserDomainService.selectTerminalUser(terminalUserResquest);
+            if(CollectionUtils.isEmpty(terminalUserVoList)){
                 i = terminalUserDomainService.insertTerminalUser(terminalUserResquest);
             }else {
                 i = terminalUserDomainService.updateTerminalUser(terminalUserResquest);
             }
-            result.setResultObj(i);
-            result.setSuccess(true);
-        }catch (Exception e){
-            result.setSuccess(false);
-            result.setErrorMsg("");
-            log.info("updateTerminalUser:{}",e.getMessage());
         }
+        result.setResultObj(i);
+        result.setSuccess(true);
         return result;
     }
 

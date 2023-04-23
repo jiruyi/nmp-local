@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.AlarmConTypeEnum;
 import com.matrictime.network.base.enums.DataCollectEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.TimeUtil;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
+import com.matrictime.network.dao.mapper.NmplAlarmInfoMapper;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
@@ -74,6 +76,9 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
 
     @Resource
     NmplDataCollectExtMapper nmplDataCollectExtMapper;
+
+    @Resource
+    NmplAlarmInfoMapper nmplAlarmInfoMapper;
 
     @Override
     public Result<PageInfo> queryByConditon(DataCollectReq dataCollectReq) {
@@ -381,7 +386,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                 NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
                 nmplDataCollectExample.createCriteria().andDataItemCodeEqualTo(dataCollectReq.getDataItemCode())
                         .andDeviceIpEqualTo(dataCollectReq.getDeviceIp())
-                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWENTY_FOUR,THIRTY));
+                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWENTY_FOUR,ZERO));
                 List<NmplDataCollect> dataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
 
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -433,9 +438,11 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
             if(value == null){
                 double res =0.0;
+                //获取根据device_id,data_item_code分组最新上报的数据
                 List<DataCollectVo> dataCollectVos = nmplDataCollectExtMapper.selectCurrentIpFlow(dataCollectReq);
                 for (DataCollectVo dataCollectVo : dataCollectVos) {
-                    if(time.equals(formatter.format(dataCollectVo.getUploadTime()))){
+                    //判断数据是否是当天以及时刻是否是当前时刻的
+                    if(time.equals(formatter.format(dataCollectVo.getUploadTime()))&& TimeUtil.IsTodayDate(dataCollectVo.getUploadTime())){
                         BigDecimal bigDecimal = new BigDecimal(dataCollectVo.getDataItemValue());
                         // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
                         res = bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(res)).doubleValue();
@@ -463,6 +470,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         DataCollectReq dataCollectReq = new DataCollectReq();
         dataCollectReq.setDataItemCode(code);
         dataCollectReq.setDeviceIp(ip);
+        //获取根据device_id,data_item_code分组最新上报的数据
         List<DataCollectVo> dataCollectVos = nmplDataCollectExtMapper.selectCurrentIpFlow(dataCollectReq);
         String time = TimeUtil.getOnTime();
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -470,12 +478,15 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         String currentKey = DataConstants.CURRENT_FLOW + ip +"_" + code;
         double result = 0.0;
         for (DataCollectVo dataCollectVo : dataCollectVos) {
-            if(time.equals(formatter.format(dataCollectVo.getUploadTime()))){
+            //判断数据是否是当天以及时刻是否是当前时刻的
+            if(time.equals(formatter.format(dataCollectVo.getUploadTime()))&& TimeUtil.IsTodayDate(dataCollectVo.getUploadTime())){
                 BigDecimal bigDecimal = new BigDecimal(dataCollectVo.getDataItemValue());
                 // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
                 result = bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(result)).doubleValue();
             }
         }
+        //当前流量大于xxx时增加告警信息
+
         TimeDataVo timeDataVo = new TimeDataVo();
         timeDataVo.setDate(new Date());
         timeDataVo.setValue(result);
@@ -494,6 +505,20 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         if(StringUtil.isEmpty(dataCollectReq.getDeviceIp())||StringUtil.isEmpty(dataCollectReq.getDataItemCode())){
             throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
+    }
+
+
+    /**
+     * 新增流量过载告警
+     */
+    private void addFlowAlarm(String ip){
+        NmplAlarmInfo nmplAlarmInfo = new NmplAlarmInfo();
+        nmplAlarmInfo.setAlarmSourceIp(ip);
+        nmplAlarmInfo.setAlarmLevel("1");
+        nmplAlarmInfo.setAlarmContentType(AlarmConTypeEnum.FLOW.getCode());
+        nmplAlarmInfo.setAlarmUploadTime(new Date());
+        nmplAlarmInfo.setAlarmContent(AlarmConTypeEnum.FLOW.getConditionDesc());
+        nmplAlarmInfoMapper.insert(nmplAlarmInfo);
     }
 
     /**
@@ -519,7 +544,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
     private  Map<String,Double> filterData(Map<String, TimeDataVo> map){
         Map<String,Double> res = new HashMap<>();
         Set<String> set = map.keySet();
-        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,THIRTY);
+        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
         for (String s : set) {
             if(TimeUtil.checkTime(s)){
                 TimeDataVo timeDataVo = map.get(s);

@@ -2,7 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.request.TerminalDataRequest;
+import com.matrictime.network.request.*;
 import com.matrictime.network.response.TerminalDataResponse;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
@@ -20,7 +20,6 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.TerminalDataVo;
 import com.matrictime.network.modelVo.TimeDataVo;
-import com.matrictime.network.request.TerminalDataReq;
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.TerminalDataRequest;
@@ -31,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -73,6 +73,32 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         return result;
     }
 
+    @Transactional
+    @Override
+    public Result<Integer> collectTerminalData(TerminalDataListRequest terminalDataListRequest) {
+        Result<Integer> result = new Result<>();
+        int i = 0;
+        Map<String,Set<String>> map = new HashMap<>();
+        for (TerminalDataVo terminalDataVo: terminalDataListRequest.getList()){
+            i = terminalDataDomainService.collectTerminalData(terminalDataVo);
+            if(!map.containsKey(terminalDataVo.getTerminalNetworkId())){
+                map.put(terminalDataVo.getTerminalNetworkId(),new HashSet<>());
+            }
+            map.get(terminalDataVo.getTerminalNetworkId()).add(terminalDataVo.getDataType());
+        }
+        for (Map.Entry<String, Set<String>> stringSetEntry : map.entrySet()) {
+            for (String s : stringSetEntry.getValue()) {
+                TerminalDataReq terminalDataReq = new TerminalDataReq();
+                terminalDataReq.setDataType(s);
+                terminalDataReq.setTerminalNetworkId(stringSetEntry.getKey());
+                handleAddData(terminalDataReq);
+            }
+        }
+        result.setResultObj(i);
+        result.setSuccess(true);
+        return result;
+    }
+
 
     @Override
     public Result flowTransformation(TerminalDataReq terminalDataReq) {
@@ -88,7 +114,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
                 NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
                 nmplTerminalDataExample.createCriteria().andDataTypeEqualTo(terminalDataReq.getDataType())
                         .andTerminalNetworkIdEqualTo(terminalDataReq.getTerminalNetworkId())
-                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWENTY_FOUR,THIRTY));
+                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWENTY_FOUR,ZERO));
                 List<NmplTerminalData> nmplTerminalData = nmplTerminalDataMapper.selectByExample(nmplTerminalDataExample);
 
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -128,6 +154,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
     @Override
     public void handleAddData(TerminalDataReq terminalDataReq) {
         checkParam(terminalDataReq);
+        //获取根据terminal_network_id,data_type分组最新上报的数据
         List<TerminalDataVo> terminalDataVoList = nmplTerminalDataExtMapper.selectCurrentIpFlow(terminalDataReq);
         String time = TimeUtil.getOnTime();
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -137,7 +164,8 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         timeDataVo.setUpValue(0.0);
         timeDataVo.setDownValue(0.0);
         for (TerminalDataVo terminalDataVo : terminalDataVoList) {
-            if(time.equals(formatter.format(terminalDataVo.getUploadTime()))){
+            //判断数据是否是当天以及时刻是否是当前时刻的
+            if(time.equals(formatter.format(terminalDataVo.getUploadTime()))&& TimeUtil.IsTodayDate(terminalDataVo.getUploadTime())){
                 BigDecimal upValue = new BigDecimal(terminalDataVo.getUpValue());
                 BigDecimal downValue = new BigDecimal(terminalDataVo.getDownValue());
                 timeDataVo.setUpValue(upValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).
@@ -181,7 +209,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         Map<String,JSONObject> res = new HashMap<>();
         Set<String> set = map.keySet();
 
-        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,THIRTY);
+        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
         for (String s : set) {
             if(TimeUtil.checkTime(s)){
                 TimeDataVo timeDataVo = map.get(s);
