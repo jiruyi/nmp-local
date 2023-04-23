@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 

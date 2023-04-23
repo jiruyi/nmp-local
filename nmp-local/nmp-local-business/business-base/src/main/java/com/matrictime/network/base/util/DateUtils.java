@@ -126,6 +126,20 @@ public class DateUtils {
     }
 
     /**
+      * @title dateToDate
+      * @param [date]
+      * @return java.util.Date
+      * @description date去掉时分秒
+      * @author jiruyi
+      * @create 2023/4/21 0021 16:00
+      */
+    public static Date dateToDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return  formatStringToDate(sdf.format(date),sdf);
+
+    }
+
+    /**
      * date转换成yyyy-MM格式字符串
      *
      * @param date
@@ -748,4 +762,7 @@ public class DateUtils {
         }
         return false;
     }
+
+
+
 }

@@ -14,4 +14,6 @@ import java.util.List;
 public interface AlarmDataDomainService {
 
      int  acceptAlarmData(List<AlarmInfo> alarmInfoList);
+
+     void alarmCountDataForRedis(List<AlarmInfo> alarmInfoList);
 }
