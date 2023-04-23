@@ -1,6 +1,5 @@
 package com.matrictime.network.base.constant;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -237,5 +236,7 @@ public class DataConstants {
     public static final int THIRTY = 30;
 
     public static final String UNDERLINE ="_";
+
+    public static final String VLINE  ="-";
 
 }

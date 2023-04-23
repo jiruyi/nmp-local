@@ -52,7 +52,7 @@ spring:
     host: 192.168.72.225
     port: 6379
     password: 123456
-    timeout: 500
+    timeout: 5000
     lettuce:
       pool:
         max-active: 100
