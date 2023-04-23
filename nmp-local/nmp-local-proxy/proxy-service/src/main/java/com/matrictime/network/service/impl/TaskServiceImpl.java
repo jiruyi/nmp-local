@@ -8,10 +8,19 @@ import com.matrictime.network.dao.model.*;
 import com.matrictime.network.dao.model.extend.DeviceInfo;
 import com.matrictime.network.dao.model.extend.NmplPhysicalDeviceResource;
 import com.matrictime.network.dao.model.extend.NmplSystemResource;
+import com.matrictime.network.facade.MonitorFacade;
+import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.PhysicalDeviceHeartbeatVo;
+import com.matrictime.network.modelVo.PhysicalDeviceResourceVo;
+import com.matrictime.network.modelVo.SystemResourceVo;
+import com.matrictime.network.request.PhysicalDeviceHeartbeatReq;
+import com.matrictime.network.request.PhysicalDeviceResourceReq;
+import com.matrictime.network.request.SystemResourceReq;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -61,6 +70,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private NmplLocalDeviceInfoMapper nmplLocalDeviceInfoMapper;
+
+    @Autowired
+    private MonitorFacade monitorFacade;
 
     @Value("${local.ip}")
     private String localIp;
@@ -226,55 +238,53 @@ public class TaskServiceImpl implements TaskService {
     /**
      * 物理设备心跳上报服务
      * @param uploadTime
-     * @param url
      */
     @Override
-    public void physicalDeviceHeartbeat(Date uploadTime, String url) {
+    public void physicalDeviceHeartbeat(Date uploadTime) {
         List<String> ips = getIps();
 
-        List<Map<String,String>> reqList = new ArrayList<>();
+        List<PhysicalDeviceHeartbeatVo> reqList = new ArrayList<>();
 
         if (!CollectionUtils.isEmpty(ips)){
             for (String ip : ips){
                 try {
-                    Map<String,String> map = new HashMap<>();
+                    PhysicalDeviceHeartbeatVo vo = new PhysicalDeviceHeartbeatVo();
 
                     int i = CompareUtil.compareIp(localIp, ip);
                     if (i==0){
                         continue;
                     }else if (i>0){
-                        map.put("ip1_ip2",ip+KEY_SPLIT_UNDERLINE+localIp);
+                        vo.setIp1Ip2(ip+KEY_SPLIT_UNDERLINE+localIp);
                     }else if (i<0){
-                        map.put("ip1_ip2",localIp+KEY_SPLIT_UNDERLINE+ip);
+                        vo.setIp1Ip2(localIp+KEY_SPLIT_UNDERLINE+ip);
                     }
                     boolean ping = SystemUtils.getPingResult(ip);
                     if (ping){
-                        map.put("status",CONNECT_STATUS_SUCCESS);
+                        vo.setStatus(CONNECT_STATUS_SUCCESS);
                     }else {
-                        map.put("status",CONNECT_STATUS_FAIL);
+                        vo.setStatus(CONNECT_STATUS_FAIL);
                     }
-                    reqList.add(map);
+                    reqList.add(vo);
                 } catch (Exception e) {
                     log.warn("TaskServiceImpl.physicalDeviceHeartbeat exception:{}",e);
                 }
             }
             Boolean flag = false;
-            String post = null;
+            Result result = null;
             String data = "";
             String msg =null;
             if (!CollectionUtils.isEmpty(reqList)){
                 try {
-                    JSONObject req = new JSONObject();
-                    req.put("heartbeatList",reqList);
-                    req.put("uploadTime",uploadTime);
-                    data = req.toJSONString();
-                    post = HttpClientUtil.post(url,data);
+                    PhysicalDeviceHeartbeatReq req = new PhysicalDeviceHeartbeatReq();
+                    req.setHeartbeatList(reqList);
+                    result = monitorFacade.physicalDeviceHeartbeat(req);
+                    data = req.toString();
                 }catch (Exception e){
                     flag = true;
                     msg = e.getMessage();
                     log.info("physicalDeviceHeartbeat push Exception:{}",e.getMessage());
                 }finally {
-                    logError(post,url,data,flag,msg);
+                    logError(result,"/monitor/physicalDeviceHeartbeat",data,flag,msg);
                 }
             }
         }
@@ -286,25 +296,28 @@ public class TaskServiceImpl implements TaskService {
     /**
      * 物理设备资源情况上报服务
      * @param uploadTime
-     * @param url
      */
     @Override
-    public void physicalDeviceResource(Date uploadTime,String url) {
+    public void physicalDeviceResource(Date uploadTime) {
         Boolean flag = false;
-        String post = null;
+        Result result = null;
         String data = "";
         String msg =null;
         try {
-            JSONObject req = new JSONObject();
-            req.put("pdrList",getPdrList(uploadTime));
-            data = req.toJSONString();
-            post = HttpClientUtil.post(url,data);
+//            JSONObject req = new JSONObject();
+//            req.put("pdrList",getPdrList(uploadTime));
+//            data = req.toJSONString();
+//            post = HttpClientUtil.post(url,data);
+            PhysicalDeviceResourceReq req = new PhysicalDeviceResourceReq();
+            req.setPdrList(getPdrList(uploadTime));
+            result = monitorFacade.physicalDeviceResource(req);
+            data = req.toString();
         }catch (Exception e){
             flag = true;
             msg = e.getMessage();
             log.info("physicalDeviceHeartResource push Exception:{}",e.getMessage());
         }finally {
-            logError(post,url,data,flag,msg);
+            logError(result,"/monitor/physicalDeviceResource",data,flag,msg);
         }
 
     }
@@ -312,10 +325,9 @@ public class TaskServiceImpl implements TaskService {
     /**
      * 运行系统资源上报服务
      * @param uploadTime
-     * @param url
      */
     @Override
-    public void systemResource(Date uploadTime,String url) {
+    public void systemResource(Date uploadTime) {
         // 获取本机所有基站及设备列表
         List<DeviceInfo> infos = getLocalDeviceInfo();
 
@@ -324,20 +336,24 @@ public class TaskServiceImpl implements TaskService {
         }
 
         Boolean flag = false;
-        String post = null;
+        Result result = null;
         String data = "";
         String msg =null;
         try {
-            JSONObject req = new JSONObject();
-            req.put("srList",getSrList(uploadTime,infos));
-            data = req.toJSONString();
-            post = HttpClientUtil.post(url,data);
+//            JSONObject req = new JSONObject();
+//            req.put("srList",getSrList(uploadTime,infos));
+//            data = req.toJSONString();
+//            post = HttpClientUtil.post(url,data);
+            SystemResourceReq req = new SystemResourceReq();
+            req.setSrList(getSrList(uploadTime,infos));
+            result = monitorFacade.systemResource(req);
+            data = req.toString();
         }catch (Exception e){
             flag = true;
             msg = e.getMessage();
             log.info("systemResource push Exception:{}",e.getMessage());
         }finally {
-            logError(post,url,data,flag,msg);
+            logError(result,"/monitor/systemResource",data,flag,msg);
         }
     }
 
@@ -360,6 +376,34 @@ public class TaskServiceImpl implements TaskService {
                 if (resp.containsKey("errorMsg")){
                     msg = (String) resp.get("errorMsg");
                 }
+            }
+        }
+        if(msg!=null&&msg.length()> DataConstants.ERROR_MSG_MAXLENGTH){
+            msg = msg.substring(DataConstants.ZERO,DataConstants.ERROR_MSG_MAXLENGTH);
+        }
+        //推送失败或出现异常时记录
+        if(!sucess||flag){
+            NmplErrorPushLog nmplErrorPushLog = new NmplErrorPushLog();
+            nmplErrorPushLog.setUrl(url);
+            nmplErrorPushLog.setData(data);
+            nmplErrorPushLog.setErrorMsg(msg);
+            nmplErrorPushLogMapper.insertSelective(nmplErrorPushLog);
+        }
+    }
+
+    /**
+     * @param result http返回体
+     * @param url  推送路径
+     * @param data 推送数据
+     * @param flag 是否出现异常
+     * @param msg  异常信息
+     */
+    private void logError(Result result,String url,String data,Boolean flag,String msg){
+        Boolean sucess = true;
+        if(result!=null){
+            sucess = result.isSuccess();
+            if(null == msg){
+                msg = result.getErrorMsg();
             }
         }
         if(msg!=null&&msg.length()> DataConstants.ERROR_MSG_MAXLENGTH){
@@ -415,11 +459,11 @@ public class TaskServiceImpl implements TaskService {
      * @param uploadTime
      * @return
      */
-    private List<NmplPhysicalDeviceResource> getPdrList(Date uploadTime){
-        List<NmplPhysicalDeviceResource> pdrList = new ArrayList<>();
+    private List<PhysicalDeviceResourceVo> getPdrList(Date uploadTime){
+        List<PhysicalDeviceResourceVo> pdrList = new ArrayList<>();
 
         // 获取cpu信息
-        NmplPhysicalDeviceResource cpu = new NmplPhysicalDeviceResource();
+        PhysicalDeviceResourceVo cpu = new PhysicalDeviceResourceVo();
         cpu.setDeviceIp(localIp);
         cpu.setResourceType(RESOURCE_TYPE_CPU);
         cpu.setResourceValue(String.valueOf(SystemUtils.getCPUcores()));
@@ -428,7 +472,7 @@ public class TaskServiceImpl implements TaskService {
         pdrList.add(cpu);
 
         // 获取内存信息
-        NmplPhysicalDeviceResource memory = new NmplPhysicalDeviceResource();
+        PhysicalDeviceResourceVo memory = new PhysicalDeviceResourceVo();
         memory.setDeviceIp(localIp);
         memory.setResourceType(RESOURCE_TYPE_MEMORY);
         long totalMemory = SystemUtils.getTotalMemory();
@@ -441,7 +485,7 @@ public class TaskServiceImpl implements TaskService {
         pdrList.add(memory);
 
         // 获取磁盘信息
-        NmplPhysicalDeviceResource disk = new NmplPhysicalDeviceResource();
+        PhysicalDeviceResourceVo disk = new PhysicalDeviceResourceVo();
         disk.setDeviceIp(localIp);
         disk.setResourceType(RESOURCE_TYPE_DISK);
         long totalDisk = SystemUtils.getTotalFileSys();
@@ -497,15 +541,16 @@ public class TaskServiceImpl implements TaskService {
      * @param infos
      * @return
      */
-    private List<NmplSystemResource> getSrList(Date uploadTime,List<DeviceInfo> infos){
-        List<NmplSystemResource> resList = new ArrayList<>(infos.size());
+    private List<SystemResourceVo> getSrList(Date uploadTime, List<DeviceInfo> infos){
+        List<SystemResourceVo> resList = new ArrayList<>(infos.size());
         for (DeviceInfo info : infos){
             Integer pid = SystemUtils.getPID(info.getLanPort());
+            // 判断系统端口所在进程是否存在
             if (pid.equals(-1)){
                 continue;
             }else {
                 Map<String, String> systemInfo = SystemUtils.getSystemInfo(pid);
-                NmplSystemResource resource = new NmplSystemResource();
+                SystemResourceVo resource = new SystemResourceVo();
                 resource.setSystemId(info.getSystemId());
                 resource.setSystemType(info.getSystemType());
                 resource.setStartTime(DateUtils.formatStringToDate(systemInfo.get("startTime")));

@@ -2,10 +2,7 @@ package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
-import com.matrictime.network.response.CheckHeartResp;
-import com.matrictime.network.response.QueryMonitorResp;
-import com.matrictime.network.response.TotalLoadChangeResp;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.matrictime.network.response.*;
 
 public interface MonitorService {
 
@@ -38,17 +35,38 @@ public interface MonitorService {
     Result systemResource(SystemResourceReq req);
 
     /**
+     * 物理设备网络拓扑图查询
+     * @param req
+     * @return
+     */
+    Result<QueryPhysicalDevicesResp> queryPhysicalDevices(QueryPhysicalDevicesReq req);
+
+    /**
+     * 物理设备资源查询
+     * @param req
+     * @return
+     */
+    Result<QueryPhysicalDeviceResourceResp> queryPhysicalDeviceResource(QueryPhysicalDevicesResourceReq req);
+
+    /**
+     * 运行系统资源查询
+     * @param req
+     * @return
+     */
+    Result querySystemResource(QueryPhysicalDevicesResourceReq req);
+
+    /**
      * 监控轮询展示查询（废弃）
      * @param req
      * @return
      */
-    Result<QueryMonitorResp> queryMonitor(QueryMonitorReq req);
+//    Result<QueryMonitorResp> queryMonitor(QueryMonitorReq req);
 
     /**
      * 总带宽负载变化查询(废弃)
      * @param req
      * @return
      */
-    Result<TotalLoadChangeResp> totalLoadChange(TotalLoadChangeReq req);
+//    Result<TotalLoadChangeResp> totalLoadChange(TotalLoadChangeReq req);
 
 }

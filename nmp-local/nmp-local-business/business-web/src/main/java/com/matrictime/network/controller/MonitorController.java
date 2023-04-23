@@ -6,7 +6,6 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.CheckHeartResp;
 import com.matrictime.network.response.QueryMonitorResp;
-import com.matrictime.network.response.SignalIoResp;
 import com.matrictime.network.response.TotalLoadChangeResp;
 import com.matrictime.network.service.MonitorService;
 import lombok.extern.slf4j.Slf4j;
@@ -89,6 +88,54 @@ public class MonitorController {
             return  monitorService.systemResource(req);
         }catch (Exception e){
             log.error("MonitorController.systemResource exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 物理设备网络拓扑图查询
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/queryPhysicalDevices",method = RequestMethod.POST)
+    @SystemLog(opermodul = "监控模块",operDesc = "物理设备网络拓扑图",operType = "查询")
+    public Result queryPhysicalDevices(@RequestBody QueryPhysicalDevicesReq req){
+        try {
+            return  monitorService.queryPhysicalDevices(req);
+        }catch (Exception e){
+            log.error("MonitorController.queryPhysicalDevices exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 物理设备资源查询
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/queryPhysicalDeviceResource",method = RequestMethod.POST)
+    @SystemLog(opermodul = "监控模块",operDesc = "物理设备资源",operType = "查询")
+    public Result queryPhysicalDeviceResource(@RequestBody QueryPhysicalDevicesResourceReq req){
+        try {
+            return  monitorService.queryPhysicalDeviceResource(req);
+        }catch (Exception e){
+            log.error("MonitorController.queryPhysicalDeviceResource exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 运行系统资源查询
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/querySystemResource",method = RequestMethod.POST)
+    @SystemLog(opermodul = "监控模块",operDesc = "运行系统资源",operType = "查询")
+    public Result querySystemResource(@RequestBody QueryPhysicalDevicesResourceReq req){
+        try {
+            return  monitorService.querySystemResource(req);
+        }catch (Exception e){
+            log.error("MonitorController.querySystemResource exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

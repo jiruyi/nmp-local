@@ -17,22 +17,19 @@ public interface TaskService {
     /**
      * 物理设备心跳上报服务
      * @param uploadTime
-     * @param url
      */
-    void physicalDeviceHeartbeat(Date uploadTime, String url);
+    void physicalDeviceHeartbeat(Date uploadTime);
 
     /**
      * 物理设备资源情况上报服务
      * @param uploadTime
-     * @param url
      */
-    void physicalDeviceResource(Date uploadTime,String url);
+    void physicalDeviceResource(Date uploadTime);
 
     /**
      * 运行系统资源上报服务
      * @param uploadTime
-     * @param url
      */
-    void systemResource(Date uploadTime,String url);
+    void systemResource(Date uploadTime);
 
 }
