@@ -86,25 +86,6 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
                 }
             }
         });
-        //redis  物理资源插入
-//        List<AlarmInfo> phyList = alarmInfoList.stream().filter(Objects::nonNull)
-//                .filter(alarmInfo -> "00".equals(alarmInfo.getAlarmSourceType()))
-//                .collect(Collectors.toList());
-//        if(!CollectionUtils.isEmpty(phyList)){
-//            alarmPhyCountDataForRedis(phyList);
-//        }
-//        //redis  系统资源插入
-//        List<AlarmInfo> sysList = alarmInfoList.stream().filter(Objects::nonNull)
-//                .filter(alarmInfo -> !"00".equals(alarmInfo.getAlarmSourceType()))
-//                .collect(Collectors.toList());
-//        if(!CollectionUtils.isEmpty(sysList)){
-//            alarmSysCountDataForRedis(sysList);
-//        }
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         return  batchCount;
     }
 
