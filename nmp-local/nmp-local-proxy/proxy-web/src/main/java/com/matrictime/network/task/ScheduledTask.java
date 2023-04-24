@@ -111,6 +111,33 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================systemResource end=============================");
     }
 
+    @Scheduled(cron = "0 0/30 * * * ?")
+    @Async
+    public void systemHeartbeat(){
+        log.info(Thread.currentThread().getName()+"======================SystemHeartbeat begin=============================");
+        taskService.SystemHeartbeat(ip + KEY_SPLIT + port + SYSTEM_HEARTBEAT_URL);
+        log.info(Thread.currentThread().getName()+"======================SystemHeartbeat end=============================");
+    }
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    @Async
+    public void terminalUser(){
+        log.info(Thread.currentThread().getName()+"======================TerminalUser begin=============================");
+        taskService.SystemHeartbeat(ip + KEY_SPLIT + port + TERMINAL_USER_URL);
+        log.info(Thread.currentThread().getName()+"======================TerminalUser end=============================");
+    }
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    @Async
+    public void terminalData(){
+        log.info(Thread.currentThread().getName()+"======================terminalData begin=============================");
+        taskService.collectTerminalData(ip + KEY_SPLIT + port + TERMINAL_USER_URL);
+        log.info(Thread.currentThread().getName()+"======================terminalData end=============================");
+    }
+
+
+
+
 
 
 //    @Scheduled(fixedDelay = 5000)

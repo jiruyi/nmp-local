@@ -1,5 +1,6 @@
 package com.matrictime.network.dao.domain.impl;
 
+import com.matrictime.network.base.enums.TerminalDataEnum;
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplTerminalDataMapper;
@@ -9,11 +10,13 @@ import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
 import com.matrictime.network.dao.model.NmplTerminalData;
 import com.matrictime.network.dao.model.NmplTerminalDataExample;
 import com.matrictime.network.modelVo.TerminalDataVo;
+import com.matrictime.network.request.TerminalDataListRequest;
 import com.matrictime.network.request.TerminalDataRequest;
 import com.matrictime.network.response.TerminalDataResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.NumberUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -49,6 +52,13 @@ public class TerminalDataDomainServiceImpl implements TerminalDataDomainService 
         return terminalDataResponse;
     }
 
+    @Override
+    public int collectTerminalData(TerminalDataVo terminalDataVo) {
+        NmplTerminalData nmplTerminalData = new NmplTerminalData();
+        BeanUtils.copyProperties(terminalDataVo,nmplTerminalData);
+        return terminalDataMapper.insertSelective(nmplTerminalData);
+    }
+
     /**
      * 查询去重后的终端设备Id
      * @param list
@@ -56,10 +66,10 @@ public class TerminalDataDomainServiceImpl implements TerminalDataDomainService 
      */
     private List<TerminalDataVo> getDataList(List<NmplBaseStationInfo> list){
         List<TerminalDataVo> terminalDataVoList = new ArrayList<>();
-        for(int stationIndex = 0;stationIndex< list.size();stationIndex++){
+        for(int stationIndex = 0; stationIndex< list.size(); stationIndex++){
             TerminalDataRequest terminalDataRequest = new TerminalDataRequest();
             terminalDataRequest.setParentId(list.get(stationIndex).getStationId());
-            terminalDataRequest.setDataType("01");
+            terminalDataRequest.setDataType(TerminalDataEnum.RESIDUE.getCode());
             List<NmplTerminalData> terminalDataList = terminalDataExtMapper.distinctTerminalData(terminalDataRequest);
             for(int i = 0;i< terminalDataList.size();i++){
                 TerminalDataVo terminalDataVo = getTerminalDataInfo(terminalDataList.get(i));

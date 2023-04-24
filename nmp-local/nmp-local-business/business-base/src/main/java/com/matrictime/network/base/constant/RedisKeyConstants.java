@@ -10,8 +10,8 @@ package com.matrictime.network.base.constant;
 public class RedisKeyConstants {
 
     //物理设备告警
-    public static  final  String   PHYSICAL_ALARM_COUNT = "_physical_alarm_count";
+    public static  final  String   PHYSICAL_ALARM_COUNT = ":physical_alarm_count";
 
     //系统告警
-    public static  final  String   SYSTEM_ALARM_COUNT = "_system_alarm_count";
+    public static  final  String   SYSTEM_ALARM_COUNT = ":system_alarm_count";
 }

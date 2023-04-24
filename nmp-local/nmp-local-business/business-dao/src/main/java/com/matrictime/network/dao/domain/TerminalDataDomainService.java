@@ -1,6 +1,7 @@
 package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.modelVo.TerminalDataVo;
+import com.matrictime.network.request.TerminalDataListRequest;
 import com.matrictime.network.request.TerminalDataRequest;
 import com.matrictime.network.response.TerminalDataResponse;
 
@@ -12,4 +13,5 @@ public interface TerminalDataDomainService {
 
     TerminalDataResponse selectTerminalData(TerminalDataRequest terminalDataRequest);
 
+    int collectTerminalData(TerminalDataVo terminalDataVo);
 }

@@ -3,13 +3,18 @@ package com.matrictime.network.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.dao.domain.SystemHeartbeatDomainService;
+import com.matrictime.network.dao.domain.TerminalDataDomainService;
+import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.dao.model.extend.DeviceInfo;
 import com.matrictime.network.dao.model.extend.NmplPhysicalDeviceResource;
 import com.matrictime.network.dao.model.extend.NmplSystemResource;
 import com.matrictime.network.facade.MonitorFacade;
-import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.TerminalDataVo;
+import com.matrictime.network.response.SystemHeartbeatResponse;
+import com.matrictime.network.response.TerminalUserResponse;
 import com.matrictime.network.modelVo.PhysicalDeviceHeartbeatVo;
 import com.matrictime.network.modelVo.PhysicalDeviceResourceVo;
 import com.matrictime.network.modelVo.SystemResourceVo;
@@ -70,6 +75,15 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private NmplLocalDeviceInfoMapper nmplLocalDeviceInfoMapper;
+
+    @Resource
+    private SystemHeartbeatDomainService systemHeartbeatDomainService;
+
+    @Resource
+    private TerminalUserDomainService terminalUserDomainService;
+
+    @Resource
+    private TerminalDataDomainService terminalDataDomainService;
 
     @Autowired
     private MonitorFacade monitorFacade;
@@ -359,6 +373,72 @@ public class TaskServiceImpl implements TaskService {
             log.info("systemResource push Exception:{}",e.getMessage());
         }finally {
             logError(result,"/monitor/systemResource",data,flag,msg);
+        }
+    }
+
+    @Override
+    public void SystemHeartbeat(String url) {
+        SystemHeartbeatResponse systemHeartbeatResponse = systemHeartbeatDomainService.selectSystemHeartbeat();
+        Boolean flag = false;
+        String post = null;
+        String data = "";
+        String msg =null;
+        try {
+            JSONObject req = new JSONObject();
+            req.put("list",systemHeartbeatResponse.getList());
+            data = req.toJSONString();
+            post = HttpClientUtil.post(url, data);
+            log.info("SystemHeartbeat push result:{}",post);
+        }catch (Exception e){
+            flag = true;
+            msg = e.getMessage();
+            log.info("SystemHeartbeat push Exception:{}",e.getMessage());
+        }finally {
+            logError(post,url,data,flag,msg);
+        }
+    }
+
+    @Override
+    public void TerminalUser(String url) {
+        TerminalUserResponse terminalUserResponse = terminalUserDomainService.selectTerminalUser();
+        Boolean flag = false;
+        String post = null;
+        String data = "";
+        String msg =null;
+        try {
+            JSONObject req = new JSONObject();
+            req.put("list",terminalUserResponse.getList());
+            data = req.toJSONString();
+            post = HttpClientUtil.post(url, data);
+            log.info("TerminalUser push result:{}",post);
+        }catch (Exception e){
+            flag = true;
+            msg = e.getMessage();
+            log.info("TerminalUser push Exception:{}",e.getMessage());
+        }finally {
+            logError(post,url,data,flag,msg);
+        }
+    }
+
+    @Override
+    public void collectTerminalData(String url) {
+        List<TerminalDataVo> terminalDataVoList = terminalDataDomainService.collectTerminalData();
+        Boolean flag = false;
+        String post = null;
+        String data = "";
+        String msg =null;
+        try {
+            JSONObject req = new JSONObject();
+            req.put("list",terminalDataVoList);
+            data = req.toJSONString();
+            post = HttpClientUtil.post(url, data);
+            log.info("collectTerminalData push result:{}",post);
+        }catch (Exception e){
+            flag = true;
+            msg = e.getMessage();
+            log.info("collectTerminalData push Exception:{}",e.getMessage());
+        }finally {
+            logError(post,url,data,flag,msg);
         }
     }
 

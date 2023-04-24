@@ -32,4 +32,22 @@ public interface TaskService {
      */
     void systemResource(Date uploadTime);
 
+    /**
+     * 业务心跳上报
+     * @param url
+     */
+    void SystemHeartbeat(String url);
+
+    /**
+     * 用户状态上报
+     * @param url
+     */
+    void TerminalUser(String url);
+
+    /**
+     * 终端流量收集
+     * @param url
+     */
+    void collectTerminalData(String url);
+
 }

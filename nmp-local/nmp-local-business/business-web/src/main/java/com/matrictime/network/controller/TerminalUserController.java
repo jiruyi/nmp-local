@@ -4,6 +4,7 @@ import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.TerminalUserResquest;
 import com.matrictime.network.response.TerminalUserCountResponse;
+import com.matrictime.network.response.TerminalUserResponse;
 import com.matrictime.network.service.TerminalUserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -30,16 +31,10 @@ public class TerminalUserController {
 
     @SystemLog(opermodul = "终端用户管理",operDesc = "更新用户状态",operType = "更新")
     @RequestMapping(value = "/updateTerminalUser",method = RequestMethod.POST)
-    public Result<Integer> updateTerminalUser(@RequestBody TerminalUserResquest terminalUserResquest){
+    public Result<Integer> updateTerminalUser(@RequestBody TerminalUserResponse terminalUserResponse){
         Result<Integer> result = new Result<>();
         try {
-            if(StringUtils.isEmpty(terminalUserResquest.getTerminalStatus())){
-                throw new RuntimeException("缺少必传参数");
-            }
-            if(StringUtils.isEmpty(terminalUserResquest.getTerminalNetworkId())){
-                throw new RuntimeException("缺少必传参数");
-            }
-            result = terminalUserService.updateTerminalUser(terminalUserResquest);
+            result = terminalUserService.updateTerminalUser(terminalUserResponse);
         }catch (Exception e){
             log.info("updateTerminalUser:{}",e.getMessage());
             result.setSuccess(false);

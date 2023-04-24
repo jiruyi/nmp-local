@@ -2,7 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.request.TerminalDataRequest;
+import com.matrictime.network.request.*;
 import com.matrictime.network.response.TerminalDataResponse;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
@@ -20,7 +20,6 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.TerminalDataVo;
 import com.matrictime.network.modelVo.TimeDataVo;
-import com.matrictime.network.request.TerminalDataReq;
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.TerminalDataRequest;
@@ -31,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -70,6 +70,32 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
             result.setErrorMsg("");
             log.info("selectTerminalData:{}",e.getMessage());
         }
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public Result<Integer> collectTerminalData(TerminalDataListRequest terminalDataListRequest) {
+        Result<Integer> result = new Result<>();
+        int i = 0;
+        Map<String,Set<String>> map = new HashMap<>();
+        for (TerminalDataVo terminalDataVo: terminalDataListRequest.getList()){
+            i = terminalDataDomainService.collectTerminalData(terminalDataVo);
+            if(!map.containsKey(terminalDataVo.getTerminalNetworkId())){
+                map.put(terminalDataVo.getTerminalNetworkId(),new HashSet<>());
+            }
+            map.get(terminalDataVo.getTerminalNetworkId()).add(terminalDataVo.getDataType());
+        }
+        for (Map.Entry<String, Set<String>> stringSetEntry : map.entrySet()) {
+            for (String s : stringSetEntry.getValue()) {
+                TerminalDataReq terminalDataReq = new TerminalDataReq();
+                terminalDataReq.setDataType(s);
+                terminalDataReq.setTerminalNetworkId(stringSetEntry.getKey());
+                handleAddData(terminalDataReq);
+            }
+        }
+        result.setResultObj(i);
+        result.setSuccess(true);
         return result;
     }
 

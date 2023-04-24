@@ -1,6 +1,5 @@
 package com.matrictime.network.base.constant;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -222,6 +221,12 @@ public class DataConstants {
 
     public static final String FLOW_TRANSFOR = "transfor_flow_";
 
+    public static final String BASE_STATION_FLOW_COUNT = "base_station_flow_count";
+
+    public static final String BORDER_BASE_STATION_FLOW_COUNT = "border_base_station_flow_count";
+
+    public static final String KEY_CENTER_FLOW_COUNT = "Key_center_flow_count";
+
     public static final String CURRENT_FLOW ="current_flow_";
 
     public static final int BYTE_TO_BPS = 8;
@@ -237,5 +242,7 @@ public class DataConstants {
     public static final int THIRTY = 30;
 
     public static final String UNDERLINE ="_";
+
+    public static final String VLINE  ="-";
 
 }
