@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
-import com.matrictime.network.base.enums.AlarmConTypeEnum;
+import com.matrictime.network.base.enums.AlarmPhyConTypeEnum;
 import com.matrictime.network.base.enums.DataCollectEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
@@ -19,7 +19,6 @@ import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
-
 import com.matrictime.network.modelVo.TimeDataVo;
 import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.MonitorReq;
@@ -27,7 +26,6 @@ import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.MonitorResp;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DataCollectService;
-import com.matrictime.network.util.PropertiesUtil;
 import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -45,7 +43,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -515,9 +512,9 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         NmplAlarmInfo nmplAlarmInfo = new NmplAlarmInfo();
         nmplAlarmInfo.setAlarmSourceIp(ip);
         nmplAlarmInfo.setAlarmLevel("1");
-        nmplAlarmInfo.setAlarmContentType(AlarmConTypeEnum.FLOW.getCode());
+        nmplAlarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.FLOW.getCode());
         nmplAlarmInfo.setAlarmUploadTime(new Date());
-        nmplAlarmInfo.setAlarmContent(AlarmConTypeEnum.FLOW.getConditionDesc());
+        nmplAlarmInfo.setAlarmContent(AlarmPhyConTypeEnum.FLOW.getDesc());
         nmplAlarmInfoMapper.insert(nmplAlarmInfo);
     }
 

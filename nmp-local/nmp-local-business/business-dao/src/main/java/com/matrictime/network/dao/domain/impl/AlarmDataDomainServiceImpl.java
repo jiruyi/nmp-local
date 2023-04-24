@@ -66,40 +66,40 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
         }
         //mysql 插入
         int batchCount =  alarmInfoExtMapper.batchInsert(alarmInfoList);
-//        //redis 插入
-//        taskExecutor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                //redis  物理资源插入
-//                List<AlarmInfo> phyList = alarmInfoList.stream().filter(Objects::nonNull)
-//                        .filter(alarmInfo -> "00".equals(alarmInfo.getAlarmSourceType()))
-//                        .collect(Collectors.toList());
-//                if(!CollectionUtils.isEmpty(phyList)){
-//                    alarmPhyCountDataForRedis(phyList);
-//                }
-//                //redis  系统资源插入
-//                List<AlarmInfo> sysList = alarmInfoList.stream().filter(Objects::nonNull)
-//                        .filter(alarmInfo -> !"00".equals(alarmInfo.getAlarmSourceType()))
-//                        .collect(Collectors.toList());
-//                if(!CollectionUtils.isEmpty(sysList)){
-//                    alarmSysCountDataForRedis(sysList);
-//                }
-//            }
-//        });
+        //redis 插入
+        taskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                //redis  物理资源插入
+                List<AlarmInfo> phyList = alarmInfoList.stream().filter(Objects::nonNull)
+                        .filter(alarmInfo -> "00".equals(alarmInfo.getAlarmSourceType()))
+                        .collect(Collectors.toList());
+                if(!CollectionUtils.isEmpty(phyList)){
+                    alarmPhyCountDataForRedis(phyList);
+                }
+                //redis  系统资源插入
+                List<AlarmInfo> sysList = alarmInfoList.stream().filter(Objects::nonNull)
+                        .filter(alarmInfo -> !"00".equals(alarmInfo.getAlarmSourceType()))
+                        .collect(Collectors.toList());
+                if(!CollectionUtils.isEmpty(sysList)){
+                    alarmSysCountDataForRedis(sysList);
+                }
+            }
+        });
         //redis  物理资源插入
-        List<AlarmInfo> phyList = alarmInfoList.stream().filter(Objects::nonNull)
-                .filter(alarmInfo -> "00".equals(alarmInfo.getAlarmSourceType()))
-                .collect(Collectors.toList());
-        if(!CollectionUtils.isEmpty(phyList)){
-            alarmPhyCountDataForRedis(phyList);
-        }
-        //redis  系统资源插入
-        List<AlarmInfo> sysList = alarmInfoList.stream().filter(Objects::nonNull)
-                .filter(alarmInfo -> !"00".equals(alarmInfo.getAlarmSourceType()))
-                .collect(Collectors.toList());
-        if(!CollectionUtils.isEmpty(sysList)){
-            alarmSysCountDataForRedis(sysList);
-        }
+//        List<AlarmInfo> phyList = alarmInfoList.stream().filter(Objects::nonNull)
+//                .filter(alarmInfo -> "00".equals(alarmInfo.getAlarmSourceType()))
+//                .collect(Collectors.toList());
+//        if(!CollectionUtils.isEmpty(phyList)){
+//            alarmPhyCountDataForRedis(phyList);
+//        }
+//        //redis  系统资源插入
+//        List<AlarmInfo> sysList = alarmInfoList.stream().filter(Objects::nonNull)
+//                .filter(alarmInfo -> !"00".equals(alarmInfo.getAlarmSourceType()))
+//                .collect(Collectors.toList());
+//        if(!CollectionUtils.isEmpty(sysList)){
+//            alarmSysCountDataForRedis(sysList);
+//        }
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
