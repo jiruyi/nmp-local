@@ -74,9 +74,9 @@ public enum AlarmPhyConTypeEnum {
         return typeList;
     }
 
-    public static AlarmPhyConTypeEnum getBycode(String code){
+    public static AlarmPhyConTypeEnum getBycode(String contentType){
         for(AlarmPhyConTypeEnum alarmConTypeEnum : AlarmPhyConTypeEnum.values()){
-           if(alarmConTypeEnum.getCode().equals(code)){
+           if(alarmConTypeEnum.getContentType().equals(contentType)){
                return alarmConTypeEnum;
            }
         }

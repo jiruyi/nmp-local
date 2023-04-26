@@ -222,11 +222,12 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
             /**[{"sourceIp":"192.168.72.241","contentType":"1","count":"2"},{"sourceIp":"192.168.72.241","contentType":"2","count":"2"}]*/
             List<Map> ipList = entry.getValue();
             AlarmPhyTypeCount phyTypeCount = new AlarmPhyTypeCount();
-            ;
             if (!CollectionUtils.isEmpty(ipList)) {
                 for (Map map : ipList) {
+                    /**获取告警类型*/
                     String contentType = (String) map.get("contentType");
-                    Long count = Long.valueOf(String.valueOf(map.get("count")));
+                    /**获取告警类型对应条数*/
+                    Long count = Objects.isNull(map.get("typeCount"))?0:Long.valueOf(String.valueOf(map.get("typeCount")));
                     phyTypeCount.setPhyIp(String.valueOf(map.get("sourceIp")));
                     switch (AlarmPhyConTypeEnum.getBycode(contentType)) {
                         case CPU:
