@@ -1,6 +1,8 @@
 package com.matrictime.network.base.enums;
 
 public enum DeviceTypeEnum {
+    BASE_STATION("01","接入基站"),
+    BORDER_BASE_STATION("02","边界基站"),
     BASE("10","其他设备"),
     DISPENSER("11","密钥中心"),
     GENERATOR("12","生成机"),
