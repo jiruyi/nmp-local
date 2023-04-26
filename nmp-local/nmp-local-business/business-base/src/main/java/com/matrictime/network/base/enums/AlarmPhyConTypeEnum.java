@@ -74,6 +74,15 @@ public enum AlarmPhyConTypeEnum {
         return typeList;
     }
 
+    public static AlarmPhyConTypeEnum getBycode(String code){
+        for(AlarmPhyConTypeEnum alarmConTypeEnum : AlarmPhyConTypeEnum.values()){
+           if(alarmConTypeEnum.getCode().equals(code)){
+               return alarmConTypeEnum;
+           }
+        }
+        return null;
+    }
+
     /**
      * @title getCodeCount
      * @param

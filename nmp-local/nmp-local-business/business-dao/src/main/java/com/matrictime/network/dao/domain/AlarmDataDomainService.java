@@ -1,8 +1,14 @@
 package com.matrictime.network.dao.domain;
 
+import com.matrictime.network.dao.model.NmplAlarmInfo;
 import com.matrictime.network.model.AlarmInfo;
+import com.matrictime.network.request.AlarmDataBaseRequest;
+import com.matrictime.network.request.AlarmDataListReq;
+import com.matrictime.network.response.AlarmPhyTypeCount;
+import com.matrictime.network.response.PageInfo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jiruyi
@@ -18,4 +24,12 @@ public interface AlarmDataDomainService {
      void alarmSysCountDataForRedis(List<AlarmInfo> alarmInfoList);
 
      void alarmPhyCountDataForRedis(List<AlarmInfo> alarmInfoList);
+
+     Map<String, Map<String,Long>> querySysAlarmDataCount(AlarmDataBaseRequest alarmDataBaseRequest) throws Exception;
+
+     List<AlarmPhyTypeCount> queryPhyAlarmDataCount(AlarmDataBaseRequest alarmDataBaseRequest);
+
+     PageInfo<NmplAlarmInfo> queryAlarmDataList(AlarmDataListReq alarmDataListReq);
+
+
 }

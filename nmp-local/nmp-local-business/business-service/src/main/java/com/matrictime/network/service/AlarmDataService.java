@@ -2,6 +2,11 @@ package com.matrictime.network.service;
 
 import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.request.AlarmDataBaseRequest;
+import com.matrictime.network.request.AlarmDataListReq;
+import com.matrictime.network.response.AlarmDataPhyResp;
+import com.matrictime.network.response.AlarmDataSysResp;
+import com.matrictime.network.response.PageInfo;
 
 import java.util.List;
 
@@ -13,6 +18,13 @@ import java.util.List;
  * @desc  警告数据处理服务
  */
 public interface AlarmDataService {
-
+    //数据推送
     Result acceptAlarmData(List<AlarmInfo> alarmInfoList);
+    //系统告警数据查询
+    Result<AlarmDataSysResp> querySysAlarmData(AlarmDataBaseRequest alarmDataBaseRequest);
+
+    //物理设备告警数据查询
+    Result<AlarmDataPhyResp> queryPhyAlarmData(AlarmDataBaseRequest alarmDataBaseRequest);
+
+    Result<PageInfo<AlarmInfo>> queryAlarmDataList(AlarmDataListReq alarmDataListReq);
 }
