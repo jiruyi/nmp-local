@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class QuerySystemResourceResp implements Serializable {
@@ -15,5 +16,15 @@ public class QuerySystemResourceResp implements Serializable {
      * 运行系统列表
      */
     private List<SystemResourceVo> resourceVos;
+
+    /**
+     * cpu折线数据
+     */
+    private Map<String, List<String>> cpuInfos;
+
+    /**
+     * 内存折线数据
+     */
+    private Map<String, List<String>> memInfos;
 
 }

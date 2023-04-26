@@ -2,6 +2,7 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
 import com.matrictime.network.dao.mapper.extend.NmplDeviceExtMapper;
@@ -18,6 +19,7 @@ import com.matrictime.network.service.MonitorService;
 import com.matrictime.network.util.DateUtils;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,8 +35,8 @@ import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.base.exception.ErrorMessageContants.DEVICE_NOT_EXIST_MSG;
-import static com.matrictime.network.constant.DataConstants.IS_EXIST;
-import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
+import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.util.DateUtils.MINUTE_TIME_FORMAT;
 
 @Slf4j
 @Service
@@ -191,6 +193,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 NmplSystemResource dto = new NmplSystemResource();
                 BeanUtils.copyProperties(vo,dto);
                 nmplSystemResourceMapper.insertSelective(dto);
+                putSystemResourceRedis(vo);
             }
             result = buildResult(null);
         }catch (Exception e){
@@ -282,10 +285,13 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         try{
             QuerySystemResourceResp resp = new QuerySystemResourceResp();
             checkPhysicalDevicesResourceParam(req);
-
-            List<SystemResourceVo> resourceVos = new ArrayList<>();
-
+            Date now = new Date();
+            List<SystemResourceVo> resourceVos = getSystemResources(req.getDeviceIp(),now);
+            Map<String,List<String>> cpuInfos = getSystemResourceSL(resourceVos,"CPU",now);
+            Map<String,List<String>> memInfos = getSystemResourceSL(resourceVos,"MEM",now);
             resp.setResourceVos(resourceVos);
+            resp.setCpuInfos(cpuInfos);
+            resp.setMemInfos(memInfos);
             result = buildResult(resp);
         }catch (SystemException e){
             log.error("MonitorServiceImpl.querySystemResource SystemException:{}",e.getMessage());
@@ -320,6 +326,102 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
 
         return ips;
     }
+
+    /**
+     * 插入运行系统信息缓存
+     * @param vo
+     */
+    private void putSystemResourceRedis(SystemResourceVo vo){
+        StringBuffer key = new StringBuffer(SYSTEM_NM);
+        key.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(vo.getSystemId());
+        String hashKey = DateUtils.formatDateToString2(vo.getUploadTime(),MINUTE_TIME_FORMAT);
+        DisplayVo displayVo = new DisplayVo();
+        displayVo.setDate(vo.getUploadTime());
+        displayVo.setValue1(vo.getCpuPercent());
+        displayVo.setValue2(vo.getMemoryPercent());
+        redisTemplate.opsForHash().put(key,hashKey,displayVo);
+    }
+
+    /**
+     * 根据ip获取设备下所有系统的最新运行信息
+     * @param deviceIp
+     * @return
+     */
+    private List<SystemResourceVo> getSystemResources(String deviceIp,Date now){
+        List<SystemResourceVo> voList = new ArrayList<>();
+        Date date = DateUtils.getRecentHalfTime(now);
+        NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
+        baseStationInfoExample.createCriteria().andLanIpEqualTo(deviceIp).andIsExistEqualTo(IS_EXIST);
+        List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
+        if (!CollectionUtils.isEmpty(baseStationInfos)){
+            for (NmplBaseStationInfo info : baseStationInfos){
+                SystemResourceVo vo = new SystemResourceVo();
+                NmplSystemResourceExample example = new NmplSystemResourceExample();
+                example.createCriteria().andUploadTimeEqualTo(date).andSystemIdEqualTo(info.getStationId());
+                List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
+                if (!CollectionUtils.isEmpty(resources)){
+                    BeanUtils.copyProperties(resources.get(0),vo);
+                }else {
+                    vo.setSystemId(info.getStationId());
+                    vo.setCpuPercent("0");
+                    vo.setMemoryPercent("0");
+                    vo.setSystemType(info.getStationType());
+                    vo.setUploadTime(date);
+                }
+                voList.add(vo);
+            }
+        }
+
+        NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
+        deviceInfoExample.createCriteria().andLanIpEqualTo(deviceIp).andIsExistEqualTo(IS_EXIST);
+        List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(deviceInfoExample);
+        if (!CollectionUtils.isEmpty(deviceInfos)){
+            for (NmplDeviceInfo info : deviceInfos){
+                SystemResourceVo vo = new SystemResourceVo();
+                NmplSystemResourceExample example = new NmplSystemResourceExample();
+                example.createCriteria().andUploadTimeEqualTo(date).andSystemIdEqualTo(info.getDeviceId());
+                List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
+                if (!CollectionUtils.isEmpty(resources)){
+                    BeanUtils.copyProperties(resources.get(0),vo);
+                }else {
+                    vo.setSystemId(info.getDeviceId());
+                    vo.setCpuPercent("0");
+                    vo.setMemoryPercent("0");
+                    vo.setSystemType(info.getDeviceType());
+                    vo.setUploadTime(date);
+                }
+                voList.add(vo);
+            }
+        }
+        return voList;
+    }
+
+    private Map<String,List<String>> getSystemResourceSL(List<SystemResourceVo> vos,String systemType,Date now){
+        Map<String,List<String>> resMap = new HashMap<>();
+        List<String> xTime = CommonServiceImpl.getXTimePerHalfHour(now, -24, 60 * 30, MINUTE_TIME_FORMAT);
+
+        if (!CollectionUtils.isEmpty(vos)){
+            for (SystemResourceVo vo : vos){
+                String systemId = vo.getSystemId();
+
+            }
+        }
+        return resMap;
+    }
+
+    private List<String> getSystemResourceRedis(String systemId){
+        StringBuffer key = new StringBuffer(SYSTEM_NM);
+        key.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(systemId);
+        Boolean hasKey = redisTemplate.hasKey(key);
+        if (hasKey){
+            Map<String,DisplayVo> entries = redisTemplate.opsForHash().entries(key);
+
+        }else {
+
+        }
+        return null;
+    }
+
 
 //    @Override
 //    public Result<QueryMonitorResp> queryMonitor(QueryMonitorReq req) {

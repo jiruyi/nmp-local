@@ -12,6 +12,7 @@ import com.matrictime.network.dao.model.extend.DeviceInfo;
 import com.matrictime.network.dao.model.extend.NmplPhysicalDeviceResource;
 import com.matrictime.network.dao.model.extend.NmplSystemResource;
 import com.matrictime.network.facade.MonitorFacade;
+import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.TerminalDataVo;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
