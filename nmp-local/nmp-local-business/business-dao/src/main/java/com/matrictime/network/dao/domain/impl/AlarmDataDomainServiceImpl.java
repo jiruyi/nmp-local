@@ -159,9 +159,6 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
      */
     @Override
     public Map<String, Map<String, Long>> querySysAlarmDataCount(AlarmDataBaseRequest alarmDataBaseRequest) throws Exception {
-        //入参map
-        Map<String, String> paramMap = getParamMap(alarmDataBaseRequest);
-        ;
         CountDownLatch countDownLatch = new CountDownLatch(3);
         //结果map   // {"access":{"seriousCount":2,"emergentCount":14,"3":27,"sameAsCount":3}}
         Map<String, Map<String, Long>> resultMap = new ConcurrentHashMap<>();
@@ -170,6 +167,8 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
             taskExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
+                    //入参map
+                    Map<String, String> paramMap = getParamMap(alarmDataBaseRequest);
                     paramMap.put("columnName", alarmSysLevelEnum.getColumnName());//列名
                     paramMap.put("tableName", alarmSysLevelEnum.getTableName());//表名
                     paramMap.put("alarmSourceType", alarmSysLevelEnum.getType());//类型
@@ -264,7 +263,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
         //分页
         Page<NmplAlarmInfo> page = PageHelper.startPage(alarmDataListReq.getPageNo(), alarmDataListReq.getPageSize());
         List<NmplAlarmInfo> nmplAlarmInfos = alarmInfoExtMapper.queryAlarmDataList(alarmDataListReq);
-        log.info("AlarmDataDomainService  queryAlarmDataList page:{},nmplAlarmInfos",page,nmplAlarmInfos);
+        log.info("AlarmDataDomainService  queryAlarmDataList page:{},nmplAlarmInfos：{}",page,nmplAlarmInfos);
         return  new PageInfo<>((int)page.getTotal(),page.getPages(),nmplAlarmInfos);
     }
 
@@ -276,7 +275,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
      * @author jiruyi
      * @create 2023/4/25 0025 16:42
      */
-    public Map<String, String> getParamMap(AlarmDataBaseRequest alarmDataBaseRequest) {
+    public synchronized  Map<String, String> getParamMap(AlarmDataBaseRequest alarmDataBaseRequest) {
         //入参map
         Map<String, String> paramMap = new ConcurrentHashMap<>();
         paramMap.put("roId", alarmDataBaseRequest.getRoId());

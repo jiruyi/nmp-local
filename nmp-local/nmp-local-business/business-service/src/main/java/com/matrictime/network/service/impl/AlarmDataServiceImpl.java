@@ -81,7 +81,7 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
             Map<String, Map<String, Long>> domainMap =
                     alarmDataDomainService.querySysAlarmDataCount(alarmDataBaseRequest);
             if (CollectionUtils.isEmpty(domainMap)) {
-                return result;
+                return buildResult(new AlarmDataSysResp());
             }
             // 结果map to bean
             ObjectMapper objectMapper = new ObjectMapper();
@@ -140,7 +140,7 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
             alarmInfoPageInfo = new PageInfo<>(nmplPageInfo.getCount(),nmplPageInfo.getPages(),alarmInfoList);
             return buildResult(alarmInfoPageInfo);
         }catch (Exception e){
-            log.error("AlarmDataService queryAlarmDataList exception : {} ", e.getMessage());
+            log.error("AlarmDataService queryAlarmDataList exception : {} ", e);
             return failResult(e);
         }
     }

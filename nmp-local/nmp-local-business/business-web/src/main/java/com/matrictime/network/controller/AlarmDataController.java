@@ -29,7 +29,7 @@ import java.util.List;
  * @desc
  */
 @RequestMapping(value = "/alarm")
-@Api(value = "网关日志和用户登录明细", tags = "网关日志和用户登录明细")
+@Api(value = "告警信息相关接口", tags = "告警信息相关接口")
 @RestController
 @Slf4j
 public class AlarmDataController {

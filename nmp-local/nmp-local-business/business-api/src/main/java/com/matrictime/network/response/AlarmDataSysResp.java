@@ -1,7 +1,9 @@
 package com.matrictime.network.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -14,6 +16,8 @@ import java.io.Serializable;
  */
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AlarmDataSysResp extends BaseResponse implements Serializable {
     private static final long serialVersionUID = -8101225910330056880L;
     //接入基站

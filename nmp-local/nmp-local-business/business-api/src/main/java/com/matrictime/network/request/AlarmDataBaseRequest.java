@@ -1,6 +1,8 @@
 package com.matrictime.network.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -12,6 +14,8 @@ import java.io.Serializable;
  * @desc
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AlarmDataBaseRequest extends BaseRequest implements Serializable {
 
     /**小区id*/

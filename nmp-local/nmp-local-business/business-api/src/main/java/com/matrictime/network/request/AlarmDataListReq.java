@@ -1,7 +1,9 @@
 package com.matrictime.network.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -14,6 +16,8 @@ import java.io.Serializable;
  */
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AlarmDataListReq extends AlarmDataBaseRequest implements Serializable {
     private static final long serialVersionUID = -8676639604701256084L;
 
