@@ -13,6 +13,8 @@ import java.util.List;
 public class CommunityBelongVo implements Serializable {
     private String communityBelong;
 
+    private String communityName;
+
     private List<BaseStationBelongVo> communityList;
 
 }

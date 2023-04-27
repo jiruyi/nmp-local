@@ -2,6 +2,7 @@ package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.CommunityBaseStationVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
@@ -48,4 +49,6 @@ public interface BaseStationInfoService {
     Result<CountBaseStationResponse> countBaseStation(BaseStationInfoRequest baseStationInfoRequest);
 
     Result<Integer> updateConnectCount(BaseStationCountRequest baseStationCountRequest);
+
+    Result<List<CommunityBaseStationVo>> selectPhysicalDevice(BaseStationInfoRequest baseStationInfoRequest);
 }

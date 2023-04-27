@@ -4,10 +4,7 @@ import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.DataCollectVo;
-import com.matrictime.network.modelVo.NmplPcDataVo;
-import com.matrictime.network.modelVo.PcDataVo;
-import com.matrictime.network.modelVo.StationVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
 import com.matrictime.network.service.BaseStationInfoService;
@@ -320,6 +317,25 @@ public class BaseStationController {
             return deviceService.updateConnectCount(baseStationCountRequest);
         }catch (Exception e){
             log.info("updateConnectCount:{}",e.getMessage());
+            return new Result<>(false,"");
+        }
+    }
+
+    /**
+     * 查询不通Ip物理设备
+     * @param baseStationInfoRequest
+     * @return
+     */
+    @SystemLog(opermodul = "设备管理模块",operDesc = "查询不通Ip物理设备",operType = "查询")
+    @RequestMapping(value = "/selectPhysicalDevice",method = RequestMethod.POST)
+    public Result<List<CommunityBaseStationVo>> selectPhysicalDevice(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
+        try {
+            if(StringUtils.isEmpty(baseStationInfoRequest.getRelationOperatorId())){
+                throw new RuntimeException("缺少必传参数");
+            }
+            return baseStationInfoService.selectPhysicalDevice(baseStationInfoRequest);
+        }catch (Exception e){
+            log.info("selectPhysicalDevice:{}",e.getMessage());
             return new Result<>(false,"");
         }
     }

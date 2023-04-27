@@ -1,6 +1,7 @@
 package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.CommunityBaseStationVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
@@ -50,4 +51,6 @@ public interface BaseStationInfoDomainService {
     CountBaseStationResponse countBaseStation(BaseStationInfoRequest baseStationInfoRequest);
 
     int updateConnectCount(BaseStationCountRequest baseStationCountRequest);
+
+    List<CommunityBaseStationVo> selectPhysicalDevice(BaseStationInfoRequest baseStationInfoRequest);
 }
