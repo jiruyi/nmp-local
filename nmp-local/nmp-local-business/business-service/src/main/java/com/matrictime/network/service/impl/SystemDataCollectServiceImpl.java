@@ -28,17 +28,17 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
     private SystemDataCollectDomainService systemDataCollectDomainService;
 
     @Resource
-     private RedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Override
-    public Result<BaseStationDataVo> selectBaseStationData() {
+    public Result<BaseStationDataVo> selectBaseStationData(DataCollectReq dataCollectReq) {
         Result<BaseStationDataVo> result = new Result<>();
         try {
             Object value = redisTemplate.opsForValue().
                     get(DataConstants.BASE_STATION_FLOW_COUNT);
             if(ObjectUtils.isEmpty(value)){
-                value = systemDataCollectDomainService.selectBaseStationData();
-                redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT,value,30, TimeUnit.MINUTES);
+                value = systemDataCollectDomainService.selectBaseStationData(dataCollectReq);
+                //redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT,value,30, TimeUnit.MINUTES);
             }
             result.setResultObj((BaseStationDataVo) value);
             result.setSuccess(true);
@@ -51,14 +51,14 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
     }
 
     @Override
-    public Result<BorderBaseStationDataVo> selectBorderBaseStationData() {
+    public Result<BorderBaseStationDataVo> selectBorderBaseStationData(DataCollectReq dataCollectReq) {
         Result<BorderBaseStationDataVo> result = new Result<>();
         try {
             Object value = redisTemplate.opsForValue().
                     get(DataConstants.BORDER_BASE_STATION_FLOW_COUNT);
             if(ObjectUtils.isEmpty(value)){
-                value = systemDataCollectDomainService.selectBorderBaseStationData();
-                redisTemplate.opsForValue().set(DataConstants.BORDER_BASE_STATION_FLOW_COUNT,value,30, TimeUnit.MINUTES);
+                value = systemDataCollectDomainService.selectBorderBaseStationData(dataCollectReq);
+                //redisTemplate.opsForValue().set(DataConstants.BORDER_BASE_STATION_FLOW_COUNT,value,30, TimeUnit.MINUTES);
             }
             result.setResultObj((BorderBaseStationDataVo) value);
             result.setSuccess(true);
@@ -71,14 +71,14 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
     }
 
     @Override
-    public Result<KeyCenterDataVo> selectKeyCenterData() {
+    public Result<KeyCenterDataVo> selectKeyCenterData(DataCollectReq dataCollectReq) {
         Result<KeyCenterDataVo> result = new Result<>();
         try {
             Object value = redisTemplate.opsForValue().
                     get(DataConstants.KEY_CENTER_FLOW_COUNT);
             if(ObjectUtils.isEmpty(value)){
-                value = systemDataCollectDomainService.selectKeyCenterData();
-                redisTemplate.opsForValue().set(DataConstants.KEY_CENTER_FLOW_COUNT,value,30, TimeUnit.MINUTES);
+                value = systemDataCollectDomainService.selectKeyCenterData(dataCollectReq);
+                //redisTemplate.opsForValue().set(DataConstants.KEY_CENTER_FLOW_COUNT,value,30, TimeUnit.MINUTES);
             }
             result.setResultObj((KeyCenterDataVo) value);
             result.setSuccess(true);

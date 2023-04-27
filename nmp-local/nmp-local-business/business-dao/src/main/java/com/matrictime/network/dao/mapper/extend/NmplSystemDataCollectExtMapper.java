@@ -1,6 +1,7 @@
 package com.matrictime.network.dao.mapper.extend;
 
-import com.matrictime.network.dao.model.NmplDataCollect;
+
+import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.DataCollectReq;
 
 import java.util.List;
@@ -10,5 +11,7 @@ import java.util.List;
  * @date 2023/4/20.
  */
 public interface NmplSystemDataCollectExtMapper {
-    List<NmplDataCollect> distinctSystemData(DataCollectReq dataCollectReq);
+    List<StationVo> distinctSystemData(DataCollectReq dataCollectReq);
+
+    List<StationVo> distinctSystemDeviceData(DataCollectReq dataCollectReq);
 }

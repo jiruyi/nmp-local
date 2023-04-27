@@ -12,9 +12,9 @@ import java.util.List;
 @Data
 public class RegionBelongVo implements Serializable {
 
-    private String regionBelong;
+    private String relationOperatorId;
 
-    private String regionName;
+    private String name;
 
-    private List<CommunityBelongVo> regionList;
+    private List<CommunityBelongVo> children;
 }

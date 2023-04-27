@@ -7,10 +7,7 @@ import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
 import com.matrictime.network.dao.mapper.extend.NmplSystemDataCollectExtMapper;
 import com.matrictime.network.dao.model.NmplDataCollect;
 import com.matrictime.network.dao.model.NmplDataCollectExample;
-import com.matrictime.network.modelVo.BaseStationDataVo;
-import com.matrictime.network.modelVo.BorderBaseStationDataVo;
-import com.matrictime.network.modelVo.DataCollectVo;
-import com.matrictime.network.modelVo.KeyCenterDataVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.DataCollectReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -41,36 +38,36 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     private NmplSystemDataCollectExtMapper nmplSystemDataCollectExtMapper;
 
     @Override
-    public BaseStationDataVo selectBaseStationData() {
+    public BaseStationDataVo selectBaseStationData(DataCollectReq dataCollectReq) {
         BaseStationDataVo baseStationDataVo;
         List<String> list = new ArrayList<>();
         //创建枚举list
         list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
         list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
         list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
-
-        List<Double> dataList = getData(list, DeviceTypeEnum.BASE_STATION.getCode());
+        dataCollectReq.setDeviceType(DeviceTypeEnum.BASE_STATION.getCode());
+        List<Double> dataList = getData(list, dataCollectReq);
         baseStationDataVo = getBaseStationData(dataList);
         return baseStationDataVo;
     }
 
     @Override
-    public BorderBaseStationDataVo selectBorderBaseStationData() {
+    public BorderBaseStationDataVo selectBorderBaseStationData(DataCollectReq dataCollectReq) {
         BorderBaseStationDataVo borderBaseStationDataVo;
         List<String> list = new ArrayList<>();
         //创建枚举list
         list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
         list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
         list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
-
-        List<Double> dataList = getData(list, DeviceTypeEnum.BORDER_BASE_STATION.getCode());
+        dataCollectReq.setDeviceType(DeviceTypeEnum.BORDER_BASE_STATION.getCode());
+        List<Double> dataList = getData(list, dataCollectReq);
         //数据转换
         borderBaseStationDataVo = getBorderBaseStationData(dataList);
         return borderBaseStationDataVo;
     }
 
     @Override
-    public KeyCenterDataVo selectKeyCenterData() {
+    public KeyCenterDataVo selectKeyCenterData(DataCollectReq dataCollectReq) {
         KeyCenterDataVo keyCenterDataVo;
         List<String> list = new ArrayList<>();
         //创建枚举list
@@ -78,7 +75,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
         list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
 
-        List<Double> dataList = getData(list, DeviceTypeEnum.DISPENSER.getCode());
+        List<Double> dataList = getDeviceData(list, dataCollectReq);
         //数据转换
         keyCenterDataVo = getKeyCenterData(dataList);
         return keyCenterDataVo;
@@ -97,19 +94,40 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     }
 
     /**
-     * 获得该设备类型下的不通类型的流量值
+     * 获取该类型设备下的不通流量值
      * @param dataCodeList
-     * @param deviceType
+     * @param dataCollectReq
      * @return
      */
-    private List<Double> getData(List<String> dataCodeList,String deviceType){
+    private List<Double> getDeviceData(List<String> dataCodeList,DataCollectReq dataCollectReq){
         List<Double> list = new ArrayList<>();
         for(int i = 0;i< dataCodeList.size();i++){
-            DataCollectReq dataCollectReq = new DataCollectReq();
-            dataCollectReq.setDeviceType(deviceType);
-            dataCollectReq.setDataItemCode(dataCodeList.get(i));
-            List<NmplDataCollect> nmplDataCollects = nmplSystemDataCollectExtMapper.distinctSystemData(dataCollectReq);
-            Double dataSum = getDataSum(nmplDataCollects);
+            DataCollectReq req = new DataCollectReq();
+            req.setDeviceType(dataCollectReq.getDeviceType());
+            req.setDataItemCode(dataCodeList.get(i));
+            req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
+            List<StationVo> stationVos = nmplSystemDataCollectExtMapper.distinctSystemDeviceData(req);
+            Double dataSum = getDataSum(stationVos);
+            list.add(dataSum);
+        }
+        return list;
+    }
+
+    /**
+     * 获得该基站类型下的不通类型的流量值
+     * @param dataCodeList
+     * @param dataCollectReq
+     * @return
+     */
+    private List<Double> getData(List<String> dataCodeList,DataCollectReq dataCollectReq){
+        List<Double> list = new ArrayList<>();
+        for(int i = 0;i< dataCodeList.size();i++){
+            DataCollectReq req = new DataCollectReq();
+            req.setDeviceType(dataCollectReq.getDeviceType());
+            req.setDataItemCode(dataCodeList.get(i));
+            req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
+            List<StationVo> stationVos = nmplSystemDataCollectExtMapper.distinctSystemData(req);
+            Double dataSum = getDataSum(stationVos);
             list.add(dataSum);
         }
         return list;
@@ -120,7 +138,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
      * @param list
      * @return
      */
-    private Double getDataSum(List<NmplDataCollect> list){
+    private Double getDataSum(List<StationVo> list){
         Double dataSum = 0d;
         for (int i = 0;i< list.size();i++){
             NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();

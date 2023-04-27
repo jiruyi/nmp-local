@@ -287,12 +287,12 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
                 CommunityBelongVo communityBelongVo = getCommunity(nmplCompanyInfos2);
                 list.add(communityBelongVo);
             }
-            regionBelongVo.setRegionBelong(nmplCompanyInfo.getCompanyId().toString());
-            regionBelongVo.setRegionName(nmplCompanyInfo.getCompanyName());
-            regionBelongVo.setRegionList(list);
+            regionBelongVo.setRelationOperatorId(nmplCompanyInfo.getCompanyId().toString());
+            regionBelongVo.setName(nmplCompanyInfo.getCompanyName());
+            regionBelongVo.setChildren(list);
             operatorList.add(regionBelongVo);
         }
-        belongInformationResponse.setOperatorList(operatorList);
+        belongInformationResponse.setList(operatorList);
         return belongInformationResponse;
     }
 
@@ -301,6 +301,7 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
         criteria.andStationTypeEqualTo(baseStationInfoRequest.getStationType());
+        criteria.andRelationOperatorIdEqualTo(baseStationInfoRequest.getRelationOperatorId());
         criteria.andIsExistEqualTo(true);
         CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
@@ -393,10 +394,10 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
             criteria.andCompanyIdEqualTo(Long.parseLong(list.get(0).getRelationOperatorId()));
             List<NmplCompanyInfo> nmplCompanyInfos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
             if(!CollectionUtils.isEmpty(nmplCompanyInfos)){
-                baseStationBelongVo.setBelongSpace(list.get(0).getRelationOperatorId());
-                baseStationBelongVo.setBelongName(nmplCompanyInfos.get(0).getCompanyName());
+                baseStationBelongVo.setRelationOperatorId(list.get(0).getRelationOperatorId());
+                baseStationBelongVo.setName(nmplCompanyInfos.get(0).getCompanyName());
             }
-            baseStationBelongVo.setBaseStationInfoVoList(baseStationInfoVoList);
+            baseStationBelongVo.setChildren(baseStationInfoVoList);
         }
         return baseStationBelongVo;
     }
@@ -427,10 +428,10 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
             criteria.andCompanyIdEqualTo(Long.parseLong(nmplCompanyInfos.get(0).getParentCode()));
             List<NmplCompanyInfo> nmplCompanyInfos1 = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
             if(!CollectionUtils.isEmpty(nmplCompanyInfos1)){
-                communityBelongVo.setCommunityBelong(nmplCompanyInfos.get(0).getParentCode());
-                communityBelongVo.setCommunityName(nmplCompanyInfos1.get(0).getCompanyName());
+                communityBelongVo.setRelationOperatorId(nmplCompanyInfos.get(0).getParentCode());
+                communityBelongVo.setName(nmplCompanyInfos1.get(0).getCompanyName());
             }
-            communityBelongVo.setCommunityList(list);
+            communityBelongVo.setChildren(list);
         }
         return communityBelongVo;
     }

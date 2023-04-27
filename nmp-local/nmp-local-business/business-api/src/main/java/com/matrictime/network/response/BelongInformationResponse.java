@@ -12,5 +12,5 @@ import java.util.List;
 @Data
 public class BelongInformationResponse extends BaseResponse{
 
-    private List<RegionBelongVo> operatorList;
+    private List<RegionBelongVo> list;
 }

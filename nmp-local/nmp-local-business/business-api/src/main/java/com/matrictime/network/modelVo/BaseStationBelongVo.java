@@ -12,10 +12,10 @@ import java.util.List;
 @Data
 public class BaseStationBelongVo implements Serializable {
 
-    private String belongSpace;
+    private String relationOperatorId;
 
-    private String belongName;
+    private String name;
 
-    private List<CommunityBaseStationVo> baseStationInfoVoList;
+    private List<CommunityBaseStationVo> children;
 
 }

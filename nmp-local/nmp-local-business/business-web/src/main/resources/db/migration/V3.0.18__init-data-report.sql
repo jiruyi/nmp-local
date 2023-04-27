@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_terminal_user` (
     PRIMARY KEY (`terminal_network_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='终端用户表';
 
-ALTER TABLE `nmpl_base_station_info` add column `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '当前用户数';
+ALTER TABLE `nmpl_base_station_info` add column `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '当前用户数';
 
-ALTER TABLE `nmpl_device_info` add column `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '当前用户数';
+ALTER TABLE `nmpl_device_info` add column `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '当前用户数';
 -- wq

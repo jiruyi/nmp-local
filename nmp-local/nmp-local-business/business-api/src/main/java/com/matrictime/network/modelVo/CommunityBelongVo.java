@@ -11,10 +11,10 @@ import java.util.List;
  */
 @Data
 public class CommunityBelongVo implements Serializable {
-    private String communityBelong;
+    private String relationOperatorId;
 
-    private String communityName;
+    private String name;
 
-    private List<BaseStationBelongVo> communityList;
+    private List<BaseStationBelongVo> children;
 
 }

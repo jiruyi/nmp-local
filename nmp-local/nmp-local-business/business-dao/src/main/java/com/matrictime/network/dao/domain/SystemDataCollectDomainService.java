@@ -11,11 +11,11 @@ import com.matrictime.network.request.DataCollectReq;
  */
 public interface SystemDataCollectDomainService {
 
-    BaseStationDataVo selectBaseStationData();
+    BaseStationDataVo selectBaseStationData(DataCollectReq dataCollectReq);
 
-    BorderBaseStationDataVo selectBorderBaseStationData();
+    BorderBaseStationDataVo selectBorderBaseStationData(DataCollectReq dataCollectReq);
 
-    KeyCenterDataVo selectKeyCenterData();
+    KeyCenterDataVo selectKeyCenterData(DataCollectReq dataCollectReq);
 
     int insertSystemData(DataCollectReq dataCollectReq);
 

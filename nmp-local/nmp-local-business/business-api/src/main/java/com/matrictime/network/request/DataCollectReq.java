@@ -27,6 +27,11 @@ public class DataCollectReq extends BaseRequest implements Serializable {
     private String deviceName;
 
     /**
+     * 关联小区Id
+     */
+    private String relationOperatorId;
+
+    /**
      * 设备ip
      */
     private String deviceIp;

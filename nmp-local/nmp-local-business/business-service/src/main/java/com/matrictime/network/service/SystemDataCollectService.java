@@ -11,11 +11,11 @@ import com.matrictime.network.request.DataCollectReq;
  * @date 2023/4/20.
  */
 public interface SystemDataCollectService {
-    Result<BaseStationDataVo> selectBaseStationData();
+    Result<BaseStationDataVo> selectBaseStationData(DataCollectReq dataCollectReq);
 
-    Result<BorderBaseStationDataVo> selectBorderBaseStationData();
+    Result<BorderBaseStationDataVo> selectBorderBaseStationData(DataCollectReq dataCollectReq);
 
-    Result<KeyCenterDataVo> selectKeyCenterData();
+    Result<KeyCenterDataVo> selectKeyCenterData(DataCollectReq dataCollectReq);
 
     Result<Integer> insertSystemData(DataCollectReq dataCollectReq);
 }
