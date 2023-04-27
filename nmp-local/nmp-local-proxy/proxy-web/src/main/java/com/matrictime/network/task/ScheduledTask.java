@@ -50,7 +50,6 @@ public class ScheduledTask {
 
     /**
       * @title alarmPush
-      * @param []
       * @return void
       * @description  告警信息定时任务
       * @author jiruyi
@@ -92,7 +91,7 @@ public class ScheduledTask {
     @Async
     public void physicalDeviceHeartbeat(){
         log.info(Thread.currentThread().getName()+"======================physicalDeviceHeartbeat begin=============================");
-        taskService.physicalDeviceHeartbeat(DateUtils.changeDate(new Date()),ip + KEY_SPLIT + port + PHYSICAL_DEVICE_HEARTBEAT_URL);
+        taskService.physicalDeviceHeartbeat(DateUtils.changeDate(new Date()));
         log.info(Thread.currentThread().getName()+"======================physicalDeviceHeartbeat end=============================");
     }
 
@@ -100,7 +99,7 @@ public class ScheduledTask {
     @Async
     public void physicalDeviceResource(){
         log.info(Thread.currentThread().getName()+"======================physicalDeviceResource begin=============================");
-        taskService.physicalDeviceResource(DateUtils.changeDate(new Date()),ip + KEY_SPLIT + port + PHYSICAL_DEVICE_RESOURCE_URL);
+        taskService.physicalDeviceResource(DateUtils.changeDate(new Date()));
         log.info(Thread.currentThread().getName()+"======================physicalDeviceResource end=============================");
         }
 
@@ -108,7 +107,7 @@ public class ScheduledTask {
     @Async
     public void systemResource(){
         log.info(Thread.currentThread().getName()+"======================systemResource begin=============================");
-        taskService.systemResource(DateUtils.changeDate(new Date()),ip + KEY_SPLIT + port + SYSTEM_RESOURCE_URL);
+        taskService.systemResource(DateUtils.changeDate(new Date()));
         log.info(Thread.currentThread().getName()+"======================systemResource end=============================");
     }
 

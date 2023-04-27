@@ -117,6 +117,8 @@ public class DataConstants {
      */
     public static final String HEART_CHECK_DEVICE_ID = "heart_check_device_id:";
 
+    public static final String SYSTEM_RESOURCE = "system_resource";
+
     /**
      * map key
      */

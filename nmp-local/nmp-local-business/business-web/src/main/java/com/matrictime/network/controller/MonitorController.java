@@ -6,7 +6,6 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.CheckHeartResp;
 import com.matrictime.network.response.QueryMonitorResp;
-import com.matrictime.network.response.SignalIoResp;
 import com.matrictime.network.response.TotalLoadChangeResp;
 import com.matrictime.network.service.MonitorService;
 import lombok.extern.slf4j.Slf4j;
@@ -93,41 +92,89 @@ public class MonitorController {
         }
     }
 
-
-
     /**
-     * 监控轮询展示查询(废弃)
-     * @author hexu
+     * 物理设备网络拓扑图查询
      * @param req
      * @return
      */
-    @RequestMapping (value = "/queryMonitor",method = RequestMethod.POST)
-    @SystemLog(opermodul = "监控模块",operDesc = "监控轮询展示查询",operType = "查询")
-    @RequiresPermissions("sys:monitor:query")
-    public Result<QueryMonitorResp> queryMonitor(@RequestBody QueryMonitorReq req){
+    @RequestMapping (value = "/queryPhysicalDevices",method = RequestMethod.POST)
+    @SystemLog(opermodul = "监控模块",operDesc = "物理设备网络拓扑图",operType = "查询")
+    public Result queryPhysicalDevices(@RequestBody QueryPhysicalDevicesReq req){
         try {
-            return  monitorService.queryMonitor(req);
+            return  monitorService.queryPhysicalDevices(req);
         }catch (Exception e){
-            log.error("MonitorController.queryMonitor exception:{}",e.getMessage());
+            log.error("MonitorController.queryPhysicalDevices exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
 
     /**
-     * 总带宽负载变化查询（废弃）
-     * @author hexu
+     * 物理设备资源查询
      * @param req
      * @return
      */
-    @RequestMapping (value = "/totalLoadChange",method = RequestMethod.POST)
-    @SystemLog(opermodul = "监控模块",operDesc = "总带宽负载变化查询",operType = "查询")
-    @RequiresPermissions("sys:monitor:totalload")
-    public Result<TotalLoadChangeResp> totalLoadChange(@RequestBody TotalLoadChangeReq req){
+    @RequestMapping (value = "/queryPhysicalDeviceResource",method = RequestMethod.POST)
+    @SystemLog(opermodul = "监控模块",operDesc = "物理设备资源",operType = "查询")
+    public Result queryPhysicalDeviceResource(@RequestBody QueryPhysicalDevicesResourceReq req){
         try {
-            return  monitorService.totalLoadChange(req);
+            return  monitorService.queryPhysicalDeviceResource(req);
         }catch (Exception e){
-            log.error("MonitorController.totalLoadChange exception:{}",e.getMessage());
+            log.error("MonitorController.queryPhysicalDeviceResource exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
+
+    /**
+     * 运行系统资源查询
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/querySystemResource",method = RequestMethod.POST)
+    @SystemLog(opermodul = "监控模块",operDesc = "运行系统资源",operType = "查询")
+    public Result querySystemResource(@RequestBody QueryPhysicalDevicesResourceReq req){
+        try {
+            return  monitorService.querySystemResource(req);
+        }catch (Exception e){
+            log.error("MonitorController.querySystemResource exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+
+
+//    /**
+//     * 监控轮询展示查询(废弃)
+//     * @author hexu
+//     * @param req
+//     * @return
+//     */
+//    @RequestMapping (value = "/queryMonitor",method = RequestMethod.POST)
+//    @SystemLog(opermodul = "监控模块",operDesc = "监控轮询展示查询",operType = "查询")
+//    @RequiresPermissions("sys:monitor:query")
+//    public Result<QueryMonitorResp> queryMonitor(@RequestBody QueryMonitorReq req){
+//        try {
+//            return  monitorService.queryMonitor(req);
+//        }catch (Exception e){
+//            log.error("MonitorController.queryMonitor exception:{}",e.getMessage());
+//            return new Result(false,e.getMessage());
+//        }
+//    }
+
+//    /**
+//     * 总带宽负载变化查询（废弃）
+//     * @author hexu
+//     * @param req
+//     * @return
+//     */
+//    @RequestMapping (value = "/totalLoadChange",method = RequestMethod.POST)
+//    @SystemLog(opermodul = "监控模块",operDesc = "总带宽负载变化查询",operType = "查询")
+//    @RequiresPermissions("sys:monitor:totalload")
+//    public Result<TotalLoadChangeResp> totalLoadChange(@RequestBody TotalLoadChangeReq req){
+//        try {
+//            return  monitorService.totalLoadChange(req);
+//        }catch (Exception e){
+//            log.error("MonitorController.totalLoadChange exception:{}",e.getMessage());
+//            return new Result(false,e.getMessage());
+//        }
+//    }
 }

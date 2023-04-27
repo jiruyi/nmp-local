@@ -11,6 +11,10 @@ import java.util.Date;
  */
 @Data
 public class PhysicalDeviceHeartbeatVo {
+
+    private String ip1;
+
+    private String ip2;
     /**
      * 主键(标记两台设备的关联关系，小的ip在前)
      */

@@ -801,4 +801,24 @@ public class DateUtils {
         calendar.set(Calendar.MILLISECOND,0);
         return calendar.getTime();
     }
+
+    /**
+     * 获取最近半个小时的时间整点
+     * 入参13:29:22,13:31:45 返回13:00:00,13:30:00
+     * @param date
+     * @return
+     */
+    public static Date getRecentHalfTime(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int i = calendar.get(Calendar.MINUTE);
+        if (i<30){
+            calendar.set(Calendar.MINUTE,0);
+        }else {
+            calendar.set(Calendar.MINUTE,30);
+        }
+        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.MILLISECOND,0);
+        return calendar.getTime();
+    }
 }
