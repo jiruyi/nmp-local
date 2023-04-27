@@ -1,7 +1,10 @@
 package com.matrictime.network.response;
 
 
+import com.github.pagehelper.Page;
+
 import java.util.List;
+import java.util.Objects;
 
 /**
   * @title
@@ -14,13 +17,13 @@ import java.util.List;
 public class PageInfo<T> {
 
     /**
-     * 每页查多少行
+     * 总共多少行
      */
-    private int count;
+    private int count = 0;
     /**
-     * 页码
+     * 总共多少页
      */
-    private int pages;
+    private int pages = 0;
 
 
     private List<T> list;
@@ -72,5 +75,14 @@ public class PageInfo<T> {
     public String toString() {
         return "PageResult{count=" + this.count + ", pages=" + this.pages + '}';
     }
+
+    public  PageInfo<T>  buildPageInByPage(Page<T> page,List<T> list){
+       if(Objects.isNull(page)){
+           return null;
+       }
+       return  new PageInfo<T>((int)page.getTotal(),page.getPages(),list);
+
+    }
+
 
 }

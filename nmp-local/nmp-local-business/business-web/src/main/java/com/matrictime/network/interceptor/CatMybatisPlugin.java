@@ -51,7 +51,7 @@ public class CatMybatisPlugin   implements Interceptor {
     //缓存，提高性能
     private static final Map<String, String> sqlURLCache = new ConcurrentHashMap<String, String>(256);
 
-    private static final String EMPTY_CONNECTION = "jdbc:mysql://192.168.72.230:3306/nmp";
+    private static final String EMPTY_CONNECTION = "jdbc:mysql://192.168.72.14:3306/nmp_local";
 
     private Executor target;
 

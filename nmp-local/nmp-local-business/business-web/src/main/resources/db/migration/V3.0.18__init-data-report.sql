@@ -76,6 +76,14 @@ CREATE TABLE IF NOT EXISTS `nmpl_data_collect` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3737590 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DELETE FROM `nmp_local`.`nmpl_menu` where `menu_id` in('163','164','165','166');
+INSERT INTO `nmp_local`.`nmpl_menu` ( `menu_id`,`menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ( '163','资源监控', '70', '/resource', '0', '1', '1', 'sys:monitor:resource',  NULL, '1', '', '0', 'monitor/resource');
+INSERT INTO `nmp_local`.`nmpl_menu` ( `menu_id`,`menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ( '164','设备流量监控', '70', '/device', '0', '1', '1', 'sys:monitor:device', NULL,'1', '', '0', 'monitor/device');
+INSERT INTO `nmp_local`.`nmpl_menu` ( `menu_id`,`menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ( '165','系统终端监控', '70', '/system', '0', '1', '1', 'sys:monitor:system',  NULL, '1', '', '0', 'monitor/system');
+INSERT INTO `nmp_local`.`nmpl_menu` ( `menu_id`,`menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ( '166','告警监控', '70', '/warning', '0', '1', '1', 'sys:monitor:warning', NULL, '1', '', '0', 'monitor/warning');
+UPDATE `nmp_local`.`nmpl_menu` SET `url`='/monitor' WHERE (`menu_id`='70');
+UPDATE `nmp_local`.`nmpl_menu` SET `url`='/status',`perms_code`='sys:monitor:status',`component`='monitor/status' WHERE (`menu_id`='71');
+
 -- zyj
 
 -- wq
