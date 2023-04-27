@@ -10,7 +10,7 @@ public class DisplayVo implements Serializable {
 
     private static final long serialVersionUID = 4262136472071848220L;
 
-    private Date date;
+    private String date;
 
     private String value1;
 

@@ -18,12 +18,12 @@ public class QuerySystemResourceResp implements Serializable {
     private List<SystemResourceVo> resourceVos;
 
     /**
-     * cpu折线数据
+     * cpu折线数据(key:systemId  value:折线值)
      */
     private Map<String, List<String>> cpuInfos;
 
     /**
-     * 内存折线数据
+     * 内存折线数据(key:systemId  value:折线值)
      */
     private Map<String, List<String>> memInfos;
 

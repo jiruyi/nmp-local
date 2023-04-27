@@ -336,7 +336,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         key.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(vo.getSystemId());
         String hashKey = DateUtils.formatDateToString2(vo.getUploadTime(),MINUTE_TIME_FORMAT);
         DisplayVo displayVo = new DisplayVo();
-        displayVo.setDate(vo.getUploadTime());
+        displayVo.setDate(DateUtils.formatDateToInteger(vo.getUploadTime()));
         displayVo.setValue1(vo.getCpuPercent());
         displayVo.setValue2(vo.getMemoryPercent());
         redisTemplate.opsForHash().put(key,hashKey,displayVo);
@@ -401,8 +401,33 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         List<String> xTime = CommonServiceImpl.getXTimePerHalfHour(now, -24, 60 * 30, MINUTE_TIME_FORMAT);
 
         if (!CollectionUtils.isEmpty(vos)){
+            String nowStr = DateUtils.formatDateToInteger(now);
             for (SystemResourceVo vo : vos){
+                List<String> values = new ArrayList<>();
                 String systemId = vo.getSystemId();
+                StringBuffer hashKey = new StringBuffer(SYSTEM_NM);
+                hashKey.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(systemId);
+                Map<String,DisplayVo> entries = redisTemplate.opsForHash().entries(hashKey);
+                if (entries == null){
+                    for (String time : xTime){
+
+                    }
+                }else {
+                    for (String time : xTime){
+                        if (entries.containsKey(time)){
+                            DisplayVo displayVo = entries.get(time);
+                            if (nowStr.equals(displayVo.getDate())){
+                                if ("CPU".equals(systemType)){
+                                    values.add(displayVo.getValue1());
+                                }else if ("MEM".equals(systemType)){
+                                    values.add(displayVo.getValue2());
+                                }
+                            }else {
+                                values.add("0");
+                            }
+                        }
+                    }
+                }
 
             }
         }

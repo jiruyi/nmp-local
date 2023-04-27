@@ -2,13 +2,15 @@ package com.matrictime.network.service.impl;
 
 
 import com.matrictime.network.util.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class CommonServiceImpl {
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 获取x轴时间坐标
