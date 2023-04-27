@@ -21,6 +21,7 @@ import com.matrictime.network.dao.mapper.NmplDeviceMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.CommunityBaseStationVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
@@ -471,6 +472,22 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             result.setErrorMsg("");
             log.info("updateConnectCount:{}",e.getMessage());
         }
+        return result;
+    }
+
+    @Override
+    public Result<List<CommunityBaseStationVo>> selectPhysicalDevice(BaseStationInfoRequest baseStationInfoRequest) {
+        Result<List<CommunityBaseStationVo>> result = new Result<>();
+        try {
+            List<CommunityBaseStationVo> list = baseStationInfoDomainService.selectPhysicalDevice(baseStationInfoRequest);
+            result.setSuccess(true);
+            result.setResultObj(list);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg("");
+            log.info("selectPhysicalDevice:{}",e.getMessage());
+        }
+
         return result;
     }
 

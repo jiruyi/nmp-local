@@ -14,5 +14,7 @@ public class RegionBelongVo implements Serializable {
 
     private String regionBelong;
 
+    private String regionName;
+
     private List<CommunityBelongVo> regionList;
 }

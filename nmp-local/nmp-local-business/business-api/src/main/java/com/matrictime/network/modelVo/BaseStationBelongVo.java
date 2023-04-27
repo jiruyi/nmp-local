@@ -14,5 +14,8 @@ public class BaseStationBelongVo implements Serializable {
 
     private String belongSpace;
 
+    private String belongName;
+
     private List<CommunityBaseStationVo> baseStationInfoVoList;
+
 }
