@@ -408,23 +408,35 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 StringBuffer hashKey = new StringBuffer(SYSTEM_NM);
                 hashKey.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(systemId);
                 Map<String,DisplayVo> entries = redisTemplate.opsForHash().entries(hashKey);
-                if (entries == null){
-                    for (String time : xTime){
-
+                if (entries.isEmpty()){
+                    Date uploadTime = DateUtils.addDayForDate(DateUtils.getRecentHalfTime(now), -1);
+                    NmplSystemResourceExample example = new NmplSystemResourceExample();
+                    example.createCriteria().andUploadTimeGreaterThanOrEqualTo(uploadTime).andSystemIdEqualTo(systemId);
+                    List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
+                    if (!CollectionUtils.isEmpty(resources)){
+                        for (NmplSystemResource resource : resources){
+                            DisplayVo displayVo = new DisplayVo();
+                            displayVo.setDate(DateUtils.formatDateToInteger(resource.getUploadTime()));
+                            displayVo.setValue1(resource.getCpuPercent());
+                            displayVo.setValue2(resource.getMemoryPercent());
+                            String mapKey = DateUtils.formatDateToString2(resource.getUploadTime(), MINUTE_TIME_FORMAT);
+                            entries.put(mapKey,displayVo);
+                        }
+                        redisTemplate.opsForHash().putAll(hashKey,entries);
                     }
-                }else {
-                    for (String time : xTime){
-                        if (entries.containsKey(time)){
-                            DisplayVo displayVo = entries.get(time);
-                            if (nowStr.equals(displayVo.getDate())){
-                                if ("CPU".equals(systemType)){
-                                    values.add(displayVo.getValue1());
-                                }else if ("MEM".equals(systemType)){
-                                    values.add(displayVo.getValue2());
-                                }
-                            }else {
-                                values.add("0");
+
+                }
+                for (String time : xTime){
+                    if (entries.containsKey(time)){
+                        DisplayVo displayVo = entries.get(time);
+                        if (nowStr.equals(displayVo.getDate())){
+                            if ("CPU".equals(systemType)){
+                                values.add(displayVo.getValue1());
+                            }else if ("MEM".equals(systemType)){
+                                values.add(displayVo.getValue2());
                             }
+                        }else {
+                            values.add("0");
                         }
                     }
                 }
@@ -432,19 +444,6 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             }
         }
         return resMap;
-    }
-
-    private List<String> getSystemResourceRedis(String systemId){
-        StringBuffer key = new StringBuffer(SYSTEM_NM);
-        key.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(systemId);
-        Boolean hasKey = redisTemplate.hasKey(key);
-        if (hasKey){
-            Map<String,DisplayVo> entries = redisTemplate.opsForHash().entries(key);
-
-        }else {
-
-        }
-        return null;
     }
 
 
