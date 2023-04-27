@@ -3,6 +3,7 @@ package com.matrictime.network.dao.domain.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.mapper.*;
@@ -414,6 +415,7 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
                 NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
                 criteria.andIsExistEqualTo(true);
                 criteria.andRelationOperatorIdEqualTo(nmplCompanyInfo.getCompanyId().toString());
+                criteria.andStationTypeEqualTo(DeviceTypeEnum.BASE_STATION.getCode());
                 List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
 
                 //获取小区下面基站信息
