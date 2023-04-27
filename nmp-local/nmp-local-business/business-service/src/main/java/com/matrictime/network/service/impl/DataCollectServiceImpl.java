@@ -447,6 +447,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                 }
                 value = String.valueOf(res);
                 redisTemplate.opsForValue().set(key,value);
+                redisTemplate.expire(key,THIRTY,TimeUnit.MINUTES);
             }
             return buildResult(value);
         }catch (SystemException e) {
