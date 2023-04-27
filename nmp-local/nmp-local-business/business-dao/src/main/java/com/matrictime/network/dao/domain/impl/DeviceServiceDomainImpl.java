@@ -199,6 +199,7 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
         NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
         NmplDeviceCountExample.Criteria criteria = nmplDeviceCountExample.createCriteria();
         criteria.andDeviceTypeEqualTo(deviceInfoRequest.getDeviceType());
+        criteria.andRelationOperatorIdEqualTo(deviceInfoRequest.getRelationOperatorId());
         List<NmplDeviceCount> nmplDeviceCounts = nmplDeviceCountMapper.selectByExample(nmplDeviceCountExample);
         CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
         if(!CollectionUtils.isEmpty(nmplDeviceCounts)){
