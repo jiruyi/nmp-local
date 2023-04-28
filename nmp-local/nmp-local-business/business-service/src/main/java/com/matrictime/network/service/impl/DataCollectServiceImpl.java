@@ -404,8 +404,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
                 redisTemplate.opsForHash().putAll(key, cache);
             }
             supplementaryData(cache);
-            map =filterData(cache);
-            return buildResult(map);
+            return buildResult(filterData(cache,TimeUtil.getOnTime()));
         }catch (SystemException e) {
             log.info("查询服务器流量变化数据异常",e.getMessage());
             result = failResult(e);
@@ -539,26 +538,32 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
      * @param map
      * @return
      */
-    private  Map<String,Double> filterData(Map<String, TimeDataVo> map){
-        Map<String,Double> res = new HashMap<>();
+    private List<TimeDataVo> filterData(Map<String, TimeDataVo> map,String now){
+        List<TimeDataVo> res = new ArrayList<>();
+        List<TimeDataVo> result = new ArrayList<>();
         Set<String> set = map.keySet();
         Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
         for (String s : set) {
             if(TimeUtil.checkTime(s)){
                 TimeDataVo timeDataVo = map.get(s);
-                if(timeDataVo.getDate().after(timeBeforeHours)){
-                    res.put(s,timeDataVo.getValue());
+                TimeDataVo dataVo = new TimeDataVo();
+                BeanUtils.copyProperties(timeDataVo,dataVo);
+                dataVo.setTime(s);
+                if(timeDataVo.getDate().before(timeBeforeHours)){
+                    dataVo.setValue(0.0);
+                }
+                if(timeChange(s).intValue()>timeChange(now)){
+                    result.add(dataVo);
                 }else {
-                    res.put(s,0.0);
+                    res.add(dataVo);
                 }
             }
         }
         //排序
-        List<Map.Entry<String, Double>> list = new ArrayList<>(res.entrySet());
-        Collections.sort(list, (o1, o2) -> timeChange(o1.getKey()).compareTo(timeChange(o2.getKey())));
-        Map<String, Double> sortedMap = new LinkedHashMap<>();
-        list.forEach(item -> sortedMap.put(item.getKey(), item.getValue()));
-        return sortedMap;
+        Collections.sort(res, (o1, o2) -> timeChange(o1.getTime()).compareTo(timeChange(o2.getTime())));
+        Collections.sort(result, (o1, o2) -> timeChange(o1.getTime()).compareTo(timeChange(o2.getTime())));
+        result.addAll(res);
+        return result;
     }
 
     /**

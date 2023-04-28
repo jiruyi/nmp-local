@@ -27,6 +27,7 @@ import com.matrictime.network.response.TerminalDataResponse;
 import com.matrictime.network.service.TerminalDataService;
 import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -137,8 +138,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
                 redisTemplate.opsForHash().putAll(key, cache);
             }
             supplementaryData(cache);
-            map = filterData(cache);
-            return buildResult(map);
+            return buildResult(filterData(cache,TimeUtil.getOnTime()));
         }catch (SystemException e) {
             log.info("查询终端流量变化数据异常",e.getMessage());
             result = failResult(e);
@@ -205,31 +205,33 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
      * @param map
      * @return
      */
-    private  Map<String, JSONObject> filterData(Map<String, TimeDataVo> map){
-        Map<String,JSONObject> res = new HashMap<>();
+    private List<TimeDataVo> filterData(Map<String, TimeDataVo> map,String now){
+        List<TimeDataVo> res = new ArrayList<>();
+        List<TimeDataVo> result = new ArrayList<>();
         Set<String> set = map.keySet();
-
         Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
         for (String s : set) {
             if(TimeUtil.checkTime(s)){
                 TimeDataVo timeDataVo = map.get(s);
-                JSONObject json = new JSONObject();
-                if(timeDataVo.getDate().after(timeBeforeHours)){
-                    json.put("upValue",timeDataVo.getUpValue());
-                    json.put("downValue",timeDataVo.getDownValue());
-                }else {
-                    json.put("upValue",0.0);
-                    json.put("downValue",0.0);
+                TimeDataVo dataVo = new TimeDataVo();
+                BeanUtils.copyProperties(timeDataVo,dataVo);
+                dataVo.setTime(s);
+                if(timeDataVo.getDate().before(timeBeforeHours)){
+                    dataVo.setUpValue(0.0);
+                    dataVo.setDownValue(0.0);
                 }
-                res.put(s,json);
+                if(timeChange(s).intValue()>timeChange(now)){
+                    result.add(dataVo);
+                }else {
+                    res.add(dataVo);
+                }
             }
         }
         //排序
-        List<Map.Entry<String, JSONObject>> list = new ArrayList<>(res.entrySet());
-        Collections.sort(list, (o1, o2) -> timeChange(o1.getKey()).compareTo(timeChange(o2.getKey())));
-        Map<String, JSONObject> sortedMap = new LinkedHashMap<>();
-        list.forEach(item -> sortedMap.put(item.getKey(), item.getValue()));
-        return sortedMap;
+        Collections.sort(res, (o1, o2) -> timeChange(o1.getTime()).compareTo(timeChange(o2.getTime())));
+        Collections.sort(result, (o1, o2) -> timeChange(o1.getTime()).compareTo(timeChange(o2.getTime())));
+        result.addAll(res);
+        return result;
     }
 
     /**
