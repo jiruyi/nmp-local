@@ -62,7 +62,6 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
         NmplTerminalUserExample nmplTerminalUserExample = new NmplTerminalUserExample();
         NmplTerminalUserExample.Criteria criteria = nmplTerminalUserExample.createCriteria();
         criteria.andTerminalStatusEqualTo(terminalUserResquest.getTerminalStatus());
-        criteria.andParentDeviceIdEqualTo(terminalUserResquest.getParentDeviceId());
         List<NmplTerminalUser> nmplTerminalUsers = nmplTerminalUserMapper.selectByExample(nmplTerminalUserExample);
         return nmplTerminalUsers.size();
     }

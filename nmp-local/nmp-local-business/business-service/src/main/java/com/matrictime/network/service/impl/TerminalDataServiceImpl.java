@@ -3,6 +3,7 @@ package com.matrictime.network.service.impl;
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.TerminalDataResponse;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
@@ -60,8 +61,8 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
     private TerminalDataDomainService terminalDataDomainService;
 
     @Override
-    public Result<TerminalDataResponse> selectTerminalData(TerminalDataRequest terminalDataRequest) {
-        Result<TerminalDataResponse> result = new Result<>();
+    public Result<PageInfo> selectTerminalData(TerminalDataRequest terminalDataRequest) {
+        Result<PageInfo> result = new Result<>();
         try {
             result.setResultObj(terminalDataDomainService.selectTerminalData(terminalDataRequest));
             result.setSuccess(true);

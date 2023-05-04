@@ -4,6 +4,7 @@ import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.TerminalDataListRequest;
 import com.matrictime.network.request.TerminalDataRequest;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.TerminalDataResponse;
 import com.matrictime.network.service.TerminalDataService;
 import io.swagger.annotations.Api;
@@ -31,8 +32,8 @@ public class TerminalDataController {
 
     @SystemLog(opermodul = "终端流量",operDesc = "终端流量列表展示",operType = "查询")
     @RequestMapping(value = "/selectTerminalData",method = RequestMethod.POST)
-    public Result<TerminalDataResponse> selectTerminalData(@RequestBody TerminalDataRequest terminalDataRequest){
-        Result<TerminalDataResponse> result = new Result<>();
+    public Result<PageInfo> selectTerminalData(@RequestBody TerminalDataRequest terminalDataRequest){
+        Result<PageInfo> result = new Result<>();
         try {
             if(StringUtils.isEmpty(terminalDataRequest.getParenIp())){
                 throw new RuntimeException("缺少必传参数");

@@ -1,5 +1,7 @@
 package com.matrictime.network.dao.domain.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.enums.TerminalDataEnum;
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
@@ -12,11 +14,14 @@ import com.matrictime.network.dao.model.NmplTerminalDataExample;
 import com.matrictime.network.modelVo.TerminalDataVo;
 import com.matrictime.network.request.TerminalDataListRequest;
 import com.matrictime.network.request.TerminalDataRequest;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.TerminalDataResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.NumberUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -40,16 +45,22 @@ public class TerminalDataDomainServiceImpl implements TerminalDataDomainService 
     private NmplTerminalDataExtMapper terminalDataExtMapper;
 
     @Override
-    public TerminalDataResponse selectTerminalData(TerminalDataRequest terminalDataRequest) {
-        TerminalDataResponse terminalDataResponse = new TerminalDataResponse();
+    public PageInfo<TerminalDataVo> selectTerminalData(TerminalDataRequest terminalDataRequest) {
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
         criteria.andLanIpEqualTo(terminalDataRequest.getParenIp());
-        List<NmplBaseStationInfo> baseStationList = baseStationInfoMapper.selectByExample(baseStationInfoExample);
-        //查询终端流量列表
-        List<TerminalDataVo> list = getDataList(baseStationList);
-        terminalDataResponse.setList(list);
-        return terminalDataResponse;
+        List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(baseStationInfoExample);
+        if(!CollectionUtils.isEmpty(baseStationInfos)){
+            terminalDataRequest.setParentId(baseStationInfos.get(0).getStationId());
+        }
+        terminalDataRequest.setDataType(TerminalDataEnum.RESIDUE.getCode());
+        Page page = PageHelper.startPage(terminalDataRequest.getPageNo(),terminalDataRequest.getPageSize());
+        List<TerminalDataVo> list = terminalDataExtMapper.distinctTerminalData(terminalDataRequest);
+        PageInfo<TerminalDataVo> pageInfo = new PageInfo<>();
+        pageInfo.setList(list);
+        pageInfo.setCount((int) page.getTotal());
+        pageInfo.setPages(page.getPages());
+        return pageInfo;
     }
 
     @Override
@@ -59,40 +70,4 @@ public class TerminalDataDomainServiceImpl implements TerminalDataDomainService 
         return terminalDataMapper.insertSelective(nmplTerminalData);
     }
 
-    /**
-     * 查询去重后的终端设备Id
-     * @param list
-     * @return
-     */
-    private List<TerminalDataVo> getDataList(List<NmplBaseStationInfo> list){
-        List<TerminalDataVo> terminalDataVoList = new ArrayList<>();
-        for(int stationIndex = 0; stationIndex< list.size(); stationIndex++){
-            TerminalDataRequest terminalDataRequest = new TerminalDataRequest();
-            terminalDataRequest.setParentId(list.get(stationIndex).getStationId());
-            terminalDataRequest.setDataType(TerminalDataEnum.RESIDUE.getCode());
-            List<NmplTerminalData> terminalDataList = terminalDataExtMapper.distinctTerminalData(terminalDataRequest);
-            for(int i = 0;i< terminalDataList.size();i++){
-                TerminalDataVo terminalDataVo = getTerminalDataInfo(terminalDataList.get(i));
-                terminalDataVoList.add(terminalDataVo);
-            }
-        }
-        return terminalDataVoList;
-    }
-
-    /**
-     * 获取终端数据信息
-     * @param terminalData
-     * @return
-     */
-    private TerminalDataVo getTerminalDataInfo(NmplTerminalData terminalData){
-        NmplTerminalDataExample terminalDataExample = new NmplTerminalDataExample();
-        NmplTerminalDataExample.Criteria criteria = terminalDataExample.createCriteria();
-        terminalDataExample.setOrderByClause("upload_time desc");
-        criteria.andTerminalNetworkIdEqualTo(terminalData.getTerminalNetworkId());
-        List<NmplTerminalData> terminalDataList = terminalDataMapper.selectByExample(terminalDataExample);
-
-        TerminalDataVo terminalDataVo = new TerminalDataVo();
-        BeanUtils.copyProperties(terminalDataList.get(0),terminalDataVo);
-        return terminalDataVo;
-    }
 }
