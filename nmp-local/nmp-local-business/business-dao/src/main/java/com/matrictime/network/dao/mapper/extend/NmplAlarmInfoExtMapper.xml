@@ -75,10 +75,10 @@
         FROM nmpl_alarm_info
         WHERE 1=1
         <if test="alarmLevel != null and alarmLevel != ''">
-            alarm_level =  #{alarmLevel,jdbcType=VARCHAR}
+           AND alarm_level =  #{alarmLevel,jdbcType=VARCHAR}
         </if>
         <if test="alarmSourceIp != null and alarmSourceIp != ''">
-            AND alarm_source_ip = #{alarmSourceIp,jdbcType=VARCHAR},
+            AND alarm_source_ip = #{alarmSourceIp,jdbcType=VARCHAR}
         </if>
           AND DATE(alarm_upload_time) >= DATE_SUB(CURDATE()
             , INTERVAL  ${timePicker}  DAY)
