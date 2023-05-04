@@ -186,7 +186,7 @@ public class DataController {
     /**
      * 终端流量变化
      */
-    @RequestMapping(value = "/TerminalflowTransfor",method = RequestMethod.POST)
+    @RequestMapping(value = "/terminalflowTransfor",method = RequestMethod.POST)
     public Result TerminalflowTransfor(@RequestBody TerminalDataReq terminalDataReq){
         return terminalDataService.flowTransformation(terminalDataReq);
     }

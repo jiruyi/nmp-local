@@ -17,4 +17,6 @@ public class TimeDataVo implements Serializable {
 
     private Double downValue;
 
+    private String time;
+
 }
