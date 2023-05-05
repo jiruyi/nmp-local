@@ -88,7 +88,7 @@ public class SystemDataCollectController {
      */
     @SystemLog(opermodul = "业务数据收集管理",operDesc = "业务数据收集",operType = "插入")
     @RequestMapping(value = "/insertSystemData",method = RequestMethod.POST)
-    public Result<Integer> insertSystemData(DataCollectReq dataCollectReq){
+    public Result<Integer> insertSystemData(@RequestBody DataCollectReq dataCollectReq){
         Result<Integer> result = new Result<>();
         try {
             result = systemDataCollectService.insertSystemData(dataCollectReq);

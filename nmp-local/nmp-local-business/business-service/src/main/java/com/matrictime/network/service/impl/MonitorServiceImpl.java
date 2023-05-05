@@ -136,6 +136,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             for (PhysicalDeviceHeartbeatVo vo : heartbeatList){
                 NmplPhysicalDeviceHeartbeat dto = new NmplPhysicalDeviceHeartbeat();
                 BeanUtils.copyProperties(vo,dto);
+                dto.setUploadTime(req.getUploadTime());
                 NmplPhysicalDeviceHeartbeat heartbeat = nmplPhysicalDeviceHeartbeatMapper.selectByPrimaryKey(vo.getIp1Ip2());
                 if (heartbeat !=null){
                     nmplPhysicalDeviceHeartbeatMapper.updateByPrimaryKeySelective(dto);

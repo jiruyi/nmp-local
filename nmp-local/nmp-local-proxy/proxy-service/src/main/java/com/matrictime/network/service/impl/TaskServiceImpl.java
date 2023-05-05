@@ -11,7 +11,8 @@ import com.matrictime.network.dao.model.*;
 import com.matrictime.network.dao.model.extend.DeviceInfo;
 import com.matrictime.network.dao.model.extend.NmplPhysicalDeviceResource;
 import com.matrictime.network.dao.model.extend.NmplSystemResource;
-import com.matrictime.network.facade.MonitorFacade;
+import com.matrictime.network.facade.AlarmDataFacade;
+//import com.matrictime.network.facade.MonitorFacade;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.TerminalDataVo;
 import com.matrictime.network.response.SystemHeartbeatResponse;
@@ -30,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import oshi.driver.mac.net.NetStat;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -86,8 +86,9 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private TerminalDataDomainService terminalDataDomainService;
 
+
     @Autowired
-    private MonitorFacade monitorFacade;
+    private AlarmDataFacade alarmDataFacade;
 
     @Value("${local.ip}")
     private String localIp;
@@ -297,7 +298,8 @@ public class TaskServiceImpl implements TaskService {
                 try {
                     PhysicalDeviceHeartbeatReq req = new PhysicalDeviceHeartbeatReq();
                     req.setHeartbeatList(reqList);
-                    result = monitorFacade.physicalDeviceHeartbeat(req);
+                    req.setUploadTime(uploadTime);
+                    result = alarmDataFacade.physicalDeviceHeartbeat(req);
                     data = req.toString();
                 }catch (Exception e){
                     flag = true;
@@ -324,13 +326,9 @@ public class TaskServiceImpl implements TaskService {
         String data = "";
         String msg =null;
         try {
-//            JSONObject req = new JSONObject();
-//            req.put("pdrList",getPdrList(uploadTime));
-//            data = req.toJSONString();
-//            post = HttpClientUtil.post(url,data);
             PhysicalDeviceResourceReq req = new PhysicalDeviceResourceReq();
             req.setPdrList(getPdrList(uploadTime));
-            result = monitorFacade.physicalDeviceResource(req);
+            result = alarmDataFacade.physicalDeviceResource(req);
             data = req.toString();
         }catch (Exception e){
             flag = true;
@@ -360,13 +358,9 @@ public class TaskServiceImpl implements TaskService {
         String data = "";
         String msg =null;
         try {
-//            JSONObject req = new JSONObject();
-//            req.put("srList",getSrList(uploadTime,infos));
-//            data = req.toJSONString();
-//            post = HttpClientUtil.post(url,data);
             SystemResourceReq req = new SystemResourceReq();
             req.setSrList(getSrList(uploadTime,infos));
-            result = monitorFacade.systemResource(req);
+            result = alarmDataFacade.systemResource(req);
             data = req.toString();
         }catch (Exception e){
             flag = true;

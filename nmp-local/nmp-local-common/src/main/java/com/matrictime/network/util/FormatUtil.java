@@ -68,7 +68,7 @@ public class FormatUtil {
     }
 
     public static String formatUnits(long value, long prefix) {
-        String res = String.format("%.2f", (double) value / prefix);
+        String res = String.format("%.0f", (double) value / prefix);
         return res;
     }
 }
