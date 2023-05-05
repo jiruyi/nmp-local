@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2023/4/20.
  */
 @Data
-public class TerminalDataRequest {
+public class TerminalDataRequest extends BaseRequest{
     /**
      * 自增主键
      */

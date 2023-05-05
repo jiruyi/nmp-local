@@ -20,6 +20,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -308,6 +309,9 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         if(!CollectionUtils.isEmpty(nmplBaseStationInfos)){
             int currentConnectCount = 0;
             for(int i = 0;i< nmplBaseStationInfos.size();i++){
+                if(StringUtils.isEmpty(nmplBaseStationInfos.get(i).getCurrentConnectCount())){
+                    nmplBaseStationInfos.get(i).setCurrentConnectCount("0");
+                }
                 currentConnectCount = currentConnectCount +
                         Integer.parseInt(nmplBaseStationInfos.get(i).getCurrentConnectCount());
             }

@@ -7,6 +7,7 @@ import com.matrictime.network.request.TerminalDataReq;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.TerminalDataRequest;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.response.TerminalDataResponse;
 
 /**
@@ -14,7 +15,7 @@ import com.matrictime.network.response.TerminalDataResponse;
  * @date 2023/4/19.
  */
 public interface TerminalDataService {
-    Result<TerminalDataResponse> selectTerminalData(TerminalDataRequest terminalDataRequest);
+    Result<PageInfo> selectTerminalData(TerminalDataRequest terminalDataRequest);
 
     Result<Integer> collectTerminalData(TerminalDataListRequest terminalDataListRequest);
 

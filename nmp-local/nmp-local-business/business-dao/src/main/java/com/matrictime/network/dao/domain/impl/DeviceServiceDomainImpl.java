@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -205,6 +206,9 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
         if(!CollectionUtils.isEmpty(nmplDeviceCounts)){
             int currentConnectCount = 0;
             for (int i = 0;i < nmplDeviceCounts.size();i++){
+                if(StringUtils.isEmpty(nmplDeviceCounts.get(i).getCurrentConnectCount())){
+                    nmplDeviceCounts.get(i).setCurrentConnectCount("0");
+                }
                 currentConnectCount = currentConnectCount +
                         Integer.parseInt(currentConnectCount + nmplDeviceCounts.get(i).getCurrentConnectCount());
             }

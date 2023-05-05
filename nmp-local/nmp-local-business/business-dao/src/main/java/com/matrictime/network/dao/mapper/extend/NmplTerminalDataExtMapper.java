@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface NmplTerminalDataExtMapper {
 
-    List<NmplTerminalData> distinctTerminalData(TerminalDataRequest terminalDataRequest);
+    List<TerminalDataVo> distinctTerminalData(TerminalDataRequest terminalDataRequest);
 
     List<TerminalDataVo> selectCurrentIpFlow(TerminalDataReq req);
 

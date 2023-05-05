@@ -17,9 +17,19 @@ public class SystemHeartbeatVo implements Serializable {
     private String sourceId;
 
     /**
+     * 来源name
+     */
+    private String sourceName;
+
+    /**
      * 目标Id
      */
     private String targetId;
+
+    /**
+     * 目标name
+     */
+    private String targetName;
 
     /**
      * 连接状态 01:通  02:不通

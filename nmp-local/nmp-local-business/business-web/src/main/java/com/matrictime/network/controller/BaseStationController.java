@@ -290,12 +290,12 @@ public class BaseStationController {
      */
     @SystemLog(opermodul = "设备管理模块",operDesc = "查询设备总数",operType = "查询")
     @RequestMapping(value = "/countBaseStation",method = RequestMethod.POST)
-    public Result<CountBaseStationResponse> countBaseStation(@RequestBody DeviceInfoRequest deviceInfoRequest){
+    public Result<CountBaseStationResponse> countBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         try {
-            if(StringUtils.isEmpty(deviceInfoRequest.getDeviceType())){
+            if(StringUtils.isEmpty(baseStationInfoRequest.getStationType())){
                 throw new RuntimeException("缺少必传参数");
             }
-            return deviceService.countBaseStation(deviceInfoRequest);
+            return baseStationInfoService.countBaseStation(baseStationInfoRequest);
         }catch (Exception e){
             log.info("countBaseStation:{}",e.getMessage());
             return new Result<>(false,"");

@@ -1,9 +1,10 @@
 package com.matrictime.network.dao.domain.impl;
 
 import com.matrictime.network.dao.domain.SystemHeartbeatDomainService;
+import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDeviceCountMapper;
 import com.matrictime.network.dao.mapper.NmplSystemHeartbeatMapper;
-import com.matrictime.network.dao.model.NmplSystemHeartbeat;
-import com.matrictime.network.dao.model.NmplSystemHeartbeatExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.SystemHeartbeatVo;
 import com.matrictime.network.request.SystemHeartbeatRequest;
 import com.matrictime.network.response.SystemHeartbeatResponse;
@@ -28,6 +29,12 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
     @Resource
     private NmplSystemHeartbeatMapper nmplSystemHeartbeatMapper;
 
+    @Resource
+    private NmplBaseStationInfoMapper baseStationInfoMapper;
+
+    @Resource
+    private NmplDeviceCountMapper nmplDeviceCountMapper;
+
     @Override
     public int insertSystemHeartbeat(SystemHeartbeatRequest systemHeartbeatRequest) {
         NmplSystemHeartbeat nmplSystemHeartbeat = new NmplSystemHeartbeat();
@@ -49,13 +56,6 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
     @Override
     public SystemHeartbeatResponse selectSystemHeartbeat(SystemHeartbeatRequest systemHeartbeatRequest) {
         NmplSystemHeartbeatExample nmplSystemHeartbeatExample = new NmplSystemHeartbeatExample();
-        NmplSystemHeartbeatExample.Criteria criteria = nmplSystemHeartbeatExample.createCriteria();
-        if(!StringUtils.isEmpty(systemHeartbeatRequest.getSourceId())){
-            criteria.andSourceIdEqualTo(systemHeartbeatRequest.getSourceId());
-        }
-        if(!StringUtils.isEmpty(systemHeartbeatRequest.getTargetId())){
-            criteria.andTargetIdEqualTo(systemHeartbeatRequest.getTargetId());
-        }
         SystemHeartbeatResponse systemHeartbeatResponse = new SystemHeartbeatResponse();
         List<SystemHeartbeatVo> list = new ArrayList<>();
         List<NmplSystemHeartbeat> nmplSystemHeartbeats = nmplSystemHeartbeatMapper.selectByExample(nmplSystemHeartbeatExample);
@@ -63,6 +63,8 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
             for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
                 SystemHeartbeatVo systemHeartbeatVo = new SystemHeartbeatVo();
                 BeanUtils.copyProperties(nmplSystemHeartbeat,systemHeartbeatVo);
+                systemHeartbeatVo.setTargetName(getTargetName(nmplSystemHeartbeat));
+                systemHeartbeatVo.setSourceName(getSourceName(nmplSystemHeartbeat));
                 list.add(systemHeartbeatVo);
             }
             systemHeartbeatResponse.setList(list);
@@ -70,5 +72,52 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
         return systemHeartbeatResponse;
     }
 
+    /**
+     * 获取来源设备名称
+     * @param nmplSystemHeartbeat
+     * @return
+     */
+    private String getSourceName(NmplSystemHeartbeat nmplSystemHeartbeat){
+        //来源设备
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
+        criteria.andStationIdEqualTo(nmplSystemHeartbeat.getSourceId());
+        List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+        if(CollectionUtils.isEmpty(baseStationInfos)){
+            NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
+            NmplDeviceCountExample.Criteria criteria1 = nmplDeviceCountExample.createCriteria();
+            criteria1.andDeviceIdEqualTo(nmplSystemHeartbeat.getSourceId());
+            List<NmplDeviceCount> nmplDeviceCounts = nmplDeviceCountMapper.selectByExample(nmplDeviceCountExample);
+            if(CollectionUtils.isEmpty(nmplDeviceCounts)){
+                throw new RuntimeException("该设备不在设备列表中");
+            }
+            return nmplDeviceCounts.get(0).getDeviceName();
+        }
+        return baseStationInfos.get(0).getStationName();
+    }
+
+    /**
+     * 获取目标设备名称
+     * @param nmplSystemHeartbeat
+     * @return
+     */
+    private String getTargetName(NmplSystemHeartbeat nmplSystemHeartbeat){
+        //目标设备
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
+        criteria.andStationIdEqualTo(nmplSystemHeartbeat.getTargetId());
+        List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+        if(CollectionUtils.isEmpty(baseStationInfos)){
+            NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
+            NmplDeviceCountExample.Criteria criteria1 = nmplDeviceCountExample.createCriteria();
+            criteria1.andDeviceIdEqualTo(nmplSystemHeartbeat.getTargetId());
+            List<NmplDeviceCount> nmplDeviceCounts = nmplDeviceCountMapper.selectByExample(nmplDeviceCountExample);
+            if(CollectionUtils.isEmpty(nmplDeviceCounts)){
+                throw new RuntimeException("该设备不在设备列表中");
+            }
+            return nmplDeviceCounts.get(0).getDeviceName();
+        }
+        return baseStationInfos.get(0).getStationName();
+    }
 
 }
