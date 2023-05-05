@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,12 +85,6 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
                     alarmPhyCountDataForRedis(phyList);
                 }
                 //redis  业务系统资源插入 todo 暂时不用redis
-//                List<AlarmInfo> sysList = alarmInfoList.stream().filter(Objects::nonNull)
-//                        .filter(alarmInfo -> !"00".equals(alarmInfo.getAlarmSourceType()))
-//                        .collect(Collectors.toList());
-//                if(!CollectionUtils.isEmpty(sysList)){
-//                    alarmSysCountDataForRedis(sysList);
-//                }
             }
         });
         return batchCount;
@@ -137,6 +132,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
                 //获取各个资源条数
                 Map<String, Long> countMap = getCodeCount(dateListMap.get(date), physicalValueMap.get(date));
                 //放入redis
+                log.info("此次 ip:{}上传的物理资源告警各个类型的条数是:{}", ip, countMap);
                 redisTemplate.opsForHash().put(ip + PHYSICAL_ALARM_COUNT,
                         DateUtils.dateToDate(date),
                         countMap.get(CPU.getCode()) + DataConstants.VLINE +
@@ -180,7 +176,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
                     if (!CollectionUtils.isEmpty(maps)) {
                         countMapResp = maps.stream().collect(Collectors.toMap(
                                 entry -> AlarmSysLevelEnum.LevelEnum.getKeyCodeBylevel(String.valueOf(entry.get("alarmLevel"))),
-                                entry -> Long.valueOf(entry.get("countLevel").toString())));
+                                entry -> Objects.isNull(entry.get("countLevel")) ? 0 : Long.valueOf(entry.get("countLevel").toString())));
                         log.info("线程:{}查询:{}的结果maps:{}", Thread.currentThread().getName(),
                                 alarmSysLevelEnum.getDesc(), maps);
                         log.info("线程:{}的结果codeMapResp:{}", Thread.currentThread().getName(), countMapResp);
@@ -199,6 +195,61 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
     /**
      * @param [alarmDataBaseRequest]
      * @return java.util.List<java.util.Map>
+     * @title queryPhyAlarmCountFromRedis
+     * @description 从redis 查询物理设备告警条数 key: 192.168.72.24:physical_alarm_count
+     * value: {"["java.util.Date",1683302400000]":"0-0-0-2"}
+     * @author jiruyi
+     * @create 2023/5/5 0005 10:28
+     */
+    List<Map> queryPhyAlarmCountFromRedis(AlarmDataBaseRequest alarmDataBaseRequest) {
+        /**1 查询小区下所有ip*/
+        List<String> ips = alarmInfoExtMapper.selectIpFromDeviceAndStation(alarmDataBaseRequest.getRoId());
+        if (CollectionUtils.isEmpty(ips)) {
+            return null;
+        }
+        /**2 在redis查询所有ip*/
+        List<Map> list = new ArrayList<>();
+        for (String ip : ips) {
+            Map<Date, String> physicalValueMap = redisTemplate.opsForHash().entries(ip + PHYSICAL_ALARM_COUNT);
+            if (CollectionUtils.isEmpty(physicalValueMap)) {
+                continue;
+            }
+            int cpuCount = 0, memCount = 0, diskCount = 0, flowCount = 0;
+            Map<String ,Integer> countMap = new ConcurrentHashMap<>();
+            /**3 获取value中每个日期*/
+            for (int i = 0; i < Integer.valueOf(alarmDataBaseRequest.getTimePicker()); i++) {
+                String dateValue = physicalValueMap.get(DateUtils.dateToDate(DateUtils.addDayForNow(-i)));
+                if (StringUtils.isEmpty(dateValue)) {
+                    continue;
+                }
+                String[] countArray = dateValue.split(DataConstants.VLINE);
+                if(CollectionUtils.isEmpty(Arrays.asList(countArray)) || countArray.length < values().length){
+                    continue;
+                }
+                /**4 累加每个日期的值*/
+                cpuCount += Integer.valueOf(countArray[CPU.getRedisIndex()]);
+                countMap.put(CPU.getContentType(),cpuCount);
+                memCount += Integer.valueOf(countArray[MEM.getRedisIndex()]);
+                countMap.put(MEM.getContentType(),memCount);
+                diskCount += Integer.valueOf(countArray[DISK.getRedisIndex()]);
+                countMap.put(DISK.getContentType(),diskCount);
+                flowCount += Integer.valueOf(countArray[FLOW.getRedisIndex()]);
+                countMap.put(FLOW.getContentType(),flowCount);
+            }
+            /**构造与mysql相同的数据结构*/
+            for(AlarmPhyConTypeEnum conTypeEnum : AlarmPhyConTypeEnum.values()){
+                Map map = new ConcurrentHashMap();
+                map.put("sourceIp", ip);
+                map.put("contentType", conTypeEnum.getContentType());
+                map.put("typeCount", countMap.get(conTypeEnum.getContentType()));
+                list.add(map);
+            }
+        }
+        return list;
+    }
+    /**
+     * @param [alarmDataBaseRequest]
+     * @return java.util.List<java.util.Map>
      * @title queryPhyAlarmDataCount
      * @description 根据 小区 时间范围查询所有物理设备告警条数
      * @author jiruyi
@@ -208,42 +259,47 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
     public List<AlarmPhyTypeCount> queryPhyAlarmDataCount(AlarmDataBaseRequest alarmDataBaseRequest) {
         /**入参map */
         Map<String, String> paramMap = getParamMap(alarmDataBaseRequest);
+        /**查询redis*/
+        List<Map> dataSourceMapList = queryPhyAlarmCountFromRedis(alarmDataBaseRequest);
         /**数据库查询 */
-        List<Map> mybatisMapList = alarmInfoExtMapper.selectPhyAlarmCount(paramMap);
-        if (CollectionUtils.isEmpty(mybatisMapList)) {
+        if (CollectionUtils.isEmpty(dataSourceMapList)) {
+            dataSourceMapList = alarmInfoExtMapper.selectPhyAlarmCount(paramMap);
+        }
+        if (CollectionUtils.isEmpty(dataSourceMapList)) {
             return null;
         }
-        log.info("AlarmDataDomainService queryPhyAlarmDataCount mybatisMapList:{}", mybatisMapList);
+        log.info("AlarmDataDomainService queryPhyAlarmDataCount mybatisMapList:{}", dataSourceMapList);
         /** 结果转换  ip 分组 */
-        Map<String, List<Map>> alarmInfoMap = mybatisMapList.stream()
+        Map<String, List<Map>> alarmInfoMap = dataSourceMapList.stream()
                 .collect(Collectors.groupingBy(entry -> String.valueOf(entry.get("sourceIp"))));
         List<AlarmPhyTypeCount> phyTypeCountList = new ArrayList<>();
         alarmInfoMap.entrySet().forEach(entry -> {
             /**[{"sourceIp":"192.168.72.241","contentType":"1","count":"2"},{"sourceIp":"192.168.72.241","contentType":"2","count":"2"}]*/
             List<Map> ipList = entry.getValue();
             AlarmPhyTypeCount phyTypeCount = new AlarmPhyTypeCount();
-            if (!CollectionUtils.isEmpty(ipList)) {
-                for (Map map : ipList) {
-                    /**获取告警类型*/
-                    String contentType = (String) map.get("contentType");
-                    /**获取告警类型对应条数*/
-                    Long count = Objects.isNull(map.get("typeCount"))?0:Long.valueOf(String.valueOf(map.get("typeCount")));
-                    phyTypeCount.setPhyIp(String.valueOf(map.get("sourceIp")));
-                    switch (AlarmPhyConTypeEnum.getBycode(contentType)) {
-                        case CPU:
-                            phyTypeCount.setCpuCount(count);
-                            break;
-                        case MEM:
-                            phyTypeCount.setMemCount(count);
-                            break;
-                        case DISK:
-                            phyTypeCount.setDiskCount(count);
-                            break;
-                        case FLOW:
-                            phyTypeCount.setFlowCount(count);
-                            break;
-                        default:
-                    }
+            for (Map map : ipList) {
+                if (CollectionUtils.isEmpty(map)) {
+                    continue;
+                }
+                /**获取告警类型*/
+                String contentType = (String) map.get("contentType");
+                /**获取告警类型对应条数*/
+                Long count = Objects.isNull(map.get("typeCount")) ? 0 : Long.valueOf(String.valueOf(map.get("typeCount")));
+                phyTypeCount.setPhyIp(String.valueOf(map.get("sourceIp")));
+                switch (AlarmPhyConTypeEnum.getEnumByContentType(contentType)) {
+                    case CPU:
+                        phyTypeCount.setCpuCount(count);
+                        break;
+                    case MEM:
+                        phyTypeCount.setMemCount(count);
+                        break;
+                    case DISK:
+                        phyTypeCount.setDiskCount(count);
+                        break;
+                    case FLOW:
+                        phyTypeCount.setFlowCount(count);
+                        break;
+                    default:
                 }
             }
             phyTypeCountList.add(phyTypeCount);
@@ -264,8 +320,8 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
         //分页
         Page<NmplAlarmInfo> page = PageHelper.startPage(alarmDataListReq.getPageNo(), alarmDataListReq.getPageSize());
         List<NmplAlarmInfo> nmplAlarmInfos = alarmInfoExtMapper.queryAlarmDataList(alarmDataListReq);
-        log.info("AlarmDataDomainService  queryAlarmDataList page:{},nmplAlarmInfos：{}",page,nmplAlarmInfos);
-        return  new PageInfo<>((int)page.getTotal(),page.getPages(),nmplAlarmInfos);
+        log.info("AlarmDataDomainService  queryAlarmDataList page:{},nmplAlarmInfos：{}", page, nmplAlarmInfos);
+        return new PageInfo<>((int) page.getTotal(), page.getPages(), nmplAlarmInfos);
     }
 
     /**
@@ -276,7 +332,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
      * @author jiruyi
      * @create 2023/4/25 0025 16:42
      */
-    public synchronized  Map<String, String> getParamMap(AlarmDataBaseRequest alarmDataBaseRequest) {
+    public synchronized Map<String, String> getParamMap(AlarmDataBaseRequest alarmDataBaseRequest) {
         //入参map
         Map<String, String> paramMap = new ConcurrentHashMap<>();
         paramMap.put("roId", alarmDataBaseRequest.getRoId());
