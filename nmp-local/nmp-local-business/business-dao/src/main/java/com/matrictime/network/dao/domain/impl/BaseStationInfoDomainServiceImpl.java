@@ -378,34 +378,6 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
 
     }
 
-
-    /**
-     * 获取小区下面基站信息
-     * @param list
-     * @return
-     */
-    private BaseStationBelongVo getBaseStation(List<NmplBaseStationInfo> list){
-        BaseStationBelongVo baseStationBelongVo = new BaseStationBelongVo();
-        if(!CollectionUtils.isEmpty(list)){
-            List<CommunityBaseStationVo> baseStationInfoVoList = new ArrayList<>();
-            for(NmplBaseStationInfo nmplBaseStationInfo: list){
-                CommunityBaseStationVo communityBaseStationVo = new CommunityBaseStationVo();
-                BeanUtils.copyProperties(nmplBaseStationInfo,communityBaseStationVo);
-                baseStationInfoVoList.add(communityBaseStationVo);
-            }
-            NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
-            NmplCompanyInfoExample.Criteria criteria = nmplCompanyInfoExample.createCriteria();
-            criteria.andCompanyIdEqualTo(Long.parseLong(list.get(0).getRelationOperatorId()));
-            List<NmplCompanyInfo> nmplCompanyInfos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
-            if(!CollectionUtils.isEmpty(nmplCompanyInfos)){
-                baseStationBelongVo.setRelationOperatorId(list.get(0).getRelationOperatorId());
-                baseStationBelongVo.setName(nmplCompanyInfos.get(0).getCompanyName());
-            }
-            baseStationBelongVo.setChildren(baseStationInfoVoList);
-        }
-        return baseStationBelongVo;
-    }
-
     /**
      * 获取大区下面的小区
      * @param nmplCompanyInfos
@@ -415,16 +387,24 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         CommunityBelongVo communityBelongVo = new CommunityBelongVo();
         if(!CollectionUtils.isEmpty(nmplCompanyInfos)){
             List<BaseStationBelongVo> list = new ArrayList<>();
-            for (NmplCompanyInfo nmplCompanyInfo : nmplCompanyInfos){
+            for(int i = 0;i< nmplCompanyInfos.size();i++){
                 NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
                 NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
                 criteria.andIsExistEqualTo(true);
-                criteria.andRelationOperatorIdEqualTo(nmplCompanyInfo.getCompanyId().toString());
+                criteria.andRelationOperatorIdEqualTo(nmplCompanyInfos.get(i).getCompanyId().toString());
                 criteria.andStationTypeEqualTo(DeviceTypeEnum.BASE_STATION.getCode());
                 List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-
                 //获取小区下面基站信息
-                BaseStationBelongVo baseStationBelongVo = getBaseStation(nmplBaseStationInfos);
+                BaseStationBelongVo baseStationBelongVo = new BaseStationBelongVo();
+                List<CommunityBaseStationVo> baseStationInfoVoList = new ArrayList<>();
+                for(NmplBaseStationInfo nmplBaseStationInfo: nmplBaseStationInfos){
+                    CommunityBaseStationVo communityBaseStationVo = new CommunityBaseStationVo();
+                    BeanUtils.copyProperties(nmplBaseStationInfo,communityBaseStationVo);
+                    baseStationInfoVoList.add(communityBaseStationVo);
+                }
+                baseStationBelongVo.setRelationOperatorId(nmplCompanyInfos.get(i).getCompanyId().toString());
+                baseStationBelongVo.setName(nmplCompanyInfos.get(i).getCompanyName());
+                baseStationBelongVo.setChildren(baseStationInfoVoList);
                 list.add(baseStationBelongVo);
             }
             NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
