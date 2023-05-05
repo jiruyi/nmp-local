@@ -11,15 +11,12 @@
     <insert id="batchInsert" parameterType="com.matrictime.network.model.AlarmInfo">
         insert into nmpl_alarm_info (alarm_source_id, alarm_source_ip,
         alarm_content, alarm_level, alarm_upload_time,
-        alarm_source_type, alarm_content_type, create_time,
-        update_time) values
+        alarm_source_type, alarm_content_type) values
         <foreach collection="alarmInfoList" item="alarm" separator=",">
             (#{alarm.alarmSourceId,jdbcType=VARCHAR}, #{alarm.alarmSourceIp,jdbcType=VARCHAR},
             #{alarm.alarmContent,jdbcType=VARCHAR}, #{alarm.alarmLevel,jdbcType=CHAR},
             #{alarm.alarmUploadTime,jdbcType=TIMESTAMP},
-            #{alarm.alarmSourceType,jdbcType=CHAR}, #{alarm.alarmContentType,jdbcType=CHAR},
-            #{alarm.createTime,jdbcType=TIMESTAMP},
-            #{alarm.updateTime,jdbcType=TIMESTAMP})
+            #{alarm.alarmSourceType,jdbcType=CHAR}, #{alarm.alarmContentType,jdbcType=CHAR})
         </foreach>
     </insert>
 
@@ -37,7 +34,7 @@
           AND is_exist = '1')
         GROUP BY alarm_level;
     </select>
-    <!--   查询业务系统条数 -->
+    <!--   查询物理系统条数 -->
     <select id="selectPhyAlarmCount" resultType="map" parameterType="map">
         SELECT alarm_source_ip           as sourceIp,
                alarm_content_type        as contentType,
@@ -57,44 +54,58 @@
         GROUP BY alarm_source_ip, alarm_content_type;
     </select>
 
+    <select id="selectIpFromDeviceAndStation" resultType="string" parameterType="string">
+
+        SELECT lan_ip
+         FROM nmpl_base_station_info
+         WHERE relation_operator_id = #{roId,jdbcType=VARCHAR}
+           AND is_exist = '1'
+         UNION
+         SELECT lan_ip
+         FROM nmpl_device_info
+         WHERE relation_operator_id = #{roId,jdbcType=VARCHAR}
+           AND is_exist = '1'
+    </select>
+
     <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplAlarmInfo">
-        <id column="alarm_id" jdbcType="BIGINT" property="alarmId" />
-        <result column="alarm_source_id" jdbcType="VARCHAR" property="alarmSourceId" />
-        <result column="alarm_source_ip" jdbcType="VARCHAR" property="alarmSourceIp" />
-        <result column="alarm_content" jdbcType="VARCHAR" property="alarmContent" />
-        <result column="alarm_level" jdbcType="CHAR" property="alarmLevel" />
-        <result column="alarm_upload_time" jdbcType="TIMESTAMP" property="alarmUploadTime" />
-        <result column="alarm_source_type" jdbcType="CHAR" property="alarmSourceType" />
-        <result column="alarm_content_type" jdbcType="CHAR" property="alarmContentType" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <id column="alarm_id" jdbcType="BIGINT" property="alarmId"/>
+        <result column="alarm_source_id" jdbcType="VARCHAR" property="alarmSourceId"/>
+        <result column="alarm_source_ip" jdbcType="VARCHAR" property="alarmSourceIp"/>
+        <result column="alarm_content" jdbcType="VARCHAR" property="alarmContent"/>
+        <result column="alarm_level" jdbcType="CHAR" property="alarmLevel"/>
+        <result column="alarm_upload_time" jdbcType="TIMESTAMP" property="alarmUploadTime"/>
+        <result column="alarm_source_type" jdbcType="CHAR" property="alarmSourceType"/>
+        <result column="alarm_content_type" jdbcType="CHAR" property="alarmContentType"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
 
-    <select id="queryAlarmDataList"  resultMap="BaseResultMap" parameterType="com.matrictime.network.request.AlarmDataListReq">
+    <select id="queryAlarmDataList" resultMap="BaseResultMap"
+            parameterType="com.matrictime.network.request.AlarmDataListReq">
         SELECT *
         FROM nmpl_alarm_info
         WHERE 1=1
         <if test="alarmLevel != null and alarmLevel != ''">
-           AND alarm_level =  #{alarmLevel,jdbcType=VARCHAR}
+            AND alarm_level = #{alarmLevel,jdbcType=VARCHAR}
         </if>
         <if test="alarmSourceIp != null and alarmSourceIp != ''">
             AND alarm_source_ip = #{alarmSourceIp,jdbcType=VARCHAR}
         </if>
-          AND DATE(alarm_upload_time) >= DATE_SUB(CURDATE()
-            , INTERVAL  ${timePicker}  DAY)
-          AND alarm_source_ip IN
-            (SELECT
-            lan_ip
-            FROM
-            nmpl_base_station_info
-            WHERE relation_operator_id =  #{roId,jdbcType=VARCHAR}
-            AND is_exist = '1'
-            UNION
-            SELECT
-            lan_ip
-            FROM
-            nmpl_device_info
-            WHERE relation_operator_id =  #{roId,jdbcType=VARCHAR}
-          AND is_exist = '1')
+        AND DATE(alarm_upload_time) >= DATE_SUB(CURDATE()
+        , INTERVAL ${timePicker} DAY)
+        AND alarm_source_ip IN
+        (SELECT
+        lan_ip
+        FROM
+        nmpl_base_station_info
+        WHERE relation_operator_id = #{roId,jdbcType=VARCHAR}
+        AND is_exist = '1'
+        UNION
+        SELECT
+        lan_ip
+        FROM
+        nmpl_device_info
+        WHERE relation_operator_id = #{roId,jdbcType=VARCHAR}
+        AND is_exist = '1')
     </select>
 </mapper>
