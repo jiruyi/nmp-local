@@ -51,16 +51,18 @@ public class ShellUtil {
         log.info("runShellgetEcho start,params{}",commands);
         ProcessBuilder pb = new ProcessBuilder(commands);
         int runningStatus = 1;
-        String s = "";
+        String pid = "";
+        String msg = "";
         try {
             Process p = pb.start();
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            while ((s = stdInput.readLine()) != null) {
-                log.info(s);
+            while ((msg = stdInput.readLine()) != null) {
+                pid = msg;
+                log.info(msg);
             }
-            while ((s = stdError.readLine()) != null) {
-                log.warn(s);
+            while ((msg = stdError.readLine()) != null) {
+                log.warn(msg);
             }
             runningStatus = p.waitFor();
         } catch (IOException e) {
@@ -68,8 +70,8 @@ public class ShellUtil {
         }catch (InterruptedException e) {
             e.printStackTrace();
         }
-        log.info("runShellgetEcho end,commands:{},result:{}",commands,runningStatus);
-        return s;
+        log.info("runShellgetEcho end,commands:{},result:{},pid:{}",commands,runningStatus,pid);
+        return pid;
     }
 
 }

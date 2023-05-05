@@ -131,6 +131,8 @@ public class SystemUtils {
     public static Integer getPID(String port){
         Integer pid = -1;
         List<String> cmd = new ArrayList<>();
+        cmd.add("/bin/sh");
+        cmd.add("-c");
         cmd.add(GET_PID_CMD.replace(GET_PID_CMD_PORT,port));
         String getPid = ShellUtil.runShellgetEcho(cmd);
         if (!ParamCheckUtil.checkVoStrBlank(getPid)){
@@ -168,23 +170,23 @@ public class SystemUtils {
 
     public static void main(String[] args) {
         // 定义要查询的端口号
-        int port = 8080;
+        int port = 3306;
 
         try {
-            SystemInfo si = new SystemInfo();
-
-            HardwareAbstractionLayer hal = si.getHardware();
-            OperatingSystem os = si.getOperatingSystem();
+//            SystemInfo si = new SystemInfo();
+//
+//            HardwareAbstractionLayer hal = si.getHardware();
+//            OperatingSystem os = si.getOperatingSystem();
 //            List<OSProcess> processes = os.getProcesses();
 //            for (OSProcess osProcess : processes){
 //                System.out.println(osProcess.toString());
 //            }
 
 //            printProcesses(os,hal.getMemory());
-
-            for (String s : oshi){
-                System.out.println(s);
-            }
+            Integer pid = getPID(String.valueOf(port));
+//            for (String s : oshi){
+                System.out.println(pid);
+//            }
 
 //            for (int i=0;i<2;i++){
 ////                String[] s = com.matrictime.network.util.FormatUtil.formatBy1024(getUseFileSys());
