@@ -2,6 +2,8 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.enums.AlarmPhyConTypeEnum;
+import com.matrictime.network.base.enums.AlarmSysLevelEnum;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
@@ -9,13 +11,16 @@ import com.matrictime.network.dao.mapper.extend.NmplDeviceExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
+import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
+import com.matrictime.network.service.AlarmDataService;
 import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.service.DeviceService;
 import com.matrictime.network.service.MonitorService;
+import com.matrictime.network.util.CompareUtil;
 import com.matrictime.network.util.DateUtils;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.base.exception.ErrorMessageContants.DEVICE_NOT_EXIST_MSG;
+import static com.matrictime.network.constant.BusinessConsts.*;
 import static com.matrictime.network.constant.DataConstants.*;
 import static com.matrictime.network.util.DateUtils.MINUTE_TIME_FORMAT;
 
@@ -45,6 +51,33 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
 
     @Value("${health.deadline.time}")
     private Long healthDeadlineTime;
+
+    @Value("${error.cpu}")
+    private String errorCpu;
+
+    @Value("${warn.cpu}")
+    private String warnCpu;
+
+    @Value("${info.cpu}")
+    private String infoCpu;
+
+    @Value("${error.mem}")
+    private String errorMem;
+
+    @Value("${warn.mem}")
+    private String warnMem;
+
+    @Value("${info.mem}")
+    private String infoMem;
+
+    @Value("${error.disk}")
+    private String errorDisk;
+
+    @Value("${warn.disk}")
+    private String warnDisk;
+
+    @Value("${info.disk}")
+    private String infoDisk;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -78,6 +111,9 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
 
     @Resource
     private NmplSystemResourceMapper nmplSystemResourceMapper;
+
+    @Autowired
+    private AlarmDataService alarmDataService;
 
 
     private static final String USER_COUNT_CODE = "userNumber";
@@ -162,6 +198,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         Result result;
         try{
             List<PhysicalDeviceResourceVo> pdrList = req.getPdrList();
+            List<AlarmInfo> alarmInfoList = new ArrayList<>();
             for (PhysicalDeviceResourceVo vo : pdrList){
                 NmplPhysicalDeviceResource dto = new NmplPhysicalDeviceResource();
                 BeanUtils.copyProperties(vo,dto);
@@ -171,6 +208,14 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 }else {
                     nmplPhysicalDeviceResourceMapper.insertSelective(dto);
                 }
+                AlarmInfo alarmInfo = getAlarmInfo(dto);
+                if (alarmInfo != null){
+                    alarmInfoList.add(alarmInfo);
+                }
+            }
+            // 资源告警推送
+            if (!CollectionUtils.isEmpty(alarmInfoList)){
+                alarmDataService.acceptAlarmData(alarmInfoList);
             }
             result = buildResult(null);
         }catch (Exception e){
@@ -178,6 +223,64 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             result = failResult(e);
         }
         return result;
+    }
+
+    private AlarmInfo getAlarmInfo(NmplPhysicalDeviceResource dto){
+        boolean isAlarm = false;
+        AlarmInfo alarmInfo = null;
+        String percent = dto.getResourcePercent();
+        switch (dto.getResourceType()){
+            case RESOURCE_TYPE_CPU :
+                if (CompareUtil.compareShortStr(percent,infoCpu)>1){
+                    isAlarm = true;
+                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.CPU.getContentType());
+                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.CPU.getDesc());
+                    if (CompareUtil.compareShortStr(percent,errorCpu)>1){
+                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
+                    }else if (CompareUtil.compareShortStr(percent,warnCpu)>1){
+                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
+                    }else {
+                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
+                    }
+                }
+                break;
+            case RESOURCE_TYPE_MEMORY:
+                if (CompareUtil.compareShortStr(percent,infoMem)>1){
+                    isAlarm = true;
+                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.MEM.getContentType());
+                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.MEM.getDesc());
+                    if (CompareUtil.compareShortStr(percent,errorMem)>1){
+                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
+                    }else if (CompareUtil.compareShortStr(percent,warnMem)>1){
+                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
+                    }else {
+                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
+                    }
+                }
+                break;
+            case RESOURCE_TYPE_DISK:
+                if (CompareUtil.compareShortStr(percent,infoDisk)>1){
+                    isAlarm = true;
+                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.DISK.getContentType());
+                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.DISK.getDesc());
+                    if (CompareUtil.compareShortStr(percent,errorDisk)>1){
+                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
+                    }else if (CompareUtil.compareShortStr(percent,warnDisk)>1){
+                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
+                    }else {
+                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        if (isAlarm){
+            alarmInfo.setAlarmSourceIp(dto.getDeviceIp());
+            alarmInfo.setAlarmUploadTime(dto.getUploadTime());
+            alarmInfo.setAlarmSourceType(AlarmSysLevelEnum.RESOURCE.getCode());
+        }
+        return alarmInfo;
     }
 
     /**
@@ -288,8 +391,8 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             checkPhysicalDevicesResourceParam(req);
             Date now = new Date();
             List<SystemResourceVo> resourceVos = getSystemResources(req.getDeviceIp(),now);
-            Map<String,List<String>> cpuInfos = getSystemResourceSL(resourceVos,"CPU",now);
-            Map<String,List<String>> memInfos = getSystemResourceSL(resourceVos,"MEM",now);
+            Map<String,List<String>> cpuInfos = getSystemResourceSL(resourceVos,"CPU",DateUtils.getRecentHalfTime(now));
+            Map<String,List<String>> memInfos = getSystemResourceSL(resourceVos,"MEM",DateUtils.getRecentHalfTime(now));
             resp.setResourceVos(resourceVos);
             resp.setCpuInfos(cpuInfos);
             resp.setMemInfos(memInfos);
@@ -340,7 +443,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         displayVo.setDate(DateUtils.formatDateToInteger(vo.getUploadTime()));
         displayVo.setValue1(vo.getCpuPercent());
         displayVo.setValue2(vo.getMemoryPercent());
-        redisTemplate.opsForHash().put(key,hashKey,displayVo);
+        redisTemplate.opsForHash().put(key.toString(),hashKey,displayVo);
     }
 
     /**
@@ -367,6 +470,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                     vo.setCpuPercent("0");
                     vo.setMemoryPercent("0");
                     vo.setSystemType(info.getStationType());
+                    vo.setRunTime(0L);
                     vo.setUploadTime(date);
                 }
                 voList.add(vo);
@@ -408,7 +512,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 String systemId = vo.getSystemId();
                 StringBuffer hashKey = new StringBuffer(SYSTEM_NM);
                 hashKey.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(systemId);
-                Map<String,DisplayVo> entries = redisTemplate.opsForHash().entries(hashKey);
+                Map<String,DisplayVo> entries = redisTemplate.opsForHash().entries(hashKey.toString());
                 if (entries.isEmpty()){
                     Date uploadTime = DateUtils.addDayForDate(DateUtils.getRecentHalfTime(now), -1);
                     NmplSystemResourceExample example = new NmplSystemResourceExample();
@@ -423,7 +527,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                             String mapKey = DateUtils.formatDateToString2(resource.getUploadTime(), MINUTE_TIME_FORMAT);
                             entries.put(mapKey,displayVo);
                         }
-                        redisTemplate.opsForHash().putAll(hashKey,entries);
+                        redisTemplate.opsForHash().putAll(hashKey.toString(),entries);
                     }
 
                 }
@@ -437,11 +541,13 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                                 values.add(displayVo.getValue2());
                             }
                         }else {
-                            values.add("0");
+                            values.add("0.00");
                         }
+                    }else {
+                        values.add("0.00");
                     }
                 }
-
+                resMap.put(systemId,values);
             }
         }
         return resMap;
