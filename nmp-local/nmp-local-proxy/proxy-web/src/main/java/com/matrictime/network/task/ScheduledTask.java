@@ -62,14 +62,6 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+new Date()+"======================alarmPush end=============================");
     }
 
-//    @Scheduled(cron = "*/30 * * * * ?")
-//    @Async
-////    public void pcData(){
-////        log.info(Thread.currentThread().getName()+"======================pcData begin=============================");
-////        taskService.pcData(ip + KEY_SPLIT + port + PC_DATA_URL);
-////        log.info(Thread.currentThread().getName()+"======================pcData end=============================");
-////    }
-
 
     @Scheduled(cron = "0 0/30 * * * ?")
     @Async
@@ -78,14 +70,6 @@ public class ScheduledTask {
         taskService.dataCollectPush(ip + KEY_SPLIT + port + DATA_COLLECT_URL,localIp);
         log.info(Thread.currentThread().getName()+"======================dataCollect end=============================");
     }
-
-//    @Scheduled(cron = "*/30 * * * * ?")
-//    @Async
-//    public void billPush(){
-//        log.info(Thread.currentThread().getName()+"======================bill begin=============================");
-//        taskService.billPush(ip + KEY_SPLIT + port + BILL_URL);
-//        log.info(Thread.currentThread().getName()+"======================bill end=============================");
-//    }
 
     @Scheduled(cron = "0 0/30 * * * ?")
     @Async
@@ -139,6 +123,25 @@ public class ScheduledTask {
 
 
 
+
+
+
+//    @Scheduled(cron = "*/30 * * * * ?")
+//    @Async
+//    public void billPush(){
+//        log.info(Thread.currentThread().getName()+"======================bill begin=============================");
+//        taskService.billPush(ip + KEY_SPLIT + port + BILL_URL);
+//        log.info(Thread.currentThread().getName()+"======================bill end=============================");
+//    }
+
+
+//    @Scheduled(cron = "*/30 * * * * ?")
+//    @Async
+////    public void pcData(){
+////        log.info(Thread.currentThread().getName()+"======================pcData begin=============================");
+////        taskService.pcData(ip + KEY_SPLIT + port + PC_DATA_URL);
+////        log.info(Thread.currentThread().getName()+"======================pcData end=============================");
+////    }
 
 //    @Scheduled(fixedDelay = 5000)
 //    @Async·
