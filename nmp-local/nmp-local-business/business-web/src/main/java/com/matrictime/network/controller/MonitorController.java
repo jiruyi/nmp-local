@@ -4,9 +4,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
-import com.matrictime.network.response.CheckHeartResp;
-import com.matrictime.network.response.QueryMonitorResp;
-import com.matrictime.network.response.TotalLoadChangeResp;
+import com.matrictime.network.response.*;
 import com.matrictime.network.service.MonitorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -99,7 +97,7 @@ public class MonitorController {
      */
     @RequestMapping (value = "/queryPhysicalDevices",method = RequestMethod.POST)
     @SystemLog(opermodul = "监控模块",operDesc = "物理设备网络拓扑图",operType = "查询")
-    public Result queryPhysicalDevices(@RequestBody QueryPhysicalDevicesReq req){
+    public Result<QueryPhysicalDevicesResp> queryPhysicalDevices(@RequestBody QueryPhysicalDevicesReq req){
         try {
             return  monitorService.queryPhysicalDevices(req);
         }catch (Exception e){
@@ -115,7 +113,7 @@ public class MonitorController {
      */
     @RequestMapping (value = "/queryPhysicalDeviceResource",method = RequestMethod.POST)
     @SystemLog(opermodul = "监控模块",operDesc = "物理设备资源",operType = "查询")
-    public Result queryPhysicalDeviceResource(@RequestBody QueryPhysicalDevicesResourceReq req){
+    public Result<QueryPhysicalDeviceResourceResp> queryPhysicalDeviceResource(@RequestBody QueryPhysicalDevicesResourceReq req){
         try {
             return  monitorService.queryPhysicalDeviceResource(req);
         }catch (Exception e){
@@ -131,7 +129,7 @@ public class MonitorController {
      */
     @RequestMapping (value = "/querySystemResource",method = RequestMethod.POST)
     @SystemLog(opermodul = "监控模块",operDesc = "运行系统资源",operType = "查询")
-    public Result querySystemResource(@RequestBody QueryPhysicalDevicesResourceReq req){
+    public Result<QuerySystemResourceResp> querySystemResource(@RequestBody QueryPhysicalDevicesResourceReq req){
         try {
             return  monitorService.querySystemResource(req);
         }catch (Exception e){
