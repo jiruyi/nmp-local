@@ -25,4 +25,6 @@ public interface NmplAlarmInfoExtMapper {
 
     List<NmplAlarmInfo> queryAlarmDataList(AlarmDataListReq alarmDataListReq);
 
+    List<String> selectIpFromDeviceAndStation(String roId);
+
 }

@@ -53,7 +53,7 @@ public interface MonitorService {
      * @param req
      * @return
      */
-    Result querySystemResource(QueryPhysicalDevicesResourceReq req);
+    Result<QuerySystemResourceResp> querySystemResource(QueryPhysicalDevicesResourceReq req);
 
     /**
      * 监控轮询展示查询（废弃）
