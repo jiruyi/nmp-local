@@ -2,6 +2,7 @@ package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.modelVo.BaseStationDataVo;
 import com.matrictime.network.modelVo.BorderBaseStationDataVo;
+import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.KeyCenterDataVo;
 import com.matrictime.network.request.DataCollectReq;
 
@@ -17,7 +18,7 @@ public interface SystemDataCollectDomainService {
 
     KeyCenterDataVo selectKeyCenterData(DataCollectReq dataCollectReq);
 
-    int insertSystemData(DataCollectReq dataCollectReq);
+    int insertSystemData(DataCollectVo dataCollectVo);
 
 
 }

@@ -81,16 +81,11 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         return keyCenterDataVo;
     }
 
-    @Transactional
     @Override
-    public int insertSystemData(DataCollectReq dataCollectReq) {
-        List<DataCollectVo> dataCollectVoList = dataCollectReq.getDataCollectVoList();
-        for(DataCollectVo dataCollectVo: dataCollectVoList){
-            NmplDataCollect nmplDataCollect = new NmplDataCollect();
-            BeanUtils.copyProperties(dataCollectVo,nmplDataCollect);
-            nmplDataCollectMapper.insertSelective(nmplDataCollect);
-        }
-        return 1;
+    public int insertSystemData(DataCollectVo dataCollectVo) {
+        NmplDataCollect nmplDataCollect = new NmplDataCollect();
+        BeanUtils.copyProperties(dataCollectVo,nmplDataCollect);
+        return nmplDataCollectMapper.insertSelective(nmplDataCollect);
     }
 
     /**

@@ -2,20 +2,25 @@ package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.DataCollectEnum;
 import com.matrictime.network.dao.domain.SystemDataCollectDomainService;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.BaseStationDataVo;
-import com.matrictime.network.modelVo.BorderBaseStationDataVo;
-import com.matrictime.network.modelVo.KeyCenterDataVo;
-import com.matrictime.network.modelVo.TimeDataVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.DataCollectReq;
+import com.matrictime.network.request.TerminalDataReq;
+import com.matrictime.network.service.DataCollectService;
 import com.matrictime.network.service.SystemDataCollectService;
+import com.matrictime.network.service.TerminalDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,6 +36,9 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
 
     @Resource
     private RedisTemplate redisTemplate;
+
+    @Resource
+    private DataCollectService dataCollectService;
 
     @Override
     public Result<BaseStationDataVo> selectBaseStationData(DataCollectReq dataCollectReq) {
@@ -108,7 +116,24 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
     public Result<Integer> insertSystemData(DataCollectReq dataCollectReq) {
         Result<Integer> result = new Result<>();
         try {
-            result.setResultObj(systemDataCollectDomainService.insertSystemData(dataCollectReq));
+            int i = 0;
+            for(DataCollectVo dataCollectVo: dataCollectReq.getDataCollectVoList()){
+                i = systemDataCollectDomainService.insertSystemData(dataCollectVo);
+            }
+            //插入缓存
+            Set<String> set = new HashSet<>();
+            String deviceIp = "";
+            for (DataCollectVo dataCollectVo: dataCollectReq.getDataCollectVoList()){
+                deviceIp = dataCollectVo.getDeviceIp();
+                if(Integer.parseInt(DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode()) <Integer.parseInt(dataCollectVo.getDataItemCode()) &&
+                        Integer.parseInt(dataCollectVo.getDataItemCode())<Integer.parseInt(DataCollectEnum.ISOLATIONLOAD_DOWN_FLOW.getCode())){
+                    set.add(dataCollectVo.getDataItemCode());
+                }
+            }
+            for (String s : set) {
+                dataCollectService.handleAddData(s,deviceIp);
+            }
+            result.setResultObj(i);
             result.setSuccess(true);
         }catch (Exception e){
             result.setErrorMsg("");

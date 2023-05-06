@@ -69,7 +69,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
             result.setSuccess(true);
         }catch (Exception e){
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg(e.getMessage());
             log.info("selectTerminalData:{}",e.getMessage());
         }
         return result;

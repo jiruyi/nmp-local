@@ -50,9 +50,10 @@ public class TerminalDataDomainServiceImpl implements TerminalDataDomainService 
         NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
         criteria.andLanIpEqualTo(terminalDataRequest.getParenIp());
         List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(baseStationInfoExample);
-        if(!CollectionUtils.isEmpty(baseStationInfos)){
-            terminalDataRequest.setParentId(baseStationInfos.get(0).getStationId());
+        if(CollectionUtils.isEmpty(baseStationInfos)){
+            throw new RuntimeException("设备列表中不存在该设备");
         }
+        terminalDataRequest.setParentId(baseStationInfos.get(0).getStationId());
         terminalDataRequest.setDataType(TerminalDataEnum.RESIDUE.getCode());
         Page page = PageHelper.startPage(terminalDataRequest.getPageNo(),terminalDataRequest.getPageSize());
         List<TerminalDataVo> list = terminalDataExtMapper.distinctTerminalData(terminalDataRequest);

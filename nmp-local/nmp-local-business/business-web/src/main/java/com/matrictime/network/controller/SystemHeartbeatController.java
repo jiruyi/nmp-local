@@ -52,7 +52,7 @@ public class SystemHeartbeatController {
         }catch (Exception e){
             log.info("selectSystemHeartbeat:{}",e.getMessage());
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg(e.getMessage());
         }
         return result;
     }
