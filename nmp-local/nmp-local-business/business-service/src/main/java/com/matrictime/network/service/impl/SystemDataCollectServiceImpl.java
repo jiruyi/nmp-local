@@ -44,20 +44,11 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
     public Result<BaseStationDataVo> selectBaseStationData(DataCollectReq dataCollectReq) {
         Result<BaseStationDataVo> result = new Result<>();
         try {
-            String value = (String) redisTemplate.opsForValue().
-                    get(DataConstants.BASE_STATION_FLOW_COUNT);
-            if(ObjectUtils.isEmpty(value)){
-                BaseStationDataVo baseStationDataVo = systemDataCollectDomainService.selectBaseStationData(dataCollectReq);
-                redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT,JSONObject.toJSONString(baseStationDataVo),30, TimeUnit.MINUTES);
-                result.setSuccess(true);
-                result.setResultObj(baseStationDataVo);
-                return result;
-            }
-            BaseStationDataVo baseStationDataVo = JSONObject.parseObject(value, BaseStationDataVo.class);
-            result.setResultObj(baseStationDataVo);
+            BaseStationDataVo baseStationDataVo = systemDataCollectDomainService.selectBaseStationData(dataCollectReq);
             result.setSuccess(true);
+            result.setResultObj(baseStationDataVo);
         }catch (Exception e){
-            result.setErrorMsg("");
+            result.setErrorMsg(e.getMessage());
             result.setSuccess(false);
             log.info("selectBaseStationData:{}",e.getMessage());
         }
@@ -68,20 +59,11 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
     public Result<BorderBaseStationDataVo> selectBorderBaseStationData(DataCollectReq dataCollectReq) {
         Result<BorderBaseStationDataVo> result = new Result<>();
         try {
-            String value = (String) redisTemplate.opsForValue().
-                    get(DataConstants.BORDER_BASE_STATION_FLOW_COUNT);
-            if(ObjectUtils.isEmpty(value)){
-                BorderBaseStationDataVo borderBaseStationDataVo = systemDataCollectDomainService.selectBorderBaseStationData(dataCollectReq);
-                redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT,JSONObject.toJSONString(borderBaseStationDataVo),30, TimeUnit.MINUTES);
-                result.setSuccess(true);
-                result.setResultObj(borderBaseStationDataVo);
-                return result;
-            }
-            BorderBaseStationDataVo borderBaseStationDataVo = JSONObject.parseObject(value, BorderBaseStationDataVo.class);
-            result.setResultObj(borderBaseStationDataVo);
+            BorderBaseStationDataVo borderBaseStationDataVo = systemDataCollectDomainService.selectBorderBaseStationData(dataCollectReq);
             result.setSuccess(true);
+            result.setResultObj(borderBaseStationDataVo);
         }catch (Exception e){
-            result.setErrorMsg("");
+            result.setErrorMsg(e.getMessage());
             result.setSuccess(false);
             log.info("selectBorderBaseStationData:{}",e.getMessage());
         }
@@ -92,20 +74,11 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
     public Result<KeyCenterDataVo> selectKeyCenterData(DataCollectReq dataCollectReq) {
         Result<KeyCenterDataVo> result = new Result<>();
         try {
-            String value = (String) redisTemplate.opsForValue().
-                    get(DataConstants.KEY_CENTER_FLOW_COUNT);
-            if(ObjectUtils.isEmpty(value)){
-                KeyCenterDataVo keyCenterDataVo = systemDataCollectDomainService.selectKeyCenterData(dataCollectReq);
-                redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT,JSONObject.toJSONString(keyCenterDataVo),30, TimeUnit.MINUTES);
-                result.setSuccess(true);
-                result.setResultObj(keyCenterDataVo);
-                return result;
-            }
-            KeyCenterDataVo keyCenterDataVo = JSONObject.parseObject(value, KeyCenterDataVo.class);
+            KeyCenterDataVo keyCenterDataVo = systemDataCollectDomainService.selectKeyCenterData(dataCollectReq);
             result.setResultObj(keyCenterDataVo);
             result.setSuccess(true);
         }catch (Exception e){
-            result.setErrorMsg("");
+            result.setErrorMsg(e.getMessage());
             result.setSuccess(false);
             log.info("selectKeyCenterData:{}",e.getMessage());
         }
@@ -120,6 +93,18 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
             for(DataCollectVo dataCollectVo: dataCollectReq.getDataCollectVoList()){
                 i = systemDataCollectDomainService.insertSystemData(dataCollectVo);
             }
+//            //接入基站存入redis
+//            BaseStationDataVo baseStationDataVo = systemDataCollectDomainService.selectBaseStationData(dataCollectReq);
+//            redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT + dataCollectReq,JSONObject.toJSONString(baseStationDataVo),
+//                    30, TimeUnit.MINUTES);
+//            //边界基站存入redis
+//            BorderBaseStationDataVo borderBaseStationDataVo = systemDataCollectDomainService.selectBorderBaseStationData(dataCollectReq);
+//            redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT,JSONObject.toJSONString(borderBaseStationDataVo),
+//                    30, TimeUnit.MINUTES);
+//            //密钥中心存入redis
+//            KeyCenterDataVo keyCenterDataVo = systemDataCollectDomainService.selectKeyCenterData(dataCollectReq);
+//            redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT,JSONObject.toJSONString(keyCenterDataVo),
+//                    30, TimeUnit.MINUTES);
             //插入缓存
             Set<String> set = new HashSet<>();
             String deviceIp = "";
