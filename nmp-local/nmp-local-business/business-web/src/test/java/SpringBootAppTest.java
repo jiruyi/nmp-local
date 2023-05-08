@@ -36,16 +36,18 @@ public class SpringBootAppTest {
     @Test
     public void testRedis(){
         List<AlarmInfo> alarmInfoList = new ArrayList<>();
-        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.24").alarmUploadTime(new Date()).alarmContentType("1").alarmSourceType("00").alarmLevel("1").build());
-        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.24").alarmUploadTime(new Date()).alarmContentType("2").alarmSourceType("00").alarmLevel("1").build());
-        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.24").alarmUploadTime(new Date()).alarmContentType("3").alarmSourceType("00").alarmLevel("1").build());
-        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.24").alarmUploadTime(new Date()).alarmContentType("4").alarmSourceType("00").alarmLevel("1").build());
-        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.25").alarmUploadTime(new Date()).alarmContentType("1").alarmSourceType("00").alarmLevel("1").build());
-        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.25").alarmUploadTime(new Date()).alarmContentType("2").alarmSourceType("00").alarmLevel("1").build());
-        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.25").alarmUploadTime(new Date()).alarmContentType("3").alarmSourceType("00").alarmLevel("1").build());
-        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.25").alarmUploadTime(new Date()).alarmContentType("4").alarmSourceType("00").alarmLevel("1").build());
-        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.241").alarmUploadTime(DateUtils.addDayForNow(-1)).alarmSourceType("00").alarmLevel("1").alarmContentType("4").build());
-        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.221").alarmUploadTime(DateUtils.addDayForNow(-2)).alarmSourceType("00").alarmLevel("1").alarmContentType("4").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(new Date()).alarmContentType("1").alarmSourceType("00").alarmLevel("1").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(new Date()).alarmContentType("2").alarmSourceType("00").alarmLevel("2").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(new Date()).alarmContentType("3").alarmSourceType("00").alarmLevel("3").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(new Date()).alarmContentType("4").alarmSourceType("00").alarmLevel("4").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(new Date()).alarmContentType("1").alarmSourceType("00").alarmLevel("1").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(new Date()).alarmContentType("1").alarmSourceType("00").alarmLevel("2").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(new Date()).alarmContentType("2").alarmSourceType("00").alarmLevel("3").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(new Date()).alarmContentType("3").alarmSourceType("00").alarmLevel("4").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(DateUtils.addDayForNow(-1)).alarmSourceType("00").alarmLevel("2").alarmContentType("1").alarmContent("cpu过高").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(DateUtils.addDayForNow(-2)).alarmSourceType("00").alarmLevel("1").alarmContentType("2").alarmContent("内存不足").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.20").alarmUploadTime(DateUtils.addDayForNow(-1)).alarmSourceType("00").alarmLevel("2").alarmContentType("3").alarmContent("磁盘满载").build());
+        alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.20").alarmUploadTime(DateUtils.addDayForNow(-2)).alarmSourceType("00").alarmLevel("1").alarmContentType("4").alarmContent("流量过高").build());
         alarmDataDomainService.acceptAlarmData(alarmInfoList);
     }
 

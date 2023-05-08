@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_alarm_info` (
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
     PRIMARY KEY (`alarm_id`),
     KEY `idx_device_id` (`alarm_source_id`),
+    KEY `idx_source_ip` (`alarm_source_ip`),
     KEY `upload_time_key` (`alarm_upload_time`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

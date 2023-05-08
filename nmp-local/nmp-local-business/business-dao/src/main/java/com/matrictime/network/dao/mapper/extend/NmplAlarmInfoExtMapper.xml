@@ -25,8 +25,7 @@
         SELECT alarm_level as alarmLevel, COUNT(*) as countLevel
         FROM nmpl_alarm_info
         WHERE alarm_source_type = #{paramMap.alarmSourceType,jdbcType=CHAR}
-          AND DATE (alarm_upload_time) >= DATE_SUB( CURDATE()
-            , INTERVAL ${paramMap.timePicker} DAY)
+          AND DATE(alarm_upload_time) >= DATE_SUB(CURDATE() , INTERVAL ${paramMap.timePicker} DAY)
           AND alarm_source_id IN
             (SELECT ${paramMap.columnName}
             FROM ${paramMap.tableName}
@@ -34,23 +33,34 @@
           AND is_exist = '1')
         GROUP BY alarm_level;
     </select>
-    <!--   查询物理系统条数 -->
+    <!-- 根据小区和时间范围  查询物理资源告警条数 -->
     <select id="selectPhyAlarmCount" resultType="map" parameterType="map">
         SELECT alarm_source_ip           as sourceIp,
                alarm_content_type        as contentType,
                COUNT(alarm_content_type) as typeCount
         FROM nmpl_alarm_info
         WHERE alarm_source_type = '00'
-          AND
-            DATE (alarm_upload_time) >= DATE_SUB( CURDATE()
-            , INTERVAL ${paramMap.timePicker} DAY)
-          AND
-            alarm_source_ip IN
+          AND DATE(alarm_upload_time) >= DATE_SUB(CURDATE(), INTERVAL ${paramMap.timePicker} DAY)
+          AND alarm_source_ip IN
             ( SELECT lan_ip FROM nmpl_base_station_info WHERE relation_operator_id = #{paramMap.roId,jdbcType=VARCHAR}
-          AND is_exist = '1'
-            UNION
-            SELECT lan_ip FROM nmpl_device_info WHERE relation_operator_id = #{paramMap.roId,jdbcType=VARCHAR}
-          AND is_exist = '1' )
+             AND is_exist = '1'
+             UNION
+             SELECT lan_ip FROM nmpl_device_info WHERE relation_operator_id = #{paramMap.roId,jdbcType=VARCHAR}
+             AND is_exist = '1' )
+        GROUP BY alarm_source_ip, alarm_content_type;
+    </select>
+    <!-- 根据小区和日期  查询物理资源告警条数 -->
+    <select id="selectPhyAlarmCountByDates" resultType="map" parameterType="map">
+        SELECT alarm_source_ip           as sourceIp,
+               alarm_content_type        as contentType,
+               COUNT(alarm_content_type) as typeCount
+        FROM  nmpl_alarm_info
+        WHERE alarm_source_type = '00'
+              AND DATE(alarm_upload_time) in
+             <foreach collection="paramMap.dates" item="date" separator="," open="(" close=")">
+                 #{date,jdbcType=DATE}
+             </foreach>
+              AND alarm_source_ip  = #{paramMap.ip,jdbcType=VARCHAR}
         GROUP BY alarm_source_ip, alarm_content_type;
     </select>
 

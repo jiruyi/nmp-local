@@ -21,13 +21,13 @@ import java.io.Serializable;
 public class AlarmPhyTypeCount implements Serializable {
     private static final long serialVersionUID = -5568226664685235967L;
 
-    private Long cpuCount;
+    private Long cpuCount = 0L;
 
-    private Long memCount;
+    private Long memCount = 0L;
 
-    private Long diskCount;
+    private Long diskCount= 0L;
 
-    private Long flowCount;
+    private Long flowCount= 0L;
 
     private  String phyIp;
 }

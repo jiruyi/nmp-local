@@ -23,7 +23,7 @@ public interface AlarmDataDomainService {
 
      void alarmSysCountDataForRedis(List<AlarmInfo> alarmInfoList);
 
-     void alarmPhyCountDataForRedis(List<AlarmInfo> alarmInfoList);
+     void alarmPhyCountDataToRedis(List<AlarmInfo> alarmInfoList);
 
      Map<String, Map<String,Long>> querySysAlarmDataCount(AlarmDataBaseRequest alarmDataBaseRequest) throws Exception;
 

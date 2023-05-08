@@ -23,6 +23,8 @@ public interface NmplAlarmInfoExtMapper {
 
     List<Map> selectPhyAlarmCount(@Param("paramMap") Map<String,String> paramMap);
 
+    List<Map>  selectPhyAlarmCountByDates(@Param("paramMap") Map paramMap);
+
     List<NmplAlarmInfo> queryAlarmDataList(AlarmDataListReq alarmDataListReq);
 
     List<String> selectIpFromDeviceAndStation(String roId);
