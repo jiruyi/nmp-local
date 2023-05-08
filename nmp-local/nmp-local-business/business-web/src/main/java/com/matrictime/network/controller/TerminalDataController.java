@@ -42,7 +42,7 @@ public class TerminalDataController {
         }catch (Exception e){
             log.info("selectTerminalData:{}",e.getMessage());
             result.setSuccess(false);
-            result.setErrorMsg("");
+            result.setErrorMsg(e.getMessage());
         }
         return result;
     }

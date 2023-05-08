@@ -36,13 +36,13 @@ public interface TaskService {
      * 业务心跳上报
      * @param url
      */
-    void SystemHeartbeat(String url);
+    void systemHeartbeat(String url);
 
     /**
      * 用户状态上报
      * @param url
      */
-    void TerminalUser(String url);
+    void terminalUser(String url);
 
     /**
      * 终端流量收集

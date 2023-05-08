@@ -99,7 +99,7 @@ public class ScheduledTask {
     @Async
     public void systemHeartbeat(){
         log.info(Thread.currentThread().getName()+"======================SystemHeartbeat begin=============================");
-        taskService.SystemHeartbeat(ip + KEY_SPLIT + port + SYSTEM_HEARTBEAT_URL);
+        taskService.systemHeartbeat(ip + KEY_SPLIT + port + SYSTEM_HEARTBEAT_URL);
         log.info(Thread.currentThread().getName()+"======================SystemHeartbeat end=============================");
     }
 
@@ -107,7 +107,7 @@ public class ScheduledTask {
     @Async
     public void terminalUser(){
         log.info(Thread.currentThread().getName()+"======================TerminalUser begin=============================");
-        taskService.SystemHeartbeat(ip + KEY_SPLIT + port + TERMINAL_USER_URL);
+        taskService.terminalUser(ip + KEY_SPLIT + port + TERMINAL_USER_URL);
         log.info(Thread.currentThread().getName()+"======================TerminalUser end=============================");
     }
 

@@ -20,7 +20,8 @@
             a.down_value,
             a.upload_time,
             a.parent_id,
-            a.data_type
+            a.data_type,
+            a.terminal_ip
         FROM
             nmpl_terminal_data a,
             (
@@ -36,14 +37,13 @@
                     data_type
             ) AS b
         WHERE
-            a.terminal_network_id = b.terminal_network_id
-        <if test="parentId != null">
-            AND a.parent_id = #{parentId,jdbcType=VARCHAR}
-            AND b.parent_id = #{parentId,jdbcType=VARCHAR}
-        </if>
-          AND a.upload_time = b.q
-          AND a.data_type = b.data_type
-          AND b.data_type = #{dataType,jdbcType=CHAR}
+        a.terminal_network_id = b.terminal_network_id
+        AND a.parent_id = #{parentId,jdbcType=VARCHAR}
+        AND b.parent_id = #{parentId,jdbcType=VARCHAR}
+        AND a.upload_time = b.q
+        AND a.data_type = b.data_type
+        AND b.data_type = #{dataType,jdbcType=CHAR}
+        order by a.upload_time desc
     </select>
 
 

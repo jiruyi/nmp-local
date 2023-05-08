@@ -372,7 +372,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void SystemHeartbeat(String url) {
+    public void systemHeartbeat(String url) {
         SystemHeartbeatResponse systemHeartbeatResponse = systemHeartbeatDomainService.selectSystemHeartbeat();
         Boolean flag = false;
         String post = null;
@@ -394,7 +394,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void TerminalUser(String url) {
+    public void terminalUser(String url) {
         TerminalUserResponse terminalUserResponse = terminalUserDomainService.selectTerminalUser();
         Boolean flag = false;
         String post = null;
