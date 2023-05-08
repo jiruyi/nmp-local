@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public enum AlarmSysLevelEnum {
 
-    RESOURCE("00","资源","resource","null","null"),
     ACCESS("01","接入基站","access","station_id","nmpl_base_station_info"),
     BOUNDARY("02","边界基站","boundary","station_id","nmpl_base_station_info"),
     KEYCENTER("11","密钥中心","keyCenter","device_id","nmpl_device_info");

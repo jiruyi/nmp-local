@@ -17,4 +17,6 @@ public class BusinessConsts {
     public static final String RESOURCE_TYPE_LOAD = "4";
     // 资源类型 5 其他
     public static final String RESOURCE_TYPE_EXT = "5";
+
+    public static final String ALARM_SOURCE_TYPE_RESOURCE = "00";
 }
