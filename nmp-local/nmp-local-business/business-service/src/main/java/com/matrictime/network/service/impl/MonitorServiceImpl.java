@@ -278,7 +278,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         if (isAlarm){
             alarmInfo.setAlarmSourceIp(dto.getDeviceIp());
             alarmInfo.setAlarmUploadTime(dto.getUploadTime());
-            alarmInfo.setAlarmSourceType(AlarmSysLevelEnum.RESOURCE.getCode());
+            alarmInfo.setAlarmSourceType(ALARM_SOURCE_TYPE_RESOURCE);
         }
         return alarmInfo;
     }
