@@ -247,4 +247,6 @@ public class DataConstants {
 
     public static final String VLINE  ="-";
 
+    public static final String DEFAULT_ZERO = "0.00";
+
 }
