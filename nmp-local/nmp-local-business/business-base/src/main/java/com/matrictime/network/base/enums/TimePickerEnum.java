@@ -9,11 +9,11 @@ package com.matrictime.network.base.enums;
  */
 public enum TimePickerEnum {
     TODAY("0","今天",0),
-    THREE("3","近三天",3),
-    SEVEN("7","近七天",7),
-    THIRTY("30","近一个月",30),
-    NINETY("90","近三个月",90),
-    HUNDREDEIGHTY("180","近六个月",180),
+    THREE("3","近三天",2),
+    SEVEN("7","近七天",6),
+    THIRTY("30","近一个月",29),
+    NINETY("90","近三个月",89),
+    HUNDREDEIGHTY("180","近六个月",179),
     ;
 
     private String code;
