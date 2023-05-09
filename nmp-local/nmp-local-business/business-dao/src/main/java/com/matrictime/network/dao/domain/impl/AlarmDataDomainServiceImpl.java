@@ -215,7 +215,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
             int cpuCount = 0, memCount = 0, diskCount = 0, flowCount = 0;
             Map<String ,Integer> countMap = new ConcurrentHashMap<>();
             /**3 获取value中每个日期*/
-            for (int i = 0; i < Integer.valueOf(alarmDataBaseRequest.getTimePicker()); i++) {
+            for (int i = 0; i <= Integer.valueOf(alarmDataBaseRequest.getTimePicker()); i++) {
                 /** 从当前日期往前推 ,.timepicker(0  3 7 30 90 180)天 去除时分秒*/
                 Date everyDate = DateUtils.dateToDate(DateUtils.addDayForNow(-i));
                 String dateValue = physicalValueMap.get(everyDate);
@@ -257,6 +257,14 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
         return resultList;
     }
 
+    /**
+      * @title mergeListByContentType
+      * @param [mapList]
+      * @return java.util.List<java.util.Map>
+      * @description  合并类型 把所有告警类型相同的map 相加count后合并
+      * @author jiruyi
+      * @create 2023/5/9 0009 9:28
+      */
     public List<Map> mergeListByContentType(List<Map> mapList){
         if(CollectionUtils.isEmpty(mapList)){
             return null;
@@ -344,6 +352,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
             }
             phyTypeCountList.add(phyTypeCount);
         });
+        /**补全没有数据的物理设备 默认都是0*/
         ips.removeAll(phyTypeCountList.stream().map(AlarmPhyTypeCount::getPhyIp).collect(Collectors.toList()));
         ips.stream().forEach(ip ->{
             phyTypeCountList.add(AlarmPhyTypeCount.builder().phyIp(ip).build());

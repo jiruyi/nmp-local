@@ -391,8 +391,8 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             checkPhysicalDevicesResourceParam(req);
             Date now = new Date();
             List<SystemResourceVo> resourceVos = getSystemResources(req.getDeviceIp(),now);
-            Map<String,List<String>> cpuInfos = getSystemResourceSL(resourceVos,"CPU",DateUtils.getRecentHalfTime(now));
-            Map<String,List<String>> memInfos = getSystemResourceSL(resourceVos,"MEM",DateUtils.getRecentHalfTime(now));
+            Map<String,List<String>> cpuInfos = getSystemResourceSL(resourceVos,RESOURCE_TYPE_CPU,DateUtils.getRecentHalfTime(now));
+            Map<String,List<String>> memInfos = getSystemResourceSL(resourceVos,RESOURCE_TYPE_MEMORY,DateUtils.getRecentHalfTime(now));
             resp.setResourceVos(resourceVos);
             resp.setCpuInfos(cpuInfos);
             resp.setMemInfos(memInfos);
@@ -436,14 +436,18 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
      * @param vo
      */
     private void putSystemResourceRedis(SystemResourceVo vo){
-        StringBuffer key = new StringBuffer(SYSTEM_NM);
-        key.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(vo.getSystemId());
-        String hashKey = DateUtils.formatDateToString2(vo.getUploadTime(),MINUTE_TIME_FORMAT);
-        DisplayVo displayVo = new DisplayVo();
-        displayVo.setDate(DateUtils.formatDateToInteger(vo.getUploadTime()));
-        displayVo.setValue1(vo.getCpuPercent());
-        displayVo.setValue2(vo.getMemoryPercent());
-        redisTemplate.opsForHash().put(key.toString(),hashKey,displayVo);
+        try{
+            StringBuffer key = new StringBuffer(SYSTEM_NM);
+            key.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(vo.getSystemId());
+            String hashKey = DateUtils.formatDateToString2(vo.getUploadTime(),MINUTE_TIME_FORMAT);
+            DisplayVo displayVo = new DisplayVo();
+            displayVo.setDate(DateUtils.formatDateToInteger(vo.getUploadTime()));
+            displayVo.setValue1(vo.getCpuPercent());
+            displayVo.setValue2(vo.getMemoryPercent());
+            redisTemplate.opsForHash().put(key.toString(),hashKey,displayVo);
+        }catch (Exception e){
+            log.warn("putSystemResourceRedis exception:{}",e);
+        }
     }
 
     /**
@@ -512,9 +516,15 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 String systemId = vo.getSystemId();
                 StringBuffer hashKey = new StringBuffer(SYSTEM_NM);
                 hashKey.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(systemId);
-                Map<String,DisplayVo> entries = redisTemplate.opsForHash().entries(hashKey.toString());
+                Map<String,DisplayVo> entries = new HashMap<>();
+                try{
+                    entries = redisTemplate.opsForHash().entries(hashKey.toString());
+                }catch (Exception e){
+                    log.warn("getSystemResourceSL getall redis exception:{}",e);
+                }
+                Date recentHalfTime = DateUtils.getRecentHalfTime(now);
                 if (entries.isEmpty()){
-                    Date uploadTime = DateUtils.addDayForDate(DateUtils.getRecentHalfTime(now), -1);
+                    Date uploadTime = DateUtils.addDayForDate(recentHalfTime, -1);
                     NmplSystemResourceExample example = new NmplSystemResourceExample();
                     example.createCriteria().andUploadTimeGreaterThanOrEqualTo(uploadTime).andSystemIdEqualTo(systemId);
                     List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
@@ -527,25 +537,47 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                             String mapKey = DateUtils.formatDateToString2(resource.getUploadTime(), MINUTE_TIME_FORMAT);
                             entries.put(mapKey,displayVo);
                         }
-                        redisTemplate.opsForHash().putAll(hashKey.toString(),entries);
+                        try {
+                            redisTemplate.opsForHash().putAll(hashKey.toString(),entries);
+                        }catch (Exception e){
+                            log.warn("getSystemResourceSL putall redis exception:{}",e);
+                        }
                     }
 
                 }
                 for (String time : xTime){
+                    String value = DEFAULT_ZERO;
                     if (entries.containsKey(time)){
                         DisplayVo displayVo = entries.get(time);
                         if (nowStr.equals(displayVo.getDate())){
-                            if ("CPU".equals(systemType)){
-                                values.add(displayVo.getValue1());
-                            }else if ("MEM".equals(systemType)){
-                                values.add(displayVo.getValue2());
+                            if (RESOURCE_TYPE_CPU.equals(systemType)){
+                                value = displayVo.getValue1();
+                            }else if (RESOURCE_TYPE_MEMORY.equals(systemType)){
+                                value = displayVo.getValue2();
                             }
-                        }else {
-                            values.add("0.00");
                         }
                     }else {
-                        values.add("0.00");
+                        NmplSystemResourceExample example = new NmplSystemResourceExample();
+                        example.createCriteria().andSystemIdEqualTo(systemId).andSystemTypeEqualTo(systemType).andUploadTimeEqualTo(recentHalfTime);
+                        List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
+                        SystemResourceVo resourceVo = new SystemResourceVo();
+                        if (!CollectionUtils.isEmpty(resources)){
+                            BeanUtils.copyProperties(resources.get(0),resourceVo);
+                            if (RESOURCE_TYPE_CPU.equals(systemType)){
+                                value = resources.get(0).getCpuPercent();
+                            }else if (RESOURCE_TYPE_MEMORY.equals(systemType)){
+                                value = resources.get(0).getMemoryPercent();
+                            }
+                            putSystemResourceRedis(resourceVo);
+                        }else {
+                            resourceVo.setSystemId(systemId);
+                            resourceVo.setUploadTime(recentHalfTime);
+                            resourceVo.setCpuPercent(DEFAULT_ZERO);
+                            resourceVo.setMemoryPercent(DEFAULT_ZERO);
+                            putSystemResourceRedis(resourceVo);
+                        }
                     }
+                    values.add(value);
                 }
                 resMap.put(systemId,values);
             }
