@@ -356,9 +356,9 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
             }
             //过滤重复ip的基站和密钥分发机
             List<NmplDeviceInfo> deviceInfoList = deviceExtMapper.deduplicationLanIp(ipList);
-            for(NmplDeviceInfo deviceCount: deviceInfoList){
+            for(int i = 0;i<deviceInfoList.size();i++){
                 CommunityBaseStationVo communityBaseStationVo = new CommunityBaseStationVo();
-                BeanUtils.copyProperties(deviceCount,communityBaseStationVo);
+                BeanUtils.copyProperties(deviceInfoList.get(i),communityBaseStationVo);
                 list.add(communityBaseStationVo);
             }
         }
