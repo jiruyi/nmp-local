@@ -27,4 +27,9 @@ public class QuerySystemResourceResp implements Serializable {
      */
     private Map<String, List<String>> memInfos;
 
+    /**
+     * 横轴的值
+     */
+    private List<String> xTime;
+
 }
