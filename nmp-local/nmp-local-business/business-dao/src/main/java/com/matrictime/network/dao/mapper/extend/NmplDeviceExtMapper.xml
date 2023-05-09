@@ -204,4 +204,16 @@
     and nbsi.is_exist = '1'
   </select>
 
+  <select id="deduplicationLanIp" parameterType="list" resultMap="DeviceInfoMap">
+    select
+    <include refid="Device_Info_List" />
+    from
+         nmpl_device_info as ndi
+    where lan_ip not in
+    <foreach collection="lanIp" item="item" open="(" close=")" separator=",">
+      #{item,jdbcType=VARCHAR}
+    </foreach>
+    and is_exist = '1'
+  </select>
+
 </mapper>

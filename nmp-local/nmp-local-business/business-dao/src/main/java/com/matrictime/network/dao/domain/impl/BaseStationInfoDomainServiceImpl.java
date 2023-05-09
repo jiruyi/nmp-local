@@ -7,6 +7,7 @@ import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
 import com.matrictime.network.dao.mapper.*;
+import com.matrictime.network.dao.mapper.extend.NmplDeviceExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.modelVo.*;
@@ -58,6 +59,9 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
 
     @Resource
     private NmplDeviceCountMapper deviceCountMapper;
+
+    @Resource
+    private NmplDeviceExtMapper deviceExtMapper;
 
 
     @Override
@@ -341,41 +345,24 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         //获取物理基站
         List<CommunityBaseStationVo> list = new ArrayList<>();
         if(!CollectionUtils.isEmpty(baseStationInfos)){
+            List<String> ipList = new ArrayList<>();
+            for(NmplBaseStationInfo baseStationInfo: baseStationInfos){
+                ipList.add(baseStationInfo.getLanIp());
+            }
             for(NmplBaseStationInfo baseStationInfo: baseStationInfos){
                 CommunityBaseStationVo communityBaseStationVo = new CommunityBaseStationVo();
                 BeanUtils.copyProperties(baseStationInfo,communityBaseStationVo);
                 list.add(communityBaseStationVo);
             }
             //过滤重复ip的基站和密钥分发机
-            Set<NmplDeviceCount> deviceCountSet = filterBaseStation(baseStationInfos, baseStationInfoRequest);
-            for(NmplDeviceCount deviceCount: deviceCountSet){
+            List<NmplDeviceInfo> deviceInfoList = deviceExtMapper.deduplicationLanIp(ipList);
+            for(NmplDeviceInfo deviceCount: deviceInfoList){
                 CommunityBaseStationVo communityBaseStationVo = new CommunityBaseStationVo();
                 BeanUtils.copyProperties(deviceCount,communityBaseStationVo);
                 list.add(communityBaseStationVo);
             }
         }
         return list;
-    }
-
-    /**
-     * 过滤Ip重复的基站
-     * @param baseStationInfos
-     * @param baseStationInfoRequest
-     * @return
-     */
-    private Set<NmplDeviceCount> filterBaseStation(List<NmplBaseStationInfo> baseStationInfos,BaseStationInfoRequest baseStationInfoRequest){
-        Set<NmplDeviceCount> deviceCountSet = new HashSet<>();
-        for(int i = 0;i < baseStationInfos.size();i++){
-            NmplDeviceCountExample deviceCountExample = new NmplDeviceCountExample();
-            NmplDeviceCountExample.Criteria criteria = deviceCountExample.createCriteria();
-            criteria.andRelationOperatorIdEqualTo(baseStationInfoRequest.getRelationOperatorId());
-            criteria.andIsExistEqualTo(true);
-            criteria.andLanIpNotEqualTo(baseStationInfos.get(i).getLanIp());
-            List<NmplDeviceCount> deviceCounts = deviceCountMapper.selectByExample(deviceCountExample);
-            deviceCountSet.addAll(deviceCounts);
-        }
-        return deviceCountSet;
-
     }
 
     /**
