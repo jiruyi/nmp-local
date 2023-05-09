@@ -19,5 +19,7 @@ public interface NmplDeviceExtMapper {
 
     List<VersionInfoVo> queryRunDataByCondition(VersionReq req);
 
+    List<NmplDeviceInfo> deduplicationLanIp(@Param("lanIp") List<String> stringList);
+
 
 }
