@@ -26,6 +26,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.request.TerminalDataRequest;
 import com.matrictime.network.response.TerminalDataResponse;
 import com.matrictime.network.service.TerminalDataService;
+import com.matrictime.network.util.DateUtils;
 import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -110,36 +111,13 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
             String key = DataConstants.FLOW_TRANSFOR
                     +terminalDataReq.getTerminalNetworkId()+UNDERLINE +terminalDataReq.getDataType();
             Map<String, TimeDataVo> cache = getRedisHash(key);
-            Map<String, JSONObject> map = new HashMap<>();
             if(cache.isEmpty()) {
-                // 如果redis查询为空 或者redis查询异常 则通过mysql获取24小时历史数据
-                NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
-                nmplTerminalDataExample.createCriteria().andDataTypeEqualTo(terminalDataReq.getDataType())
-                        .andTerminalNetworkIdEqualTo(terminalDataReq.getTerminalNetworkId())
-                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWENTY_FOUR,ZERO));
-                List<NmplTerminalData> nmplTerminalData = nmplTerminalDataMapper.selectByExample(nmplTerminalDataExample);
-
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-                for (NmplTerminalData nmplTerminalDatum : nmplTerminalData) {
-                    BigDecimal upValue = new BigDecimal(nmplTerminalDatum.getUpValue());
-                    BigDecimal downValue = new BigDecimal(nmplTerminalDatum.getDownValue());
-                    if (cache.containsKey(formatter.format(nmplTerminalDatum.getUploadTime()))) {
-                        TimeDataVo timeDataVo = cache.get(formatter.format(nmplTerminalDatum.getUploadTime()));
-                        timeDataVo.setUpValue( upValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getUpValue())).doubleValue());
-                        timeDataVo.setDownValue( downValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getDownValue())).doubleValue());
-                    } else {
-                        TimeDataVo timeDataVo = new TimeDataVo();
-                        timeDataVo.setDate(nmplTerminalDatum.getUploadTime());
-                        timeDataVo.setUpValue(upValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).doubleValue());
-                        timeDataVo.setDownValue(downValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).doubleValue());
-                        cache.put(formatter.format(nmplTerminalDatum.getUploadTime()), timeDataVo);
-                    }
-                }
+                queryAllDataFromMysql(terminalDataReq,cache);
                 //将数据放入redis缓存
                 redisTemplate.opsForHash().putAll(key, cache);
             }
-            supplementaryData(cache);
-            return buildResult(filterData(cache,TimeUtil.getOnTime()));
+            supplementaryDateToRedis(cache,terminalDataReq,key);
+            return buildResult(sortData(cache));
         }catch (SystemException e) {
             log.info("查询终端流量变化数据异常",e.getMessage());
             result = failResult(e);
@@ -181,6 +159,10 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
 
     }
 
+    /**
+     * 校验入参
+     * @param terminalDataReq
+     */
     private void checkParam(TerminalDataReq terminalDataReq){
         if(StringUtil.isEmpty(terminalDataReq.getDataType())|| StringUtil.isEmpty(terminalDataReq.getTerminalNetworkId())){
             throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
@@ -202,68 +184,104 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
     }
 
     /**
-     * 过滤12小时以外的数据
+     * 补充数据
      * @param map
-     * @return
+     * @param terminalDataReq
+     * @param key
      */
-    private List<TimeDataVo> filterData(Map<String, TimeDataVo> map,String now){
-        List<TimeDataVo> res = new ArrayList<>();
-        List<TimeDataVo> result = new ArrayList<>();
-        Set<String> set = map.keySet();
+    private void supplementaryDateToRedis(Map<String, TimeDataVo> map,TerminalDataReq terminalDataReq,String key){
+        Map<String,TimeDataVo> missingTime = new HashMap<>();
         Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
-        for (String s : set) {
-            if(TimeUtil.checkTime(s)){
-                TimeDataVo timeDataVo = map.get(s);
-                TimeDataVo dataVo = new TimeDataVo();
-                BeanUtils.copyProperties(timeDataVo,dataVo);
-                dataVo.setTime(s);
-                if(timeDataVo.getDate().before(timeBeforeHours)){
-                    dataVo.setUpValue(0.0);
-                    dataVo.setDownValue(0.0);
-                }
-                if(timeChange(s).intValue()>timeChange(now)){
-                    result.add(dataVo);
-                }else {
-                    res.add(dataVo);
-                }
+        List<String> timeList = CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -24, 30 * 60, DateUtils.MINUTE_TIME_FORMAT);
+        for (String time : timeList) {
+            TimeDataVo timeDataVo = new TimeDataVo();
+            timeDataVo.setUpValue(0.0);
+            timeDataVo.setDownValue(0.0);
+            timeDataVo.setTime(time);
+            timeDataVo.setDate(new Date());
+            if(!map.containsKey(time)){
+                missingTime.put(time,timeDataVo);
+            }else if(map.get(time).getDate().before(timeBeforeHours)){
+                missingTime.put(time,timeDataVo);
             }
         }
-        //排序
-        Collections.sort(res, (o1, o2) -> timeChange(o1.getTime()).compareTo(timeChange(o2.getTime())));
-        Collections.sort(result, (o1, o2) -> timeChange(o1.getTime()).compareTo(timeChange(o2.getTime())));
-        result.addAll(res);
-        return result;
+        if(!missingTime.isEmpty()){
+            queryMissDataFromMysql(terminalDataReq,missingTime);
+            for (String time : missingTime.keySet()) {
+                redisTemplate.opsForHash().put(key,time,missingTime.get(time));
+            }
+            map.putAll(missingTime);
+        }
     }
 
     /**
-     * 补充map缺失的节点数据
+     * mysql获取12小时的历史数据来补缺失的数据
+     * @param terminalDataReq
+     * @param cache
      */
-    private Map<String,TimeDataVo> supplementaryData(Map<String, TimeDataVo> map){
-        TimeDataVo timeDataVo = new TimeDataVo();
-        timeDataVo.setDate(new Date());
-        timeDataVo.setUpValue(0.0);
-        timeDataVo.setDownValue(0.0);
-        for (int i = 0; i < TWENTY_FOUR; i++) {
-            String time1 = null;
-            String time2 = null;
-            if(i<10){
-                time1 = "0"+ i +":00";
-                time2 = "0"+ i +":30";
-            }else {
-                time1 =  i +":00";
-                time2 =  i +":30";
-            }
-            if(!map.containsKey(time1)){
-                map.put(time1,timeDataVo);
-            }
-            if(!map.containsKey(time2)){
-                map.put(time2,timeDataVo);
+    private void queryMissDataFromMysql(TerminalDataReq terminalDataReq,Map<String,TimeDataVo> cache) {
+        NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
+        nmplTerminalDataExample.createCriteria().andDataTypeEqualTo(terminalDataReq.getDataType())
+                .andTerminalNetworkIdEqualTo(terminalDataReq.getTerminalNetworkId())
+                .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWELVE, ZERO));
+        List<NmplTerminalData> nmplTerminalData = nmplTerminalDataMapper.selectByExample(nmplTerminalDataExample);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+        for (NmplTerminalData nmplTerminalDatum : nmplTerminalData) {
+            BigDecimal upValue = new BigDecimal(nmplTerminalDatum.getUpValue());
+            BigDecimal downValue = new BigDecimal(nmplTerminalDatum.getDownValue());
+            if (cache.containsKey(formatter.format(nmplTerminalDatum.getUploadTime()))) {
+                TimeDataVo timeDataVo = cache.get(formatter.format(nmplTerminalDatum.getUploadTime()));
+                timeDataVo.setUpValue(upValue.divide(new BigDecimal(BASE_NUMBER * BASE_NUMBER * HALF_HOUR_SECONDS / BYTE_TO_BPS), RESERVE_DIGITS, BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getUpValue())).doubleValue());
+                timeDataVo.setDownValue(downValue.divide(new BigDecimal(BASE_NUMBER * BASE_NUMBER * HALF_HOUR_SECONDS / BYTE_TO_BPS), RESERVE_DIGITS, BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getDownValue())).doubleValue());
+                timeDataVo.setDate(nmplTerminalDatum.getUploadTime());
             }
         }
-        return map;
     }
 
-    private Integer timeChange(String string){
-        return Integer.valueOf(string.replaceAll(":",""));
+    /**
+     * mysql获取12小时所有的历史数据
+     * @param terminalDataReq
+     * @param cache
+     */
+    private void queryAllDataFromMysql(TerminalDataReq terminalDataReq,Map<String,TimeDataVo> cache){
+        // 如果redis查询为空 或者redis查询异常 则通过mysql获取12小时历史数据
+        NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
+        nmplTerminalDataExample.createCriteria().andDataTypeEqualTo(terminalDataReq.getDataType())
+                .andTerminalNetworkIdEqualTo(terminalDataReq.getTerminalNetworkId())
+                .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWELVE,ZERO));
+        List<NmplTerminalData> nmplTerminalData = nmplTerminalDataMapper.selectByExample(nmplTerminalDataExample);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+        for (NmplTerminalData nmplTerminalDatum : nmplTerminalData) {
+            BigDecimal upValue = new BigDecimal(nmplTerminalDatum.getUpValue());
+            BigDecimal downValue = new BigDecimal(nmplTerminalDatum.getDownValue());
+            if (cache.containsKey(formatter.format(nmplTerminalDatum.getUploadTime()))) {
+                TimeDataVo timeDataVo = cache.get(formatter.format(nmplTerminalDatum.getUploadTime()));
+                timeDataVo.setUpValue( upValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getUpValue())).doubleValue());
+                timeDataVo.setDownValue( downValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getDownValue())).doubleValue());
+            } else {
+                TimeDataVo timeDataVo = new TimeDataVo();
+                timeDataVo.setDate(nmplTerminalDatum.getUploadTime());
+                timeDataVo.setUpValue(upValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).doubleValue());
+                timeDataVo.setDownValue(downValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).doubleValue());
+                cache.put(formatter.format(nmplTerminalDatum.getUploadTime()), timeDataVo);
+            }
+        }
+    }
+
+    /**
+     * 排序返回结果集
+     * @param map
+     * @return
+     */
+    private List<TimeDataVo> sortData(Map<String, TimeDataVo> map){
+        List<String> timeList = CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -24, 30 * 60, DateUtils.MINUTE_TIME_FORMAT);
+        List<TimeDataVo> result = new ArrayList<>();
+        for (String s : timeList) {
+            map.get(s).setTime(s);
+            result.add(map.get(s));
+        }
+        return result;
     }
 }

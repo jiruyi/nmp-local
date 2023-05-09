@@ -22,10 +22,12 @@ import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.TimeDataVo;
 import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.MonitorReq;
+import com.matrictime.network.request.TerminalDataReq;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.MonitorResp;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DataCollectService;
+import com.matrictime.network.util.DateUtils;
 import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -377,34 +379,13 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             String key = DataConstants.FLOW_TRANSFOR
                     +dataCollectReq.getDeviceIp()+UNDERLINE +dataCollectReq.getDataItemCode();
             Map<String, TimeDataVo> cache = getRedisHash(key);
-            Map<String, Double> map = new HashMap<>();
             if(cache.isEmpty()) {
-                // 如果redis查询为空 或者redis查询异常 则通过mysql获取24小时历史数据
-                NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
-                nmplDataCollectExample.createCriteria().andDataItemCodeEqualTo(dataCollectReq.getDataItemCode())
-                        .andDeviceIpEqualTo(dataCollectReq.getDeviceIp())
-                        .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWENTY_FOUR,ZERO));
-                List<NmplDataCollect> dataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
-
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-                for (NmplDataCollect nmplDataCollect : dataCollectList) {
-                    BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
-                    if (cache.containsKey(formatter.format(nmplDataCollect.getUploadTime()))) {
-                        TimeDataVo timeDataVo = cache.get(formatter.format(nmplDataCollect.getUploadTime()));
-                        // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
-                        timeDataVo.setValue( + bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getValue())).doubleValue());
-                    } else {
-                        TimeDataVo timeDataVo = new TimeDataVo();
-                        timeDataVo.setDate(nmplDataCollect.getUploadTime());
-                        timeDataVo.setValue(bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).doubleValue());
-                        cache.put(formatter.format(nmplDataCollect.getUploadTime()), timeDataVo);
-                    }
-                }
+                queryAllDataFromMysql(dataCollectReq,cache);
                 //将数据放入redis缓存
                 redisTemplate.opsForHash().putAll(key, cache);
             }
-            supplementaryData(cache);
-            return buildResult(filterData(cache,TimeUtil.getOnTime()));
+            supplementaryDateToRedis(cache,dataCollectReq,key);
+            return buildResult(sortData(cache));
         }catch (SystemException e) {
             log.info("查询服务器流量变化数据异常",e.getMessage());
             result = failResult(e);
@@ -513,6 +494,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         nmplAlarmInfo.setAlarmSourceIp(ip);
         nmplAlarmInfo.setAlarmLevel("1");
         nmplAlarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.FLOW.getCode());
+        nmplAlarmInfo.setAlarmSourceType("00");
         nmplAlarmInfo.setAlarmUploadTime(new Date());
         nmplAlarmInfo.setAlarmContent(AlarmPhyConTypeEnum.FLOW.getDesc());
         nmplAlarmInfoMapper.insert(nmplAlarmInfo);
@@ -533,68 +515,103 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         return res;
     }
 
+
     /**
-     * 过滤12小时以外的数据
+     * 补充数据
+     * @param map
+     * @param dataCollectReq
+     * @param key
+     */
+    private void supplementaryDateToRedis(Map<String, TimeDataVo> map, DataCollectReq dataCollectReq, String key){
+        Map<String,TimeDataVo> missingTime = new HashMap<>();
+        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
+        List<String> timeList = CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -24, 30 * 60, DateUtils.MINUTE_TIME_FORMAT);
+        for (String time : timeList) {
+            TimeDataVo timeDataVo = new TimeDataVo();
+            timeDataVo.setValue(0.0);
+            timeDataVo.setTime(time);
+            timeDataVo.setDate(new Date());
+            if(!map.containsKey(time)){
+                missingTime.put(time,timeDataVo);
+            }else if(map.get(time).getDate().before(timeBeforeHours)){
+                missingTime.put(time,timeDataVo);
+            }
+        }
+        if(!missingTime.isEmpty()){
+            queryMissDataFromMysql(dataCollectReq,missingTime);
+            for (String time : missingTime.keySet()) {
+                redisTemplate.opsForHash().put(key,time,missingTime.get(time));
+            }
+            map.putAll(missingTime);
+        }
+    }
+
+    /**
+     * mysql获取12小时的历史数据来补缺失的数据
+     * @param dataCollectReq
+     * @param cache
+     */
+    private void queryMissDataFromMysql(DataCollectReq dataCollectReq,Map<String,TimeDataVo> cache) {
+        // 如果redis查询为空 或者redis查询异常 则通过mysql获取12小时历史数据
+        NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
+        nmplDataCollectExample.createCriteria().andDataItemCodeEqualTo(dataCollectReq.getDataItemCode())
+                .andDeviceIpEqualTo(dataCollectReq.getDeviceIp())
+                .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWELVE,ZERO));
+        List<NmplDataCollect> dataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+        for (NmplDataCollect nmplDataCollect : dataCollectList) {
+            BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
+            if (cache.containsKey(formatter.format(nmplDataCollect.getUploadTime()))) {
+                TimeDataVo timeDataVo = cache.get(formatter.format(nmplDataCollect.getUploadTime()));
+                // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
+                timeDataVo.setValue( + bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getValue())).doubleValue());
+            }
+        }
+    }
+
+    /**
+     * mysql获取12小时所有的历史数据
+     * @param dataCollectReq
+     * @param cache
+     */
+    private void queryAllDataFromMysql(DataCollectReq dataCollectReq,Map<String,TimeDataVo> cache){
+        // 如果redis查询为空 或者redis查询异常 则通过mysql获取12小时历史数据
+        NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
+        nmplDataCollectExample.createCriteria().andDataItemCodeEqualTo(dataCollectReq.getDataItemCode())
+                .andDeviceIpEqualTo(dataCollectReq.getDeviceIp())
+                .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(TWELVE,ZERO));
+        List<NmplDataCollect> dataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+        for (NmplDataCollect nmplDataCollect : dataCollectList) {
+            BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
+            if (cache.containsKey(formatter.format(nmplDataCollect.getUploadTime()))) {
+                TimeDataVo timeDataVo = cache.get(formatter.format(nmplDataCollect.getUploadTime()));
+                // 8Mbps = 1MB/s    byte->Mb 10^20  半小时 1800s
+                timeDataVo.setValue( + bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getValue())).doubleValue());
+            } else {
+                TimeDataVo timeDataVo = new TimeDataVo();
+                timeDataVo.setDate(nmplDataCollect.getUploadTime());
+                timeDataVo.setValue(bigDecimal.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).doubleValue());
+                cache.put(formatter.format(nmplDataCollect.getUploadTime()), timeDataVo);
+            }
+        }
+    }
+
+    /**
+     * 排序返回结果集
      * @param map
      * @return
      */
-    private List<TimeDataVo> filterData(Map<String, TimeDataVo> map,String now){
-        List<TimeDataVo> res = new ArrayList<>();
+    private List<TimeDataVo> sortData(Map<String, TimeDataVo> map){
+        List<String> timeList = CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -24, 30 * 60, DateUtils.MINUTE_TIME_FORMAT);
         List<TimeDataVo> result = new ArrayList<>();
-        Set<String> set = map.keySet();
-        Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
-        for (String s : set) {
-            if(TimeUtil.checkTime(s)){
-                TimeDataVo timeDataVo = map.get(s);
-                TimeDataVo dataVo = new TimeDataVo();
-                BeanUtils.copyProperties(timeDataVo,dataVo);
-                dataVo.setTime(s);
-                if(timeDataVo.getDate().before(timeBeforeHours)){
-                    dataVo.setValue(0.0);
-                }
-                if(timeChange(s).intValue()>timeChange(now)){
-                    result.add(dataVo);
-                }else {
-                    res.add(dataVo);
-                }
-            }
+        for (String s : timeList) {
+            map.get(s).setTime(s);
+            result.add(map.get(s));
         }
-        //排序
-        Collections.sort(res, (o1, o2) -> timeChange(o1.getTime()).compareTo(timeChange(o2.getTime())));
-        Collections.sort(result, (o1, o2) -> timeChange(o1.getTime()).compareTo(timeChange(o2.getTime())));
-        result.addAll(res);
         return result;
-    }
-
-    /**
-     * 补充map缺失的节点数据
-     */
-    private Map<String,TimeDataVo> supplementaryData(Map<String, TimeDataVo> map){
-        TimeDataVo timeDataVo = new TimeDataVo();
-        timeDataVo.setDate(new Date());
-        timeDataVo.setValue(0.0);
-        for (int i = 0; i < TWENTY_FOUR; i++) {
-            String time1 = null;
-            String time2 = null;
-            if(i<10){
-                time1 = "0"+ i +":00";
-                time2 = "0"+ i +":30";
-            }else {
-                time1 =  i +":00";
-                time2 =  i +":30";
-            }
-            if(!map.containsKey(time1)){
-                map.put(time1,timeDataVo);
-            }
-            if(!map.containsKey(time2)){
-                map.put(time2,timeDataVo);
-            }
-        }
-        return map;
-    }
-
-    private Integer timeChange(String string){
-       return Integer.valueOf(string.replaceAll(":",""));
     }
 
 }
