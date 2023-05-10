@@ -14,13 +14,11 @@ import com.matrictime.network.dao.model.extend.NmplSystemResource;
 import com.matrictime.network.facade.AlarmDataFacade;
 //import com.matrictime.network.facade.MonitorFacade;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.TerminalDataVo;
+import com.matrictime.network.modelVo.*;
+import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.TerminalDataListRequest;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
-import com.matrictime.network.modelVo.PhysicalDeviceHeartbeatVo;
-import com.matrictime.network.modelVo.PhysicalDeviceResourceVo;
-import com.matrictime.network.modelVo.SystemResourceVo;
 import com.matrictime.network.request.PhysicalDeviceHeartbeatReq;
 import com.matrictime.network.request.PhysicalDeviceResourceReq;
 import com.matrictime.network.request.SystemResourceReq;
@@ -28,6 +26,7 @@ import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -198,27 +197,31 @@ public class TaskServiceImpl implements TaskService {
         nmplDataCollectExample.setOrderByClause("id desc");
 
         List<NmplDataCollect> nmplDataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+        DataCollectReq dataCollectReq = new DataCollectReq();
+        List<DataCollectVo> dataCollectVoList = new ArrayList<>();
         for (NmplDataCollect nmplDataCollect : nmplDataCollectList) {
+            nmplDataCollect.setId(null);
             nmplDataCollect.setDeviceIp(localIp);
+            DataCollectVo dataCollectVo = new DataCollectVo();
+            BeanUtils.copyProperties(nmplDataCollect,dataCollectVo);
+            dataCollectVoList.add(dataCollectVo);
         }
+        dataCollectReq.setDataCollectVoList(dataCollectVoList);
+        Result result=null;
+        Boolean flag = false;
+        String data = "";
+        String msg =null;
         if(!CollectionUtils.isEmpty(nmplDataCollectList)){
             Long maxId = nmplDataCollectList.get(0).getId();
-            Boolean flag = false;
-            String post = null;
-            String data = "";
-            String msg =null;
             try {
-                JSONObject req = new JSONObject();
-                req.put("dataCollectVoList",nmplDataCollectList);
-                data = req.toJSONString();
-                post = HttpClientUtil.post(url, data);
-                log.info("dataCollect push result:{}",post);
+                data = dataCollectReq.toString();
+                result = alarmDataFacade.insertSystemData(dataCollectReq);
             }catch (Exception e){
                 flag = true;
-                msg =e.getMessage();
+                msg = e.getMessage();
                 log.info("ddataCollect push Exception:{}",e.getMessage());
             }finally {
-                logError(post,url,data,flag,msg);
+                logError(result,"/systemDataCollect/insertSystemData",data,flag,msg);
             }
             criteria.andIdLessThanOrEqualTo(maxId);
             nmplDataCollectMapper.deleteByExample(nmplDataCollectExample);
