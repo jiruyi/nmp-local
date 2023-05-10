@@ -198,7 +198,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         Result result;
         try{
             List<PhysicalDeviceResourceVo> pdrList = req.getPdrList();
-            List<AlarmInfo> alarmInfoList = new ArrayList<>();
+//            List<AlarmInfo> alarmInfoList = new ArrayList<>();
             for (PhysicalDeviceResourceVo vo : pdrList){
                 NmplPhysicalDeviceResource dto = new NmplPhysicalDeviceResource();
                 BeanUtils.copyProperties(vo,dto);
@@ -208,15 +208,15 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 }else {
                     nmplPhysicalDeviceResourceMapper.insertSelective(dto);
                 }
-                AlarmInfo alarmInfo = getAlarmInfo(dto);
-                if (alarmInfo != null){
-                    alarmInfoList.add(alarmInfo);
-                }
+//                AlarmInfo alarmInfo = getAlarmInfo(dto);
+//                if (alarmInfo != null){
+//                    alarmInfoList.add(alarmInfo);
+//                }
             }
-            // 资源告警推送
-            if (!CollectionUtils.isEmpty(alarmInfoList)){
-                alarmDataService.acceptAlarmData(alarmInfoList);
-            }
+            // 资源告警推送（转移到代理端）
+//            if (!CollectionUtils.isEmpty(alarmInfoList)){
+//                alarmDataService.acceptAlarmData(alarmInfoList);
+//            }
             result = buildResult(null);
         }catch (Exception e){
             log.error("MonitorServiceImpl.physicalDeviceResource Exception:{}",e.getMessage());
@@ -225,63 +225,63 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         return result;
     }
 
-    private AlarmInfo getAlarmInfo(NmplPhysicalDeviceResource dto){
-        boolean isAlarm = false;
-        AlarmInfo alarmInfo = null;
-        String percent = dto.getResourcePercent();
-        switch (dto.getResourceType()){
-            case RESOURCE_TYPE_CPU :
-                if (CompareUtil.compareShortStr(percent,infoCpu)>1){
-                    isAlarm = true;
-                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.CPU.getContentType());
-                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.CPU.getDesc());
-                    if (CompareUtil.compareShortStr(percent,errorCpu)>1){
-                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
-                    }else if (CompareUtil.compareShortStr(percent,warnCpu)>1){
-                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
-                    }else {
-                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
-                    }
-                }
-                break;
-            case RESOURCE_TYPE_MEMORY:
-                if (CompareUtil.compareShortStr(percent,infoMem)>1){
-                    isAlarm = true;
-                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.MEM.getContentType());
-                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.MEM.getDesc());
-                    if (CompareUtil.compareShortStr(percent,errorMem)>1){
-                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
-                    }else if (CompareUtil.compareShortStr(percent,warnMem)>1){
-                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
-                    }else {
-                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
-                    }
-                }
-                break;
-            case RESOURCE_TYPE_DISK:
-                if (CompareUtil.compareShortStr(percent,infoDisk)>1){
-                    isAlarm = true;
-                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.DISK.getContentType());
-                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.DISK.getDesc());
-                    if (CompareUtil.compareShortStr(percent,errorDisk)>1){
-                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
-                    }else if (CompareUtil.compareShortStr(percent,warnDisk)>1){
-                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
-                    }else {
-                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-        if (isAlarm){
-            alarmInfo.setAlarmSourceIp(dto.getDeviceIp());
-            alarmInfo.setAlarmUploadTime(dto.getUploadTime());
-            alarmInfo.setAlarmSourceType(ALARM_SOURCE_TYPE_RESOURCE);
-        }
-        return alarmInfo;
-    }
+//    private AlarmInfo getAlarmInfo(NmplPhysicalDeviceResource dto){
+//        boolean isAlarm = false;
+//        AlarmInfo alarmInfo = null;
+//        String percent = dto.getResourcePercent();
+//        switch (dto.getResourceType()){
+//            case RESOURCE_TYPE_CPU :
+//                if (CompareUtil.compareShortStr(percent,infoCpu)>1){
+//                    isAlarm = true;
+//                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.CPU.getContentType());
+//                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.CPU.getDesc());
+//                    if (CompareUtil.compareShortStr(percent,errorCpu)>1){
+//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
+//                    }else if (CompareUtil.compareShortStr(percent,warnCpu)>1){
+//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
+//                    }else {
+//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
+//                    }
+//                }
+//                break;
+//            case RESOURCE_TYPE_MEMORY:
+//                if (CompareUtil.compareShortStr(percent,infoMem)>1){
+//                    isAlarm = true;
+//                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.MEM.getContentType());
+//                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.MEM.getDesc());
+//                    if (CompareUtil.compareShortStr(percent,errorMem)>1){
+//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
+//                    }else if (CompareUtil.compareShortStr(percent,warnMem)>1){
+//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
+//                    }else {
+//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
+//                    }
+//                }
+//                break;
+//            case RESOURCE_TYPE_DISK:
+//                if (CompareUtil.compareShortStr(percent,infoDisk)>1){
+//                    isAlarm = true;
+//                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.DISK.getContentType());
+//                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.DISK.getDesc());
+//                    if (CompareUtil.compareShortStr(percent,errorDisk)>1){
+//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
+//                    }else if (CompareUtil.compareShortStr(percent,warnDisk)>1){
+//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
+//                    }else {
+//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
+//                    }
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+//        if (isAlarm){
+//            alarmInfo.setAlarmSourceIp(dto.getDeviceIp());
+//            alarmInfo.setAlarmUploadTime(dto.getUploadTime());
+//            alarmInfo.setAlarmSourceType(ALARM_SOURCE_TYPE_RESOURCE);
+//        }
+//        return alarmInfo;
+//    }
 
     /**
      * 运行系统资源信息上报

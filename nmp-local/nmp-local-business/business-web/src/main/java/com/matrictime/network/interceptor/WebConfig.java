@@ -60,6 +60,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/terminalUser/updateTerminalUser")
                 .excludePathPatterns("/systemHeartbeat/updateSystemHeartbeat")
                 .excludePathPatterns("/terminalData/collectTerminalData")
-                .excludePathPatterns("/systemDataCollect/insertSystemData");
+                .excludePathPatterns("/systemDataCollect/insertSystemData")
+                .excludePathPatterns("/monitor/physicalDeviceHeartbeat")
+                .excludePathPatterns("/monitor/physicalDeviceResource")
+                .excludePathPatterns("/monitor/systemResource");
     }
 }

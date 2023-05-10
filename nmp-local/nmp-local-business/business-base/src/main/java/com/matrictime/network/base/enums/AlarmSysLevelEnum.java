@@ -124,7 +124,7 @@ public enum AlarmSysLevelEnum {
             this.redisIndex = redisIndex;
         }
         //根据level获取对用code 作为map key
-        public static String getKeyCodeBylevel(String level){
+        public static String getCodeBylevel(String level){
             for(LevelEnum levelEnum : LevelEnum.values()){
                 if(levelEnum.getLevel().equals(level)){
                     return levelEnum.getCode();
