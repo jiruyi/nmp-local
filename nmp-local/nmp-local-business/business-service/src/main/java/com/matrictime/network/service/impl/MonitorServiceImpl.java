@@ -326,10 +326,12 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             for (NmplPhysicalDeviceHeartbeat heartbeat : heartbeats){
                 PhysicalDeviceHeartbeatVo vo = new PhysicalDeviceHeartbeatVo();
                 String[] ipArray = heartbeat.getIp1Ip2().split(KEY_SPLIT_UNDERLINE);
-                vo.setIp1(ipArray[0]);
-                vo.setIp2(ipArray[1]);
-                vo.setStatus(heartbeat.getStatus());
-                heartbeatVos.add(vo);
+                if (ips.contains(ipArray[0]) && ips.contains(ipArray[1])){
+                    vo.setIp1(ipArray[0]);
+                    vo.setIp2(ipArray[1]);
+                    vo.setStatus(heartbeat.getStatus());
+                    heartbeatVos.add(vo);
+                }
             }
 
             resp.setIps(ips);
@@ -393,6 +395,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             List<SystemResourceVo> resourceVos = getSystemResources(req.getDeviceIp(),now);
             Map<String,List<String>> cpuInfos = getSystemResourceSL(resourceVos,RESOURCE_TYPE_CPU,DateUtils.getRecentHalfTime(now));
             Map<String,List<String>> memInfos = getSystemResourceSL(resourceVos,RESOURCE_TYPE_MEMORY,DateUtils.getRecentHalfTime(now));
+            resp.setXTime(CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(now), -24, 60 * 30, MINUTE_TIME_FORMAT));
             resp.setResourceVos(resourceVos);
             resp.setCpuInfos(cpuInfos);
             resp.setMemInfos(memInfos);
@@ -507,7 +510,8 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
 
     private Map<String,List<String>> getSystemResourceSL(List<SystemResourceVo> vos,String systemType,Date now){
         Map<String,List<String>> resMap = new HashMap<>();
-        List<String> xTime = CommonServiceImpl.getXTimePerHalfHour(now, -24, 60 * 30, MINUTE_TIME_FORMAT);
+        Date recentHalfTime = DateUtils.getRecentHalfTime(now);
+        List<String> xTime = CommonServiceImpl.getXTimePerHalfHour(recentHalfTime, -24, 60 * 30, MINUTE_TIME_FORMAT);
 
         if (!CollectionUtils.isEmpty(vos)){
             String nowStr = DateUtils.formatDateToInteger(now);
@@ -522,7 +526,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 }catch (Exception e){
                     log.warn("getSystemResourceSL getall redis exception:{}",e);
                 }
-                Date recentHalfTime = DateUtils.getRecentHalfTime(now);
+
                 if (entries.isEmpty()){
                     Date uploadTime = DateUtils.addDayForDate(recentHalfTime, -1);
                     NmplSystemResourceExample example = new NmplSystemResourceExample();
@@ -558,7 +562,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                         }
                     }else {
                         NmplSystemResourceExample example = new NmplSystemResourceExample();
-                        example.createCriteria().andSystemIdEqualTo(systemId).andSystemTypeEqualTo(systemType).andUploadTimeEqualTo(recentHalfTime);
+                        example.createCriteria().andSystemIdEqualTo(systemId).andSystemTypeEqualTo(systemType).andUploadTimeEqualTo(CommonServiceImpl.getDateByStr(nowStr+time));
                         List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
                         SystemResourceVo resourceVo = new SystemResourceVo();
                         if (!CollectionUtils.isEmpty(resources)){
