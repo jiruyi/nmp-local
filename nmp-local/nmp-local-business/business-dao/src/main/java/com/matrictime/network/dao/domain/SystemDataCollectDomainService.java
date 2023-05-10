@@ -6,6 +6,8 @@ import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.KeyCenterDataVo;
 import com.matrictime.network.request.DataCollectReq;
 
+import java.util.List;
+
 /**
  * @author by wangqiang
  * @date 2023/4/20.
@@ -18,7 +20,7 @@ public interface SystemDataCollectDomainService {
 
     KeyCenterDataVo selectKeyCenterData(DataCollectReq dataCollectReq);
 
-    int insertSystemData(DataCollectVo dataCollectVo);
+    int insertSystemData(List<DataCollectVo> dataCollectVoList);
 
 
 }

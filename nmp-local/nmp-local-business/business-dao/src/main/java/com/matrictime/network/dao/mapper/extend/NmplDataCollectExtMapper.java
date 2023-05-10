@@ -29,4 +29,6 @@ public interface NmplDataCollectExtMapper {
 
 
     List<DataCollectVo>selectCurrentIpFlow(DataCollectReq dataCollectReq);
+
+    int batchInsertDataCollect(@Param("list") List<DataCollectVo> dataCollectVos);
 }

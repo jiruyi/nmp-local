@@ -64,4 +64,9 @@ public class DataCollectVo {
      * 设备状态
      */
     private String stationStatus;
+
+    /**
+     * 设备ip
+     */
+    private String deviceIp;
 }

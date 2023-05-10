@@ -204,9 +204,9 @@
     and nbsi.is_exist = '1'
   </select>
 
-  <select id="deduplicationLanIp" parameterType="list" resultMap="DeviceInfoMap">
+  <select id="deduplicationLanIp" parameterType="list" resultMap="BaseStationInfoMap">
     select
-    <include refid="Device_Info_List" />
+        id,device_name as station_name,lan_ip
     from
          nmpl_device_info as ndi
     where lan_ip not in

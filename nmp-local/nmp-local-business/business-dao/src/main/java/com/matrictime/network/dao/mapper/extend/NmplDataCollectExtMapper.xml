@@ -181,5 +181,15 @@
         </if>
     </select>
 
+    <insert id="batchInsertDataCollect" parameterType="com.matrictime.network.modelVo.DataCollectVo">
+        insert into nmpl_data_collect ( device_id, device_name,device_ip,
+        device_type, data_item_name, data_item_code,
+        data_item_value, unit,upload_time) values
+        <foreach collection ="list" item="data" separator =",">
+            ( #{data.deviceId},#{data.deviceName},#{data.deviceIp}, #{data.deviceType}, #{data.dataItemName}, #{data.dataItemCode},
+            #{data.dataItemValue}, #{data.unit},#{data.uploadTime})
+        </foreach >
+    </insert>
+
 
 </mapper>

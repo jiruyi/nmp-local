@@ -2,11 +2,18 @@ package com.matrictime.network.service.impl;
 
 
 import com.matrictime.network.util.DateUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.matrictime.network.util.DateUtils.DATE_DF_INT;
+import static com.matrictime.network.util.DateUtils.MINUTE_TIME_FORMAT;
+
+@Slf4j
 public class CommonServiceImpl {
 
     @Autowired
@@ -41,10 +48,28 @@ public class CommonServiceImpl {
         return resList;
     }
 
+    /**
+     * 根据时间字符串获取时间秒和毫秒为0（yyMMddHH:mm）
+     * @param str
+     * @return
+     */
+    public static Date getDateByStr(String str){
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_DF_INT+MINUTE_TIME_FORMAT);
+        Date date = null;
+        try {
+            date = sdf.parse(str);
+        } catch (ParseException e) {
+            log.warn("CommonServiceImpl.getDateByStr ParseException:{}",e);
+        }
+        return date;
+    }
+
 
     public static void main(String[] args) {
-        List<String> hour = getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -24, 30 * 60, DateUtils.MINUTE_TIME_FORMAT);
-        System.out.println(hour.toString());
+//        List<String> hour = getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -24, 30 * 60, DateUtils.MINUTE_TIME_FORMAT);
+        Date dateByStr = getDateByStr(DateUtils.formatDateToInteger(new Date()) + "11:30");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss SSS");
+        System.out.println(sdf.format(dateByStr));
     }
 }
 

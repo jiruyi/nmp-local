@@ -2,9 +2,13 @@ package com.matrictime.network.facade;
 
 import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.request.PhysicalDeviceHeartbeatReq;
 import com.matrictime.network.request.PhysicalDeviceResourceReq;
 import com.matrictime.network.request.SystemResourceReq;
+import com.matrictime.network.request.TerminalDataListRequest;
+import com.matrictime.network.response.SystemHeartbeatResponse;
+import com.matrictime.network.response.TerminalUserResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,4 +35,17 @@ public interface AlarmDataFacade {
 
     @RequestMapping(value= "/monitor/systemResource",method = RequestMethod.POST)
     Result systemResource(SystemResourceReq req);
+
+    @RequestMapping(value= "/systemDataCollect/insertSystemData",method = RequestMethod.POST)
+    Result insertSystemData(DataCollectReq dataCollectReq);
+
+    @RequestMapping(value= "/systemHeartbeat/updateSystemHeartbeat",method = RequestMethod.POST)
+    Result systemHeartbeatResource(SystemHeartbeatResponse systemHeartbeatResponse);
+
+    @RequestMapping(value= "/terminalUser/updateTerminalUser",method = RequestMethod.POST)
+    Result terminalUserResource(TerminalUserResponse terminalUserResponse);
+
+    @RequestMapping(value= "/terminalData/collectTerminalData",method = RequestMethod.POST)
+    Result collectTerminalDataResource(TerminalDataListRequest terminalDataListRequest);
+
 }
