@@ -5,6 +5,8 @@
         <result column="station_id" jdbcType="VARCHAR" property="deviceId" />
         <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
         <result column="station_type" jdbcType="CHAR" property="stationType" />
+        <result column="station_type" jdbcType="CHAR" property="stationType" />
+        <result column="data_item_value" jdbcType="CHAR" property="dataItemValue" />
     </resultMap>
 
     <select id="distinctSystemData" parameterType="com.matrictime.network.request.DataCollectReq" resultMap="BaseResultMap">
@@ -41,5 +43,13 @@
                   AND data_item_code = #{dataItemCode,jdbcType=VARCHAR}
             )
           AND d.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectDataItemValue" parameterType="list" resultMap="BaseResultMap">
+        select data_item_value from nmpl_data_collect where device_id in
+        <foreach collection="deviceId" item="item" open="(" close=")" separator=",">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+        order by upload_time desc
     </select>
 </mapper>

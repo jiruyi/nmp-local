@@ -1,8 +1,11 @@
 package com.matrictime.network.modelVo;
 
 
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
 public class StationVo implements Serializable {
 
     private String deviceId;
@@ -11,27 +14,6 @@ public class StationVo implements Serializable {
 
     private String  stationType;
 
-    public String getStationNetworkId() {
-        return stationNetworkId;
-    }
+    private String dataItemValue;
 
-    public void setStationNetworkId(String stationNetworkId) {
-        this.stationNetworkId = stationNetworkId;
-    }
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
-    public String getStationType() {
-        return stationType;
-    }
-
-    public void setStationType(String stationType) {
-        this.stationType = stationType;
-    }
 }

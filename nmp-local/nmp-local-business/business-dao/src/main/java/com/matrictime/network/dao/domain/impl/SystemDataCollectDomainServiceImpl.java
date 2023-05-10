@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -136,12 +137,15 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     private List<Double> getDeviceData(List<String> dataCodeList,DataCollectReq dataCollectReq){
         List<Double> list = new ArrayList<>();
         for(int i = 0;i< dataCodeList.size();i++){
+            Double dataSum = 0d;
             DataCollectReq req = new DataCollectReq();
             req.setDeviceType(dataCollectReq.getDeviceType());
             req.setDataItemCode(dataCodeList.get(i));
             req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
             List<StationVo> stationVos = nmplSystemDataCollectExtMapper.distinctSystemDeviceData(req);
-            Double dataSum = getDataSum(stationVos);
+            if(!CollectionUtils.isEmpty(stationVos)){
+                dataSum = getDataSum(stationVos);
+            }
             list.add(dataSum);
         }
         return list;
@@ -156,12 +160,15 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     private List<Double> getData(List<String> dataCodeList,DataCollectReq dataCollectReq){
         List<Double> list = new ArrayList<>();
         for(int i = 0;i< dataCodeList.size();i++){
+            Double dataSum = 0d;
             DataCollectReq req = new DataCollectReq();
             req.setDeviceType(dataCollectReq.getDeviceType());
             req.setDataItemCode(dataCodeList.get(i));
             req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
             List<StationVo> stationVos = nmplSystemDataCollectExtMapper.distinctSystemData(req);
-            Double dataSum = getDataSum(stationVos);
+            if(!CollectionUtils.isEmpty(stationVos)){
+                dataSum = getDataSum(stationVos);
+            }
             list.add(dataSum);
         }
         return list;
@@ -173,14 +180,21 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
      * @return
      */
     private Double getDataSum(List<StationVo> list){
+        List<String> deviceIdList = new ArrayList<>();
+        for(StationVo stationVo: list){
+            deviceIdList.add(stationVo.getDeviceId());
+        }
+        List<StationVo> stationVos = nmplSystemDataCollectExtMapper.selectDataItemValue(deviceIdList);
+
         Double dataSum = 0d;
-        for (int i = 0;i< list.size();i++){
-            NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
-            NmplDataCollectExample.Criteria criteria = nmplDataCollectExample.createCriteria();
-            nmplDataCollectExample.setOrderByClause("upload_time desc");
-            criteria.andDeviceIdEqualTo(list.get(i).getDeviceId());
-            List<NmplDataCollect> nmplDataCollects = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
-            dataSum = dataSum + Double.parseDouble(nmplDataCollects.get(0).getDataItemValue());
+        for (int i = 0;i< stationVos.size();i++){
+            dataSum = dataSum + Double.parseDouble(stationVos.get(i).getDataItemValue());
+//            NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
+//            NmplDataCollectExample.Criteria criteria = nmplDataCollectExample.createCriteria();
+//            nmplDataCollectExample.setOrderByClause("upload_time desc");
+//            criteria.andDeviceIdEqualTo(list.get(i).getDeviceId());
+//            List<NmplDataCollect> nmplDataCollects = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+//            dataSum = dataSum + Double.parseDouble(nmplDataCollects.get(0).getDataItemValue());
         }
         return dataSum;
     }

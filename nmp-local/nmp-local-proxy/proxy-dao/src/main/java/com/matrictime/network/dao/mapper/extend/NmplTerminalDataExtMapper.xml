@@ -15,6 +15,6 @@
     </resultMap>
     <select id="collectTerminalData" resultMap="BaseResultMap">
         select max(upload_time) as upload_time,terminal_network_id,parent_id,data_type,up_value,down_value,terminal_ip
-        from nmpl_terminal_data where GROUP BY terminal_network_id,data_type
+        from nmpl_terminal_data GROUP BY terminal_network_id,data_type
     </select>
 </mapper>

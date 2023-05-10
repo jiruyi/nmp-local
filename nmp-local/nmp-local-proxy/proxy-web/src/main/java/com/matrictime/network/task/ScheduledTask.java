@@ -115,7 +115,7 @@ public class ScheduledTask {
     @Async
     public void terminalData(){
         log.info(Thread.currentThread().getName()+"======================terminalData begin=============================");
-        taskService.collectTerminalData(ip + KEY_SPLIT + port + TERMINAL_USER_URL);
+        taskService.collectTerminalData(ip + KEY_SPLIT + port + TERMINAL_DATA_URL);
         log.info(Thread.currentThread().getName()+"======================terminalData end=============================");
     }
 
