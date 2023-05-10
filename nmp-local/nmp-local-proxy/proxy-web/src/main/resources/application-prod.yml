@@ -67,3 +67,9 @@ netmanage:
 
 local:
   ip: 192.168.72.14
+
+eureka:
+  client:
+    register-with-eureka: false
+    service-url:
+      defaultZone:  http://192.168.72.24:7002/eureka/

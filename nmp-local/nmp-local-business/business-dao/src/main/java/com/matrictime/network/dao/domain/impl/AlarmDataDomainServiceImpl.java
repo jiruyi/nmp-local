@@ -54,6 +54,8 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
     @Autowired
     private Executor taskExecutor;
 
+    private static final String PHYSICAL_TYPE= "00";
+
     /**
      * @param [alarmInfoList]
      * @return com.matrictime.network.model.Result
@@ -70,12 +72,12 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
         try {
             //redis  物理资源插入
             List<AlarmInfo> phyList = alarmInfoList.stream().filter(Objects::nonNull)
-                    .filter(alarmInfo -> "00".equals(alarmInfo.getAlarmSourceType()))
+                    .filter(alarmInfo -> PHYSICAL_TYPE.equals(alarmInfo.getAlarmSourceType()))
                     .collect(Collectors.toList());
             alarmPhyCountDataToRedis(phyList);
             //redis  业务系统资源插入
             List<AlarmInfo> sysList = alarmInfoList.stream().filter(Objects::nonNull)
-                    .filter(alarmInfo -> !"00".equals(alarmInfo.getAlarmSourceType()))
+                    .filter(alarmInfo -> !PHYSICAL_TYPE.equals(alarmInfo.getAlarmSourceType()))
                     .collect(Collectors.toList());
             alarmSysCountDataToRedis(sysList);
         } catch (Exception e) {
