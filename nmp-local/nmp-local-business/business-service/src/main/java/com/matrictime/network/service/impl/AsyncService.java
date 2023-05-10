@@ -3,15 +3,16 @@ package com.matrictime.network.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.dao.domain.AlarmDataDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
-import com.matrictime.network.model.Result;
+import com.matrictime.network.model.AlarmInfo;
+import com.matrictime.network.util.DateUtils;
 import com.matrictime.network.util.FileHahUtil;
 import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.remoting.RemoteAccessException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -23,8 +24,6 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -55,7 +54,33 @@ public class AsyncService{
     @Value("${asynservice.isremote}")
     private Integer isremote;
 
+    @Autowired
+    private AlarmDataDomainService alarmDataDomainService;
 
+    @Async("taskExecutor")
+    public void testInsertAlarmData(){
+        List<AlarmInfo> alarmInfoList = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.103").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("01").alarmLevel("1").alarmContent("系统崩溃").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.103").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("01").alarmLevel("2").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.103").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("01").alarmLevel("3").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.20").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("01").alarmLevel("1").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.24").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("02").alarmLevel("2").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.24").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("02").alarmLevel("3").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.24").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("02").alarmLevel("1").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.23").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("11").alarmLevel("1").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.23").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("11").alarmLevel("2").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.23").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("11").alarmLevel("3").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.23").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("11").alarmLevel("3").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.20").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmSourceType("01").alarmLevel("2").alarmContentType("5").alarmContent("系统崩溃").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.20").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmSourceType("01").alarmLevel("1").alarmContentType("5").alarmContent("系统塌了").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmSourceType("00").alarmLevel("2").alarmContentType("1").alarmContent("cpu过高").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.21").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmSourceType("00").alarmLevel("1").alarmContentType("2").alarmContent("内存不足").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.20").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmSourceType("00").alarmLevel("2").alarmContentType("3").alarmContent("磁盘满载").build());
+            alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.20").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmSourceType("00").alarmLevel("1").alarmContentType("4").alarmContent("流量过高").build());
+        }
+        alarmDataDomainService.acceptAlarmData(alarmInfoList);
+    }
 
 
     @Async("taskExecutor")

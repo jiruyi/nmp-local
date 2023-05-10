@@ -21,7 +21,7 @@ public interface AlarmDataDomainService {
 
      int  acceptAlarmData(List<AlarmInfo> alarmInfoList);
 
-     void alarmSysCountDataForRedis(List<AlarmInfo> alarmInfoList);
+     void alarmSysCountDataToRedis(List<AlarmInfo> alarmInfoList);
 
      void alarmPhyCountDataToRedis(List<AlarmInfo> alarmInfoList);
 

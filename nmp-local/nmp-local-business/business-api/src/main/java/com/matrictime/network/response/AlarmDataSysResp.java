@@ -21,10 +21,10 @@ import java.io.Serializable;
 public class AlarmDataSysResp extends BaseResponse implements Serializable {
     private static final long serialVersionUID = -8101225910330056880L;
     //接入基站
-    private AlarmSysLevelCount accessCountResp;
+    private AlarmSysLevelCount accessCountResp = new AlarmSysLevelCount() ;
     //边界基站
-    private AlarmSysLevelCount boundaryCountResp;
+    private AlarmSysLevelCount boundaryCountResp =new AlarmSysLevelCount() ;
     //密钥中心基站
-    private AlarmSysLevelCount keyCenterCountResp;
+    private AlarmSysLevelCount keyCenterCountResp =new AlarmSysLevelCount();
 
 }
