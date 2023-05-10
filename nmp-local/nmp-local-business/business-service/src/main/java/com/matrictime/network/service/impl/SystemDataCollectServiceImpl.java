@@ -90,9 +90,9 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
         Result<Integer> result = new Result<>();
         try {
             int i = 0;
-            for(DataCollectVo dataCollectVo: dataCollectReq.getDataCollectVoList()){
-                i = systemDataCollectDomainService.insertSystemData(dataCollectVo);
-            }
+
+            i = systemDataCollectDomainService.insertSystemData(dataCollectReq.getDataCollectVoList());
+
 //            //接入基站存入redis
 //            BaseStationDataVo baseStationDataVo = systemDataCollectDomainService.selectBaseStationData(dataCollectReq);
 //            redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT + dataCollectReq,JSONObject.toJSONString(baseStationDataVo),

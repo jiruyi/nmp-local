@@ -3,10 +3,13 @@ package com.matrictime.network.dao.domain.impl;
 import com.matrictime.network.base.enums.DataCollectEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.dao.domain.SystemDataCollectDomainService;
+import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
+import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
+import com.matrictime.network.dao.mapper.extend.NmplDeviceExtMapper;
 import com.matrictime.network.dao.mapper.extend.NmplSystemDataCollectExtMapper;
-import com.matrictime.network.dao.model.NmplDataCollect;
-import com.matrictime.network.dao.model.NmplDataCollectExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.DataCollectReq;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +21,9 @@ import org.springframework.util.ObjectUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.base.constant.DataConstants.RESERVE_DIGITS;
@@ -36,6 +41,15 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
 
     @Resource
     private NmplSystemDataCollectExtMapper nmplSystemDataCollectExtMapper;
+
+    @Resource
+    private NmplDataCollectExtMapper dataCollectExtMapper;
+
+    @Resource
+    private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
+
+    @Resource
+    private NmplDeviceInfoMapper nmplDeviceInfoMapper;
 
     @Override
     public BaseStationDataVo selectBaseStationData(DataCollectReq dataCollectReq) {
@@ -82,10 +96,35 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     }
 
     @Override
-    public int insertSystemData(DataCollectVo dataCollectVo) {
-        NmplDataCollect nmplDataCollect = new NmplDataCollect();
-        BeanUtils.copyProperties(dataCollectVo,nmplDataCollect);
-        return nmplDataCollectMapper.insertSelective(nmplDataCollect);
+    public int insertSystemData(List<DataCollectVo> dataCollectVoList) {
+        Map<String,String> deviceMap = new HashMap<>();
+        List<DataCollectVo> dataCollectVos = new ArrayList<>();
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
+        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+
+        NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+        nmplDeviceInfoExample.createCriteria().andIsExistEqualTo(true);
+        List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+
+        for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+            deviceMap.put(nmplBaseStationInfo.getStationId(),nmplBaseStationInfo.getStationName());
+        }
+        for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+            deviceMap.put(nmplDeviceInfo.getDeviceId(),nmplDeviceInfo.getDeviceName());
+        }
+
+        for (DataCollectVo dataCollectVo : dataCollectVoList) {
+            String name = DataCollectEnum.getMap().get(dataCollectVo.getDataItemCode()).getConditionDesc();
+            String unit = DataCollectEnum.getMap().get(dataCollectVo.getDataItemCode()).getUnit();
+            if (deviceMap.get(dataCollectVo.getDeviceId()) != null) {
+                dataCollectVo.setDeviceName(deviceMap.get(dataCollectVo.getDeviceId()));
+            }
+            dataCollectVo.setDataItemName(name);
+            dataCollectVo.setUnit(unit);
+            dataCollectVos.add(dataCollectVo);
+        }
+        return dataCollectExtMapper.batchInsertDataCollect(dataCollectVos);
     }
 
     /**
