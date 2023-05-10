@@ -91,6 +91,9 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private NmplAlarmInfoMapper alarmInfoMapper;
 
+    @Resource
+    private NmplTerminalDataMapper terminalDataMapper;
+
 
     @Autowired
     private AlarmDataFacade alarmDataFacade;
@@ -444,23 +447,43 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void collectTerminalData(String url) {
-        List<TerminalDataVo> terminalDataVoList = terminalDataDomainService.collectTerminalData();
-        TerminalDataListRequest terminalDataListRequest = new TerminalDataListRequest();
-        terminalDataListRequest.setList(terminalDataVoList);
+        NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
+        NmplTerminalDataExample.Criteria criteria = nmplTerminalDataExample.createCriteria();
+        nmplTerminalDataExample.setOrderByClause("id desc");
+        List<NmplTerminalData> terminalDataList = terminalDataMapper.selectByExample(nmplTerminalDataExample);
+        //数据转换
+        List<TerminalDataVo> dataVoList = new ArrayList<>();
+        TerminalDataListRequest dataListRequest = new TerminalDataListRequest();
+        if(!CollectionUtils.isEmpty(terminalDataList)){
+            for(NmplTerminalData nmplTerminalData: terminalDataList){
+                TerminalDataVo terminalDataVo = new TerminalDataVo();
+                BeanUtils.copyProperties(nmplTerminalData,terminalDataVo);
+                dataVoList.add(terminalDataVo);
+            }
+        }
+        dataListRequest.setList(dataVoList);
+        //上传数据
         Boolean flag = false;
         Result result = null;
         String data = "";
         String msg =null;
-        try {
-            result = alarmDataFacade.collectTerminalDataResource(terminalDataListRequest);
-            log.info("collectTerminalData push result:{}",result);
-        }catch (Exception e){
-            flag = true;
-            msg = e.getMessage();
-            log.info("collectTerminalData push Exception:{}",e.getMessage());
-        }finally {
-            logError(result,url,data,flag,msg);
+        if(!CollectionUtils.isEmpty(terminalDataList)){
+            Long maxId = terminalDataList.get(0).getId();
+            try {
+                data = dataListRequest.toString();
+                result = alarmDataFacade.collectTerminalDataResource(dataListRequest);
+            }catch (Exception e){
+                flag = true;
+                msg = e.getMessage();
+                log.info("collectTerminalData push Exception:{}",e.getMessage());
+            }finally {
+                //记录失败数据
+                logError(result,"/terminalData/collectTerminalData",data,flag,msg);
+            }
+            criteria.andIdLessThanOrEqualTo(maxId);
+            terminalDataMapper.deleteByExample(nmplTerminalDataExample);
         }
+
     }
 
 
