@@ -3,16 +3,16 @@ package com.matrictime.network.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.AlarmPhyConTypeEnum;
+import com.matrictime.network.base.enums.LevelEnum;
 import com.matrictime.network.dao.domain.SystemHeartbeatDomainService;
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.dao.model.extend.DeviceInfo;
-import com.matrictime.network.dao.model.extend.NmplPhysicalDeviceResource;
-import com.matrictime.network.dao.model.extend.NmplSystemResource;
 import com.matrictime.network.facade.AlarmDataFacade;
-//import com.matrictime.network.facade.MonitorFacade;
+import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.DataCollectReq;
@@ -29,6 +29,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -42,6 +43,7 @@ import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 
 @Service
 @Slf4j
+@PropertySource(value = "classpath:/businessConfig.properties",encoding = "UTF-8")
 public class TaskServiceImpl implements TaskService {
 
     @Resource
@@ -85,6 +87,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private TerminalDataDomainService terminalDataDomainService;
+    
+    @Resource
+    private NmplAlarmInfoMapper alarmInfoMapper;
 
 
     @Autowired
@@ -93,7 +98,32 @@ public class TaskServiceImpl implements TaskService {
     @Value("${local.ip}")
     private String localIp;
 
+    @Value("${error.cpu}")
+    private String errorCpu;
 
+    @Value("${warn.cpu}")
+    private String warnCpu;
+
+    @Value("${info.cpu}")
+    private String infoCpu;
+
+    @Value("${error.mem}")
+    private String errorMem;
+
+    @Value("${warn.mem}")
+    private String warnMem;
+
+    @Value("${info.mem}")
+    private String infoMem;
+
+    @Value("${error.disk}")
+    private String errorDisk;
+
+    @Value("${warn.disk}")
+    private String warnDisk;
+
+    @Value("${info.disk}")
+    private String infoDisk;
 
     @Override
     public void heartReport(String url) {
@@ -547,6 +577,7 @@ public class TaskServiceImpl implements TaskService {
         cpu.setResourcePercent(SystemUtils.getCPUusePercent());
         cpu.setUploadTime(uploadTime);
         pdrList.add(cpu);
+        insertAlarmInfo(cpu);
 
         // 获取内存信息
         PhysicalDeviceResourceVo memory = new PhysicalDeviceResourceVo();
@@ -560,6 +591,7 @@ public class TaskServiceImpl implements TaskService {
         memory.setResourcePercent(FormatUtil.formatUnits(totalMemory-availMemory,totalMemory));
         memory.setUploadTime(uploadTime);
         pdrList.add(memory);
+        insertAlarmInfo(memory);
 
         // 获取磁盘信息
         PhysicalDeviceResourceVo disk = new PhysicalDeviceResourceVo();
@@ -573,8 +605,69 @@ public class TaskServiceImpl implements TaskService {
         disk.setResourcePercent(FormatUtil.formatUnits(totalDisk-availDisk,totalDisk));
         disk.setUploadTime(uploadTime);
         pdrList.add(disk);
+        insertAlarmInfo(disk);
 
         return pdrList;
+    }
+
+    /**
+     * 插入alarm表
+     * @param dto
+     */
+    private void insertAlarmInfo(PhysicalDeviceResourceVo dto){
+        log.info("PhysicalDeviceResourceVo :{}",dto.toString());
+        try{
+            boolean isAlarm = false;
+            NmplAlarmInfo alarmInfo = new NmplAlarmInfo();
+            String percent = dto.getResourcePercent();
+            if (AlarmPhyConTypeEnum.CPU.getContentType().equals(dto.getResourceType())){
+                if (CompareUtil.compareShortStr(percent,infoCpu)>1){
+                    isAlarm = true;
+                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.CPU.getDesc());
+                    if (CompareUtil.compareShortStr(percent,errorCpu)>1){
+                        alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
+                    }else if (CompareUtil.compareShortStr(percent,warnCpu)>1){
+                        alarmInfo.setAlarmLevel(LevelEnum.EMERG.getLevel());
+                    }else {
+                        alarmInfo.setAlarmLevel(LevelEnum.SAMEAS.getLevel());
+                    }
+                }
+            }else if (AlarmPhyConTypeEnum.MEM.getContentType().equals(dto.getResourceType())){
+                if (CompareUtil.compareShortStr(percent,infoMem)>1){
+                    isAlarm = true;
+                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.MEM.getDesc());
+                    if (CompareUtil.compareShortStr(percent,errorMem)>1){
+                        alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
+                    }else if (CompareUtil.compareShortStr(percent,warnMem)>1){
+                        alarmInfo.setAlarmLevel(LevelEnum.EMERG.getLevel());
+                    }else {
+                        alarmInfo.setAlarmLevel(LevelEnum.SAMEAS.getLevel());
+                    }
+                }
+            }else if (AlarmPhyConTypeEnum.DISK.getContentType().equals(dto.getResourceType())){
+                if (CompareUtil.compareShortStr(percent,infoDisk)>1){
+                    isAlarm = true;
+                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.DISK.getDesc());
+                    if (CompareUtil.compareShortStr(percent,errorDisk)>1){
+                        alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
+                    }else if (CompareUtil.compareShortStr(percent,warnDisk)>1){
+                        alarmInfo.setAlarmLevel(LevelEnum.EMERG.getLevel());
+                    }else {
+                        alarmInfo.setAlarmLevel(LevelEnum.SAMEAS.getLevel());
+                    }
+                }
+            }
+            if (isAlarm){
+                log.info("PhysicalDeviceResourceVo :{}",alarmInfo.toString());
+                alarmInfo.setAlarmContentType(dto.getResourceType());
+                alarmInfo.setAlarmSourceIp(dto.getDeviceIp());
+                alarmInfo.setAlarmUploadTime(dto.getUploadTime());
+                alarmInfo.setAlarmSourceType(ALARM_SOURCE_TYPE_RESOURCE);
+                alarmInfoMapper.insertSelective(alarmInfo);
+            }
+        }catch (Exception e){
+            log.warn("insertAlarmInfo Exception:{}",e);
+        }
     }
 
     /**
