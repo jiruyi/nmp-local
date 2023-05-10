@@ -230,7 +230,6 @@ public class TaskServiceImpl implements TaskService {
         DataCollectReq dataCollectReq = new DataCollectReq();
         List<DataCollectVo> dataCollectVoList = new ArrayList<>();
         for (NmplDataCollect nmplDataCollect : nmplDataCollectList) {
-            nmplDataCollect.setId(null);
             nmplDataCollect.setDeviceIp(localIp);
             DataCollectVo dataCollectVo = new DataCollectVo();
             BeanUtils.copyProperties(nmplDataCollect,dataCollectVo);
