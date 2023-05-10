@@ -15,6 +15,7 @@ import com.matrictime.network.facade.AlarmDataFacade;
 //import com.matrictime.network.facade.MonitorFacade;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.TerminalDataVo;
+import com.matrictime.network.request.TerminalDataListRequest;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
 import com.matrictime.network.modelVo.PhysicalDeviceHeartbeatVo;
@@ -375,21 +376,18 @@ public class TaskServiceImpl implements TaskService {
     public void systemHeartbeat(String url) {
         SystemHeartbeatResponse systemHeartbeatResponse = systemHeartbeatDomainService.selectSystemHeartbeat();
         Boolean flag = false;
-        String post = null;
+        Result result = null;
         String data = "";
         String msg =null;
         try {
-            JSONObject req = new JSONObject();
-            req.put("list",systemHeartbeatResponse.getList());
-            data = req.toJSONString();
-            post = HttpClientUtil.post(url, data);
-            log.info("SystemHeartbeat push result:{}",post);
+            result = alarmDataFacade.systemHeartbeatResource(systemHeartbeatResponse);
+            log.info("SystemHeartbeat push result:{}",result);
         }catch (Exception e){
             flag = true;
             msg = e.getMessage();
             log.info("SystemHeartbeat push Exception:{}",e.getMessage());
         }finally {
-            logError(post,url,data,flag,msg);
+            logError(result,url,data,flag,msg);
         }
     }
 
@@ -397,43 +395,39 @@ public class TaskServiceImpl implements TaskService {
     public void terminalUser(String url) {
         TerminalUserResponse terminalUserResponse = terminalUserDomainService.selectTerminalUser();
         Boolean flag = false;
-        String post = null;
+        Result result = null;
         String data = "";
         String msg =null;
         try {
-            JSONObject req = new JSONObject();
-            req.put("list",terminalUserResponse.getList());
-            data = req.toJSONString();
-            post = HttpClientUtil.post(url, data);
-            log.info("TerminalUser push result:{}",post);
+            result = alarmDataFacade.terminalUserResource(terminalUserResponse);
+            log.info("TerminalUser push result:{}",result);
         }catch (Exception e){
             flag = true;
             msg = e.getMessage();
             log.info("TerminalUser push Exception:{}",e.getMessage());
         }finally {
-            logError(post,url,data,flag,msg);
+            logError(result,url,data,flag,msg);
         }
     }
 
     @Override
     public void collectTerminalData(String url) {
         List<TerminalDataVo> terminalDataVoList = terminalDataDomainService.collectTerminalData();
+        TerminalDataListRequest terminalDataListRequest = new TerminalDataListRequest();
+        terminalDataListRequest.setList(terminalDataVoList);
         Boolean flag = false;
-        String post = null;
+        Result result = null;
         String data = "";
         String msg =null;
         try {
-            JSONObject req = new JSONObject();
-            req.put("list",terminalDataVoList);
-            data = req.toJSONString();
-            post = HttpClientUtil.post(url, data);
-            log.info("collectTerminalData push result:{}",post);
+            result = alarmDataFacade.collectTerminalDataResource(terminalDataListRequest);
+            log.info("collectTerminalData push result:{}",result);
         }catch (Exception e){
             flag = true;
             msg = e.getMessage();
             log.info("collectTerminalData push Exception:{}",e.getMessage());
         }finally {
-            logError(post,url,data,flag,msg);
+            logError(result,url,data,flag,msg);
         }
     }
 
