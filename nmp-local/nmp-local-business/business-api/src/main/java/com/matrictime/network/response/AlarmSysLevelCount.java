@@ -12,9 +12,9 @@ import lombok.Data;
 @Data
 public class AlarmSysLevelCount {
     //严重警告条数
-    private Long seriousCount;
+    private Long seriousCount = 0l;
     //紧急警告条数
-    private Long emergentCount;
+    private Long emergentCount = 0l;
     //一般警告条数
-    private Long sameAsCount;
+    private Long sameAsCount = 0l;
 }

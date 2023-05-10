@@ -64,6 +64,16 @@
         GROUP BY alarm_source_ip, alarm_content_type;
     </select>
 
+    <!--   查询对应小区下所有设备-->
+    <select id="selectDeviceIdFromAllTables" resultType="map">
+        SELECT station_id AS deviceId,station_type AS deviceType
+        FROM  nmpl_base_station_info
+        WHERE  station_type IN ('01','02')    AND relation_operator_id = '3' AND is_exist = '1'
+        UNION
+        SELECT device_id AS deviceId,device_type AS deviceType
+        FROM  nmpl_device_info
+        WHERE  device_type = '11'  AND relation_operator_id = '3' AND is_exist = '1'
+    </select>
     <select id="selectIpFromDeviceAndStation" resultType="string" parameterType="string">
 
         SELECT lan_ip

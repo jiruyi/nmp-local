@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author jiruyi
@@ -59,7 +60,7 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
             log.info("alarmDataDomainService save mysql  count is: {}", count);
             return buildResult(count);
         } catch (Exception e) {
-            log.error("AlarmDataService acceptAlarmData exception : {} ", e.getMessage());
+            log.error("AlarmDataService acceptAlarmData exception : {} ", e);
             return failResult(e);
         }
 
@@ -84,12 +85,20 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
                 return buildResult(new AlarmDataSysResp());
             }
             // 结果map to bean
+            AlarmDataSysResp sysResp =  new AlarmDataSysResp();
             ObjectMapper objectMapper = new ObjectMapper();
-            AlarmDataSysResp sysResp = AlarmDataSysResp.builder()
-                    .accessCountResp(objectMapper.convertValue(domainMap.get(AlarmSysLevelEnum.ACCESS.getCode()), AlarmSysLevelCount.class))
-                    .boundaryCountResp(objectMapper.convertValue(domainMap.get(AlarmSysLevelEnum.BOUNDARY.getCode()), AlarmSysLevelCount.class))
-                    .keyCenterCountResp(objectMapper.convertValue(domainMap.get(AlarmSysLevelEnum.KEYCENTER.getCode()), AlarmSysLevelCount.class))
-                    .build();
+            for(AlarmSysLevelEnum sysLevelEnum : AlarmSysLevelEnum.values()){
+                AlarmSysLevelCount resp = objectMapper.convertValue(domainMap.get(sysLevelEnum.getCode()),AlarmSysLevelCount.class);
+                if(Objects.isNull(resp)){
+                    resp = new AlarmSysLevelCount();
+                }
+                switch (sysLevelEnum){
+                    case ACCESS:sysResp.setAccessCountResp(resp);break;
+                    case BOUNDARY: sysResp.setBoundaryCountResp(resp);break;
+                    case KEYCENTER: sysResp.setKeyCenterCountResp(resp);break;
+                    default:
+                }
+            }
             result = buildResult(sysResp);
             log.info("querySysAlarmData 结果map to bean  AlarmDataSysResp:{}",sysResp);
         } catch (Exception e) {
@@ -102,13 +111,13 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
 
 
     /**
-      * @title queryPhyAlarmData
-      * @param [alarmDataBaseRequest]
-      * @return com.matrictime.network.model.Result<com.matrictime.network.response.AlarmDataPhyResp>
-      * @description  查询物理设备资源告警
-      * @author jiruyi
-      * @create 2023/4/25 0025 15:01
-      */
+     * @title queryPhyAlarmData
+     * @param [alarmDataBaseRequest]
+     * @return com.matrictime.network.model.Result<com.matrictime.network.response.AlarmDataPhyResp>
+     * @description  查询物理设备资源告警
+     * @author jiruyi
+     * @create 2023/4/25 0025 15:01
+     */
     @Override
     public Result<AlarmDataPhyResp> queryPhyAlarmData(AlarmDataBaseRequest alarmDataBaseRequest) {
         AlarmDataPhyResp alarmDataPhyResp = null;
@@ -123,13 +132,13 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
     }
 
     /**
-      * @title queryAlarmDataList
-      * @param [alarmDataBaseRequest]
-      * @return com.matrictime.network.model.Result<com.matrictime.network.response.PageInfo<com.matrictime.network.model.AlarmInfo>>
-      * @description  查询告警list
-      * @author jiruyi
-      * @create 2023/4/26 0026 10:09
-      */
+     * @title queryAlarmDataList
+     * @param [alarmDataBaseRequest]
+     * @return com.matrictime.network.model.Result<com.matrictime.network.response.PageInfo<com.matrictime.network.model.AlarmInfo>>
+     * @description  查询告警list
+     * @author jiruyi
+     * @create 2023/4/26 0026 10:09
+     */
     @Override
     public Result<PageInfo<AlarmInfo>> queryAlarmDataList(AlarmDataListReq alarmDataListReq) {
         PageInfo<AlarmInfo> alarmInfoPageInfo =  null;

@@ -30,4 +30,7 @@ public class AlarmPhyTypeCount implements Serializable {
     private Long flowCount= 0L;
 
     private  String phyIp;
+    public AlarmPhyTypeCount(String phyIp){
+        this.phyIp = phyIp;
+    }
 }
