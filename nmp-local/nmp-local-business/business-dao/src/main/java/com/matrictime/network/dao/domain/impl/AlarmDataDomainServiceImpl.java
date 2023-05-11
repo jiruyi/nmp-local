@@ -190,7 +190,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
                                 alarmSysLevelEnum.getDesc(), maps);
                         log.info("线程:{}的结果codeMapResp:{}", Thread.currentThread().getName(), countMapResp);
                         /**每个类型基站的结果放入resultMap*/
-                        resultMap.put(alarmSysLevelEnum.getCode(), countMapResp);
+                        resultMap.put(alarmSysLevelEnum.getType(), countMapResp);
                     }
                     countDownLatch.countDown();
                 }
@@ -237,7 +237,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
                         continue;
                     }
                     String[] countArray = dateValue.split(DataConstants.VLINE);
-                    if (CollectionUtils.isEmpty(Arrays.asList(countArray)) || countArray.length < values().length) {
+                    if (CollectionUtils.isEmpty(Arrays.asList(countArray)) || countArray.length < AlarmSysLevelEnum.LevelEnum.values().length) {
                         continue;
                     }
                     /**4 累加每个日期的值*/
