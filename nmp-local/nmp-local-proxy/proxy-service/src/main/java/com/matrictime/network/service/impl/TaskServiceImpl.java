@@ -12,7 +12,6 @@ import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.dao.model.extend.DeviceInfo;
 import com.matrictime.network.facade.AlarmDataFacade;
-import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.DataCollectReq;
@@ -127,6 +126,17 @@ public class TaskServiceImpl implements TaskService {
 
     @Value("${info.disk}")
     private String infoDisk;
+
+
+    @Value("${error.network.load}")
+    private Long errorLoad;
+
+    @Value("${warn.network.load}")
+    private Long warnLoad;
+
+    @Value("${info.network.load}")
+    private Long infoLoad;
+
 
     @Override
     public void heartReport(String url) {
@@ -594,7 +604,7 @@ public class TaskServiceImpl implements TaskService {
         // 获取cpu信息
         PhysicalDeviceResourceVo cpu = new PhysicalDeviceResourceVo();
         cpu.setDeviceIp(localIp);
-        cpu.setResourceType(RESOURCE_TYPE_CPU);
+        cpu.setResourceType(AlarmPhyConTypeEnum.CPU.getContentType());
         cpu.setResourceValue(String.valueOf(SystemUtils.getCPUcores()));
         cpu.setResourcePercent(SystemUtils.getCPUusePercent());
         cpu.setUploadTime(uploadTime);
@@ -604,7 +614,7 @@ public class TaskServiceImpl implements TaskService {
         // 获取内存信息
         PhysicalDeviceResourceVo memory = new PhysicalDeviceResourceVo();
         memory.setDeviceIp(localIp);
-        memory.setResourceType(RESOURCE_TYPE_MEMORY);
+        memory.setResourceType(AlarmPhyConTypeEnum.MEM.getContentType());
         long totalMemory = SystemUtils.getTotalMemory();
         long availMemory = SystemUtils.getAvailableMemory();
         String[] totalMemArray = FormatUtil.formatBy1024(totalMemory);
@@ -618,7 +628,7 @@ public class TaskServiceImpl implements TaskService {
         // 获取磁盘信息
         PhysicalDeviceResourceVo disk = new PhysicalDeviceResourceVo();
         disk.setDeviceIp(localIp);
-        disk.setResourceType(RESOURCE_TYPE_DISK);
+        disk.setResourceType(AlarmPhyConTypeEnum.DISK.getContentType());
         long totalDisk = SystemUtils.getTotalFileSys();
         long availDisk = SystemUtils.getUsableFileSys();
         String[] totalDiskArray = FormatUtil.formatBy1024(totalDisk);
@@ -628,6 +638,15 @@ public class TaskServiceImpl implements TaskService {
         disk.setUploadTime(uploadTime);
         pdrList.add(disk);
         insertAlarmInfo(disk);
+
+        // 获取网络流量信息
+        PhysicalDeviceResourceVo netLoad = new PhysicalDeviceResourceVo();
+        netLoad.setDeviceIp(localIp);
+        netLoad.setResourceType(AlarmPhyConTypeEnum.FLOW.getContentType());
+        long load = SystemUtils.getNetLoad(localIp);
+        netLoad.setResourceValue(String.valueOf(load));
+        netLoad.setUploadTime(uploadTime);
+        insertAlarmInfo(netLoad);
 
         return pdrList;
     }
@@ -643,36 +662,49 @@ public class TaskServiceImpl implements TaskService {
             NmplAlarmInfo alarmInfo = new NmplAlarmInfo();
             String percent = dto.getResourcePercent();
             if (AlarmPhyConTypeEnum.CPU.getContentType().equals(dto.getResourceType())){
-                if (CompareUtil.compareShortStr(percent,infoCpu)>1){
+                if (CompareUtil.compareShortStr(percent,infoCpu)>0){
                     isAlarm = true;
                     alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.CPU.getDesc());
-                    if (CompareUtil.compareShortStr(percent,errorCpu)>1){
+                    if (CompareUtil.compareShortStr(percent,errorCpu)>0){
                         alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
-                    }else if (CompareUtil.compareShortStr(percent,warnCpu)>1){
+                    }else if (CompareUtil.compareShortStr(percent,warnCpu)>0){
                         alarmInfo.setAlarmLevel(LevelEnum.EMERG.getLevel());
                     }else {
                         alarmInfo.setAlarmLevel(LevelEnum.SAMEAS.getLevel());
                     }
                 }
             }else if (AlarmPhyConTypeEnum.MEM.getContentType().equals(dto.getResourceType())){
-                if (CompareUtil.compareShortStr(percent,infoMem)>1){
+                if (CompareUtil.compareShortStr(percent,infoMem)>0){
                     isAlarm = true;
                     alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.MEM.getDesc());
-                    if (CompareUtil.compareShortStr(percent,errorMem)>1){
+                    if (CompareUtil.compareShortStr(percent,errorMem)>0){
                         alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
-                    }else if (CompareUtil.compareShortStr(percent,warnMem)>1){
+                    }else if (CompareUtil.compareShortStr(percent,warnMem)>0){
                         alarmInfo.setAlarmLevel(LevelEnum.EMERG.getLevel());
                     }else {
                         alarmInfo.setAlarmLevel(LevelEnum.SAMEAS.getLevel());
                     }
                 }
             }else if (AlarmPhyConTypeEnum.DISK.getContentType().equals(dto.getResourceType())){
-                if (CompareUtil.compareShortStr(percent,infoDisk)>1){
+                if (CompareUtil.compareShortStr(percent,infoDisk)>0){
                     isAlarm = true;
                     alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.DISK.getDesc());
-                    if (CompareUtil.compareShortStr(percent,errorDisk)>1){
+                    if (CompareUtil.compareShortStr(percent,errorDisk)>0){
                         alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
-                    }else if (CompareUtil.compareShortStr(percent,warnDisk)>1){
+                    }else if (CompareUtil.compareShortStr(percent,warnDisk)>0){
+                        alarmInfo.setAlarmLevel(LevelEnum.EMERG.getLevel());
+                    }else {
+                        alarmInfo.setAlarmLevel(LevelEnum.SAMEAS.getLevel());
+                    }
+                }
+            }else if (AlarmPhyConTypeEnum.FLOW.getContentType().equals(dto.getResourceType())){
+                Long value = Long.valueOf(dto.getResourceValue());
+                if (infoLoad.compareTo(value) == -1){
+                    isAlarm = true;
+                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.FLOW.getDesc());
+                    if (errorLoad.compareTo(value) == -1){
+                        alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
+                    }else if (warnLoad.compareTo(value) == -1){
                         alarmInfo.setAlarmLevel(LevelEnum.EMERG.getLevel());
                     }else {
                         alarmInfo.setAlarmLevel(LevelEnum.SAMEAS.getLevel());

@@ -166,6 +166,29 @@ public class SystemUtils {
         return res;
     }
 
+    public static long getNetLoad(String ip){
+        long load = 0;
+        SystemInfo si = new SystemInfo();
+        HardwareAbstractionLayer hd = si.getHardware();
+        List<NetworkIF> networkIFs = hd.getNetworkIFs();
+        for (NetworkIF networkIF : networkIFs){
+            String[] iPv4addr = networkIF.getIPv4addr();
+            for (String tempIp : iPv4addr){
+                if (ip.equals(tempIp)){
+                    long bytesRecvBegin = networkIF.getBytesRecv();
+                    long bytesSentBegin = networkIF.getBytesSent();
+                    Util.sleep(CPU_WAIT_TIME);
+                    boolean b = networkIF.updateAttributes();
+                    System.out.println(b);
+                    long bytesRecvEnd = networkIF.getBytesRecv();
+                    long bytesSentEnd = networkIF.getBytesSent();
+                    load = (bytesRecvEnd-bytesRecvBegin) + (bytesSentEnd-bytesSentBegin);
+                }
+            }
+        }
+        return load;
+    }
+
     static List<String> oshi = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -173,6 +196,12 @@ public class SystemUtils {
         int port = 3306;
 
         try {
+            System.out.println(getNetLoad("192.168.72.14"));
+//            for (int i=0;i<20;i++){
+//                System.out.println(getCPUusePercent());
+//                Thread.sleep(1000);
+//            }
+
 //            SystemInfo si = new SystemInfo();
 //
 //            HardwareAbstractionLayer hal = si.getHardware();
@@ -183,9 +212,9 @@ public class SystemUtils {
 //            }
 
 //            printProcesses(os,hal.getMemory());
-            Integer pid = getPID(String.valueOf(port));
+//            Integer pid = getPID(String.valueOf(port));
 //            for (String s : oshi){
-                System.out.println(pid);
+//                System.out.println(pid);
 //            }
 
 //            for (int i=0;i<2;i++){
