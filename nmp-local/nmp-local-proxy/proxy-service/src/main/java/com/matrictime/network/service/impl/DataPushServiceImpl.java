@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -59,8 +58,9 @@ public class DataPushServiceImpl implements DataPushService {
             }
             log.info("alarmDataFacade.acceptAlarmData push data count :{}",pushResult.getResultObj());
             //删除此次推送之前的数据
-            Collections.sort(alarmInfoList, Comparator.comparing(NmplAlarmInfo::getAlarmUploadTime,(a1,a2) ->a2.compareTo(a1)));
-            int deleteCount =  alarmDomainService.deleteThisTimePushData(alarmInfoList.get(0).getAlarmUploadTime());
+            Long maxAlarmId = alarmInfoList.stream().max(Comparator.comparingLong(NmplAlarmInfo::getAlarmId)).get().getAlarmId();
+            log.info("alarmPush this time maxAlarmId ：{}",maxAlarmId);
+            int deleteCount =  alarmDomainService.deleteThisTimePushData(maxAlarmId);
             log.info("alarmPush this time delete data count：{}",deleteCount);
         }catch (Exception e){
             log.error("DataPushService alarmPush exception:{}",e.getMessage());
