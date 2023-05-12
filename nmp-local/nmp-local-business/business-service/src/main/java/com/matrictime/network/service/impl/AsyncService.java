@@ -79,7 +79,7 @@ public class AsyncService{
             alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.20").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmSourceType("00").alarmLevel("2").alarmContentType("3").alarmContent("磁盘满载").build());
             alarmInfoList.add(AlarmInfo.builder().alarmSourceIp("192.168.72.20").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmSourceType("00").alarmLevel("1").alarmContentType("4").alarmContent("流量过高").build());
         }
-        alarmDataDomainService.acceptAlarmData(alarmInfoList);
+        alarmDataDomainService.acceptAlarmData(alarmInfoList,"192.168.72.24");
     }
 
 

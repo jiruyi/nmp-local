@@ -10,8 +10,10 @@ import com.matrictime.network.request.TerminalDataListRequest;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -25,7 +27,7 @@ import java.util.List;
 @FeignClient(value = "nmp-local-business",path = "nmp-local-business",contextId = "alarm")
 public interface AlarmDataFacade {
     @RequestMapping(value= "/alarm/accept",method = RequestMethod.POST)
-    Result acceptAlarmData(List<AlarmInfo> alarmInfoList);
+    Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList, @RequestParam("ip") String ip);
 
     @RequestMapping(value= "/monitor/physicalDeviceHeartbeat",method = RequestMethod.POST)
     Result physicalDeviceHeartbeat(PhysicalDeviceHeartbeatReq req);

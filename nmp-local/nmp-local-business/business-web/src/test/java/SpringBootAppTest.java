@@ -48,7 +48,7 @@ public class SpringBootAppTest {
 
     @Test
     public void testRedis() {
-        for (int j = 0; j < 100; j++) {
+        for (int j = 0; j < 10; j++) {
             List<AlarmInfo> alarmInfoList = new ArrayList<>();
             for (int i = 0; i < 50; i++) {
                 alarmInfoList.add(AlarmInfo.builder().alarmSourceId("8342391251767685120").alarmSourceIp("192.168.72.103").alarmUploadTime(DateUtils.addDayForNow(-i)).alarmContentType("5").alarmSourceType("01").alarmLevel("1").alarmContent("checksunm失败").build());

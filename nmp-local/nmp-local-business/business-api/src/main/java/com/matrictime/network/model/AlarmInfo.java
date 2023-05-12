@@ -20,6 +20,10 @@ import java.util.Date;
 @AllArgsConstructor
 public class AlarmInfo {
     /**
+     * 主键
+     */
+    private Long alarmId;
+    /**
      * 业务系统id  物理设备无
      */
     private String alarmSourceId;

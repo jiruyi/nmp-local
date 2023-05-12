@@ -94,6 +94,8 @@ management:
       show-details: always
     beans:
       enabled: true
+    scheduledtasks:
+      enabled: true
   endpoints:
     web:
       exposure:

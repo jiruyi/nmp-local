@@ -33,8 +33,10 @@ public class AlarmDomainServiceImpl  implements AlarmDomainService {
       */
     @Override
     public List<NmplAlarmInfo> queryAlarmList() {
-        PageHelper.startPage(1,1000);
-        List<NmplAlarmInfo> infoList =  alarmInfoMapper.selectByExample(null);
+        PageHelper.startPage(1,500);
+        NmplAlarmInfoExample example = new NmplAlarmInfoExample();
+        example.setOrderByClause("alarm_id");
+        List<NmplAlarmInfo> infoList =  alarmInfoMapper.selectByExample(example);
         return infoList;
     }
 

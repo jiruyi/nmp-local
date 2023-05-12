@@ -14,10 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -47,8 +44,8 @@ public class AlarmDataController {
      */
     @ApiOperation(value = "告警信息数据推送", notes = "告警信息数据推送")
     @RequestMapping(value = "/accept", method = RequestMethod.POST)
-    public Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList) {
-        return alarmDataService.acceptAlarmData(alarmInfoList);
+    public Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList,@RequestParam("ip") String ip) {
+        return alarmDataService.acceptAlarmData(alarmInfoList,ip);
     }
 
     /**
