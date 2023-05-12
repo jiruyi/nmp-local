@@ -67,7 +67,7 @@ public class AlarmDataController {
             checkParam(dataBaseRequest);
             log.info("AlarmDataController querySysAlarmDataList param:{}",dataBaseRequest);
             //查询
-            return alarmDataService.querySysAlarmData(dataBaseRequest);
+            return alarmDataService.querySysAlarmDataCount(dataBaseRequest);
         } catch (Exception e) {
             log.error("AlarmDataController querySysAlarmDataList exception:{}", e);
             return new Result(false, e.getMessage());
@@ -90,7 +90,7 @@ public class AlarmDataController {
             checkParam(dataBaseRequest);
             log.info("AlarmDataController queryPhyAlarmDataList param:{}",dataBaseRequest);
             //查询
-            return alarmDataService.queryPhyAlarmData(dataBaseRequest);
+            return alarmDataService.queryPhyAlarmDataCount(dataBaseRequest);
         } catch (Exception e) {
             log.error("AlarmDataController querySysAlarmDataList exception:{}", e);
             return new Result(false, e.getMessage());

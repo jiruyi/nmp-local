@@ -75,7 +75,7 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
      * @create 2023/4/24 0024 13:57
      */
     @Override
-    public Result<AlarmDataSysResp> querySysAlarmData(AlarmDataBaseRequest alarmDataBaseRequest) {
+    public Result<AlarmDataSysResp> querySysAlarmDataCount(AlarmDataBaseRequest alarmDataBaseRequest) {
         Result<AlarmDataSysResp> result = null;
         try {
             //结果map   // {"access":{"seriousCount":2,"emergentCount":14,"3":27},"sameAsCount":{"1":2,"2":14,"3":27}}
@@ -88,7 +88,7 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
             AlarmDataSysResp sysResp =  new AlarmDataSysResp();
             ObjectMapper objectMapper = new ObjectMapper();
             for(AlarmSysLevelEnum sysLevelEnum : AlarmSysLevelEnum.values()){
-                AlarmSysLevelCount resp = objectMapper.convertValue(domainMap.get(sysLevelEnum.getCode()),AlarmSysLevelCount.class);
+                AlarmSysLevelCount resp = objectMapper.convertValue(domainMap.get(sysLevelEnum.getType()),AlarmSysLevelCount.class);
                 if(Objects.isNull(resp)){
                     resp = new AlarmSysLevelCount();
                 }
@@ -119,7 +119,7 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
      * @create 2023/4/25 0025 15:01
      */
     @Override
-    public Result<AlarmDataPhyResp> queryPhyAlarmData(AlarmDataBaseRequest alarmDataBaseRequest) {
+    public Result<AlarmDataPhyResp> queryPhyAlarmDataCount(AlarmDataBaseRequest alarmDataBaseRequest) {
         AlarmDataPhyResp alarmDataPhyResp = null;
         try {
             List<AlarmPhyTypeCount> phyTypeCountList = alarmDataDomainService.queryPhyAlarmDataCount(alarmDataBaseRequest);
