@@ -321,7 +321,9 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             String operatorId = req.getRelationOperatorId();
             Set<String> ips = distinctIps(operatorId);
 
-            List<NmplPhysicalDeviceHeartbeat> heartbeats = nmplPhysicalDeviceHeartbeatMapper.selectByExample(null);
+            NmplPhysicalDeviceHeartbeatExample example = new NmplPhysicalDeviceHeartbeatExample();
+            example.createCriteria().andUploadTimeEqualTo(DateUtils.getRecentHalfTime(new Date()));
+            List<NmplPhysicalDeviceHeartbeat> heartbeats = nmplPhysicalDeviceHeartbeatMapper.selectByExample(example);
             List<PhysicalDeviceHeartbeatVo> heartbeatVos = new ArrayList<>();
             for (NmplPhysicalDeviceHeartbeat heartbeat : heartbeats){
                 PhysicalDeviceHeartbeatVo vo = new PhysicalDeviceHeartbeatVo();
