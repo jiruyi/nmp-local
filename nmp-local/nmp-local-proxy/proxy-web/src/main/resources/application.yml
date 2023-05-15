@@ -46,10 +46,18 @@ spring:
   mvc:
     async:
       request-timeout: 60000
-  instance:
-    instance-id: nmp-local-proxy
-    prefer-ip-address: true     #访问路径可以显示IP地址
- 
+  redis:
+    database: 0
+    host: 192.168.72.14
+    port: 6379
+    password: 123456
+    timeout: 5000
+    lettuce:
+      pool:
+        max-active: 100
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
 info: 
   app.name: nmp-local-proxy
   company.name: www.matrictime.com
@@ -72,6 +80,28 @@ local:
 
 eureka:
   client:
-    register-with-eureka: false
     service-url:
-      defaultZone:  http://192.168.72.24:7002/eureka/
+      defaultZone: http://192.168.72.24:7002/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+       connectTimeout: 600000
+       readTimeout: 600000
+
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    beans:
+      enabled: true
+    scheduledtasks:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"

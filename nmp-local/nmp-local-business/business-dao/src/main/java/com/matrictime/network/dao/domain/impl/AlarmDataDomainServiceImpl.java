@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -54,7 +55,12 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
     @Autowired
     private Executor taskExecutor;
 
+    @Autowired
+    private HttpServletRequest request;
+
     private static final String PHYSICAL_TYPE= "00";
+
+    private static final String ALARM_PUSH_LAST_MAXI_ID= ":alarm_last_push_max_id";
 
     /**
      * @param [alarmInfoList]
@@ -65,7 +71,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
      * @create 2023/4/19 0019 15:51
      */
     @Override
-    public int acceptAlarmData(List<AlarmInfo> alarmInfoList) {
+    public int acceptAlarmData(List<AlarmInfo> alarmInfoList,String ip) {
         if (CollectionUtils.isEmpty(alarmInfoList)) {
             return NumberUtils.INTEGER_ZERO;
         }
@@ -85,7 +91,13 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
             return -1;
         }
         //mysql 插入
-        return alarmInfoExtMapper.batchInsert(alarmInfoList);
+        int batchCount = alarmInfoExtMapper.batchInsert(alarmInfoList);
+        /**ip*/
+        Long maxId = alarmInfoList.stream().max(Comparator.comparingLong(AlarmInfo::getAlarmId)).get().getAlarmId();
+        log.info("this time acceptAlarmData ip:{},maxId:{}",ip,maxId);
+        redisTemplate.opsForValue().set(ip+ALARM_PUSH_LAST_MAXI_ID,String.valueOf(maxId));
+        return batchCount;
+
     }
 
     /**
@@ -190,7 +202,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
                                 alarmSysLevelEnum.getDesc(), maps);
                         log.info("线程:{}的结果codeMapResp:{}", Thread.currentThread().getName(), countMapResp);
                         /**每个类型基站的结果放入resultMap*/
-                        resultMap.put(alarmSysLevelEnum.getCode(), countMapResp);
+                        resultMap.put(alarmSysLevelEnum.getType(), countMapResp);
                     }
                     countDownLatch.countDown();
                 }
@@ -237,7 +249,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
                         continue;
                     }
                     String[] countArray = dateValue.split(DataConstants.VLINE);
-                    if (CollectionUtils.isEmpty(Arrays.asList(countArray)) || countArray.length < values().length) {
+                    if (CollectionUtils.isEmpty(Arrays.asList(countArray)) || countArray.length < AlarmSysLevelEnum.LevelEnum.values().length) {
                         continue;
                     }
                     /**4 累加每个日期的值*/

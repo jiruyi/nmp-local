@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public interface AlarmDataDomainService {
 
-     int  acceptAlarmData(List<AlarmInfo> alarmInfoList);
+     int  acceptAlarmData(List<AlarmInfo> alarmInfoList,String ip);
 
      void alarmSysCountDataToRedis(List<AlarmInfo> alarmInfoList);
 

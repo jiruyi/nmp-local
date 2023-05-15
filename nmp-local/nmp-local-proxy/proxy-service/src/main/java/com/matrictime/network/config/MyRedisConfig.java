@@ -9,7 +9,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
- * @author jiruyi
+ * @author jiruyi@goldengintech.com.cn
  * @project mini_know
  * @date 2019-2019/10/10-19:29
  * @desc

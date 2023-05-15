@@ -1,5 +1,6 @@
 package com.matrictime.network.dao.domain.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.mapper.NmplAlarmInfoMapper;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
@@ -7,7 +8,6 @@ import com.matrictime.network.dao.model.NmplAlarmInfoExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,7 +33,10 @@ public class AlarmDomainServiceImpl  implements AlarmDomainService {
       */
     @Override
     public List<NmplAlarmInfo> queryAlarmList() {
-        List<NmplAlarmInfo> infoList =  alarmInfoMapper.selectWithOutIdByExample(null);
+        PageHelper.startPage(1,500);
+        NmplAlarmInfoExample example = new NmplAlarmInfoExample();
+        example.setOrderByClause("alarm_id");
+        List<NmplAlarmInfo> infoList =  alarmInfoMapper.selectByExample(example);
         return infoList;
     }
 
@@ -46,9 +49,9 @@ public class AlarmDomainServiceImpl  implements AlarmDomainService {
       * @create 2023/4/20 0020 16:42
       */
     @Override
-    public int deleteThisTimePushData(Date uploadTime) {
+    public int deleteThisTimePushData(Long maxAlarmId) {
         NmplAlarmInfoExample example = new NmplAlarmInfoExample();
-        example.createCriteria().andAlarmUploadTimeLessThanOrEqualTo(uploadTime);
+        example.createCriteria().andAlarmIdLessThanOrEqualTo(maxAlarmId);
         return  alarmInfoMapper.deleteByExample(example);
     }
 }

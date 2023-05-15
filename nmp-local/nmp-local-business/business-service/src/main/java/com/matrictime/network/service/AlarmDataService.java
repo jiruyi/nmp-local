@@ -19,12 +19,12 @@ import java.util.List;
  */
 public interface AlarmDataService {
     //数据推送
-    Result acceptAlarmData(List<AlarmInfo> alarmInfoList);
+    Result acceptAlarmData(List<AlarmInfo> alarmInfoList,String ip);
     //系统告警数据查询
-    Result<AlarmDataSysResp> querySysAlarmData(AlarmDataBaseRequest alarmDataBaseRequest);
+    Result<AlarmDataSysResp> querySysAlarmDataCount(AlarmDataBaseRequest alarmDataBaseRequest);
 
     //物理设备告警数据查询
-    Result<AlarmDataPhyResp> queryPhyAlarmData(AlarmDataBaseRequest alarmDataBaseRequest);
+    Result<AlarmDataPhyResp> queryPhyAlarmDataCount(AlarmDataBaseRequest alarmDataBaseRequest);
 
     Result<PageInfo<AlarmInfo>> queryAlarmDataList(AlarmDataListReq alarmDataListReq);
 }

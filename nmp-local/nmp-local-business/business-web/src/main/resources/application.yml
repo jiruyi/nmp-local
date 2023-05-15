@@ -36,9 +36,9 @@ spring:
           slow-sql-millis: 15000
       time-between-eviction-runs-millis: 10000
       min-evictable-idle-time-millis: 30000
-      async-init: true
+      async-init: false
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
     init-sqls: CREATE DATABASE IF NOT EXISTS `nmp_local` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
   servlet:
@@ -49,7 +49,7 @@ spring:
       max-request-size: 215MB
   redis:
     database: 0
-    host: 192.168.72.225
+    host: 192.168.72.14
     port: 6379
     password: 123456
     timeout: 5000
@@ -62,8 +62,7 @@ spring:
   cloud:
     sentinel:
       transport:
-        port: 8720
-        dashboard: 127.0.0.1:8090
+        dashboard: 127.0.0.1:8080
   jackson:
     time-zone: "GMT+8"
     date-format: "yyyy-MM-dd HH:mm:ss"
@@ -94,6 +93,8 @@ management:
       enabled: true
       show-details: always
     beans:
+      enabled: true
+    scheduledtasks:
       enabled: true
   endpoints:
     web:
