@@ -1,5 +1,6 @@
 package com.matrictime.network.response;
 
+import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.SystemHeartbeatVo;
 import lombok.Data;
 
@@ -11,6 +12,8 @@ import java.util.List;
  */
 @Data
 public class SystemHeartbeatResponse {
+
     private List<SystemHeartbeatVo> list;
 
+    private List<BaseStationInfoVo> stationInfoVoList;
 }

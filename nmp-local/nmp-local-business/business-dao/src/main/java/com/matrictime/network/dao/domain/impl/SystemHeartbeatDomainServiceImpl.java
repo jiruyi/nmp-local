@@ -5,6 +5,7 @@ import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceCountMapper;
 import com.matrictime.network.dao.mapper.NmplSystemHeartbeatMapper;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.SystemHeartbeatVo;
 import com.matrictime.network.request.SystemHeartbeatRequest;
 import com.matrictime.network.response.SystemHeartbeatResponse;
@@ -58,6 +59,10 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
         NmplSystemHeartbeatExample nmplSystemHeartbeatExample = new NmplSystemHeartbeatExample();
         SystemHeartbeatResponse systemHeartbeatResponse = new SystemHeartbeatResponse();
         List<SystemHeartbeatVo> list = new ArrayList<>();
+        List<BaseStationInfoVo> baseStationInfoVoList = baseStationInfoMapper.selectAllDevice(systemHeartbeatRequest);
+        if(CollectionUtils.isEmpty(baseStationInfoVoList)){
+            throw new RuntimeException("该小区下没有设备");
+        }
         List<NmplSystemHeartbeat> nmplSystemHeartbeats = nmplSystemHeartbeatMapper.selectByExample(nmplSystemHeartbeatExample);
         if(!CollectionUtils.isEmpty(nmplSystemHeartbeats)){
             for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
@@ -68,6 +73,7 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
                 list.add(systemHeartbeatVo);
             }
             systemHeartbeatResponse.setList(list);
+            systemHeartbeatResponse.setStationInfoVoList(baseStationInfoVoList);
         }
         return systemHeartbeatResponse;
     }
