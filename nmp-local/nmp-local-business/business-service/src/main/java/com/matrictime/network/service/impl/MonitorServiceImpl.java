@@ -511,7 +511,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         return voList;
     }
 
-    private Map<String,List<String>> getSystemResourceSL(List<SystemResourceVo> vos,String systemType,Date now){
+    private Map<String,List<String>> getSystemResourceSL(List<SystemResourceVo> vos,String resourceType,Date now){
         Map<String,List<String>> resMap = new HashMap<>();
         Date recentHalfTime = DateUtils.getRecentHalfTime(now);
         List<String> xTime = CommonServiceImpl.getXTimePerHalfHour(recentHalfTime, -24, 60 * 30, MINUTE_TIME_FORMAT);
@@ -557,22 +557,22 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                     if (entries.containsKey(time)){
                         DisplayVo displayVo = entries.get(time);
                         if (nowStr.equals(displayVo.getDate())){
-                            if (RESOURCE_TYPE_CPU.equals(systemType)){
+                            if (RESOURCE_TYPE_CPU.equals(resourceType)){
                                 value = displayVo.getValue1();
-                            }else if (RESOURCE_TYPE_MEMORY.equals(systemType)){
+                            }else if (RESOURCE_TYPE_MEMORY.equals(resourceType)){
                                 value = displayVo.getValue2();
                             }
                         }
                     }else {
                         NmplSystemResourceExample example = new NmplSystemResourceExample();
-                        example.createCriteria().andSystemIdEqualTo(systemId).andSystemTypeEqualTo(systemType).andUploadTimeEqualTo(CommonServiceImpl.getDateByStr(nowStr+time));
+                        example.createCriteria().andSystemIdEqualTo(systemId).andSystemTypeEqualTo(vo.getSystemType()).andUploadTimeEqualTo(CommonServiceImpl.getDateByStr(nowStr+time));
                         List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
                         SystemResourceVo resourceVo = new SystemResourceVo();
                         if (!CollectionUtils.isEmpty(resources)){
                             BeanUtils.copyProperties(resources.get(0),resourceVo);
-                            if (RESOURCE_TYPE_CPU.equals(systemType)){
+                            if (RESOURCE_TYPE_CPU.equals(resourceType)){
                                 value = resources.get(0).getCpuPercent();
-                            }else if (RESOURCE_TYPE_MEMORY.equals(systemType)){
+                            }else if (RESOURCE_TYPE_MEMORY.equals(resourceType)){
                                 value = resources.get(0).getMemoryPercent();
                             }
                             putSystemResourceRedis(resourceVo);
