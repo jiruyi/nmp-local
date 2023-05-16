@@ -2,6 +2,7 @@ package com.matrictime.network.dao.domain.impl;
 
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.dao.mapper.NmplTerminalUserMapper;
+import com.matrictime.network.dao.mapper.extend.NmplTerminalUserExtMapper;
 import com.matrictime.network.dao.model.NmplTerminalUser;
 import com.matrictime.network.dao.model.NmplTerminalUserExample;
 import com.matrictime.network.modelVo.TerminalUserVo;
@@ -24,6 +25,9 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
 
     @Resource
     private NmplTerminalUserMapper nmplTerminalUserMapper;
+
+    @Resource
+    private NmplTerminalUserExtMapper terminalUserExtMapper;
 
     @Override
     public int insertTerminalUser(TerminalUserResquest terminalUserResquest) {
@@ -59,11 +63,8 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
 
     @Override
     public int countTerminalUser(TerminalUserResquest terminalUserResquest) {
-        NmplTerminalUserExample nmplTerminalUserExample = new NmplTerminalUserExample();
-        NmplTerminalUserExample.Criteria criteria = nmplTerminalUserExample.createCriteria();
-        criteria.andTerminalStatusEqualTo(terminalUserResquest.getTerminalStatus());
-        List<NmplTerminalUser> nmplTerminalUsers = nmplTerminalUserMapper.selectByExample(nmplTerminalUserExample);
-        return nmplTerminalUsers.size();
+        List<TerminalUserVo> list = terminalUserExtMapper.selectTerminalUser(terminalUserResquest);
+        return list.size();
     }
 
 
