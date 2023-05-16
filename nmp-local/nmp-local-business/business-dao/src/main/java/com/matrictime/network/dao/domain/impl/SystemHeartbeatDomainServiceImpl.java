@@ -61,7 +61,7 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
         List<SystemHeartbeatVo> list = new ArrayList<>();
         List<BaseStationInfoVo> baseStationInfoVoList = baseStationInfoMapper.selectAllDevice(systemHeartbeatRequest);
         if(CollectionUtils.isEmpty(baseStationInfoVoList)){
-            throw new RuntimeException("该小区下没有设备");
+            return systemHeartbeatResponse;
         }
         List<NmplSystemHeartbeat> nmplSystemHeartbeats = nmplSystemHeartbeatMapper.selectByExample(nmplSystemHeartbeatExample);
         if(!CollectionUtils.isEmpty(nmplSystemHeartbeats)){
