@@ -27,6 +27,11 @@ public class SystemHeartbeatRequest implements Serializable {
     private String status;
 
     /**
+     * 小区id
+     */
+    private String relationOperatorId;
+
+    /**
      * 上报时间
      */
     private Date uploadTime;

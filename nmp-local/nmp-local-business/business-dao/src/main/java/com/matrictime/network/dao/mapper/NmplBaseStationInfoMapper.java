@@ -7,6 +7,7 @@ import java.util.List;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.SystemHeartbeatRequest;
 import org.apache.ibatis.annotations.Param;
 
 public interface NmplBaseStationInfoMapper {
@@ -57,4 +58,6 @@ public interface NmplBaseStationInfoMapper {
     int getSequenceId();
 
     List<BaseStationInfoVo> selectForRoute(BaseStationInfoRequest baseStationInfoRequest);
+
+    List<BaseStationInfoVo> selectAllDevice(SystemHeartbeatRequest systemHeartbeatRequest);
 }

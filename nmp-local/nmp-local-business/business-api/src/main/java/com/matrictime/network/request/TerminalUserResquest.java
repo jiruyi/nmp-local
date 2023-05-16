@@ -27,6 +27,11 @@ public class TerminalUserResquest implements Serializable {
     private String terminalStatus;
 
     /**
+     * 小区Id
+     */
+    private String relationOperatorId;
+
+    /**
      * 上报时间
      */
     private Date uploadTime;

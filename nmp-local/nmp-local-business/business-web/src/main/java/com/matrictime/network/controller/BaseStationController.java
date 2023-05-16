@@ -292,9 +292,6 @@ public class BaseStationController {
     @RequestMapping(value = "/countBaseStation",method = RequestMethod.POST)
     public Result<CountBaseStationResponse> countBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         try {
-            if(StringUtils.isEmpty(baseStationInfoRequest.getStationType())){
-                throw new RuntimeException("缺少必传参数");
-            }
             return baseStationInfoService.countBaseStation(baseStationInfoRequest);
         }catch (Exception e){
             log.info("countBaseStation:{}",e.getMessage());
@@ -330,9 +327,6 @@ public class BaseStationController {
     @RequestMapping(value = "/selectPhysicalDevice",method = RequestMethod.POST)
     public Result<List<CommunityBaseStationVo>> selectPhysicalDevice(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         try {
-            if(StringUtils.isEmpty(baseStationInfoRequest.getRelationOperatorId())){
-                throw new RuntimeException("缺少必传参数");
-            }
             return baseStationInfoService.selectPhysicalDevice(baseStationInfoRequest);
         }catch (Exception e){
             log.info("selectPhysicalDevice:{}",e.getMessage());

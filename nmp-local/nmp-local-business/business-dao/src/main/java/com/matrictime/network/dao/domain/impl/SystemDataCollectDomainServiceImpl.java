@@ -89,7 +89,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
         list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
         list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
-
+        dataCollectReq.setDeviceType(DeviceTypeEnum.DISPENSER.getCode());
         List<Double> dataList = getDeviceData(list, dataCollectReq);
         //数据转换
         keyCenterDataVo = getKeyCenterData(dataList);
@@ -142,9 +142,9 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
             req.setDeviceType(dataCollectReq.getDeviceType());
             req.setDataItemCode(dataCodeList.get(i));
             req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
-            List<StationVo> stationVos = nmplSystemDataCollectExtMapper.distinctSystemDeviceData(req);
-            if(!CollectionUtils.isEmpty(stationVos)){
-                dataSum = getDataSum(stationVos);
+            List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.distinctSystemDeviceData(req);
+            if(!CollectionUtils.isEmpty(dataCollectVos)){
+                dataSum = getDeviceDataSum(dataCollectVos);
             }
             list.add(dataSum);
         }
@@ -184,20 +184,33 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         for(StationVo stationVo: list){
             deviceIdList.add(stationVo.getDeviceId());
         }
-        List<StationVo> stationVos = nmplSystemDataCollectExtMapper.selectDataItemValue(deviceIdList);
-
+        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(deviceIdList);
         Double dataSum = 0d;
-        for (int i = 0;i< stationVos.size();i++){
-            dataSum = dataSum + Double.parseDouble(stationVos.get(i).getDataItemValue());
-//            NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
-//            NmplDataCollectExample.Criteria criteria = nmplDataCollectExample.createCriteria();
-//            nmplDataCollectExample.setOrderByClause("upload_time desc");
-//            criteria.andDeviceIdEqualTo(list.get(i).getDeviceId());
-//            List<NmplDataCollect> nmplDataCollects = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
-//            dataSum = dataSum + Double.parseDouble(nmplDataCollects.get(0).getDataItemValue());
+        for (int i = 0;i< dataCollectVos.size();i++){
+            dataSum = dataSum + Double.parseDouble(dataCollectVos.get(i).getDataItemValue());
         }
         return dataSum;
     }
+
+    /**
+     * 获取密钥中心流量总和
+     * @param list
+     * @return
+     */
+    private Double getDeviceDataSum(List<DataCollectVo> list){
+        List<String> deviceIdList = new ArrayList<>();
+        for(DataCollectVo dataCollectVo: list){
+            deviceIdList.add(dataCollectVo.getDeviceId());
+        }
+        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(deviceIdList);
+        Double dataSum = 0d;
+        for (int i = 0;i< dataCollectVos.size();i++){
+            dataSum = dataSum + Double.parseDouble(dataCollectVos.get(i).getDataItemValue());
+        }
+        return dataSum;
+    }
+
+
 
     private BaseStationDataVo getBaseStationData( List<Double> dataList){
         BaseStationDataVo baseStationDataVo = new BaseStationDataVo();
