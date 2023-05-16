@@ -1,6 +1,7 @@
 package com.matrictime.network.dao.mapper.extend;
 
 
+import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.DataCollectReq;
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +15,7 @@ import java.util.List;
 public interface NmplSystemDataCollectExtMapper {
     List<StationVo> distinctSystemData(DataCollectReq dataCollectReq);
 
-    List<StationVo> distinctSystemDeviceData(DataCollectReq dataCollectReq);
+    List<DataCollectVo> distinctSystemDeviceData(DataCollectReq dataCollectReq);
 
-    List<StationVo> selectDataItemValue(@Param("deviceId") List<String> deviceIdList);
+    List<DataCollectVo> selectDataItemValue(@Param("deviceId") List<String> deviceIdList);
 }
