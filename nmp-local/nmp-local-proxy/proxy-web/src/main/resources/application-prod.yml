@@ -11,7 +11,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver              # mysql驱动包
     url: jdbc:mysql://127.0.0.1:3306/nmp_proxy?useSSL=false  # 数据库名称
     username: root
-    password: Jzsg@2021
+    password: Admin@1234
     druid:
       min-idle: 20                                           # 数据库连接池的最小维持连接数
       initial-size: 5                                      # 初始化连接数
@@ -34,7 +34,6 @@ spring:
           slow-sql-millis: 3000
       time-between-eviction-runs-millis: 10000
       min-evictable-idle-time-millis: 30000
-      async-init: true
   servlet:
     multipart:
       enabled: true
@@ -47,7 +46,18 @@ spring:
   mvc:
     async:
       request-timeout: 60000
-
+  redis:
+    database: 0
+    host: 192.168.72.14
+    port: 6379
+    password: 123456
+    timeout: 5000
+    lettuce:
+      pool:
+        max-active: 100
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
 info:
   app.name: nmp-local-proxy
   company.name: www.matrictime.com
@@ -66,10 +76,32 @@ netmanage:
   port: 8002
 
 local:
-  ip: 192.168.72.14
+  ip: 192.168.72.103
 
 eureka:
   client:
-    register-with-eureka: false
     service-url:
-      defaultZone:  http://192.168.72.24:7002/eureka/
+      defaultZone: http://192.168.72.14:7002/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 50000
+        readTimeout: 50000
+
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    beans:
+      enabled: true
+    scheduledtasks:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
