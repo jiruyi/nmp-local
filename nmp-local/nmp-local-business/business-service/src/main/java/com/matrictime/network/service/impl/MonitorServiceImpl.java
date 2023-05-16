@@ -502,6 +502,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                     vo.setCpuPercent("0");
                     vo.setMemoryPercent("0");
                     vo.setSystemType(info.getDeviceType());
+                    vo.setRunTime(0L);
                     vo.setUploadTime(date);
                 }
                 voList.add(vo);
