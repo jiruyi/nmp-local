@@ -2,10 +2,8 @@ package com.matrictime.network.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.annotation.SystemLog;
-import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.LogDomainService;
 import com.matrictime.network.dao.model.NmplOperateLog;
-import com.matrictime.network.model.Result;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -56,21 +54,22 @@ public class LogHandlerAspect {
      */
     @AfterReturning(value = "controllerAspect()", returning = "returnValue")
     public void doAfterReturn(JoinPoint joinPoint, Object returnValue) {
-        logger.info("进入日志切面后置通知");
-        try {
-            NmplOperateLog networkLog = NmplOperateLog.builder().build();
-            packageModel(joinPoint, networkLog);
-            //返回值
-            networkLog.setOperRespParam(subStr(returnValue));
-            if (!ObjectUtils.isEmpty(returnValue)) {
-                Result result = (Result) returnValue;
-                networkLog.setIsSuccess(result.isSuccess());
-            }
-            //日志保存
-            logDomainService.saveLog(networkLog);
-        } catch (Exception e) {
-            logger.info("日志切面后置通知异常:{}", e.getMessage());
-        }
+//        logger.info("进入日志切面后置通知");
+//        try {
+//            NmplOperateLog networkLog = NmplOperateLog.builder().build();
+//            packageModel(joinPoint, networkLog);
+//            //返回值
+//            networkLog.setOperRespParam(subStr(returnValue));
+//            if (!ObjectUtils.isEmpty(returnValue)) {
+//                Result result = (Result) returnValue;
+//                networkLog.setIsSuccess(result.isSuccess());
+//            }
+//            //日志保存
+//           // logDomainService.saveLog(networkLog);
+//
+//        } catch (Exception e) {
+//            logger.info("日志切面后置通知异常:{}", e.getMessage());
+//        }
 
     }
 
