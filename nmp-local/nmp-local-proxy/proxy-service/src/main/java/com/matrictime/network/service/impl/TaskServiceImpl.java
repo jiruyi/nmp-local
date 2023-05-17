@@ -769,7 +769,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     private List<SystemResourceVo> getSrList(Date uploadTime, List<DeviceInfo> infos){
-        List<SystemResourceVo> resList = new ArrayList<>(infos.size());
+        List<SystemResourceVo> resList = new ArrayList<>();
         for (DeviceInfo info : infos){
             Integer pid = SystemUtils.getPID(info.getLanPort());
             // 判断系统端口所在进程是否存在
