@@ -553,6 +553,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
 
                 }
                 for (String time : xTime){
+                    boolean isGetFromDb = true;
                     String value = DEFAULT_ZERO;
                     if (entries.containsKey(time)){
                         DisplayVo displayVo = entries.get(time);
@@ -562,10 +563,13 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                             }else if (RESOURCE_TYPE_MEMORY.equals(resourceType)){
                                 value = displayVo.getValue2();
                             }
+                            isGetFromDb = false;
                         }
-                    }else {
+                    }
+                    if (isGetFromDb){
+                        Date uploadTime = CommonServiceImpl.getDateByStr(nowStr + time);
                         NmplSystemResourceExample example = new NmplSystemResourceExample();
-                        example.createCriteria().andSystemIdEqualTo(systemId).andSystemTypeEqualTo(vo.getSystemType()).andUploadTimeEqualTo(CommonServiceImpl.getDateByStr(nowStr+time));
+                        example.createCriteria().andSystemIdEqualTo(systemId).andSystemTypeEqualTo(vo.getSystemType()).andUploadTimeEqualTo(uploadTime);
                         List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
                         SystemResourceVo resourceVo = new SystemResourceVo();
                         if (!CollectionUtils.isEmpty(resources)){
@@ -578,7 +582,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                             putSystemResourceRedis(resourceVo);
                         }else {
                             resourceVo.setSystemId(systemId);
-                            resourceVo.setUploadTime(recentHalfTime);
+                            resourceVo.setUploadTime(uploadTime);
                             resourceVo.setCpuPercent(DEFAULT_ZERO);
                             resourceVo.setMemoryPercent(DEFAULT_ZERO);
                             putSystemResourceRedis(resourceVo);

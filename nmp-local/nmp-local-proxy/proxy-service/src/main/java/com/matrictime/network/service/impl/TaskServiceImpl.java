@@ -345,6 +345,7 @@ public class TaskServiceImpl implements TaskService {
                     PhysicalDeviceHeartbeatReq req = new PhysicalDeviceHeartbeatReq();
                     req.setHeartbeatList(reqList);
                     req.setUploadTime(uploadTime);
+                    log.info("alarmDataFacade.physicalDeviceHeartbeat req:{}",req.toString());
                     result = alarmDataFacade.physicalDeviceHeartbeat(req);
                     data = req.toString();
                 }catch (Exception e){
@@ -374,6 +375,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             PhysicalDeviceResourceReq req = new PhysicalDeviceResourceReq();
             req.setPdrList(getPdrList(uploadTime));
+            log.info("alarmDataFacade.physicalDeviceResource req:{}",req.toString());
             result = alarmDataFacade.physicalDeviceResource(req);
             data = req.toString();
         }catch (Exception e){
@@ -406,6 +408,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             SystemResourceReq req = new SystemResourceReq();
             req.setSrList(getSrList(uploadTime,infos));
+            log.info("alarmDataFacade.systemResource req:{}",req.toString());
             result = alarmDataFacade.systemResource(req);
             data = req.toString();
         }catch (Exception e){
