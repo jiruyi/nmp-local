@@ -468,7 +468,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         TimeDataVo timeDataVo = new TimeDataVo();
         timeDataVo.setDate(new Date());
         timeDataVo.setValue(result);
-        redisTemplate.opsForValue().set(currentKey,result);
+        redisTemplate.opsForValue().set(currentKey,String.valueOf(result));
         redisTemplate.expire(currentKey,THIRTY,TimeUnit.MINUTES);
         redisTemplate.opsForHash().put(transforKey,time,timeDataVo);
     }
