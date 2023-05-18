@@ -345,6 +345,7 @@ public class TaskServiceImpl implements TaskService {
                     PhysicalDeviceHeartbeatReq req = new PhysicalDeviceHeartbeatReq();
                     req.setHeartbeatList(reqList);
                     req.setUploadTime(uploadTime);
+                    log.info("alarmDataFacade.physicalDeviceHeartbeat req:{}",req.toString());
                     result = alarmDataFacade.physicalDeviceHeartbeat(req);
                     data = req.toString();
                 }catch (Exception e){
@@ -374,6 +375,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             PhysicalDeviceResourceReq req = new PhysicalDeviceResourceReq();
             req.setPdrList(getPdrList(uploadTime));
+            log.info("alarmDataFacade.physicalDeviceResource req:{}",req.toString());
             result = alarmDataFacade.physicalDeviceResource(req);
             data = req.toString();
         }catch (Exception e){
@@ -406,6 +408,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             SystemResourceReq req = new SystemResourceReq();
             req.setSrList(getSrList(uploadTime,infos));
+            log.info("alarmDataFacade.systemResource req:{}",req.toString());
             result = alarmDataFacade.systemResource(req);
             data = req.toString();
         }catch (Exception e){
@@ -766,7 +769,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     private List<SystemResourceVo> getSrList(Date uploadTime, List<DeviceInfo> infos){
-        List<SystemResourceVo> resList = new ArrayList<>(infos.size());
+        List<SystemResourceVo> resList = new ArrayList<>();
         for (DeviceInfo info : infos){
             Integer pid = SystemUtils.getPID(info.getLanPort());
             // 判断系统端口所在进程是否存在

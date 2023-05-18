@@ -49,7 +49,7 @@ public class TerminalUserController {
         Result<TerminalUserCountResponse> result = new Result<>();
         try {
             if(StringUtils.isEmpty(terminalUserResquest.getTerminalStatus())){
-                throw new RuntimeException("缺少必传参数");
+                return new Result<>(false,"缺少必传参数");
             }
             result = terminalUserService.countTerminalUser(terminalUserResquest);
         }catch (Exception e){

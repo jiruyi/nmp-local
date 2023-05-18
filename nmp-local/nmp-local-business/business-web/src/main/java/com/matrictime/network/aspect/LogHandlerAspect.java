@@ -2,7 +2,6 @@ package com.matrictime.network.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.annotation.SystemLog;
-import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.LogDomainService;
 import com.matrictime.network.dao.model.NmplOperateLog;
 import com.matrictime.network.model.Result;
@@ -67,7 +66,8 @@ public class LogHandlerAspect {
                 networkLog.setIsSuccess(result.isSuccess());
             }
             //日志保存
-            logDomainService.saveLog(networkLog);
+           // logDomainService.saveLog(networkLog);
+
         } catch (Exception e) {
             logger.info("日志切面后置通知异常:{}", e.getMessage());
         }
