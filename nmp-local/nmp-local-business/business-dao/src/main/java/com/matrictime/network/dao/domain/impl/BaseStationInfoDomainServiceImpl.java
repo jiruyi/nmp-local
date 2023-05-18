@@ -305,8 +305,12 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     public CountBaseStationResponse countBaseStation(BaseStationInfoRequest baseStationInfoRequest) {
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
-        criteria.andStationTypeEqualTo(baseStationInfoRequest.getStationType());
-        criteria.andRelationOperatorIdEqualTo(baseStationInfoRequest.getRelationOperatorId());
+        if(!StringUtils.isEmpty(baseStationInfoRequest.getStationType())){
+            criteria.andStationTypeEqualTo(baseStationInfoRequest.getStationType());
+        }
+        if(!StringUtils.isEmpty(baseStationInfoRequest.getRelationOperatorId())){
+            criteria.andRelationOperatorIdEqualTo(baseStationInfoRequest.getRelationOperatorId());
+        }
         criteria.andIsExistEqualTo(true);
         CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
