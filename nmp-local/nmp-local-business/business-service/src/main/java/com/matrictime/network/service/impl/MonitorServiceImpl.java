@@ -293,11 +293,13 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         Result result;
         try{
             List<SystemResourceVo> srList = req.getSrList();
-            for (SystemResourceVo vo : srList){
-                NmplSystemResource dto = new NmplSystemResource();
-                BeanUtils.copyProperties(vo,dto);
-                nmplSystemResourceMapper.insertSelective(dto);
-                putSystemResourceRedis(vo);
+            if (!CollectionUtils.isEmpty(srList)){
+                for (SystemResourceVo vo : srList){
+                    NmplSystemResource dto = new NmplSystemResource();
+                    BeanUtils.copyProperties(vo,dto);
+                    nmplSystemResourceMapper.insertSelective(dto);
+                    putSystemResourceRedis(vo);
+                }
             }
             result = buildResult(null);
         }catch (Exception e){
