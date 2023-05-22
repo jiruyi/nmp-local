@@ -288,8 +288,14 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
                 criteria2.andParentCodeEqualTo(nmplCompanyInfo1.getCompanyId().toString());
                 criteria2.andIsExistEqualTo(true);
                 List<NmplCompanyInfo> nmplCompanyInfos2 = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample2);
+                CommunityBelongVo communityBelongVo = new CommunityBelongVo();
                 //查询大区下面的小区
-                CommunityBelongVo communityBelongVo = getCommunity(nmplCompanyInfos2);
+                if(CollectionUtils.isEmpty(nmplCompanyInfos2)){
+                    communityBelongVo.setRelationOperatorId(nmplCompanyInfo1.getCompanyId().toString());
+                    communityBelongVo.setName(nmplCompanyInfo1.getCompanyName());
+                }else {
+                    communityBelongVo = getCommunity(nmplCompanyInfos2);
+                }
                 list.add(communityBelongVo);
             }
             regionBelongVo.setRelationOperatorId(nmplCompanyInfo.getCompanyId().toString());
