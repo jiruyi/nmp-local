@@ -38,9 +38,6 @@ import static com.matrictime.network.base.constant.DataConstants.RESERVE_DIGITS;
 public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDomainService {
 
     @Resource
-    private NmplDataCollectMapper nmplDataCollectMapper;
-
-    @Resource
     private NmplSystemDataCollectExtMapper nmplSystemDataCollectExtMapper;
 
     @Resource
@@ -59,7 +56,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         //创建枚举list
         list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
         list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
-        list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
+        list.add(DataCollectEnum.KEY_RELAY_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_RELAY_DOWN_LOAD.getCode());
         dataCollectReq.setDeviceType(DeviceTypeEnum.BASE_STATION.getCode());
         List<Double> dataList = getData(list, dataCollectReq);
         baseStationDataVo = getBaseStationData(dataList);
@@ -73,7 +70,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         //创建枚举list
         list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
         list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
-        list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
+        list.add(DataCollectEnum.KEY_RELAY_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_RELAY_DOWN_LOAD.getCode());
         dataCollectReq.setDeviceType(DeviceTypeEnum.BORDER_BASE_STATION.getCode());
         List<Double> dataList = getData(list, dataCollectReq);
         //数据转换
