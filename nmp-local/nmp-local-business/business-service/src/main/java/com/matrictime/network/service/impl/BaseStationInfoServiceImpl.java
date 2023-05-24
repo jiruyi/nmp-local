@@ -25,6 +25,7 @@ import com.matrictime.network.modelVo.CommunityBaseStationVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.CurrentCountRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.CountBaseStationResponse;
@@ -486,6 +487,21 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             result.setSuccess(false);
             result.setErrorMsg("");
             log.info("selectPhysicalDevice:{}",e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public Result<Integer> updateCurrentConnectCount(CurrentCountRequest currentCountRequest) {
+        Result<Integer> result = new Result<>();
+        try {
+            result.setResultObj(baseStationInfoDomainService.updateCurrentConnectCount(currentCountRequest));
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg("");
+            log.info("updateCurrentConnectCount:{}",e.getMessage());
         }
 
         return result;

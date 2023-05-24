@@ -7,6 +7,7 @@ import com.matrictime.network.request.DataCollectReq;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author by wangqiang
@@ -17,5 +18,5 @@ public interface NmplSystemDataCollectExtMapper {
 
     List<DataCollectVo> distinctSystemDeviceData(DataCollectReq dataCollectReq);
 
-    List<DataCollectVo> selectDataItemValue(@Param("deviceId") List<String> deviceIdList);
+    List<DataCollectVo> selectDataItemValue(@Param("dataMap")Map dataMap);
 }

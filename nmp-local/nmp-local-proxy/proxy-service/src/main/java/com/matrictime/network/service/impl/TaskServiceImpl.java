@@ -5,22 +5,20 @@ import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.AlarmPhyConTypeEnum;
 import com.matrictime.network.base.enums.LevelEnum;
+import com.matrictime.network.dao.domain.LocalBaseStationDomainService;
 import com.matrictime.network.dao.domain.SystemHeartbeatDomainService;
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.dao.model.NmplTerminalData;
 import com.matrictime.network.dao.model.extend.DeviceInfo;
 import com.matrictime.network.facade.AlarmDataFacade;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
-import com.matrictime.network.request.DataCollectReq;
-import com.matrictime.network.request.TerminalDataListRequest;
+import com.matrictime.network.request.*;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
-import com.matrictime.network.request.PhysicalDeviceHeartbeatReq;
-import com.matrictime.network.request.PhysicalDeviceResourceReq;
-import com.matrictime.network.request.SystemResourceReq;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
 import lombok.extern.slf4j.Slf4j;
@@ -92,6 +90,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private NmplTerminalDataMapper terminalDataMapper;
+
+    @Resource
+    private LocalBaseStationDomainService localBaseStationDomainService;
 
 
     @Autowired
@@ -497,6 +498,25 @@ public class TaskServiceImpl implements TaskService {
             terminalDataMapper.deleteByExample(nmplTerminalDataExample);
         }
 
+    }
+
+    @Override
+    public void updateCurrentConnectCount(String url) {
+        CurrentCountRequest currentCountRequest = localBaseStationDomainService.selectLocalBaseStation();
+        Boolean flag = false;
+        Result result = null;
+        String data = "";
+        String msg =null;
+        try {
+            result = alarmDataFacade.updateCurrentConnectCount(currentCountRequest);
+            log.info("updateCurrentConnectCount push result:{}",result);
+        }catch (Exception e){
+            flag = true;
+            msg = e.getMessage();
+            log.info("updateCurrentConnectCount push Exception:{}",e.getMessage());
+        }finally {
+            logError(result,url,data,flag,msg);
+        }
     }
 
 

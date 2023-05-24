@@ -50,4 +50,9 @@ public interface TaskService {
      */
     void collectTerminalData(String url);
 
+    /**
+     * 更新在线用户
+     */
+    void updateCurrentConnectCount(String url);
+
 }

@@ -144,7 +144,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
             req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
             List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.distinctSystemDeviceData(req);
             if(!CollectionUtils.isEmpty(dataCollectVos)){
-                dataSum = getDeviceDataSum(dataCollectVos);
+                dataSum = getDeviceDataSum(dataCollectVos,dataCodeList.get(i));
             }
             list.add(dataSum);
         }
@@ -167,7 +167,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
             req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
             List<StationVo> stationVos = nmplSystemDataCollectExtMapper.distinctSystemData(req);
             if(!CollectionUtils.isEmpty(stationVos)){
-                dataSum = getDataSum(stationVos);
+                dataSum = getDataSum(stationVos,dataCodeList.get(i));
             }
             list.add(dataSum);
         }
@@ -179,12 +179,15 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
      * @param list
      * @return
      */
-    private Double getDataSum(List<StationVo> list){
+    private Double getDataSum(List<StationVo> list,String code){
         List<String> deviceIdList = new ArrayList<>();
+        Map dataMap = new HashMap();
         for(StationVo stationVo: list){
             deviceIdList.add(stationVo.getDeviceId());
         }
-        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(deviceIdList);
+        dataMap.put("idList",deviceIdList);
+        dataMap.put("code",code);
+        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(dataMap);
         Double dataSum = 0d;
         for (int i = 0;i< dataCollectVos.size();i++){
             dataSum = dataSum + Double.parseDouble(dataCollectVos.get(i).getDataItemValue());
@@ -197,12 +200,15 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
      * @param list
      * @return
      */
-    private Double getDeviceDataSum(List<DataCollectVo> list){
+    private Double getDeviceDataSum(List<DataCollectVo> list,String code){
         List<String> deviceIdList = new ArrayList<>();
+        HashMap dataMap = new HashMap();
         for(DataCollectVo dataCollectVo: list){
             deviceIdList.add(dataCollectVo.getDeviceId());
         }
-        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(deviceIdList);
+        dataMap.put("idList",deviceIdList);
+        dataMap.put("code",code);
+        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(dataMap);
         Double dataSum = 0d;
         for (int i = 0;i< dataCollectVos.size();i++){
             dataSum = dataSum + Double.parseDouble(dataCollectVos.get(i).getDataItemValue());
