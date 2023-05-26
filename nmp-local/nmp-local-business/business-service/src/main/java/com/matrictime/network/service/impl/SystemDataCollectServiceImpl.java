@@ -110,8 +110,8 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
             String deviceIp = "";
             for (DataCollectVo dataCollectVo: dataCollectReq.getDataCollectVoList()){
                 deviceIp = dataCollectVo.getDeviceIp();
-                if(Integer.parseInt(DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode()) <Integer.parseInt(dataCollectVo.getDataItemCode()) &&
-                        Integer.parseInt(dataCollectVo.getDataItemCode())<Integer.parseInt(DataCollectEnum.ISOLATIONLOAD_DOWN_FLOW.getCode())){
+                if(Integer.parseInt(DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode()) <= Integer.parseInt(dataCollectVo.getDataItemCode()) &&
+                        Integer.parseInt(dataCollectVo.getDataItemCode())<= Integer.parseInt(DataCollectEnum.ISOLATIONLOAD_DOWN_FLOW.getCode())){
                     set.add(dataCollectVo.getDataItemCode());
                 }
             }
