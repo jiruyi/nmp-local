@@ -43,7 +43,7 @@ public class ScheduledTask {
     @Async
     public void heartReport(){
         log.info(Thread.currentThread().getName()+"======================heartReport begin=============================");
-        taskService.heartReport(ip + KEY_SPLIT + port + HEART_REPORT_URL);
+        taskService.heartReport();
         log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
     }
 

@@ -10,17 +10,14 @@ import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.dao.model.NmplTerminalData;
 import com.matrictime.network.dao.model.extend.DeviceInfo;
 import com.matrictime.network.facade.AlarmDataFacade;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
-import com.matrictime.network.request.DataCollectReq;
-import com.matrictime.network.request.TerminalDataListRequest;
+import com.matrictime.network.request.*;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
-import com.matrictime.network.request.PhysicalDeviceHeartbeatReq;
-import com.matrictime.network.request.PhysicalDeviceResourceReq;
-import com.matrictime.network.request.SystemResourceReq;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
 import lombok.extern.slf4j.Slf4j;
@@ -139,19 +136,16 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public void heartReport(String url) {
+    public void heartReport() {
         NmplStationHeartInfoExample stationExample = new NmplStationHeartInfoExample();
         stationExample.setOrderByClause("create_time desc");
         List<NmplStationHeartInfo> stationHeartInfos = nmplStationHeartInfoMapper.selectByExample(stationExample);
         if (!CollectionUtils.isEmpty(stationHeartInfos)){
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("deviceId",stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getStationId());
-            jsonObject.put("status", stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getRemark());
-            try {
-                HttpClientUtil.post(url,jsonObject.toJSONString());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            CheckHeartReq req = new CheckHeartReq();
+            req.setStatus(stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getRemark());
+            req.setDeviceId(stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getStationId());
+            Result result = alarmDataFacade.checkHeart(req);
+
             stationExample.createCriteria().andCreateTimeLessThanOrEqualTo(stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getCreateTime());
             int deleteStation = nmplStationHeartInfoMapper.deleteByExample(stationExample);
             log.info("TaskServiceImpl.heartReport deleteStation:{}"+deleteStation);
@@ -161,76 +155,73 @@ public class TaskServiceImpl implements TaskService {
         keycenterExample.setOrderByClause("create_time desc");
         List<NmplKeycenterHeartInfo> keycenterHeartInfos = nmplKeycenterHeartInfoMapper.selectByExample(keycenterExample);
         if (!CollectionUtils.isEmpty(keycenterHeartInfos)){
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("deviceId",keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getDeviceId());
-            jsonObject.put("status", keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getRemark());
-            try {
-                HttpClientUtil.post(url,jsonObject.toJSONString());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            CheckHeartReq req = new CheckHeartReq();
+            req.setStatus(keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getRemark());
+            req.setDeviceId(keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getDeviceId());
+            Result result = alarmDataFacade.checkHeart(req);
+
             keycenterExample.createCriteria().andCreateTimeLessThanOrEqualTo(keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getCreateTime());
             int deleteKeycenter = nmplKeycenterHeartInfoMapper.deleteByExample(keycenterExample);
             log.info("TaskServiceImpl.heartReport deleteKeycenter:{}"+deleteKeycenter);
         }
     }
 
-    @Override
-    public void logPush(String url) {
-        NmplDeviceLogExample nmplDeviceLogExample = new NmplDeviceLogExample();
-        NmplDeviceLogExample.Criteria criteria = nmplDeviceLogExample.createCriteria();
-        nmplDeviceLogExample.setOrderByClause("id desc");
-        List<NmplDeviceLog> nmplDeviceLogs = nmplDeviceLogMapper.selectByExample(nmplDeviceLogExample);
-        if(!CollectionUtils.isEmpty(nmplDeviceLogs)){
-            Boolean flag = false;
-            String post = null;
-            String data = "";
-            String msg= null;
-            try {
-                data = JSON.toJSONString(nmplDeviceLogs);
-                post = HttpClientUtil.post(url, data);
-                log.info("logPush result:{}",post);
-            }catch (Exception e){
-                msg = e.getMessage();
-                log.info("logPush Exception:{}",e.getMessage());
-                flag = true;
-            }finally {
-                logError(post,url,data,flag,msg);
-            }
-            //删除已经推送的日志
-            criteria.andIdLessThan(nmplDeviceLogs.get(NumberUtils.INTEGER_ZERO).getId());
-            nmplDeviceLogMapper.deleteByExample(nmplDeviceLogExample);
-        }
-    }
-
-    @Override
-    public void pcData(String url) {
-        NmplPcDataExample nmplPcDataExample = new NmplPcDataExample();
-        NmplPcDataExample.Criteria criteria = nmplPcDataExample.createCriteria();
-        nmplPcDataExample.setOrderByClause("id desc");
-        List<NmplPcData> nmplPcData = nmplPcDataMapper.selectByExample(nmplPcDataExample);
-        if (!CollectionUtils.isEmpty(nmplPcData)){
-            Boolean flag = false;
-            String post = null;
-            String data = "";
-            String msg = null;
-            try {
-                JSONObject req = new JSONObject();
-                req.put("nmplPcDataVoList",nmplPcData);
-                data = req.toJSONString();
-                post = HttpClientUtil.post(url,data);
-                log.info("pcData:{}",post);
-            }catch (Exception e){
-                msg = e.getMessage();
-                log.info("pcData Exception:{}",e.getMessage());
-                flag = true;
-            }finally {
-                logError(post,url,data,flag,msg);
-            }
-            criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());
-            nmplPcDataMapper.deleteByExample(nmplPcDataExample);
-        }
-    }
+//    @Override
+//    public void logPush(String url) {
+//        NmplDeviceLogExample nmplDeviceLogExample = new NmplDeviceLogExample();
+//        NmplDeviceLogExample.Criteria criteria = nmplDeviceLogExample.createCriteria();
+//        nmplDeviceLogExample.setOrderByClause("id desc");
+//        List<NmplDeviceLog> nmplDeviceLogs = nmplDeviceLogMapper.selectByExample(nmplDeviceLogExample);
+//        if(!CollectionUtils.isEmpty(nmplDeviceLogs)){
+//            Boolean flag = false;
+//            String post = null;
+//            String data = "";
+//            String msg= null;
+//            try {
+//                data = JSON.toJSONString(nmplDeviceLogs);
+//                post = HttpClientUtil.post(url, data);
+//                log.info("logPush result:{}",post);
+//            }catch (Exception e){
+//                msg = e.getMessage();
+//                log.info("logPush Exception:{}",e.getMessage());
+//                flag = true;
+//            }finally {
+//                logError(post,url,data,flag,msg);
+//            }
+//            //删除已经推送的日志
+//            criteria.andIdLessThan(nmplDeviceLogs.get(NumberUtils.INTEGER_ZERO).getId());
+//            nmplDeviceLogMapper.deleteByExample(nmplDeviceLogExample);
+//        }
+//    }
+//
+//    @Override
+//    public void pcData(String url) {
+//        NmplPcDataExample nmplPcDataExample = new NmplPcDataExample();
+//        NmplPcDataExample.Criteria criteria = nmplPcDataExample.createCriteria();
+//        nmplPcDataExample.setOrderByClause("id desc");
+//        List<NmplPcData> nmplPcData = nmplPcDataMapper.selectByExample(nmplPcDataExample);
+//        if (!CollectionUtils.isEmpty(nmplPcData)){
+//            Boolean flag = false;
+//            String post = null;
+//            String data = "";
+//            String msg = null;
+//            try {
+//                JSONObject req = new JSONObject();
+//                req.put("nmplPcDataVoList",nmplPcData);
+//                data = req.toJSONString();
+//                post = HttpClientUtil.post(url,data);
+//                log.info("pcData:{}",post);
+//            }catch (Exception e){
+//                msg = e.getMessage();
+//                log.info("pcData Exception:{}",e.getMessage());
+//                flag = true;
+//            }finally {
+//                logError(post,url,data,flag,msg);
+//            }
+//            criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());
+//            nmplPcDataMapper.deleteByExample(nmplPcDataExample);
+//        }
+//    }
 
 
     @Override
@@ -271,36 +262,36 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-    @Override
-    public void billPush(String url) {
-        NmplBillExample nmplBillExample = new NmplBillExample();
-        NmplBillExample.Criteria criteria = nmplBillExample.createCriteria();
-        nmplBillExample.setOrderByClause("id desc");
-        List<NmplBill> nmplBills = nmplBillMapper.selectByExample(nmplBillExample);
-        if(!CollectionUtils.isEmpty(nmplBills)){
-            Long maxId = nmplBills.get(0).getId();
-            Boolean flag = false;
-            String post = null;
-            String data = "";
-            String msg =null;
-            try {
-                JSONObject req = new JSONObject();
-                req.put("nmplBillVoList",nmplBills);
-                data = req.toJSONString();
-                post = HttpClientUtil.post(url,data);
-                log.info("Bill push result:{}",post);
-            }catch (Exception e){
-                flag = true;
-                msg = e.getMessage();
-                log.info("Bill push Exception:{}",e.getMessage());
-            }finally {
-                logError(post,url,data,flag,msg);
-            }
-            criteria.andIdLessThanOrEqualTo(maxId);
-            nmplBillMapper.deleteByExample(nmplBillExample);
-        }
-
-    }
+//    @Override
+//    public void billPush(String url) {
+//        NmplBillExample nmplBillExample = new NmplBillExample();
+//        NmplBillExample.Criteria criteria = nmplBillExample.createCriteria();
+//        nmplBillExample.setOrderByClause("id desc");
+//        List<NmplBill> nmplBills = nmplBillMapper.selectByExample(nmplBillExample);
+//        if(!CollectionUtils.isEmpty(nmplBills)){
+//            Long maxId = nmplBills.get(0).getId();
+//            Boolean flag = false;
+//            String post = null;
+//            String data = "";
+//            String msg =null;
+//            try {
+//                JSONObject req = new JSONObject();
+//                req.put("nmplBillVoList",nmplBills);
+//                data = req.toJSONString();
+//                post = HttpClientUtil.post(url,data);
+//                log.info("Bill push result:{}",post);
+//            }catch (Exception e){
+//                flag = true;
+//                msg = e.getMessage();
+//                log.info("Bill push Exception:{}",e.getMessage());
+//            }finally {
+//                logError(post,url,data,flag,msg);
+//            }
+//            criteria.andIdLessThanOrEqualTo(maxId);
+//            nmplBillMapper.deleteByExample(nmplBillExample);
+//        }
+//
+//    }
 
     /**
      * 物理设备心跳上报服务

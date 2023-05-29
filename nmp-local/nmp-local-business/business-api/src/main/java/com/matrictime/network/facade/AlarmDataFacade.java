@@ -2,11 +2,7 @@ package com.matrictime.network.facade;
 
 import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.request.DataCollectReq;
-import com.matrictime.network.request.PhysicalDeviceHeartbeatReq;
-import com.matrictime.network.request.PhysicalDeviceResourceReq;
-import com.matrictime.network.request.SystemResourceReq;
-import com.matrictime.network.request.TerminalDataListRequest;
+import com.matrictime.network.request.*;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -28,6 +24,9 @@ import java.util.List;
 public interface AlarmDataFacade {
     @RequestMapping(value= "/alarm/accept",method = RequestMethod.POST)
     Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList, @RequestParam("ip") String ip);
+
+    @RequestMapping(value= "/monitor/checkHeart",method = RequestMethod.POST)
+    Result checkHeart(@RequestBody CheckHeartReq req);
 
     @RequestMapping(value= "/monitor/physicalDeviceHeartbeat",method = RequestMethod.POST)
     Result physicalDeviceHeartbeat(PhysicalDeviceHeartbeatReq req);
