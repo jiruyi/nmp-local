@@ -143,7 +143,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         try {
             checkHeartParam(req);
             Map<String, String> map = checkStationStatus(req.getDeviceId());
-            redisTemplate.opsForValue().set(HEART_CHECK_DEVICE_ID+req.getDeviceId(),true,healthDeadlineTime, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(HEART_CHECK_DEVICE_ID+req.getDeviceId(),req.getStatus(),healthDeadlineTime, TimeUnit.SECONDS);
             String status = map.get("status");
             String bigType = map.get("bigType");
             String id = map.get("id");
@@ -887,6 +887,9 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     private void checkHeartParam(CheckHeartReq req) {
         if (ParamCheckUtil.checkVoStrBlank(req.getDeviceId())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "deviceId"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        if (ParamCheckUtil.checkVoStrBlank(req.getStatus())){
+            throw new SystemException(ErrorCode.PARAM_IS_NULL, "status"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
     }
 
