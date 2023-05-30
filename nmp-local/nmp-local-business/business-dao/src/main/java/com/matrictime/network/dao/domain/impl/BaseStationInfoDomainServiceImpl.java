@@ -13,6 +13,7 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.CurrentCountRequest;
 import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.CountBaseStationResponse;
 import com.matrictime.network.response.PageInfo;
@@ -21,6 +22,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -58,7 +60,7 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     private NmplCompanyInfoMapper nmplCompanyInfoMapper;
 
     @Resource
-    private NmplDeviceCountMapper deviceCountMapper;
+    private NmplDeviceCountMapper nmplDeviceCountMapper;
 
     @Resource
     private NmplDeviceExtMapper deviceExtMapper;
@@ -288,8 +290,14 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
                 criteria2.andParentCodeEqualTo(nmplCompanyInfo1.getCompanyId().toString());
                 criteria2.andIsExistEqualTo(true);
                 List<NmplCompanyInfo> nmplCompanyInfos2 = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample2);
+                CommunityBelongVo communityBelongVo = new CommunityBelongVo();
                 //查询大区下面的小区
-                CommunityBelongVo communityBelongVo = getCommunity(nmplCompanyInfos2);
+                if(CollectionUtils.isEmpty(nmplCompanyInfos2)){
+                    communityBelongVo.setRelationOperatorId(nmplCompanyInfo1.getCompanyId().toString());
+                    communityBelongVo.setName(nmplCompanyInfo1.getCompanyName());
+                }else {
+                    communityBelongVo = getCommunity(nmplCompanyInfos2);
+                }
                 list.add(communityBelongVo);
             }
             regionBelongVo.setRelationOperatorId(nmplCompanyInfo.getCompanyId().toString());
@@ -367,6 +375,28 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
             }
         }
         return list;
+    }
+
+    @Override
+    public int updateCurrentConnectCount(CurrentCountRequest currentCountRequest) {
+        int i = 0;
+        if(!ObjectUtils.isEmpty(currentCountRequest.getBaseStationCurrentRequest())){
+            NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+            NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
+            criteria.andStationIdEqualTo(currentCountRequest.getBaseStationCurrentRequest().getStationId());
+            NmplBaseStationInfo nmplBaseStationInfo = new NmplBaseStationInfo();
+            BeanUtils.copyProperties(currentCountRequest.getBaseStationCurrentRequest(),nmplBaseStationInfo);
+            i = nmplBaseStationInfoMapper.updateByExampleSelective(nmplBaseStationInfo,nmplBaseStationInfoExample);
+        }
+        if(!ObjectUtils.isEmpty(currentCountRequest.getDeviceCurrentRequest())){
+            NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
+            NmplDeviceCountExample.Criteria criteria = nmplDeviceCountExample.createCriteria();
+            criteria.andDeviceIdEqualTo(currentCountRequest.getDeviceCurrentRequest().getDeviceId());
+            NmplDeviceCount nmplDeviceCount = new NmplDeviceCount();
+            BeanUtils.copyProperties(currentCountRequest.getDeviceCurrentRequest(),nmplDeviceCount);
+            i = nmplDeviceCountMapper.updateByExampleSelective(nmplDeviceCount,nmplDeviceCountExample);
+        }
+        return i;
     }
 
     /**

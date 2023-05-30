@@ -119,6 +119,15 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================terminalData end=============================");
     }
 
+    @Scheduled(cron = "0 0/30 * * * ?")
+    @Async
+    public void updateCurrentConnectCount(){
+        log.info(Thread.currentThread().getName()+"======================updateCurrentConnectCount begin=============================");
+        taskService.updateCurrentConnectCount(ip + KEY_SPLIT + port + UPDATE_CURRENT_URL);
+        log.info(Thread.currentThread().getName()+"======================updateCurrentConnectCount end=============================");
+    }
+
+
 
 
 

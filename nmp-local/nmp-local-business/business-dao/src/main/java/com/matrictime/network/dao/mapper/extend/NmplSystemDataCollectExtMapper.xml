@@ -45,14 +45,15 @@
           AND d.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
     </select>
 
-    <select id="selectDataItemValue" parameterType="list" resultType="com.matrictime.network.modelVo.DataCollectVo">
+    <select id="selectDataItemValue" parameterType="map" resultType="com.matrictime.network.modelVo.DataCollectVo">
         select a.id, a.device_id,a.device_name,a.data_item_code,a.data_item_value,a.upload_time,a.unit from nmpl_data_collect a,
         (SELECT max(upload_time) as q,device_id,data_item_code from
             nmpl_data_collect group by device_id,data_item_code) as b
         where a.device_id in
-        <foreach collection="deviceId" item="item" open="(" close=")" separator=",">
+        <foreach collection="dataMap.idList" item="item" open="(" close=")" separator=",">
             #{item,jdbcType=VARCHAR}
         </foreach>
         and a.upload_time = b.q and a.data_item_code = b.data_item_code and a.device_id = b.device_id
+        and a.data_item_code = #{dataMap.code,jdbcType=VARCHAR}
     </select>
 </mapper>

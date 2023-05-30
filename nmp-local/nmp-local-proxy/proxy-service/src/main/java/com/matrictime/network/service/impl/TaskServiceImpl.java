@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.AlarmPhyConTypeEnum;
 import com.matrictime.network.base.enums.LevelEnum;
+import com.matrictime.network.dao.domain.LocalBaseStationDomainService;
 import com.matrictime.network.dao.domain.SystemHeartbeatDomainService;
 import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
@@ -89,6 +90,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private NmplTerminalDataMapper terminalDataMapper;
+
+    @Resource
+    private LocalBaseStationDomainService localBaseStationDomainService;
 
 
     @Autowired
@@ -488,6 +492,25 @@ public class TaskServiceImpl implements TaskService {
             terminalDataMapper.deleteByExample(nmplTerminalDataExample);
         }
 
+    }
+
+    @Override
+    public void updateCurrentConnectCount(String url) {
+        CurrentCountRequest currentCountRequest = localBaseStationDomainService.selectLocalBaseStation();
+        Boolean flag = false;
+        Result result = null;
+        String data = "";
+        String msg =null;
+        try {
+            result = alarmDataFacade.updateCurrentConnectCount(currentCountRequest);
+            log.info("updateCurrentConnectCount push result:{}",result);
+        }catch (Exception e){
+            flag = true;
+            msg = e.getMessage();
+            log.info("updateCurrentConnectCount push Exception:{}",e.getMessage());
+        }finally {
+            logError(result,url,data,flag,msg);
+        }
     }
 
 

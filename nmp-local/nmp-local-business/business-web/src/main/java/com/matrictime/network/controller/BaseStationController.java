@@ -334,5 +334,20 @@ public class BaseStationController {
         }
     }
 
+    /**
+     * 更新当前用户数
+     * @param currentCountRequest
+     * @return
+     */
+    @RequestMapping(value = "/updateCurrentConnectCount",method = RequestMethod.POST)
+    public Result<Integer> updateCurrentConnectCount(@RequestBody CurrentCountRequest currentCountRequest){
+        try {
+            return baseStationInfoService.updateCurrentConnectCount(currentCountRequest);
+        }catch (Exception e){
+            log.info("updateCurrentConnectCount:{}",e.getMessage());
+            return new Result<>(false,"");
+        }
+    }
+
 
 }

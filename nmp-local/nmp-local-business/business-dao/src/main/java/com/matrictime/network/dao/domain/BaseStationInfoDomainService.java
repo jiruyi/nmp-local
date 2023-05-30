@@ -5,6 +5,7 @@ import com.matrictime.network.modelVo.CommunityBaseStationVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.CurrentCountRequest;
 import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.CountBaseStationResponse;
 import com.matrictime.network.response.PageInfo;
@@ -53,4 +54,6 @@ public interface BaseStationInfoDomainService {
     int updateConnectCount(BaseStationCountRequest baseStationCountRequest);
 
     List<CommunityBaseStationVo> selectPhysicalDevice(BaseStationInfoRequest baseStationInfoRequest);
+
+    int updateCurrentConnectCount(CurrentCountRequest currentCountRequest);
 }

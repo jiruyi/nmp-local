@@ -49,4 +49,7 @@ public interface AlarmDataFacade {
     @RequestMapping(value= "/terminalData/collectTerminalData",method = RequestMethod.POST)
     Result collectTerminalDataResource(TerminalDataListRequest terminalDataListRequest);
 
+    @RequestMapping(value= "/baseStation/updateCurrentConnectCount",method = RequestMethod.POST)
+    Result updateCurrentConnectCount(CurrentCountRequest currentCountRequest);
+
 }

@@ -419,6 +419,11 @@ CREATE TABLE IF NOT EXISTS `nmpl_alarm_info` (
     KEY `upload_time_key` (`alarm_upload_time`)
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+ALTER TABLE `nmpl_local_base_station_info` add column `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '当前用户数';
+
+ALTER TABLE `nmpl_local_device_info` add column `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '当前用户数';
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

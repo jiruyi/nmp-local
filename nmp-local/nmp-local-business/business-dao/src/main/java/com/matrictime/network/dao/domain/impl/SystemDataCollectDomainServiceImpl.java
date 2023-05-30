@@ -38,9 +38,6 @@ import static com.matrictime.network.base.constant.DataConstants.RESERVE_DIGITS;
 public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDomainService {
 
     @Resource
-    private NmplDataCollectMapper nmplDataCollectMapper;
-
-    @Resource
     private NmplSystemDataCollectExtMapper nmplSystemDataCollectExtMapper;
 
     @Resource
@@ -59,7 +56,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         //创建枚举list
         list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
         list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
-        list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
+        list.add(DataCollectEnum.KEY_RELAY_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_RELAY_DOWN_LOAD.getCode());
         dataCollectReq.setDeviceType(DeviceTypeEnum.BASE_STATION.getCode());
         List<Double> dataList = getData(list, dataCollectReq);
         baseStationDataVo = getBaseStationData(dataList);
@@ -73,7 +70,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         //创建枚举list
         list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
         list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
-        list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
+        list.add(DataCollectEnum.KEY_RELAY_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_RELAY_DOWN_LOAD.getCode());
         dataCollectReq.setDeviceType(DeviceTypeEnum.BORDER_BASE_STATION.getCode());
         List<Double> dataList = getData(list, dataCollectReq);
         //数据转换
@@ -144,7 +141,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
             req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
             List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.distinctSystemDeviceData(req);
             if(!CollectionUtils.isEmpty(dataCollectVos)){
-                dataSum = getDeviceDataSum(dataCollectVos);
+                dataSum = getDeviceDataSum(dataCollectVos,dataCodeList.get(i));
             }
             list.add(dataSum);
         }
@@ -167,7 +164,7 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
             req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
             List<StationVo> stationVos = nmplSystemDataCollectExtMapper.distinctSystemData(req);
             if(!CollectionUtils.isEmpty(stationVos)){
-                dataSum = getDataSum(stationVos);
+                dataSum = getDataSum(stationVos,dataCodeList.get(i));
             }
             list.add(dataSum);
         }
@@ -179,12 +176,15 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
      * @param list
      * @return
      */
-    private Double getDataSum(List<StationVo> list){
+    private Double getDataSum(List<StationVo> list,String code){
         List<String> deviceIdList = new ArrayList<>();
+        Map dataMap = new HashMap();
         for(StationVo stationVo: list){
             deviceIdList.add(stationVo.getDeviceId());
         }
-        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(deviceIdList);
+        dataMap.put("idList",deviceIdList);
+        dataMap.put("code",code);
+        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(dataMap);
         Double dataSum = 0d;
         for (int i = 0;i< dataCollectVos.size();i++){
             dataSum = dataSum + Double.parseDouble(dataCollectVos.get(i).getDataItemValue());
@@ -197,12 +197,15 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
      * @param list
      * @return
      */
-    private Double getDeviceDataSum(List<DataCollectVo> list){
+    private Double getDeviceDataSum(List<DataCollectVo> list,String code){
         List<String> deviceIdList = new ArrayList<>();
+        HashMap dataMap = new HashMap();
         for(DataCollectVo dataCollectVo: list){
             deviceIdList.add(dataCollectVo.getDeviceId());
         }
-        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(deviceIdList);
+        dataMap.put("idList",deviceIdList);
+        dataMap.put("code",code);
+        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(dataMap);
         Double dataSum = 0d;
         for (int i = 0;i< dataCollectVos.size();i++){
             dataSum = dataSum + Double.parseDouble(dataCollectVos.get(i).getDataItemValue());
