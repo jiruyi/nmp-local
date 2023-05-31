@@ -1,13 +1,11 @@
 package com.matrictime.network.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.AlarmPhyConTypeEnum;
 import com.matrictime.network.base.enums.LevelEnum;
 import com.matrictime.network.dao.domain.LocalBaseStationDomainService;
 import com.matrictime.network.dao.domain.SystemHeartbeatDomainService;
-import com.matrictime.network.dao.domain.TerminalDataDomainService;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
@@ -31,9 +29,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.*;
 
+import static com.matrictime.network.base.constant.DataConstants.HEART_REPORT_SPACE;
 import static com.matrictime.network.constant.BusinessConsts.*;
 import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
@@ -50,16 +48,7 @@ public class TaskServiceImpl implements TaskService {
     private NmplKeycenterHeartInfoMapper nmplKeycenterHeartInfoMapper;
 
     @Resource
-    private NmplDeviceLogMapper nmplDeviceLogMapper;
-
-    @Resource
-    private NmplPcDataMapper nmplPcDataMapper;
-
-    @Resource
     private NmplDataCollectMapper nmplDataCollectMapper;
-
-    @Resource
-    private NmplBillMapper nmplBillMapper;
 
     @Resource
     private NmplErrorPushLogMapper nmplErrorPushLogMapper;
@@ -81,9 +70,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private TerminalUserDomainService terminalUserDomainService;
-
-    @Resource
-    private TerminalDataDomainService terminalDataDomainService;
     
     @Resource
     private NmplAlarmInfoMapper alarmInfoMapper;
@@ -139,93 +125,65 @@ public class TaskServiceImpl implements TaskService {
     private Long infoLoad;
 
 
+    /**
+     * 站点状态上报
+     */
     @Override
-    public void heartReport() {
+    public void heartReport(Date excuteTime) {
+        // 查询基站的状态上报数据
         NmplStationHeartInfoExample stationExample = new NmplStationHeartInfoExample();
         stationExample.setOrderByClause("create_time desc");
         List<NmplStationHeartInfo> stationHeartInfos = nmplStationHeartInfoMapper.selectByExample(stationExample);
         if (!CollectionUtils.isEmpty(stationHeartInfos)){
-            CheckHeartReq req = new CheckHeartReq();
-            req.setStatus(stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getRemark());
-            req.setDeviceId(stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getStationId());
-            Result result = alarmDataFacade.checkHeart(req);
+            NmplStationHeartInfo heartInfo = stationHeartInfos.get(NumberUtils.INTEGER_ZERO);
+            Date lastUploadTime = DateUtils.addSecondsForDate(heartInfo.getCreateTime(), HEART_REPORT_SPACE);
 
+            // 判断最新数据是否有效，并上报网管中心站点状态
+            checkHeartReport(excuteTime,lastUploadTime,heartInfo.getRemark(),heartInfo.getStationId());
+
+            // 清除基站历史状态上报数据
             stationExample.createCriteria().andCreateTimeLessThanOrEqualTo(stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getCreateTime());
             int deleteStation = nmplStationHeartInfoMapper.deleteByExample(stationExample);
-            log.info("TaskServiceImpl.heartReport deleteStation:{}"+deleteStation);
+            log.info("TaskServiceImpl.heartReport deleteStation:{}",deleteStation);
         }
 
+        // 查询设备的心跳上报数据
         NmplKeycenterHeartInfoExample keycenterExample = new NmplKeycenterHeartInfoExample();
         keycenterExample.setOrderByClause("create_time desc");
         List<NmplKeycenterHeartInfo> keycenterHeartInfos = nmplKeycenterHeartInfoMapper.selectByExample(keycenterExample);
         if (!CollectionUtils.isEmpty(keycenterHeartInfos)){
-            CheckHeartReq req = new CheckHeartReq();
-            req.setStatus(keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getRemark());
-            req.setDeviceId(keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getDeviceId());
-            Result result = alarmDataFacade.checkHeart(req);
+            NmplKeycenterHeartInfo heartInfo = keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO);
+            Date lastUploadTime = DateUtils.addSecondsForDate(heartInfo.getCreateTime(), HEART_REPORT_SPACE);
 
+            // 判断最新数据是否有效，并上报网管中心站点状态
+            checkHeartReport(excuteTime,lastUploadTime,heartInfo.getRemark(),heartInfo.getDeviceId());
+
+            // 清除密钥中心历史状态上报数据
             keycenterExample.createCriteria().andCreateTimeLessThanOrEqualTo(keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getCreateTime());
             int deleteKeycenter = nmplKeycenterHeartInfoMapper.deleteByExample(keycenterExample);
-            log.info("TaskServiceImpl.heartReport deleteKeycenter:{}"+deleteKeycenter);
+            log.info("TaskServiceImpl.heartReport deleteKeycenter:{}",deleteKeycenter);
         }
     }
 
-//    @Override
-//    public void logPush(String url) {
-//        NmplDeviceLogExample nmplDeviceLogExample = new NmplDeviceLogExample();
-//        NmplDeviceLogExample.Criteria criteria = nmplDeviceLogExample.createCriteria();
-//        nmplDeviceLogExample.setOrderByClause("id desc");
-//        List<NmplDeviceLog> nmplDeviceLogs = nmplDeviceLogMapper.selectByExample(nmplDeviceLogExample);
-//        if(!CollectionUtils.isEmpty(nmplDeviceLogs)){
-//            Boolean flag = false;
-//            String post = null;
-//            String data = "";
-//            String msg= null;
-//            try {
-//                data = JSON.toJSONString(nmplDeviceLogs);
-//                post = HttpClientUtil.post(url, data);
-//                log.info("logPush result:{}",post);
-//            }catch (Exception e){
-//                msg = e.getMessage();
-//                log.info("logPush Exception:{}",e.getMessage());
-//                flag = true;
-//            }finally {
-//                logError(post,url,data,flag,msg);
-//            }
-//            //删除已经推送的日志
-//            criteria.andIdLessThan(nmplDeviceLogs.get(NumberUtils.INTEGER_ZERO).getId());
-//            nmplDeviceLogMapper.deleteByExample(nmplDeviceLogExample);
-//        }
-//    }
-//
-//    @Override
-//    public void pcData(String url) {
-//        NmplPcDataExample nmplPcDataExample = new NmplPcDataExample();
-//        NmplPcDataExample.Criteria criteria = nmplPcDataExample.createCriteria();
-//        nmplPcDataExample.setOrderByClause("id desc");
-//        List<NmplPcData> nmplPcData = nmplPcDataMapper.selectByExample(nmplPcDataExample);
-//        if (!CollectionUtils.isEmpty(nmplPcData)){
-//            Boolean flag = false;
-//            String post = null;
-//            String data = "";
-//            String msg = null;
-//            try {
-//                JSONObject req = new JSONObject();
-//                req.put("nmplPcDataVoList",nmplPcData);
-//                data = req.toJSONString();
-//                post = HttpClientUtil.post(url,data);
-//                log.info("pcData:{}",post);
-//            }catch (Exception e){
-//                msg = e.getMessage();
-//                log.info("pcData Exception:{}",e.getMessage());
-//                flag = true;
-//            }finally {
-//                logError(post,url,data,flag,msg);
-//            }
-//            criteria.andIdLessThanOrEqualTo(nmplPcData.get(NumberUtils.INTEGER_ZERO).getId());
-//            nmplPcDataMapper.deleteByExample(nmplPcDataExample);
-//        }
-//    }
+    /**
+     * 站点状态上报网管中心
+     * @param excuteTime
+     * @param lastUploadTime
+     * @param status
+     * @param deviceId
+     */
+    private void checkHeartReport(Date excuteTime,Date lastUploadTime,String status,String deviceId){
+        // 判断最新一次上报的时间是否在30秒以内，是则上报，否则为无效数据不上报
+        if (excuteTime.compareTo(lastUploadTime) == -1){
+            CheckHeartReq req = new CheckHeartReq();
+            req.setStatus(status);
+            req.setDeviceId(deviceId);
+
+            // 上报中心网管
+            Result result = alarmDataFacade.checkHeart(req);
+            log.info("TaskServiceImpl.checkHeartReport alarmDataFacade.checkHeart:{}",result.toString());
+        }
+    }
 
 
     @Override
@@ -266,52 +224,22 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-//    @Override
-//    public void billPush(String url) {
-//        NmplBillExample nmplBillExample = new NmplBillExample();
-//        NmplBillExample.Criteria criteria = nmplBillExample.createCriteria();
-//        nmplBillExample.setOrderByClause("id desc");
-//        List<NmplBill> nmplBills = nmplBillMapper.selectByExample(nmplBillExample);
-//        if(!CollectionUtils.isEmpty(nmplBills)){
-//            Long maxId = nmplBills.get(0).getId();
-//            Boolean flag = false;
-//            String post = null;
-//            String data = "";
-//            String msg =null;
-//            try {
-//                JSONObject req = new JSONObject();
-//                req.put("nmplBillVoList",nmplBills);
-//                data = req.toJSONString();
-//                post = HttpClientUtil.post(url,data);
-//                log.info("Bill push result:{}",post);
-//            }catch (Exception e){
-//                flag = true;
-//                msg = e.getMessage();
-//                log.info("Bill push Exception:{}",e.getMessage());
-//            }finally {
-//                logError(post,url,data,flag,msg);
-//            }
-//            criteria.andIdLessThanOrEqualTo(maxId);
-//            nmplBillMapper.deleteByExample(nmplBillExample);
-//        }
-//
-//    }
-
     /**
      * 物理设备心跳上报服务
      * @param uploadTime
      */
     @Override
     public void physicalDeviceHeartbeat(Date uploadTime) {
+        // 获取所有物理设备ip列表
         List<String> ips = getIps();
 
         List<PhysicalDeviceHeartbeatVo> reqList = new ArrayList<>();
-
         if (!CollectionUtils.isEmpty(ips)){
             for (String ip : ips){
                 try {
                     PhysicalDeviceHeartbeatVo vo = new PhysicalDeviceHeartbeatVo();
 
+                    // 比较ip大小拼接主键，小ip在前，大ip在后，用下划线拼接，例：192.168.72.14_192.168.68.125
                     int i = CompareUtil.compareIp(localIp, ip);
                     if (i==0){
                         continue;
@@ -320,6 +248,8 @@ public class TaskServiceImpl implements TaskService {
                     }else if (i<0){
                         vo.setIp1Ip2(localIp+KEY_SPLIT_UNDERLINE+ip);
                     }
+
+                    // 获取两个ip ping的结果
                     boolean ping = SystemUtils.getPingResult(ip);
                     if (ping){
                         vo.setStatus(CONNECT_STATUS_SUCCESS);
@@ -337,6 +267,7 @@ public class TaskServiceImpl implements TaskService {
             String msg =null;
             if (!CollectionUtils.isEmpty(reqList)){
                 try {
+                    // 拼接上报数据并上报网管中心
                     PhysicalDeviceHeartbeatReq req = new PhysicalDeviceHeartbeatReq();
                     req.setHeartbeatList(reqList);
                     req.setUploadTime(uploadTime);
@@ -368,6 +299,7 @@ public class TaskServiceImpl implements TaskService {
         String data = "";
         String msg =null;
         try {
+            // 拼接上报数据并上报网管中心
             PhysicalDeviceResourceReq req = new PhysicalDeviceResourceReq();
             req.setPdrList(getPdrList(uploadTime));
             log.info("alarmDataFacade.physicalDeviceResource req:{}",req.toString());
@@ -401,6 +333,7 @@ public class TaskServiceImpl implements TaskService {
         String data = "";
         String msg =null;
         try {
+            // 拼接上报数据并上报网管中心
             SystemResourceReq req = new SystemResourceReq();
             req.setSrList(getSrList(uploadTime,infos));
             log.info("alarmDataFacade.systemResource req:{}",req.toString());
@@ -669,7 +602,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * 插入alarm表
+     * 插入告警信息表
      * @param dto
      */
     private void insertAlarmInfo(PhysicalDeviceResourceVo dto){
@@ -678,10 +611,12 @@ public class TaskServiceImpl implements TaskService {
             boolean isAlarm = false;
             NmplAlarmInfo alarmInfo = new NmplAlarmInfo();
             String percent = dto.getResourcePercent();
-            if (AlarmPhyConTypeEnum.CPU.getContentType().equals(dto.getResourceType())){
+            if (AlarmPhyConTypeEnum.CPU.getContentType().equals(dto.getResourceType())){// 判断资源类型是否为cpu
                 if (CompareUtil.compareShortStr(percent,infoCpu)>0){
                     isAlarm = true;
                     alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.CPU.getDesc());
+
+                    // 判断cpu是否超过严重、紧急、一般的阈值
                     if (CompareUtil.compareShortStr(percent,errorCpu)>0){
                         alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
                     }else if (CompareUtil.compareShortStr(percent,warnCpu)>0){
@@ -690,10 +625,12 @@ public class TaskServiceImpl implements TaskService {
                         alarmInfo.setAlarmLevel(LevelEnum.SAMEAS.getLevel());
                     }
                 }
-            }else if (AlarmPhyConTypeEnum.MEM.getContentType().equals(dto.getResourceType())){
+            }else if (AlarmPhyConTypeEnum.MEM.getContentType().equals(dto.getResourceType())){// 判断资源类型是否为内存
                 if (CompareUtil.compareShortStr(percent,infoMem)>0){
                     isAlarm = true;
                     alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.MEM.getDesc());
+
+                    // 判断内存是否超过严重、紧急、一般的阈值
                     if (CompareUtil.compareShortStr(percent,errorMem)>0){
                         alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
                     }else if (CompareUtil.compareShortStr(percent,warnMem)>0){
@@ -702,10 +639,12 @@ public class TaskServiceImpl implements TaskService {
                         alarmInfo.setAlarmLevel(LevelEnum.SAMEAS.getLevel());
                     }
                 }
-            }else if (AlarmPhyConTypeEnum.DISK.getContentType().equals(dto.getResourceType())){
+            }else if (AlarmPhyConTypeEnum.DISK.getContentType().equals(dto.getResourceType())){// 判断资源类型是否为磁盘
                 if (CompareUtil.compareShortStr(percent,infoDisk)>0){
                     isAlarm = true;
                     alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.DISK.getDesc());
+
+                    // 判断磁盘是否超过严重、紧急、一般的阈值
                     if (CompareUtil.compareShortStr(percent,errorDisk)>0){
                         alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
                     }else if (CompareUtil.compareShortStr(percent,warnDisk)>0){
@@ -714,11 +653,13 @@ public class TaskServiceImpl implements TaskService {
                         alarmInfo.setAlarmLevel(LevelEnum.SAMEAS.getLevel());
                     }
                 }
-            }else if (AlarmPhyConTypeEnum.FLOW.getContentType().equals(dto.getResourceType())){
+            }else if (AlarmPhyConTypeEnum.FLOW.getContentType().equals(dto.getResourceType())){// 判断资源类型是否为流量
                 Long value = Long.valueOf(dto.getResourceValue());
                 if (infoLoad.compareTo(value) == -1){
                     isAlarm = true;
                     alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.FLOW.getDesc());
+
+                    // 判断流量是否超过严重、紧急、一般的阈值
                     if (errorLoad.compareTo(value) == -1){
                         alarmInfo.setAlarmLevel(LevelEnum.SERIOUS.getLevel());
                     }else if (warnLoad.compareTo(value) == -1){
@@ -728,6 +669,7 @@ public class TaskServiceImpl implements TaskService {
                     }
                 }
             }
+            // 超过阈值则插入告警表
             if (isAlarm){
                 log.info("PhysicalDeviceResourceVo :{}",alarmInfo.toString());
                 alarmInfo.setAlarmContentType(dto.getResourceType());
@@ -785,11 +727,13 @@ public class TaskServiceImpl implements TaskService {
     private List<SystemResourceVo> getSrList(Date uploadTime, List<DeviceInfo> infos){
         List<SystemResourceVo> resList = new ArrayList<>();
         for (DeviceInfo info : infos){
+            // 根据端口获取进程的pid
             Integer pid = SystemUtils.getPID(info.getLanPort());
             // 判断系统端口所在进程是否存在
             if (pid.equals(-1)){
                 continue;
             }else {
+                // 获取对应应用的信息
                 Map<String, String> systemInfo = SystemUtils.getSystemInfo(pid);
                 SystemResourceVo resource = new SystemResourceVo();
                 resource.setSystemId(info.getSystemId());

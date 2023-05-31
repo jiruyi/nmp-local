@@ -4,7 +4,7 @@ import java.util.Date;
 
 public interface TaskService {
 
-    void heartReport();
+    void heartReport(Date excuteTime);
 
 //    void logPush(String url);
 //

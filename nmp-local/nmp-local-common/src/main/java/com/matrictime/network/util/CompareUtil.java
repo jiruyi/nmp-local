@@ -4,6 +4,12 @@ import static com.matrictime.network.constant.DataConstants.KEY_POINT;
 
 public class CompareUtil {
 
+    /**
+     * 将ip转成整数，比较ip大小
+     * @param ip1
+     * @param ip2
+     * @return
+     */
     public static int compareIp(String ip1,String ip2){
         Long ip1Str = Long.valueOf(ip1.replace(KEY_POINT,""));
         Long ip2Str = Long.valueOf(ip2.replace(KEY_POINT,""));
