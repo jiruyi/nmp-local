@@ -111,6 +111,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
     public Result flowTransformation(TerminalDataReq terminalDataReq) {
         Result result;
         try {
+            // 校验参数
             checkParam(terminalDataReq);
             String key = DataConstants.FLOW_TRANSFOR
                     +terminalDataReq.getTerminalNetworkId()+UNDERLINE +terminalDataReq.getDataType();
@@ -227,6 +228,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
      * @param cache
      */
     private void queryMissDataFromMysql(TerminalDataReq terminalDataReq,Map<String,TimeDataVo> cache) {
+        //查询十二小时前的历史数据
         NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
         nmplTerminalDataExample.createCriteria().andDataTypeEqualTo(terminalDataReq.getDataType())
                 .andTerminalNetworkIdEqualTo(terminalDataReq.getTerminalNetworkId())

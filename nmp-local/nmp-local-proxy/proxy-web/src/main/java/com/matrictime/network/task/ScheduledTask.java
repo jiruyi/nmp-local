@@ -69,7 +69,14 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+new Date()+"======================alarmPush end=============================");
     }
 
-
+    /**
+     * @title dataCollectPush
+     * @return void
+     * @description 统计数据定时任务
+     * @author zyj
+     * @create 2023/5/31 14:25
+     */
+    //@Scheduled(cron = "0 */1 * * * ?")
     @Scheduled(cron = "0 0/30 * * * ?")
     @Async
     public void dataCollectPush(){

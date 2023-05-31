@@ -25,8 +25,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -84,6 +86,9 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private AlarmDataFacade alarmDataFacade;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @Value("${local.ip}")
     private String localIp;
 
@@ -123,6 +128,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Value("${info.network.load}")
     private Long infoLoad;
+
+    private static final String DATACOLLECT_PUSH_LAST_MAXI_ID= ":datacollect_last_push_max_id";
 
 
     /**
@@ -185,41 +192,49 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-
+    /**
+     * 统计数据推送
+     * @param url
+     * @param localIp
+     */
     @Override
     public void dataCollectPush(String url,String localIp) {
-        NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
-        NmplDataCollectExample.Criteria criteria = nmplDataCollectExample.createCriteria();
-        nmplDataCollectExample.setOrderByClause("id desc");
-
-        List<NmplDataCollect> nmplDataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
-        DataCollectReq dataCollectReq = new DataCollectReq();
-        List<DataCollectVo> dataCollectVoList = new ArrayList<>();
-        for (NmplDataCollect nmplDataCollect : nmplDataCollectList) {
-            nmplDataCollect.setDeviceIp(localIp);
-            DataCollectVo dataCollectVo = new DataCollectVo();
-            BeanUtils.copyProperties(nmplDataCollect,dataCollectVo);
-            dataCollectVoList.add(dataCollectVo);
-        }
-        dataCollectReq.setDataCollectVoList(dataCollectVoList);
-        Result result=null;
-        Boolean flag = false;
-        String data = "";
-        String msg =null;
-        if(!CollectionUtils.isEmpty(nmplDataCollectList)){
-            Long maxId = nmplDataCollectList.get(0).getId();
-            try {
-                data = dataCollectReq.toString();
-                result = alarmDataFacade.insertSystemData(dataCollectReq);
-            }catch (Exception e){
-                flag = true;
-                msg = e.getMessage();
-                log.info("ddataCollect push Exception:{}",e.getMessage());
-            }finally {
-                logError(result,"/systemDataCollect/insertSystemData",data,flag,msg);
+        try {
+            NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
+            NmplDataCollectExample.Criteria criteria = nmplDataCollectExample.createCriteria();
+            Object lastMaxId = redisTemplate.opsForValue().get(localIp+DATACOLLECT_PUSH_LAST_MAXI_ID);
+            if(Objects.nonNull(lastMaxId)){
+                //删除上次推送之前的数据
+                criteria.andIdLessThanOrEqualTo(Long.valueOf(lastMaxId.toString()));
+                int thisCount = nmplDataCollectMapper.deleteByExample(nmplDataCollectExample);
+                nmplDataCollectExample.clear();
+                log.info("ip is:{} last alarmPush lastMaxId is:{} deletecount is:{} ",localIp,lastMaxId,thisCount);
             }
+            // 查询所有的统计数据
+            nmplDataCollectExample.setOrderByClause("id desc");
+            List<NmplDataCollect> nmplDataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
+            nmplDataCollectExample.clear();
+
+            // 补充数据
+            DataCollectReq dataCollectReq = new DataCollectReq();
+            List<DataCollectVo> dataCollectVoList = new ArrayList<>();
+            for (NmplDataCollect nmplDataCollect : nmplDataCollectList) {
+                nmplDataCollect.setDeviceIp(localIp);
+                DataCollectVo dataCollectVo = new DataCollectVo();
+                BeanUtils.copyProperties(nmplDataCollect,dataCollectVo);
+                dataCollectVoList.add(dataCollectVo);
+            }
+            dataCollectReq.setDataCollectVoList(dataCollectVoList);
+
+            Result result = alarmDataFacade.insertSystemData(dataCollectReq);
+            if(ObjectUtils.isEmpty(result) ||  !result.isSuccess()){
+                return;
+            }
+            Long maxId = nmplDataCollectList.get(0).getId();
             criteria.andIdLessThanOrEqualTo(maxId);
             nmplDataCollectMapper.deleteByExample(nmplDataCollectExample);
+        }catch (Exception e){
+            log.error("DataPushService dataCollectPush exception:{}",e.getMessage());
         }
     }
 
