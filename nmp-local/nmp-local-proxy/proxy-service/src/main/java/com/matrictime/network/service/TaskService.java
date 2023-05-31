@@ -4,15 +4,13 @@ import java.util.Date;
 
 public interface TaskService {
 
+    /**
+     * 站点状态上报服务
+     * @param excuteTime
+     */
     void heartReport(Date excuteTime);
 
-//    void logPush(String url);
-//
-//    void pcData(String url);
-
     void dataCollectPush(String url,String localIp);
-
-//    void billPush(String url);
 
     /**
      * 物理设备心跳上报服务

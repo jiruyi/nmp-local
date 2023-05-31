@@ -7,7 +7,7 @@ import com.matrictime.network.response.*;
 public interface MonitorService {
 
     /**
-     * 心跳监测
+     * 站点状态监测
      * @param req
      * @return
      */

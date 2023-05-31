@@ -26,7 +26,7 @@ public class MonitorController {
     private MonitorService monitorService;
 
     /**
-     * 心跳缓存
+     * 站点状态上报
      * @author hexu
      * @param req
      * @return

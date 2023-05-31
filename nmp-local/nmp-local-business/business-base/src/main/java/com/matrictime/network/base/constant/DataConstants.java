@@ -251,4 +251,6 @@ public class DataConstants {
 
     public static final double DOUBLE_ZERO = 0.0;
 
+    public static final String DEFAULT_STR_ZERO = "0";
+
 }
