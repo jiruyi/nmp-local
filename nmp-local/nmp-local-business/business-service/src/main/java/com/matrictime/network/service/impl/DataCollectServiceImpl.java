@@ -76,8 +76,6 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
     @Resource
     NmplDataCollectExtMapper nmplDataCollectExtMapper;
 
-    @Resource
-    NmplAlarmInfoMapper nmplAlarmInfoMapper;
 
     @Override
     public Result<PageInfo> queryByConditon(DataCollectReq dataCollectReq) {
@@ -97,224 +95,224 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         return result;
     }
 
-    @Async("taskExecutor")
-    @Override
-    @Transactional
-    public Future<Result> save(DataCollectReq dataCollectReq) {
-        Result<Integer> result;
-        try {
-            if(dataCollectReq.getDataCollectVoList()!=null){
-                List<DataCollectVo> dataCollectVoLoadList = new ArrayList<>();
-                Map<String,String> deviceMap = new HashMap<>();
-                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-                nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
-                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+//    @Async("taskExecutor")
+//    @Override
+//    @Transactional
+//    public Future<Result> save(DataCollectReq dataCollectReq) {
+//        Result<Integer> result;
+//        try {
+//            if(dataCollectReq.getDataCollectVoList()!=null){
+//                List<DataCollectVo> dataCollectVoLoadList = new ArrayList<>();
+//                Map<String,String> deviceMap = new HashMap<>();
+//                NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+//                nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
+//                List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+//
+//                NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+//                nmplDeviceInfoExample.createCriteria().andIsExistEqualTo(true);
+//                List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+//
+//                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
+//                    deviceMap.put(nmplBaseStationInfo.getStationId(),nmplBaseStationInfo.getStationName());
+//                }
+//                for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
+//                    deviceMap.put(nmplDeviceInfo.getDeviceId(),nmplDeviceInfo.getDeviceName());
+//                }
+//
+//                for (DataCollectVo dataCollectVo : dataCollectReq.getDataCollectVoList()) {
+//                    String name = DataCollectEnum.getMap().get(dataCollectVo.getDataItemCode()).getConditionDesc();
+//                    String unit = DataCollectEnum.getMap().get(dataCollectVo.getDataItemCode()).getUnit();
+//                    if(deviceMap.get(dataCollectVo.getDeviceId())!=null){
+//                        dataCollectVo.setDeviceName(deviceMap.get(dataCollectVo.getDeviceId()));
+//                    }
+//                    dataCollectVo.setDataItemName(name);
+//                    dataCollectVo.setUnit(unit);
+//                    if (INTRANET_BROADBAND_LOAD_CODE.equals(dataCollectVo.getDataItemCode()) || INTERNET_BROADBAND_LOAD_CODE.equals(dataCollectVo.getDataItemCode())) {
+//                        dataCollectVoLoadList.add(dataCollectVo);
+//                    }
+//                }
+//                dataCollectReq.setDataCollectVoLoadList(dataCollectVoLoadList);
+//            }
+//            result = buildResult(dataCollectDomainService.save(dataCollectReq));
+//        }catch (SystemException e){
+//            log.info("存储统计数据异常",e.getMessage());
+//            result = failResult(e);
+//        } catch (Exception e){
+//            log.info("存储统计数据异常",e.getMessage());
+//            result = failResult("");
+//        }
+//        return new AsyncResult<>(result);
+//    }
 
-                NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
-                nmplDeviceInfoExample.createCriteria().andIsExistEqualTo(true);
-                List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+//    @Override
+//    public Result monitorData(MonitorReq monitorReq) {
+//        Result result= null;
+//        try {
+//            //1.根据小区id和当前时间找到最近的统计数据
+//            monitorReq.setCurrentTime(LocalTimeToUdate(LocalTime.now().minusMinutes(15)));
+//            List<NmplDataCollect> dataCollectList = dataCollectDomainService.queryMonitorData(monitorReq);
+//            //2.根据设备类型分组
+//            Integer userNumber = 0;
+//            double totalBandwidth=0.0;
+//            double dispenserSecretKey=0.0;
+//            double generatorSecretKey=0.0;
+//            double cacheSecretKey=0.0;
+//
+//            for (NmplDataCollect nmplDataCollect : dataCollectList) {
+//                BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
+//                double value = 0.0;
+//                if(nmplDataCollect.getDataItemCode().equals("10006")){
+//                    value = bigDecimal.divide(new BigDecimal(1000.0*1000.0),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+//                }
+//                if(nmplDataCollect.getDataItemCode().equals("10007")){
+//                    value = bigDecimal.divide(new BigDecimal(1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+//                }
+//                switch (nmplDataCollect.getDeviceType()){
+//                    case "00":
+//                        if(nmplDataCollect.getDataItemCode().equals("10000")){
+//                            userNumber+=Integer.valueOf(nmplDataCollect.getDataItemValue());
+//                        }
+//                        if(nmplDataCollect.getDataItemCode().equals("10006")){
+//                            totalBandwidth+=value;
+//                        }
+//                        break;
+//                    case "11":
+//                        if(nmplDataCollect.getDataItemCode().equals("10007")){
+//                            dispenserSecretKey+=value;
+//                        }
+//                        if(nmplDataCollect.getDataItemCode().equals("10006")){
+//                            totalBandwidth+=value;
+//                        }
+//                        break;
+//                    case "12":
+//                        if(nmplDataCollect.getDataItemCode().equals("10007")){
+//                            generatorSecretKey+=value;
+//                        }
+//                        if(nmplDataCollect.getDataItemCode().equals("10006")){
+//                            totalBandwidth+=value;
+//                        }
+//                        break;
+//                    case "13":
+//                        if(nmplDataCollect.getDataItemCode().equals("10007")){
+//                            cacheSecretKey+=value;
+//                        }
+//                        if(nmplDataCollect.getDataItemCode().equals("10006")){
+//                            totalBandwidth+=value;
+//                        }
+//                        break;
+//                    default:
+//                }
+//            }
+//            //统计用户数 表pc_data 去重
+//            userNumber = dataCollectDomainService.countDeviceNumber(monitorReq);
+//
+//            //统计带宽 表 data_collect 累加 totalBandwidth  code=10006
+//            totalBandwidth = dataCollectDomainService.sumDataItemValue(monitorReq);
+//
+//            //cacheSecretKey=dispenserSecretKey+random(1000)
+//            Random random = new Random(1000);
+//            double v = random.nextDouble();
+//            generatorSecretKey = dispenserSecretKey + v;
+//
+//            //统一单位
+//            String [] totalBandwidthStr = dataChangeWithoutUnit(totalBandwidth,1);
+//
+//            String dispenserSecretKeyStr = dataChange(dispenserSecretKey,0);
+//
+//            String generatorSecretKeyStr = dataChange(generatorSecretKey,0);
+//
+//            String cacheSecretKeyStr = dataChange(cacheSecretKey,0);
+//
+//
+//            MonitorResp monitorResp = new MonitorResp
+//                    (userNumber,totalBandwidthStr[0],totalBandwidthStr[1],dispenserSecretKeyStr,generatorSecretKeyStr,
+//                            cacheSecretKeyStr,new ArrayList<>());
+//            result = buildResult(monitorResp);
+//        } catch (SystemException e) {
+//            log.info("查询监控数据异常",e.getMessage());
+//            result = failResult(e);
+//        } catch (Exception e) {
+//            log.info("查询监控数据异常",e.getMessage());
+//            result = failResult("");
+//        }
+//        return result;
+//    }
 
-                for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
-                    deviceMap.put(nmplBaseStationInfo.getStationId(),nmplBaseStationInfo.getStationName());
-                }
-                for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
-                    deviceMap.put(nmplDeviceInfo.getDeviceId(),nmplDeviceInfo.getDeviceName());
-                }
-
-                for (DataCollectVo dataCollectVo : dataCollectReq.getDataCollectVoList()) {
-                    String name = DataCollectEnum.getMap().get(dataCollectVo.getDataItemCode()).getConditionDesc();
-                    String unit = DataCollectEnum.getMap().get(dataCollectVo.getDataItemCode()).getUnit();
-                    if(deviceMap.get(dataCollectVo.getDeviceId())!=null){
-                        dataCollectVo.setDeviceName(deviceMap.get(dataCollectVo.getDeviceId()));
-                    }
-                    dataCollectVo.setDataItemName(name);
-                    dataCollectVo.setUnit(unit);
-                    if (INTRANET_BROADBAND_LOAD_CODE.equals(dataCollectVo.getDataItemCode()) || INTERNET_BROADBAND_LOAD_CODE.equals(dataCollectVo.getDataItemCode())) {
-                        dataCollectVoLoadList.add(dataCollectVo);
-                    }
-                }
-                dataCollectReq.setDataCollectVoLoadList(dataCollectVoLoadList);
-            }
-            result = buildResult(dataCollectDomainService.save(dataCollectReq));
-        }catch (SystemException e){
-            log.info("存储统计数据异常",e.getMessage());
-            result = failResult(e);
-        } catch (Exception e){
-            log.info("存储统计数据异常",e.getMessage());
-            result = failResult("");
-        }
-        return new AsyncResult<>(result);
-    }
-
-    @Override
-    public Result monitorData(MonitorReq monitorReq) {
-        Result result= null;
-        try {
-            //1.根据小区id和当前时间找到最近的统计数据
-            monitorReq.setCurrentTime(LocalTimeToUdate(LocalTime.now().minusMinutes(15)));
-            List<NmplDataCollect> dataCollectList = dataCollectDomainService.queryMonitorData(monitorReq);
-            //2.根据设备类型分组
-            Integer userNumber = 0;
-            double totalBandwidth=0.0;
-            double dispenserSecretKey=0.0;
-            double generatorSecretKey=0.0;
-            double cacheSecretKey=0.0;
-
-            for (NmplDataCollect nmplDataCollect : dataCollectList) {
-                BigDecimal bigDecimal = new BigDecimal(nmplDataCollect.getDataItemValue());
-                double value = 0.0;
-                if(nmplDataCollect.getDataItemCode().equals("10006")){
-                    value = bigDecimal.divide(new BigDecimal(1000.0*1000.0),2,BigDecimal.ROUND_HALF_UP).doubleValue();
-                }
-                if(nmplDataCollect.getDataItemCode().equals("10007")){
-                    value = bigDecimal.divide(new BigDecimal(1024.0*1024.0),2,BigDecimal.ROUND_HALF_UP).doubleValue();
-                }
-                switch (nmplDataCollect.getDeviceType()){
-                    case "00":
-                        if(nmplDataCollect.getDataItemCode().equals("10000")){
-                            userNumber+=Integer.valueOf(nmplDataCollect.getDataItemValue());
-                        }
-                        if(nmplDataCollect.getDataItemCode().equals("10006")){
-                            totalBandwidth+=value;
-                        }
-                        break;
-                    case "11":
-                        if(nmplDataCollect.getDataItemCode().equals("10007")){
-                            dispenserSecretKey+=value;
-                        }
-                        if(nmplDataCollect.getDataItemCode().equals("10006")){
-                            totalBandwidth+=value;
-                        }
-                        break;
-                    case "12":
-                        if(nmplDataCollect.getDataItemCode().equals("10007")){
-                            generatorSecretKey+=value;
-                        }
-                        if(nmplDataCollect.getDataItemCode().equals("10006")){
-                            totalBandwidth+=value;
-                        }
-                        break;
-                    case "13":
-                        if(nmplDataCollect.getDataItemCode().equals("10007")){
-                            cacheSecretKey+=value;
-                        }
-                        if(nmplDataCollect.getDataItemCode().equals("10006")){
-                            totalBandwidth+=value;
-                        }
-                        break;
-                    default:
-                }
-            }
-            //统计用户数 表pc_data 去重
-            userNumber = dataCollectDomainService.countDeviceNumber(monitorReq);
-
-            //统计带宽 表 data_collect 累加 totalBandwidth  code=10006
-            totalBandwidth = dataCollectDomainService.sumDataItemValue(monitorReq);
-
-            //cacheSecretKey=dispenserSecretKey+random(1000)
-            Random random = new Random(1000);
-            double v = random.nextDouble();
-            generatorSecretKey = dispenserSecretKey + v;
-
-            //统一单位
-            String [] totalBandwidthStr = dataChangeWithoutUnit(totalBandwidth,1);
-
-            String dispenserSecretKeyStr = dataChange(dispenserSecretKey,0);
-
-            String generatorSecretKeyStr = dataChange(generatorSecretKey,0);
-
-            String cacheSecretKeyStr = dataChange(cacheSecretKey,0);
-
-
-            MonitorResp monitorResp = new MonitorResp
-                    (userNumber,totalBandwidthStr[0],totalBandwidthStr[1],dispenserSecretKeyStr,generatorSecretKeyStr,
-                            cacheSecretKeyStr,new ArrayList<>());
-            result = buildResult(monitorResp);
-        } catch (SystemException e) {
-            log.info("查询监控数据异常",e.getMessage());
-            result = failResult(e);
-        } catch (Exception e) {
-            log.info("查询监控数据异常",e.getMessage());
-            result = failResult("");
-        }
-        return result;
-    }
-
-    /**
-     * @param data
-     * 计算出来的数据
-     * @param countFlag
-     * 判断传过来的是否是基站带宽总量
-     * 1 代表是基站带宽总量,0 代表其他
-     * @return
-     */
-    private String dataChange(Double data, int countFlag){
-        //转换成MB
-        if(countFlag == 1){
-            data = data/(1024.0*1024.0);
-        }
-        //转换成GB
-        if(data >= 999.0){
-            data = data/1024.0;
-            //转换成TB
-            if(data >= 999.0){
-                data = data/1024.0;
-                return String.format("%.2f", data) + "TB";
-            }
-            return String.format("%.2f", data) + "GB";
-        }
-        return String.format("%.2f", data) + "MB";
-    }
-
-    private String[] dataChangeWithoutUnit(Double data, int countFlag){
-        String [] strings = new String[2];
-        //转换成MB
-        if(countFlag == 1){
-            data = data/(1024.0*1024.0);
-        }
-        //转换成GB
-        if(data >= 999.0){
-            data = data/1024.0;
-            //转换成TB
-            if(data >= 999.0){
-                data = data/1024.0;
-                strings[0] = String.format("%.2f", data);
-                strings[1] = "TB";
-                return strings;
-            }
-            strings[0] = String.format("%.2f", data);
-            strings[1] = "GB";
-            return strings;
-        }
-        strings[0] = String.format("%.2f", data);
-        strings[1] = "MB";
-        return strings;
-    }
-
-    @Override
-    public Result monitorDataTopTen(MonitorReq monitorReq) {
-        Result result= null;
-        try {
-            monitorReq.setCurrentTime(LocalTimeToUdate(LocalTime.now().minusMinutes(delayTime)));
-            result = buildResult(dataCollectDomainService.queryTopTen(monitorReq));
-        }catch (SystemException e){
-            log.info("查询排行前10数据异常",e.getMessage());
-            result = failResult(e);
-        }catch (Exception e){
-            log.info("查询排行前10数据异常",e.getMessage());
-            result = failResult("");
-        }
-        return result;
-    }
+//    /**
+//     * @param data
+//     * 计算出来的数据
+//     * @param countFlag
+//     * 判断传过来的是否是基站带宽总量
+//     * 1 代表是基站带宽总量,0 代表其他
+//     * @return
+//     */
+//    private String dataChange(Double data, int countFlag){
+//        //转换成MB
+//        if(countFlag == 1){
+//            data = data/(1024.0*1024.0);
+//        }
+//        //转换成GB
+//        if(data >= 999.0){
+//            data = data/1024.0;
+//            //转换成TB
+//            if(data >= 999.0){
+//                data = data/1024.0;
+//                return String.format("%.2f", data) + "TB";
+//            }
+//            return String.format("%.2f", data) + "GB";
+//        }
+//        return String.format("%.2f", data) + "MB";
+//    }
+//
+//    private String[] dataChangeWithoutUnit(Double data, int countFlag){
+//        String [] strings = new String[2];
+//        //转换成MB
+//        if(countFlag == 1){
+//            data = data/(1024.0*1024.0);
+//        }
+//        //转换成GB
+//        if(data >= 999.0){
+//            data = data/1024.0;
+//            //转换成TB
+//            if(data >= 999.0){
+//                data = data/1024.0;
+//                strings[0] = String.format("%.2f", data);
+//                strings[1] = "TB";
+//                return strings;
+//            }
+//            strings[0] = String.format("%.2f", data);
+//            strings[1] = "GB";
+//            return strings;
+//        }
+//        strings[0] = String.format("%.2f", data);
+//        strings[1] = "MB";
+//        return strings;
+//    }
+//
+//    @Override
+//    public Result monitorDataTopTen(MonitorReq monitorReq) {
+//        Result result= null;
+//        try {
+//            monitorReq.setCurrentTime(LocalTimeToUdate(LocalTime.now().minusMinutes(delayTime)));
+//            result = buildResult(dataCollectDomainService.queryTopTen(monitorReq));
+//        }catch (SystemException e){
+//            log.info("查询排行前10数据异常",e.getMessage());
+//            result = failResult(e);
+//        }catch (Exception e){
+//            log.info("查询排行前10数据异常",e.getMessage());
+//            result = failResult("");
+//        }
+//        return result;
+//    }
 
 
-    public Date LocalTimeToUdate(LocalTime localTime) {
-        LocalDate localDate = LocalDate.now();
-        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
-        ZoneId zone = ZoneId.systemDefault();
-        Instant instant = localDateTime.atZone(zone).toInstant();
-        return Date.from(instant);
-    }
+//    public Date LocalTimeToUdate(LocalTime localTime) {
+//        LocalDate localDate = LocalDate.now();
+//        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
+//        ZoneId zone = ZoneId.systemDefault();
+//        Instant instant = localDateTime.atZone(zone).toInstant();
+//        return Date.from(instant);
+//    }
 
 
     @Override
@@ -414,7 +412,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
             String time = TimeUtil.getOnTime();
             SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
             if(value == null){
-                double res =0.0;
+                double res =DOUBLE_ZERO;
                 //获取根据device_id,data_item_code分组最新上报的数据
                 List<DataCollectVo> dataCollectVos = nmplDataCollectExtMapper.selectCurrentIpFlow(dataCollectReq);
                 for (DataCollectVo dataCollectVo : dataCollectVos) {
@@ -454,7 +452,7 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
         String transforKey = DataConstants.FLOW_TRANSFOR + ip +"_" + code;
         String currentKey = DataConstants.CURRENT_FLOW + ip +"_" + code;
-        double result = 0.0;
+        double result = DOUBLE_ZERO;
         for (DataCollectVo dataCollectVo : dataCollectVos) {
             //判断数据是否是当天以及时刻是否是当前时刻的
             if(time.equals(formatter.format(dataCollectVo.getUploadTime()))&& TimeUtil.IsTodayDate(dataCollectVo.getUploadTime())){
@@ -486,19 +484,6 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
     }
 
 
-    /**
-     * 新增流量过载告警
-     */
-    private void addFlowAlarm(String ip){
-        NmplAlarmInfo nmplAlarmInfo = new NmplAlarmInfo();
-        nmplAlarmInfo.setAlarmSourceIp(ip);
-        nmplAlarmInfo.setAlarmLevel("1");
-        nmplAlarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.FLOW.getCode());
-        nmplAlarmInfo.setAlarmSourceType("00");
-        nmplAlarmInfo.setAlarmUploadTime(new Date());
-        nmplAlarmInfo.setAlarmContent(AlarmPhyConTypeEnum.FLOW.getDesc());
-        nmplAlarmInfoMapper.insert(nmplAlarmInfo);
-    }
 
     /**
      * redis获取hash数据
@@ -525,10 +510,10 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
     private void supplementaryDateToRedis(Map<String, TimeDataVo> map, DataCollectReq dataCollectReq, String key){
         Map<String,TimeDataVo> missingTime = new HashMap<>();
         Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
-        List<String> timeList = CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -24, 30 * 60, DateUtils.MINUTE_TIME_FORMAT);
+        List<String> timeList = CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -TWENTY_FOUR, HALF_HOUR_SECONDS, DateUtils.MINUTE_TIME_FORMAT);
         for (String time : timeList) {
             TimeDataVo timeDataVo = new TimeDataVo();
-            timeDataVo.setValue(0.0);
+            timeDataVo.setValue(DOUBLE_ZERO);
             timeDataVo.setTime(time);
             timeDataVo.setDate(new Date());
             if(!map.containsKey(time)){
@@ -605,7 +590,8 @@ public class DataCollectServiceImpl extends SystemBaseService implements DataCol
      * @return
      */
     private List<TimeDataVo> sortData(Map<String, TimeDataVo> map){
-        List<String> timeList = CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -24, 30 * 60, DateUtils.MINUTE_TIME_FORMAT);
+        // 获取过去12小时时间节点
+        List<String> timeList = CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()),  -TWENTY_FOUR, HALF_HOUR_SECONDS, DateUtils.MINUTE_TIME_FORMAT);
         List<TimeDataVo> result = new ArrayList<>();
         for (String s : timeList) {
             map.get(s).setTime(s);
