@@ -136,18 +136,27 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     }
 
 
+    /**
+     * 站点状态监测
+     * @param req
+     * @return
+     */
     @Override
     public Result<CheckHeartResp> checkHeart(CheckHeartReq req) {
         Result result;
         CheckHeartResp resp = null;
         try {
+            // 校验入参
             checkHeartParam(req);
             Map<String, String> map = checkStationStatus(req.getDeviceId());
+            // 插入缓存
             redisTemplate.opsForValue().set(HEART_CHECK_DEVICE_ID+req.getDeviceId(),req.getStatus(),healthDeadlineTime, TimeUnit.SECONDS);
             String status = map.get("status");
             String bigType = map.get("bigType");
             String id = map.get("id");
+            // 判断当前状态与上报状态是否一致
             if(!deviceMap.get(req.getStatus()).equals(status)){
+                // 不一致进行中心数据更新并推送至各个代理
                 heartHttpPush(bigType,id, req.getDeviceId(),deviceMap.get(req.getStatus()));
             }
             result = buildResult(resp);
@@ -173,6 +182,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 NmplPhysicalDeviceHeartbeat dto = new NmplPhysicalDeviceHeartbeat();
                 BeanUtils.copyProperties(vo,dto);
                 dto.setUploadTime(req.getUploadTime());
+                // 获取物理设备ip间心跳信息，有则更新，无则插入
                 NmplPhysicalDeviceHeartbeat heartbeat = nmplPhysicalDeviceHeartbeatMapper.selectByPrimaryKey(vo.getIp1Ip2());
                 if (heartbeat !=null){
                     nmplPhysicalDeviceHeartbeatMapper.updateByPrimaryKeySelective(dto);
@@ -198,25 +208,17 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         Result result;
         try{
             List<PhysicalDeviceResourceVo> pdrList = req.getPdrList();
-//            List<AlarmInfo> alarmInfoList = new ArrayList<>();
             for (PhysicalDeviceResourceVo vo : pdrList){
                 NmplPhysicalDeviceResource dto = new NmplPhysicalDeviceResource();
                 BeanUtils.copyProperties(vo,dto);
+                // 获取物理设备资源信息，有则更新，无则插入
                 NmplPhysicalDeviceResource resource = nmplPhysicalDeviceResourceMapper.selectByPrimaryKey(vo.getDeviceIp(), vo.getResourceType());
                 if (resource != null){
                     nmplPhysicalDeviceResourceMapper.updateByPrimaryKeySelective(dto);
                 }else {
                     nmplPhysicalDeviceResourceMapper.insertSelective(dto);
                 }
-//                AlarmInfo alarmInfo = getAlarmInfo(dto);
-//                if (alarmInfo != null){
-//                    alarmInfoList.add(alarmInfo);
-//                }
             }
-            // 资源告警推送（转移到代理端）
-//            if (!CollectionUtils.isEmpty(alarmInfoList)){
-//                alarmDataService.acceptAlarmData(alarmInfoList);
-//            }
             result = buildResult(null);
         }catch (Exception e){
             log.error("MonitorServiceImpl.physicalDeviceResource Exception:{}",e.getMessage());
@@ -225,63 +227,6 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         return result;
     }
 
-//    private AlarmInfo getAlarmInfo(NmplPhysicalDeviceResource dto){
-//        boolean isAlarm = false;
-//        AlarmInfo alarmInfo = null;
-//        String percent = dto.getResourcePercent();
-//        switch (dto.getResourceType()){
-//            case RESOURCE_TYPE_CPU :
-//                if (CompareUtil.compareShortStr(percent,infoCpu)>1){
-//                    isAlarm = true;
-//                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.CPU.getContentType());
-//                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.CPU.getDesc());
-//                    if (CompareUtil.compareShortStr(percent,errorCpu)>1){
-//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
-//                    }else if (CompareUtil.compareShortStr(percent,warnCpu)>1){
-//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
-//                    }else {
-//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
-//                    }
-//                }
-//                break;
-//            case RESOURCE_TYPE_MEMORY:
-//                if (CompareUtil.compareShortStr(percent,infoMem)>1){
-//                    isAlarm = true;
-//                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.MEM.getContentType());
-//                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.MEM.getDesc());
-//                    if (CompareUtil.compareShortStr(percent,errorMem)>1){
-//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
-//                    }else if (CompareUtil.compareShortStr(percent,warnMem)>1){
-//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
-//                    }else {
-//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
-//                    }
-//                }
-//                break;
-//            case RESOURCE_TYPE_DISK:
-//                if (CompareUtil.compareShortStr(percent,infoDisk)>1){
-//                    isAlarm = true;
-//                    alarmInfo.setAlarmContentType(AlarmPhyConTypeEnum.DISK.getContentType());
-//                    alarmInfo.setAlarmContent(AlarmPhyConTypeEnum.DISK.getDesc());
-//                    if (CompareUtil.compareShortStr(percent,errorDisk)>1){
-//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SERIOUS.getLevel());
-//                    }else if (CompareUtil.compareShortStr(percent,warnDisk)>1){
-//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.EMERG.getLevel());
-//                    }else {
-//                        alarmInfo.setAlarmLevel(AlarmSysLevelEnum.LevelEnum.SAMEAS.getLevel());
-//                    }
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//        if (isAlarm){
-//            alarmInfo.setAlarmSourceIp(dto.getDeviceIp());
-//            alarmInfo.setAlarmUploadTime(dto.getUploadTime());
-//            alarmInfo.setAlarmSourceType(ALARM_SOURCE_TYPE_RESOURCE);
-//        }
-//        return alarmInfo;
-//    }
 
     /**
      * 运行系统资源信息上报
@@ -297,7 +242,9 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 for (SystemResourceVo vo : srList){
                     NmplSystemResource dto = new NmplSystemResource();
                     BeanUtils.copyProperties(vo,dto);
+                    // 插入数据库
                     nmplSystemResourceMapper.insertSelective(dto);
+                    // 插入缓存
                     putSystemResourceRedis(vo);
                 }
             }
@@ -319,12 +266,15 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         Result<QueryPhysicalDevicesResp> result;
         try{
             QueryPhysicalDevicesResp resp = new QueryPhysicalDevicesResp();
+            // 校验请求入参
             checkPhysicalDevicesParam(req);
             String operatorId = req.getRelationOperatorId();
+            // 获取所有设备ip集合
             Set<String> ips = distinctIps(operatorId);
 
             NmplPhysicalDeviceHeartbeatExample example = new NmplPhysicalDeviceHeartbeatExample();
             example.createCriteria().andUploadTimeEqualTo(DateUtils.getRecentHalfTime(new Date()));
+            // 获取最近一个上报时间点的ip间心跳上报情况
             List<NmplPhysicalDeviceHeartbeat> heartbeats = nmplPhysicalDeviceHeartbeatMapper.selectByExample(example);
             List<PhysicalDeviceHeartbeatVo> heartbeatVos = new ArrayList<>();
             for (NmplPhysicalDeviceHeartbeat heartbeat : heartbeats){
@@ -361,10 +311,12 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         Result<QueryPhysicalDeviceResourceResp> result;
         try{
             QueryPhysicalDeviceResourceResp resp = new QueryPhysicalDeviceResourceResp();
+            // 校验请求入参
             checkPhysicalDevicesResourceParam(req);
 
             NmplPhysicalDeviceResourceExample example = new NmplPhysicalDeviceResourceExample();
             example.createCriteria().andDeviceIpEqualTo(req.getDeviceIp());
+            // 根据设备ip获取该设备的物理资源信息
             List<NmplPhysicalDeviceResource> resources = nmplPhysicalDeviceResourceMapper.selectByExample(example);
             List<PhysicalDeviceResourceVo> resourceVos = new ArrayList<>();
             for (NmplPhysicalDeviceResource resource : resources){
@@ -394,10 +346,15 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         Result<QuerySystemResourceResp> result;
         try{
             QuerySystemResourceResp resp = new QuerySystemResourceResp();
+            // 校验请求入参
             checkPhysicalDevicesResourceParam(req);
             Date now = new Date();
+
+            // 根据ip获取设备下所有系统的最新运行信息
             List<SystemResourceVo> resourceVos = getSystemResources(req.getDeviceIp(),now);
+            // 获取系统列表最近12个小时的cpu上报折线图信息
             Map<String,List<String>> cpuInfos = getSystemResourceSL(resourceVos,RESOURCE_TYPE_CPU,DateUtils.getRecentHalfTime(now));
+            // 获取系统列表最近12个小时的内存上报折线图信息
             Map<String,List<String>> memInfos = getSystemResourceSL(resourceVos,RESOURCE_TYPE_MEMORY,DateUtils.getRecentHalfTime(now));
             resp.setXTime(CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(now), -24, 60 * 30, MINUTE_TIME_FORMAT));
             resp.setResourceVos(resourceVos);
@@ -467,21 +424,23 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         Date date = DateUtils.getRecentHalfTime(now);
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         baseStationInfoExample.createCriteria().andLanIpEqualTo(deviceIp).andIsExistEqualTo(IS_EXIST);
+        // 根据内网ip获取所有基站信息
         List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
         if (!CollectionUtils.isEmpty(baseStationInfos)){
             for (NmplBaseStationInfo info : baseStationInfos){
                 SystemResourceVo vo = new SystemResourceVo();
                 NmplSystemResourceExample example = new NmplSystemResourceExample();
                 example.createCriteria().andUploadTimeEqualTo(date).andSystemIdEqualTo(info.getStationId());
+                // 根据站点id获取最近上报点的资源信息
                 List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
                 if (!CollectionUtils.isEmpty(resources)){
                     BeanUtils.copyProperties(resources.get(0),vo);
                 }else {
                     vo.setSystemId(info.getStationId());
-                    vo.setCpuPercent("0");
-                    vo.setMemoryPercent("0");
+                    vo.setCpuPercent(DEFAULT_STR_ZERO);
+                    vo.setMemoryPercent(DEFAULT_STR_ZERO);
                     vo.setSystemType(info.getStationType());
-                    vo.setRunTime(0L);
+                    vo.setRunTime(Long.parseLong(DEFAULT_STR_ZERO));
                     vo.setUploadTime(date);
                 }
                 voList.add(vo);
@@ -490,21 +449,23 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
 
         NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
         deviceInfoExample.createCriteria().andLanIpEqualTo(deviceIp).andIsExistEqualTo(IS_EXIST);
+        // 根据内网ip获取所有设备信息
         List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(deviceInfoExample);
         if (!CollectionUtils.isEmpty(deviceInfos)){
             for (NmplDeviceInfo info : deviceInfos){
                 SystemResourceVo vo = new SystemResourceVo();
                 NmplSystemResourceExample example = new NmplSystemResourceExample();
                 example.createCriteria().andUploadTimeEqualTo(date).andSystemIdEqualTo(info.getDeviceId());
+                // 根据站点id获取最近上报点的资源信息
                 List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
                 if (!CollectionUtils.isEmpty(resources)){
                     BeanUtils.copyProperties(resources.get(0),vo);
                 }else {
                     vo.setSystemId(info.getDeviceId());
-                    vo.setCpuPercent("0");
-                    vo.setMemoryPercent("0");
+                    vo.setCpuPercent(DEFAULT_STR_ZERO);
+                    vo.setMemoryPercent(DEFAULT_STR_ZERO);
                     vo.setSystemType(info.getDeviceType());
-                    vo.setRunTime(0L);
+                    vo.setRunTime(Long.parseLong(DEFAULT_STR_ZERO));
                     vo.setUploadTime(date);
                 }
                 voList.add(vo);
@@ -513,13 +474,22 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
         return voList;
     }
 
+    /**
+     * 获取系统资源信息折线图的上报信息
+     * @param vos
+     * @param resourceType
+     * @param now
+     * @return
+     */
     private Map<String,List<String>> getSystemResourceSL(List<SystemResourceVo> vos,String resourceType,Date now){
         Map<String,List<String>> resMap = new HashMap<>();
         Date recentHalfTime = DateUtils.getRecentHalfTime(now);
+        // 获取当前查询时间最近12小时的上报时间点
         List<String> xTime = CommonServiceImpl.getXTimePerHalfHour(recentHalfTime, -24, 60 * 30, MINUTE_TIME_FORMAT);
 
         if (!CollectionUtils.isEmpty(vos)){
             String nowStr = DateUtils.formatDateToInteger(now);
+            // 遍历系统获取每一个系统的资源信息折线图
             for (SystemResourceVo vo : vos){
                 List<String> values = new ArrayList<>();
                 String systemId = vo.getSystemId();
@@ -527,11 +497,13 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                 hashKey.append(UNDERLINE).append(SYSTEM_RESOURCE).append(UNDERLINE).append(systemId);
                 Map<String,DisplayVo> entries = new HashMap<>();
                 try{
+                    // 先从缓存获取
                     entries = redisTemplate.opsForHash().entries(hashKey.toString());
                 }catch (Exception e){
                     log.warn("getSystemResourceSL getall redis exception:{}",e);
                 }
 
+                // 缓存为空从数据库获取
                 if (entries.isEmpty()){
                     Date uploadTime = DateUtils.addDayForDate(recentHalfTime, -1);
                     NmplSystemResourceExample example = new NmplSystemResourceExample();
@@ -547,6 +519,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                             entries.put(mapKey,displayVo);
                         }
                         try {
+                            // 数据库获取结果插入缓存
                             redisTemplate.opsForHash().putAll(hashKey.toString(),entries);
                         }catch (Exception e){
                             log.warn("getSystemResourceSL putall redis exception:{}",e);
@@ -554,6 +527,7 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                     }
 
                 }
+                // 将查询出的数据与时间折线节点进行匹配（处理可能时间节点没有查询到上报数据的情况）
                 for (String time : xTime){
                     boolean isGetFromDb = true;
                     String value = DEFAULT_ZERO;
@@ -568,10 +542,12 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                             isGetFromDb = false;
                         }
                     }
+                    // 有时间节点缺数据
                     if (isGetFromDb){
                         Date uploadTime = CommonServiceImpl.getDateByStr(nowStr + time);
                         NmplSystemResourceExample example = new NmplSystemResourceExample();
                         example.createCriteria().andSystemIdEqualTo(systemId).andSystemTypeEqualTo(vo.getSystemType()).andUploadTimeEqualTo(uploadTime);
+                        // 查询数据库
                         List<NmplSystemResource> resources = nmplSystemResourceMapper.selectByExample(example);
                         SystemResourceVo resourceVo = new SystemResourceVo();
                         if (!CollectionUtils.isEmpty(resources)){
@@ -581,12 +557,14 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
                             }else if (RESOURCE_TYPE_MEMORY.equals(resourceType)){
                                 value = resources.get(0).getMemoryPercent();
                             }
+                            // 有数据插入缓存
                             putSystemResourceRedis(resourceVo);
                         }else {
                             resourceVo.setSystemId(systemId);
                             resourceVo.setUploadTime(uploadTime);
                             resourceVo.setCpuPercent(DEFAULT_ZERO);
                             resourceVo.setMemoryPercent(DEFAULT_ZERO);
+                            // 没有数据插入默认值到缓存
                             putSystemResourceRedis(resourceVo);
                         }
                     }
@@ -599,222 +577,8 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
     }
 
 
-//    @Override
-//    public Result<QueryMonitorResp> queryMonitor(QueryMonitorReq req) {
-//        Result result;
-//
-//        try {
-//            QueryMonitorResp resp = new QueryMonitorResp();
-//            queryMonitorParam(req);
-//            String roId = req.getRoId();
-//            NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
-//            baseStationInfoExample.createCriteria().andIsExistEqualTo(IS_EXIST).andRelationOperatorIdEqualTo(roId);
-//            List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
-//
-//            NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
-//            deviceInfoExample.createCriteria().andIsExistEqualTo(IS_EXIST).andRelationOperatorIdEqualTo(roId);
-//            List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(deviceInfoExample);
-//
-//            Map<Integer, List<DeviceInfoRelVo>> deviceInfoMap = new HashMap<>();
-//            Long userCount = 0L;
-//            Long totalBandwidth = 0L;
-//
-//            if (!CollectionUtils.isEmpty(baseStationInfos)){
-//                List<DeviceInfoRelVo> levelThree = new ArrayList<>();
-//                for (NmplBaseStationInfo baseStationInfo : baseStationInfos){
-//                    DeviceInfoRelVo baseInfo = new DeviceInfoRelVo();
-//                    BeanUtils.copyProperties(baseStationInfo,baseInfo);
-//                    baseInfo.setDeviceId(baseStationInfo.getStationId());
-//                    baseInfo.setDeviceName(baseStationInfo.getStationName());
-//                    baseInfo.setDeviceType(CONFIG_DEVICE_TYPE_1);
-//                    levelThree.add(baseInfo);
-//                    userCount = addUserCount(userCount, baseStationInfo.getStationId());
-//                    totalBandwidth = addTotalBandwidth(totalBandwidth, baseStationInfo.getStationId());
-//                }
-//                deviceInfoMap.put(LEVEL_3,levelThree);
-//            }
-//
-//            if (!CollectionUtils.isEmpty(deviceInfos)){
-//                List<DeviceInfoRelVo> levelOne = new ArrayList<>();
-//                List<DeviceInfoRelVo> levelTwo = new ArrayList<>();
-//                for (NmplDeviceInfo deviceInfo : deviceInfos){
-//                    DeviceInfoRelVo deviceInfoRelVo = new DeviceInfoRelVo();
-//                    BeanUtils.copyProperties(deviceInfo,deviceInfoRelVo);
-//
-//                    switch (deviceInfo.getDeviceType()){
-//                        case SYSTEM_ID_1:
-//                            deviceInfoRelVo.setDeviceType(CONFIG_DEVICE_TYPE_2);
-//                            levelTwo.add(deviceInfoRelVo);
-//                            break;
-//                        case SYSTEM_ID_2:
-//                            deviceInfoRelVo.setDeviceType(CONFIG_DEVICE_TYPE_3);
-//                            levelOne.add(deviceInfoRelVo);
-//                            break;
-//                        case SYSTEM_ID_3:
-//                            deviceInfoRelVo.setDeviceType(CONFIG_DEVICE_TYPE_4);
-//                            levelTwo.add(deviceInfoRelVo);
-//                            break;
-//                        default:
-//                            deviceInfoRelVo.setDeviceType(null);
-//                            break;
-//                    }
-//                    userCount = addUserCount(userCount, deviceInfo.getDeviceId());
-//                    totalBandwidth = addTotalBandwidth(totalBandwidth, deviceInfo.getDeviceId());
-//                }
-//                deviceInfoMap.put(LEVEL_1,levelOne);
-//                deviceInfoMap.put(LEVEL_2,levelTwo);
-//            }
-//
-//
-//            if (!CollectionUtils.isEmpty(deviceInfoMap)){
-//                for (Map.Entry<Integer, List<DeviceInfoRelVo>> entry : deviceInfoMap.entrySet()){
-//                    List<DeviceInfoRelVo> baseInfos = entry.getValue();
-//                    if (!CollectionUtils.isEmpty(baseInfos)){
-//                        // 找同级设备
-//                        for (DeviceInfoRelVo baseInfo : baseInfos){
-//                            List<NmplDeviceInfo> sameLevelInfo = nmplDeviceExtMapper.selectBaseStationListByMainDeviceId(baseInfo.getDeviceId(), roId);
-//                            if (!CollectionUtils.isEmpty(sameLevelInfo)){
-//                                List<DeviceInfoRelVo> sameLevelInfos = new ArrayList<>(sameLevelInfo.size());
-//                                for (NmplDeviceInfo deviceInfo : sameLevelInfo){
-//                                    DeviceInfoRelVo deviceInfoRelVo = new DeviceInfoRelVo();
-//                                    BeanUtils.copyProperties(deviceInfo,deviceInfoRelVo);
-//                                    sameLevelInfos.add(deviceInfoRelVo);
-//                                }
-//                                baseInfo.setRelDevices(sameLevelInfos);
-//                            }
-//                        }
-//
-//                        // 找子级设备
-//                        for (DeviceInfoRelVo baseInfo : baseInfos){
-//                            List<NmplDeviceInfo> childLevelInfo = nmplDeviceExtMapper.selectDeviceListByMainDeviceId(baseInfo.getDeviceId(), roId);
-//                            if (!CollectionUtils.isEmpty(childLevelInfo)){
-//                                List<DeviceInfoRelVo> childLevelInfos = new ArrayList<>(childLevelInfo.size());
-//                                for (NmplDeviceInfo deviceInfo : childLevelInfo){
-//                                    DeviceInfoRelVo deviceInfoRelVo = new DeviceInfoRelVo();
-//                                    BeanUtils.copyProperties(deviceInfo,deviceInfoRelVo);
-//                                    childLevelInfos.add(deviceInfoRelVo);
-//                                }
-//                                baseInfo.setChildrenDevices(childLevelInfos);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//
-//            resp.setDeviceInfoMap(deviceInfoMap);
-//            result = buildResult(resp);
-//        }catch (Exception e){
-//            log.error("MonitorServiceImpl.queryMonitor Exception:{}",e.getMessage());
-//            result = failResult(e);
-//        }
-//        return result;
-//    }
-//
-//    @Override
-//    public Result<TotalLoadChangeResp> totalLoadChange(TotalLoadChangeReq req) {
-//        Result result;
-//
-//        try {
-//            TotalLoadChangeResp resp = null;
-//            totalLoadChangeParam(req);
-//
-//            switch (req.getBigType()){
-//                case DEVICE_BIG_TYPE_0:
-//                    NmplBaseStationInfoExample bexample = new NmplBaseStationInfoExample();
-//                    bexample.createCriteria().andStationTypeEqualTo(req.getDeviceType()).andRelationOperatorIdEqualTo(req.getRoId()).andIsExistEqualTo(IS_EXIST);
-//                    List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(bexample);
-//                    if (!CollectionUtils.isEmpty(stationInfos)){
-//                        Map<String, List> dataMap = new HashMap<>();
-//                        List<Long> inTotalLoadVos = new ArrayList<>(24*60/15);
-//                        List<Long> outTotalLoadVos = new ArrayList<>(24*60/15);
-//                        List<String> timeString = new ArrayList<>(24*60/15);
-//
-//                        Date startTime = DateUtils.getStartForDay(new Date());
-//                        for (int i=0; i<24*60/SPLIT_TIME ; i++){
-//                            BigDecimal inTotalLoad = BigDecimal.ZERO;
-//                            BigDecimal outTotalLoad = BigDecimal.ZERO;
-//                            Date endTime = DateUtils.addMinuteForDate(startTime, SPLIT_TIME);
-//                            for (NmplBaseStationInfo stationInfo : stationInfos){
-//                                // 查询设备的内网总带宽
-//                                BigDecimal decimal1 = nmplDataCollectExtMapper.countLoad(stationInfo.getStationId(), INTRANET_BROADBAND_LOAD_CODE, startTime, endTime);
-//                                if (decimal1 != null){
-//                                    inTotalLoad = inTotalLoad.add(decimal1);
-//                                }
-//
-//                                // 查询设备的外网总带宽
-//                                BigDecimal decimal2 = nmplDataCollectExtMapper.countLoad(stationInfo.getStationId(), INTERNET_BROADBAND_LOAD_CODE, startTime, endTime);
-//                                if (decimal2 != null){
-//                                    outTotalLoad = outTotalLoad.add(decimal2);
-//                                }
-//                            }
-//                            inTotalLoadVos.add(inTotalLoad.longValueExact());
-//                            outTotalLoadVos.add(outTotalLoad.longValueExact());
-//                            timeString.add(DateUtils.dateToString(endTime, DateUtils.MINUTE_TIME_FORMAT));
-//                            startTime = endTime;
-//                        }
-//                        dataMap.put(INTRANET_BROADBAND_LOAD_CODE,inTotalLoadVos);
-//                        dataMap.put(INTERNET_BROADBAND_LOAD_CODE,outTotalLoadVos);
-//                        dataMap.put(TIMER_SHAFT,timeString);
-//                        resp = new TotalLoadChangeResp();
-//                        resp.setDataMap(dataMap);
-//                    }
-//                    break;
-//                case DEVICE_BIG_TYPE_1:
-//                    NmplDeviceInfoExample dexample = new NmplDeviceInfoExample();
-//                    dexample.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andRelationOperatorIdEqualTo(req.getRoId()).andIsExistEqualTo(IS_EXIST);
-//                    List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(dexample);
-//                    if (!CollectionUtils.isEmpty(deviceInfos)){
-//                        Map<String, List> dataMap = new HashMap<>();
-//                        List<Long> inTotalLoadVos = new ArrayList<>(24*60/15);
-//                        List<Long> outTotalLoadVos = new ArrayList<>(24*60/15);
-//                        List<String> timeString = new ArrayList<>(24*60/15);
-//
-//                        Date startTime = DateUtils.getStartForDay(new Date());
-//                        for (int i=0; i<24*60/SPLIT_TIME; i++){
-//                            BigDecimal inTotalLoad = BigDecimal.ZERO;
-//                            BigDecimal outTotalLoad = BigDecimal.ZERO;
-//                            Date endTime = DateUtils.addMinuteForDate(startTime, SPLIT_TIME);
-//                            for (NmplDeviceInfo deviceInfo : deviceInfos){
-//                                // 查询设备的内网总带宽
-//                                BigDecimal decimal1 = nmplDataCollectExtMapper.countLoad(deviceInfo.getDeviceId(), INTRANET_BROADBAND_LOAD_CODE, startTime, endTime);
-//                                if (decimal1 != null){
-//                                    inTotalLoad = inTotalLoad.add(decimal1);
-//                                }
-//
-//                                // 查询设备的外网总带宽
-//                                BigDecimal decimal2 = nmplDataCollectExtMapper.countLoad(deviceInfo.getDeviceId(), INTERNET_BROADBAND_LOAD_CODE, startTime, endTime);
-//                                if (decimal2 != null){
-//                                    outTotalLoad = outTotalLoad.add(decimal2);
-//                                }
-//                            }
-//                            inTotalLoadVos.add(inTotalLoad.longValueExact());
-//                            outTotalLoadVos.add(outTotalLoad.longValueExact());
-//                            timeString.add(DateUtils.dateToString(endTime, DateUtils.MINUTE_TIME_FORMAT));
-//                            startTime = endTime;
-//                        }
-//                        dataMap.put(INTRANET_BROADBAND_LOAD_CODE,inTotalLoadVos);
-//                        dataMap.put(INTERNET_BROADBAND_LOAD_CODE,outTotalLoadVos);
-//                        dataMap.put(TIMER_SHAFT,timeString);
-//                        resp = new TotalLoadChangeResp();
-//                        resp.setDataMap(dataMap);
-//                    }
-//                    break;
-//                default:
-//                    log.error("MonitorServiceImpl.totalLoadChange error: 设备大类{}",req.getBigType());
-//                    throw new SystemException(ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG);
-//            }
-//            result = buildResult(resp);
-//        }catch (Exception e){
-//            log.error("MonitorServiceImpl.totalLoadChange Exception:{}",e.getMessage());
-//            result = failResult(e);
-//        }
-//
-//        return result;
-//    }
-
-
     /**
-     * 1：在线 2：未激活 3：下线 4:其他
+     * 获取当前站点状态 01:待激活  02:在线  03:外网异常 04:下线'
      * @param deviceId
      * @return
      *
@@ -845,44 +609,8 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             resultMap.put("id",String.valueOf(baseStationInfo.getId()));
         }
 
-//        // 再查看缓存是否在线
-//        try {
-//            Object key = redisTemplate.opsForValue().get(HEART_CHECK_DEVICE_ID+deviceId);
-//
-//            if (key != null){
-//                resultMap.put("status",STATION_STATUS_ACTIVE);
-//                return resultMap;
-//            }
-//        }catch (Exception e){
-//            log.warn("get heart_check_device_id error,id:{},msg:{}",deviceId,e.getMessage());
-//        }
-
         return resultMap;
     }
-
-//    private Long addUserCount(Long userCount,String deviceId){
-//        NmplDataCollectExample example = new NmplDataCollectExample();
-//        example.setOrderByClause("upload_time desc");
-//        example.createCriteria().andDeviceIdEqualTo(deviceId).andDataItemCodeEqualTo(USER_COUNT_CODE).andUploadTimeGreaterThan(DateUtils.addMinuteForDate(new Date(),-USER_COUNT_TIME));
-//        List<NmplDataCollect> dataCollects = nmplDataCollectMapper.selectByExample(example);
-//        if (!CollectionUtils.isEmpty(dataCollects)){
-//            String dataItemValue = dataCollects.get(0).getDataItemValue();
-//            userCount = userCount + Long.valueOf(dataItemValue);
-//        }
-//        return userCount;
-//    }
-//
-//    private Long addTotalBandwidth(Long totalBandwidth,String deviceId){
-//        NmplDataCollectExample example = new NmplDataCollectExample();
-//        example.setOrderByClause("upload_time desc");
-//        example.createCriteria().andDeviceIdEqualTo(deviceId).andDataItemCodeEqualTo(TOTAL_BAND_WIDTH_CODE).andUploadTimeGreaterThan(DateUtils.addMinuteForDate(new Date(),-TOTAL_BAND_WIDTH_TIME));
-//        List<NmplDataCollect> dataCollects = nmplDataCollectMapper.selectByExample(example);
-//        if (!CollectionUtils.isEmpty(dataCollects)){
-//            String dataItemValue = dataCollects.get(0).getDataItemValue();
-//            totalBandwidth = totalBandwidth + Long.valueOf(dataItemValue);
-//        }
-//        return totalBandwidth;
-//    }
 
     private void checkHeartParam(CheckHeartReq req) {
         if (ParamCheckUtil.checkVoStrBlank(req.getDeviceId())){
@@ -892,24 +620,6 @@ public class MonitorServiceImpl extends SystemBaseService implements MonitorServ
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "status"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
     }
-
-//    private void queryMonitorParam(QueryMonitorReq req) {
-//        if (ParamCheckUtil.checkVoStrBlank(req.getRoId())){
-//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "roId"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
-//        }
-//    }
-//
-//    private void totalLoadChangeParam(TotalLoadChangeReq req) {
-//        if (ParamCheckUtil.checkVoStrBlank(req.getRoId())){
-//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "roId"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
-//        }
-//        if (ParamCheckUtil.checkVoStrBlank(req.getBigType())){
-//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "bigType"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
-//        }
-//        if (ParamCheckUtil.checkVoStrBlank(req.getDeviceType())){
-//            throw new SystemException(ErrorCode.PARAM_IS_NULL, "deviceType"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
-//        }
-//    }
 
 
     private void heartHttpPush(String bigType,String id,String deviceId,String latestStatus) throws Exception {
