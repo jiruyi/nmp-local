@@ -28,9 +28,11 @@ public class TerminalUserServiceImpl implements TerminalUserService {
     @Resource
     private TerminalUserDomainService terminalUserDomainService;
 
-    @Resource
-    RedisTemplate redisTemplate;
-
+    /**
+     * 更新用户状态
+     * @param terminalUserResponse
+     * @return
+     */
     @Transactional
     @Override
     public Result<Integer> updateTerminalUser(TerminalUserResponse terminalUserResponse) {
@@ -40,7 +42,9 @@ public class TerminalUserServiceImpl implements TerminalUserService {
         for(TerminalUserVo terminalUserVo: list){
             TerminalUserResquest terminalUserResquest = new TerminalUserResquest();
             BeanUtils.copyProperties(terminalUserVo,terminalUserResquest);
+            //查询该用户是否已经在基站下
             List<TerminalUserVo> terminalUserVoList = terminalUserDomainService.selectTerminalUser(terminalUserResquest);
+            //基站下已经有该用户则更新没有就插入
             if(CollectionUtils.isEmpty(terminalUserVoList)){
                 i = terminalUserDomainService.insertTerminalUser(terminalUserResquest);
             }else {
@@ -52,6 +56,11 @@ public class TerminalUserServiceImpl implements TerminalUserService {
         return result;
     }
 
+    /**
+     * 查询各个用户总数
+     * @param terminalUserResquest
+     * @return
+     */
     @Override
     public Result<TerminalUserCountResponse> countTerminalUser(TerminalUserResquest terminalUserResquest) {
         Result<TerminalUserCountResponse> result = new Result<>();

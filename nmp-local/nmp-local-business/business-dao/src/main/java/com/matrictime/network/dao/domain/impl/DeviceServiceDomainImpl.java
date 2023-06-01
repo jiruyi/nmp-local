@@ -195,15 +195,26 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
         }
     }
 
+    /**
+     * 查询密钥生成机总数
+     * @param deviceInfoRequest
+     * @return
+     */
     @Override
     public CountBaseStationResponse countBaseStation(DeviceInfoRequest deviceInfoRequest) {
         NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
         NmplDeviceCountExample.Criteria criteria = nmplDeviceCountExample.createCriteria();
-        criteria.andDeviceTypeEqualTo(deviceInfoRequest.getDeviceType());
-        criteria.andRelationOperatorIdEqualTo(deviceInfoRequest.getRelationOperatorId());
+        if(!StringUtils.isEmpty(deviceInfoRequest.getDeviceType())){
+            criteria.andDeviceTypeEqualTo(deviceInfoRequest.getDeviceType());
+        }
+        if(!StringUtils.isEmpty(deviceInfoRequest.getRelationOperatorId())){
+            criteria.andRelationOperatorIdEqualTo(deviceInfoRequest.getRelationOperatorId());
+        }
+        //查询小区下的所有设备
         List<NmplDeviceCount> nmplDeviceCounts = nmplDeviceCountMapper.selectByExample(nmplDeviceCountExample);
         CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
         if(!CollectionUtils.isEmpty(nmplDeviceCounts)){
+            //累加当前用户
             int currentConnectCount = 0;
             for (int i = 0;i < nmplDeviceCounts.size();i++){
                 if(StringUtils.isEmpty(nmplDeviceCounts.get(i).getCurrentConnectCount())){
@@ -218,6 +229,11 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
         return countBaseStationResponse;
     }
 
+    /**
+     * 更新基站下面的用户数
+     * @param baseStationCountRequest
+     * @return
+     */
     @Override
     public int updateConnectCount(BaseStationCountRequest baseStationCountRequest) {
         NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();

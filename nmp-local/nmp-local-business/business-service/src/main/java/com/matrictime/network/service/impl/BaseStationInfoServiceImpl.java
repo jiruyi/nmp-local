@@ -432,6 +432,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         }
     }
 
+    /**
+     * 查询归属信息
+     * @return
+     */
     @Override
     public Result<BelongInformationResponse> selectBelongInformation() {
 
@@ -448,6 +452,11 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         return result;
     }
 
+    /**
+     * 查询基站总数
+     * @param baseStationInfoRequest
+     * @return
+     */
     @Override
     public Result<CountBaseStationResponse> countBaseStation(BaseStationInfoRequest baseStationInfoRequest) {
         Result<CountBaseStationResponse> result = new Result<>();
@@ -476,6 +485,11 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         return result;
     }
 
+    /**
+     * 查询不同Ip物理设备
+     * @param baseStationInfoRequest
+     * @return
+     */
     @Override
     public Result<List<CommunityBaseStationVo>> selectPhysicalDevice(BaseStationInfoRequest baseStationInfoRequest) {
         Result<List<CommunityBaseStationVo>> result = new Result<>();
@@ -492,6 +506,11 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         return result;
     }
 
+    /**
+     * 更新当前用户数
+     * @param currentCountRequest
+     * @return
+     */
     @Override
     public Result<Integer> updateCurrentConnectCount(CurrentCountRequest currentCountRequest) {
         Result<Integer> result = new Result<>();

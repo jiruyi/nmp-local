@@ -40,6 +40,11 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
     @Resource
     private DataCollectService dataCollectService;
 
+    /**
+     * 查询接入基站流量数据
+     * @param dataCollectReq
+     * @return
+     */
     @Override
     public Result<BaseStationDataVo> selectBaseStationData(DataCollectReq dataCollectReq) {
         Result<BaseStationDataVo> result = new Result<>();
@@ -55,6 +60,11 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
         return result;
     }
 
+    /**
+     * 查询边界基站流量数据
+     * @param dataCollectReq
+     * @return
+     */
     @Override
     public Result<BorderBaseStationDataVo> selectBorderBaseStationData(DataCollectReq dataCollectReq) {
         Result<BorderBaseStationDataVo> result = new Result<>();
@@ -70,6 +80,11 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
         return result;
     }
 
+    /**
+     * 查询密钥中心流量数据
+     * @param dataCollectReq
+     * @return
+     */
     @Override
     public Result<KeyCenterDataVo> selectKeyCenterData(DataCollectReq dataCollectReq) {
         Result<KeyCenterDataVo> result = new Result<>();
@@ -85,26 +100,17 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
         return result;
     }
 
+    /**
+     * 业务数据收集
+     * @param dataCollectReq
+     * @return
+     */
     @Override
     public Result<Integer> insertSystemData(DataCollectReq dataCollectReq) {
         Result<Integer> result = new Result<>();
         try {
             int i = 0;
-
             i = systemDataCollectDomainService.insertSystemData(dataCollectReq.getDataCollectVoList());
-
-//            //接入基站存入redis
-//            BaseStationDataVo baseStationDataVo = systemDataCollectDomainService.selectBaseStationData(dataCollectReq);
-//            redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT + dataCollectReq,JSONObject.toJSONString(baseStationDataVo),
-//                    30, TimeUnit.MINUTES);
-//            //边界基站存入redis
-//            BorderBaseStationDataVo borderBaseStationDataVo = systemDataCollectDomainService.selectBorderBaseStationData(dataCollectReq);
-//            redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT,JSONObject.toJSONString(borderBaseStationDataVo),
-//                    30, TimeUnit.MINUTES);
-//            //密钥中心存入redis
-//            KeyCenterDataVo keyCenterDataVo = systemDataCollectDomainService.selectKeyCenterData(dataCollectReq);
-//            redisTemplate.opsForValue().set(DataConstants.BASE_STATION_FLOW_COUNT,JSONObject.toJSONString(keyCenterDataVo),
-//                    30, TimeUnit.MINUTES);
             //插入缓存
             Set<String> set = new HashSet<>();
             String deviceIp = "";

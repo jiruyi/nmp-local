@@ -10,6 +10,7 @@ import com.matrictime.network.request.TerminalUserResquest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -29,6 +30,11 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
     @Resource
     private NmplTerminalUserExtMapper terminalUserExtMapper;
 
+    /**
+     * 插入新用户
+     * @param terminalUserResquest
+     * @return
+     */
     @Override
     public int insertTerminalUser(TerminalUserResquest terminalUserResquest) {
         NmplTerminalUser nmplTerminalUser = new NmplTerminalUser();
@@ -36,6 +42,11 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
         return nmplTerminalUserMapper.insertSelective(nmplTerminalUser);
     }
 
+    /**
+     * 更新旧用户
+     * @param terminalUserResquest
+     * @return
+     */
     @Override
     public int updateTerminalUser(TerminalUserResquest terminalUserResquest) {
         NmplTerminalUserExample nmplTerminalUserExample = new NmplTerminalUserExample();
@@ -61,9 +72,17 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
         return list;
     }
 
+    /**
+     * 查询各个用户总数
+     * @param terminalUserResquest
+     * @return
+     */
     @Override
     public int countTerminalUser(TerminalUserResquest terminalUserResquest) {
         List<TerminalUserVo> list = terminalUserExtMapper.selectTerminalUser(terminalUserResquest);
+        if(CollectionUtils.isEmpty(list)){
+            return 0;
+        }
         return list.size();
     }
 

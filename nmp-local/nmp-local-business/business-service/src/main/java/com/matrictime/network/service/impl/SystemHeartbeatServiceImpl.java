@@ -26,6 +26,11 @@ public class SystemHeartbeatServiceImpl implements SystemHeartbeatService {
     @Resource
     private SystemHeartbeatDomainService systemHeartbeatDomainService;
 
+    /**
+     * 更新心跳状态
+     * @param systemHeartbeatResponse
+     * @return
+     */
     @Transactional
     @Override
     public Result<Integer> updateSystemHeartbeat(SystemHeartbeatResponse systemHeartbeatResponse) {
@@ -47,6 +52,11 @@ public class SystemHeartbeatServiceImpl implements SystemHeartbeatService {
         return result;
     }
 
+    /**
+     * 查询心跳状态
+     * @param systemHeartbeatRequest
+     * @return
+     */
     @Override
     public Result<SystemHeartbeatResponse> selectSystemHeartbeat(SystemHeartbeatRequest systemHeartbeatRequest) {
         Result<SystemHeartbeatResponse> result = new Result<>();

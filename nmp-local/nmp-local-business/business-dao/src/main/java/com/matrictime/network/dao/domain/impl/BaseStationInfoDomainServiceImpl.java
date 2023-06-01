@@ -263,6 +263,10 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
 
     }
 
+    /**
+     * 查询归属信息
+     * @return
+     */
     @Override
     public BelongInformationResponse selectBelongInformation() {
         //查询运营商
@@ -272,34 +276,19 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         criteria.andParentCodeIsNull();
         List<NmplCompanyInfo> nmplCompanyInfos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
         BelongInformationResponse belongInformationResponse = new BelongInformationResponse();
-
         List<RegionBelongVo> operatorList = new ArrayList<>();
         for(NmplCompanyInfo nmplCompanyInfo: nmplCompanyInfos){
-            nmplCompanyInfo.getCompanyId();
             NmplCompanyInfoExample nmplCompanyInfoExample1 = new NmplCompanyInfoExample();
             NmplCompanyInfoExample.Criteria criteria1 = nmplCompanyInfoExample1.createCriteria();
             criteria1.andParentCodeEqualTo(nmplCompanyInfo.getCompanyId().toString());
             criteria1.andIsExistEqualTo(true);
             //查询运营商下的大区
-            List<NmplCompanyInfo> nmplCompanyInfos1 = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample1);
-            List<CommunityBelongVo> list = new ArrayList<>();
+            List<NmplCompanyInfo> companyInfos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample1);
+            List<CommunityBelongVo> list;
             RegionBelongVo regionBelongVo = new RegionBelongVo();
-            for(NmplCompanyInfo nmplCompanyInfo1: nmplCompanyInfos1){
-                NmplCompanyInfoExample nmplCompanyInfoExample2 = new NmplCompanyInfoExample();
-                NmplCompanyInfoExample.Criteria criteria2 = nmplCompanyInfoExample2.createCriteria();
-                criteria2.andParentCodeEqualTo(nmplCompanyInfo1.getCompanyId().toString());
-                criteria2.andIsExistEqualTo(true);
-                List<NmplCompanyInfo> nmplCompanyInfos2 = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample2);
-                CommunityBelongVo communityBelongVo = new CommunityBelongVo();
-                //查询大区下面的小区
-                if(CollectionUtils.isEmpty(nmplCompanyInfos2)){
-                    communityBelongVo.setRelationOperatorId(nmplCompanyInfo1.getCompanyId().toString());
-                    communityBelongVo.setName(nmplCompanyInfo1.getCompanyName());
-                }else {
-                    communityBelongVo = getCommunity(nmplCompanyInfos2);
-                }
-                list.add(communityBelongVo);
-            }
+            //获取大区下面的小区
+            list = getCommunityBelong(companyInfos);
+            //数据结构拼接
             regionBelongVo.setRelationOperatorId(nmplCompanyInfo.getCompanyId().toString());
             regionBelongVo.setName(nmplCompanyInfo.getCompanyName());
             regionBelongVo.setChildren(list);
@@ -309,10 +298,42 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         return belongInformationResponse;
     }
 
+    /**
+     * 查询出小区下面的所有小区
+     * @param list 运营商下面的大区
+     * @return
+     */
+    private List<CommunityBelongVo> getCommunityBelong(List<NmplCompanyInfo> list){
+        List<CommunityBelongVo> communityBelongVoList = new ArrayList<>();
+        for(NmplCompanyInfo nmplCompanyInfo: list){
+            NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
+            NmplCompanyInfoExample.Criteria criteria = nmplCompanyInfoExample.createCriteria();
+            criteria.andParentCodeEqualTo(nmplCompanyInfo.getCompanyId().toString());
+            criteria.andIsExistEqualTo(true);
+            //查询大区下面的小区
+            List<NmplCompanyInfo> companyInfos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
+            CommunityBelongVo communityBelongVo = new CommunityBelongVo();
+            if(CollectionUtils.isEmpty(companyInfos)){
+                communityBelongVo.setRelationOperatorId(nmplCompanyInfo.getCompanyId().toString());
+                communityBelongVo.setName(nmplCompanyInfo.getCompanyName());
+            }else {
+                communityBelongVo = getCommunity(companyInfos);
+            }
+            communityBelongVoList.add(communityBelongVo);
+        }
+        return communityBelongVoList;
+    }
+
+    /**
+     * 查询基站总数
+     * @param baseStationInfoRequest
+     * @return
+     */
     @Override
     public CountBaseStationResponse countBaseStation(BaseStationInfoRequest baseStationInfoRequest) {
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
+        //更加参数来判断查询那种基站
         if(!StringUtils.isEmpty(baseStationInfoRequest.getStationType())){
             criteria.andStationTypeEqualTo(baseStationInfoRequest.getStationType());
         }
@@ -321,9 +342,11 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         }
         criteria.andIsExistEqualTo(true);
         CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
+        //查询小区下面的所有基站
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         if(!CollectionUtils.isEmpty(nmplBaseStationInfos)){
             int currentConnectCount = 0;
+            //累计基站下面当前用户数
             for(int i = 0;i< nmplBaseStationInfos.size();i++){
                 if(StringUtils.isEmpty(nmplBaseStationInfos.get(i).getCurrentConnectCount())){
                     nmplBaseStationInfos.get(i).setCurrentConnectCount("0");
@@ -347,6 +370,11 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         return nmplBaseStationInfoMapper.updateByExampleSelective(nmplBaseStationInfo,nmplBaseStationInfoExample);
     }
 
+    /**
+     * 查询不同Ip物理设备
+     * @param baseStationInfoRequest
+     * @return
+     */
     @Override
     public List<CommunityBaseStationVo> selectPhysicalDevice(BaseStationInfoRequest baseStationInfoRequest) {
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
@@ -377,6 +405,11 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         return list;
     }
 
+    /**
+     * 更新当前用户数
+     * @param currentCountRequest
+     * @return
+     */
     @Override
     public int updateCurrentConnectCount(CurrentCountRequest currentCountRequest) {
         int i = 0;

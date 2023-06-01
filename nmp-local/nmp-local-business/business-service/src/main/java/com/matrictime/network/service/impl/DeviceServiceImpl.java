@@ -309,6 +309,11 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
 
     }
 
+    /**
+     * 查询密钥生成机总数
+     * @param deviceInfoRequest
+     * @return
+     */
     @Override
     public Result<CountBaseStationResponse> countBaseStation(DeviceInfoRequest deviceInfoRequest) {
         Result<CountBaseStationResponse> result = new Result<>();
@@ -322,6 +327,11 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         return result;
     }
 
+    /**
+     * 更新基站下面的用户数
+     * @param baseStationCountRequest
+     * @return
+     */
     @Override
     public Result<Integer> updateConnectCount(BaseStationCountRequest baseStationCountRequest) {
         Result<Integer> result = new Result<>();

@@ -49,6 +49,11 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     @Resource
     private NmplDeviceInfoMapper nmplDeviceInfoMapper;
 
+    /**
+     * 查询接入基站流量数据
+     * @param dataCollectReq
+     * @return
+     */
     @Override
     public BaseStationDataVo selectBaseStationData(DataCollectReq dataCollectReq) {
         BaseStationDataVo baseStationDataVo;
@@ -63,6 +68,11 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         return baseStationDataVo;
     }
 
+    /**
+     * 查询边界基站流量数据
+     * @param dataCollectReq
+     * @return
+     */
     @Override
     public BorderBaseStationDataVo selectBorderBaseStationData(DataCollectReq dataCollectReq) {
         BorderBaseStationDataVo borderBaseStationDataVo;
@@ -78,6 +88,11 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         return borderBaseStationDataVo;
     }
 
+    /**
+     * 查询密钥中心流量数据
+     * @param dataCollectReq
+     * @return
+     */
     @Override
     public KeyCenterDataVo selectKeyCenterData(DataCollectReq dataCollectReq) {
         KeyCenterDataVo keyCenterDataVo;
@@ -93,25 +108,32 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
         return keyCenterDataVo;
     }
 
+    /**
+     * 业务数据收集
+     * @param dataCollectVoList
+     * @return
+     */
     @Override
     public int insertSystemData(List<DataCollectVo> dataCollectVoList) {
         Map<String,String> deviceMap = new HashMap<>();
         List<DataCollectVo> dataCollectVos = new ArrayList<>();
+        //查询基站列表
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-
+        //查询设备列表
         NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
         nmplDeviceInfoExample.createCriteria().andIsExistEqualTo(true);
         List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
-
+        //创建基站列表映射
         for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
             deviceMap.put(nmplBaseStationInfo.getStationId(),nmplBaseStationInfo.getStationName());
         }
+        //创建设备列表映射
         for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
             deviceMap.put(nmplDeviceInfo.getDeviceId(),nmplDeviceInfo.getDeviceName());
         }
-
+        //根据映射拼和传过来的数据拼接入库数据
         for (DataCollectVo dataCollectVo : dataCollectVoList) {
             String name = DataCollectEnum.getMap().get(dataCollectVo.getDataItemCode()).getConditionDesc();
             String unit = DataCollectEnum.getMap().get(dataCollectVo.getDataItemCode()).getUnit();

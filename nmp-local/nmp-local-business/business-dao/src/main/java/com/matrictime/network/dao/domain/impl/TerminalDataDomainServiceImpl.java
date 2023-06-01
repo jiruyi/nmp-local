@@ -44,17 +44,24 @@ public class TerminalDataDomainServiceImpl implements TerminalDataDomainService 
     @Resource
     private NmplTerminalDataExtMapper terminalDataExtMapper;
 
+    /**
+     * 终端流量列表查询
+     * @param terminalDataRequest
+     * @return
+     */
     @Override
     public PageInfo<TerminalDataVo> selectTerminalData(TerminalDataRequest terminalDataRequest) {
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
         criteria.andLanIpEqualTo(terminalDataRequest.getParenIp());
+        //查询基站列表是否有该基站
         List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(baseStationInfoExample);
         if(CollectionUtils.isEmpty(baseStationInfos)){
             throw new RuntimeException("设备列表中不存在该设备");
         }
         terminalDataRequest.setParentId(baseStationInfos.get(0).getStationId());
         terminalDataRequest.setDataType(TerminalDataEnum.RESIDUE.getCode());
+        //进行分页查询
         Page page = PageHelper.startPage(terminalDataRequest.getPageNo(),terminalDataRequest.getPageSize());
         List<TerminalDataVo> list = terminalDataExtMapper.distinctTerminalData(terminalDataRequest);
         PageInfo<TerminalDataVo> pageInfo = new PageInfo<>();
@@ -64,6 +71,11 @@ public class TerminalDataDomainServiceImpl implements TerminalDataDomainService 
         return pageInfo;
     }
 
+    /**
+     * 终端流量收集
+     * @param terminalDataVo
+     * @return
+     */
     @Override
     public int collectTerminalData(TerminalDataVo terminalDataVo) {
         NmplTerminalData nmplTerminalData = new NmplTerminalData();

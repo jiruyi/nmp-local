@@ -292,6 +292,13 @@ public class BaseStationController {
     @RequestMapping(value = "/countBaseStation",method = RequestMethod.POST)
     public Result<CountBaseStationResponse> countBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         try {
+            if(StringUtils.isEmpty(baseStationInfoRequest.getRelationOperatorId())){
+                CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
+                Result<CountBaseStationResponse> result = new Result<>();
+                result.setResultObj(countBaseStationResponse);
+                result.setSuccess(true);
+                return result;
+            }
             return baseStationInfoService.countBaseStation(baseStationInfoRequest);
         }catch (Exception e){
             log.info("countBaseStation:{}",e.getMessage());
@@ -319,11 +326,11 @@ public class BaseStationController {
     }
 
     /**
-     * 查询不通Ip物理设备
+     * 查询不同Ip物理设备
      * @param baseStationInfoRequest
      * @return
      */
-    @SystemLog(opermodul = "设备管理模块",operDesc = "查询不通Ip物理设备",operType = "查询")
+    @SystemLog(opermodul = "设备管理模块",operDesc = "查询不同Ip物理设备",operType = "查询")
     @RequestMapping(value = "/selectPhysicalDevice",method = RequestMethod.POST)
     public Result<List<CommunityBaseStationVo>> selectPhysicalDevice(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
         try {

@@ -43,6 +43,11 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
         return nmplSystemHeartbeatMapper.insertSelective(nmplSystemHeartbeat);
     }
 
+    /**
+     * 更新业务心跳
+     * @param systemHeartbeatRequest
+     * @return
+     */
     @Override
     public int updateSystemHeartbeat(SystemHeartbeatRequest systemHeartbeatRequest) {
         NmplSystemHeartbeatExample nmplSystemHeartbeatExample = new NmplSystemHeartbeatExample();
@@ -54,15 +59,22 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
         return nmplSystemHeartbeatMapper.updateByExampleSelective(nmplSystemHeartbeat,nmplSystemHeartbeatExample);
     }
 
+    /**
+     * 查询心跳状态
+     * @param systemHeartbeatRequest
+     * @return
+     */
     @Override
     public SystemHeartbeatResponse selectSystemHeartbeat(SystemHeartbeatRequest systemHeartbeatRequest) {
         NmplSystemHeartbeatExample nmplSystemHeartbeatExample = new NmplSystemHeartbeatExample();
         SystemHeartbeatResponse systemHeartbeatResponse = new SystemHeartbeatResponse();
         List<SystemHeartbeatVo> list = new ArrayList<>();
+        //查询该小区下的所有设备和基站，没有则返回空
         List<BaseStationInfoVo> baseStationInfoVoList = baseStationInfoMapper.selectAllDevice(systemHeartbeatRequest);
         if(CollectionUtils.isEmpty(baseStationInfoVoList)){
             return systemHeartbeatResponse;
         }
+        //查询业务心跳表中的数据
         List<NmplSystemHeartbeat> nmplSystemHeartbeats = nmplSystemHeartbeatMapper.selectByExample(nmplSystemHeartbeatExample);
         if(!CollectionUtils.isEmpty(nmplSystemHeartbeats)){
             for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){

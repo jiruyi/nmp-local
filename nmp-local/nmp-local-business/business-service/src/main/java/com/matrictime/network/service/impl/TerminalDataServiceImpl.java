@@ -54,14 +54,21 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
 
     @Resource
     NmplTerminalDataMapper nmplTerminalDataMapper;
+
     @Resource
     RedisTemplate redisTemplate;
+
     @Resource
     NmplTerminalDataExtMapper nmplTerminalDataExtMapper;
 
     @Resource
     private TerminalDataDomainService terminalDataDomainService;
 
+    /**
+     * 终端流量列表查询
+     * @param terminalDataRequest
+     * @return
+     */
     @Override
     public Result<PageInfo> selectTerminalData(TerminalDataRequest terminalDataRequest) {
         Result<PageInfo> result = new Result<>();
@@ -76,6 +83,11 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         return result;
     }
 
+    /**
+     * 终端流量流量收集
+     * @param terminalDataListRequest
+     * @return
+     */
     @Transactional
     @Override
     public Result<Integer> collectTerminalData(TerminalDataListRequest terminalDataListRequest) {
@@ -89,6 +101,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
             }
             map.get(terminalDataVo.getTerminalNetworkId()).add(terminalDataVo.getDataType());
         }
+        //数据放入缓存中
         for (Map.Entry<String, Set<String>> stringSetEntry : map.entrySet()) {
             for (String s : stringSetEntry.getValue()) {
                 TerminalDataReq terminalDataReq = new TerminalDataReq();

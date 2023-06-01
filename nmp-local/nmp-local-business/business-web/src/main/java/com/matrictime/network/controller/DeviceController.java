@@ -13,6 +13,7 @@ import com.matrictime.network.service.DeviceService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -319,6 +320,14 @@ public class DeviceController {
     public Result<CountBaseStationResponse> countBaseStation(@RequestBody DeviceInfoRequest deviceInfoRequest){
         Result<CountBaseStationResponse> result = new Result<>();
         try {
+            if(StringUtils.isEmpty(deviceInfoRequest.getRelationOperatorId()) ||
+                    StringUtils.isEmpty(deviceInfoRequest.getDeviceType())){
+                CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
+                Result<CountBaseStationResponse> responseResult = new Result<>();
+                responseResult.setResultObj(countBaseStationResponse);
+                responseResult.setSuccess(true);
+                return responseResult;
+            }
             result = deviceService.countBaseStation(deviceInfoRequest);
         }catch (Exception e){
             log.info("countBaseStation:{}",e.getMessage());
