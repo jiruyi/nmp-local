@@ -101,59 +101,59 @@ public class DataController {
         return dataCollectService.queryByConditon(dataCollectReq);
     }
 
-    /**
-     * 统计数据插入
-     * @param dataCollectReq
-     * @return
-     */
-    @ApiOperation(value = "统计数据创建接口",notes = "统计数据多条件查询接口")
-    @RequestMapping(value = "/saveData",method = RequestMethod.POST)
-    @SystemLog(opermodul = "统计管理模块",operDesc = "新增统计数据",operType = "新增")
-    public Result saveData(@RequestBody DataCollectReq dataCollectReq){
-        Result result = null;
-        try {
-            if (dataCollectReq.getDataCollectVoList()!=null&&dataCollectReq.getDataCollectVoList().size()>maxSize){
-                List<Result>resultList = new ArrayList<>();
-                List<List<DataCollectVo>> data = ListSplitUtil.split(dataCollectReq.getDataCollectVoList(),maxSize);
-                for (List<DataCollectVo> datum : data) {
-                    DataCollectReq req = new DataCollectReq();
-                    req.setDataCollectVoList(datum);
-                    resultList.add(dataCollectService.save(req).get());
-                }
-                result = new Result<>();
-                result.setSuccess(true);
-                result.setResultObj(resultList);
-            }else {
-                result = dataCollectService.save(dataCollectReq).get();
-            }
-        } catch (InterruptedException e) {
-            log.info(e.getMessage());
-        } catch (ExecutionException e) {
-            log.info(e.getMessage());
-        }finally {
-            return result;
-        }
-    }
+//    /**
+//     * 统计数据插入
+//     * @param dataCollectReq
+//     * @return
+//     */
+//    @ApiOperation(value = "统计数据创建接口",notes = "统计数据多条件查询接口")
+//    @RequestMapping(value = "/saveData",method = RequestMethod.POST)
+//    @SystemLog(opermodul = "统计管理模块",operDesc = "新增统计数据",operType = "新增")
+//    public Result saveData(@RequestBody DataCollectReq dataCollectReq){
+//        Result result = null;
+//        try {
+//            if (dataCollectReq.getDataCollectVoList()!=null&&dataCollectReq.getDataCollectVoList().size()>maxSize){
+//                List<Result>resultList = new ArrayList<>();
+//                List<List<DataCollectVo>> data = ListSplitUtil.split(dataCollectReq.getDataCollectVoList(),maxSize);
+//                for (List<DataCollectVo> datum : data) {
+//                    DataCollectReq req = new DataCollectReq();
+//                    req.setDataCollectVoList(datum);
+//                    resultList.add(dataCollectService.save(req).get());
+//                }
+//                result = new Result<>();
+//                result.setSuccess(true);
+//                result.setResultObj(resultList);
+//            }else {
+//                result = dataCollectService.save(dataCollectReq).get();
+//            }
+//        } catch (InterruptedException e) {
+//            log.info(e.getMessage());
+//        } catch (ExecutionException e) {
+//            log.info(e.getMessage());
+//        }finally {
+//            return result;
+//        }
+//    }
 
 
-    /**
-     * 状态监控统计数据
-     */
-    @RequiresPermissions("sys:monitor:query")
-    @RequestMapping(value = "/monitorData",method = RequestMethod.POST)
-    public Result monitorData(@RequestBody MonitorReq monitorReq){
-        return dataCollectService.monitorData(monitorReq);
-    }
-
-
-    /**
-     * 状态监控top10
-     */
-    @RequiresPermissions("sys:monitor:query")
-    @RequestMapping(value = "/monitorDataTopTen",method = RequestMethod.POST)
-    public Result monitorDataTopTen(@RequestBody MonitorReq monitorReq){
-        return dataCollectService.monitorDataTopTen(monitorReq);
-    }
+//    /**
+//     * 状态监控统计数据
+//     */
+//    @RequiresPermissions("sys:monitor:query")
+//    @RequestMapping(value = "/monitorData",method = RequestMethod.POST)
+//    public Result monitorData(@RequestBody MonitorReq monitorReq){
+//        return dataCollectService.monitorData(monitorReq);
+//    }
+//
+//
+//    /**
+//     * 状态监控top10
+//     */
+//    @RequiresPermissions("sys:monitor:query")
+//    @RequestMapping(value = "/monitorDataTopTen",method = RequestMethod.POST)
+//    public Result monitorDataTopTen(@RequestBody MonitorReq monitorReq){
+//        return dataCollectService.monitorDataTopTen(monitorReq);
+//    }
 
     /**
      * 获取统计数据的设备
@@ -165,10 +165,10 @@ public class DataController {
         return dataCollectService.selectAllDevice(dataCollectReq);
     }
 
-
-
     /**
      * 流量变化
+     * @param dataCollectReq
+     * @return
      */
     @RequestMapping(value = "/flowTransformation",method = RequestMethod.POST)
     public Result flowTransformation(@RequestBody DataCollectReq dataCollectReq){
@@ -177,6 +177,8 @@ public class DataController {
 
     /**
      * 当前流量
+     * @param dataCollectReq
+     * @return
      */
     @RequestMapping(value = "/currentIpFlow",method = RequestMethod.POST)
     public Result currentIpFlow(@RequestBody DataCollectReq dataCollectReq){
@@ -185,6 +187,8 @@ public class DataController {
 
     /**
      * 终端流量变化
+     * @param terminalDataReq
+     * @return
      */
     @RequestMapping(value = "/terminalflowTransfor",method = RequestMethod.POST)
     public Result TerminalflowTransfor(@RequestBody TerminalDataReq terminalDataReq){

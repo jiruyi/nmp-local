@@ -115,11 +115,16 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         return result;
     }
 
-
+    /**
+     * 流量变化
+     * @param terminalDataReq
+     * @return
+     */
     @Override
     public Result flowTransformation(TerminalDataReq terminalDataReq) {
         Result result;
         try {
+            // 校验参数
             checkParam(terminalDataReq);
             String key = DataConstants.FLOW_TRANSFOR
                     +terminalDataReq.getTerminalNetworkId()+UNDERLINE +terminalDataReq.getDataType();
@@ -142,7 +147,10 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
 
     }
 
-
+    /**
+     * 处理新增数据放入redis
+     * @param terminalDataReq
+     */
     @Override
     public void handleAddData(TerminalDataReq terminalDataReq) {
         checkParam(terminalDataReq);
@@ -153,8 +161,8 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         String key = DataConstants.FLOW_TRANSFOR
                 +terminalDataReq.getTerminalNetworkId()+UNDERLINE +terminalDataReq.getDataType();
         TimeDataVo timeDataVo = new TimeDataVo();
-        timeDataVo.setUpValue(0.0);
-        timeDataVo.setDownValue(0.0);
+        timeDataVo.setUpValue(DOUBLE_ZERO);
+        timeDataVo.setDownValue(DOUBLE_ZERO);
         for (TerminalDataVo terminalDataVo : terminalDataVoList) {
             //判断数据是否是当天以及时刻是否是当前时刻的
             if(time.equals(formatter.format(terminalDataVo.getUploadTime()))&& TimeUtil.IsTodayDate(terminalDataVo.getUploadTime())){
@@ -205,11 +213,11 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
     private void supplementaryDateToRedis(Map<String, TimeDataVo> map,TerminalDataReq terminalDataReq,String key){
         Map<String,TimeDataVo> missingTime = new HashMap<>();
         Date timeBeforeHours =TimeUtil.getTimeBeforeHours(TWELVE,ZERO);
-        List<String> timeList = CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -24, 30 * 60, DateUtils.MINUTE_TIME_FORMAT);
+        List<String> timeList = CommonServiceImpl.getXTimePerHalfHour(DateUtils.getRecentHalfTime(new Date()), -TWENTY_FOUR, HALF_HOUR_SECONDS , DateUtils.MINUTE_TIME_FORMAT);
         for (String time : timeList) {
             TimeDataVo timeDataVo = new TimeDataVo();
-            timeDataVo.setUpValue(0.0);
-            timeDataVo.setDownValue(0.0);
+            timeDataVo.setUpValue(DOUBLE_ZERO);
+            timeDataVo.setDownValue(DOUBLE_ZERO);
             timeDataVo.setTime(time);
             timeDataVo.setDate(new Date());
             if(!map.containsKey(time)){
@@ -233,6 +241,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
      * @param cache
      */
     private void queryMissDataFromMysql(TerminalDataReq terminalDataReq,Map<String,TimeDataVo> cache) {
+        //查询十二小时前的历史数据
         NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
         nmplTerminalDataExample.createCriteria().andDataTypeEqualTo(terminalDataReq.getDataType())
                 .andTerminalNetworkIdEqualTo(terminalDataReq.getTerminalNetworkId())

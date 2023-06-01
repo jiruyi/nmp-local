@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.DataCollectEnum;
 import com.matrictime.network.dao.domain.SystemDataCollectDomainService;
+import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.DataCollectReq;
@@ -17,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -45,6 +43,8 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
      * @param dataCollectReq
      * @return
      */
+    private static final String DATACOLLECT_PUSH_LAST_MAXI_ID= ":datacollect_last_push_max_id";
+
     @Override
     public Result<BaseStationDataVo> selectBaseStationData(DataCollectReq dataCollectReq) {
         Result<BaseStationDataVo> result = new Result<>();
@@ -124,6 +124,13 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
             for (String s : set) {
                 dataCollectService.handleAddData(s,deviceIp);
             }
+
+            // 放入redis缓存记录最新同步记录位置
+            Long maxId =dataCollectReq.getDataCollectVoList().get(0).getId();
+            String ip = dataCollectReq.getDataCollectVoList().get(0).getDeviceIp();
+            log.info("this time acceptAlarmData ip:{},maxId:{}",ip,maxId);
+            redisTemplate.opsForValue().set(ip+DATACOLLECT_PUSH_LAST_MAXI_ID,String.valueOf(maxId));
+
             result.setResultObj(i);
             result.setSuccess(true);
         }catch (Exception e){
