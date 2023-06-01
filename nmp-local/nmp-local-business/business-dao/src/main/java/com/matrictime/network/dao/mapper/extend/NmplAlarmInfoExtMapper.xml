@@ -127,6 +127,6 @@
         nmpl_device_info
         WHERE relation_operator_id = #{roId,jdbcType=VARCHAR}
         AND is_exist = '1')
-        order by alarm_upload_time
+        ORDER BY alarm_level, alarm_upload_time DESC
     </select>
 </mapper>
