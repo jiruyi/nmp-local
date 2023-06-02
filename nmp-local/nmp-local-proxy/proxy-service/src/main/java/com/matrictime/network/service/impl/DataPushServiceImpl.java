@@ -6,10 +6,12 @@ import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
 import com.matrictime.network.facade.AlarmDataFacade;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.request.AcceptAlarmDataReq;
 import com.matrictime.network.service.DataPushService;
 import com.matrictime.network.util.SystemUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -18,6 +20,8 @@ import org.springframework.util.ObjectUtils;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+
+import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 
 /**
  * @author jiruyi
@@ -29,6 +33,9 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class DataPushServiceImpl implements DataPushService {
+
+    @Value("${local.ip}")
+    private String localIp;
 
     @Autowired
     private  AlarmDomainService alarmDomainService;
@@ -57,7 +64,7 @@ public class DataPushServiceImpl implements DataPushService {
         try {
             //获取本机ip作为redis key 标识
 //            String cpuId = SystemUtil.getCpuId();
-            String cpuId = SystemUtils.getCPUProcessorID();
+            String cpuId = SystemUtils.getCPUProcessorID()+KEY_SPLIT_UNDERLINE+localIp;
             log.info("SystemUtils.getCPUProcessorID {}",cpuId);
             Object lastMaxId = redisTemplate.opsForValue().get(cpuId+ALARM_PUSH_LAST_MAXI_ID);
             if(Objects.nonNull(lastMaxId)){
@@ -72,7 +79,10 @@ public class DataPushServiceImpl implements DataPushService {
             }
             log.info("alarmPush this time query data count：{}",alarmInfoList.size());
             //推送数据
-            Result pushResult = alarmDataFacade.acceptAlarmData(alarmInfoConvert.to(alarmInfoList),cpuId);
+            AcceptAlarmDataReq req = new AcceptAlarmDataReq();
+            req.setAlarmInfoList(alarmInfoConvert.to(alarmInfoList));
+            req.setCpuId(cpuId);
+            Result pushResult = alarmDataFacade.acceptAlarmData(req);
             if(ObjectUtils.isEmpty(pushResult) ||  !pushResult.isSuccess()){
                 return;
             }

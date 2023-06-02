@@ -25,12 +25,11 @@ public interface AlarmDataFacade {
 
     /**
      * 告警信息上报
-     * @param alarmInfoList
-     * @param ip
+     * @param req
      * @return
      */
     @RequestMapping(value= "/alarm/accept",method = RequestMethod.POST)
-    Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList, @RequestParam("cpuId") String cpuId);
+    Result acceptAlarmData(@RequestBody AcceptAlarmDataReq req);
 
     /**
      * 站点状态上报
