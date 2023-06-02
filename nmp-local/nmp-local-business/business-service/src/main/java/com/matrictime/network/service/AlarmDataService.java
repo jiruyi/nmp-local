@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface AlarmDataService {
     //数据推送
-    Result acceptAlarmData(List<AlarmInfo> alarmInfoList,String ip);
+    Result acceptAlarmData(List<AlarmInfo> alarmInfoList,String cpuId);
     //系统告警数据查询
     Result<AlarmDataSysResp> querySysAlarmDataCount(AlarmDataBaseRequest alarmDataBaseRequest);
 

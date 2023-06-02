@@ -30,7 +30,7 @@ public interface AlarmDataFacade {
      * @return
      */
     @RequestMapping(value= "/alarm/accept",method = RequestMethod.POST)
-    Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList, @RequestParam("ip") String ip);
+    Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList, @RequestParam("cpuId") String cpuId);
 
     /**
      * 站点状态上报

@@ -44,8 +44,8 @@ public class AlarmDataController {
      */
     @ApiOperation(value = "告警信息数据推送", notes = "告警信息数据推送")
     @RequestMapping(value = "/accept", method = RequestMethod.POST)
-    public Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList,@RequestParam("ip") String ip) {
-        return alarmDataService.acceptAlarmData(alarmInfoList,ip);
+    public Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList,@RequestParam("cpuId") String cpuId) {
+        return alarmDataService.acceptAlarmData(alarmInfoList,cpuId);
     }
 
     /**

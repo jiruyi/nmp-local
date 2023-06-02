@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.matrictime.network.base.util.SystemUtil;
 import com.matrictime.network.convert.AlarmInfoConvert;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import java.net.InetAddress;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -55,12 +55,12 @@ public class DataPushServiceImpl implements DataPushService {
     public  void alarmPush() {
         try {
             //获取本机ip作为redis key 标识
-            String ip = InetAddress.getLocalHost().getHostAddress();
-            Object lastMaxId = redisTemplate.opsForValue().get(ip+ALARM_PUSH_LAST_MAXI_ID);
+            String cpuId = SystemUtil.getCpuId();
+            Object lastMaxId = redisTemplate.opsForValue().get(cpuId+ALARM_PUSH_LAST_MAXI_ID);
             if(Objects.nonNull(lastMaxId)){
                 //删除上次推送之前的数据
                 int thisCount = alarmDomainService.deleteThisTimePushData(Long.valueOf(lastMaxId.toString()));
-                log.info("ip is:{} last alarmPush lastMaxId is:{} deletecount is:{} ",ip,lastMaxId,thisCount);
+                log.info("cpuId is:{} last alarmPush lastMaxId is:{} deletecount is:{} ",cpuId,lastMaxId,thisCount);
             }
             //查询数据
             List<NmplAlarmInfo> alarmInfoList =  alarmDomainService.queryAlarmList();
@@ -69,7 +69,7 @@ public class DataPushServiceImpl implements DataPushService {
             }
             log.info("alarmPush this time query data count：{}",alarmInfoList.size());
             //推送数据
-            Result pushResult = alarmDataFacade.acceptAlarmData(alarmInfoConvert.to(alarmInfoList),ip);
+            Result pushResult = alarmDataFacade.acceptAlarmData(alarmInfoConvert.to(alarmInfoList),cpuId);
             if(ObjectUtils.isEmpty(pushResult) ||  !pushResult.isSuccess()){
                 return;
             }

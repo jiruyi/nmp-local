@@ -48,7 +48,7 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
      * @create 2023/4/19 0019 16:22
      */
     @Override
-    public Result acceptAlarmData(List<AlarmInfo> alarmInfoList,String ip) {
+    public Result acceptAlarmData(List<AlarmInfo> alarmInfoList,String cpuId) {
         //参数校验
         if (CollectionUtils.isEmpty(alarmInfoList)) {
             return failResult("acceptAlarmData alarmInfoList is null");
@@ -56,7 +56,7 @@ public class AlarmDataServiceImpl extends SystemBaseService implements AlarmData
         try {
             //插入数据库
             log.info("alarmInfoList param size is: {}", alarmInfoList.size());
-            int count = alarmDataDomainService.acceptAlarmData(alarmInfoList,ip);
+            int count = alarmDataDomainService.acceptAlarmData(alarmInfoList,cpuId);
             log.info("alarmDataDomainService save mysql  count is: {}", count);
             return buildResult(count);
         } catch (Exception e) {
