@@ -62,7 +62,7 @@ public class ScheduledTask {
       * @author jiruyi
       * @create 2023/4/19 0019 17:25
       */
-    @Scheduled(cron = "0 0/30 * * * ? ")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void alarmPush(){
         log.info(Thread.currentThread().getName()+ new Date()+"======================alarmPush begin=============================");
         dataPushService.alarmPush();
