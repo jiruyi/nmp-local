@@ -7,6 +7,7 @@ import com.matrictime.network.dao.model.NmplAlarmInfo;
 import com.matrictime.network.facade.AlarmDataFacade;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.service.DataPushService;
+import com.matrictime.network.util.SystemUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -55,7 +56,9 @@ public class DataPushServiceImpl implements DataPushService {
     public  void alarmPush() {
         try {
             //获取本机ip作为redis key 标识
-            String cpuId = SystemUtil.getCpuId();
+//            String cpuId = SystemUtil.getCpuId();
+            String cpuId = SystemUtils.getCPUProcessorID();
+            log.info("SystemUtils.getCPUProcessorID {}",cpuId);
             Object lastMaxId = redisTemplate.opsForValue().get(cpuId+ALARM_PUSH_LAST_MAXI_ID);
             if(Objects.nonNull(lastMaxId)){
                 //删除上次推送之前的数据

@@ -189,6 +189,39 @@ public class SystemUtils {
         return load;
     }
 
+    /**
+     * 获取处理器id
+     * @return
+     */
+    public static String getCPUProcessorID(){
+        SystemInfo si = new SystemInfo();
+        HardwareAbstractionLayer hardware = si.getHardware();
+        CentralProcessor processor = hardware.getProcessor();
+        CentralProcessor.ProcessorIdentifier identifier = processor.getProcessorIdentifier();
+        return identifier.getProcessorID().replace(" ","");
+    }
+
+    public static void getSystest(){
+        SystemInfo si = new SystemInfo();
+        OperatingSystem op = si.getOperatingSystem();
+        FileSystem fileSystem = op.getFileSystem();
+        long total = 0;
+        long use = 0;
+        for (OSFileStore fs : fileSystem.getFileStores()) {
+            System.out.println("name:"+fs.getName());
+            System.out.println("mount:"+fs.getMount());
+            System.out.println("description:"+fs.getDescription());
+            System.out.println("total:"+fs.getTotalSpace());
+            System.out.println("usable:"+fs.getUsableSpace());
+            use = use + fs.getUsableSpace();
+            total = total + fs.getTotalSpace();
+        }
+        System.out.println("alltotal:"+total);
+        System.out.println("allusable:"+use);
+        long isused = total - use;
+        System.out.println(String.format("%.0f", (double) isused / total));
+    }
+
     static List<String> oshi = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -196,7 +229,16 @@ public class SystemUtils {
         int port = 3306;
 
         try {
-            System.out.println(getNetLoad("192.168.72.14"));
+//            for (int i=0;i<100;i++){
+//                System.out.println(getCPUusePercent());
+//            }
+            SystemInfo si = new SystemInfo();
+            HardwareAbstractionLayer hardware = si.getHardware();
+            CentralProcessor processor = hardware.getProcessor();
+            CentralProcessor.ProcessorIdentifier identifier = processor.getProcessorIdentifier();
+            System.out.println(identifier.getIdentifier());
+            System.out.println(identifier.getProcessorID());
+
 //            for (int i=0;i<20;i++){
 //                System.out.println(getCPUusePercent());
 //                Thread.sleep(1000);
