@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -40,6 +41,10 @@ public class SystemHeartbeatServiceImpl implements SystemHeartbeatService {
         for(SystemHeartbeatVo systemHeartbeatVo: list){
             SystemHeartbeatRequest systemHeartbeatRequest = new SystemHeartbeatRequest();
             BeanUtils.copyProperties(systemHeartbeatVo,systemHeartbeatRequest);
+            if(StringUtils.isEmpty(systemHeartbeatRequest.getSourceId()) ||
+                    StringUtils.isEmpty(systemHeartbeatRequest.getTargetId())){
+                return new Result<>(false,"参数异常");
+            }
             SystemHeartbeatResponse heartbeatResponse = systemHeartbeatDomainService.selectSystemHeartbeat(systemHeartbeatRequest);
             if(CollectionUtils.isEmpty(heartbeatResponse.getList())){
                 i = systemHeartbeatDomainService.insertSystemHeartbeat(systemHeartbeatRequest);

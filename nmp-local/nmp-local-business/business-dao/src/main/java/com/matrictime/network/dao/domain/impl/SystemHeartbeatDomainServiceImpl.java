@@ -67,14 +67,16 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
     @Override
     public SystemHeartbeatResponse selectSystemHeartbeat(SystemHeartbeatRequest systemHeartbeatRequest) {
         NmplSystemHeartbeatExample nmplSystemHeartbeatExample = new NmplSystemHeartbeatExample();
+        NmplSystemHeartbeatExample.Criteria criteria = nmplSystemHeartbeatExample.createCriteria();
         SystemHeartbeatResponse systemHeartbeatResponse = new SystemHeartbeatResponse();
         List<SystemHeartbeatVo> list = new ArrayList<>();
-        //查询该小区下的所有设备和基站，没有则返回空
-        List<BaseStationInfoVo> baseStationInfoVoList = baseStationInfoMapper.selectAllDevice(systemHeartbeatRequest);
-        if(CollectionUtils.isEmpty(baseStationInfoVoList)){
-            return systemHeartbeatResponse;
-        }
         //查询业务心跳表中的数据
+        if(!StringUtils.isEmpty(systemHeartbeatRequest.getSourceId())){
+            criteria.andSourceIdEqualTo(systemHeartbeatRequest.getSourceId());
+        }
+        if(!StringUtils.isEmpty(systemHeartbeatRequest.getTargetId())){
+            criteria.andTargetIdEqualTo(systemHeartbeatRequest.getTargetId());
+        }
         List<NmplSystemHeartbeat> nmplSystemHeartbeats = nmplSystemHeartbeatMapper.selectByExample(nmplSystemHeartbeatExample);
         if(!CollectionUtils.isEmpty(nmplSystemHeartbeats)){
             for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
@@ -85,7 +87,6 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
                 list.add(systemHeartbeatVo);
             }
             systemHeartbeatResponse.setList(list);
-            systemHeartbeatResponse.setStationInfoVoList(baseStationInfoVoList);
         }
         return systemHeartbeatResponse;
     }
@@ -107,7 +108,7 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
             criteria1.andDeviceIdEqualTo(nmplSystemHeartbeat.getSourceId());
             List<NmplDeviceCount> nmplDeviceCounts = nmplDeviceCountMapper.selectByExample(nmplDeviceCountExample);
             if(CollectionUtils.isEmpty(nmplDeviceCounts)){
-                throw new RuntimeException("该设备不在设备列表中");
+                return "";
             }
             return nmplDeviceCounts.get(0).getDeviceName();
         }
@@ -131,7 +132,7 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
             criteria1.andDeviceIdEqualTo(nmplSystemHeartbeat.getTargetId());
             List<NmplDeviceCount> nmplDeviceCounts = nmplDeviceCountMapper.selectByExample(nmplDeviceCountExample);
             if(CollectionUtils.isEmpty(nmplDeviceCounts)){
-                throw new RuntimeException("该设备不在设备列表中");
+                return "";
             }
             return nmplDeviceCounts.get(0).getDeviceName();
         }

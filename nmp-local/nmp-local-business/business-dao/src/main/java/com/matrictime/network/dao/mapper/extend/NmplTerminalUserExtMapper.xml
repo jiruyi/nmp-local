@@ -15,7 +15,14 @@
         FROM
             nmpl_terminal_user t
         WHERE
-                t.terminal_network_id IN (
+                t.parent_device_id IN (
+                SELECT
+                    station_id
+                FROM
+                    nmpl_base_station_info b
+                WHERE
+                    b.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
+                union
                 SELECT
                     device_id as station_id
                 FROM
@@ -23,6 +30,8 @@
                 WHERE
                     d.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
             )
-          and t.terminal_status = #{terminalStatus,jdbcType=VARCHAR}
+        <if test="terminalStatus != null and terminalStatus != ''">
+            and t.terminal_status = #{terminalStatus,jdbcType=VARCHAR}
+        </if>
     </select>
 </mapper>

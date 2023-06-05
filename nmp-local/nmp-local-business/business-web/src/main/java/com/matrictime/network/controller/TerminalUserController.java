@@ -48,9 +48,6 @@ public class TerminalUserController {
     public Result<TerminalUserCountResponse> countTerminalUser(@RequestBody TerminalUserResquest terminalUserResquest){
         Result<TerminalUserCountResponse> result = new Result<>();
         try {
-            if(StringUtils.isEmpty(terminalUserResquest.getTerminalStatus())){
-                return new Result<>(false,"缺少必传参数");
-            }
             result = terminalUserService.countTerminalUser(terminalUserResquest);
         }catch (Exception e){
             log.info("countTerminalUser:{}",e.getMessage());
