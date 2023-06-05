@@ -3,6 +3,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.request.AcceptAlarmDataReq;
 import com.matrictime.network.request.AlarmDataBaseRequest;
 import com.matrictime.network.request.AlarmDataListReq;
 import com.matrictime.network.response.AlarmDataPhyResp;
@@ -44,8 +45,8 @@ public class AlarmDataController {
      */
     @ApiOperation(value = "告警信息数据推送", notes = "告警信息数据推送")
     @RequestMapping(value = "/accept", method = RequestMethod.POST)
-    public Result acceptAlarmData(@RequestBody List<AlarmInfo> alarmInfoList,@RequestParam("ip") String ip) {
-        return alarmDataService.acceptAlarmData(alarmInfoList,ip);
+    public Result acceptAlarmData(@RequestBody AcceptAlarmDataReq req) {
+        return alarmDataService.acceptAlarmData(req.getAlarmInfoList(),req.getCpuId());
     }
 
     /**

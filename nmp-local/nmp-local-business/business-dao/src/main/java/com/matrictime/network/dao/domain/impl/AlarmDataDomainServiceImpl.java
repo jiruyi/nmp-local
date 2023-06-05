@@ -71,7 +71,7 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
      * @create 2023/4/19 0019 15:51
      */
     @Override
-    public int acceptAlarmData(List<AlarmInfo> alarmInfoList,String ip) {
+    public int acceptAlarmData(List<AlarmInfo> alarmInfoList,String cpuId) {
         if (CollectionUtils.isEmpty(alarmInfoList)) {
             return NumberUtils.INTEGER_ZERO;
         }
@@ -94,8 +94,8 @@ public class AlarmDataDomainServiceImpl extends SystemBaseService implements Ala
         int batchCount = alarmInfoExtMapper.batchInsert(alarmInfoList);
         /**ip*/
         Long maxId = alarmInfoList.stream().max(Comparator.comparingLong(AlarmInfo::getAlarmId)).get().getAlarmId();
-        log.info("this time acceptAlarmData ip:{},maxId:{}",ip,maxId);
-        redisTemplate.opsForValue().set(ip+ALARM_PUSH_LAST_MAXI_ID,String.valueOf(maxId));
+        log.info("this time acceptAlarmData cpuId:{},maxId:{}",cpuId,maxId);
+        redisTemplate.opsForValue().set(cpuId+ALARM_PUSH_LAST_MAXI_ID,String.valueOf(maxId));
         return batchCount;
 
     }
