@@ -210,6 +210,7 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
         if(!StringUtils.isEmpty(deviceInfoRequest.getRelationOperatorId())){
             criteria.andRelationOperatorIdEqualTo(deviceInfoRequest.getRelationOperatorId());
         }
+        criteria.andIsExistEqualTo(true);
         //查询小区下的所有设备
         List<NmplDeviceCount> nmplDeviceCounts = nmplDeviceCountMapper.selectByExample(nmplDeviceCountExample);
         CountBaseStationResponse countBaseStationResponse = new CountBaseStationResponse();
