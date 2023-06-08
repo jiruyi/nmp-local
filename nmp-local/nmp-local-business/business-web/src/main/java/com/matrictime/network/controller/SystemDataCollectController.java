@@ -10,6 +10,8 @@ import com.matrictime.network.request.DataCollectReq;
 import com.matrictime.network.service.SystemDataCollectService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -162,6 +164,9 @@ public class SystemDataCollectController {
     public Result<Integer> insertSystemData(@RequestBody DataCollectReq dataCollectReq){
         Result<Integer> result = new Result<>();
         try {
+            if(ObjectUtils.isEmpty(dataCollectReq)){
+                return new Result<>(false,"上报数据为空");
+            }
             result = systemDataCollectService.insertSystemData(dataCollectReq);
         }catch (Exception e){
             log.info("insertSystemData:{}",e.getMessage());

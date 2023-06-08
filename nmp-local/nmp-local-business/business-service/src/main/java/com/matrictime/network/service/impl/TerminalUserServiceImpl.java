@@ -39,6 +39,9 @@ public class TerminalUserServiceImpl implements TerminalUserService {
         Result<Integer> result = new Result<>();
         int i = 0;
         List<TerminalUserVo> list = terminalUserResponse.getList();
+        if(CollectionUtils.isEmpty(list)){
+            return new Result<>(false,"上报数据为空");
+        }
         for(TerminalUserVo terminalUserVo: list){
             TerminalUserResquest terminalUserResquest = new TerminalUserResquest();
             BeanUtils.copyProperties(terminalUserVo,terminalUserResquest);

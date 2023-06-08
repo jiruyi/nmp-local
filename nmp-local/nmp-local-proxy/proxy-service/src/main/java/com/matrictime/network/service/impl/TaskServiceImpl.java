@@ -414,6 +414,7 @@ public class TaskServiceImpl implements TaskService {
             for(NmplTerminalData nmplTerminalData: terminalDataList){
                 TerminalDataVo terminalDataVo = new TerminalDataVo();
                 BeanUtils.copyProperties(nmplTerminalData,terminalDataVo);
+                terminalDataVo.setId(null);
                 dataVoList.add(terminalDataVo);
             }
         }

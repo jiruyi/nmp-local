@@ -38,13 +38,12 @@ public class SystemHeartbeatServiceImpl implements SystemHeartbeatService {
         Result<Integer> result = new Result<>();
         int i = 0;
         List<SystemHeartbeatVo> list = systemHeartbeatResponse.getList();
+        if(CollectionUtils.isEmpty(list)){
+            return new Result<>(false,"上报数据为空");
+        }
         for(SystemHeartbeatVo systemHeartbeatVo: list){
             SystemHeartbeatRequest systemHeartbeatRequest = new SystemHeartbeatRequest();
             BeanUtils.copyProperties(systemHeartbeatVo,systemHeartbeatRequest);
-            if(StringUtils.isEmpty(systemHeartbeatRequest.getSourceId()) ||
-                    StringUtils.isEmpty(systemHeartbeatRequest.getTargetId())){
-                return new Result<>(false,"参数异常");
-            }
             SystemHeartbeatResponse heartbeatResponse = systemHeartbeatDomainService.selectSystemHeartbeat(systemHeartbeatRequest);
             if(CollectionUtils.isEmpty(heartbeatResponse.getList())){
                 i = systemHeartbeatDomainService.insertSystemHeartbeat(systemHeartbeatRequest);

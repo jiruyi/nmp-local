@@ -15,6 +15,7 @@ import com.matrictime.network.service.TerminalDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -109,7 +110,10 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
     public Result<Integer> insertSystemData(DataCollectReq dataCollectReq) {
         Result<Integer> result = new Result<>();
         try {
-            int i = 0;
+            if(CollectionUtils.isEmpty(dataCollectReq.getDataCollectVoList())){
+                return new Result<>(false,"上报数据为空");
+            }
+            int i;
             i = systemDataCollectDomainService.insertSystemData(dataCollectReq.getDataCollectVoList());
             //插入缓存
             Set<String> set = new HashSet<>();
