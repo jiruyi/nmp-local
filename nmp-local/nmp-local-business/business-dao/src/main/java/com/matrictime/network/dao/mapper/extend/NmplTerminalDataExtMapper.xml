@@ -54,7 +54,7 @@
             a.terminal_network_id,
             a.up_value,
             a.down_value,
-            a.update_time
+            a.upload_time
         FROM
             nmpl_terminal_data a,
         (
@@ -68,12 +68,12 @@
         ) AS b
         WHERE
             a.terminal_network_id = b.terminal_network_id
-            AND a.update_time = b.q
+            AND a.upload_time = b.q
             AND a.data_type = b.data_type
-        <if test="data_type != null">
+        <if test="dataType != null">
             and a.data_type = #{dataType,jdbcType=CHAR}
         </if>
-        <if test="terminal_network_id != null">
+        <if test="terminalNetworkId != null">
             and a.terminal_network_id = #{terminalNetworkId,jdbcType=VARCHAR}
         </if>
     </select>
