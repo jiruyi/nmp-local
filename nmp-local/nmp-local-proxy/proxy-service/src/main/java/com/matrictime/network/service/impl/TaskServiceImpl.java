@@ -214,7 +214,9 @@ public class TaskServiceImpl implements TaskService {
             nmplDataCollectExample.setOrderByClause("id desc");
             List<NmplDataCollect> nmplDataCollectList = nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
             nmplDataCollectExample.clear();
-
+            if(CollectionUtils.isEmpty(nmplDataCollectList)){
+                return;
+            }
             // 补充数据
             DataCollectReq dataCollectReq = new DataCollectReq();
             List<DataCollectVo> dataCollectVoList = new ArrayList<>();
