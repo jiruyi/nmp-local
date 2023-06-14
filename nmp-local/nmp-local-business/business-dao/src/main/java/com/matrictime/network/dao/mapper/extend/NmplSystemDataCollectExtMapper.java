@@ -19,4 +19,9 @@ public interface NmplSystemDataCollectExtMapper {
     List<DataCollectVo> distinctSystemDeviceData(DataCollectReq dataCollectReq);
 
     List<DataCollectVo> selectDataItemValue(@Param("dataMap")Map dataMap);
+
+    List<DataCollectVo> selectDeviceDataItem(DataCollectReq dataCollectReq);
+
+    List<DataCollectVo> selectStationDataItem(DataCollectReq dataCollectReq);
+
 }

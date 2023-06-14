@@ -161,13 +161,26 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
             req.setDeviceType(dataCollectReq.getDeviceType());
             req.setDataItemCode(dataCodeList.get(i));
             req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
-            List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.distinctSystemDeviceData(req);
+            List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDeviceDataItem(req);
             if(!CollectionUtils.isEmpty(dataCollectVos)){
-                dataSum = getDeviceDataSum(dataCollectVos,dataCodeList.get(i));
+                dataSum = getDataItemSum(dataCollectVos);
             }
             list.add(dataSum);
         }
         return list;
+    }
+
+    /**
+     * 获取该基站下不通类型流量的总和
+     * @param dataCollectVos
+     * @return
+     */
+    Double getDataItemSum(List<DataCollectVo> dataCollectVos){
+        Double dataSum = 0d;
+        for (int i = 0;i< dataCollectVos.size();i++){
+            dataSum = dataSum + Double.parseDouble(dataCollectVos.get(i).getDataItemValue());
+        }
+        return dataSum;
     }
 
     /**
@@ -184,57 +197,14 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
             req.setDeviceType(dataCollectReq.getDeviceType());
             req.setDataItemCode(dataCodeList.get(i));
             req.setRelationOperatorId(dataCollectReq.getRelationOperatorId());
-            List<StationVo> stationVos = nmplSystemDataCollectExtMapper.distinctSystemData(req);
-            if(!CollectionUtils.isEmpty(stationVos)){
-                dataSum = getDataSum(stationVos,dataCodeList.get(i));
+            List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectStationDataItem(req);
+            if(!CollectionUtils.isEmpty(dataCollectVos)){
+                dataSum = getDataItemSum(dataCollectVos);
             }
             list.add(dataSum);
         }
         return list;
     }
-
-    /**
-     * 获取不通类型流量的总和
-     * @param list
-     * @return
-     */
-    private Double getDataSum(List<StationVo> list,String code){
-        List<String> deviceIdList = new ArrayList<>();
-        Map dataMap = new HashMap();
-        for(StationVo stationVo: list){
-            deviceIdList.add(stationVo.getDeviceId());
-        }
-        dataMap.put("idList",deviceIdList);
-        dataMap.put("code",code);
-        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(dataMap);
-        Double dataSum = 0d;
-        for (int i = 0;i< dataCollectVos.size();i++){
-            dataSum = dataSum + Double.parseDouble(dataCollectVos.get(i).getDataItemValue());
-        }
-        return dataSum;
-    }
-
-    /**
-     * 获取密钥中心流量总和
-     * @param list
-     * @return
-     */
-    private Double getDeviceDataSum(List<DataCollectVo> list,String code){
-        List<String> deviceIdList = new ArrayList<>();
-        HashMap dataMap = new HashMap();
-        for(DataCollectVo dataCollectVo: list){
-            deviceIdList.add(dataCollectVo.getDeviceId());
-        }
-        dataMap.put("idList",deviceIdList);
-        dataMap.put("code",code);
-        List<DataCollectVo> dataCollectVos = nmplSystemDataCollectExtMapper.selectDataItemValue(dataMap);
-        Double dataSum = 0d;
-        for (int i = 0;i< dataCollectVos.size();i++){
-            dataSum = dataSum + Double.parseDouble(dataCollectVos.get(i).getDataItemValue());
-        }
-        return dataSum;
-    }
-
 
 
     private BaseStationDataVo getBaseStationData( List<Double> dataList){
