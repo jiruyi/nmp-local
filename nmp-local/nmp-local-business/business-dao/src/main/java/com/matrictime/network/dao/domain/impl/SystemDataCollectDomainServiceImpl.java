@@ -57,11 +57,8 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     @Override
     public BaseStationDataVo selectBaseStationData(DataCollectReq dataCollectReq) {
         BaseStationDataVo baseStationDataVo;
-        List<String> list = new ArrayList<>();
         //创建枚举list
-        list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
-        list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
-        list.add(DataCollectEnum.KEY_RELAY_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_RELAY_DOWN_LOAD.getCode());
+        List<String> list = enumStationList();
         dataCollectReq.setDeviceType(DeviceTypeEnum.BASE_STATION.getCode());
         List<Double> dataList = getData(list, dataCollectReq);
         baseStationDataVo = getBaseStationData(dataList);
@@ -76,11 +73,8 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     @Override
     public BorderBaseStationDataVo selectBorderBaseStationData(DataCollectReq dataCollectReq) {
         BorderBaseStationDataVo borderBaseStationDataVo;
-        List<String> list = new ArrayList<>();
         //创建枚举list
-        list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
-        list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
-        list.add(DataCollectEnum.KEY_RELAY_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_RELAY_DOWN_LOAD.getCode());
+        List<String> list = enumStationList();
         dataCollectReq.setDeviceType(DeviceTypeEnum.BORDER_BASE_STATION.getCode());
         List<Double> dataList = getData(list, dataCollectReq);
         //数据转换
@@ -96,11 +90,8 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
     @Override
     public KeyCenterDataVo selectKeyCenterData(DataCollectReq dataCollectReq) {
         KeyCenterDataVo keyCenterDataVo;
-        List<String> list = new ArrayList<>();
         //创建枚举list
-        list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
-        list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
-        list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
+        List<String> list = enumDeviceList();
         dataCollectReq.setDeviceType(DeviceTypeEnum.DISPENSER.getCode());
         List<Double> dataList = getDeviceData(list, dataCollectReq);
         //数据转换
@@ -145,6 +136,30 @@ public class SystemDataCollectDomainServiceImpl implements SystemDataCollectDoma
             dataCollectVos.add(dataCollectVo);
         }
         return dataCollectExtMapper.batchInsertDataCollect(dataCollectVos);
+    }
+
+    /**
+     * 构建基站流量枚举
+     * @return
+     */
+    private List<String> enumStationList(){
+        List<String> list = new ArrayList<>();
+        list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
+        list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
+        list.add(DataCollectEnum.KEY_RELAY_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_RELAY_DOWN_LOAD.getCode());
+        return list;
+    }
+
+    /**
+     * 构建设备流量枚举
+     * @return
+     */
+    private List<String> enumDeviceList(){
+        List<String> list = new ArrayList<>();
+        list.add(DataCollectEnum.COMM_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode());
+        list.add( DataCollectEnum.FORWARD_LOAD_UP_FLOW.getCode());list.add(DataCollectEnum.FORWARD_LOAD_DOWN_FLOW.getCode());
+        list.add(DataCollectEnum.KEY_DISTRIBUTE_UP_LOAD.getCode());list.add(DataCollectEnum.KEY_DISTRIBUTE_DOWN_LOAD.getCode());
+        return list;
     }
 
     /**
