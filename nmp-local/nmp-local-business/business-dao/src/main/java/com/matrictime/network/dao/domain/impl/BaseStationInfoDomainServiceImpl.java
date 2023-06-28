@@ -433,6 +433,128 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     }
 
     /**
+     * 获取归属信息
+     * @return
+     */
+    @Override
+    public BelongInformationResponse selectAllBelongInformation() {
+        BelongInformationResponse belongInformationResponse = new BelongInformationResponse();
+        //运营商数据查询
+        NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
+        NmplCompanyInfoExample.Criteria criteria = nmplCompanyInfoExample.createCriteria();
+        criteria.andIsExistEqualTo(true);
+        List<NmplCompanyInfo> nmplCompanyInfos = nmplCompanyInfoMapper.selectByExample(nmplCompanyInfoExample);
+        if(CollectionUtils.isEmpty(nmplCompanyInfos)){
+            return belongInformationResponse;
+        }
+        //查询所有基站
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        NmplBaseStationInfoExample.Criteria stationCriteria = nmplBaseStationInfoExample.createCriteria();
+        stationCriteria.andIsExistEqualTo(true);
+        stationCriteria.andStationTypeEqualTo(DeviceTypeEnum.BASE_STATION.getCode());
+        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+        //运营商
+        List<NmplCompanyInfo> companyList = new ArrayList<>();
+        List<RegionBelongVo> regionBelongVoList = new ArrayList<>();
+        //获取运营商
+        for(NmplCompanyInfo nmplCompanyInfo: nmplCompanyInfos){
+            if(nmplCompanyInfo.getParentCode() == null){
+                companyList.add(nmplCompanyInfo);
+            }
+        }
+        for(NmplCompanyInfo company: companyList){
+            List<NmplCompanyInfo> regionList = new ArrayList<>();
+            //获取大区
+            for(NmplCompanyInfo companyInfo: nmplCompanyInfos){
+                if(company.getCompanyId().toString().
+                        equals(companyInfo.getParentCode())){
+                    regionList.add(companyInfo);
+                }
+            }
+            //大区构建
+            RegionBelongVo region = getRegion(regionList, nmplCompanyInfos, company, nmplBaseStationInfos);
+            regionBelongVoList.add(region);
+        }
+        belongInformationResponse.setList(regionBelongVoList);
+        return belongInformationResponse;
+    }
+
+    /**
+     * 构建大区
+     * @param regionList
+     * @param nmplCompanyInfos
+     * @param company
+     * @param nmplBaseStationInfos
+     * @return
+     */
+    private RegionBelongVo getRegion(List<NmplCompanyInfo> regionList,List<NmplCompanyInfo> nmplCompanyInfos,NmplCompanyInfo company,
+                                     List<NmplBaseStationInfo> nmplBaseStationInfos){
+        List<CommunityBelongVo> communityBelongVoList = new ArrayList<>();
+        RegionBelongVo regionBelongVo = new RegionBelongVo();
+        for(NmplCompanyInfo region: regionList){
+            //大区下的小区
+            List<NmplCompanyInfo> communityList = new ArrayList<>();
+            for(NmplCompanyInfo communityInfo: nmplCompanyInfos){
+                if(region.getCompanyId().toString().
+                        equals(communityInfo.getParentCode())){
+                    communityList.add(communityInfo);
+                }
+            }
+            //构建小区
+            CommunityBelongVo communityBelongVo = constructCommunity(region, communityList, nmplBaseStationInfos);
+            communityBelongVoList.add(communityBelongVo);
+        }
+        regionBelongVo.setChildren(communityBelongVoList);
+        regionBelongVo.setName(company.getCompanyName());
+        regionBelongVo.setRelationOperatorId(company.getCompanyId().toString());
+        return regionBelongVo;
+    }
+
+    /**
+     * 小区构建
+     * @param region
+     * @param communityList
+     * @param nmplBaseStationInfos
+     * @return
+     */
+    private CommunityBelongVo constructCommunity(NmplCompanyInfo region,List<NmplCompanyInfo> communityList,
+                                                 List<NmplBaseStationInfo> nmplBaseStationInfos){
+        CommunityBelongVo communityBelongVo = new CommunityBelongVo();
+        List<BaseStationBelongVo> list = new ArrayList<>();
+        for(NmplCompanyInfo community: communityList){
+            //小区基站返回
+            BaseStationBelongVo station = getStation(community, nmplBaseStationInfos);
+            list.add(station);
+        }
+        communityBelongVo.setChildren(list);
+        communityBelongVo.setName(region.getCompanyName());
+        communityBelongVo.setRelationOperatorId(region.getCompanyId().toString());
+        return communityBelongVo;
+    }
+
+    /**
+     * 获取小区下的基站
+     * @param community
+     * @param nmplBaseStationInfos
+     * @return
+     */
+    private BaseStationBelongVo getStation(NmplCompanyInfo community,List<NmplBaseStationInfo> nmplBaseStationInfos){
+        BaseStationBelongVo baseStationBelongVo = new BaseStationBelongVo();
+        List<CommunityBaseStationVo> baseStationInfoVoList = new ArrayList<>();
+        for(NmplBaseStationInfo baseStationInfo: nmplBaseStationInfos){
+            if(community.getCompanyId().toString().equals(baseStationInfo.getRelationOperatorId())){
+                CommunityBaseStationVo communityBaseStationVo = new CommunityBaseStationVo();
+                BeanUtils.copyProperties(baseStationInfo,communityBaseStationVo);
+                baseStationInfoVoList.add(communityBaseStationVo);
+            }
+        }
+        baseStationBelongVo.setChildren(baseStationInfoVoList);
+        baseStationBelongVo.setName(community.getCompanyName());
+        baseStationBelongVo.setRelationOperatorId(community.getCompanyId().toString());
+        return baseStationBelongVo;
+    }
+
+    /**
      * 获取大区下面的小区
      * @param nmplCompanyInfos
      * @return

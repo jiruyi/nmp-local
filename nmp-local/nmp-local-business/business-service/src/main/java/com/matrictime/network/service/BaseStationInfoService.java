@@ -54,4 +54,6 @@ public interface BaseStationInfoService {
     Result<List<CommunityBaseStationVo>> selectPhysicalDevice(BaseStationInfoRequest baseStationInfoRequest);
 
     Result<Integer> updateCurrentConnectCount(CurrentCountRequest currentCountRequest);
+
+    Result<BelongInformationResponse> selectAllBelongInformation();
 }

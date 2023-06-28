@@ -285,6 +285,21 @@ public class BaseStationController {
     }
 
     /**
+     * 查询归属信息
+     * @return
+     */
+    @SystemLog(opermodul = "基站管理模块",operDesc = "查询归属信息",operType = "查询")
+    @RequestMapping(value = "/selectAllBelongInformation",method = RequestMethod.POST)
+    public Result<BelongInformationResponse> selectAllBelongInformation(){
+        try {
+            return baseStationInfoService.selectAllBelongInformation();
+        }catch (Exception e){
+            log.info("selectAllBelongInformation:{}",e.getMessage());
+            return new Result<>(false,"");
+        }
+    }
+
+    /**
      * 查询基站总数
      * @return
      */

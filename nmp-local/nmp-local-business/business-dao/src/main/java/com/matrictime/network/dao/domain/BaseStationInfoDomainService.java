@@ -56,4 +56,6 @@ public interface BaseStationInfoDomainService {
     List<CommunityBaseStationVo> selectPhysicalDevice(BaseStationInfoRequest baseStationInfoRequest);
 
     int updateCurrentConnectCount(CurrentCountRequest currentCountRequest);
+
+    BelongInformationResponse selectAllBelongInformation();
 }

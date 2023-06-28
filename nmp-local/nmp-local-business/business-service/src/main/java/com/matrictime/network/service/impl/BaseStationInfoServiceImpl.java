@@ -526,5 +526,24 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         return result;
     }
 
+    /**
+     * 归属信息查询
+     * @return
+     */
+    @Override
+    public Result<BelongInformationResponse> selectAllBelongInformation() {
+        Result<BelongInformationResponse> result = new Result<>();
+        try {
+            BelongInformationResponse belongInformationResponse = baseStationInfoDomainService.selectAllBelongInformation();
+            result.setResultObj(belongInformationResponse);
+            result.setSuccess(true);
+        }catch (Exception e){
+            log.info("selectAllBelongInformation:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("");
+        }
+        return result;
+    }
+
 
 }
