@@ -70,6 +70,10 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
         NmplSystemHeartbeatExample.Criteria criteria = nmplSystemHeartbeatExample.createCriteria();
         SystemHeartbeatResponse systemHeartbeatResponse = new SystemHeartbeatResponse();
         List<SystemHeartbeatVo> list = new ArrayList<>();
+        List<BaseStationInfoVo> baseStationInfoVoList = baseStationInfoMapper.selectAllDevice(systemHeartbeatRequest);
+        if(!CollectionUtils.isEmpty(baseStationInfoVoList)){
+            systemHeartbeatResponse.setStationInfoVoList(baseStationInfoVoList);
+        }
         //查询业务心跳表中的数据
         if(!StringUtils.isEmpty(systemHeartbeatRequest.getSourceId())){
             criteria.andSourceIdEqualTo(systemHeartbeatRequest.getSourceId());
@@ -87,6 +91,7 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
                 list.add(systemHeartbeatVo);
             }
             systemHeartbeatResponse.setList(list);
+
         }
         return systemHeartbeatResponse;
     }
