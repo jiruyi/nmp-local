@@ -1,8 +1,8 @@
 {
-  "serverUrl": "http://127.0.0.1:8002/nmp-local-business/",
+  "serverUrl": "http://127.0.0.1:8001/nmp-center-business/",
   "isStrict": false,
   "allInOne": true,
-  "outPath": "D://doc//business",
+  "outPath": "D://doc//center",
   "coverOld": true,
   "style":"xt256",
   "createDebugPage": true,
@@ -11,5 +11,5 @@
   "openUrl": "http://127.0.0.1:7700/api",
   "debugEnvName":"测试环境",
   "replace": true,
-  "debugEnvUrl":"http://127.0.0.1:8002/nmp-local-business"
+  "debugEnvUrl":"http://127.0.0.1:8001/nmp-center-business"
 }

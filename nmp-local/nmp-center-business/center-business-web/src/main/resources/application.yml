@@ -1,0 +1,111 @@
+server:
+  port: 8001
+  servlet:
+      context-path: /nmp-center-business
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml           # mybatis配置文件所在路径
+    
+spring:
+  application:
+   name: nmp-center-business
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+    driver-class-name: com.mysql.cj.jdbc.Driver              # mysql驱动包
+    url: jdbc:mysql://192.168.72.14:3306/nmp_center   # 数据库名称
+    username: root
+    password: Admin@1234
+    druid:
+      min-idle: 20                                           # 数据库连接池的最小维持连接数
+      initial-size: 5                                      # 初始化连接数
+      max-wait: 1000
+      max-active: 300
+      web-stat-filter:
+        enabled: true
+        profile-enable: true
+      stat-view-servlet:
+        enabled: true
+        login-username: druid
+        login-password: druid
+        url-pattern: /druid/*
+        allow: ""
+        deny: ""
+      filter:
+        stat:
+          enabled: true
+          log-slow-sql: true
+          slow-sql-millis: 15000
+      time-between-eviction-runs-millis: 10000
+      min-evictable-idle-time-millis: 30000
+      async-init: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    init-sqls: CREATE DATABASE IF NOT EXISTS `nmp_center` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 300MB
+      max-request-size: 215MB
+  redis:
+    database: 0
+    host: 192.168.72.14
+    port: 6379
+    password: 123456
+    timeout: 5000
+    lettuce:
+      pool:
+        max-active: 100
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+  cloud:
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:8080
+    inetutils:
+      ignored-interfaces: [ 'VMware.*' ]
+  jackson:
+    time-zone: "GMT+8"
+    date-format: "yyyy-MM-dd HH:mm:ss"
+  mvc:
+    async:
+      request-timeout: 60000
+eureka:
+  client:
+    register-with-eureka: false #客户端注册进eureka服务列表内
+    fetch-registry: false
+#    service-url:
+#       defaultZone: http://192.168.72.105:7002/eureka/
+#  instance:
+#    instance-id: nmp-center-business
+#    prefer-ip-address: true     #访问路径可以显示IP地址
+
+info: 
+  app.name: nmp-center-business
+  company.name: www.matrictime.com
+  build.artifactId: $project.artifactId$
+  build.version: $project.version$
+logging:
+  file:
+    path: logs
+  level:
+    com.jzsg: info
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    beans:
+      enabled: true
+    scheduledtasks:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+token:
+  timeOut: 12
+thread:
+  batchMaxSize: 500

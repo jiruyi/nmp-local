@@ -18,6 +18,7 @@
         <module>nmp-local-proxy</module>
         <module>unified-portal</module>
         <module>security-server</module>
+        <module>nmp-center-business</module>
     </modules>
 
     <properties>
