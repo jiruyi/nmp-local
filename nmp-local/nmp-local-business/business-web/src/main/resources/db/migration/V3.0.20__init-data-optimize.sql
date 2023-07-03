@@ -1,0 +1,1 @@
+alter table nmpl_system_resource add index nsr_systemId_uploadTime(system_id,upload_time);
