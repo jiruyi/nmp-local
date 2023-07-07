@@ -30,8 +30,11 @@
                 WHERE
                     d.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
             )
-        <if test="terminalStatus != null and terminalStatus != ''">
+        <if test="terminalStatus == '03'.toString()">
             and t.terminal_status = #{terminalStatus,jdbcType=VARCHAR}
+        </if>
+        <if test="terminalStatus == '02'.toString()">
+            and t.terminal_status &gt;= #{terminalStatus,jdbcType=VARCHAR}
         </if>
     </select>
 </mapper>
