@@ -62,7 +62,7 @@
                         FROM
                             nmpl_data_collect
                         WHERE
-                            device_type = #{deviceType,jdbcType=VARCHAR}
+                            station_type = #{deviceType,jdbcType=VARCHAR}
                           AND data_item_code = #{dataItemCode,jdbcType=VARCHAR}
                     )
                   AND b.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
