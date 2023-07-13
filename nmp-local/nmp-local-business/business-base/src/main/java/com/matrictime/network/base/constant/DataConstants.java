@@ -129,6 +129,9 @@ public class DataConstants {
     public static final String KEY_CONFIG_CODE = "configCode";
     public static final String KEY_CONFIG_VALUE = "configValue";
     public static final String KEY_UNIT = "unit";
+    public static final String KEY_EDIT_TYPE = "editType";
+    public static final String KEY_DEVICE_TYPE = "deviceType";
+    public static final String KEY_CONFIGVOS = "configVos";
     public static final String KEY_SUCCESS_IDS = "successIds";
     public static final String KEY_FAIL_IDS = "failIds";
     public static final String KEY_IO_TYPE = "opType";
@@ -254,5 +257,7 @@ public class DataConstants {
     public static final double DOUBLE_ZERO = 0.0;
 
     public static final String DEFAULT_STR_ZERO = "0";
+
+    public static final String EDIT_CONFIG_URL = "/config/editConfig";
 
 }

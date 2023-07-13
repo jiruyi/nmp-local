@@ -5,49 +5,40 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 数据采集业务上报配置表
+ * @author   hexu
+ * @date   2023-07-13
+ */
 @Data
-public class NmplConfigVo implements Serializable {
+public class NmplReportBusinessVo implements Serializable {
 
-    private static final long serialVersionUID = -2288406664669678585L;
+
+    private static final long serialVersionUID = -7733674600232894353L;
     /**
      * 主键
      */
     private Long id;
 
     /**
-     * 系统类型 01:接入基站 02:边界基站 11:密钥中心 20:数据采集
+     * 业务名称
      */
-    private String deviceType;
+    private String businessName;
 
     /**
-     * 配置项名称
+     * 业务编码
      */
-    private String configName;
+    private String businessCode;
 
     /**
-     * 配置编码
+     * 业务配置值
      */
-    private String configCode;
-
-    /**
-     * 配置值
-     */
-    private String configValue;
+    private String businessValue;
 
     /**
      * 默认值
      */
     private String defaultValue;
-
-    /**
-     * 单位
-     */
-    private String unit;
-
-    /**
-     * 状态 1同步 0 未同步
-     */
-    private Byte status;
 
     /**
      * 创建时间
@@ -73,9 +64,4 @@ public class NmplConfigVo implements Serializable {
      * 状态 true:存在(1)  false:删除(0)
      */
     private Boolean isExist;
-
-    /**
-     * 备注
-     */
-    private String remark;
 }

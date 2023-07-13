@@ -7,6 +7,8 @@ import com.matrictime.network.dao.domain.AlarmDataDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.AlarmInfo;
+import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.NmplConfigVo;
 import com.matrictime.network.util.DateUtils;
 import com.matrictime.network.util.FileHahUtil;
 import com.matrictime.network.util.HttpClientUtil;
@@ -84,35 +86,35 @@ public class AsyncService{
 
 
     @Async("taskExecutor")
-    public Future<Map<String,List<String>>> httpSyncConfig(List<Map<String, String>> list) {
+    public Future<Map<String,List<String>>> httpSyncConfig(List<Map<String, Object>> list) {
 
         Map<String,List<String>> result = new HashMap<>();
         List<String> successIds = new ArrayList<>(list.size());
         List<String> failIds = new ArrayList<>();
         String deviceId = "";
         try {
-            for (Map<String,String> map : list){
+            for (Map<String,Object> map : list){
                 log.info("AsyncService.httpSyncConfig map:{},isremote:{}",JSONObject.toJSONString(map),isremote);
-                deviceId = map.get(KEY_DEVICE_ID);
-                String configCode = map.get(KEY_CONFIG_CODE);
+                deviceId = (String) map.get(KEY_DEVICE_ID);
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put(KEY_CONFIG_CODE,configCode);
-                jsonReq.put(KEY_CONFIG_VALUE,map.get(KEY_CONFIG_VALUE));
-                jsonReq.put(KEY_UNIT,map.get(KEY_UNIT));
+                jsonReq.put(KEY_EDIT_TYPE,map.get(KEY_EDIT_TYPE));
+                jsonReq.put(KEY_CONFIGVOS,map.get(KEY_EDIT_TYPE));
+                jsonReq.put(KEY_DEVICE_TYPE,map.get(KEY_DEVICE_TYPE));
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
                     if (map.containsKey(KEY_URL)){
                         String post = "";
                         if (isremote == 1){
-                            post = HttpClientUtil.post(map.get(KEY_URL), jsonReq.toJSONString());
+                            post = HttpClientUtil.post((String) map.get(KEY_URL), jsonReq.toJSONString());
                         }else {
-                            post = "{\"isSuccess\":true}";
+                            Result tempResult = new Result(true,"");
+                            post = JSONObject.toJSONString(tempResult);
                         }
                         log.info("AsyncService.httpSyncConfig result deviceId:{},req:{},post:{}",deviceId,jsonReq.toJSONString(),post);
-                        JSONObject jsonObject = JSONObject.parseObject(post);
-                        if (jsonObject != null && jsonObject.get(KEY_IS_SUCCESS) instanceof Boolean){
-                            flag = (Boolean) jsonObject.get(KEY_IS_SUCCESS);
+                        Result postResult = JSONObject.parseObject(post, Result.class);
+                        if (postResult != null && postResult.isSuccess()){
+                            flag = postResult.isSuccess();
                         }
                     }
                 }catch (Exception e){

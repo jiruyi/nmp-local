@@ -141,6 +141,8 @@ public class DataConstants {
 
     public static final String NMPL_OUTLINE_PC_INFO = "nmpl_outline_pc_info";
 
+    public static final String NMPL_CONFIG = "nmpl_config";
+
 
     /**
      * netmanage url

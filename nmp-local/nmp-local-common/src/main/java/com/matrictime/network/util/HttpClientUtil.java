@@ -373,7 +373,6 @@ public class HttpClientUtil {
         sb.append(ip);
         sb.append(DataConstants.KEY_SPLIT);
         sb.append(port);
-        sb.append(DataConstants.KEY_SLASH);
         sb.append(path);
         return sb.toString();
     }

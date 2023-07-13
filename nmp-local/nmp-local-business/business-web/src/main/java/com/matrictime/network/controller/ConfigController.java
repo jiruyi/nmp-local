@@ -48,7 +48,7 @@ public class ConfigController {
 
 
     /**
-     * 查询接口（支持分页查询）
+     * 系统设置查询接口（支持分页查询）
      * @author hexu
      * @param req
      * @return
@@ -67,7 +67,7 @@ public class ConfigController {
 
 
     /**
-     * 恢复默认接口（支持全量恢复,同时需要同步数据）
+     * 恢复默认接口（支持全量恢复）
      * @author hexu
      * @param req
      * @return
@@ -99,6 +99,40 @@ public class ConfigController {
             return  configService.syncConfig(req);
         }catch (Exception e){
             log.error("ConfigController.syncConfig exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 数据采集参数配置查询
+     * @return
+     */
+    @RequestMapping (value = "/queryConfigByPages",method = RequestMethod.POST)
+    @SystemLog(opermodul = "配置模块",operDesc = "数据采集参数配置查询",operType = "查询")
+    @RequiresPermissions("sys:parm:query")
+    public Result<QueryDataCollectResp> queryDataCollect(){
+        try {
+            return configService.queryDataCollect();
+        }catch (Exception e){
+            log.error("ConfigController.queryDataCollect exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 恢复数据采集上报业务配置接口（支持全量恢复）
+     * @author hexu
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/resetDataBusinessConfig",method = RequestMethod.POST)
+    @SystemLog(opermodul = "配置模块",operDesc = "恢复数据采集上报业务配置接口",operType = "恢复默认",operLevl = "2")
+    @RequiresPermissions("sys:parm:reset")
+    public Result<ResetDataBusinessConfigResp> resetDataBusinessConfig(@RequestBody ResetDataBusinessConfigReq req){
+        try {
+            return  configService.resetDataBusinessConfig(req);
+        }catch (Exception e){
+            log.error("ConfigController.resetDataBusinessConfig exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

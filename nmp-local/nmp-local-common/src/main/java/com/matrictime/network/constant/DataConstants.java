@@ -68,6 +68,9 @@ public class DataConstants {
     public static final String EDIT_RANGE_PART = "1";
     public static final String EDIT_RANGE_ALL = "2";
 
+    public static final String CONFIG_RANGE_SINGLE = "1";
+    public static final String CONFIG_RANGE_ALL = "2";
+
     public static final boolean IS_EXIST = true;
     public static final boolean IS_NOT_EXIST = false;
 
