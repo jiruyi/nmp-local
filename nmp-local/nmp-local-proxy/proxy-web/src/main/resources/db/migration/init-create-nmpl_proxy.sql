@@ -228,6 +228,8 @@ CREATE TABLE IF NOT EXISTS `nmpl_outline_pc_info` (
     `update_user` varchar(20) DEFAULT NULL COMMENT '修改人',
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '修改时间',
     `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+    `swing_in` tinyint(1) DEFAULT '1' COMMENT '是否摆入',
+    `swing_out` tinyint(1) DEFAULT '1' COMMENT '是否摆出',
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='一体机信息表';
 

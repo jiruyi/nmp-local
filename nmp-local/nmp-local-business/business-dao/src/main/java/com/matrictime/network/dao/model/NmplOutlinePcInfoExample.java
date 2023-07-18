@@ -764,6 +764,126 @@ public class NmplOutlinePcInfoExample {
             addCriterion("is_exist not between", value1, value2, "isExist");
             return (Criteria) this;
         }
+
+        public Criteria andSwingInIsNull() {
+            addCriterion("swing_in is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInIsNotNull() {
+            addCriterion("swing_in is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInEqualTo(Boolean value) {
+            addCriterion("swing_in =", value, "swingIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInNotEqualTo(Boolean value) {
+            addCriterion("swing_in <>", value, "swingIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInGreaterThan(Boolean value) {
+            addCriterion("swing_in >", value, "swingIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("swing_in >=", value, "swingIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInLessThan(Boolean value) {
+            addCriterion("swing_in <", value, "swingIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInLessThanOrEqualTo(Boolean value) {
+            addCriterion("swing_in <=", value, "swingIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInIn(List<Boolean> values) {
+            addCriterion("swing_in in", values, "swingIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInNotIn(List<Boolean> values) {
+            addCriterion("swing_in not in", values, "swingIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInBetween(Boolean value1, Boolean value2) {
+            addCriterion("swing_in between", value1, value2, "swingIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingInNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("swing_in not between", value1, value2, "swingIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutIsNull() {
+            addCriterion("swing_out is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutIsNotNull() {
+            addCriterion("swing_out is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutEqualTo(Boolean value) {
+            addCriterion("swing_out =", value, "swingOut");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutNotEqualTo(Boolean value) {
+            addCriterion("swing_out <>", value, "swingOut");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutGreaterThan(Boolean value) {
+            addCriterion("swing_out >", value, "swingOut");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("swing_out >=", value, "swingOut");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutLessThan(Boolean value) {
+            addCriterion("swing_out <", value, "swingOut");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutLessThanOrEqualTo(Boolean value) {
+            addCriterion("swing_out <=", value, "swingOut");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutIn(List<Boolean> values) {
+            addCriterion("swing_out in", values, "swingOut");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutNotIn(List<Boolean> values) {
+            addCriterion("swing_out not in", values, "swingOut");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutBetween(Boolean value1, Boolean value2) {
+            addCriterion("swing_out between", value1, value2, "swingOut");
+            return (Criteria) this;
+        }
+
+        public Criteria andSwingOutNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("swing_out not between", value1, value2, "swingOut");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

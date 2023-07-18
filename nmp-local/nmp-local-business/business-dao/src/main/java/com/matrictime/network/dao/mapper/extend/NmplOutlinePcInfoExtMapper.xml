@@ -15,11 +15,11 @@
 
     <insert id="batchInsert" parameterType="com.matrictime.network.dao.model.NmplOutlinePcInfo">
         insert into nmpl_outline_pc_info (device_id, device_name,
-                                          remark, create_user,station_network_id
+                                          remark, create_user,station_network_id,swing_in, swing_out
         ) values
         <foreach collection ="list" item="pc" separator =",">
             (#{pc.deviceId,jdbcType=VARCHAR},#{pc.deviceName,jdbcType=VARCHAR}, #{pc.remark,jdbcType=VARCHAR},
-             #{pc.createUser,jdbcType=VARCHAR},#{pc.stationNetworkId,jdbcType=VARCHAR})
+             #{pc.createUser,jdbcType=VARCHAR},#{pc.stationNetworkId,jdbcType=VARCHAR},#{pc.swingIn,jdbcType=BIT}, #{pc.swingOut,jdbcType=BIT})
         </foreach >
     </insert>
 
