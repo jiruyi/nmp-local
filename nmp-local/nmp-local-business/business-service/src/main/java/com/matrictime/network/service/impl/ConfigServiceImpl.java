@@ -560,10 +560,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 for (NmplBaseStationInfo info:stationInfos){
                     Map<String,Object> httpParam = new HashMap<>(8);
                     httpParam.put(KEY_CONFIGVOS, configVos);
-                    httpParam.put(KEY_EDIT_TYPE, EDIT_TYPE_UPD);
                     httpParam.put(KEY_DEVICE_TYPE, req.getDeviceType());
                     httpParam.put(KEY_DEVICE_ID,info.getStationId());
-                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),proxyPort,proxyPath+EDIT_CONFIG_URL));
+                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),proxyPort,proxyPath+SYNC_CONFIG_URL));
                     httpList.add(httpParam);
                 }
             }
@@ -587,10 +586,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 for (NmplDeviceInfo info:deviceInfos){
                     Map<String,Object> httpParam = new HashMap<>(8);
                     httpParam.put(KEY_CONFIGVOS, configVos);
-                    httpParam.put(KEY_EDIT_TYPE, EDIT_TYPE_UPD);
                     httpParam.put(KEY_DEVICE_TYPE, req.getDeviceType());
                     httpParam.put(KEY_DEVICE_ID,info.getDeviceId());
-                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),proxyPort,proxyPath+EDIT_CONFIG_URL));
+                    httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),proxyPort,proxyPath+SYNC_CONFIG_URL));
                     httpList.add(httpParam);
                 }
             }

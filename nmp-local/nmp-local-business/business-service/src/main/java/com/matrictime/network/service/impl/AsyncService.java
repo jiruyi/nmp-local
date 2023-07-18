@@ -98,7 +98,6 @@ public class AsyncService{
                 log.info("AsyncService.httpSyncConfig map:{},isremote:{}",JSONObject.toJSONString(map),isremote);
                 deviceId = (String) map.get(KEY_DEVICE_ID);
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put(KEY_EDIT_TYPE,map.get(KEY_EDIT_TYPE));
                 jsonReq.put(KEY_CONFIGVOS, map.get(KEY_CONFIGVOS));
                 jsonReq.put(KEY_DEVICE_TYPE,map.get(KEY_DEVICE_TYPE));
                 boolean flag = false;

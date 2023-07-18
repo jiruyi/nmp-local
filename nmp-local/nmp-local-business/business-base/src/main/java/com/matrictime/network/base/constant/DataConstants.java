@@ -260,4 +260,6 @@ public class DataConstants {
 
     public static final String EDIT_CONFIG_URL = "/config/editConfig";
 
+    public static final String SYNC_CONFIG_URL = "/config/syncConfig";
+
 }
