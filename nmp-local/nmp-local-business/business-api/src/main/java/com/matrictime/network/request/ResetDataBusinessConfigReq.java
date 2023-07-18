@@ -10,7 +10,7 @@ public class ResetDataBusinessConfigReq implements Serializable {
 
     private static final long serialVersionUID = -1371604359499355984L;
     /**
-     * 操作数据范围（1：非全量 3：全量）
+     * 操作数据范围（1：非全量 2：全量）
      */
     private String editRange;
 

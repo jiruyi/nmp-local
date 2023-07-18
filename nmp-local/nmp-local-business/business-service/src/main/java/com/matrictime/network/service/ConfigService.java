@@ -49,5 +49,11 @@ public interface ConfigService {
      */
     Result<ResetDataBusinessConfigResp> resetDataBusinessConfig(ResetDataBusinessConfigReq req);
 
+    /**
+     * 编辑上报业务配置
+     * @param req
+     * @return
+     */
+    Result editDataBusinessConfig(EditDataBusinessConfigReq req);
 
 }

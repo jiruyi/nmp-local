@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.domain.AlarmDataDomainService;
@@ -98,7 +99,7 @@ public class AsyncService{
                 deviceId = (String) map.get(KEY_DEVICE_ID);
                 JSONObject jsonReq = new JSONObject();
                 jsonReq.put(KEY_EDIT_TYPE,map.get(KEY_EDIT_TYPE));
-                jsonReq.put(KEY_CONFIGVOS,map.get(KEY_EDIT_TYPE));
+                jsonReq.put(KEY_CONFIGVOS, map.get(KEY_CONFIGVOS));
                 jsonReq.put(KEY_DEVICE_TYPE,map.get(KEY_DEVICE_TYPE));
                 boolean flag = false;
                 try{
@@ -112,9 +113,9 @@ public class AsyncService{
                             post = JSONObject.toJSONString(tempResult);
                         }
                         log.info("AsyncService.httpSyncConfig result deviceId:{},req:{},post:{}",deviceId,jsonReq.toJSONString(),post);
-                        Result postResult = JSONObject.parseObject(post, Result.class);
-                        if (postResult != null && postResult.isSuccess()){
-                            flag = postResult.isSuccess();
+                        JSONObject jsonObject = JSONObject.parseObject(post);
+                        if (jsonObject != null && jsonObject.containsKey(SUCCESS_MSG)){
+                            flag = (Boolean) jsonObject.get(SUCCESS_MSG);
                         }
                     }
                 }catch (Exception e){

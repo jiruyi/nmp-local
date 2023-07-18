@@ -46,10 +46,8 @@ public class ConfigController {
         }
     }
 
-
     /**
      * 系统设置查询接口（支持分页查询）
-     * @author hexu
      * @param req
      * @return
      */
@@ -107,7 +105,7 @@ public class ConfigController {
      * 数据采集参数配置查询
      * @return
      */
-    @RequestMapping (value = "/queryConfigByPages",method = RequestMethod.POST)
+    @RequestMapping (value = "/queryDataCollect",method = RequestMethod.POST)
     @SystemLog(opermodul = "配置模块",operDesc = "数据采集参数配置查询",operType = "查询")
     @RequiresPermissions("sys:parm:query")
     public Result<QueryDataCollectResp> queryDataCollect(){
@@ -133,6 +131,24 @@ public class ConfigController {
             return  configService.resetDataBusinessConfig(req);
         }catch (Exception e){
             log.error("ConfigController.resetDataBusinessConfig exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 编辑上报业务配置
+     * @author hexu
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/editDataBusinessConfig",method = RequestMethod.POST)
+    @SystemLog(opermodul = "配置模块",operDesc = "编辑上报业务配置记录",operType = "编辑",operLevl = "2")
+    @RequiresPermissions("sys:parm:update")
+    public Result editDataBusinessConfig(@RequestBody EditDataBusinessConfigReq req){
+        try {
+            return  configService.editDataBusinessConfig(req);
+        }catch (Exception e){
+            log.error("ConfigController.editDataBusinessConfig exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

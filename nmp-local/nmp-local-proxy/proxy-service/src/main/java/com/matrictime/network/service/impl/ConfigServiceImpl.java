@@ -21,9 +21,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.matrictime.network.base.constant.DataConstants.NMPL_CONFIG;
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 import static com.matrictime.network.constant.DataConstants.SYSTEM_NM;
 
 
@@ -56,7 +59,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             switch (req.getEditType()){
                 // 批量插入（暂未使用）
                 case DataConstants.EDIT_TYPE_ADD:
-                    for (NmplConfigVo vo : req.getNmplConfigVos()){
+                    for (NmplConfigVo vo : req.getConfigVos()){
                         NmplConfig config = new NmplConfig();
                         BeanUtils.copyProperties(vo,config);
                         nmplConfigMapper.insertSelective(config);
@@ -64,15 +67,37 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                     break;
                 //批量修改
                 case DataConstants.EDIT_TYPE_UPD:
-                    for (NmplConfigVo vo : req.getNmplConfigVos()){
+                    List<NmplConfigVo> configVos = req.getConfigVos();
+                    List<Long> voIds = new ArrayList<>();
+                    boolean addFlag = false;
+                    boolean updateFlag = false;
+                    for (NmplConfigVo voId : configVos){
+                        voIds.add(voId.getId());
+                    }
+                    NmplConfigExample configExample = new NmplConfigExample();
+                    configExample.createCriteria().andIdIn(voIds).andIsExistEqualTo(IS_EXIST);
+                    List<NmplConfig> localConfigs = nmplConfigMapper.selectByExample(configExample);
+                    for (NmplConfigVo vo : configVos){
                         // 校验id是否为空
                         if (vo.getId() == null){
-                            throw new SystemException(ErrorCode.PARAM_IS_NULL, "nmplConfigVos.id"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                            throw new SystemException(ErrorCode.PARAM_IS_NULL, "configVos.id"+ErrorMessageContants.PARAM_IS_NULL_MSG);
                         }
-                        NmplConfig config = new NmplConfig();
-                        BeanUtils.copyProperties(vo,config);
-                        config.setUpdateTime(createTime);
-                        nmplConfigMapper.updateByPrimaryKeySelective(config);
+                        for (NmplConfig localVo:localConfigs){
+                            if (vo.getId().compareTo(localVo.getId()) == 0 &&
+                                (!vo.getConfigValue().equals(localVo.getConfigValue()) ||
+                                !vo.getDefaultValue().equals(localVo.getDefaultValue()) ||
+                                !vo.getUnit().equals(localVo.getUnit()))){
+                                NmplConfig config = new NmplConfig();
+                                BeanUtils.copyProperties(vo,config);
+                                config.setUpdateTime(createTime);
+                                nmplConfigMapper.updateByPrimaryKeySelective(config);
+                            }else {
+                                NmplConfig config = new NmplConfig();
+                                BeanUtils.copyProperties(vo,config);
+                                config.setUpdateTime(createTime);
+                                nmplConfigMapper.insert(config);
+                            }
+                        }
                     }
                     // 通知对应设备信息修改表
                     updateInfoService.updateInfo(req.getDeviceType(),NMPL_CONFIG,req.getEditType(),SYSTEM_NM,createTime);
@@ -100,7 +125,6 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     }
 
 
-
     private void checkEditConfigParam(EditConfigReq req) throws Exception{
         // 校验操作类型入参是否合法
         if (ParamCheckUtil.checkVoStrBlank(req.getEditType())){
@@ -108,8 +132,8 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
         }
         // 校验操作类型为新增时入参是否合法
         if (DataConstants.EDIT_TYPE_ADD.equals(req.getEditType()) || DataConstants.EDIT_TYPE_UPD.equals(req.getEditType())){
-            if (CollectionUtils.isEmpty(req.getNmplConfigVos())){
-                throw new Exception("nmplConfigVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            if (CollectionUtils.isEmpty(req.getConfigVos())){
+                throw new Exception("configVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
         }
         // 校验操作类型为删除时入参是否合法

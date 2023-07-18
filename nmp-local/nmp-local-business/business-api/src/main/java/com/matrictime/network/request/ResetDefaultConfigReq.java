@@ -10,7 +10,7 @@ public class ResetDefaultConfigReq implements Serializable {
     private static final long serialVersionUID = -5288412689888863509L;
 
     /**
-     * 操作数据范围（1：非全量 3：全量）
+     * 操作数据范围（1：非全量 2：全量）
      */
     private String editRange;
 

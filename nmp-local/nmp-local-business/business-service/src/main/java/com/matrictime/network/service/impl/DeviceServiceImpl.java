@@ -203,19 +203,16 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         try {
             DeviceResponse deviceResponse = new DeviceResponse();
             if (ParamCheckUtil.checkVoStrBlank(deviceInfoRequest.getDeviceType())){
-                log.info("DeviceServiceImpl.selectActiveDevice 接口异常,DeviceType"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
-                result.setErrorMsg("系统异常，请稍后再试");
-                result.setSuccess(false);
-                return result;
+                throw new Exception("DeviceType"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             deviceResponse.setDeviceInfoVos(deviceDomainService.selectActiveDevice(deviceInfoRequest));
             result.setResultObj(deviceResponse);
             result.setSuccess(true);
         }catch (SystemException e){
-            log.info("设备查询异常",e.getMessage());
+            log.info("DeviceServiceImpl.selectActiveDevice 接口异常:{}",e.getMessage());
             result = failResult(e);
         }catch (Exception e){
-            log.error("设备查询异常：{}",e.getMessage());
+            log.error("DeviceServiceImpl.selectActiveDevice 接口异常:{}",e.getMessage());
             result = failResult("");
         }
         return result;

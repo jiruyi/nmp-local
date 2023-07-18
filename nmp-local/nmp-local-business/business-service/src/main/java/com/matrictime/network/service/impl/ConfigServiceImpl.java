@@ -175,6 +175,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
      * @return
      */
     @Override
+    @Transactional
     public Result<ResetDefaultConfigResp> resetDefaultConfig(ResetDefaultConfigReq req) {
         Result result;
         try {
@@ -204,7 +205,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 // 全量恢复默认
                 case DataConstants.EDIT_RANGE_ALL:
                     NmplConfigExample example = new NmplConfigExample();
-                    example.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andIsExistEqualTo(IS_EXIST);
+                    example.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andConfigCodeNotEqualTo(dataSwitch).andIsExistEqualTo(IS_EXIST);
                     List<NmplConfig> nmplConfigs = nmplConfigMapper.selectByExample(example);
                     if (!CollectionUtils.isEmpty(nmplConfigs)){
                         for (NmplConfig dto : nmplConfigs){
@@ -446,9 +447,66 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
         return result;
     }
 
+    /**
+     * 编辑上报业务配置
+     * @param req
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result<EditConfigResp> editDataBusinessConfig(EditDataBusinessConfigReq req) {
+        Result result;
+
+        try {
+            EditConfigResp resp = null;
+            // check param is legal
+            checkEditDataBusinessConfigParam(req);
+            switch (req.getEditType()){
+                // 批量插入（暂未使用）
+                case DataConstants.EDIT_TYPE_ADD:
+                    for (NmplReportBusinessVo vo : req.getNmplReportBusinessVos()){
+                        NmplReportBusiness reportBusiness = new NmplReportBusiness();
+                        BeanUtils.copyProperties(vo,reportBusiness);
+                        nmplReportBusinessMapper.insertSelective(reportBusiness);
+                    }
+                    break;
+                //批量修改
+                case DataConstants.EDIT_TYPE_UPD:
+                    for (NmplReportBusinessVo vo : req.getNmplReportBusinessVos()){
+                        // 校验id是否为空
+                        if (vo.getId() == null){
+                            throw new Exception("nmplReportBusinessVo.id"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                        }
+                        NmplReportBusiness reportBusiness = new NmplReportBusiness();
+                        BeanUtils.copyProperties(vo,reportBusiness);
+                        nmplReportBusinessMapper.updateByPrimaryKeySelective(reportBusiness);
+                    }
+                    break;
+                // 批量删除（暂时未使用）
+                case DataConstants.EDIT_TYPE_DEL:
+                    for (Long id : req.getDelIds()){
+                        nmplReportBusinessMapper.deleteByPrimaryKey(id);
+                    }
+                    break;
+                default:
+                    throw new Exception("EditType"+ PARAM_IS_UNEXPECTED_MSG);
+            }
+
+            result = buildResult(resp);
+        }catch (SystemException e){
+            log.error("ConfigServiceImpl.editDataBusinessConfig SystemException:{}",e.getMessage());
+            result = failResult(e.getCode(),e.getMessage());
+        }catch (Exception e){
+            log.error("ConfigServiceImpl.editDataBusinessConfig Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+
+        return result;
+    }
+
     private List<Map<String,Object>> getHttpList(SyncConfigReq req) throws Exception{
         List<Map<String,Object>> httpList = new ArrayList<>();
-        Map<String,Object> httpParam = new HashMap<>(8);
+
         List<NmplConfigVo> configVos = new ArrayList<>();
         // 根据配置同步范围查询配置信息
         switch (req.getConfigRange()){
@@ -475,11 +533,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             default:
                 throw new Exception("configRange"+PARAM_IS_UNEXPECTED_MSG);
         }
-        if (!CollectionUtils.isEmpty(configVos)){
-            httpParam.put(KEY_CONFIGVOS, JSONObject.toJSONString(configVos));
-            httpParam.put(KEY_EDIT_TYPE, EDIT_TYPE_UPD);
-            httpParam.put(KEY_DEVICE_TYPE, req.getDeviceType());
-        }else {// 没有找到配置信息直接跳出方法
+        if (CollectionUtils.isEmpty(configVos)){// 没有找到配置信息直接跳出方法
             throw new SystemException(ErrorCode.SYSTEM_ERROR,DO_NOT_GET_CONFIG);
         }
 
@@ -504,6 +558,10 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
 
             if (!CollectionUtils.isEmpty(stationInfos)){
                 for (NmplBaseStationInfo info:stationInfos){
+                    Map<String,Object> httpParam = new HashMap<>(8);
+                    httpParam.put(KEY_CONFIGVOS, configVos);
+                    httpParam.put(KEY_EDIT_TYPE, EDIT_TYPE_UPD);
+                    httpParam.put(KEY_DEVICE_TYPE, req.getDeviceType());
                     httpParam.put(KEY_DEVICE_ID,info.getStationId());
                     httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),proxyPort,proxyPath+EDIT_CONFIG_URL));
                     httpList.add(httpParam);
@@ -527,6 +585,10 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             }
             if (!CollectionUtils.isEmpty(deviceInfos)){
                 for (NmplDeviceInfo info:deviceInfos){
+                    Map<String,Object> httpParam = new HashMap<>(8);
+                    httpParam.put(KEY_CONFIGVOS, configVos);
+                    httpParam.put(KEY_EDIT_TYPE, EDIT_TYPE_UPD);
+                    httpParam.put(KEY_DEVICE_TYPE, req.getDeviceType());
                     httpParam.put(KEY_DEVICE_ID,info.getDeviceId());
                     httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),proxyPort,proxyPath+EDIT_CONFIG_URL));
                     httpList.add(httpParam);
@@ -571,6 +633,24 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
         if (DataConstants.EDIT_TYPE_ADD.equals(req.getEditType()) || DataConstants.EDIT_TYPE_UPD.equals(req.getEditType())){
             if (CollectionUtils.isEmpty(req.getNmplConfigVos())){
                 throw new Exception("nmplConfigVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+        }
+        // 校验操作类型为删除时入参是否合法
+        if (DataConstants.EDIT_TYPE_DEL.equals(req.getEditType()) && CollectionUtils.isEmpty(req.getDelIds())){
+            throw new Exception("delIds"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+
+    private void checkEditDataBusinessConfigParam(EditDataBusinessConfigReq req) throws Exception{
+        // 校验操作类型入参是否合法
+        if (ParamCheckUtil.checkVoStrBlank(req.getEditType())){
+            throw new Exception("editType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+        // 校验操作类型为新增时入参是否合法
+        if (DataConstants.EDIT_TYPE_ADD.equals(req.getEditType()) || DataConstants.EDIT_TYPE_UPD.equals(req.getEditType())){
+            if (CollectionUtils.isEmpty(req.getNmplReportBusinessVos())){
+                throw new Exception("nmplReportBusinessVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
         }
         // 校验操作类型为删除时入参是否合法
