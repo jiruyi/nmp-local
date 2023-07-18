@@ -166,5 +166,14 @@ public class ConfigController {
     }
 
 
-
+    /**
+     * 手动上报业务数据
+     * @author zhangyunjie
+     * @return
+     */
+    @RequestMapping (value = "/reportBusinessData",method = RequestMethod.POST)
+    @SystemLog(opermodul = "配置模块",operDesc = "手动上报业务数据",operType = "上报")
+    public Result reportBusinessData(){
+        return  configurationService.reportBusinessData();
+    }
 }

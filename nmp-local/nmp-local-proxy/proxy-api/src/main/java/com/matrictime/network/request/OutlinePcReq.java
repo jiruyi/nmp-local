@@ -59,4 +59,14 @@ public class OutlinePcReq extends BaseRequest{
     private Date startTime;
 
     private Date endTime;
+
+    /**
+     * 是否摆入
+     */
+    private Boolean swingIn;
+
+    /**
+     * 是否摆出
+     */
+    private Boolean swingOut;
 }

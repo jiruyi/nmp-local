@@ -36,6 +36,12 @@ public class CsvUtils {
                 if(rows.length>=3){
                     nmplOutlinePcInfo.setRemark(rows[2]);
                 }
+                if(rows.length>=4){
+                    nmplOutlinePcInfo.setSwingIn(Boolean.valueOf(rows[3]));
+                }
+                if(rows.length>=5){
+                    nmplOutlinePcInfo.setSwingOut(Boolean.valueOf(rows[4]));
+                }
                 nmplOutlinePcInfo.setDeviceId(SnowFlake.nextId_String());
                 nmplOutlinePcInfo.setCreateUser(user.getNickName());
                 list.add(nmplOutlinePcInfo);
@@ -82,27 +88,7 @@ public class CsvUtils {
         return list;
     }
 
-//    public static String[] getStringByInputStream(File file) {
-////        if (inputStream != null) {
-//            try {
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(new BOMInputStream(new FileInputStream(file))));
-//                //BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
-//                StringBuilder sb = new StringBuilder();
-//                String text = "";
-//                while ((text = reader.readLine()) != null) {
-//                    sb.append(text);
-//                }
-//                String res = sb.toString();
-//                System.out.println(res);
-//                String[] row = res.split(",", -1);
-//               // res.replaceAll("\r","");
-//                return row;
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-////        }
-//        return null;
-//    }
+
 
 
 }
