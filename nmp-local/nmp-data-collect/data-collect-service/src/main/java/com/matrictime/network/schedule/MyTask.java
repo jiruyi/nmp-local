@@ -39,6 +39,7 @@ public class MyTask implements SchedulingConfigurer {
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
+                //业务逻辑
                 System.out.println(format.format(new Date()) + "============222222222222222222222222222222222");
             }
         }, new Trigger() {

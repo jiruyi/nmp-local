@@ -39,6 +39,7 @@ public class ScheduleController {
             //参数校验
             checkParam(scheduleCronReq);
             log.info("updateScheduleCron timer:{}",scheduleCronReq.getConfigValue());
+            //更新定时器的间隔时间毫秒值
             myTask.updateTimer(Long.valueOf(scheduleCronReq.getConfigValue())*1000);
             return new Result();
         }catch (Exception e){
