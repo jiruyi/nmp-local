@@ -16,4 +16,11 @@ public interface ConfigService {
      */
     Result<EditConfigResp> editConfig(EditConfigReq req);
 
+    /**
+     * 配置同步
+     * @param req
+     * @return
+     */
+    Result syncConfig(EditConfigReq req);
+
 }
