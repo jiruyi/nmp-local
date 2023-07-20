@@ -134,6 +134,8 @@ public class DataConstants {
     public static final String KEY_CONFIGVOS = "configVos";
     public static final String KEY_SUCCESS_IDS = "successIds";
     public static final String KEY_FAIL_IDS = "failIds";
+
+    public static final String KEY_CONFIG_IDS = "configIds";
     public static final String KEY_IO_TYPE = "opType";
     public static final String KEY_IS_SUCCESS = "isSuccess";
     public static final String KEY_URL = "url";

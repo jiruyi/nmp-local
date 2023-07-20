@@ -22,7 +22,6 @@ import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +32,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
@@ -146,6 +146,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                         }
                         NmplConfig config = new NmplConfig();
                         BeanUtils.copyProperties(vo,config);
+                        config.setStatus(SYNC_KEY_NO);
                         nmplConfigMapper.updateByPrimaryKeySelective(config);
                     }
                     break;
@@ -193,6 +194,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                             NmplConfig nmplConfig = new NmplConfig();
                             nmplConfig.setId(id);
                             nmplConfig.setConfigValue(tmp.getDefaultValue());
+                            nmplConfig.setStatus(SYNC_KEY_NO);
                             int flag = nmplConfigMapper.updateByPrimaryKeySelective(nmplConfig);
                             if(flag > 0){
                                 successIds.add(id);
@@ -213,6 +215,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                 NmplConfig nmplConfig = new NmplConfig();
                                 nmplConfig.setId(dto.getId());
                                 nmplConfig.setConfigValue(dto.getDefaultValue());
+                                nmplConfig.setStatus(SYNC_KEY_NO);
                                 int flag = nmplConfigMapper.updateByPrimaryKeySelective(nmplConfig);
                                 if(flag > 0){
                                     successIds.add(dto.getId());
@@ -256,11 +259,12 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
 
             List<String> successIds = new ArrayList<>();// 返回成功id列表
             List<String> failIds = new ArrayList<>();// 返回失败id列表
+            Set<String> configIds = new HashSet<>();// 返回成功配置id列表
             List<Map<String,Object>> httpList = getHttpList(req);// 同步多线程处理业务列表
 
             if (!CollectionUtils.isEmpty(httpList)){
                 List<Future> futures = new ArrayList<>();
-                if (httpList.size()>maxPoolSize){
+                if (httpList.size()>maxPoolSize){// 超出最大线程池数量则每个线程池执行多个任务
                     List<List<Map<String, Object>>> splitList = splitList(httpList);
                     for (List<Map<String, Object>> tmpList : splitList){
                         Future<Map<String, List<String>>> mapFuture = asyncService.httpSyncConfig(tmpList);
@@ -288,6 +292,9 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                         if (!CollectionUtils.isEmpty(msg.get(KEY_FAIL_IDS))){
                                             failIds.addAll(msg.get(KEY_FAIL_IDS));
                                         }
+                                        if (!CollectionUtils.isEmpty(msg.get(KEY_CONFIG_IDS))){
+                                            configIds.addAll(msg.get(KEY_CONFIG_IDS));
+                                        }
                                     }
                                 } catch (Exception e) {
                                     log.info("同步配置线程池处理单个批次配置出错！error:{}",e.getMessage());
@@ -300,6 +307,14 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                     }else {
                         break;
                     }
+                }
+                if (!CollectionUtils.isEmpty(configIds)){
+                    List<Long> ids = configIds.stream().map(s->Long.parseLong(s.trim())).collect(Collectors.toList());
+                    NmplConfigExample example = new NmplConfigExample();
+                    example.createCriteria().andIdIn(ids);
+                    NmplConfig nmplConfig = new NmplConfig();
+                    nmplConfig.setStatus(SYNC_KEY_YES);
+                    nmplConfigMapper.updateByExampleSelective(nmplConfig,example);
                 }
             }
 

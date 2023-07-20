@@ -92,6 +92,7 @@ public class AsyncService{
         Map<String,List<String>> result = new HashMap<>();
         List<String> successIds = new ArrayList<>(list.size());
         List<String> failIds = new ArrayList<>();
+        List<String> configIds = new ArrayList<>();
         String deviceId = "";
         try {
             for (Map<String,Object> map : list){
@@ -122,6 +123,10 @@ public class AsyncService{
                 }
                 if (flag){
                     successIds.add(deviceId);
+                    List<NmplConfigVo> configVos = (List<NmplConfigVo>) map.get(KEY_CONFIGVOS);
+                    for (NmplConfigVo vo : configVos){
+                        configIds.add(String.valueOf(vo.getId()));
+                    }
                 }else {
                     failIds.add(deviceId);
                 }
@@ -131,6 +136,7 @@ public class AsyncService{
         }
         result.put(KEY_SUCCESS_IDS,successIds);
         result.put(KEY_FAIL_IDS,failIds);
+        result.put(KEY_CONFIG_IDS,configIds);
         return new AsyncResult<>(result);
     }
 

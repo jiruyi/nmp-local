@@ -109,4 +109,8 @@ public class DataConstants {
 
     public static final String VERSION_SHELL_ERR_KEY = "action_err_msg:";
 
+    public static final Byte SYNC_KEY_YES = 1;
+
+    public static final Byte SYNC_KEY_NO = 0;
+
 }

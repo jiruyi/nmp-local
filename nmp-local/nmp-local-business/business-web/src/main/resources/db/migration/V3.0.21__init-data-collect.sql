@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_config` (
     `config_value` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '配置值',
     `default_value` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '默认值',
     `unit` varchar(32) DEFAULT NULL COMMENT '单位',
-    `status` tinyint DEFAULT '0' COMMENT '状态 1同步 0 未同步',
+    `status` tinyint DEFAULT '1' COMMENT '状态 1同步 0 未同步',
     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
     `create_user` varchar(20) DEFAULT NULL COMMENT '创建人',
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
