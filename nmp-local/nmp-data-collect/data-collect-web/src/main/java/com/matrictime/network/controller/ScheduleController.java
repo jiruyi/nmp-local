@@ -38,9 +38,8 @@ public class ScheduleController {
         try {
             //参数校验
             checkParam(scheduleCronReq);
-            String cron = "*/"+scheduleCronReq.getConfigValue()+" * * * * ?";
-            log.info("updateScheduleCron cron:{}",cron);
-            myTask.updateCron(cron);
+            log.info("updateScheduleCron timer:{}",scheduleCronReq.getConfigValue());
+            myTask.updateTimer(Long.valueOf(scheduleCronReq.getConfigValue())*1000);
             return new Result();
         }catch (Exception e){
             log.error("ScheduleController updateScheduleCron exception:{}", e);
