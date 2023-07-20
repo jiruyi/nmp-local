@@ -53,7 +53,7 @@ public class ConfigurationServiceImpl extends SystemBaseService implements Confi
 
     @Override
     public Result reportBusinessData() {
-        Result result = null;
+        Result result = new Result<>();
         NmplReportBusinessExample nmplReportBusinessExample=  new NmplReportBusinessExample();
         nmplReportBusinessExample.createCriteria().andBusinessValueEqualTo("1");
         List<NmplReportBusiness> nmplReportBusinesses = nmplReportBusinessMapper.selectByExample(nmplReportBusinessExample);
