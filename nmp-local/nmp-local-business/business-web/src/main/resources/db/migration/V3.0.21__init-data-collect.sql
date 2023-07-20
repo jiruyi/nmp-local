@@ -84,6 +84,8 @@ INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `
 INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `is_exist`, `icon`, `permission`, `component`) VALUES ('194', '修改上报信息', '175', '', '0', '2', '1', 'sys:parmDataCollect:modifyConfig', '1', '', '1', '');
 INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `is_exist`, `icon`, `permission`, `component`) VALUES ('195', '恢复默认业务配置', '175', '', '0', '2', '1', 'sys:parmDataCollect:defaultConfig', '1', '', '1', '');
 
+update `nmp_local`.`nmpl_menu` set menu_name = '终端设备认证放号' where menu_id in (126,127);
+
 CREATE PROCEDURE `add_col_homework`()-- 新增一个存储过程
 BEGIN
 	IF not EXISTS (SELECT column_name FROM information_schema.columns WHERE table_name = 'nmpl_outline_pc_info' and column_name = 'swing_in'and TABLE_SCHEMA ='nmp_local')
