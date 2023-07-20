@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -93,6 +94,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             // 根据系统类型（必传）和配置名称（非必传）查询配置列表
             NmplConfigExample configExample = new NmplConfigExample();
             NmplConfigExample.Criteria criteria = configExample.createCriteria();
+            configExample.setOrderByClause("update_time desc");
             criteria.andDeviceTypeEqualTo(req.getDeviceType());
             if (StringUtils.isNotBlank(req.getConfigName())){
                 StringBuffer sb = new StringBuffer(KEY_PERCENT).append(req.getConfigName()).append(KEY_PERCENT);
@@ -140,7 +142,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                     for (NmplConfigVo vo : req.getNmplConfigVos()){
                         // 校验id是否为空
                         if (vo.getId() == null){
-                            throw new SystemException(ErrorCode.PARAM_IS_NULL, "nmplConfigVos.id"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                            throw new Exception("nmplConfigVos.id"+ErrorMessageContants.PARAM_IS_NULL_MSG);
                         }
                         NmplConfig config = new NmplConfig();
                         BeanUtils.copyProperties(vo,config);
@@ -158,12 +160,10 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             }
 
             result = buildResult(resp);
-        }catch (SystemException e){
-            log.error("ConfigServiceImpl.editConfig SystemException:{}",e.getMessage());
-            result = failResult(e.getCode(),e.getMessage());
         }catch (Exception e){
             log.error("ConfigServiceImpl.editConfig Exception:{}",e.getMessage());
             result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return result;
@@ -233,14 +233,11 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             resp.setSuccessIds(successIds);
             resp.setFailIds(failIds);
             result = buildResult(resp);
-        }catch (SystemException e){
-            log.error("ConfigServiceImpl.resetDefaultConfig SystemException:{}",e.getMessage());
-            result = failResult(e.getCode(),e.getMessage());
         }catch (Exception e){
             log.error("ConfigServiceImpl.resetDefaultConfig Exception:{}",e.getMessage());
             result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
-
         return result;
     }
 
@@ -311,12 +308,11 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             result = buildResult(resp);
         }catch (SystemException e){
             log.error("ConfigServiceImpl.syncConfig SystemException:{}",e.getMessage());
-            result = failResult(e.getCode(),e.getMessage());
+            result = failResult(e.getMessage());
         }catch (Exception e){
             log.error("ConfigServiceImpl.syncConfig Exception:{}",e.getMessage());
             result = failResult("");
         }
-
         return result;
     }
 
@@ -332,6 +328,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             QueryDataCollectResp resp = new QueryDataCollectResp();
             // 查询数据采集自动上报基础配置
             NmplConfigExample configExample = new NmplConfigExample();
+            configExample.setOrderByClause("update_time desc");
             NmplConfigExample.Criteria criteria = configExample.createCriteria();
             criteria.andDeviceTypeEqualTo(DeviceTypeEnum.DATA_BASE.getCode()).andIsExistEqualTo(IS_EXIST);
             List<NmplConfig> nmplConfigs = nmplConfigMapper.selectByExample(configExample);
@@ -401,7 +398,6 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                                 successIds.add(id);
                                 continue;
                             }
-
                         }
                         failIds.add(id);
                     }
@@ -436,12 +432,10 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             resp.setSuccessIds(successIds);
             resp.setFailIds(failIds);
             result = buildResult(resp);
-        }catch (SystemException e){
-            log.error("ConfigServiceImpl.resetDefaultConfig SystemException:{}",e.getMessage());
-            result = failResult(e.getCode(),e.getMessage());
         }catch (Exception e){
             log.error("ConfigServiceImpl.resetDefaultConfig Exception:{}",e.getMessage());
             result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return result;
@@ -493,12 +487,10 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             }
 
             result = buildResult(resp);
-        }catch (SystemException e){
-            log.error("ConfigServiceImpl.editDataBusinessConfig SystemException:{}",e.getMessage());
-            result = failResult(e.getCode(),e.getMessage());
         }catch (Exception e){
             log.error("ConfigServiceImpl.editDataBusinessConfig Exception:{}",e.getMessage());
             result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return result;
@@ -553,7 +545,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                     stationInfos = nmplBaseStationInfoMapper.selectByExample(aExample);
                     break;
                 default:
-                    throw new SystemException(ErrorCode.PARAM_EXCEPTION, "editRange"+ PARAM_IS_UNEXPECTED_MSG);
+                    throw new Exception("editRange"+ PARAM_IS_UNEXPECTED_MSG);
             }
 
             if (!CollectionUtils.isEmpty(stationInfos)){
@@ -580,7 +572,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                     deviceInfos = nmplDeviceInfoMapper.selectByExample(aExample);
                     break;
                 default:
-                    throw new SystemException(ErrorCode.PARAM_EXCEPTION, "editRange"+ PARAM_IS_UNEXPECTED_MSG);
+                    throw new Exception("editRange"+ PARAM_IS_UNEXPECTED_MSG);
             }
             if (!CollectionUtils.isEmpty(deviceInfos)){
                 for (NmplDeviceInfo info:deviceInfos){
@@ -696,19 +688,19 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
         }
     }
 
-    private void checkSyncConfigParam(SyncConfigReq req) {
+    private void checkSyncConfigParam(SyncConfigReq req) throws Exception{
         if (ParamCheckUtil.checkVoStrBlank(req.getEditRange())){
-            throw new SystemException(ErrorCode.PARAM_IS_NULL, "editRange"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new Exception("editRange"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (DataConstants.EDIT_RANGE_PART.equals(req.getEditRange())){
             if (req.getConfigId() == null){
-                throw new SystemException(ErrorCode.PARAM_IS_NULL, "configId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                throw new Exception("configId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             if (ParamCheckUtil.checkVoStrBlank(req.getDeviceType())){
-                throw new SystemException(ErrorCode.PARAM_IS_NULL, "deviceType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                throw new Exception("deviceType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
             if (CollectionUtils.isEmpty(req.getDeviceIds())){
-                throw new SystemException(ErrorCode.PARAM_IS_NULL, "deviceIds"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+                throw new Exception("deviceIds"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
         }
     }

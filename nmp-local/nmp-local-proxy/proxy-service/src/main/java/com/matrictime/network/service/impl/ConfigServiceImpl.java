@@ -19,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -94,9 +95,11 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
         }catch (SystemException e){
             log.error("ConfigServiceImpl.editConfig SystemException:{}",e.getMessage());
             result = failResult(e.getCode(),e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }catch (Exception e){
             log.error("ConfigServiceImpl.editConfig Exception:{}",e.getMessage());
             result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return result;
@@ -136,7 +139,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 }else {// 库里不存在则插入
                     NmplConfig addConfig = new NmplConfig();
                     BeanUtils.copyProperties(vo,addConfig);
-                    config.setUpdateTime(createTime);
+                    addConfig.setUpdateTime(createTime);
                     nmplConfigMapper.insert(addConfig);
                     addFlag = true;
                 }
@@ -152,9 +155,11 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
         }catch (SystemException e){
             log.error("ConfigServiceImpl.syncConfig SystemException:{}",e.getMessage());
             result = failResult(e.getCode(),e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }catch (Exception e){
             log.error("ConfigServiceImpl.syncConfig Exception:{}",e.getMessage());
             result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return result;
