@@ -36,4 +36,10 @@ public interface DeviceService {
     Result<CountBaseStationResponse> countBaseStation(DeviceInfoRequest deviceInfoRequest);
 
     Result<Integer> updateConnectCount(BaseStationCountRequest baseStationCountRequest);
+
+    Result<Integer> insertDataBase(DeviceInfoRequest deviceInfoRequest);
+
+    Result<Integer> deleteDataBase(DeviceInfoRequest deviceInfoRequest);
+
+    Result<Integer> updateDataBase(DeviceInfoRequest deviceInfoRequest);
 }

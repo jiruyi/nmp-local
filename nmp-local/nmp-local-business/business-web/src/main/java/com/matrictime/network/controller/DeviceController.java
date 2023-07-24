@@ -3,6 +3,8 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
+import com.matrictime.network.context.RequestContext;
+import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.DeviceInfoRequest;
@@ -287,6 +289,93 @@ public class DeviceController {
             log.info("查询缓存机信息异常:selectCache{}",e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg("查询缓存机信息异常");
+        }
+        return result;
+    }
+
+    /**
+     * 数据采集插入
+     * @param deviceInfoRequest
+     * @return
+     */
+    @RequiresPermissions("sys:datacollect:save")
+    @SystemLog(opermodul = "数据采集管理模块",operDesc = "数据采集插入",operType = "数据采集插入")
+    @RequestMapping(value = "/insertDataBase",method = RequestMethod.POST)
+    @ApiOperation(value = "数据采集接口",notes = "数据采集插入")
+    public Result<Integer> insertDataBase(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            deviceInfoRequest.setDeviceType(com.matrictime.network.enums.DeviceTypeEnum.DATA_BASE.getCode());
+            result = deviceService.insertDataBase(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("数据采集插入异常:insertDataBase{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("数据采集插入异常");
+        }
+        return result;
+    }
+
+    /**
+     * 删除采集删除
+     * @param deviceInfoRequest
+     * @return
+     */
+    @RequiresPermissions("sys:datacollect:delete")
+    @SystemLog(opermodul = "数据采集管理模块",operDesc = "数据采集删除",operType = "数据采集删除")
+    @RequestMapping(value = "/deleteDataBase",method = RequestMethod.POST)
+    @ApiOperation(value = "数据采集接口",notes = "数据采集删除")
+    public Result<Integer> deleteDataBase(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            result = deviceService.deleteDataBase(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("数据采集删除异常:deleteDataBase{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("数据采集删除异常");
+        }
+        return result;
+    }
+
+    /**
+     * 删除采集更新
+     * @param deviceInfoRequest
+     * @return
+     */
+    @RequiresPermissions("sys:datacollect:update")
+    @SystemLog(opermodul = "数据采集管理模块",operDesc = "数据采集更新",operType = "数据采集更新")
+    @RequestMapping(value = "/updateDataBase",method = RequestMethod.POST)
+    @ApiOperation(value = "数据采集接口",notes = "数据采集更新")
+    public Result<Integer> updateDataBase(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            deviceInfoRequest.setDeviceType(com.matrictime.network.enums.DeviceTypeEnum.DATA_BASE.getCode());
+            result = deviceService.updateDataBase(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("数据采集更新异常:updateDataBase{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("数据采集更新异常");
+        }
+        return result;
+    }
+
+    /**
+     * 查询采集设备信息
+     * @param deviceInfoRequest
+     * @return
+     */
+    @RequiresPermissions("sys:datacollect:query")
+    @SystemLog(opermodul = "缓存机管理模块",operDesc = "查询采集设备信息",operType = "查询采集设备信息")
+    @RequestMapping(value = "/selectDataBase",method = RequestMethod.POST)
+    @ApiOperation(value = "查询采集设备信息接口",notes = "查询采集设备信息")
+    public Result<PageInfo> selectDataBase(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<PageInfo> result = new Result<>();
+        try {
+            deviceInfoRequest.setDeviceType(com.matrictime.network.enums.DeviceTypeEnum.DATA_BASE.getCode());
+            result = deviceService.selectDeviceALl(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("查询采集设备信息异常:selectDataBase{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("查询采集设备信息异常");
         }
         return result;
     }

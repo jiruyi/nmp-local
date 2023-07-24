@@ -112,15 +112,11 @@ public class LinkRelationServiceImpl implements LinkRelationService {
     @Override
     public Result<Integer> updateLinkRelation(LinkRelationRequest linkRelationRequest) {
         Result<Integer> result = new Result<>();
-        Date date = new Date();
         try {
             if(!CommonCheckUtil.checkStringLength(linkRelationRequest.getLinkName(),null,100)){
                 return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
             }
             List<LinkRelationVo> list = nmplLinkRelationMapper.query(linkRelationRequest);
-            if(list.get(0).getFollowDeviceId().equals(linkRelationRequest.getFollowDeviceId())){
-                return new Result<>(true,"修改成功");
-            }
             linkRelationRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             int i = linkRelationDomainService.updateLinkRelation(linkRelationRequest);
             if(i == 2){

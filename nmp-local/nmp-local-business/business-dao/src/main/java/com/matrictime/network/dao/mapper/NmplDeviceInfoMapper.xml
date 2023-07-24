@@ -596,7 +596,7 @@
   </select>
   <select id="selectDeviceALl" parameterType="com.matrictime.network.request.DeviceInfoRequest" resultType="com.matrictime.network.modelVo.DeviceInfoVo">
     select device_id,device_name,public_network_ip,public_network_port,station_status,
-    relation_operator_id,nmpl_device_info.remark,nick_name,lan_ip,lan_port,company_name,device_type,
+    relation_operator_id,nmpl_device_info.remark,nick_name,lan_ip,lan_port,company_name,device_type,nmpl_device_info.create_time,
     SUBSTRING_INDEX(station_network_id,'-',-1) as station_network_id
     from nmpl_device_info,nmpl_company_info,nmpl_user
     <where>
