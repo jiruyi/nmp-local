@@ -12,6 +12,8 @@
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="swing_in" jdbcType="BIT" property="swingIn" />
+    <result column="swing_out" jdbcType="BIT" property="swingOut" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -73,7 +75,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, device_id, device_name, station_network_id, remark, create_user, create_time, 
-    update_user, update_time, is_exist
+    update_user, update_time, is_exist, swing_in, swing_out
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplOutlinePcInfoExample" resultMap="BaseResultMap">
     select
@@ -110,11 +112,11 @@
     insert into nmpl_outline_pc_info (id, device_id, device_name, 
       station_network_id, remark, create_user, 
       create_time, update_user, update_time, 
-      is_exist)
+      is_exist, swing_in, swing_out)
     values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{deviceName,jdbcType=VARCHAR}, 
       #{stationNetworkId,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{isExist,jdbcType=BIT})
+      #{isExist,jdbcType=BIT}, #{swingIn,jdbcType=BIT}, #{swingOut,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplOutlinePcInfo">
     insert into nmpl_outline_pc_info
@@ -149,6 +151,12 @@
       <if test="isExist != null">
         is_exist,
       </if>
+      <if test="swingIn != null">
+        swing_in,
+      </if>
+      <if test="swingOut != null">
+        swing_out,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -180,6 +188,12 @@
       </if>
       <if test="isExist != null">
         #{isExist,jdbcType=BIT},
+      </if>
+      <if test="swingIn != null">
+        #{swingIn,jdbcType=BIT},
+      </if>
+      <if test="swingOut != null">
+        #{swingOut,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -222,6 +236,12 @@
       <if test="record.isExist != null">
         is_exist = #{record.isExist,jdbcType=BIT},
       </if>
+      <if test="record.swingIn != null">
+        swing_in = #{record.swingIn,jdbcType=BIT},
+      </if>
+      <if test="record.swingOut != null">
+        swing_out = #{record.swingOut,jdbcType=BIT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -238,7 +258,9 @@
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      is_exist = #{record.isExist,jdbcType=BIT}
+      is_exist = #{record.isExist,jdbcType=BIT},
+      swing_in = #{record.swingIn,jdbcType=BIT},
+      swing_out = #{record.swingOut,jdbcType=BIT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -273,6 +295,12 @@
       <if test="isExist != null">
         is_exist = #{isExist,jdbcType=BIT},
       </if>
+      <if test="swingIn != null">
+        swing_in = #{swingIn,jdbcType=BIT},
+      </if>
+      <if test="swingOut != null">
+        swing_out = #{swingOut,jdbcType=BIT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -286,7 +314,9 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      is_exist = #{isExist,jdbcType=BIT}
+      is_exist = #{isExist,jdbcType=BIT},
+      swing_in = #{swingIn,jdbcType=BIT},
+      swing_out = #{swingOut,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

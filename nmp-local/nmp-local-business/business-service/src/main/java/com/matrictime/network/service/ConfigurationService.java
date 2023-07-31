@@ -8,4 +8,6 @@ public interface ConfigurationService {
 
     Result query(ConfigurationReq configurationReq);
 
+    Result reportBusinessData();
+
 }

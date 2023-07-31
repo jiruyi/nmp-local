@@ -1,12 +1,15 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.domain.AlarmDataDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.AlarmInfo;
+import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.NmplConfigVo;
 import com.matrictime.network.util.DateUtils;
 import com.matrictime.network.util.FileHahUtil;
 import com.matrictime.network.util.HttpClientUtil;
@@ -84,35 +87,35 @@ public class AsyncService{
 
 
     @Async("taskExecutor")
-    public Future<Map<String,List<String>>> httpSyncConfig(List<Map<String, String>> list) {
+    public Future<Map<String,List<String>>> httpSyncConfig(List<Map<String, Object>> list) {
 
         Map<String,List<String>> result = new HashMap<>();
         List<String> successIds = new ArrayList<>(list.size());
         List<String> failIds = new ArrayList<>();
+        List<String> configIds = new ArrayList<>();
         String deviceId = "";
         try {
-            for (Map<String,String> map : list){
+            for (Map<String,Object> map : list){
                 log.info("AsyncService.httpSyncConfig map:{},isremote:{}",JSONObject.toJSONString(map),isremote);
-                deviceId = map.get(KEY_DEVICE_ID);
-                String configCode = map.get(KEY_CONFIG_CODE);
+                deviceId = (String) map.get(KEY_DEVICE_ID);
                 JSONObject jsonReq = new JSONObject();
-                jsonReq.put(KEY_CONFIG_CODE,configCode);
-                jsonReq.put(KEY_CONFIG_VALUE,map.get(KEY_CONFIG_VALUE));
-                jsonReq.put(KEY_UNIT,map.get(KEY_UNIT));
+                jsonReq.put(KEY_CONFIGVOS, map.get(KEY_CONFIGVOS));
+                jsonReq.put(KEY_DEVICE_TYPE,map.get(KEY_DEVICE_TYPE));
                 boolean flag = false;
                 try{
                     // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
                     if (map.containsKey(KEY_URL)){
                         String post = "";
                         if (isremote == 1){
-                            post = HttpClientUtil.post(map.get(KEY_URL), jsonReq.toJSONString());
+                            post = HttpClientUtil.post((String) map.get(KEY_URL), jsonReq.toJSONString());
                         }else {
-                            post = "{\"isSuccess\":true}";
+                            Result tempResult = new Result(true,"");
+                            post = JSONObject.toJSONString(tempResult);
                         }
                         log.info("AsyncService.httpSyncConfig result deviceId:{},req:{},post:{}",deviceId,jsonReq.toJSONString(),post);
                         JSONObject jsonObject = JSONObject.parseObject(post);
-                        if (jsonObject != null && jsonObject.get(KEY_IS_SUCCESS) instanceof Boolean){
-                            flag = (Boolean) jsonObject.get(KEY_IS_SUCCESS);
+                        if (jsonObject != null && jsonObject.containsKey(SUCCESS_MSG)){
+                            flag = (Boolean) jsonObject.get(SUCCESS_MSG);
                         }
                     }
                 }catch (Exception e){
@@ -120,6 +123,10 @@ public class AsyncService{
                 }
                 if (flag){
                     successIds.add(deviceId);
+                    List<NmplConfigVo> configVos = (List<NmplConfigVo>) map.get(KEY_CONFIGVOS);
+                    for (NmplConfigVo vo : configVos){
+                        configIds.add(String.valueOf(vo.getId()));
+                    }
                 }else {
                     failIds.add(deviceId);
                 }
@@ -129,6 +136,7 @@ public class AsyncService{
         }
         result.put(KEY_SUCCESS_IDS,successIds);
         result.put(KEY_FAIL_IDS,failIds);
+        result.put(KEY_CONFIG_IDS,configIds);
         return new AsyncResult<>(result);
     }
 

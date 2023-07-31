@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 离线一体机
  * @author   hexu
- * @date   2022-05-16
+ * @date   2023-07-10
  */
 @Data
 public class NmplOutlinePcInfo {
@@ -59,6 +59,16 @@ public class NmplOutlinePcInfo {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * 是否摆入
+     */
+    private Boolean swingIn;
+
+    /**
+     * 是否摆出
+     */
+    private Boolean swingOut;
 
     public Long getId() {
         return id;
@@ -138,5 +148,21 @@ public class NmplOutlinePcInfo {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public Boolean getSwingIn() {
+        return swingIn;
+    }
+
+    public void setSwingIn(Boolean swingIn) {
+        this.swingIn = swingIn;
+    }
+
+    public Boolean getSwingOut() {
+        return swingOut;
+    }
+
+    public void setSwingOut(Boolean swingOut) {
+        this.swingOut = swingOut;
     }
 }

@@ -131,4 +131,6 @@ public class ErrorMessageContants {
 
 	public static final String RUN_SHELL_EXCEPTION = "运行脚本异常";
 
+	public static final String DO_NOT_GET_CONFIG = "没有找到配置信息";
+
 }

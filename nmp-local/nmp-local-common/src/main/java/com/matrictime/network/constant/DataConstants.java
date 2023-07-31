@@ -68,6 +68,9 @@ public class DataConstants {
     public static final String EDIT_RANGE_PART = "1";
     public static final String EDIT_RANGE_ALL = "2";
 
+    public static final String CONFIG_RANGE_SINGLE = "1";
+    public static final String CONFIG_RANGE_ALL = "2";
+
     public static final boolean IS_EXIST = true;
     public static final boolean IS_NOT_EXIST = false;
 
@@ -105,5 +108,9 @@ public class DataConstants {
     public static final String VERSION_SHELL_RES_FAIL = "fail";
 
     public static final String VERSION_SHELL_ERR_KEY = "action_err_msg:";
+
+    public static final Byte SYNC_KEY_YES = 1;
+
+    public static final Byte SYNC_KEY_NO = 0;
 
 }

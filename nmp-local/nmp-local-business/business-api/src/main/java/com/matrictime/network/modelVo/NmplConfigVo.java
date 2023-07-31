@@ -15,7 +15,7 @@ public class NmplConfigVo implements Serializable {
     private Long id;
 
     /**
-     * 1:基站 2 分发机 3 生成机 4 缓存机
+     * 系统类型 01:接入基站 02:边界基站 11:密钥中心 20:数据采集
      */
     private String deviceType;
 

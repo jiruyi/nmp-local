@@ -228,6 +228,8 @@ CREATE TABLE IF NOT EXISTS `nmpl_outline_pc_info` (
     `update_user` varchar(20) DEFAULT NULL COMMENT '修改人',
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '修改时间',
     `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+    `swing_in` tinyint(1) DEFAULT '1' COMMENT '是否摆入',
+    `swing_out` tinyint(1) DEFAULT '1' COMMENT '是否摆出',
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='一体机信息表';
 
@@ -423,6 +425,33 @@ CREATE TABLE IF NOT EXISTS `nmpl_alarm_info` (
 ALTER TABLE `nmpl_local_base_station_info` add column `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '当前用户数';
 
 ALTER TABLE `nmpl_local_device_info` add column `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '当前用户数';
+
+CREATE TABLE IF NOT EXISTS `nmpl_config` (
+    `id` bigint NOT NULL COMMENT '主键',
+    `device_type` char(2) DEFAULT NULL COMMENT '01:接入基站 02:边界基站 11:密钥中心 20:数据采集',
+    `config_name` varchar(100) DEFAULT NULL COMMENT '配置项名称',
+    `config_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '配置编码',
+    `config_value` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '配置值',
+    `default_value` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '默认值',
+    `unit` varchar(32) DEFAULT NULL COMMENT '单位',
+    `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+    `is_exist` tinyint(1) DEFAULT '1' COMMENT '状态 true:存在(1)  false:删除(0)',
+    `remark` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '备注',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `nmpl_update_info_boundary` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `table_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '更新表名',
+    `operation_type` varchar(8) DEFAULT NULL COMMENT '操作类型：新增:1 修改:2',
+    `create_user` varchar(20) DEFAULT NULL COMMENT '创建人',
+    `create_time` datetime(2) NOT NULL COMMENT '创建时间',
+    `update_user` varchar(20) DEFAULT NULL COMMENT '修改人',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '修改时间',
+    `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='数据更新信息表(边界基站专用)';
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

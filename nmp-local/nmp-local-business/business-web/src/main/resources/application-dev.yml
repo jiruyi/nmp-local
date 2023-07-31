@@ -1,10 +1,10 @@
 server:
   port: 8002
   servlet:
-      context-path: /nmp-local-business
+    context-path: /nmp-local-business
 mybatis:
   config-location: classpath:mybatis/mybatis-config.xml           # mybatis配置文件所在路径
-    
+
 spring:
   application:
    name: nmp-local-business
@@ -37,22 +37,22 @@ spring:
       time-between-eviction-runs-millis: 10000
       min-evictable-idle-time-millis: 30000
       async-init: true
+  flyway:
+    enabled: false
+    baseline-on-migrate: true
+    init-sqls: CREATE DATABASE IF NOT EXISTS `nmp_local` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
   servlet:
     multipart:
       enabled: true
       file-size-threshold: 2KB
       max-file-size: 300MB
       max-request-size: 215MB
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    init-sqls: CREATE DATABASE IF NOT EXISTS `nmp_local` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
   redis:
     database: 0
     host: 192.168.72.14
     port: 6379
     password: 123456
-    timeout: 500
+    timeout: 5000
     lettuce:
       pool:
         max-active: 100
@@ -62,8 +62,9 @@ spring:
   cloud:
     sentinel:
       transport:
-        port: 8720
         dashboard: 127.0.0.1:8090
+    inetutils:
+      ignored-interfaces: [ 'VMware.*' ]
   jackson:
     time-zone: "GMT+8"
     date-format: "yyyy-MM-dd HH:mm:ss"
@@ -73,12 +74,12 @@ spring:
 eureka:
   client: #客户端注册进eureka服务列表内
     service-url:
-       defaultZone: http://127.0.0.1:7002/eureka/
+      defaultZone: http://192.168.72.14:7002/eureka/
   instance:
     instance-id: nmp-local-business
     prefer-ip-address: true     #访问路径可以显示IP地址
- 
-info: 
+
+info:
   app.name: nmp-local-business
   company.name: www.matrictime.com
   build.artifactId: $project.artifactId$
@@ -95,6 +96,8 @@ management:
       show-details: always
     beans:
       enabled: true
+    scheduledtasks:
+      enabled: true
   endpoints:
     web:
       exposure:
@@ -103,4 +106,7 @@ management:
 token:
   timeOut: 12
 thread:
-  maxSize: 500
+  batchMaxSize: 500
+proxy:
+  context-path: /nmp-local-proxy
+  port: 8008

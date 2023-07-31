@@ -54,4 +54,13 @@ public class NmplOutlinePcInfoVo {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+    /**
+     * 是否摆入
+     */
+    private Boolean swingIn;
+
+    /**
+     * 是否摆出
+     */
+    private Boolean swingOut;
 }
