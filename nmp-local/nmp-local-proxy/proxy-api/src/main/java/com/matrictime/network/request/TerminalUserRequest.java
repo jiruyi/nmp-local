@@ -12,6 +12,11 @@ import java.util.Date;
 @Data
 public class TerminalUserRequest implements Serializable {
     /**
+     * 主键
+     */
+    private Long id;
+
+    /**
      * 终端设备Id
      */
     private String terminalNetworkId;
@@ -40,4 +45,9 @@ public class TerminalUserRequest implements Serializable {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 用户类型 01:一体机  02:安全服务器
+     */
+    private String userType;
 }

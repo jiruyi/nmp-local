@@ -6,10 +6,15 @@ import lombok.Data;
 /**
  * 业务心跳
  * @author   xxxx
- * @date   2023-04-19
+ * @date   2023-08-08
  */
 @Data
 public class NmplSystemHeartbeat {
+    /**
+     * 主键
+     */
+    private Long id;
+
     /**
      * 来源Id
      */
@@ -39,6 +44,14 @@ public class NmplSystemHeartbeat {
      * 更新时间
      */
     private Date updateTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getSourceId() {
         return sourceId;

@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NmplTerminalUserExample {
+public class NmplStationConnectCountExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public NmplTerminalUserExample() {
+    public NmplStationConnectCountExample() {
         oredCriteria = new ArrayList<>();
     }
 
@@ -165,273 +165,143 @@ public class NmplTerminalUserExample {
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdIsNull() {
-            addCriterion("terminal_network_id is null");
+        public Criteria andStationIdIsNull() {
+            addCriterion("station_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdIsNotNull() {
-            addCriterion("terminal_network_id is not null");
+        public Criteria andStationIdIsNotNull() {
+            addCriterion("station_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdEqualTo(String value) {
-            addCriterion("terminal_network_id =", value, "terminalNetworkId");
+        public Criteria andStationIdEqualTo(String value) {
+            addCriterion("station_id =", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdNotEqualTo(String value) {
-            addCriterion("terminal_network_id <>", value, "terminalNetworkId");
+        public Criteria andStationIdNotEqualTo(String value) {
+            addCriterion("station_id <>", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdGreaterThan(String value) {
-            addCriterion("terminal_network_id >", value, "terminalNetworkId");
+        public Criteria andStationIdGreaterThan(String value) {
+            addCriterion("station_id >", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdGreaterThanOrEqualTo(String value) {
-            addCriterion("terminal_network_id >=", value, "terminalNetworkId");
+        public Criteria andStationIdGreaterThanOrEqualTo(String value) {
+            addCriterion("station_id >=", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdLessThan(String value) {
-            addCriterion("terminal_network_id <", value, "terminalNetworkId");
+        public Criteria andStationIdLessThan(String value) {
+            addCriterion("station_id <", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdLessThanOrEqualTo(String value) {
-            addCriterion("terminal_network_id <=", value, "terminalNetworkId");
+        public Criteria andStationIdLessThanOrEqualTo(String value) {
+            addCriterion("station_id <=", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdLike(String value) {
-            addCriterion("terminal_network_id like", value, "terminalNetworkId");
+        public Criteria andStationIdLike(String value) {
+            addCriterion("station_id like", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdNotLike(String value) {
-            addCriterion("terminal_network_id not like", value, "terminalNetworkId");
+        public Criteria andStationIdNotLike(String value) {
+            addCriterion("station_id not like", value, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdIn(List<String> values) {
-            addCriterion("terminal_network_id in", values, "terminalNetworkId");
+        public Criteria andStationIdIn(List<String> values) {
+            addCriterion("station_id in", values, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdNotIn(List<String> values) {
-            addCriterion("terminal_network_id not in", values, "terminalNetworkId");
+        public Criteria andStationIdNotIn(List<String> values) {
+            addCriterion("station_id not in", values, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdBetween(String value1, String value2) {
-            addCriterion("terminal_network_id between", value1, value2, "terminalNetworkId");
+        public Criteria andStationIdBetween(String value1, String value2) {
+            addCriterion("station_id between", value1, value2, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andTerminalNetworkIdNotBetween(String value1, String value2) {
-            addCriterion("terminal_network_id not between", value1, value2, "terminalNetworkId");
+        public Criteria andStationIdNotBetween(String value1, String value2) {
+            addCriterion("station_id not between", value1, value2, "stationId");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdIsNull() {
-            addCriterion("parent_device_id is null");
+        public Criteria andCurrentConnectCountIsNull() {
+            addCriterion("current_connect_count is null");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdIsNotNull() {
-            addCriterion("parent_device_id is not null");
+        public Criteria andCurrentConnectCountIsNotNull() {
+            addCriterion("current_connect_count is not null");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdEqualTo(String value) {
-            addCriterion("parent_device_id =", value, "parentDeviceId");
+        public Criteria andCurrentConnectCountEqualTo(String value) {
+            addCriterion("current_connect_count =", value, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdNotEqualTo(String value) {
-            addCriterion("parent_device_id <>", value, "parentDeviceId");
+        public Criteria andCurrentConnectCountNotEqualTo(String value) {
+            addCriterion("current_connect_count <>", value, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdGreaterThan(String value) {
-            addCriterion("parent_device_id >", value, "parentDeviceId");
+        public Criteria andCurrentConnectCountGreaterThan(String value) {
+            addCriterion("current_connect_count >", value, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdGreaterThanOrEqualTo(String value) {
-            addCriterion("parent_device_id >=", value, "parentDeviceId");
+        public Criteria andCurrentConnectCountGreaterThanOrEqualTo(String value) {
+            addCriterion("current_connect_count >=", value, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdLessThan(String value) {
-            addCriterion("parent_device_id <", value, "parentDeviceId");
+        public Criteria andCurrentConnectCountLessThan(String value) {
+            addCriterion("current_connect_count <", value, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdLessThanOrEqualTo(String value) {
-            addCriterion("parent_device_id <=", value, "parentDeviceId");
+        public Criteria andCurrentConnectCountLessThanOrEqualTo(String value) {
+            addCriterion("current_connect_count <=", value, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdLike(String value) {
-            addCriterion("parent_device_id like", value, "parentDeviceId");
+        public Criteria andCurrentConnectCountLike(String value) {
+            addCriterion("current_connect_count like", value, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdNotLike(String value) {
-            addCriterion("parent_device_id not like", value, "parentDeviceId");
+        public Criteria andCurrentConnectCountNotLike(String value) {
+            addCriterion("current_connect_count not like", value, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdIn(List<String> values) {
-            addCriterion("parent_device_id in", values, "parentDeviceId");
+        public Criteria andCurrentConnectCountIn(List<String> values) {
+            addCriterion("current_connect_count in", values, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdNotIn(List<String> values) {
-            addCriterion("parent_device_id not in", values, "parentDeviceId");
+        public Criteria andCurrentConnectCountNotIn(List<String> values) {
+            addCriterion("current_connect_count not in", values, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdBetween(String value1, String value2) {
-            addCriterion("parent_device_id between", value1, value2, "parentDeviceId");
+        public Criteria andCurrentConnectCountBetween(String value1, String value2) {
+            addCriterion("current_connect_count between", value1, value2, "currentConnectCount");
             return (Criteria) this;
         }
 
-        public Criteria andParentDeviceIdNotBetween(String value1, String value2) {
-            addCriterion("parent_device_id not between", value1, value2, "parentDeviceId");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusIsNull() {
-            addCriterion("terminal_status is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusIsNotNull() {
-            addCriterion("terminal_status is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusEqualTo(String value) {
-            addCriterion("terminal_status =", value, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusNotEqualTo(String value) {
-            addCriterion("terminal_status <>", value, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusGreaterThan(String value) {
-            addCriterion("terminal_status >", value, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusGreaterThanOrEqualTo(String value) {
-            addCriterion("terminal_status >=", value, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusLessThan(String value) {
-            addCriterion("terminal_status <", value, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusLessThanOrEqualTo(String value) {
-            addCriterion("terminal_status <=", value, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusLike(String value) {
-            addCriterion("terminal_status like", value, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusNotLike(String value) {
-            addCriterion("terminal_status not like", value, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusIn(List<String> values) {
-            addCriterion("terminal_status in", values, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusNotIn(List<String> values) {
-            addCriterion("terminal_status not in", values, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusBetween(String value1, String value2) {
-            addCriterion("terminal_status between", value1, value2, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andTerminalStatusNotBetween(String value1, String value2) {
-            addCriterion("terminal_status not between", value1, value2, "terminalStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeIsNull() {
-            addCriterion("upload_time is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeIsNotNull() {
-            addCriterion("upload_time is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeEqualTo(Date value) {
-            addCriterion("upload_time =", value, "uploadTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeNotEqualTo(Date value) {
-            addCriterion("upload_time <>", value, "uploadTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeGreaterThan(Date value) {
-            addCriterion("upload_time >", value, "uploadTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("upload_time >=", value, "uploadTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeLessThan(Date value) {
-            addCriterion("upload_time <", value, "uploadTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeLessThanOrEqualTo(Date value) {
-            addCriterion("upload_time <=", value, "uploadTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeIn(List<Date> values) {
-            addCriterion("upload_time in", values, "uploadTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeNotIn(List<Date> values) {
-            addCriterion("upload_time not in", values, "uploadTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeBetween(Date value1, Date value2) {
-            addCriterion("upload_time between", value1, value2, "uploadTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUploadTimeNotBetween(Date value1, Date value2) {
-            addCriterion("upload_time not between", value1, value2, "uploadTime");
+        public Criteria andCurrentConnectCountNotBetween(String value1, String value2) {
+            addCriterion("current_connect_count not between", value1, value2, "currentConnectCount");
             return (Criteria) this;
         }
 
@@ -555,73 +425,63 @@ public class NmplTerminalUserExample {
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeIsNull() {
-            addCriterion("user_type is null");
+        public Criteria andUploadTimeIsNull() {
+            addCriterion("upload_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeIsNotNull() {
-            addCriterion("user_type is not null");
+        public Criteria andUploadTimeIsNotNull() {
+            addCriterion("upload_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeEqualTo(String value) {
-            addCriterion("user_type =", value, "userType");
+        public Criteria andUploadTimeEqualTo(Date value) {
+            addCriterion("upload_time =", value, "uploadTime");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeNotEqualTo(String value) {
-            addCriterion("user_type <>", value, "userType");
+        public Criteria andUploadTimeNotEqualTo(Date value) {
+            addCriterion("upload_time <>", value, "uploadTime");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeGreaterThan(String value) {
-            addCriterion("user_type >", value, "userType");
+        public Criteria andUploadTimeGreaterThan(Date value) {
+            addCriterion("upload_time >", value, "uploadTime");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeGreaterThanOrEqualTo(String value) {
-            addCriterion("user_type >=", value, "userType");
+        public Criteria andUploadTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("upload_time >=", value, "uploadTime");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeLessThan(String value) {
-            addCriterion("user_type <", value, "userType");
+        public Criteria andUploadTimeLessThan(Date value) {
+            addCriterion("upload_time <", value, "uploadTime");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeLessThanOrEqualTo(String value) {
-            addCriterion("user_type <=", value, "userType");
+        public Criteria andUploadTimeLessThanOrEqualTo(Date value) {
+            addCriterion("upload_time <=", value, "uploadTime");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeLike(String value) {
-            addCriterion("user_type like", value, "userType");
+        public Criteria andUploadTimeIn(List<Date> values) {
+            addCriterion("upload_time in", values, "uploadTime");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeNotLike(String value) {
-            addCriterion("user_type not like", value, "userType");
+        public Criteria andUploadTimeNotIn(List<Date> values) {
+            addCriterion("upload_time not in", values, "uploadTime");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeIn(List<String> values) {
-            addCriterion("user_type in", values, "userType");
+        public Criteria andUploadTimeBetween(Date value1, Date value2) {
+            addCriterion("upload_time between", value1, value2, "uploadTime");
             return (Criteria) this;
         }
 
-        public Criteria andUserTypeNotIn(List<String> values) {
-            addCriterion("user_type not in", values, "userType");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserTypeBetween(String value1, String value2) {
-            addCriterion("user_type between", value1, value2, "userType");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserTypeNotBetween(String value1, String value2) {
-            addCriterion("user_type not between", value1, value2, "userType");
+        public Criteria andUploadTimeNotBetween(Date value1, Date value2) {
+            addCriterion("upload_time not between", value1, value2, "uploadTime");
             return (Criteria) this;
         }
     }

@@ -44,12 +44,10 @@ public class SystemHeartbeatServiceImpl implements SystemHeartbeatService {
         for(SystemHeartbeatVo systemHeartbeatVo: list){
             SystemHeartbeatRequest systemHeartbeatRequest = new SystemHeartbeatRequest();
             BeanUtils.copyProperties(systemHeartbeatVo,systemHeartbeatRequest);
-            SystemHeartbeatResponse heartbeatResponse = systemHeartbeatDomainService.selectSystemHeartbeat(systemHeartbeatRequest);
-            if(CollectionUtils.isEmpty(heartbeatResponse.getList())){
-                i = systemHeartbeatDomainService.insertSystemHeartbeat(systemHeartbeatRequest);
-            }else {
-                i = systemHeartbeatDomainService.updateSystemHeartbeat(systemHeartbeatRequest);
-            }
+            //SystemHeartbeatResponse heartbeatResponse = systemHeartbeatDomainService.selectSystemHeartbeat(systemHeartbeatRequest);
+
+            i = systemHeartbeatDomainService.insertSystemHeartbeat(systemHeartbeatRequest);
+
         }
         result.setResultObj(i);
         result.setSuccess(true);

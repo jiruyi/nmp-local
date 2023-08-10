@@ -2,29 +2,29 @@ package com.matrictime.network.request;
 
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author by wangqiang
- * @date 2023/4/18.
+ * @date 2023/8/7.
  */
 @Data
-public class SystemHeartbeatRequest implements Serializable {
+public class StationConnectCountRequest extends BaseRequest{
+
     /**
      * 主键
      */
     private Long id;
 
     /**
-     * 来源Id
+     * 设备Id
      */
-    private String sourceId;
+    private String stationId;
 
     /**
-     * 目标Id
+     * 当前用户数
      */
-    private String targetId;
+    private String currentConnectCount;
 
     /**
      * 小区id
@@ -32,9 +32,9 @@ public class SystemHeartbeatRequest implements Serializable {
     private String relationOperatorId;
 
     /**
-     * 连接状态 01:通  02:不通
+     * 设备类型
      */
-    private String status;
+    private String stationType;
 
     /**
      * 上报时间

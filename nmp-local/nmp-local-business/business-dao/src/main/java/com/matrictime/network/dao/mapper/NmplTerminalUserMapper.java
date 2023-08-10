@@ -10,7 +10,7 @@ public interface NmplTerminalUserMapper {
 
     int deleteByExample(NmplTerminalUserExample example);
 
-    int deleteByPrimaryKey(String terminalNetworkId);
+    int deleteByPrimaryKey(Long id);
 
     int insert(NmplTerminalUser record);
 
@@ -18,7 +18,7 @@ public interface NmplTerminalUserMapper {
 
     List<NmplTerminalUser> selectByExample(NmplTerminalUserExample example);
 
-    NmplTerminalUser selectByPrimaryKey(String terminalNetworkId);
+    NmplTerminalUser selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") NmplTerminalUser record, @Param("example") NmplTerminalUserExample example);
 

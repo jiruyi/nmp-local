@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.matrictime.network.dao.mapper.NmplTerminalUserMapper">
-  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplTerminalUser">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplStationConnectCountMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplStationConnectCount">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="terminal_network_id" jdbcType="VARCHAR" property="terminalNetworkId" />
-    <result column="parent_device_id" jdbcType="VARCHAR" property="parentDeviceId" />
-    <result column="terminal_status" jdbcType="CHAR" property="terminalStatus" />
-    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="current_connect_count" jdbcType="VARCHAR" property="currentConnectCount" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="user_type" jdbcType="CHAR" property="userType" />
+    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -70,17 +68,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, terminal_network_id, parent_device_id, terminal_status, upload_time, create_time, 
-    update_time, user_type
+    id, station_id, current_connect_count, create_time, update_time, upload_time
   </sql>
-  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplTerminalUserExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplStationConnectCountExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from nmpl_terminal_user
+    from nmpl_station_connect_count
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -91,44 +88,38 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from nmpl_terminal_user
+    from nmpl_station_connect_count
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from nmpl_terminal_user
+    delete from nmpl_station_connect_count
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplTerminalUserExample">
-    delete from nmpl_terminal_user
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplStationConnectCountExample">
+    delete from nmpl_station_connect_count
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplTerminalUser">
-    insert into nmpl_terminal_user (id, terminal_network_id, parent_device_id, 
-      terminal_status, upload_time, create_time, 
-      update_time, user_type)
-    values (#{id,jdbcType=BIGINT}, #{terminalNetworkId,jdbcType=VARCHAR}, #{parentDeviceId,jdbcType=VARCHAR}, 
-      #{terminalStatus,jdbcType=CHAR}, #{uploadTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{userType,jdbcType=CHAR})
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplStationConnectCount">
+    insert into nmpl_station_connect_count (id, station_id, current_connect_count, 
+      create_time, update_time, upload_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{stationId,jdbcType=VARCHAR}, #{currentConnectCount,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{uploadTime,jdbcType=TIMESTAMP}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplTerminalUser">
-    insert into nmpl_terminal_user
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplStationConnectCount">
+    insert into nmpl_station_connect_count
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
       </if>
-      <if test="terminalNetworkId != null">
-        terminal_network_id,
+      <if test="stationId != null">
+        station_id,
       </if>
-      <if test="parentDeviceId != null">
-        parent_device_id,
-      </if>
-      <if test="terminalStatus != null">
-        terminal_status,
-      </if>
-      <if test="uploadTime != null">
-        upload_time,
+      <if test="currentConnectCount != null">
+        current_connect_count,
       </if>
       <if test="createTime != null">
         create_time,
@@ -136,25 +127,19 @@
       <if test="updateTime != null">
         update_time,
       </if>
-      <if test="userType != null">
-        user_type,
+      <if test="uploadTime != null">
+        upload_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="terminalNetworkId != null">
-        #{terminalNetworkId,jdbcType=VARCHAR},
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
       </if>
-      <if test="parentDeviceId != null">
-        #{parentDeviceId,jdbcType=VARCHAR},
-      </if>
-      <if test="terminalStatus != null">
-        #{terminalStatus,jdbcType=CHAR},
-      </if>
-      <if test="uploadTime != null">
-        #{uploadTime,jdbcType=TIMESTAMP},
+      <if test="currentConnectCount != null">
+        #{currentConnectCount,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -162,34 +147,28 @@
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="userType != null">
-        #{userType,jdbcType=CHAR},
+      <if test="uploadTime != null">
+        #{uploadTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplTerminalUserExample" resultType="java.lang.Long">
-    select count(*) from nmpl_terminal_user
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplStationConnectCountExample" resultType="java.lang.Long">
+    select count(*) from nmpl_station_connect_count
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update nmpl_terminal_user
+    update nmpl_station_connect_count
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.terminalNetworkId != null">
-        terminal_network_id = #{record.terminalNetworkId,jdbcType=VARCHAR},
+      <if test="record.stationId != null">
+        station_id = #{record.stationId,jdbcType=VARCHAR},
       </if>
-      <if test="record.parentDeviceId != null">
-        parent_device_id = #{record.parentDeviceId,jdbcType=VARCHAR},
-      </if>
-      <if test="record.terminalStatus != null">
-        terminal_status = #{record.terminalStatus,jdbcType=CHAR},
-      </if>
-      <if test="record.uploadTime != null">
-        upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
+      <if test="record.currentConnectCount != null">
+        current_connect_count = #{record.currentConnectCount,jdbcType=VARCHAR},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -197,8 +176,8 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.userType != null">
-        user_type = #{record.userType,jdbcType=CHAR},
+      <if test="record.uploadTime != null">
+        upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -206,33 +185,25 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update nmpl_terminal_user
+    update nmpl_station_connect_count
     set id = #{record.id,jdbcType=BIGINT},
-      terminal_network_id = #{record.terminalNetworkId,jdbcType=VARCHAR},
-      parent_device_id = #{record.parentDeviceId,jdbcType=VARCHAR},
-      terminal_status = #{record.terminalStatus,jdbcType=CHAR},
-      upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
+      station_id = #{record.stationId,jdbcType=VARCHAR},
+      current_connect_count = #{record.currentConnectCount,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      user_type = #{record.userType,jdbcType=CHAR}
+      upload_time = #{record.uploadTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplTerminalUser">
-    update nmpl_terminal_user
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplStationConnectCount">
+    update nmpl_station_connect_count
     <set>
-      <if test="terminalNetworkId != null">
-        terminal_network_id = #{terminalNetworkId,jdbcType=VARCHAR},
+      <if test="stationId != null">
+        station_id = #{stationId,jdbcType=VARCHAR},
       </if>
-      <if test="parentDeviceId != null">
-        parent_device_id = #{parentDeviceId,jdbcType=VARCHAR},
-      </if>
-      <if test="terminalStatus != null">
-        terminal_status = #{terminalStatus,jdbcType=CHAR},
-      </if>
-      <if test="uploadTime != null">
-        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      <if test="currentConnectCount != null">
+        current_connect_count = #{currentConnectCount,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -240,21 +211,19 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="userType != null">
-        user_type = #{userType,jdbcType=CHAR},
+      <if test="uploadTime != null">
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplTerminalUser">
-    update nmpl_terminal_user
-    set terminal_network_id = #{terminalNetworkId,jdbcType=VARCHAR},
-      parent_device_id = #{parentDeviceId,jdbcType=VARCHAR},
-      terminal_status = #{terminalStatus,jdbcType=CHAR},
-      upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplStationConnectCount">
+    update nmpl_station_connect_count
+    set station_id = #{stationId,jdbcType=VARCHAR},
+      current_connect_count = #{currentConnectCount,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      user_type = #{userType,jdbcType=CHAR}
+      upload_time = #{uploadTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

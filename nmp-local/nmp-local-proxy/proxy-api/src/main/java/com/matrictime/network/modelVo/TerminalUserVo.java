@@ -11,6 +11,7 @@ import java.util.Date;
  */
 @Data
 public class TerminalUserVo implements Serializable {
+
     /**
      * 终端设备Id
      */
@@ -40,4 +41,9 @@ public class TerminalUserVo implements Serializable {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 用户类型 01:一体机  02:安全服务器
+     */
+    private String userType;
 }

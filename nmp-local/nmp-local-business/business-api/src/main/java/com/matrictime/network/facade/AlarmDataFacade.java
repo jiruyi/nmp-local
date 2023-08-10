@@ -3,6 +3,7 @@ package com.matrictime.network.facade;
 import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
+import com.matrictime.network.response.StationConnectCountResponse;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -75,7 +76,8 @@ public interface AlarmDataFacade {
     @RequestMapping(value= "/terminalData/collectTerminalData",method = RequestMethod.POST)
     Result collectTerminalDataResource(TerminalDataListRequest terminalDataListRequest);
 
-    @RequestMapping(value= "/baseStation/updateCurrentConnectCount",method = RequestMethod.POST)
-    Result updateCurrentConnectCount(CurrentCountRequest currentCountRequest);
+    @RequestMapping(value= "/stationConnectCount/insertStationConnectCount",method = RequestMethod.POST)
+    Result insertStationConnectCount(StationConnectCountResponse stationConnectCountResponse);
+
 
 }

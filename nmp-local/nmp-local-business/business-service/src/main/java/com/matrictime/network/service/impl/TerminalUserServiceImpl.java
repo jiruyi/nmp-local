@@ -45,14 +45,10 @@ public class TerminalUserServiceImpl implements TerminalUserService {
         for(TerminalUserVo terminalUserVo: list){
             TerminalUserResquest terminalUserResquest = new TerminalUserResquest();
             BeanUtils.copyProperties(terminalUserVo,terminalUserResquest);
-            //查询该用户是否已经在基站下
-            List<TerminalUserVo> terminalUserVoList = terminalUserDomainService.selectTerminalUser(terminalUserResquest);
-            //基站下已经有该用户则更新没有就插入
-            if(CollectionUtils.isEmpty(terminalUserVoList)){
-                i = terminalUserDomainService.insertTerminalUser(terminalUserResquest);
-            }else {
-                i = terminalUserDomainService.updateTerminalUser(terminalUserResquest);
-            }
+//            //查询该用户是否已经在基站下
+//            List<TerminalUserVo> terminalUserVoList = terminalUserDomainService.selectTerminalUser(terminalUserResquest);
+            i = terminalUserDomainService.insertTerminalUser(terminalUserResquest);
+
         }
         result.setResultObj(i);
         result.setSuccess(true);
