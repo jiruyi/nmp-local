@@ -38,7 +38,7 @@ spring:
       min-evictable-idle-time-millis: 30000
       async-init: true
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
     init-sqls: CREATE DATABASE IF NOT EXISTS `nmp_center` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
   servlet:
