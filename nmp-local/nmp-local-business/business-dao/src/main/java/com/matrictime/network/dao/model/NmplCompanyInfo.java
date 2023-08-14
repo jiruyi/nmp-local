@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 
  * @author   hexu
- * @date   2022-04-07
+ * @date   2023-08-09
  */
 @Data
 public class NmplCompanyInfo {
@@ -89,6 +89,11 @@ public class NmplCompanyInfo {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * 经纬度位置
+     */
+    private String position;
 
     public Long getCompanyId() {
         return companyId;
@@ -216,5 +221,13 @@ public class NmplCompanyInfo {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position == null ? null : position.trim();
     }
 }

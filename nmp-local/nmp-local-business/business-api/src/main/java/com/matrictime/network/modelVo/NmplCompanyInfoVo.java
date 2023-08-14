@@ -112,4 +112,9 @@ public class NmplCompanyInfoVo {
     private String unitName;
 
     private String bid;
+
+    /**
+     * 经纬度位置
+     */
+    private String position;
 }
