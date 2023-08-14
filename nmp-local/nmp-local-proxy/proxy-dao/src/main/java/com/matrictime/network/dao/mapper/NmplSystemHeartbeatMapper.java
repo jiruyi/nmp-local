@@ -10,7 +10,7 @@ public interface NmplSystemHeartbeatMapper {
 
     int deleteByExample(NmplSystemHeartbeatExample example);
 
-    int deleteByPrimaryKey(@Param("sourceId") String sourceId, @Param("targetId") String targetId);
+    int deleteByPrimaryKey(Long id);
 
     int insert(NmplSystemHeartbeat record);
 
@@ -18,7 +18,7 @@ public interface NmplSystemHeartbeatMapper {
 
     List<NmplSystemHeartbeat> selectByExample(NmplSystemHeartbeatExample example);
 
-    NmplSystemHeartbeat selectByPrimaryKey(@Param("sourceId") String sourceId, @Param("targetId") String targetId);
+    NmplSystemHeartbeat selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") NmplSystemHeartbeat record, @Param("example") NmplSystemHeartbeatExample example);
 

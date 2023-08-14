@@ -40,6 +40,7 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
     public int insertTerminalUser(TerminalUserResquest terminalUserResquest) {
         NmplTerminalUser nmplTerminalUser = new NmplTerminalUser();
         BeanUtils.copyProperties(terminalUserResquest,nmplTerminalUser);
+        nmplTerminalUser.setId(null);
         return nmplTerminalUserMapper.insertSelective(nmplTerminalUser);
     }
 

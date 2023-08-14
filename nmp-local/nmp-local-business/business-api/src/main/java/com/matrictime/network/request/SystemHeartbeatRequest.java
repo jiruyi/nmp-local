@@ -12,6 +12,11 @@ import java.util.Date;
 @Data
 public class SystemHeartbeatRequest implements Serializable {
     /**
+     * 主键
+     */
+    private Long id;
+
+    /**
      * 来源Id
      */
     private String sourceId;
@@ -22,14 +27,14 @@ public class SystemHeartbeatRequest implements Serializable {
     private String targetId;
 
     /**
-     * 连接状态 01:通  02:不通
-     */
-    private String status;
-
-    /**
      * 小区id
      */
     private String relationOperatorId;
+
+    /**
+     * 连接状态 01:通  02:不通
+     */
+    private String status;
 
     /**
      * 上报时间

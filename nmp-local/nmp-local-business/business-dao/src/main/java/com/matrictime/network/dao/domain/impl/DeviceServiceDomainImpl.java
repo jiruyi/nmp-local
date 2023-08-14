@@ -244,4 +244,41 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
         BeanUtils.copyProperties(baseStationCountRequest,nmplDeviceCount);
         return nmplDeviceCountMapper.updateByExampleSelective(nmplDeviceCount,nmplDeviceCountExample);
     }
+
+    /**
+     * 插入采集设备
+     * @param deviceInfoRequest
+     * @return
+     */
+    @Override
+    public int insertDataBase(DeviceInfoRequest deviceInfoRequest) {
+        InsertCheckUnique(deviceInfoRequest);
+        NmplDevice nmplDevice = new NmplDevice();
+        BeanUtils.copyProperties(deviceInfoRequest,nmplDevice);
+        return nmplDeviceMapper.insertSelective(nmplDevice);
+    }
+
+    /**
+     * 删除采集设备
+     * @param deviceInfoRequest
+     * @return
+     */
+    @Override
+    public int deleteDataBase(DeviceInfoRequest deviceInfoRequest) {
+        return nmplDeviceInfoMapper.deleteDevice(deviceInfoRequest);
+    }
+
+    /**
+     * 更新采集设备
+     * @param deviceInfoRequest
+     * @return
+     */
+    @Override
+    public int updateDataBase(DeviceInfoRequest deviceInfoRequest) {
+        UpdateCheckUnique(deviceInfoRequest);
+        return nmplDeviceInfoMapper.updateDevice(deviceInfoRequest);
+    }
+
+
+
 }

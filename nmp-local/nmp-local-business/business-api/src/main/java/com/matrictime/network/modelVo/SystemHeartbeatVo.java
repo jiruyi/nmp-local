@@ -12,24 +12,23 @@ import java.util.Date;
 @Data
 public class SystemHeartbeatVo implements Serializable {
     /**
+     * 主键
+     */
+    private Long id;
+
+    /**
      * 来源Id
      */
     private String sourceId;
 
-    /**
-     * 来源name
-     */
+    private String targetName;
+
     private String sourceName;
 
     /**
      * 目标Id
      */
     private String targetId;
-
-    /**
-     * 目标name
-     */
-    private String targetName;
 
     /**
      * 连接状态 01:通  02:不通

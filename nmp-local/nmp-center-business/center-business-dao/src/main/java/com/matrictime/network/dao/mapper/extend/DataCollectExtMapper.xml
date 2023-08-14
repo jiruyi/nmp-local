@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.DataCollectExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplDataCollect">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="sum_number" jdbcType="VARCHAR" property="sumNumber" />
+        <result column="company_network_id" jdbcType="VARCHAR" property="companyNetworkId" />
+        <result column="data_item_code" jdbcType="VARCHAR" property="dataItemCode" />
+        <result column="unit" jdbcType="VARCHAR" property="unit" />
+        <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <select id="sumData" parameterType="com.matrictime.network.request.DataCollectRequest" resultMap="BaseResultMap">
+        SELECT
+            a.sum_number,
+            a.data_item_code,
+            a.upload_time,
+            a.company_network_id
+        FROM
+            nmpl_data_collect as a,
+        (
+            SELECT
+                max(upload_time) AS q,
+                data_item_code,
+                company_network_id
+            FROM
+                nmpl_data_collect
+            GROUP BY
+                data_item_code,
+                company_network_id
+        ) AS t
+        WHERE
+            a.upload_time = t.q
+        and
+            a.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
+        and
+            t.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
+        and
+            t.company_network_id = a.company_network_id
+    </select>
+    <select id="selectLoadData" parameterType="com.matrictime.network.request.DataCollectRequest" resultMap="BaseResultMap">
+        select
+            a.sum_number,
+            a.data_item_code,
+            a.upload_time,
+            a.company_network_id
+        from
+            nmpl_data_collect as a
+        where
+            a.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
+        and
+            (
+                SELECT FROM_UNIXTIME(UNIX_TIMESTAMP(CAST(SYSDATE()AS DATE) - INTERVAL 1 DAY))
+                    &lt;= a.upload_time
+            )
+        and
+            (
+                SELECT
+                    FROM_UNIXTIME(UNIX_TIMESTAMP(CAST(SYSDATE() AS DATE)))
+                    &gt;= a.upload_time
+            )
+    </select>
+</mapper>

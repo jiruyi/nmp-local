@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplStationConnectCountExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplStationConnectCount">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+        <result column="current_connect_count" jdbcType="VARCHAR" property="currentConnectCount" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+    </resultMap>
+    <select id="selectConnectCount" parameterType="com.matrictime.network.request.StationConnectCountRequest" resultMap="BaseResultMap">
+        select
+            s.station_id,s.current_connect_count,s.upload_time
+        from
+            nmpl_station_connect_count s,
+            (
+                select max(upload_time) q,
+                       station_id
+                from nmpl_station_connect_count
+                group by station_id
+            ) as a
+        where
+            s.station_id in (
+                select
+                    station_id from nmpl_base_station_info b
+                where
+                    b.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
+                <if test="stationType != null">
+                    and station_type = #{stationType,jdbcType=VARCHAR}
+                </if>
+                union
+                select
+                    device_id as station_id from nmpl_device_info d
+                where
+                    d.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
+                <if test="stationType != null">
+                    and device_type = #{stationType,jdbcType=VARCHAR}
+                </if>
+            )
+        and s.station_id = a.station_id
+        and s.upload_time = a.q
+    </select>
+</mapper>

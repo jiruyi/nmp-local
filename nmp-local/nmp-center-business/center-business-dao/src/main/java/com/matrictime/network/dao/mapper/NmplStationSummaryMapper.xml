@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplStationSummaryMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplStationSummary">
+    <id column="sum_type" jdbcType="CHAR" property="sumType" />
+    <id column="company_network_id" jdbcType="VARCHAR" property="companyNetworkId" />
+    <result column="sum_number" jdbcType="VARCHAR" property="sumNumber" />
+    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    sum_type, company_network_id, sum_number, upload_time, create_time, update_time
+  </sql>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplStationSummaryExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmpl_station_summary
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from nmpl_station_summary
+    where sum_type = #{sumType,jdbcType=CHAR}
+      and company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from nmpl_station_summary
+    where sum_type = #{sumType,jdbcType=CHAR}
+      and company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplStationSummaryExample">
+    delete from nmpl_station_summary
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplStationSummary">
+    insert into nmpl_station_summary (sum_type, company_network_id, sum_number, 
+      upload_time, create_time, update_time
+      )
+    values (#{sumType,jdbcType=CHAR}, #{companyNetworkId,jdbcType=VARCHAR}, #{sumNumber,jdbcType=VARCHAR}, 
+      #{uploadTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplStationSummary">
+    insert into nmpl_station_summary
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sumType != null">
+        sum_type,
+      </if>
+      <if test="companyNetworkId != null">
+        company_network_id,
+      </if>
+      <if test="sumNumber != null">
+        sum_number,
+      </if>
+      <if test="uploadTime != null">
+        upload_time,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sumType != null">
+        #{sumType,jdbcType=CHAR},
+      </if>
+      <if test="companyNetworkId != null">
+        #{companyNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="sumNumber != null">
+        #{sumNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadTime != null">
+        #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplStationSummaryExample" resultType="java.lang.Long">
+    select count(*) from nmpl_station_summary
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmpl_station_summary
+    <set>
+      <if test="record.sumType != null">
+        sum_type = #{record.sumType,jdbcType=CHAR},
+      </if>
+      <if test="record.companyNetworkId != null">
+        company_network_id = #{record.companyNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sumNumber != null">
+        sum_number = #{record.sumNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uploadTime != null">
+        upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmpl_station_summary
+    set sum_type = #{record.sumType,jdbcType=CHAR},
+      company_network_id = #{record.companyNetworkId,jdbcType=VARCHAR},
+      sum_number = #{record.sumNumber,jdbcType=VARCHAR},
+      upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplStationSummary">
+    update nmpl_station_summary
+    <set>
+      <if test="sumNumber != null">
+        sum_number = #{sumNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadTime != null">
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where sum_type = #{sumType,jdbcType=CHAR}
+      and company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplStationSummary">
+    update nmpl_station_summary
+    set sum_number = #{sumNumber,jdbcType=VARCHAR},
+      upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where sum_type = #{sumType,jdbcType=CHAR}
+      and company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
+  </update>
+</mapper>

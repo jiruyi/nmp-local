@@ -12,6 +12,11 @@ import java.util.Date;
 @Data
 public class SystemHeartbeatRequest implements Serializable {
     /**
+     * 主键
+     */
+    private Long id;
+
+    /**
      * 来源Id
      */
     private String sourceId;

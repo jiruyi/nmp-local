@@ -6,10 +6,15 @@ import lombok.Data;
 /**
  * 终端用户表
  * @author   xxxx
- * @date   2023-04-19
+ * @date   2023-08-07
  */
 @Data
 public class NmplTerminalUser {
+    /**
+     * 主键
+     */
+    private Long id;
+
     /**
      * 终端设备Id
      */
@@ -39,6 +44,19 @@ public class NmplTerminalUser {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 用户类型 01:一体机  02:安全服务器
+     */
+    private String userType;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTerminalNetworkId() {
         return terminalNetworkId;
@@ -86,5 +104,13 @@ public class NmplTerminalUser {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType == null ? null : userType.trim();
     }
 }

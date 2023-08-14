@@ -5,6 +5,7 @@ import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.AlarmPhyConTypeEnum;
 import com.matrictime.network.base.enums.LevelEnum;
 import com.matrictime.network.dao.domain.LocalBaseStationDomainService;
+import com.matrictime.network.dao.domain.StationConnectCountDomainService;
 import com.matrictime.network.dao.domain.SystemHeartbeatDomainService;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.dao.mapper.*;
@@ -15,6 +16,7 @@ import com.matrictime.network.facade.AlarmDataFacade;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.*;
+import com.matrictime.network.response.StationConnectCountResponse;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
 import com.matrictime.network.service.TaskService;
@@ -81,6 +83,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private LocalBaseStationDomainService localBaseStationDomainService;
+
+    @Resource
+    private StationConnectCountDomainService connectCountDomainService;
 
 
     @Autowired
@@ -447,13 +452,13 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void updateCurrentConnectCount(String url) {
-        CurrentCountRequest currentCountRequest = localBaseStationDomainService.selectLocalBaseStation();
+        StationConnectCountResponse stationConnectCountResponse = connectCountDomainService.selectStationConnectCount();
         Boolean flag = false;
         Result result = null;
         String data = "";
         String msg =null;
         try {
-            result = alarmDataFacade.updateCurrentConnectCount(currentCountRequest);
+            result = alarmDataFacade.insertStationConnectCount(stationConnectCountResponse);
             log.info("updateCurrentConnectCount push result:{}",result);
         }catch (Exception e){
             flag = true;

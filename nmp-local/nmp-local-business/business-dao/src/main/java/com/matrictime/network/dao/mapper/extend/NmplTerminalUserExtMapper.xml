@@ -11,11 +11,23 @@
     </resultMap>
     <select id="selectTerminalUser" parameterType="com.matrictime.network.request.TerminalUserResquest" resultMap="BaseResultMap">
         SELECT
-            terminal_network_id
+            a.terminal_network_id,
+            a.parent_device_id,
+            a.upload_time,
+            a.terminal_status
         FROM
-            nmpl_terminal_user t
+            nmpl_terminal_user as a,
+            (
+                SELECT
+                    max(upload_time) AS q,
+                    terminal_network_id
+                FROM
+                    nmpl_terminal_user
+                GROUP BY
+                    terminal_network_id
+            ) AS t
         WHERE
-                t.parent_device_id IN (
+                a.parent_device_id IN (
                 SELECT
                     station_id
                 FROM
@@ -30,11 +42,13 @@
                 WHERE
                     d.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
             )
+        and a.upload_time = t.q
+        and a.terminal_network_id = t.terminal_network_id
         <if test="terminalStatus == '03'.toString()">
-            and t.terminal_status = #{terminalStatus,jdbcType=VARCHAR}
+            and a.terminal_status = #{terminalStatus,jdbcType=VARCHAR}
         </if>
         <if test="terminalStatus == '02'.toString()">
-            and t.terminal_status &gt;= #{terminalStatus,jdbcType=VARCHAR}
+            and a.terminal_status &gt;= #{terminalStatus,jdbcType=VARCHAR}
         </if>
     </select>
 </mapper>

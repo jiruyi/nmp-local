@@ -4,6 +4,7 @@ import com.matrictime.network.dao.domain.SystemHeartbeatDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceCountMapper;
 import com.matrictime.network.dao.mapper.NmplSystemHeartbeatMapper;
+import com.matrictime.network.dao.mapper.extend.NmplSystemHeartbeatExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.SystemHeartbeatVo;
@@ -36,10 +37,14 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
     @Resource
     private NmplDeviceCountMapper nmplDeviceCountMapper;
 
+    @Resource
+    private NmplSystemHeartbeatExtMapper systemHeartbeatExtMapper;
+
     @Override
     public int insertSystemHeartbeat(SystemHeartbeatRequest systemHeartbeatRequest) {
         NmplSystemHeartbeat nmplSystemHeartbeat = new NmplSystemHeartbeat();
         BeanUtils.copyProperties(systemHeartbeatRequest,nmplSystemHeartbeat);
+        nmplSystemHeartbeat.setId(null);
         return nmplSystemHeartbeatMapper.insertSelective(nmplSystemHeartbeat);
     }
 
@@ -81,14 +86,14 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
         if(!StringUtils.isEmpty(systemHeartbeatRequest.getTargetId())){
             criteria.andTargetIdEqualTo(systemHeartbeatRequest.getTargetId());
         }
-        List<NmplSystemHeartbeat> nmplSystemHeartbeats = nmplSystemHeartbeatMapper.selectByExample(nmplSystemHeartbeatExample);
-        if(!CollectionUtils.isEmpty(nmplSystemHeartbeats)){
-            for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
-                SystemHeartbeatVo systemHeartbeatVo = new SystemHeartbeatVo();
-                BeanUtils.copyProperties(nmplSystemHeartbeat,systemHeartbeatVo);
-                systemHeartbeatVo.setTargetName(getTargetName(nmplSystemHeartbeat));
-                systemHeartbeatVo.setSourceName(getSourceName(nmplSystemHeartbeat));
-                list.add(systemHeartbeatVo);
+        //List<NmplSystemHeartbeat> nmplSystemHeartbeats = nmplSystemHeartbeatMapper.selectByExample(nmplSystemHeartbeatExample);
+        List<SystemHeartbeatVo> systemHeartbeatVoList = systemHeartbeatExtMapper.selectSystemHeartbeat(systemHeartbeatRequest);
+
+        if(!CollectionUtils.isEmpty(systemHeartbeatVoList)){
+            for(SystemHeartbeatVo nmplSystemHeartbeat: systemHeartbeatVoList){
+                nmplSystemHeartbeat.setTargetName(getTargetName(nmplSystemHeartbeat));
+                nmplSystemHeartbeat.setSourceName(getSourceName(nmplSystemHeartbeat));
+                list.add(nmplSystemHeartbeat);
             }
             systemHeartbeatResponse.setList(list);
 
@@ -101,7 +106,7 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
      * @param nmplSystemHeartbeat
      * @return
      */
-    private String getSourceName(NmplSystemHeartbeat nmplSystemHeartbeat){
+    private String getSourceName(SystemHeartbeatVo nmplSystemHeartbeat){
         //来源设备
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
@@ -125,7 +130,7 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
      * @param nmplSystemHeartbeat
      * @return
      */
-    private String getTargetName(NmplSystemHeartbeat nmplSystemHeartbeat){
+    private String getTargetName(SystemHeartbeatVo nmplSystemHeartbeat){
         //目标设备
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();

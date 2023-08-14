@@ -173,7 +173,7 @@ public class DataConstants {
 
     public static final String TERMINAL_DATA_URL = "/nmp-local-business/terminalData/collectTerminalData";
 
-    public static final String UPDATE_CURRENT_URL = "/nmp-local-business/baseStation/updateCurrentConnectCount";
+    public static final String UPDATE_CURRENT_URL = "/nmp-local-business/stationConnectCount/updateStationConnectCount";
 
     public static final Integer ERROR_MSG_MAXLENGTH = 250;
 

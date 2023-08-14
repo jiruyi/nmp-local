@@ -11,6 +11,7 @@ import java.util.Date;
  */
 @Data
 public class SystemHeartbeatVo implements Serializable {
+
     /**
      * 来源Id
      */
@@ -31,13 +32,4 @@ public class SystemHeartbeatVo implements Serializable {
      */
     private Date uploadTime;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
 }
