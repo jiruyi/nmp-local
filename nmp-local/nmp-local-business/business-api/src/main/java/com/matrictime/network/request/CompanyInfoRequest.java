@@ -89,4 +89,9 @@ public class CompanyInfoRequest extends BaseRequest implements Serializable {
      * 单位名称
      */
     private String unitName;
+
+    /**
+     * 经纬度位置
+     */
+    private String position;
 }
