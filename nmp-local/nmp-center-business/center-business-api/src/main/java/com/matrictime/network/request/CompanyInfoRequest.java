@@ -75,6 +75,11 @@ public class CompanyInfoRequest extends CenterBaseRequest{
      */
     private String updateUser;
 
+    /**
+     * 经纬度位置
+     */
+    private String position;
+
 
     /**
      * 1:存在 0:删除

@@ -5,8 +5,8 @@ import lombok.Data;
 
 /**
  * 
- * @author   wangqiang
- * @date   2023-08-07
+ * @author   wq
+ * @date   2023-08-14
  */
 @Data
 public class NmplCompanyInfo {
@@ -84,6 +84,11 @@ public class NmplCompanyInfo {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 经纬度位置
+     */
+    private String position;
 
     /**
      * 1:存在 0:删除
@@ -208,6 +213,14 @@ public class NmplCompanyInfo {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position == null ? null : position.trim();
     }
 
     public Boolean getIsExist() {
