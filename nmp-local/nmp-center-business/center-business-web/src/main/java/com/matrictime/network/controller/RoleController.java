@@ -79,7 +79,7 @@ public class RoleController {
      * @return
      */
     @ApiOperation(value = "角色编辑接口",notes = "角色编辑")
-    @RequestMapping(value = "/modify",method = RequestMethod.POST)
+    @RequestMapping(value = "/modify111",method = RequestMethod.POST)
     @RequiresPermissions("sys:role:permersion")
 //    @SystemLog(opermodul = "角色管理模块",operDesc = "修改角色",operType = "编辑",operLevl = "2")
     public Result permersion(@RequestBody RoleRequest roleRequest){
