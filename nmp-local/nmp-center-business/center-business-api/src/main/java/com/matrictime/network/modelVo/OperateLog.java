@@ -1,3 +1,4 @@
+package com.matrictime.network.modelVo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

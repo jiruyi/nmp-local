@@ -37,64 +37,7 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
-
-        <!--        <table tableName="network_key_detail" domainObjectName="NetworkKeyDetail"-->
-        <!--               enableCountByExample="true" enableUpdateByExample="true"-->
-        <!--               enableDeleteByExample="true" enableSelectByExample="true"-->
-        <!--               selectByExampleQueryId="true">-->
-        <!--        </table>-->
-        <!--        <table tableName="network_login_detail" domainObjectName="NetworkLoginDetail"-->
-        <!--               enableCountByExample="true" enableUpdateByExample="true"-->
-        <!--               enableDeleteByExample="true" enableSelectByExample="true"-->
-        <!--               selectByExampleQueryId="true">-->
-        <!--        </table>-->
-
-<!--        <table tableName="nmpl_data_collect_for_load" domainObjectName="NmplDataCollectForLoad"-->
-<!--               enableCountByExample="true" enableUpdateByExample="true"-->
-<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
-<!--               selectByExampleQueryId="true">-->
-<!--        </table>-->
-<!--        <table tableName="nmpl_base_station_info" domainObjectName="NmplBaseStationInfo"-->
-<!--               enableCountByExample="true" enableUpdateByExample="true"-->
-<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
-<!--               selectByExampleQueryId="true">-->
-<!--        </table>-->
-<!--        <table tableName="nmpl_device_info" domainObjectName="NmplDeviceInfo"-->
-<!--               enableCountByExample="true" enableUpdateByExample="true"-->
-<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
-<!--               selectByExampleQueryId="true">-->
-<!--        </table>-->
-<!--        <table tableName="nmpl_link_relation" domainObjectName="NmplLinkRelation"-->
-<!--               enableCountByExample="true" enableUpdateByExample="true"-->
-<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
-<!--               selectByExampleQueryId="true">-->
-<!--        </table>-->
-        <!--        <table tableName="network_region_info" domainObjectName="NetworkRegionInfo"-->
-        <!--               enableCountByExample="true" enableUpdateByExample="true"-->
-        <!--               enableDeleteByExample="true" enableSelectByExample="true"-->
-        <!--               selectByExampleQueryId="true">-->
-        <!--        </table>-->
-        <!--        <table tableName="network_secret_index" domainObjectName="NetworkSecretIndex"-->
-        <!--               enableCountByExample="true" enableUpdateByExample="true"-->
-        <!--               enableDeleteByExample="true" enableSelectByExample="true"-->
-        <!--               selectByExampleQueryId="true">-->
-        <!--        </table>-->
-        <!--        <table tableName="network_sms_detail" domainObjectName="NetworkSmsDetail"-->
-        <!--               enableCountByExample="true" enableUpdateByExample="true"-->
-        <!--               enableDeleteByExample="true" enableSelectByExample="true"-->
-        <!--               selectByExampleQueryId="true">-->
-        <!--        </table>-->
-<!--                <table tableName="nmpl_physical_device_heartbeat" domainObjectName="NmplPhysicalDeviceHeartbeat"-->
-<!--                       enableCountByExample="true" enableUpdateByExample="true"-->
-<!--                       enableDeleteByExample="true" enableSelectByExample="true"-->
-<!--                       selectByExampleQueryId="true">-->
-<!--                </table>-->
-        <table tableName="nmpl_physical_device_resource" domainObjectName="NmplPhysicalDeviceResource"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
-        <table tableName="nmpl_system_resource" domainObjectName="NmplSystemResource"
+        <table tableName="nmpl_alarm_info" domainObjectName="NmplAlarmInfo"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">

@@ -90,7 +90,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="queryLoginDetailList" parameterType="com.matrictime.network.model.LoginDetail" resultMap="BaseResultMap">
+  <select id="queryLoginDetailList" parameterType="com.matrictime.network.model.com.matrictime.network.modelVo.LoginDetail" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from nmpl_login_detail

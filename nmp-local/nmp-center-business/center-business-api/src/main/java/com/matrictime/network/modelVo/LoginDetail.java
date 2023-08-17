@@ -1,3 +1,4 @@
+package com.matrictime.network.modelVo;
 
 import com.matrictime.network.request.BaseRequest;
 import lombok.AllArgsConstructor;

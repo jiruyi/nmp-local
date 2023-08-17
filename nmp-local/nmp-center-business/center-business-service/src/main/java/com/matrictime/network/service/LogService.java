@@ -1,7 +1,8 @@
 package com.matrictime.network.service;
 
-import com.matrictime.network.model.LoginDetail;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.LoginDetail;
+import com.matrictime.network.request.AlarmInfoRequest;
 import com.matrictime.network.request.LogRequest;
 import com.matrictime.network.response.PageInfo;
 
@@ -18,6 +19,6 @@ public interface LogService {
 
      Result<PageInfo> queryLoginDetailList(LoginDetail loginDetail);
 
-
+     Result<PageInfo> queryAlarmInfoList(AlarmInfoRequest alarmInfoRequest);
 
 }

@@ -2,7 +2,7 @@ package com.matrictime.network.dao.mapper;
 
 import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplLoginDetailExample;
-import com.matrictime.network.model.LoginDetail;
+import com.matrictime.network.modelVo.LoginDetail;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

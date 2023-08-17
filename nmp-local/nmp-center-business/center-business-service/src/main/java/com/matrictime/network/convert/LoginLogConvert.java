@@ -2,7 +2,7 @@ package com.matrictime.network.convert;
 
 import com.matrictime.network.base.util.DateUtils;
 import com.matrictime.network.dao.model.NmplLoginDetail;
-import com.matrictime.network.model.LoginDetail;
+import com.matrictime.network.modelVo.LoginDetail;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;

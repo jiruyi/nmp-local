@@ -4,11 +4,15 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.dao.domain.LogDomainService;
+import com.matrictime.network.dao.mapper.NmplAlarmInfoMapper;
 import com.matrictime.network.dao.mapper.NmplLoginDetailMapper;
 import com.matrictime.network.dao.mapper.NmplOperateLogMapper;
+import com.matrictime.network.dao.model.NmplAlarmInfo;
+import com.matrictime.network.dao.model.NmplAlarmInfoExample;
 import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplOperateLog;
-import com.matrictime.network.model.LoginDetail;
+import com.matrictime.network.modelVo.LoginDetail;
+import com.matrictime.network.request.AlarmInfoRequest;
 import com.matrictime.network.request.LogRequest;
 import com.matrictime.network.response.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +39,9 @@ public class LogDomainServiceImpl extends SystemBaseService implements LogDomain
 
     @Autowired
     private NmplLoginDetailMapper loginDetailMapper;
+
+    @Autowired
+    private NmplAlarmInfoMapper alarmInfoMapper;
 
 
     @Override
@@ -74,6 +81,26 @@ public class LogDomainServiceImpl extends SystemBaseService implements LogDomain
         Page page = PageHelper.startPage(loginDetail.getPageNo(),loginDetail.getPageSize());
         List<NmplLoginDetail> list = loginDetailMapper.queryLoginDetailList(loginDetail);
         PageInfo<NmplLoginDetail> pageResult =  new PageInfo<>((int)page.getTotal(), page.getPages(), list);
+        return pageResult;
+    }
+
+    /**
+      * @title queryAlarmInfoList
+      * @param [alarmAreaCode]
+      * @return com.matrictime.network.response.PageInfo
+      * @description 
+      * @author jiruyi
+      * @create 2023/8/17 0017 16:52
+      */
+    @Override
+    public PageInfo queryAlarmInfoList(AlarmInfoRequest alarmInfoRequest) {
+        Page page = PageHelper.startPage(alarmInfoRequest.getPageNo(),alarmInfoRequest.getPageSize());
+        NmplAlarmInfoExample alarmInfoExample = new NmplAlarmInfoExample();
+        if(!ObjectUtils.isEmpty(alarmInfoRequest.getAlarmAreaCode())){
+            alarmInfoExample.createCriteria().andAlarmAreaCodeEqualTo(alarmInfoRequest.getAlarmAreaCode());
+        }
+        List<NmplAlarmInfo> list = alarmInfoMapper.selectByExample(alarmInfoExample);
+        PageInfo<NmplAlarmInfo> pageResult =  new PageInfo<>((int)page.getTotal(), page.getPages(), list);
         return pageResult;
     }
 

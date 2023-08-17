@@ -2,12 +2,15 @@ package com.matrictime.network.service.impl;
 
 
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.convert.AlarmInfoConvert;
 import com.matrictime.network.convert.LoginLogConvert;
 import com.matrictime.network.convert.OperateLogConvert;
 import com.matrictime.network.dao.domain.LogDomainService;
-import com.matrictime.network.model.LoginDetail;
-import com.matrictime.network.model.OperateLog;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.AlarmInfo;
+import com.matrictime.network.modelVo.LoginDetail;
+import com.matrictime.network.modelVo.OperateLog;
+import com.matrictime.network.request.AlarmInfoRequest;
 import com.matrictime.network.request.LogRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.LogService;
@@ -36,6 +39,9 @@ public class LogServiceImpl extends SystemBaseService implements LogService {
 
     @Autowired
     private LoginLogConvert loginLogConvert;
+
+    @Autowired
+    private  AlarmInfoConvert alarmInfoConvert;
 
 
 
@@ -69,6 +75,27 @@ public class LogServiceImpl extends SystemBaseService implements LogService {
             return  buildResult(pageInfo);
         }catch (Exception e){
             log.error("queryNetworkLogList exception :{}",e.getMessage());
+            return  failResult(e);
+        }
+    }
+
+    /**
+      * @title queryAlarmInfoList
+      * @param [alarmInfoRequest]
+      * @return com.matrictime.network.model.Result<com.matrictime.network.response.PageInfo>
+      * @description
+      * @author jiruyi
+      * @create 2023/8/17 0017 19:43
+      */
+    @Override
+    public Result<PageInfo> queryAlarmInfoList(AlarmInfoRequest alarmInfoRequest) {
+        try {
+            PageInfo pageInfo = logDomainService.queryAlarmInfoList(alarmInfoRequest);
+            List<AlarmInfo> list = alarmInfoConvert.to(pageInfo.getList());
+            pageInfo.setList(list);
+            return  buildResult(pageInfo);
+        }catch (Exception e){
+            log.error("queryAlarmInfoList exception :{}",e.getMessage());
             return  failResult(e);
         }
     }

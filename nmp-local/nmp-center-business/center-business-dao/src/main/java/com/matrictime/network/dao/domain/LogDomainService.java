@@ -2,7 +2,8 @@ package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplOperateLog;
-import com.matrictime.network.model.LoginDetail;
+import com.matrictime.network.modelVo.LoginDetail;
+import com.matrictime.network.request.AlarmInfoRequest;
 import com.matrictime.network.request.LogRequest;
 import com.matrictime.network.response.PageInfo;
 
@@ -15,11 +16,11 @@ import com.matrictime.network.response.PageInfo;
  */
 public interface LogDomainService {
 
-     int saveLog(NmplOperateLog operateLog);
+    int saveLog(NmplOperateLog operateLog);
 
     PageInfo<NmplOperateLog> queryLogList(LogRequest logRequest);
 
     PageInfo<NmplLoginDetail> queryLoginDetailList(LoginDetail loginDetail);
 
-
+    PageInfo queryAlarmInfoList(AlarmInfoRequest alarmInfoRequest);
 }
