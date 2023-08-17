@@ -51,6 +51,30 @@ public class DataCollectController {
     }
 
     /**
+     * 分别获取单个小区各个流量
+     * @param dataCollectRequest
+     * @return
+     */
+    @RequestMapping(value = "/sumCompanyDataCollect",method = RequestMethod.POST)
+    public Result<Double> sumCompanyDataCollect(@RequestBody DataCollectRequest dataCollectRequest){
+        Result<Double> result = new Result<>();
+        try {
+            if(StringUtils.isEmpty(dataCollectRequest.getDataItemCode())){
+                return new Result<>(false,"缺少必传参数");
+            }
+            if(StringUtils.isEmpty(dataCollectRequest.getCompanyNetworkId())){
+                return new Result<>(false,"缺少必传参数");
+            }
+            result = dataCollectService.sumDataValue(dataCollectRequest);
+        }catch (Exception e){
+            log.info("sumCompanyDataCollect:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
      * 查询各个流量时间点的流量图
      * @param dataCollectRequest
      * @return
@@ -72,7 +96,7 @@ public class DataCollectController {
     }
 
     /**
-     * 查询单个小区流量值
+     * 查询单个小区流量值占比
      * @param dataCollectRequest
      * @return
      */
@@ -94,6 +118,31 @@ public class DataCollectController {
         }
         return result;
     }
+
+    /**
+     * 查询单个小区流量折线图
+     * @param dataCollectRequest
+     * @return
+     */
+    @RequestMapping(value = "/selectCompanyLoadData",method = RequestMethod.POST)
+    public Result<List<DataTimeVo>> selectCompanyLoadData(@RequestBody DataCollectRequest dataCollectRequest){
+        Result<List<DataTimeVo>> result = new Result<>();
+        try {
+            if(StringUtils.isEmpty(dataCollectRequest.getDataItemCode())){
+                return new Result<>(false,"缺少必传参数");
+            }
+            if(StringUtils.isEmpty(dataCollectRequest.getCompanyNetworkId())){
+                return new Result<>(false,"缺少必传参数");
+            }
+            result = dataCollectService.selectCompanyLoadData(dataCollectRequest);
+        }catch (Exception e){
+            log.info("selectCompanyLoadData:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
 
     @RequestMapping(value = "/insertDataCollect",method = RequestMethod.POST)
     public Result<Integer> insertDataCollect(@RequestBody DataCollectResponse dataCollectResponse){

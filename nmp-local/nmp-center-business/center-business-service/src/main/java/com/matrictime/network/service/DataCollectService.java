@@ -22,4 +22,6 @@ public interface DataCollectService {
 
     Result<String> selectCompanyData(DataCollectRequest dataCollectRequest);
 
+    Result<List<DataTimeVo>> selectCompanyLoadData(DataCollectRequest dataCollectRequest);
+
 }

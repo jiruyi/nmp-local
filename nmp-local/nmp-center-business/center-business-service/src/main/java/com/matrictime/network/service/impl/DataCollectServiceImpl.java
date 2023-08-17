@@ -109,6 +109,26 @@ public class DataCollectServiceImpl implements DataCollectService {
     }
 
     /**
+     * 查询单个小区折线图
+     * @param dataCollectRequest
+     * @return
+     */
+    @Override
+    public Result<List<DataTimeVo>> selectCompanyLoadData(DataCollectRequest dataCollectRequest) {
+        Result<List<DataTimeVo>> result = new Result<>();
+        try {
+            result.setResultObj(dataCollectDomainService.selectCompanyLoadData(dataCollectRequest));
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+            log.info("selectCompanyLoadData:{}",e.getMessage());
+        }
+
+        return result;
+    }
+
+    /**
      * 保留小数点后两位
      * @param value
      * @return
