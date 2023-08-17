@@ -38,6 +38,12 @@
             t.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
         and
             t.company_network_id = a.company_network_id
+        <if test="companyNetworkId != null">
+            and t.company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
+        </if>
+        <if test="companyNetworkId != null">
+            and a.company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
+        </if>
     </select>
     <select id="selectLoadData" parameterType="com.matrictime.network.request.DataCollectRequest" resultMap="BaseResultMap">
         select
@@ -49,9 +55,13 @@
             nmpl_data_collect as a
         where
             a.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
+        <if test="companyNetworkId != null">
+            and a.company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
+        </if>
         and
             (
-                SELECT FROM_UNIXTIME(UNIX_TIMESTAMP(CAST(SYSDATE()AS DATE) - INTERVAL 1 DAY))
+                SELECT
+                    FROM_UNIXTIME(UNIX_TIMESTAMP(CAST(SYSDATE()AS DATE) - INTERVAL 1 DAY))
                     &lt;= a.upload_time
             )
         and

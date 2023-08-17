@@ -112,4 +112,4 @@ update nmpl_outline_pc_info set swing_in = '1',`swing_out`='1';
 
 --wq
 
-ALTER TABLE `nmpl_terminal_user` MODIFY `user_type` char(2) DEFAULT '01' COMMENT '用户类型 01:一体机  02:安全服务器';
+ALTER TABLE `nmpl_terminal_user` MODIFY `user_type` char(2) DEFAULT '01' COMMENT '用户类型 21:一体机  22:安全服务器';

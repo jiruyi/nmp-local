@@ -14,6 +14,8 @@ public interface DataCollectDomainService {
 
     List<DataTimeVo> selectLoadData(DataCollectRequest dataCollectRequest);
 
+    List<DataTimeVo> selectCompanyLoadData(DataCollectRequest dataCollectRequest);
+
     Double sumDataValue(DataCollectRequest dataCollectRequest);
 
     int insertDataCollect(DataCollectResponse dataCollectResponse);

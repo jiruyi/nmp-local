@@ -64,6 +64,34 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     }
 
     /**
+     * 单个小区折线图
+     * @param dataCollectRequest
+     * @return
+     */
+    @Override
+    public List<DataTimeVo> selectCompanyLoadData(DataCollectRequest dataCollectRequest) {
+        List<NmplDataCollect> nmplDataCollects = dataCollectExtMapper.selectLoadData(dataCollectRequest);
+        List<DataTimeVo> timeVoList = new ArrayList<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+        List<String> list = getTimeList();
+        for(int i = 0;i < list.size();i++){
+            DataTimeVo dataTimeVo = new DataTimeVo();
+            for(NmplDataCollect nmplDataCollect: nmplDataCollects){
+                String formatTime = formatter.format(nmplDataCollect.getUploadTime());
+                if(list.get(i).equals(formatTime)){
+                    if(StringUtils.isEmpty(nmplDataCollect.getSumNumber())){
+                        nmplDataCollect.setSumNumber("0");
+                    }
+                    dataTimeVo.setDataSum(Double.parseDouble(nmplDataCollect.getSumNumber()));
+                }
+            }
+            dataTimeVo.setTime(list.get(i));
+            timeVoList.add(dataTimeVo);
+        }
+        return timeVoList;
+    }
+
+    /**
      * 获取一天半小时的时间段
      * @return
      */
@@ -105,11 +133,17 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     @Override
     public Double sumDataValue(DataCollectRequest dataCollectRequest) {
         List<NmplDataCollect> nmplDataCollects = dataCollectExtMapper.sumData(dataCollectRequest);
-        Double sum = 0d;
-        for(NmplDataCollect dataCollect: nmplDataCollects){
-            sum = sum + Double.parseDouble(dataCollect.getSumNumber());
+        double sum = 0d;
+        if(nmplDataCollects.size() > 1){
+            for(NmplDataCollect dataCollect: nmplDataCollects){
+                sum = sum + Double.parseDouble(dataCollect.getSumNumber());
+            }
+            return sum;
         }
-        return sum;
+        if(CollectionUtils.isEmpty(nmplDataCollects)){
+            return 0d;
+        }
+        return Double.parseDouble(nmplDataCollects.get(0).getSumNumber());
     }
 
     /**

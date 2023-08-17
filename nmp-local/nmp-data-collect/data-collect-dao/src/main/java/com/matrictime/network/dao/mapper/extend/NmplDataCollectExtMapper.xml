@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplDataCollect">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+        <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+        <result column="device_ip" jdbcType="VARCHAR" property="deviceIp" />
+        <result column="device_type" jdbcType="VARCHAR" property="deviceType" />
+        <result column="data_item_name" jdbcType="VARCHAR" property="dataItemName" />
+        <result column="data_item_code" jdbcType="VARCHAR" property="dataItemCode" />
+        <result column="data_item_value" jdbcType="VARCHAR" property="dataItemValue" />
+        <result column="unit" jdbcType="VARCHAR" property="unit" />
+        <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <select id="selectDataCollect" resultMap="BaseResultMap">
+        SELECT
+            a.data_item_code,
+            a.data_item_value,
+            a.upload_time,
+            a.device_id,
+            a.device_type
+        FROM
+            nmpl_data_collect a,
+            (
+                SELECT
+                    max(upload_time) AS q,
+                    data_item_code
+                FROM
+                    nmpl_data_collect
+                GROUP BY
+                    data_item_code
+            ) AS b
+        WHERE
+        a.upload_time = b.q
+        AND a.data_item_code = b.data_item_code
+    </select>
+</mapper>

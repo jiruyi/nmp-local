@@ -16,8 +16,8 @@
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://192.168.72.14:3306/nmp_center" userId="root"
-                        password="Admin@1234">
+                        connectionURL="jdbc:mysql://192.168.72.40:3306/nmp_center" userId="root"
+                        password="123456">
             <property name="nullCatalogMeansCurrent" value="true" />
         </jdbcConnection>
 
@@ -89,16 +89,35 @@
 <!--                       enableDeleteByExample="true" enableSelectByExample="true"-->
 <!--                       selectByExampleQueryId="true">-->
 <!--                </table>-->
-        <table tableName="nmpl_physical_device_resource" domainObjectName="NmplPhysicalDeviceResource"
+<!--        <table tableName="nmpl_physical_device_resource" domainObjectName="NmplPhysicalDeviceResource"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+<!--        <table tableName="nmpl_system_resource" domainObjectName="NmplSystemResource"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
+        <table tableName="nmpl_station_summary" domainObjectName="NmplStationSummary"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
         </table>
-        <table tableName="nmpl_system_resource" domainObjectName="NmplSystemResource"
+        <table tableName="nmpl_company_info" domainObjectName="NmplCompanyInfo"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
         </table>
-
+        <table tableName="nmpl_terminal_user" domainObjectName="NmplTerminalUser"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
+        <table tableName="nmpl_company_heartbeat" domainObjectName="NmplCompanyHeartbeat"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
     </context>
 </generatorConfiguration>
