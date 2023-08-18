@@ -21,7 +21,6 @@
             <groupId>com.matrictime.cn</groupId>
             <artifactId>center-business-base</artifactId>
             <version>1.0.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mybatis.generator</groupId>

@@ -18,7 +18,7 @@ import java.util.Date;
  * @desc
  */
 @Component
-public class MyTask implements SchedulingConfigurer {
+public class AlarmInfoTaskService implements SchedulingConfigurer {
 
     //默认毫秒值
     private long timer = 3000;

@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Data
 public class BaseRequest implements Serializable {
 
-    private static final long serialVersionUID = -2664440672733655371L;
+    private static final long serialVersionUID = -2664440672733655871L;
 
     /**
      * 分页页数（不传默认第一页）

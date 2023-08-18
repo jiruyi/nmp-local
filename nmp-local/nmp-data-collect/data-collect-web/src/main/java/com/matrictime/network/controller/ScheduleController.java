@@ -3,7 +3,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.ScheduleCronReq;
-import com.matrictime.network.schedule.MyTask;
+import com.matrictime.network.schedule.AlarmInfoTaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +28,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class ScheduleController {
 
     @Autowired
-    private MyTask myTask;
+    private AlarmInfoTaskService alarmInfoTaskService;
 
 
-
+    /**
+      * @title updateScheduleCron
+      * @param [scheduleCronReq]
+      * @return com.matrictime.network.model.Result
+      * @description
+      * @author jiruyi
+      * @create 2023/8/15 0015 9:40
+      */
     @ApiOperation(value = "数据采集时间间隔修改", notes = "数据采集时间间隔修改")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public Result updateScheduleCron(@RequestBody  ScheduleCronReq scheduleCronReq) {
@@ -40,7 +47,7 @@ public class ScheduleController {
             checkParam(scheduleCronReq);
             log.info("updateScheduleCron timer:{}",scheduleCronReq.getConfigValue());
             //更新定时器的间隔时间毫秒值
-            myTask.updateTimer(Long.valueOf(scheduleCronReq.getConfigValue())*1000);
+            alarmInfoTaskService.updateTimer(Long.valueOf(scheduleCronReq.getConfigValue())*1000);
             return new Result();
         }catch (Exception e){
             log.error("ScheduleController updateScheduleCron exception:{}", e);

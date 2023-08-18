@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface CompanyInfoDomainService {
 
-    List<CompanyInfoVo> selectCompanyInfo();
+    List<CompanyInfoVo> selectCompanyInfo()throws Exception;
 
 }

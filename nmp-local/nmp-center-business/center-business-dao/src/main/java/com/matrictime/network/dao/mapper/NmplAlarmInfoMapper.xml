@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplAlarmInfoMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplAlarmInfo">
+    <id column="alarm_id" jdbcType="BIGINT" property="alarmId" />
+    <result column="alarm_source_id" jdbcType="VARCHAR" property="alarmSourceId" />
+    <result column="alarm_source_ip" jdbcType="VARCHAR" property="alarmSourceIp" />
+    <result column="alarm_content" jdbcType="VARCHAR" property="alarmContent" />
+    <result column="alarm_level" jdbcType="CHAR" property="alarmLevel" />
+    <result column="alarm_upload_time" jdbcType="TIMESTAMP" property="alarmUploadTime" />
+    <result column="alarm_source_type" jdbcType="CHAR" property="alarmSourceType" />
+    <result column="alarm_content_type" jdbcType="CHAR" property="alarmContentType" />
+    <result column="alarm_area_code" jdbcType="VARCHAR" property="alarmAreaCode" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    alarm_id, alarm_source_id, alarm_source_ip, alarm_content, alarm_level, alarm_upload_time, 
+    alarm_source_type, alarm_content_type, alarm_area_code, create_time, update_time
+  </sql>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplAlarmInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmpl_alarm_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <resultMap id="BaseResultMapExt" type="com.matrictime.network.dao.model.extend.NmplAlarmInfoExt">
+    <id column="alarm_id" jdbcType="BIGINT" property="alarmId" />
+    <result column="alarm_source_id" jdbcType="VARCHAR" property="alarmSourceId" />
+    <result column="alarm_source_ip" jdbcType="VARCHAR" property="alarmSourceIp" />
+    <result column="alarm_content" jdbcType="VARCHAR" property="alarmContent" />
+    <result column="alarm_level" jdbcType="CHAR" property="alarmLevel" />
+    <result column="alarm_upload_time" jdbcType="TIMESTAMP" property="alarmUploadTime" />
+    <result column="alarm_source_type" jdbcType="CHAR" property="alarmSourceType" />
+    <result column="alarm_content_type" jdbcType="CHAR" property="alarmContentType" />
+    <result column="alarm_area_code" jdbcType="VARCHAR" property="alarmAreaCode" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+  </resultMap>
+  <select id="selectListFromAlarmAndCompany" parameterType="com.matrictime.network.dao.model.NmplAlarmInfoExample" resultMap="BaseResultMapExt">
+    select
+    alarm_id, alarm_source_id, alarm_source_ip, alarm_content, alarm_level, alarm_upload_time,
+    alarm_source_type, alarm_content_type, alarm_area_code, company_name
+    from nmpl_alarm_info
+    join nmpl_company_info
+    on alarm_area_code = company_network_id
+    where 1=1
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from nmpl_alarm_info
+    where alarm_id = #{alarmId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nmpl_alarm_info
+    where alarm_id = #{alarmId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplAlarmInfoExample">
+    delete from nmpl_alarm_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplAlarmInfo">
+    insert into nmpl_alarm_info (alarm_id, alarm_source_id, alarm_source_ip, 
+      alarm_content, alarm_level, alarm_upload_time, 
+      alarm_source_type, alarm_content_type, alarm_area_code, 
+      create_time, update_time)
+    values (#{alarmId,jdbcType=BIGINT}, #{alarmSourceId,jdbcType=VARCHAR}, #{alarmSourceIp,jdbcType=VARCHAR}, 
+      #{alarmContent,jdbcType=VARCHAR}, #{alarmLevel,jdbcType=CHAR}, #{alarmUploadTime,jdbcType=TIMESTAMP}, 
+      #{alarmSourceType,jdbcType=CHAR}, #{alarmContentType,jdbcType=CHAR}, #{alarmAreaCode,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplAlarmInfo">
+    insert into nmpl_alarm_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="alarmId != null">
+        alarm_id,
+      </if>
+      <if test="alarmSourceId != null">
+        alarm_source_id,
+      </if>
+      <if test="alarmSourceIp != null">
+        alarm_source_ip,
+      </if>
+      <if test="alarmContent != null">
+        alarm_content,
+      </if>
+      <if test="alarmLevel != null">
+        alarm_level,
+      </if>
+      <if test="alarmUploadTime != null">
+        alarm_upload_time,
+      </if>
+      <if test="alarmSourceType != null">
+        alarm_source_type,
+      </if>
+      <if test="alarmContentType != null">
+        alarm_content_type,
+      </if>
+      <if test="alarmAreaCode != null">
+        alarm_area_code,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="alarmId != null">
+        #{alarmId,jdbcType=BIGINT},
+      </if>
+      <if test="alarmSourceId != null">
+        #{alarmSourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmSourceIp != null">
+        #{alarmSourceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmContent != null">
+        #{alarmContent,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmLevel != null">
+        #{alarmLevel,jdbcType=CHAR},
+      </if>
+      <if test="alarmUploadTime != null">
+        #{alarmUploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="alarmSourceType != null">
+        #{alarmSourceType,jdbcType=CHAR},
+      </if>
+      <if test="alarmContentType != null">
+        #{alarmContentType,jdbcType=CHAR},
+      </if>
+      <if test="alarmAreaCode != null">
+        #{alarmAreaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplAlarmInfoExample" resultType="java.lang.Long">
+    select count(*) from nmpl_alarm_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmpl_alarm_info
+    <set>
+      <if test="record.alarmId != null">
+        alarm_id = #{record.alarmId,jdbcType=BIGINT},
+      </if>
+      <if test="record.alarmSourceId != null">
+        alarm_source_id = #{record.alarmSourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.alarmSourceIp != null">
+        alarm_source_ip = #{record.alarmSourceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.alarmContent != null">
+        alarm_content = #{record.alarmContent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.alarmLevel != null">
+        alarm_level = #{record.alarmLevel,jdbcType=CHAR},
+      </if>
+      <if test="record.alarmUploadTime != null">
+        alarm_upload_time = #{record.alarmUploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.alarmSourceType != null">
+        alarm_source_type = #{record.alarmSourceType,jdbcType=CHAR},
+      </if>
+      <if test="record.alarmContentType != null">
+        alarm_content_type = #{record.alarmContentType,jdbcType=CHAR},
+      </if>
+      <if test="record.alarmAreaCode != null">
+        alarm_area_code = #{record.alarmAreaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmpl_alarm_info
+    set alarm_id = #{record.alarmId,jdbcType=BIGINT},
+      alarm_source_id = #{record.alarmSourceId,jdbcType=VARCHAR},
+      alarm_source_ip = #{record.alarmSourceIp,jdbcType=VARCHAR},
+      alarm_content = #{record.alarmContent,jdbcType=VARCHAR},
+      alarm_level = #{record.alarmLevel,jdbcType=CHAR},
+      alarm_upload_time = #{record.alarmUploadTime,jdbcType=TIMESTAMP},
+      alarm_source_type = #{record.alarmSourceType,jdbcType=CHAR},
+      alarm_content_type = #{record.alarmContentType,jdbcType=CHAR},
+      alarm_area_code = #{record.alarmAreaCode,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplAlarmInfo">
+    update nmpl_alarm_info
+    <set>
+      <if test="alarmSourceId != null">
+        alarm_source_id = #{alarmSourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmSourceIp != null">
+        alarm_source_ip = #{alarmSourceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmContent != null">
+        alarm_content = #{alarmContent,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmLevel != null">
+        alarm_level = #{alarmLevel,jdbcType=CHAR},
+      </if>
+      <if test="alarmUploadTime != null">
+        alarm_upload_time = #{alarmUploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="alarmSourceType != null">
+        alarm_source_type = #{alarmSourceType,jdbcType=CHAR},
+      </if>
+      <if test="alarmContentType != null">
+        alarm_content_type = #{alarmContentType,jdbcType=CHAR},
+      </if>
+      <if test="alarmAreaCode != null">
+        alarm_area_code = #{alarmAreaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where alarm_id = #{alarmId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplAlarmInfo">
+    update nmpl_alarm_info
+    set alarm_source_id = #{alarmSourceId,jdbcType=VARCHAR},
+      alarm_source_ip = #{alarmSourceIp,jdbcType=VARCHAR},
+      alarm_content = #{alarmContent,jdbcType=VARCHAR},
+      alarm_level = #{alarmLevel,jdbcType=CHAR},
+      alarm_upload_time = #{alarmUploadTime,jdbcType=TIMESTAMP},
+      alarm_source_type = #{alarmSourceType,jdbcType=CHAR},
+      alarm_content_type = #{alarmContentType,jdbcType=CHAR},
+      alarm_area_code = #{alarmAreaCode,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where alarm_id = #{alarmId,jdbcType=BIGINT}
+  </update>
+</mapper>
