@@ -1,8 +1,11 @@
 package com.matrictime.network.controller;
 
 import com.matrictime.network.model.Result;
-import com.matrictime.network.request.EditBasicConfigReq;
-import com.matrictime.network.request.QueryDictionaryReq;
+import com.matrictime.network.request.*;
+import com.matrictime.network.response.QueryCompanyUserResp;
+import com.matrictime.network.response.QueryDeviceResp;
+import com.matrictime.network.response.queryUserResp;
+import com.matrictime.network.service.MonitorDisplayService;
 import com.matrictime.network.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,67 +21,57 @@ import org.springframework.web.multipart.MultipartFile;
 public class MonitorDisplayController {
 
     @Autowired
-    SystemConfigService systemConfigService;
+    MonitorDisplayService monitorDisplayService;
 
     /**
-     * 基础配置查询
-     * @return
-     */
-    @RequestMapping(value = "/queryBasicConfig",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "基础配置",operDesc = "基础配置查询",operType = "查询")
-//    @RequiresPermissions("sys:basic:query")
-    public Result queryBasicConfig(){
-        try {
-            return  systemConfigService.queryBasicConfig();
-        }catch (Exception e){
-            log.error("SystemConfigController.queryBasicConfig exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
-        }
-    }
-
-    /**
-     * 基础配置编辑
-     * @return
-     */
-    @RequestMapping(value = "/updateBasicConfig",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "基础配置",operDesc = "基础配置编辑",operType = "编辑")
-//    @RequiresPermissions("sys:basic:update")
-    public Result updateBasicConfig(@RequestBody EditBasicConfigReq req){
-        try {
-            return  systemConfigService.editBasicConfig(req);
-        }catch (Exception e){
-            log.error("SystemConfigController.updateBasicConfig exception:{}",e.getMessage());
-            return new Result(false,e.getMessage());
-        }
-    }
-
-    /**
-     * 字典表查询
+     * 查询小区用户数
      * @param req
      * @return
      */
-    @RequestMapping(value = "/queryDictionary",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "字典表",operDesc = "字典表查询",operType = "查询")
-//    @RequiresPermissions("sys:dict:query")
-    public Result queryDictionary(@RequestBody QueryDictionaryReq req){
+    @RequestMapping(value = "/queryCompanyUser",method = RequestMethod.POST)
+//    @SystemLog(opermodul = "大屏展示",operDesc = "查询小区用户数",operType = "查询")
+//    @RequiresPermissions("sys:basic:query")
+    public Result<QueryCompanyUserResp> queryCompanyUser(@RequestBody QueryCompanyUserReq req){
         try {
-            return  systemConfigService.queryDictionary(req);
+            return  monitorDisplayService.queryCompanyUser(req);
         }catch (Exception e){
-            log.error("SystemConfigController.queryDictionary exception:{}",e.getMessage());
+            log.error("MonitorDisplayController.queryCompanyUser exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
 
     /**
-     * 字典表上传
-     * @param file
+     * 查询用户数
+     * @param req
      * @return
      */
-    @RequestMapping(value = "/uploadDictionary",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "字典表",operDesc = "字典表上传",operType = "上传")
-//    @RequiresPermissions("sys:dict:upload")
-    public Result uploadDictionary(@RequestBody MultipartFile file){
-        return systemConfigService.uploadDictionary(file);
+    @RequestMapping(value = "/queryUser",method = RequestMethod.POST)
+//    @SystemLog(opermodul = "大屏展示",operDesc = "查询用户数",operType = "编辑")
+//    @RequiresPermissions("sys:basic:update")
+    public Result<queryUserResp> updateBasicConfig(@RequestBody QueryUserReq req){
+        try {
+            return  monitorDisplayService.queryUser(req);
+        }catch (Exception e){
+            log.error("MonitorDisplayController.queryUser exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 查询设备数
+     * @param req
+     * @return
+     */
+    @RequestMapping(value = "/queryDevice",method = RequestMethod.POST)
+//    @SystemLog(opermodul = "大屏展示",operDesc = "查询设备数",operType = "查询")
+//    @RequiresPermissions("sys:dict:query")
+    public Result<QueryDeviceResp> queryDevice(@RequestBody QueryDeviceReq req){
+        try {
+            return  monitorDisplayService.queryDevice(req);
+        }catch (Exception e){
+            log.error("MonitorDisplayController.queryDevice exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
     }
 
 
