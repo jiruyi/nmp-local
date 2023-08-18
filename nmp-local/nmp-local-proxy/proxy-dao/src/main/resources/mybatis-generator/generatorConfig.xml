@@ -16,8 +16,8 @@
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://192.168.72.14:3306/nmp_proxy" userId="root"
-                        password="Admin@1234">
+                        connectionURL="jdbc:mysql://192.168.72.40:3306/nmp_local" userId="root"
+                        password="123456">
             <property name="nullCatalogMeansCurrent" value="true" />
         </jdbcConnection>
 
@@ -37,8 +37,7 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
-
-        <table tableName="nmpl_update_info_boundary" domainObjectName="NmplUpdateInfoBoundary"
+        <table tableName="nmpl_station_connect_count" domainObjectName="NmplStationConnectCount"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">

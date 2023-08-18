@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplTerminalUserExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplTerminalUser">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="terminal_network_id" jdbcType="VARCHAR" property="terminalNetworkId" />
+        <result column="parent_device_id" jdbcType="VARCHAR" property="parentDeviceId" />
+        <result column="terminal_status" jdbcType="CHAR" property="terminalStatus" />
+        <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="user_type" jdbcType="CHAR" property="userType" />
+    </resultMap>
+    <select id="selectTerminalUser" resultMap="BaseResultMap">
+        SELECT
+            a.terminal_status,
+            a.user_type,
+            a.upload_time,
+            a.parent_device_id
+        FROM
+            nmpl_terminal_user a,
+            (
+                SELECT
+                    max(upload_time) AS q,
+                    terminal_status
+                FROM
+                    nmpl_terminal_user
+                GROUP BY
+                    terminal_status
+            ) AS b
+        WHERE
+            a.upload_time = b.q
+          AND a.terminal_status = b.terminal_status
+    </select>
+</mapper>

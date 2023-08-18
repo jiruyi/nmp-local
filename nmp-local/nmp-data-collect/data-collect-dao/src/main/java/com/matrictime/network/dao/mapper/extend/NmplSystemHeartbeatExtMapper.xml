@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplSystemHeartbeatExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplSystemHeartbeat">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="source_id" jdbcType="VARCHAR" property="sourceId" />
+        <result column="target_id" jdbcType="VARCHAR" property="targetId" />
+        <result column="status" jdbcType="CHAR" property="status" />
+        <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <select id="selectSystemHeart" resultMap="BaseResultMap">
+        select
+            s.source_id,s.target_id,s.status,s.upload_time
+        from
+            nmpl_system_heartbeat s,
+            (
+                select
+                    max(upload_time) q,
+                    source_id,
+                    target_id
+                from nmpl_system_heartbeat
+                group by source_id,target_id
+            ) as a
+        where s.source_id = a.source_id and s.target_id = a.target_id and s.upload_time = a.q
+    </select>
+</mapper>
