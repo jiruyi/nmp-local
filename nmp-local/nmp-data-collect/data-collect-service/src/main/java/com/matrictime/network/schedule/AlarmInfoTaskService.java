@@ -1,14 +1,20 @@
 package com.matrictime.network.schedule;
 
+import com.matrictime.network.dao.domain.AlarmDomainService;
+import com.matrictime.network.dao.model.NmplAlarmInfo;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jiruyi
@@ -17,6 +23,7 @@ import java.util.Date;
  * @date 2023/7/20 0020 10:20
  * @desc
  */
+@Slf4j
 @Component
 public class AlarmInfoTaskService implements SchedulingConfigurer {
 
@@ -25,7 +32,8 @@ public class AlarmInfoTaskService implements SchedulingConfigurer {
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-
+    @Autowired
+    private  AlarmDomainService alarmDomainService;
     /**
       * @title configureTasks
       * @param [scheduledTaskRegistrar]
@@ -39,8 +47,12 @@ public class AlarmInfoTaskService implements SchedulingConfigurer {
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                //业务逻辑
-                System.out.println(format.format(new Date()) + "============222222222222222222222222222222222");
+                //业务逻辑 查询数据
+                List<NmplAlarmInfo> alarmInfoList =  alarmDomainService.queryAlarmList();
+                if(CollectionUtils.isEmpty(alarmInfoList)){
+                    return;
+                }
+                log.info("alarmPush this time query data count：{}",alarmInfoList.size());
             }
         }, new Trigger() {
             @Override
