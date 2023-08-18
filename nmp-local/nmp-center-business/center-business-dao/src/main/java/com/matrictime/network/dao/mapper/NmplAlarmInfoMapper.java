@@ -2,8 +2,10 @@ package com.matrictime.network.dao.mapper;
 
 import com.matrictime.network.dao.model.NmplAlarmInfo;
 import com.matrictime.network.dao.model.NmplAlarmInfoExample;
-import java.util.List;
+import com.matrictime.network.dao.model.extend.NmplAlarmInfoExt;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface NmplAlarmInfoMapper {
     long countByExample(NmplAlarmInfoExample example);
@@ -27,4 +29,6 @@ public interface NmplAlarmInfoMapper {
     int updateByPrimaryKeySelective(NmplAlarmInfo record);
 
     int updateByPrimaryKey(NmplAlarmInfo record);
+
+    List<NmplAlarmInfoExt> selectListFromAlarmAndCompany(NmplAlarmInfoExample example);
 }

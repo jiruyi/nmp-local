@@ -1,6 +1,6 @@
 package com.matrictime.network.convert;
 
-import com.matrictime.network.dao.model.NmplAlarmInfo;
+import com.matrictime.network.dao.model.extend.NmplAlarmInfoExt;
 import com.matrictime.network.modelVo.AlarmInfo;
 import org.mapstruct.Mapper;
 
@@ -12,7 +12,7 @@ import org.mapstruct.Mapper;
  * @desc
  */
 @Mapper(componentModel = "spring")
-public interface AlarmInfoConvert extends  BasicObjectMapper<NmplAlarmInfo , AlarmInfo>{
+public interface AlarmInfoConvert extends  BasicObjectMapper<NmplAlarmInfoExt, AlarmInfo>{
     @Override
-    AlarmInfo to(NmplAlarmInfo var1);
+    AlarmInfo to(NmplAlarmInfoExt var1);
 }

@@ -91,6 +91,35 @@
       order by ${orderByClause}
     </if>
   </select>
+  <resultMap id="BaseResultMapExt" type="com.matrictime.network.dao.model.extend.NmplAlarmInfoExt">
+    <id column="alarm_id" jdbcType="BIGINT" property="alarmId" />
+    <result column="alarm_source_id" jdbcType="VARCHAR" property="alarmSourceId" />
+    <result column="alarm_source_ip" jdbcType="VARCHAR" property="alarmSourceIp" />
+    <result column="alarm_content" jdbcType="VARCHAR" property="alarmContent" />
+    <result column="alarm_level" jdbcType="CHAR" property="alarmLevel" />
+    <result column="alarm_upload_time" jdbcType="TIMESTAMP" property="alarmUploadTime" />
+    <result column="alarm_source_type" jdbcType="CHAR" property="alarmSourceType" />
+    <result column="alarm_content_type" jdbcType="CHAR" property="alarmContentType" />
+    <result column="alarm_area_code" jdbcType="VARCHAR" property="alarmAreaCode" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+  </resultMap>
+  <select id="selectListFromAlarmAndCompany" parameterType="com.matrictime.network.dao.model.NmplAlarmInfoExample" resultMap="BaseResultMapExt">
+    select
+    alarm_id, alarm_source_id, alarm_source_ip, alarm_content, alarm_level, alarm_upload_time,
+    alarm_source_type, alarm_content_type, alarm_area_code, company_name
+    from nmpl_alarm_info
+    join nmpl_company_info
+    on alarm_area_code = company_network_id
+    where 1=1
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

@@ -1,9 +1,6 @@
-package com.matrictime.network.modelVo;
+package com.matrictime.network.dao.model.extend;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -11,18 +8,16 @@ import java.util.Date;
  * @author jiruyi
  * @copyright www.matrictime.com
  * @project nmp-local
- * @date 2023/4/19 0019 15:44
+ * @date 2023/8/18 0018 9:39
  * @desc
  */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class AlarmInfo {
+public class NmplAlarmInfoExt {
     /**
      * 主键
      */
     private Long alarmId;
+
     /**
      * 业务系统id  物理设备无
      */
@@ -59,14 +54,9 @@ public class AlarmInfo {
     private String alarmContentType;
 
     /**
-     * 告警小区编码
+     * 小区编码
      */
     private String alarmAreaCode;
-
-    /**
-     * 告警小区名字
-     */
-    private String companyName;
 
     /**
      * 创建时间
@@ -77,4 +67,8 @@ public class AlarmInfo {
      * 更新时间
      */
     private Date updateTime;
+    /**
+     * 小区名字
+     */
+    private String companyName;
 }
