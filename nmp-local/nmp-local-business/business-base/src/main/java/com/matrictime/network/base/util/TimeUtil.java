@@ -51,7 +51,6 @@ public class TimeUtil {
         LocalDateTime now = LocalDateTime.now();
         //获取分
         int minute = now.getMinute();
-        //获取[0-15) 为0 [15-45)为30  获取[45-60)为00
         int count = minute/30;
         switch (count){
             case 0:
