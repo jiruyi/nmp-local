@@ -6,7 +6,7 @@ import java.util.Date;
 
 /**
  * @author by wangqiang
- * @date 2023/8/14.
+ * @date 2023/8/18.
  */
 @Data
 public class CompanyHeartbeatVo {
@@ -40,4 +40,5 @@ public class CompanyHeartbeatVo {
      * 上报时间
      */
     private Date uploadTime;
+
 }

@@ -38,7 +38,7 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         //构建更新体
         NmplStationSummary stationSummary = new NmplStationSummary();
         BeanUtils.copyProperties(stationSummaryRequest,stationSummary);
-        return stationSummaryMapper.updateByExample(stationSummary,stationSummaryExample);
+        return stationSummaryMapper.updateByExampleSelective(stationSummary,stationSummaryExample);
     }
 
     @Override

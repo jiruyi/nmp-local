@@ -165,143 +165,143 @@ public class NmplCompanyHeartbeatExample {
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdIsNull() {
-            addCriterion("source_company_network_id is null");
+        public Criteria andSourceNetworkIdIsNull() {
+            addCriterion("source_network_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdIsNotNull() {
-            addCriterion("source_company_network_id is not null");
+        public Criteria andSourceNetworkIdIsNotNull() {
+            addCriterion("source_network_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdEqualTo(String value) {
-            addCriterion("source_company_network_id =", value, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdEqualTo(String value) {
+            addCriterion("source_network_id =", value, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdNotEqualTo(String value) {
-            addCriterion("source_company_network_id <>", value, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdNotEqualTo(String value) {
+            addCriterion("source_network_id <>", value, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdGreaterThan(String value) {
-            addCriterion("source_company_network_id >", value, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdGreaterThan(String value) {
+            addCriterion("source_network_id >", value, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdGreaterThanOrEqualTo(String value) {
-            addCriterion("source_company_network_id >=", value, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdGreaterThanOrEqualTo(String value) {
+            addCriterion("source_network_id >=", value, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdLessThan(String value) {
-            addCriterion("source_company_network_id <", value, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdLessThan(String value) {
+            addCriterion("source_network_id <", value, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdLessThanOrEqualTo(String value) {
-            addCriterion("source_company_network_id <=", value, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdLessThanOrEqualTo(String value) {
+            addCriterion("source_network_id <=", value, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdLike(String value) {
-            addCriterion("source_company_network_id like", value, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdLike(String value) {
+            addCriterion("source_network_id like", value, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdNotLike(String value) {
-            addCriterion("source_company_network_id not like", value, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdNotLike(String value) {
+            addCriterion("source_network_id not like", value, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdIn(List<String> values) {
-            addCriterion("source_company_network_id in", values, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdIn(List<String> values) {
+            addCriterion("source_network_id in", values, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdNotIn(List<String> values) {
-            addCriterion("source_company_network_id not in", values, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdNotIn(List<String> values) {
+            addCriterion("source_network_id not in", values, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdBetween(String value1, String value2) {
-            addCriterion("source_company_network_id between", value1, value2, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdBetween(String value1, String value2) {
+            addCriterion("source_network_id between", value1, value2, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andSourceCompanyNetworkIdNotBetween(String value1, String value2) {
-            addCriterion("source_company_network_id not between", value1, value2, "sourceCompanyNetworkId");
+        public Criteria andSourceNetworkIdNotBetween(String value1, String value2) {
+            addCriterion("source_network_id not between", value1, value2, "sourceNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdIsNull() {
-            addCriterion("target_company_network_id is null");
+        public Criteria andTargetNetworkIdIsNull() {
+            addCriterion("target_network_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdIsNotNull() {
-            addCriterion("target_company_network_id is not null");
+        public Criteria andTargetNetworkIdIsNotNull() {
+            addCriterion("target_network_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdEqualTo(String value) {
-            addCriterion("target_company_network_id =", value, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdEqualTo(String value) {
+            addCriterion("target_network_id =", value, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdNotEqualTo(String value) {
-            addCriterion("target_company_network_id <>", value, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdNotEqualTo(String value) {
+            addCriterion("target_network_id <>", value, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdGreaterThan(String value) {
-            addCriterion("target_company_network_id >", value, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdGreaterThan(String value) {
+            addCriterion("target_network_id >", value, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdGreaterThanOrEqualTo(String value) {
-            addCriterion("target_company_network_id >=", value, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdGreaterThanOrEqualTo(String value) {
+            addCriterion("target_network_id >=", value, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdLessThan(String value) {
-            addCriterion("target_company_network_id <", value, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdLessThan(String value) {
+            addCriterion("target_network_id <", value, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdLessThanOrEqualTo(String value) {
-            addCriterion("target_company_network_id <=", value, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdLessThanOrEqualTo(String value) {
+            addCriterion("target_network_id <=", value, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdLike(String value) {
-            addCriterion("target_company_network_id like", value, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdLike(String value) {
+            addCriterion("target_network_id like", value, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdNotLike(String value) {
-            addCriterion("target_company_network_id not like", value, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdNotLike(String value) {
+            addCriterion("target_network_id not like", value, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdIn(List<String> values) {
-            addCriterion("target_company_network_id in", values, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdIn(List<String> values) {
+            addCriterion("target_network_id in", values, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdNotIn(List<String> values) {
-            addCriterion("target_company_network_id not in", values, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdNotIn(List<String> values) {
+            addCriterion("target_network_id not in", values, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdBetween(String value1, String value2) {
-            addCriterion("target_company_network_id between", value1, value2, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdBetween(String value1, String value2) {
+            addCriterion("target_network_id between", value1, value2, "targetNetworkId");
             return (Criteria) this;
         }
 
-        public Criteria andTargetCompanyNetworkIdNotBetween(String value1, String value2) {
-            addCriterion("target_company_network_id not between", value1, value2, "targetCompanyNetworkId");
+        public Criteria andTargetNetworkIdNotBetween(String value1, String value2) {
+            addCriterion("target_network_id not between", value1, value2, "targetNetworkId");
             return (Criteria) this;
         }
 

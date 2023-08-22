@@ -5,7 +5,7 @@ import lombok.Data;
 
 /**
  * 小区业务心跳
- * @author   hexu
+ * @author   cxk
  * @date   2023-08-18
  */
 @Data
@@ -18,12 +18,12 @@ public class NmplCompanyHeartbeat {
     /**
      * 来源Id
      */
-    private String sourceCompanyNetworkId;
+    private String sourceNetworkId;
 
     /**
      * 目标Id
      */
-    private String targetCompanyNetworkId;
+    private String targetNetworkId;
 
     /**
      * 连接状态 01:通  02:不通
@@ -63,20 +63,20 @@ public class NmplCompanyHeartbeat {
         this.id = id;
     }
 
-    public String getSourceCompanyNetworkId() {
-        return sourceCompanyNetworkId;
+    public String getSourceNetworkId() {
+        return sourceNetworkId;
     }
 
-    public void setSourceCompanyNetworkId(String sourceCompanyNetworkId) {
-        this.sourceCompanyNetworkId = sourceCompanyNetworkId == null ? null : sourceCompanyNetworkId.trim();
+    public void setSourceNetworkId(String sourceNetworkId) {
+        this.sourceNetworkId = sourceNetworkId == null ? null : sourceNetworkId.trim();
     }
 
-    public String getTargetCompanyNetworkId() {
-        return targetCompanyNetworkId;
+    public String getTargetNetworkId() {
+        return targetNetworkId;
     }
 
-    public void setTargetCompanyNetworkId(String targetCompanyNetworkId) {
-        this.targetCompanyNetworkId = targetCompanyNetworkId == null ? null : targetCompanyNetworkId.trim();
+    public void setTargetNetworkId(String targetNetworkId) {
+        this.targetNetworkId = targetNetworkId == null ? null : targetNetworkId.trim();
     }
 
     public String getStatus() {

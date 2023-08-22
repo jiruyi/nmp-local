@@ -14,17 +14,12 @@ public class CompanyHeartbeatRequest extends CenterBaseRequest{
     /**
      * 来源Id
      */
-    private String sourceId;
+    private String sourceCompanyNetworkId;
 
     /**
      * 目标Id
      */
-    private String targetId;
-
-    /**
-     * 小区唯一编号Id
-     */
-    private String companyNetworkId;
+    private String targetCompanyNetworkId;
 
     /**
      * 连接状态 01:通  02:不通

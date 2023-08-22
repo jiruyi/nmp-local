@@ -23,6 +23,11 @@
             <version>1.18.20</version>
         </dependency>
         <dependency>
+            <groupId>com.matrictime.cn</groupId>
+            <artifactId>center-business-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
             <version>5.3.0</version>

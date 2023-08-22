@@ -3,8 +3,8 @@
 <mapper namespace="com.matrictime.network.dao.mapper.NmplCompanyHeartbeatMapper">
   <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplCompanyHeartbeat">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="source_company_network_id" jdbcType="VARCHAR" property="sourceCompanyNetworkId" />
-    <result column="target_company_network_id" jdbcType="VARCHAR" property="targetCompanyNetworkId" />
+    <result column="source_network_id" jdbcType="VARCHAR" property="sourceNetworkId" />
+    <result column="target_network_id" jdbcType="VARCHAR" property="targetNetworkId" />
     <result column="status" jdbcType="CHAR" property="status" />
     <result column="up_value" jdbcType="VARCHAR" property="upValue" />
     <result column="down_value" jdbcType="VARCHAR" property="downValue" />
@@ -71,8 +71,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, source_company_network_id, target_company_network_id, status, up_value, down_value, 
-    upload_time, create_time, update_time
+    id, source_network_id, target_network_id, status, up_value, down_value, upload_time, 
+    create_time, update_time
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplCompanyHeartbeatExample" resultMap="BaseResultMap">
     select
@@ -106,11 +106,11 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplCompanyHeartbeat">
-    insert into nmpl_company_heartbeat (id, source_company_network_id, target_company_network_id, 
+    insert into nmpl_company_heartbeat (id, source_network_id, target_network_id, 
       status, up_value, down_value, 
       upload_time, create_time, update_time
       )
-    values (#{id,jdbcType=BIGINT}, #{sourceCompanyNetworkId,jdbcType=VARCHAR}, #{targetCompanyNetworkId,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{sourceNetworkId,jdbcType=VARCHAR}, #{targetNetworkId,jdbcType=VARCHAR}, 
       #{status,jdbcType=CHAR}, #{upValue,jdbcType=VARCHAR}, #{downValue,jdbcType=VARCHAR}, 
       #{uploadTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
@@ -121,11 +121,11 @@
       <if test="id != null">
         id,
       </if>
-      <if test="sourceCompanyNetworkId != null">
-        source_company_network_id,
+      <if test="sourceNetworkId != null">
+        source_network_id,
       </if>
-      <if test="targetCompanyNetworkId != null">
-        target_company_network_id,
+      <if test="targetNetworkId != null">
+        target_network_id,
       </if>
       <if test="status != null">
         status,
@@ -150,11 +150,11 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="sourceCompanyNetworkId != null">
-        #{sourceCompanyNetworkId,jdbcType=VARCHAR},
+      <if test="sourceNetworkId != null">
+        #{sourceNetworkId,jdbcType=VARCHAR},
       </if>
-      <if test="targetCompanyNetworkId != null">
-        #{targetCompanyNetworkId,jdbcType=VARCHAR},
+      <if test="targetNetworkId != null">
+        #{targetNetworkId,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
         #{status,jdbcType=CHAR},
@@ -188,11 +188,11 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.sourceCompanyNetworkId != null">
-        source_company_network_id = #{record.sourceCompanyNetworkId,jdbcType=VARCHAR},
+      <if test="record.sourceNetworkId != null">
+        source_network_id = #{record.sourceNetworkId,jdbcType=VARCHAR},
       </if>
-      <if test="record.targetCompanyNetworkId != null">
-        target_company_network_id = #{record.targetCompanyNetworkId,jdbcType=VARCHAR},
+      <if test="record.targetNetworkId != null">
+        target_network_id = #{record.targetNetworkId,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null">
         status = #{record.status,jdbcType=CHAR},
@@ -220,8 +220,8 @@
   <update id="updateByExample" parameterType="map">
     update nmpl_company_heartbeat
     set id = #{record.id,jdbcType=BIGINT},
-      source_company_network_id = #{record.sourceCompanyNetworkId,jdbcType=VARCHAR},
-      target_company_network_id = #{record.targetCompanyNetworkId,jdbcType=VARCHAR},
+      source_network_id = #{record.sourceNetworkId,jdbcType=VARCHAR},
+      target_network_id = #{record.targetNetworkId,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=CHAR},
       up_value = #{record.upValue,jdbcType=VARCHAR},
       down_value = #{record.downValue,jdbcType=VARCHAR},
@@ -235,11 +235,11 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplCompanyHeartbeat">
     update nmpl_company_heartbeat
     <set>
-      <if test="sourceCompanyNetworkId != null">
-        source_company_network_id = #{sourceCompanyNetworkId,jdbcType=VARCHAR},
+      <if test="sourceNetworkId != null">
+        source_network_id = #{sourceNetworkId,jdbcType=VARCHAR},
       </if>
-      <if test="targetCompanyNetworkId != null">
-        target_company_network_id = #{targetCompanyNetworkId,jdbcType=VARCHAR},
+      <if test="targetNetworkId != null">
+        target_network_id = #{targetNetworkId,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=CHAR},
@@ -264,8 +264,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplCompanyHeartbeat">
     update nmpl_company_heartbeat
-    set source_company_network_id = #{sourceCompanyNetworkId,jdbcType=VARCHAR},
-      target_company_network_id = #{targetCompanyNetworkId,jdbcType=VARCHAR},
+    set source_network_id = #{sourceNetworkId,jdbcType=VARCHAR},
+      target_network_id = #{targetNetworkId,jdbcType=VARCHAR},
       status = #{status,jdbcType=CHAR},
       up_value = #{upValue,jdbcType=VARCHAR},
       down_value = #{downValue,jdbcType=VARCHAR},
