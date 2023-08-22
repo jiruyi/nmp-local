@@ -336,7 +336,7 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                 List<NmplCompanyHeartbeat> companyHeartbeats = companyHeartbeatMapper.selectByExample(heartbeatExample);
                 if (!CollectionUtils.isEmpty(companyHeartbeats)){
                     for (NmplCompanyHeartbeat heartbeat:companyHeartbeats){
-                        if (companyNetIds.contains(heartbeat.getSourceId()) && companyNetIds.contains(heartbeat.getTargetId())){
+                        if (companyNetIds.contains(heartbeat.getSourceCompanyNetworkId()) && companyNetIds.contains(heartbeat.getTargetCompanyNetworkId())){
                             CompanyHeartbeatVo vo = new CompanyHeartbeatVo();
                             BeanUtils.copyProperties(heartbeat,vo);
                             companyHeartbeatVos.add(vo);
