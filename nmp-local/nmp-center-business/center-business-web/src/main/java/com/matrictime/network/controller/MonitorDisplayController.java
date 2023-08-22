@@ -4,6 +4,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.QueryCompanyUserResp;
 import com.matrictime.network.response.QueryDeviceResp;
+import com.matrictime.network.response.QueryMapInfoResp;
 import com.matrictime.network.response.queryUserResp;
 import com.matrictime.network.service.MonitorDisplayService;
 import com.matrictime.network.service.SystemConfigService;
@@ -70,6 +71,23 @@ public class MonitorDisplayController {
             return  monitorDisplayService.queryDevice(req);
         }catch (Exception e){
             log.error("MonitorDisplayController.queryDevice exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+
+    /**
+     * 查询地图信息
+     * @return
+     */
+    @RequestMapping(value = "/queryMapInfo",method = RequestMethod.POST)
+//    @SystemLog(opermodul = "大屏展示",operDesc = "查询地图信息",operType = "查询")
+//    @RequiresPermissions("sys:dict:query")
+    public Result<QueryMapInfoResp> queryMapInfo(){
+        try {
+            return  monitorDisplayService.queryMapInfo();
+        }catch (Exception e){
+            log.error("MonitorDisplayController.queryMapInfo exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

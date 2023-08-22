@@ -85,4 +85,39 @@ public class CompanyInfoVo {
      */
     private Boolean isExist;
 
+    /**
+     * 严重警告
+     */
+    private String seriousCount;
+
+    /**
+     * 紧急警告
+     */
+    private String emergentCount;
+
+    /**
+     * 一般警告
+     */
+    private String sameAsCount;
+
+    /**
+     * 接入带宽
+     */
+    private String accessBandwith;
+
+    /**
+     * 区间带宽
+     */
+    private String intervalBandwith;
+
+    /**
+     * 网元设备
+     */
+    private String netDevices;
+
+    /**
+     * 终端设备
+     */
+    private String terminalDevices;
+
 }

@@ -32,5 +32,6 @@ public class DataConstants {
 
     public static final String ACCUSATION_CENTER  = "accusation_center_";
 
+    public static final String ZERO_STRING = "0";
 
 }
