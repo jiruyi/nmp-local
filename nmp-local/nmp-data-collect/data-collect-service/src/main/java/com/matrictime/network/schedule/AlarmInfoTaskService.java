@@ -1,7 +1,8 @@
 package com.matrictime.network.schedule;
 
-import com.matrictime.network.dao.domain.AlarmDomainService;
+import com.matrictime.network.dao.domain.*;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
+import com.matrictime.network.modelVo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +36,22 @@ public class AlarmInfoTaskService implements SchedulingConfigurer {
 
     @Autowired
     private  AlarmDomainService alarmDomainService;
+
+    @Resource
+    private DataCollectDomainService dataCollectDomainService;
+
+    @Resource
+    private StationSummaryDomainService summaryDomainService;
+
+    @Resource
+    private TerminalUserDomainService terminalUserDomainService;
+
+    @Resource
+    private CompanyInfoDomainService companyInfoDomainService;
+
+    @Resource
+    private CompanyHeartbeatDomainService companyHeartbeatDomainService;
+
     /**
       * @title configureTasks
       * @param [scheduledTaskRegistrar]
@@ -49,6 +67,27 @@ public class AlarmInfoTaskService implements SchedulingConfigurer {
             public void run() {
                 //业务逻辑 查询数据
                 List<NmplAlarmInfo> alarmInfoList =  alarmDomainService.queryAlarmList();
+                //查询流量数据
+                List<DataCollectVo> dataCollectVos = dataCollectDomainService.selectDataCollect();
+                //查询基站类型、设备类型、心跳总数
+                StationSummaryVo borderStation = summaryDomainService.selectBorderStation();
+
+                StationSummaryVo station = summaryDomainService.selectStation();
+
+                StationSummaryVo device = summaryDomainService.selectDevice();
+
+                StationSummaryVo systemHeart = summaryDomainService.selectSystemHeart();
+                //查询终端用户
+                List<TerminalUserVo> terminalUserVoList = terminalUserDomainService.selectTerminalUser();
+                //查询小区信息
+                try {
+                    List<CompanyInfoVo> companyInfoVos = companyInfoDomainService.selectCompanyInfo();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //查询小区心跳
+                List<CompanyHeartbeatVo> list = companyHeartbeatDomainService.selectCompanyHeartbeat();
+
                 if(CollectionUtils.isEmpty(alarmInfoList)){
                     return;
                 }
