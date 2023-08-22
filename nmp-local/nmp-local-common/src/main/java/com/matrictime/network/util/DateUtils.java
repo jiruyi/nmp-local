@@ -821,4 +821,25 @@ public class DateUtils {
         calendar.set(Calendar.MILLISECOND,0);
         return calendar.getTime();
     }
+
+    /**
+     * 入参 13:29:22,13:31:45 返回13:30,14:00
+     * @param time
+     * @param formatter
+     * @return
+     */
+    public static String getTime(Date time,SimpleDateFormat formatter){
+        Calendar calendar =Calendar.getInstance();
+        calendar.setTime(time);
+        int hour = calendar.get(Calendar.HOUR);
+        int minute = calendar.get(Calendar.MINUTE);
+        if (minute<30){
+            calendar.set(Calendar.MINUTE,30);
+        }else {
+            calendar.set(Calendar.MINUTE,0);
+            calendar.set(Calendar.HOUR,(hour+1)%24);
+        }
+        return formatter.format(calendar.getTime());
+    }
+
 }
