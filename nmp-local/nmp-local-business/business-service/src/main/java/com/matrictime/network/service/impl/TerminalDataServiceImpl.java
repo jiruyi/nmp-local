@@ -155,7 +155,11 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
     public void handleAddData(TerminalDataReq terminalDataReq) {
         checkParam(terminalDataReq);
         //获取根据terminal_network_id,data_type分组最新上报的数据
-        List<TerminalDataVo> terminalDataVoList = nmplTerminalDataExtMapper.selectCurrentIpFlow(terminalDataReq);
+        NmplTerminalDataExample nmplTerminalDataExample = new NmplTerminalDataExample();
+        nmplTerminalDataExample.createCriteria().andTerminalNetworkIdEqualTo(terminalDataReq.getTerminalNetworkId())
+                .andDataTypeEqualTo(terminalDataReq.getDataType())
+                .andUploadTimeGreaterThan(TimeUtil.getTimeBeforeHours(1,0));
+        List<NmplTerminalData> terminalDataVoList = nmplTerminalDataMapper.selectByExample(nmplTerminalDataExample);
         String time = TimeUtil.getOnTime();
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
         String key = DataConstants.FLOW_TRANSFOR
@@ -163,9 +167,9 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         TimeDataVo timeDataVo = new TimeDataVo();
         timeDataVo.setUpValue(DOUBLE_ZERO);
         timeDataVo.setDownValue(DOUBLE_ZERO);
-        for (TerminalDataVo terminalDataVo : terminalDataVoList) {
+        for (NmplTerminalData terminalDataVo : terminalDataVoList) {
             //判断数据是否是当天以及时刻是否是当前时刻的
-            if(time.equals(formatter.format(terminalDataVo.getUploadTime()))&& TimeUtil.IsTodayDate(terminalDataVo.getUploadTime())){
+            if(time.equals(DateUtils.getTime(terminalDataVo.getUploadTime(),formatter))&& TimeUtil.IsTodayDate(terminalDataVo.getUploadTime())){
                 BigDecimal upValue = new BigDecimal(terminalDataVo.getUpValue());
                 BigDecimal downValue = new BigDecimal(terminalDataVo.getDownValue());
                 timeDataVo.setUpValue(upValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).
@@ -252,8 +256,9 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         for (NmplTerminalData nmplTerminalDatum : nmplTerminalData) {
             BigDecimal upValue = new BigDecimal(nmplTerminalDatum.getUpValue());
             BigDecimal downValue = new BigDecimal(nmplTerminalDatum.getDownValue());
-            if (cache.containsKey(formatter.format(nmplTerminalDatum.getUploadTime()))) {
-                TimeDataVo timeDataVo = cache.get(formatter.format(nmplTerminalDatum.getUploadTime()));
+            String time = DateUtils.getTime(nmplTerminalDatum.getUploadTime(),formatter);
+            if (cache.containsKey(time)){
+                TimeDataVo timeDataVo = cache.get(time);
                 timeDataVo.setUpValue(upValue.divide(new BigDecimal(BASE_NUMBER * BASE_NUMBER * HALF_HOUR_SECONDS / BYTE_TO_BPS), RESERVE_DIGITS, BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getUpValue())).doubleValue());
                 timeDataVo.setDownValue(downValue.divide(new BigDecimal(BASE_NUMBER * BASE_NUMBER * HALF_HOUR_SECONDS / BYTE_TO_BPS), RESERVE_DIGITS, BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getDownValue())).doubleValue());
                 timeDataVo.setDate(nmplTerminalDatum.getUploadTime());
@@ -275,11 +280,13 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
         List<NmplTerminalData> nmplTerminalData = nmplTerminalDataMapper.selectByExample(nmplTerminalDataExample);
 
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+
         for (NmplTerminalData nmplTerminalDatum : nmplTerminalData) {
             BigDecimal upValue = new BigDecimal(nmplTerminalDatum.getUpValue());
             BigDecimal downValue = new BigDecimal(nmplTerminalDatum.getDownValue());
-            if (cache.containsKey(formatter.format(nmplTerminalDatum.getUploadTime()))) {
-                TimeDataVo timeDataVo = cache.get(formatter.format(nmplTerminalDatum.getUploadTime()));
+            String time = DateUtils.getTime(nmplTerminalDatum.getUploadTime(),formatter);
+            if (cache.containsKey(time)) {
+                TimeDataVo timeDataVo = cache.get(time);
                 timeDataVo.setUpValue( upValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getUpValue())).doubleValue());
                 timeDataVo.setDownValue( downValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(timeDataVo.getDownValue())).doubleValue());
             } else {
@@ -287,7 +294,7 @@ public class TerminalDataServiceImpl extends SystemBaseService implements Termin
                 timeDataVo.setDate(nmplTerminalDatum.getUploadTime());
                 timeDataVo.setUpValue(upValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).doubleValue());
                 timeDataVo.setDownValue(downValue.divide(new BigDecimal(BASE_NUMBER*BASE_NUMBER*HALF_HOUR_SECONDS/BYTE_TO_BPS),RESERVE_DIGITS,BigDecimal.ROUND_HALF_UP).doubleValue());
-                cache.put(formatter.format(nmplTerminalDatum.getUploadTime()), timeDataVo);
+                cache.put(time, timeDataVo);
             }
         }
     }
