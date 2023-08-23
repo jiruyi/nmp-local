@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * 系统设置模块
+ */
 @RequestMapping(value = "/config")
 @RestController
 @Slf4j

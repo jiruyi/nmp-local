@@ -106,9 +106,19 @@ public class CompanyInfoVo {
     private String accessBandwith;
 
     /**
+     * 接入带宽单位
+     */
+    private String accessBandwithUnit;
+
+    /**
      * 区间带宽
      */
     private String intervalBandwith;
+
+    /**
+     * 区间带宽单位
+     */
+    private String intervalBandwithUnit;
 
     /**
      * 网元设备

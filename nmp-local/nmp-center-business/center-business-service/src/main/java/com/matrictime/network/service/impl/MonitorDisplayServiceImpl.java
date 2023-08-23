@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.util.NumberUtils;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.StationSummaryExtMapper;
 import com.matrictime.network.dao.model.*;
@@ -205,16 +206,16 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
         try {
             QueryDeviceResp resp = new QueryDeviceResp();
             //总网络数
-            long totalNet = summaryExtMapper.getSum(StationSummaryEnum.TOTAL_NET_WORKS.getCode(), req.getCompanyNetworkId());
+            long totalNet = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.TOTAL_NET_WORKS.getCode(), req.getCompanyNetworkId()));
 
             //总接入基站数
-            long totalInsideStation = summaryExtMapper.getSum(StationSummaryEnum.BASE_STATION.getCode(), req.getCompanyNetworkId());
+            long totalInsideStation = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.BASE_STATION.getCode(), req.getCompanyNetworkId()));
 
             //总密钥中心数
-            long totalKeyCenter = summaryExtMapper.getSum(StationSummaryEnum.KET_CENTER.getCode(), req.getCompanyNetworkId());
+            long totalKeyCenter = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.KET_CENTER.getCode(), req.getCompanyNetworkId()));
 
             //总边界基站数
-            long totalBoundaryStation = summaryExtMapper.getSum(StationSummaryEnum.BORDER_BASE_STATION.getCode(), req.getCompanyNetworkId());
+            long totalBoundaryStation = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.BORDER_BASE_STATION.getCode(), req.getCompanyNetworkId()));
 
             //总一体机数
             long totalOutlinePc = ZERO;
@@ -223,7 +224,11 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
             long totalSafeServer = ZERO;
 
             NmplTerminalUserExample pcUserExample = new NmplTerminalUserExample();
-            pcUserExample.createCriteria().andUserTypeEqualTo(TerminalUserEnum.ONE_MACHINE.getCode()).andCompanyNetworkIdEqualTo(req.getCompanyNetworkId());
+            NmplTerminalUserExample.Criteria pcCriteria = pcUserExample.createCriteria();
+            pcCriteria.andUserTypeEqualTo(TerminalUserEnum.ONE_MACHINE.getCode());
+            if (!ParamCheckUtil.checkVoStrBlank(req.getCompanyNetworkId())){
+                pcCriteria.andCompanyNetworkIdEqualTo(req.getCompanyNetworkId());
+            }
             List<NmplTerminalUser> pcTerminalUsers = terminalUserMapper.selectByExample(pcUserExample);
             if (!CollectionUtils.isEmpty(pcTerminalUsers)){
                 for (NmplTerminalUser terminalUser:pcTerminalUsers){
@@ -232,7 +237,11 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
             }
 
             NmplTerminalUserExample ssUserExample = new NmplTerminalUserExample();
-            ssUserExample.createCriteria().andUserTypeEqualTo(TerminalUserEnum.SECURITY_SERVER.getCode()).andCompanyNetworkIdEqualTo(req.getCompanyNetworkId());
+            NmplTerminalUserExample.Criteria ssCriteria = ssUserExample.createCriteria();
+            ssCriteria.andUserTypeEqualTo(TerminalUserEnum.SECURITY_SERVER.getCode());
+            if (!ParamCheckUtil.checkVoStrBlank(req.getCompanyNetworkId())){
+                ssCriteria.andCompanyNetworkIdEqualTo(req.getCompanyNetworkId());
+            }
             List<NmplTerminalUser> ssTerminalUsers = terminalUserMapper.selectByExample(ssUserExample);
             if (!CollectionUtils.isEmpty(ssTerminalUsers)){
                 for (NmplTerminalUser terminalUser:ssTerminalUsers){
@@ -281,7 +290,6 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                     // 获取小区列表
                     CompanyInfoVo vo = new CompanyInfoVo();
                     BeanUtils.copyProperties(companyInfo,vo);
-                    companyInfos.add(vo);
 
                     // 获取告警信息
                     NmplAlarmInfoExample seriousExample = new NmplAlarmInfoExample();
@@ -306,6 +314,7 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                     if (!CollectionUtils.isEmpty(accessCollects)){
                         String sumNumber = accessCollects.get(0).getSumNumber();
                         vo.setAccessBandwith(sumNumber);
+                        vo.setAccessBandwithUnit(accessCollects.get(0).getUnit());
                     }
 
                     NmplDataCollectExample intervalExample = new NmplDataCollectExample();
@@ -314,12 +323,13 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                     if (!CollectionUtils.isEmpty(intervalCollects)){
                         String sumNumber = intervalCollects.get(0).getSumNumber();
                         vo.setIntervalBandwith(sumNumber);
+                        vo.setIntervalBandwithUnit(intervalCollects.get(0).getUnit());
                     }
 
                     // 获取设备信息
-                    long base = summaryExtMapper.getSum(StationSummaryEnum.BASE_STATION.getCode(), companyNetworkId);
-                    long border = summaryExtMapper.getSum(StationSummaryEnum.BORDER_BASE_STATION.getCode(), companyNetworkId);
-                    long keycenter = summaryExtMapper.getSum(StationSummaryEnum.KET_CENTER.getCode(), companyNetworkId);
+                    long base = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.BASE_STATION.getCode(), companyNetworkId));
+                    long border = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.BORDER_BASE_STATION.getCode(), companyNetworkId));
+                    long keycenter = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.KET_CENTER.getCode(), companyNetworkId));
                     vo.setNetDevices(String.valueOf(base+border+keycenter));
 
                     NmplTerminalUserExample pcUserExample = new NmplTerminalUserExample();
