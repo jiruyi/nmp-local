@@ -27,23 +27,6 @@ public class CompanyStationSummaryController {
     @Resource
     private StationSummaryService stationSummaryService;
 
-    /**
-     * 单个小区基站数量、网络总数查询
-     * @param stationSummaryRequest
-     * @return
-     */
-    @RequestMapping(value = "/selectCompanyStationSummary")
-    public Result selectCompanyStationSummary(@RequestBody StationSummaryRequest stationSummaryRequest){
-        if(!StringUtils.isEmpty(stationSummaryRequest.getCompanyNetworkId())){
-            return new Result<>(false,"缺少必传参数");
-        }
-        if(!StringUtils.isEmpty(stationSummaryRequest.getSumType())){
-            return new Result<>(false,"缺少必传参数");
-        }
-
-
-        return null;
-    }
 
     @RequestMapping(value = "/receiveStationSummary")
     public Result receiveStationSummary(@RequestBody StationSummaryVo stationSummaryVo){

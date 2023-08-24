@@ -2,6 +2,7 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataTimeVo;
+import com.matrictime.network.modelVo.PercentageFlowVo;
 import com.matrictime.network.request.DataCollectRequest;
 import com.matrictime.network.response.DataCollectResponse;
 import com.matrictime.network.service.DataCollectService;
@@ -101,15 +102,9 @@ public class DataCollectController {
      * @return
      */
     @RequestMapping(value = "/selectCompanyData",method = RequestMethod.POST)
-    public Result<String> selectCompanyData(@RequestBody DataCollectRequest dataCollectRequest){
-        Result<String> result = new Result<>();
+    public Result<List<PercentageFlowVo>> selectCompanyData(@RequestBody DataCollectRequest dataCollectRequest){
+        Result<List<PercentageFlowVo>> result = new Result<>();
         try {
-            if(StringUtils.isEmpty(dataCollectRequest.getDataItemCode())){
-                return new Result<>(false,"缺少必传参数");
-            }
-            if(StringUtils.isEmpty(dataCollectRequest.getCompanyNetworkId())){
-                return new Result<>(false,"缺少必传参数");
-            }
             result = dataCollectService.selectCompanyData(dataCollectRequest);
         }catch (Exception e){
             log.info("selectCompanyData:{}",e.getMessage());
@@ -134,7 +129,7 @@ public class DataCollectController {
             if(StringUtils.isEmpty(dataCollectRequest.getCompanyNetworkId())){
                 return new Result<>(false,"缺少必传参数");
             }
-            result = dataCollectService.selectCompanyLoadData(dataCollectRequest);
+            result = dataCollectService.selectLoadData(dataCollectRequest);
         }catch (Exception e){
             log.info("selectCompanyLoadData:{}",e.getMessage());
             result.setSuccess(false);

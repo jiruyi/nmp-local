@@ -36,5 +36,6 @@
         WHERE
         a.upload_time = b.q
         AND a.data_item_code = b.data_item_code
+        and a.data_item_code in('10018','10020','10021','10019')
     </select>
 </mapper>

@@ -96,7 +96,9 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
             NmplDeviceInfoExample.Criteria criteria1 = deviceInfoExample.createCriteria();
             criteria1.andDeviceIdEqualTo((nmplTerminalUser.getParentDeviceId()));
             List<NmplDeviceInfo> nmplDeviceInfoList = deviceInfoMapper.selectByExample(deviceInfoExample);
-            stationNetworkId = nmplDeviceInfoList.get(0).getStationNetworkId();
+            if(!CollectionUtils.isEmpty(nmplDeviceInfoList)){
+                stationNetworkId = nmplDeviceInfoList.get(0).getStationNetworkId();
+            }
         }
         return stationNetworkId;
     }

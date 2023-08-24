@@ -29,19 +29,6 @@ public class CompanyTerminalUserController {
     @Resource
     private TerminalUserService terminalUserService;
 
-    @RequestMapping(value = "/selectCompanyTerminalUser")
-    public Result selectCompanyTerminalUser(@RequestBody TerminalUserRequest userRequest){
-        if(!StringUtils.isEmpty(userRequest.getTerminalStatus())){
-            return new Result<>(false,"缺少必传参数");
-        }
-        if(!StringUtils.isEmpty(userRequest.getCompanyNetworkId())){
-            return new Result<>(false,"缺少必传参数");
-        }
-
-
-        return null;
-    }
-
 
     @RequestMapping(value = "/receiveTerminalUser")
     public Result receiveTerminalUser(@RequestBody TerminalUserResponse terminalUserResponse){
