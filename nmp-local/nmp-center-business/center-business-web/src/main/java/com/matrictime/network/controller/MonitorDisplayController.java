@@ -11,6 +11,7 @@ import com.matrictime.network.service.MonitorDisplayService;
 import com.matrictime.network.service.SystemConfigService;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +36,7 @@ public class MonitorDisplayController {
      */
     @RequestMapping(value = "/queryCompanyUser",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "大屏展示",operDesc = "查询小区用户数",operType = "查询")
-//    @RequiresPermissions("sys:basic:query")
+    @RequiresPermissions("sys:accusation:query")
     public Result<QueryCompanyUserResp> queryCompanyUser(){
         try {
             return  monitorDisplayService.queryCompanyUser();
@@ -52,7 +53,7 @@ public class MonitorDisplayController {
      */
     @RequestMapping(value = "/queryUserUnit",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "大屏展示",operDesc = "查询用户数",operType = "编辑")
-//    @RequiresPermissions("sys:basic:update")
+    @RequiresPermissions("sys:communityDetail:query")
     public Result<queryUserResp> queryUserUnit(@RequestBody QueryUserReq req){
         try {
             if (ParamCheckUtil.checkVoStrBlank(req.getCompanyNetworkId())){
@@ -71,7 +72,7 @@ public class MonitorDisplayController {
      */
     @RequestMapping(value = "/queryUser",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "大屏展示",operDesc = "查询用户数",operType = "编辑")
-//    @RequiresPermissions("sys:basic:update")
+    @RequiresPermissions("sys:accusation:query")
     public Result<queryUserResp> queryUser(){
         try {
             QueryUserReq req = new QueryUserReq();
@@ -89,7 +90,7 @@ public class MonitorDisplayController {
      */
     @RequestMapping(value = "/queryDeviceUnit",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "大屏展示",operDesc = "查询设备数",operType = "查询")
-//    @RequiresPermissions("sys:dict:query")
+    @RequiresPermissions("sys:communityDetail:query")
     public Result<QueryDeviceResp> queryDeviceUnit(@RequestBody QueryDeviceReq req){
         try {
             if (ParamCheckUtil.checkVoStrBlank(req.getCompanyNetworkId())){
@@ -108,7 +109,7 @@ public class MonitorDisplayController {
      */
     @RequestMapping(value = "/queryDevice",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "大屏展示",operDesc = "查询设备数",operType = "查询")
-//    @RequiresPermissions("sys:dict:query")
+    @RequiresPermissions("sys:accusation:query")
     public Result<QueryDeviceResp> queryDevice(){
         try {
             QueryDeviceReq req = new QueryDeviceReq();
@@ -126,7 +127,7 @@ public class MonitorDisplayController {
      */
     @RequestMapping(value = "/queryMapInfo",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "大屏展示",operDesc = "查询地图信息",operType = "查询")
-//    @RequiresPermissions("sys:dict:query")
+    @RequiresPermissions("sys:accusation:query")
     public Result<QueryMapInfoResp> queryMapInfo(){
         try {
             return  monitorDisplayService.queryMapInfo();
