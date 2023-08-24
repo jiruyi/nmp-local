@@ -53,7 +53,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         NmplRole nmplRole = new NmplRole();
         BeanUtils.copyProperties(roleRequest,nmplRole);
         NmplRoleExample nmplRoleExample = new NmplRoleExample();
-        nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode()).andIsExistEqualTo((byte) 1);
+//        nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode()).andIsExistEqualTo((byte) 1);
         nmplRoleExample.or().andRoleNameEqualTo(roleRequest.getRoleName()).andIsExistEqualTo((byte) 1);
         List<NmplRole> nmplRoles = nmplRoleMapper.selectByExample(nmplRoleExample);
         if (!CollectionUtils.isEmpty(nmplRoles)){
@@ -62,18 +62,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         nmplRole.setIsExist(Byte.valueOf("1"));
         Integer result = 0;
         result = nmplRoleMapper.insertSelective(nmplRole);
-//        List<Long>menuList = new ArrayList<>();
-//        menuList = roleRequest.getMenuId();
-//        menuList.add(63L);
-//        menuList = roleHandle(new HashSet<>(menuList));
-//        if (!CollectionUtils.isEmpty(menuList)){
-//            for (Long meduId : menuList) {
-//                NmplRoleMenuRelation nmplRoleMenuRelation = new NmplRoleMenuRelation();
-//                nmplRoleMenuRelation.setRoleId(nmplRole.getRoleId());
-//                nmplRoleMenuRelation.setMenuId(meduId);
-//                result = nmplRoleMenuRelationMapper.insert(nmplRoleMenuRelation);
-//            }
-//        }
+
         return result;
     }
     @Transactional(rollbackFor = Exception.class)
@@ -105,7 +94,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         BeanUtils.copyProperties(roleRequest,nmplRole);
         if (roleRequest.getRoleName()!=null||roleRequest.getRoleCode()!=null){
             NmplRoleExample nmplRoleExample = new NmplRoleExample();
-            nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode()).andIsExistEqualTo((byte) 1);
+//            nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode()).andIsExistEqualTo((byte) 1);
             nmplRoleExample.or().andRoleNameEqualTo(roleRequest.getRoleName()).andIsExistEqualTo((byte) 1);
             List<NmplRole>nmplRoles = nmplRoleMapper.selectByExample(nmplRoleExample);
             if (!CollectionUtils.isEmpty(nmplRoles)){
@@ -119,41 +108,6 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         result = nmplRoleMapper.updateByPrimaryKeySelective(nmplRole);
 
         return result;
-
-//        //将角色之前的权限删除 更新权限信息
-//
-//        NmplRoleMenuRelationExample nmplRoleMenuRelationExample = new NmplRoleMenuRelationExample();
-//        nmplRoleMenuRelationExample.createCriteria().andRoleIdEqualTo(roleRequest.getRoleId());
-//        nmplRoleMenuRelationMapper.deleteByExample(nmplRoleMenuRelationExample);
-//
-//        //新增该用户权限
-//        List<Long>menuList = new ArrayList<>();
-//        menuList = roleRequest.getMenuId();
-////        menuList.add(63L);
-//        menuList = roleHandle(new HashSet<>(menuList));
-//        if (!CollectionUtils.isEmpty(menuList)){
-//            for (Long meduId : menuList) {
-//                NmplRoleMenuRelation nmplRoleMenuRelation = new NmplRoleMenuRelation();
-//                nmplRoleMenuRelation.setRoleId(nmplRole.getRoleId());
-//                nmplRoleMenuRelation.setMenuId(meduId);
-//                nmplRoleMenuRelationMapper.insert(nmplRoleMenuRelation);
-//            }
-//        }
-//        NmplUserExample nmplUserExample = new NmplUserExample();
-//        nmplUserExample.createCriteria().andRoleIdEqualTo(String.valueOf(roleRequest.getRoleId())).andIsExistEqualTo(true);
-//        List<NmplUser> nmplUserList = nmplUserMapper.selectByExample(nmplUserExample);
-//        for (NmplUser user : nmplUserList) {
-//            if(redisTemplate.opsForValue().get(DataConstants.ACCUSATION_CENTER+user.getUserId()+ DataConstants.USER_LOGIN_STATUS)!=null){
-//                redisTemplate.opsForValue().set(DataConstants.ACCUSATION_CENTER+user.getUserId()+DataConstants.USER_LOGIN_STATUS,
-//                        LoginStatusEnum.UPDATE.getCode(),timeOut, TimeUnit.HOURS);
-//                redisTemplate.delete(DataConstants.ACCUSATION_CENTER+user.getUserId()+ DataConstants.USER_LOGIN_JWT_TOKEN);
-//                Subject subject = (Subject) ThreadContext.get(user.getUserId()+"_SUBJECT_KEY");
-//                if(subject!=null){
-//                    subject.logout();
-//                }
-//            }
-//        }
-//        return result;
     }
 
 

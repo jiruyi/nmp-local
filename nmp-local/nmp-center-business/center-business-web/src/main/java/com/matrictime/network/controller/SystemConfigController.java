@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.EditBasicConfigReq;
 import com.matrictime.network.request.QueryDictionaryReq;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * 系统设置模块
+ */
 @RequestMapping(value = "/config")
 @RestController
 @Slf4j
@@ -28,7 +32,7 @@ public class SystemConfigController {
      */
     @RequestMapping(value = "/queryBasicConfig",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "基础配置",operDesc = "基础配置查询",operType = "查询")
-//    @RequiresPermissions("sys:basic:query")
+    @RequiresPermissions("sys:basicSetting:query")
     public Result queryBasicConfig(){
         try {
             return  systemConfigService.queryBasicConfig();
@@ -44,7 +48,7 @@ public class SystemConfigController {
      */
     @RequestMapping(value = "/updateBasicConfig",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "基础配置",operDesc = "基础配置编辑",operType = "编辑")
-//    @RequiresPermissions("sys:basic:update")
+    @RequiresPermissions("sys:basicSetting:update")
     public Result updateBasicConfig(@RequestBody EditBasicConfigReq req){
         try {
             return  systemConfigService.editBasicConfig(req);
@@ -61,7 +65,7 @@ public class SystemConfigController {
      */
     @RequestMapping(value = "/queryDictionary",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "字典表",operDesc = "字典表查询",operType = "查询")
-//    @RequiresPermissions("sys:dict:query")
+    @RequiresPermissions("sys:dictionary:query")
     public Result queryDictionary(@RequestBody QueryDictionaryReq req){
         try {
             return  systemConfigService.queryDictionary(req);
@@ -78,7 +82,7 @@ public class SystemConfigController {
      */
     @RequestMapping(value = "/uploadDictionary",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "字典表",operDesc = "字典表上传",operType = "上传")
-//    @RequiresPermissions("sys:dict:upload")
+    @RequiresPermissions("sys:dictionary:export")
     public Result uploadDictionary(@RequestBody MultipartFile file){
         return systemConfigService.uploadDictionary(file);
     }

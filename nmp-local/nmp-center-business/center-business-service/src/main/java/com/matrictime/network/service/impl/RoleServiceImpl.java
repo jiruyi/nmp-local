@@ -109,7 +109,7 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
     }
 
     @Override
-    public Result permission(RoleRequest roleRequest) {
+    public Result permersion(RoleRequest roleRequest) {
         Result<Integer> result = null;
         try {
             NmplUser nmplUser = RequestContext.getUser();
@@ -220,9 +220,9 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
         if(roleRequest.getRoleName()!=null){
             flag = CommonCheckUtil.checkStringLength(roleRequest.getRoleName(), null, 30);
         }
-        if(roleRequest.getRoleCode()!=null){
-            flag = CommonCheckUtil.checkStringLength(roleRequest.getRoleCode(), null, 100);
-        }
+//        if(roleRequest.getRoleCode()!=null){
+//            flag = CommonCheckUtil.checkStringLength(roleRequest.getRoleCode(), null, 100);
+//        }
         return flag;
     }
 }

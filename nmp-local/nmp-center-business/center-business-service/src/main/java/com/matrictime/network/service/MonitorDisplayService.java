@@ -6,16 +6,16 @@ import com.matrictime.network.request.QueryDeviceReq;
 import com.matrictime.network.request.QueryUserReq;
 import com.matrictime.network.response.QueryCompanyUserResp;
 import com.matrictime.network.response.QueryDeviceResp;
+import com.matrictime.network.response.QueryMapInfoResp;
 import com.matrictime.network.response.queryUserResp;
 
 public interface MonitorDisplayService {
 
     /**
      * 查询小区用户数
-     * @param req
      * @return
      */
-    Result<QueryCompanyUserResp> queryCompanyUser(QueryCompanyUserReq req);
+    Result<QueryCompanyUserResp> queryCompanyUser();
 
     /**
      * 查询用户数
@@ -30,4 +30,10 @@ public interface MonitorDisplayService {
      * @return
      */
     Result<QueryDeviceResp> queryDevice(QueryDeviceReq req);
+
+    /**
+     * 查询地图信息
+     * @return
+     */
+    Result<QueryMapInfoResp> queryMapInfo();
 }
