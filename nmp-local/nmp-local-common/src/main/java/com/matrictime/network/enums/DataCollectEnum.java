@@ -24,6 +24,8 @@ public enum DataCollectEnum {
     KEY_DISTRIBUTE_UP_LOAD("10016","秘钥分发上行负载","byte"),
     KEY_DISTRIBUTE_DOWN_LOAD("10017","秘钥分发下行负载","byte"),
     ACCESS_BANDWITH("10018","接入带宽","byte"),
+    ACCESS_LOAD("10020","接入负载","byte"),
+    CROSS_ZONE_LOAD("10021","转发负载","byte"),
     INTERVAL_BANDWITH("10019","区间带宽","byte");
 
 
@@ -62,6 +64,8 @@ public enum DataCollectEnum {
             put("10017",KEY_DISTRIBUTE_DOWN_LOAD);
             put("10018",ACCESS_BANDWITH);
             put("10019",INTERVAL_BANDWITH);
+            put("10020",ACCESS_LOAD);
+            put("10021",CROSS_ZONE_LOAD);
         }
     };
 

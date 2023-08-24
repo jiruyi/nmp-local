@@ -23,4 +23,12 @@ public class DataConstants {
 
     public static final String RECEIVE_COMPANY = "/nmp-center-business/company/receiveCompany";
 
+    public static final double BASE_NUMBER = 1024.0;
+
+    public static final int HALF_HOUR_SECONDS = 1800;
+
+    public static final int BYTE_TO_BPS = 8;
+
+    public static final int RESERVE_DIGITS  = 2;
+
 }

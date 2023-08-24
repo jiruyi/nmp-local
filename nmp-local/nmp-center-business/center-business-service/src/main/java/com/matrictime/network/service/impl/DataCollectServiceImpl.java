@@ -3,6 +3,7 @@ package com.matrictime.network.service.impl;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataTimeVo;
+import com.matrictime.network.modelVo.PercentageFlowVo;
 import com.matrictime.network.request.DataCollectRequest;
 import com.matrictime.network.response.DataCollectResponse;
 import com.matrictime.network.service.DataCollectService;
@@ -93,13 +94,12 @@ public class DataCollectServiceImpl implements DataCollectService {
      * @return
      */
     @Override
-    public Result<String> selectCompanyData(DataCollectRequest dataCollectRequest) {
-        Result<String> result = new Result<>();
+    public Result<List<PercentageFlowVo>> selectCompanyData(DataCollectRequest dataCollectRequest) {
+        Result<List<PercentageFlowVo>> result = new Result<>();
         try {
-            Double companyData = dataCollectDomainService.selectCompanyData(dataCollectRequest);
-            Double sumData = dataCollectDomainService.sumDataValue(dataCollectRequest);
+            List<PercentageFlowVo> list = dataCollectDomainService.selectCompanyData();
+            result.setResultObj(list);
             result.setSuccess(true);
-            result.setResultObj(avgData(companyData / sumData));
         }catch (Exception e){
             log.info("selectCompanyData:{}",e.getMessage());
             result.setSuccess(false);
@@ -108,35 +108,7 @@ public class DataCollectServiceImpl implements DataCollectService {
         return result;
     }
 
-    /**
-     * 查询单个小区折线图
-     * @param dataCollectRequest
-     * @return
-     */
-    @Override
-    public Result<List<DataTimeVo>> selectCompanyLoadData(DataCollectRequest dataCollectRequest) {
-        Result<List<DataTimeVo>> result = new Result<>();
-        try {
-            result.setResultObj(dataCollectDomainService.selectCompanyLoadData(dataCollectRequest));
-            result.setSuccess(true);
-        }catch (Exception e){
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-            log.info("selectCompanyLoadData:{}",e.getMessage());
-        }
 
-        return result;
-    }
 
-    /**
-     * 保留小数点后两位
-     * @param value
-     * @return
-     */
-    public String avgData(double value) {
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(2, RoundingMode.HALF_UP);
-        return bd.toString();
-    }
 
 }

@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.matrictime.network.base.constant.DataConstants.*;
+import static com.matrictime.network.base.constant.DataConstants.RESERVE_DIGITS;
+
 /**
  * @author by wangqiang
  * @date 2023/8/16.
@@ -65,11 +68,26 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
                 }
             }
             dataCollectVo.setDataItemCode(code);
-            dataCollectVo.setSumNumber(String.valueOf(sumBig));
+            //数据转换
+            dataCollectVo.setSumNumber(changeSum(String.valueOf(sumBig)));
             dataCollectVo.setCompanyNetworkId(networkIdString);
             list.add(dataCollectVo);
         }
+
+
         return list;
+    }
+
+    /**
+     * 数据转换
+     * @param s
+     * @return
+     */
+    private String  changeSum(String s){
+        BigDecimal sum = new BigDecimal(s);
+        return String.valueOf(sum.divide(
+                new BigDecimal(BASE_NUMBER * BASE_NUMBER * HALF_HOUR_SECONDS / BYTE_TO_BPS),
+                RESERVE_DIGITS, BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
     /**
