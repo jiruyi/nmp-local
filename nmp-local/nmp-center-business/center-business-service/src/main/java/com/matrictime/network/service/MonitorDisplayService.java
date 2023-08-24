@@ -13,10 +13,9 @@ public interface MonitorDisplayService {
 
     /**
      * 查询小区用户数
-     * @param req
      * @return
      */
-    Result<QueryCompanyUserResp> queryCompanyUser(QueryCompanyUserReq req);
+    Result<QueryCompanyUserResp> queryCompanyUser();
 
     /**
      * 查询用户数

@@ -31,15 +31,14 @@ public class MonitorDisplayController {
 
     /**
      * 查询小区用户数
-     * @param req
      * @return
      */
     @RequestMapping(value = "/queryCompanyUser",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "大屏展示",operDesc = "查询小区用户数",operType = "查询")
 //    @RequiresPermissions("sys:basic:query")
-    public Result<QueryCompanyUserResp> queryCompanyUser(@RequestBody QueryCompanyUserReq req){
+    public Result<QueryCompanyUserResp> queryCompanyUser(){
         try {
-            return  monitorDisplayService.queryCompanyUser(req);
+            return  monitorDisplayService.queryCompanyUser();
         }catch (Exception e){
             log.error("MonitorDisplayController.queryCompanyUser exception:{}",e.getMessage());
             return new Result(false,e.getMessage());

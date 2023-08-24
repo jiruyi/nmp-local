@@ -61,11 +61,10 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
 
     /**
      * 查询小区用户数
-     * @param req
      * @return
      */
     @Override
-    public Result<QueryCompanyUserResp> queryCompanyUser(QueryCompanyUserReq req) {
+    public Result<QueryCompanyUserResp> queryCompanyUser() {
         Result result;
 
         try {
