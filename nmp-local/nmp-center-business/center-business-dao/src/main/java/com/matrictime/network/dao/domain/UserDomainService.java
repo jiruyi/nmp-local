@@ -1,5 +1,6 @@
 package com.matrictime.network.dao.domain;
 
+import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.request.LoginRequest;
 import com.matrictime.network.request.UserInfo;
@@ -35,7 +36,7 @@ public interface UserDomainService {
       * @author jiruyi
       * @create 2022/2/25 0025 9:24
       */
-//    int insertLoginDetail(NmplLoginDetail loginDetail);
+    int insertLoginDetail(NmplLoginDetail loginDetail);
 
 
     /**

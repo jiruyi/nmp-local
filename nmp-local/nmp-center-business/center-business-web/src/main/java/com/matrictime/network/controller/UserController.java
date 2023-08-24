@@ -1,6 +1,7 @@
 package com.matrictime.network.controller;
 
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
@@ -95,7 +96,7 @@ public class UserController {
      * @create 2022/2/28 0028 10:02
      */
     @ApiOperation(value = "退出系统登录")
-//    @SystemLog(opermodul = "用户管理模块",operDesc = "用户退出下系统",operType = "登出")
+    @SystemLog(opermodul = "用户管理模块",operDesc = "用户退出下系统",operType = "登出")
     @RequestMapping(value = "/logout",method = RequestMethod.POST)
     public Result<LoginResponse> logout(@RequestBody LoginRequest loginRequest){
         try {
@@ -124,7 +125,7 @@ public class UserController {
      * @create 2022/2/28 0028 11:06
      */
     @ApiOperation(value = "用户添加")
-//    @SystemLog(opermodul = "用户管理模块",operDesc = "用户添加",operType = "添加")
+    @SystemLog(opermodul = "用户管理模块",operDesc = "用户添加",operType = "添加")
     @RequiresPermissions("sys:user:save")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     public Result<Integer> insertUser(@RequestBody UserRequest userRequest){
@@ -153,7 +154,7 @@ public class UserController {
      * @create 2022/3/1 0001 9:36
      */
     @ApiOperation(value = "用户查询")
-//    @SystemLog(opermodul = "用户管理",operDesc = "用户查询",operType = "查询")
+    @SystemLog(opermodul = "用户管理",operDesc = "用户查询",operType = "查询")
     @RequestMapping(value = "/select",method = RequestMethod.POST)
 //    @RequiresPermissions("sys:user:query")
     public Result<PageInfo> selectUserList(@RequestBody UserRequest userRequest){
@@ -175,7 +176,7 @@ public class UserController {
      * @create 2022/2/28 0028 15:22
      */
     @ApiOperation(value = "用户修改")
-//    @SystemLog(opermodul = "用户管理模块",operDesc = "用户修改",operType = "修改",operLevl = "2")
+    @SystemLog(opermodul = "用户管理模块",operDesc = "用户修改",operType = "修改",operLevl = "2")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     @RequiresPermissions("sys:user:update")
     public Result<Integer> updateUser(@RequestBody UserRequest userRequest){
@@ -203,7 +204,7 @@ public class UserController {
      * @create 2022/2/28 0028 16:29
      */
     @ApiOperation(value = "用户删除")
-//    @SystemLog(opermodul = "用户管理模块",operDesc = "用户删除",operType = "删除",operLevl = "2")
+    @SystemLog(opermodul = "用户管理模块",operDesc = "用户删除",operType = "删除",operLevl = "2")
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @RequiresPermissions("sys:user:delete")
     public Result<Integer> deleteUser(@RequestBody UserRequest userRequest){

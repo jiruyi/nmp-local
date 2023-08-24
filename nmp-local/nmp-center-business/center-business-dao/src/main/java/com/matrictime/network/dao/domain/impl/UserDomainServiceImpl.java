@@ -4,7 +4,9 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.enums.LoginTypeEnum;
 import com.matrictime.network.dao.domain.UserDomainService;
+import com.matrictime.network.dao.mapper.NmplLoginDetailMapper;
 import com.matrictime.network.dao.mapper.NmplUserMapper;
+import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplUser;
 import com.matrictime.network.dao.model.NmplUserExample;
 import com.matrictime.network.request.LoginRequest;
@@ -34,8 +36,8 @@ public class UserDomainServiceImpl implements UserDomainService {
     @Autowired
     private NmplUserMapper userMapper;
 
-//    @Autowired
-//    private NmplLoginDetailMapper loginDetailMapper;
+    @Autowired
+    private NmplLoginDetailMapper loginDetailMapper;
 
     /**
      * @title getUserByParamter
@@ -69,13 +71,13 @@ public class UserDomainServiceImpl implements UserDomainService {
      * @author jiruyi
      * @create 2022/2/25 0025 9:25
      */
-//    @Override
-//    public int insertLoginDetail(NmplLoginDetail loginDetail) {
-//        if(ObjectUtils.isEmpty(loginDetail)){
-//            return NumberUtils.INTEGER_ZERO;
-//        }
-//        return loginDetailMapper.insertSelective(loginDetail);
-//    }
+    @Override
+    public int insertLoginDetail(NmplLoginDetail loginDetail) {
+        if(ObjectUtils.isEmpty(loginDetail)){
+            return NumberUtils.INTEGER_ZERO;
+        }
+        return loginDetailMapper.insertSelective(loginDetail);
+    }
 
     /**
      * @title getUserById

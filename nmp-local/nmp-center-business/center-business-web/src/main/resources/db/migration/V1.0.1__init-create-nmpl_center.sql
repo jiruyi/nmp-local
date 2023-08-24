@@ -44,63 +44,63 @@ CREATE TABLE IF NOT EXISTS `nmpl_dictionary` (
 
 
 CREATE TABLE IF NOT EXISTS `nmpl_menu` (
-                             `menu_id` bigint NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
-                             `menu_name` varchar(50) NOT NULL COMMENT '菜单名称',
-                             `parent_menu_id` bigint DEFAULT '-1' COMMENT '父菜单ID',
-                             `url` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '请求地址',
-                             `is_frame` tinyint DEFAULT '0' COMMENT '是否为外链（1是 0否）',
-                             `menu_type` tinyint DEFAULT NULL COMMENT '菜单类型（1目录 2菜单 3按钮）',
-                             `menu_status` tinyint DEFAULT '1' COMMENT '菜单状态（1正常 0停用）',
-                             `perms_code` varchar(100) DEFAULT NULL,
-                             `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
-                             `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
-                             `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
-                             `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-                             `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '备注',
-                             `is_exist` tinyint DEFAULT '1' COMMENT '1正常 0删除',
-                             `icon` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '前端按钮',
-                             `permission` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0' COMMENT '权限标识',
-                             `component` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '前端组件信息',
-                             PRIMARY KEY (`menu_id`)
+    `menu_id` bigint NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
+    `menu_name` varchar(50) NOT NULL COMMENT '菜单名称',
+    `parent_menu_id` bigint DEFAULT '-1' COMMENT '父菜单ID',
+    `url` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '请求地址',
+    `is_frame` tinyint DEFAULT '0' COMMENT '是否为外链（1是 0否）',
+    `menu_type` tinyint DEFAULT NULL COMMENT '菜单类型（1目录 2菜单 3按钮）',
+    `menu_status` tinyint DEFAULT '1' COMMENT '菜单状态（1正常 0停用）',
+    `perms_code` varchar(100) DEFAULT NULL,
+    `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
+    `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+    `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+    `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '备注',
+    `is_exist` tinyint DEFAULT '1' COMMENT '1正常 0删除',
+    `icon` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '前端按钮',
+    `permission` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0' COMMENT '权限标识',
+    `component` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '前端组件信息',
+    PRIMARY KEY (`menu_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='菜单权限表';
 
 CREATE TABLE IF NOT EXISTS `nmpl_role` (
-                             `role_id` bigint NOT NULL AUTO_INCREMENT COMMENT '角色ID',
-                             `role_name` varchar(30) NOT NULL COMMENT '角色名称',
-                             `role_code` varchar(100) NOT NULL COMMENT '角色编码',
-                             `menu_scope` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '2' COMMENT '1:全部菜单权限 2：自定义',
-                             `status` tinyint DEFAULT '1' COMMENT '角色状态（1正常 0停用）',
-                             `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
-                             `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
-                             `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
-                             `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-                             `remark` varchar(200) DEFAULT NULL COMMENT '备注',
-                             `is_exist` tinyint DEFAULT '1' COMMENT '1正常 0删除',
-                             PRIMARY KEY (`role_id`)
+    `role_id` bigint NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+    `role_name` varchar(30) NOT NULL COMMENT '角色名称',
+    `role_code` varchar(100) DEFAULT NULL COMMENT '角色编码',
+    `menu_scope` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '2' COMMENT '1:全部菜单权限 2：自定义',
+    `status` tinyint DEFAULT '1' COMMENT '角色状态（1正常 0停用）',
+    `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
+    `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+    `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+    `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+    `is_exist` tinyint DEFAULT '1' COMMENT '1正常 0删除',
+    PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色信息表';
 
 CREATE TABLE IF NOT EXISTS `nmpl_role_menu_relation` (
-                                           `role_id` bigint NOT NULL COMMENT '角色id',
-                                           `menu_id` bigint NOT NULL COMMENT '菜单权限id'
+    `role_id` bigint NOT NULL COMMENT '角色id',
+    `menu_id` bigint NOT NULL COMMENT '菜单权限id'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE IF NOT EXISTS `nmpl_user` (
-                             `user_id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-                             `login_account` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '登录账号',
-                             `nick_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '用户昵称',
-                             `user_type` char(2) DEFAULT '01' COMMENT '用户类型（00系统用户 01注册用户）',
-                             `email` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '用户邮箱',
-                             `phone_number` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '手机号码',
-                             `password` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '密码',
-                             `role_id` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '角色id',
-                             `status` tinyint(1) DEFAULT '1' COMMENT '帐号状态（1正常 0停用）',
-                             `is_exist` tinyint(1) DEFAULT '1' COMMENT '删除标志（1代表存在 0代表删除）',
-                             `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
-                             `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
-                             `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
-                             `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-                             `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-                             PRIMARY KEY (`user_id`)
+    `user_id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+    `login_account` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '登录账号',
+    `nick_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '用户昵称',
+    `user_type` char(2) DEFAULT '01' COMMENT '用户类型（00系统用户 01注册用户）',
+    `email` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '用户邮箱',
+    `phone_number` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '手机号码',
+    `password` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '密码',
+    `role_id` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '角色id',
+    `status` tinyint(1) DEFAULT '1' COMMENT '帐号状态（1正常 0停用）',
+    `is_exist` tinyint(1) DEFAULT '1' COMMENT '删除标志（1代表存在 0代表删除）',
+    `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
+    `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+    `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+    `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+    PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户信息表';
 
 
