@@ -7,6 +7,7 @@ import com.matrictime.network.request.DataCollectRequest;
 import com.matrictime.network.response.DataCollectResponse;
 import com.matrictime.network.service.DataCollectService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +36,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/sumDataCollect",method = RequestMethod.POST)
     public Result<Double> sumDataCollect(@RequestBody DataCollectRequest dataCollectRequest){
         Result<Double> result = new Result<>();
@@ -56,6 +58,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/sumCompanyDataCollect",method = RequestMethod.POST)
     public Result<Double> sumCompanyDataCollect(@RequestBody DataCollectRequest dataCollectRequest){
         Result<Double> result = new Result<>();
@@ -80,6 +83,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/selectLoadData",method = RequestMethod.POST)
     public Result<List<DataTimeVo>> selectLoadData(@RequestBody DataCollectRequest dataCollectRequest){
         Result<List<DataTimeVo> > result = new Result<>();
@@ -101,6 +105,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/selectCompanyData",method = RequestMethod.POST)
     public Result<List<PercentageFlowVo>> selectCompanyData(@RequestBody DataCollectRequest dataCollectRequest){
         Result<List<PercentageFlowVo>> result = new Result<>();
@@ -119,6 +124,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/selectCompanyLoadData",method = RequestMethod.POST)
     public Result<List<DataTimeVo>> selectCompanyLoadData(@RequestBody DataCollectRequest dataCollectRequest){
         Result<List<DataTimeVo>> result = new Result<>();
