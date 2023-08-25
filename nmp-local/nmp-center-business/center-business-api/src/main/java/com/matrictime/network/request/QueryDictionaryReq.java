@@ -22,4 +22,9 @@ public class QueryDictionaryReq implements Serializable {
      * id编码
      */
     private String idCode;
+
+    /**
+     * 关键字
+     */
+    private String keyWords;
 }
