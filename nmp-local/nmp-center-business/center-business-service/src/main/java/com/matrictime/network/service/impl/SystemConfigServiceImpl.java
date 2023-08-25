@@ -16,6 +16,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.ReportBusinessVo;
 import com.matrictime.network.request.EditBasicConfigReq;
 import com.matrictime.network.request.QueryDictionaryReq;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.SystemConfigService;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.util.List;
 
 import static com.matrictime.network.constant.DataConstants.IS_EXIST;
+import static com.matrictime.network.constant.DataConstants.KEY_PERCENT;
 import static com.matrictime.network.exception.ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG;
 
 @Slf4j
@@ -51,14 +53,16 @@ public class SystemConfigServiceImpl extends SystemBaseService implements System
      * @return
      */
     @Override
-    public Result queryBasicConfig() {
-        Result result;
+    public Result<PageInfo> queryBasicConfig() {
+        Result<PageInfo> result;
 
         try {
+            PageInfo pageInfo = new PageInfo<>();
             NmplReportBusinessExample example = new NmplReportBusinessExample();
             example.createCriteria().andIsExistEqualTo(IS_EXIST);
             List<NmplReportBusiness> reportBusinesses = reportBusinessMapper.selectByExample(example);
-            result = buildResult(reportBusinesses);
+            pageInfo.setList(reportBusinesses);
+            result = buildResult(pageInfo);
         }catch (Exception e){
             log.error("SystemConfigServiceImpl.queryConfigByPages Exception:{}",e.getMessage());
             result = failResult("");
@@ -122,14 +126,24 @@ public class SystemConfigServiceImpl extends SystemBaseService implements System
      * @return
      */
     @Override
-    public Result queryDictionary(QueryDictionaryReq req) {
-        Result result;
+    public Result<PageInfo> queryDictionary(QueryDictionaryReq req) {
+        Result<PageInfo> result;
 
         try {
+            PageInfo pageInfo = new PageInfo<>();
             NmplDictionaryExample example = new NmplDictionaryExample();
-            example.createCriteria().andIsExistEqualTo(IS_EXIST);
+            NmplDictionaryExample.Criteria criteria = example.createCriteria();
+            criteria.andIsExistEqualTo(IS_EXIST);
+            String keyWords = req.getKeyWords();
+            if (!ParamCheckUtil.checkVoStrBlank(keyWords)){
+                criteria.andIdCodeLike(KEY_PERCENT+keyWords+KEY_PERCENT);
+                NmplDictionaryExample.Criteria criteria2 = example.createCriteria();
+                criteria2.andIdNameLike(KEY_PERCENT+keyWords+KEY_PERCENT).andIsExistEqualTo(IS_EXIST);
+                example.or(criteria2);
+            }
             List<NmplDictionary> dictionaries = dictionaryMapper.selectByExample(example);
-            result = buildResult(dictionaries);
+            pageInfo.setList(dictionaries);
+            result = buildResult(pageInfo);
         }catch (Exception e){
             log.error("SystemConfigServiceImpl.queryDictionary Exception:{}",e.getMessage());
             result = failResult("");

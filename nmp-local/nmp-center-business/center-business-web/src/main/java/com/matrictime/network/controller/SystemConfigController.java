@@ -4,6 +4,7 @@ import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.EditBasicConfigReq;
 import com.matrictime.network.request.QueryDictionaryReq;
+import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.SystemConfigService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class SystemConfigController {
     @RequestMapping(value = "/queryBasicConfig",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "基础配置",operDesc = "基础配置查询",operType = "查询")
     @RequiresPermissions("sys:basicSetting:query")
-    public Result queryBasicConfig(){
+    public Result<PageInfo> queryBasicConfig(){
         try {
             return  systemConfigService.queryBasicConfig();
         }catch (Exception e){
@@ -66,7 +67,7 @@ public class SystemConfigController {
     @RequestMapping(value = "/queryDictionary",method = RequestMethod.POST)
 //    @SystemLog(opermodul = "字典表",operDesc = "字典表查询",operType = "查询")
     @RequiresPermissions("sys:dictionary:query")
-    public Result queryDictionary(@RequestBody QueryDictionaryReq req){
+    public Result<PageInfo> queryDictionary(@RequestBody QueryDictionaryReq req){
         try {
             return  systemConfigService.queryDictionary(req);
         }catch (Exception e){
