@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_data_collect` (
     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
     PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB AUTO_INCREMENT=3737590 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- ----------------------------
@@ -382,7 +382,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_terminal_data` (
     `data_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '数据类型 01:剩余 02:补充 03:使用',
     `up_value` int unsigned NOT NULL COMMENT '上行密钥量',
     `down_value` int unsigned NOT NULL COMMENT '下行密钥量',
-    `terminal_ip` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机ip',
+    `terminal_ip` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机ip',
     `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',

@@ -107,6 +107,8 @@ drop PROCEDURE add_col_homework; -- 删除该存储过程
 update nmpl_outline_pc_info set swing_in = '1',`swing_out`='1';
 
 ALTER TABLE `nmpl_company_info` ADD COLUMN `position` varchar(30) DEFAULT NULL COMMENT '经纬度位置';
+
+alter table nmpl_terminal_data modify `terminal_ip` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机ip';
 -- zyj
 
 
