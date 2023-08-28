@@ -113,4 +113,14 @@ ALTER TABLE `nmpl_company_info` ADD COLUMN `position` varchar(30) DEFAULT NULL C
 
 --wq
 
-ALTER TABLE `nmpl_terminal_user` MODIFY `user_type` char(2) DEFAULT '01' COMMENT '用户类型 21:一体机  22:安全服务器';
+ALTER TABLE `nmpl_terminal_user` MODIFY `user_type` char(2) DEFAULT '21' COMMENT '用户类型 21:一体机  22:安全服务器';
+
+CREATE TABLE `nmpl_station_connect_count` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `station_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '设备Id',
+    `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '当前用户数',
+    `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+    `upload_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '上传时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='当前用户在线表';
