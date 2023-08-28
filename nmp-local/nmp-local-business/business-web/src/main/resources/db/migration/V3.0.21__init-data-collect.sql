@@ -117,7 +117,7 @@ alter table nmpl_terminal_data modify `terminal_ip` varchar(64) CHARACTER SET ut
 
 ALTER TABLE `nmpl_terminal_user` MODIFY `user_type` char(2) DEFAULT '21' COMMENT '用户类型 21:一体机  22:安全服务器';
 
-CREATE TABLE `nmpl_station_connect_count` (
+CREATE TABLE IF NOT EXISTS `nmpl_station_connect_count` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
     `station_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '设备Id',
     `current_connect_count` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '当前用户数',
@@ -128,7 +128,7 @@ CREATE TABLE `nmpl_station_connect_count` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='当前用户在线表';
 
 
-CREATE TABLE `nmpl_company_heartbeat` (
+CREATE TABLE IF NOT EXISTS `nmpl_company_heartbeat` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
     `source_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '来源Id',
     `target_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '目标Id',
