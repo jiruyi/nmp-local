@@ -15,5 +15,5 @@ public interface AlarmDomainService {
 
     List<NmplAlarmInfo> queryAlarmList();
 
-    int deleteThisTimePushData(Long maxAlarmId);
+    int insertDataPushRecord(Long maxAlarmId);
 }

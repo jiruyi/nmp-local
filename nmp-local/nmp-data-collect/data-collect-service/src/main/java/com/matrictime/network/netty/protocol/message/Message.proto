@@ -1,0 +1,19 @@
+
+syntax = "proto3"; //protobuf语法有 proto2和proto3两种，这里指定 proto3
+
+option java_package = "com.matrictime.network.netty.protocol.message";
+option java_outer_classname = "MessageBase";
+
+message Message {
+    bytes version = 1;
+    bytes resv = 34;
+    bytes uMsgType = 999;
+    int32 uTotalLen = 980;
+    bytes dstRID = 121;
+    bytes srcRID = 234;
+    int32 uIndex = 112;
+    bytes uEncType = 111;
+    bytes uEncRate = 32;
+    bytes checkSum = 12;
+    string reqData = 123;
+}

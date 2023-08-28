@@ -81,7 +81,7 @@ public class LogController {
       */
     @ApiOperation(value = "查询用户登录明细",notes = "查询用户登录明细")
     @SystemLog(opermodul = "日志管理模块",operDesc = "查询告警日志",operType = "查询")
-    @RequiresPermissions("sys:alarmInfoLog:query")
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/alarm/query",method = RequestMethod.POST)
     public Result<PageInfo> queryAlarmInfoList(@RequestBody AlarmInfoRequest alarmInfoRequest){
         try {

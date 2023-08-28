@@ -1,14 +1,16 @@
 package com.matrictime.network.dao.domain.impl;
 
-import com.github.pagehelper.PageHelper;
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.mapper.NmplAlarmInfoMapper;
-import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
+import com.matrictime.network.dao.mapper.NmplDataPushRecordMapper;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
 import com.matrictime.network.dao.model.NmplAlarmInfoExample;
-import com.matrictime.network.dao.model.NmplDataCollectExample;
+import com.matrictime.network.dao.model.NmplDataPushRecord;
+import com.matrictime.network.dao.model.NmplDataPushRecordExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -26,7 +28,9 @@ public class AlarmDomainServiceImpl implements AlarmDomainService {
     private NmplAlarmInfoMapper alarmInfoMapper;
 
     @Autowired
-    private NmplDataCollectMapper dataCollectMapper;
+    private NmplDataPushRecordMapper dataPushRecordMapper;
+
+
 
     /**
       * @title queryAlarmList
@@ -38,27 +42,43 @@ public class AlarmDomainServiceImpl implements AlarmDomainService {
       */
     @Override
     public List<NmplAlarmInfo> queryAlarmList() {
-        NmplDataCollectExample collectExample = new NmplDataCollectExample();
-        dataCollectMapper.selectByExample(collectExample);
-        PageHelper.startPage(1,500);
+        //起止id
+        Long startAlarmId = 0l;
+        Long endAlarmId = startAlarmId+DataConstants.ALARM_INFO_EVERY_COUNT;
+        //1.0 查询上次推送到的位置
+        NmplDataPushRecordExample pushRecordExample = new NmplDataPushRecordExample();
+        pushRecordExample.createCriteria().andTableNameEqualTo(DataConstants.NMPL_ALARM_INFO);
+        pushRecordExample.setOrderByClause("id desc");
+        List<NmplDataPushRecord> dataPushRecords = dataPushRecordMapper.selectByExample(pushRecordExample);
+        //2.0 配置最新的起止id
+        if(!CollectionUtils.isEmpty(dataPushRecords)){
+            Long lastAlramId = dataPushRecords.get(0).getDataId();
+            startAlarmId= lastAlramId;
+            endAlarmId = endAlarmId +startAlarmId;
+        }
+        //3.0 根据起止id 查询告警数据
         NmplAlarmInfoExample example = new NmplAlarmInfoExample();
-        example.setOrderByClause("alarm_id");
+        example.createCriteria().andAlarmIdGreaterThan(startAlarmId).andAlarmIdLessThanOrEqualTo(endAlarmId);
         List<NmplAlarmInfo> infoList =  alarmInfoMapper.selectByExample(example);
         return infoList;
     }
 
+
     /**
-      * @title deleteThisTimePushData
-      * @param [] 删除此次推送过的数据
+      * @title insertDataPushRecord
+      * @param [maxAlarmId]
       * @return int
       * @description
       * @author jiruyi
-      * @create 2023/4/20 0020 16:42
+      * @create 2023/8/28 0028 15:12
       */
     @Override
-    public int deleteThisTimePushData(Long maxAlarmId) {
-        NmplAlarmInfoExample example = new NmplAlarmInfoExample();
-        example.createCriteria().andAlarmIdLessThanOrEqualTo(maxAlarmId);
-        return  alarmInfoMapper.deleteByExample(example);
+    public int insertDataPushRecord(Long maxAlarmId) {
+        NmplDataPushRecord record = new NmplDataPushRecord();
+        record.setDataId(maxAlarmId);
+        record.setTableName(DataConstants.NMPL_ALARM_INFO);
+        return  dataPushRecordMapper.insertSelective(record);
     }
+
+
 }
