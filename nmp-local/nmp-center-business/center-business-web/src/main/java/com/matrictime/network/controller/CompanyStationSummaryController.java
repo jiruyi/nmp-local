@@ -33,7 +33,7 @@ public class CompanyStationSummaryController {
         Result result = new Result<>();
         try {
             if(ObjectUtils.isEmpty(stationSummaryVo)){
-                return new Result(false,"上部数据为空");
+                return new Result(false,"上传数据为空");
             }
             result = stationSummaryService.receiveStationSummary(stationSummaryVo);
         }catch (Exception e){
