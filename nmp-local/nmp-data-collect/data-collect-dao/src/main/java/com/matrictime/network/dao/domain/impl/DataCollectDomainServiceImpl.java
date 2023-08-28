@@ -103,13 +103,17 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
             criteria.andStationIdEqualTo(nmplDataCollect.getDeviceId());
             List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(baseStationInfoExample);
-            stationNetworkId = baseStationInfos.get(0).getStationNetworkId();
+            if(!CollectionUtils.isEmpty(baseStationInfos)){
+                stationNetworkId = baseStationInfos.get(0).getStationNetworkId();
+            }
         }else {
             NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
             NmplDeviceInfoExample.Criteria criteria = deviceInfoExample.createCriteria();
             criteria.andDeviceIdEqualTo((nmplDataCollect.getDeviceId()));
             List<NmplDeviceInfo> nmplDeviceInfoList = deviceInfoMapper.selectByExample(deviceInfoExample);
-            stationNetworkId = nmplDeviceInfoList.get(0).getStationNetworkId();
+            if(!CollectionUtils.isEmpty(nmplDeviceInfoList)){
+                stationNetworkId = nmplDeviceInfoList.get(0).getStationNetworkId();
+            }
         }
 
         return stationNetworkId;
