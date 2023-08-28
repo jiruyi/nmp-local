@@ -16,7 +16,7 @@ public class SystemUtils {
 
     private final static int PINT_WAIT_TIME = 3000;
 
-    private final static String GET_PID_CMD = "netstat -nlp|grep :$esPort|awk '{print $7}'|awk -F\"/\" '{ print $1 }'";
+    private final static String GET_PID_CMD = "netstat -ntlp|grep :$esPort|awk '{print $7}'|awk -F\"/\" '{ print $1 }'";
 
     private final static String GET_PID_CMD_PORT = "$esPort";
     /**
