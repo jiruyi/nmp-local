@@ -3,6 +3,7 @@ package com.matrictime.network.dao.mapper;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
 import com.matrictime.network.dao.model.NmplAlarmInfoExample;
 import com.matrictime.network.dao.model.extend.NmplAlarmInfoExt;
+import com.matrictime.network.modelVo.AlarmInfo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -31,4 +32,6 @@ public interface NmplAlarmInfoMapper {
     int updateByPrimaryKey(NmplAlarmInfo record);
 
     List<NmplAlarmInfoExt> selectListFromAlarmAndCompany(NmplAlarmInfoExample example);
+
+    int batchInsert(@Param("alarmInfoList") List<AlarmInfo> alarmInfoList);
 }
