@@ -1,6 +1,9 @@
 package com.matrictime.network.base.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.BusinessDataEnum;
+import com.matrictime.network.modelVo.DataPushBody;
 import com.matrictime.network.modelVo.TcpDataPushVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
@@ -117,11 +120,16 @@ public class TcpTransportUtil {
      * @author jiruyi
      * @create 2023/8/25 0025 10:09
      */
-    public static byte[] getTcpDataPushVo(String reqData,String dstRID, String srcRID){
-        if(ObjectUtils.isEmpty(reqData)){
+    public static byte[] getTcpDataPushVo(BusinessDataEnum dataEnum, String tableData, String dstRID, String srcRID){
+        if(ObjectUtils.isEmpty(tableData)){
             return null;
         }
         TcpDataPushVo tdp = new TcpDataPushVo();
+        //计算业务数据大小
+        DataPushBody dataPushBody =
+                DataPushBody.builder().businessCode(dataEnum.getBusinessCode()).tableName(dataEnum.getTableName())
+                        .busiDataJsonStr(tableData).build();
+        String reqData = JSONObject.toJSONString(dataPushBody);
         int capacity = tdp.getUTotalLen()+ reqData.getBytes(StandardCharsets.UTF_8).length;
         log.info("TcpDataPushVo uTotalLen is :{}",capacity);
         //组装数据
@@ -129,39 +137,17 @@ public class TcpTransportUtil {
         byteBuffer.put(convertByte(tdp.getVersion()));
         byteBuffer.put(convertByte(tdp.getResv()));
         byteBuffer.put(convertShort(tdp.getUMsgType()));
+        //数据字节长度
         byteBuffer.put(convertInt(capacity));
+        //入网码
         byteBuffer.put(convertNetWorkId(dstRID));
         byteBuffer.put(convertNetWorkId(srcRID));
         byteBuffer.put(convertInt(tdp.getUIndex()));
         byteBuffer.put(convertByte(tdp.getUEncType()));
         byteBuffer.put(convertByte(tdp.getUEncRate()));
         byteBuffer.put(convertShort(tdp.getCheckSum()));
+        //业务数据
         byteBuffer.put(convertStr(reqData));
         return byteBuffer.array();
-    }
-
-    public static short getCheckSum(String reqData){
-        byte[] dataBytes = convertStr(reqData);
-        int length =  dataBytes.length;
-        int index = 0;
-        while (length > 1){
-            String str = moveToLeft(reqData,8);
-            index++;
-
-        }
-        return 0;
-    }
-
-    //返回左移n位字符串方法
-    private static String moveToLeft(String str,int position) {
-        String str1=str.substring(position);
-        String str2=str.substring(0, position);
-        return str1+str2;
-    }
-    //返回右移n位字符串方法
-    private static String moveToRight(String str,int position) {
-        String str1=str.substring(str.length()-position);
-        String str2=str.substring(0, str.length()-position);
-        return str1+str2;
     }
 }
