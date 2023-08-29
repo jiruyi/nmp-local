@@ -35,5 +35,21 @@ public class TaskController extends BusinessConifg {
         }
     }
 
+    @ApiOperation(value = "修改上报时间", notes = "修改上报时间")
+    @RequestMapping(value = "/updateTime", method = RequestMethod.POST)
+    public Result updateTime(@RequestBody TaskReq taskReq) {
+        try {
+            if(!CollectionUtils.isEmpty(taskReq.getCodeList()) && taskReq.getTimer()!=null){
+                for (String s : taskReq.getCodeList()) {
+                    configServiceMap.get(s).updateTimer(taskReq.getTimer());
+                }
+            }
+            return new Result();
+        }catch (Exception e){
+            log.error("TaskController updateTime exception:{}", e);
+            return new Result(false, e.getMessage());
+        }
+    }
+
 
 }

@@ -13,6 +13,7 @@ import org.springframework.util.ObjectUtils;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * @author jiruyi
@@ -32,20 +33,23 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<byte[]> {
                 log.info("收到客户端的业务消息为空：{}",msg);
             }
             DataPushBody pushBody = parseMsg(msg);
-            handlerMapping(pushBody);
+            Executor executor = (Executor) SpringContextUtils.getBean("taskExecutor");
+            executor.execute(() ->{
+                handlerMapping(pushBody);
+            });
         }catch (Exception e){
             log.error("NettyServerHandler channelRead0 error:{}",e);
         }
     }
 
     /**
-      * @title parseMsg
-      * @param [msg]
-      * @return com.matrictime.network.modelVo.DataPushBody
-      * @description  解析数据
-      * @author jiruyi
-      * @create 2023/8/29 0029 14:06
-      */
+     * @title parseMsg
+     * @param [msg]
+     * @return com.matrictime.network.modelVo.DataPushBody
+     * @description  解析数据
+     * @author jiruyi
+     * @create 2023/8/29 0029 14:06
+     */
     public DataPushBody parseMsg(byte[] msg){
         ByteBuffer byteBuffer = ByteBuffer.allocate(msg.length);
         byteBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -56,18 +60,18 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<byte[]> {
     }
 
     /**
-      * @title handlerMapping
-      * @param [dataPushBody]
-      * @return void
-      * @description  业务分发
-      * @author jiruyi
-      * @create 2023/8/29 0029 15:34
-      */
+     * @title handlerMapping
+     * @param [dataPushBody]
+     * @return void
+     * @description  业务分发
+     * @author jiruyi
+     * @create 2023/8/29 0029 15:34
+     */
     public void handlerMapping(DataPushBody dataPushBody){
         log.info("DataPushBody businessCode is:{},tableName is :{}"
                 ,dataPushBody.getBusinessCode(),dataPushBody.getTableName());
         Map<String,DataHandlerService> map =
-        SpringContextUtils.getBeansOfType(DataHandlerService.class);
+                SpringContextUtils.getBeansOfType(DataHandlerService.class);
         map.get(dataPushBody.getBusinessCode()).handlerData(dataPushBody);
     }
 
