@@ -6,8 +6,8 @@
         <result column="terminal_network_id" jdbcType="VARCHAR" property="terminalNetworkId" />
         <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
         <result column="data_type" jdbcType="CHAR" property="dataType" />
-        <result column="up_value" jdbcType="INTEGER" property="upValue" />
-        <result column="down_value" jdbcType="INTEGER" property="downValue" />
+        <result column="up_value" jdbcType="BIGINT" property="upValue" />
+        <result column="down_value" jdbcType="BIGINT" property="downValue" />
         <result column="terminal_ip" jdbcType="VARCHAR" property="terminalIp" />
         <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />

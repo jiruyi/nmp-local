@@ -34,12 +34,12 @@ public class TerminalDataVo implements Serializable {
     /**
      * 上行密钥量
      */
-    private Integer upValue;
+    private Long upValue;
 
     /**
      * 下行密钥量
      */
-    private Integer downValue;
+    private Long downValue;
 
     /**
      * 一体机ip

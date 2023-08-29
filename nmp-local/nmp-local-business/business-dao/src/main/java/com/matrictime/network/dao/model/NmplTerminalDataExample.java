@@ -385,52 +385,52 @@ public class NmplTerminalDataExample {
             return (Criteria) this;
         }
 
-        public Criteria andUpValueEqualTo(Integer value) {
+        public Criteria andUpValueEqualTo(Long value) {
             addCriterion("up_value =", value, "upValue");
             return (Criteria) this;
         }
 
-        public Criteria andUpValueNotEqualTo(Integer value) {
+        public Criteria andUpValueNotEqualTo(Long value) {
             addCriterion("up_value <>", value, "upValue");
             return (Criteria) this;
         }
 
-        public Criteria andUpValueGreaterThan(Integer value) {
+        public Criteria andUpValueGreaterThan(Long value) {
             addCriterion("up_value >", value, "upValue");
             return (Criteria) this;
         }
 
-        public Criteria andUpValueGreaterThanOrEqualTo(Integer value) {
+        public Criteria andUpValueGreaterThanOrEqualTo(Long value) {
             addCriterion("up_value >=", value, "upValue");
             return (Criteria) this;
         }
 
-        public Criteria andUpValueLessThan(Integer value) {
+        public Criteria andUpValueLessThan(Long value) {
             addCriterion("up_value <", value, "upValue");
             return (Criteria) this;
         }
 
-        public Criteria andUpValueLessThanOrEqualTo(Integer value) {
+        public Criteria andUpValueLessThanOrEqualTo(Long value) {
             addCriterion("up_value <=", value, "upValue");
             return (Criteria) this;
         }
 
-        public Criteria andUpValueIn(List<Integer> values) {
+        public Criteria andUpValueIn(List<Long> values) {
             addCriterion("up_value in", values, "upValue");
             return (Criteria) this;
         }
 
-        public Criteria andUpValueNotIn(List<Integer> values) {
+        public Criteria andUpValueNotIn(List<Long> values) {
             addCriterion("up_value not in", values, "upValue");
             return (Criteria) this;
         }
 
-        public Criteria andUpValueBetween(Integer value1, Integer value2) {
+        public Criteria andUpValueBetween(Long value1, Long value2) {
             addCriterion("up_value between", value1, value2, "upValue");
             return (Criteria) this;
         }
 
-        public Criteria andUpValueNotBetween(Integer value1, Integer value2) {
+        public Criteria andUpValueNotBetween(Long value1, Long value2) {
             addCriterion("up_value not between", value1, value2, "upValue");
             return (Criteria) this;
         }
@@ -445,52 +445,52 @@ public class NmplTerminalDataExample {
             return (Criteria) this;
         }
 
-        public Criteria andDownValueEqualTo(Integer value) {
+        public Criteria andDownValueEqualTo(Long value) {
             addCriterion("down_value =", value, "downValue");
             return (Criteria) this;
         }
 
-        public Criteria andDownValueNotEqualTo(Integer value) {
+        public Criteria andDownValueNotEqualTo(Long value) {
             addCriterion("down_value <>", value, "downValue");
             return (Criteria) this;
         }
 
-        public Criteria andDownValueGreaterThan(Integer value) {
+        public Criteria andDownValueGreaterThan(Long value) {
             addCriterion("down_value >", value, "downValue");
             return (Criteria) this;
         }
 
-        public Criteria andDownValueGreaterThanOrEqualTo(Integer value) {
+        public Criteria andDownValueGreaterThanOrEqualTo(Long value) {
             addCriterion("down_value >=", value, "downValue");
             return (Criteria) this;
         }
 
-        public Criteria andDownValueLessThan(Integer value) {
+        public Criteria andDownValueLessThan(Long value) {
             addCriterion("down_value <", value, "downValue");
             return (Criteria) this;
         }
 
-        public Criteria andDownValueLessThanOrEqualTo(Integer value) {
+        public Criteria andDownValueLessThanOrEqualTo(Long value) {
             addCriterion("down_value <=", value, "downValue");
             return (Criteria) this;
         }
 
-        public Criteria andDownValueIn(List<Integer> values) {
+        public Criteria andDownValueIn(List<Long> values) {
             addCriterion("down_value in", values, "downValue");
             return (Criteria) this;
         }
 
-        public Criteria andDownValueNotIn(List<Integer> values) {
+        public Criteria andDownValueNotIn(List<Long> values) {
             addCriterion("down_value not in", values, "downValue");
             return (Criteria) this;
         }
 
-        public Criteria andDownValueBetween(Integer value1, Integer value2) {
+        public Criteria andDownValueBetween(Long value1, Long value2) {
             addCriterion("down_value between", value1, value2, "downValue");
             return (Criteria) this;
         }
 
-        public Criteria andDownValueNotBetween(Integer value1, Integer value2) {
+        public Criteria andDownValueNotBetween(Long value1, Long value2) {
             addCriterion("down_value not between", value1, value2, "downValue");
             return (Criteria) this;
         }
