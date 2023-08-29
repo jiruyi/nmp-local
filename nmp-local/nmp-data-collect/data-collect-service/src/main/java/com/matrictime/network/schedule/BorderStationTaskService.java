@@ -9,6 +9,7 @@ import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.modelVo.StationSummaryVo;
 import com.matrictime.network.netty.client.NettyClient;
+import com.matrictime.network.service.BusinessDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -29,7 +30,7 @@ import java.util.Date;
  */
 @Slf4j
 @Component
-public class BorderStationTaskService implements SchedulingConfigurer {
+public class BorderStationTaskService implements SchedulingConfigurer, BusinessDataService {
 
     //默认毫秒值
     private long timer = 300000;
@@ -56,27 +57,7 @@ public class BorderStationTaskService implements SchedulingConfigurer {
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                //业务逻辑 查询数据
-                StationSummaryVo stationSummaryVo = summaryDomainService.selectBorderStation();
-                if(ObjectUtils.isEmpty(stationSummaryVo)){
-                    return;
-                }
-
-                //查询数据采集和指控中心的入网码
-                String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-                String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-                String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
-                //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.BorderStation,
-                        reqDataStr,comNetworkId,dataNetworkId));
-                log.info("borderStationPush this time query data count：{}",stationSummaryVo);
-                //修改nmpl_data_push_record 数据推送记录表
-                Long maxBorderStationId = stationSummaryVo.getId();
-                log.info("此次推送的最大 border_station_id is :{}",maxBorderStationId);
-                alarmDomainService.insertDataPushRecord(maxBorderStationId);
-
-
-                log.info("BorderStationTaskService this time query data count：{}",stationSummaryVo);
+                businessData();
             }
         }, new Trigger() {
             @Override
@@ -90,9 +71,35 @@ public class BorderStationTaskService implements SchedulingConfigurer {
         });
     }
 
+
+    @Override
+    public void businessData() {
+        //业务逻辑 查询数据
+        StationSummaryVo stationSummaryVo = summaryDomainService.selectBorderStation();
+        if(ObjectUtils.isEmpty(stationSummaryVo)){
+            return;
+        }
+
+        //查询数据采集和指控中心的入网码
+        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+        String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+        String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
+        //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
+        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.BorderStation,
+                reqDataStr,comNetworkId,dataNetworkId));
+        log.info("borderStationPush this time query data count：{}",stationSummaryVo);
+        //修改nmpl_data_push_record 数据推送记录表
+        Long maxBorderStationId = stationSummaryVo.getId();
+        log.info("此次推送的最大 border_station_id is :{}",maxBorderStationId);
+        alarmDomainService.insertDataPushRecord(maxBorderStationId);
+
+        log.info("BorderStationTaskService this time query data count：{}",stationSummaryVo);
+    }
+
     /**
      * 修改定时任务
      */
+    @Override
     public void updateTimer(long timer){
         this.timer = timer;
     }

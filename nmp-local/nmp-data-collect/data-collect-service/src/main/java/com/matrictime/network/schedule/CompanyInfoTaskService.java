@@ -11,6 +11,7 @@ import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.modelVo.CompanyInfoVo;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.netty.client.NettyClient;
+import com.matrictime.network.service.BusinessDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -33,7 +34,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class CompanyInfoTaskService implements SchedulingConfigurer {
+public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDataService {
 
 
     //默认毫秒值
@@ -62,32 +63,7 @@ public class CompanyInfoTaskService implements SchedulingConfigurer {
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                //业务逻辑 查询数据
-                List<CompanyInfoVo> companyInfoVos = null;
-                try {
-                    companyInfoVos = companyInfoDomainService.selectCompanyInfo();
-
-                    //查询数据采集和指控中心的入网码
-                    String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-                    String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-                    String reqDataStr = JSONObject.toJSONString(companyInfoVos);
-                    //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-                    nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyInfo,
-                            reqDataStr,comNetworkId,dataNetworkId));
-                    log.info("companyPush this time query data count：{}",companyInfoVos.size());
-                    //修改nmpl_data_push_record 数据推送记录表
-                    Long maxCompanyId = companyInfoVos.stream().max(Comparator.comparingLong(CompanyInfoVo::getId))
-                            .get().getId();
-                    log.info("此次推送的最大 company_id is :{}",maxCompanyId);
-                    alarmDomainService.insertDataPushRecord(maxCompanyId);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (CollectionUtils.isEmpty(companyInfoVos)) {
-                    return;
-                }
-                log.info("CompanyInfoTaskService this time query data count：{}", companyInfoVos.size());
+                businessData();
             }
         }, new Trigger() {
             @Override
@@ -101,9 +77,40 @@ public class CompanyInfoTaskService implements SchedulingConfigurer {
         });
     }
 
+    @Override
+    public void businessData() {
+        //业务逻辑 查询数据
+        List<CompanyInfoVo> companyInfoVos = null;
+        try {
+            companyInfoVos = companyInfoDomainService.selectCompanyInfo();
+
+            //查询数据采集和指控中心的入网码
+            String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+            String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+            String reqDataStr = JSONObject.toJSONString(companyInfoVos);
+            //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
+            nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyInfo,
+                    reqDataStr,comNetworkId,dataNetworkId));
+            log.info("companyPush this time query data count：{}",companyInfoVos.size());
+            //修改nmpl_data_push_record 数据推送记录表
+            Long maxCompanyId = companyInfoVos.stream().max(Comparator.comparingLong(CompanyInfoVo::getId))
+                    .get().getId();
+            log.info("此次推送的最大 company_id is :{}",maxCompanyId);
+            alarmDomainService.insertDataPushRecord(maxCompanyId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (CollectionUtils.isEmpty(companyInfoVos)) {
+            return;
+        }
+        log.info("CompanyInfoTaskService this time query data count：{}", companyInfoVos.size());
+    }
+
     /**
      * 修改定时任务
      */
+    @Override
     public void updateTimer(long timer){
         this.timer = timer;
     }
