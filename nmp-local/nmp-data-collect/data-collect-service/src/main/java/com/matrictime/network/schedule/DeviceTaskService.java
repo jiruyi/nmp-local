@@ -1,8 +1,17 @@
 package com.matrictime.network.schedule;
 
+import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.enums.BusinessDataEnum;
+import com.matrictime.network.base.enums.DeviceTypeEnum;
+import com.matrictime.network.base.util.TcpTransportUtil;
+import com.matrictime.network.dao.domain.AlarmDomainService;
+import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.modelVo.StationSummaryVo;
+import com.matrictime.network.netty.client.NettyClient;
+import com.matrictime.network.service.BusinessDataService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -21,12 +30,22 @@ import java.util.Date;
  */
 @Slf4j
 @Component
-public class DeviceTaskService  implements SchedulingConfigurer {
+public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataService {
 
     //默认毫秒值
-    private long timer = 3000;
+    private long timer = 300000;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+
+    @Autowired
+    private DeviceDomainService deviceDomainService;
+
+    @Autowired
+    private NettyClient nettyClient;
+
+    @Autowired
+    private AlarmDomainService alarmDomainService;
 
     @Resource
     private StationSummaryDomainService summaryDomainService;
@@ -39,12 +58,7 @@ public class DeviceTaskService  implements SchedulingConfigurer {
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                //业务逻辑 查询数据
-                StationSummaryVo stationSummaryVo = summaryDomainService.selectDevice();
-                if(ObjectUtils.isEmpty(stationSummaryVo)){
-                    return;
-                }
-                log.info("DeviceTaskService this time query data count：{}",stationSummaryVo);
+                businessData();
             }
         }, new Trigger() {
             @Override
@@ -58,9 +72,34 @@ public class DeviceTaskService  implements SchedulingConfigurer {
         });
     }
 
+    @Override
+    public void businessData() {
+        //业务逻辑 查询数据
+        StationSummaryVo stationSummaryVo = summaryDomainService.selectDevice();
+        if(ObjectUtils.isEmpty(stationSummaryVo)){
+            return;
+        }
+
+        //查询数据采集和指控中心的入网码
+        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+        String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+        String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
+        //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
+        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Device,
+                reqDataStr,comNetworkId,dataNetworkId));
+        log.info("devicePush this time query data count：{}",stationSummaryVo);
+        //修改nmpl_data_push_record 数据推送记录表
+        Long maxDeviceId = stationSummaryVo.getId();
+        log.info("此次推送的最大 device_id is :{}",maxDeviceId);
+        alarmDomainService.insertDataPushRecord(maxDeviceId);
+
+        log.info("DeviceTaskService this time query data count：{}",stationSummaryVo);
+    }
+
     /**
      * 修改定时任务
      */
+    @Override
     public void updateTimer(long timer){
         this.timer = timer;
     }

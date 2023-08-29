@@ -12,6 +12,11 @@ import java.util.Date;
 public class DataCollectVo {
 
     /**
+     * 主键
+     */
+    private Long id;
+
+    /**
      * 每个小区每个流量类型总和
      */
     private String sumNumber;
