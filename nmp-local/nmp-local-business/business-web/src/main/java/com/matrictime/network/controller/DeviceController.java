@@ -298,7 +298,7 @@ public class DeviceController {
      * @param deviceInfoRequest
      * @return
      */
-    @RequiresPermissions("sys:datacollect:save")
+    @RequiresPermissions("sys:dataCollect:insert")
     @SystemLog(opermodul = "数据采集管理模块",operDesc = "数据采集插入",operType = "数据采集插入")
     @RequestMapping(value = "/insertDataBase",method = RequestMethod.POST)
     @ApiOperation(value = "数据采集接口",notes = "数据采集插入")
@@ -341,7 +341,7 @@ public class DeviceController {
      * @param deviceInfoRequest
      * @return
      */
-    @RequiresPermissions("sys:datacollect:update")
+    @RequiresPermissions("sys:dataCollect:modify")
     @SystemLog(opermodul = "数据采集管理模块",operDesc = "数据采集更新",operType = "数据采集更新")
     @RequestMapping(value = "/updateDataBase",method = RequestMethod.POST)
     @ApiOperation(value = "数据采集接口",notes = "数据采集更新")
