@@ -115,7 +115,6 @@ alter table nmpl_terminal_data modify `terminal_ip` varchar(64) CHARACTER SET ut
 
 --wq
 
-ALTER TABLE `nmpl_terminal_user` DROP COLUMN `user_type`;
 
 ALTER TABLE `nmpl_terminal_user` add column `user_type` char(2) DEFAULT '21' COMMENT '用户类型 21:一体机  22:安全服务器';
 
