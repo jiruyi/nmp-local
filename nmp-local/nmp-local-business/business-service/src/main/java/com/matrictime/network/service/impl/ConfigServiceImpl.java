@@ -35,6 +35,8 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
+import static com.matrictime.network.constant.BusinessConsts.COMMON_SWITCH_ON;
+import static com.matrictime.network.constant.BusinessConsts.SWITCH_CONFIGCODE;
 import static com.matrictime.network.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.KEY_FAIL_IDS;
 import static com.matrictime.network.constant.DataConstants.KEY_SUCCESS_IDS;
@@ -73,9 +75,6 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
 
     @Value("${proxy.port}")
     private String proxyPort;
-
-    @Value("${switch.configCode}")
-    private String dataSwitch;
 
     /**
      * 系统设置查询接口（支持分页查询）
@@ -207,7 +206,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 // 全量恢复默认
                 case DataConstants.EDIT_RANGE_ALL:
                     NmplConfigExample example = new NmplConfigExample();
-                    example.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andConfigCodeNotEqualTo(dataSwitch).andIsExistEqualTo(IS_EXIST);
+                    example.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andConfigCodeNotEqualTo(SWITCH_CONFIGCODE).andIsExistEqualTo(IS_EXIST);
                     List<NmplConfig> nmplConfigs = nmplConfigMapper.selectByExample(example);
                     if (!CollectionUtils.isEmpty(nmplConfigs)){
                         for (NmplConfig dto : nmplConfigs){
@@ -352,7 +351,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             for(NmplConfig config : nmplConfigs){
                 NmplConfigVo configVo = new NmplConfigVo();
                 BeanUtils.copyProperties(config,configVo);
-                if(dataSwitch.equals(config.getConfigCode())){// 如果是数据采集开关则单独处理
+                if(SWITCH_CONFIGCODE.equals(config.getConfigCode())){// 如果是数据采集开关则单独处理
                     resp.setCollectSwitch(configVo);
                 }else {
                     configVos.add(configVo);

@@ -6,8 +6,8 @@
     <result column="terminal_network_id" jdbcType="VARCHAR" property="terminalNetworkId" />
     <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
     <result column="data_type" jdbcType="CHAR" property="dataType" />
-    <result column="up_value" jdbcType="INTEGER" property="upValue" />
-    <result column="down_value" jdbcType="INTEGER" property="downValue" />
+    <result column="up_value" jdbcType="BIGINT" property="upValue" />
+    <result column="down_value" jdbcType="BIGINT" property="downValue" />
     <result column="terminal_ip" jdbcType="VARCHAR" property="terminalIp" />
     <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -112,7 +112,7 @@
       terminal_ip, upload_time, create_time, 
       update_time)
     values (#{id,jdbcType=BIGINT}, #{terminalNetworkId,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, 
-      #{dataType,jdbcType=CHAR}, #{upValue,jdbcType=INTEGER}, #{downValue,jdbcType=INTEGER}, 
+      #{dataType,jdbcType=CHAR}, #{upValue,jdbcType=BIGINT}, #{downValue,jdbcType=BIGINT}, 
       #{terminalIp,jdbcType=VARCHAR}, #{uploadTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>
@@ -164,10 +164,10 @@
         #{dataType,jdbcType=CHAR},
       </if>
       <if test="upValue != null">
-        #{upValue,jdbcType=INTEGER},
+        #{upValue,jdbcType=BIGINT},
       </if>
       <if test="downValue != null">
-        #{downValue,jdbcType=INTEGER},
+        #{downValue,jdbcType=BIGINT},
       </if>
       <if test="terminalIp != null">
         #{terminalIp,jdbcType=VARCHAR},
@@ -205,10 +205,10 @@
         data_type = #{record.dataType,jdbcType=CHAR},
       </if>
       <if test="record.upValue != null">
-        up_value = #{record.upValue,jdbcType=INTEGER},
+        up_value = #{record.upValue,jdbcType=BIGINT},
       </if>
       <if test="record.downValue != null">
-        down_value = #{record.downValue,jdbcType=INTEGER},
+        down_value = #{record.downValue,jdbcType=BIGINT},
       </if>
       <if test="record.terminalIp != null">
         terminal_ip = #{record.terminalIp,jdbcType=VARCHAR},
@@ -233,8 +233,8 @@
       terminal_network_id = #{record.terminalNetworkId,jdbcType=VARCHAR},
       parent_id = #{record.parentId,jdbcType=VARCHAR},
       data_type = #{record.dataType,jdbcType=CHAR},
-      up_value = #{record.upValue,jdbcType=INTEGER},
-      down_value = #{record.downValue,jdbcType=INTEGER},
+      up_value = #{record.upValue,jdbcType=BIGINT},
+      down_value = #{record.downValue,jdbcType=BIGINT},
       terminal_ip = #{record.terminalIp,jdbcType=VARCHAR},
       upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -256,10 +256,10 @@
         data_type = #{dataType,jdbcType=CHAR},
       </if>
       <if test="upValue != null">
-        up_value = #{upValue,jdbcType=INTEGER},
+        up_value = #{upValue,jdbcType=BIGINT},
       </if>
       <if test="downValue != null">
-        down_value = #{downValue,jdbcType=INTEGER},
+        down_value = #{downValue,jdbcType=BIGINT},
       </if>
       <if test="terminalIp != null">
         terminal_ip = #{terminalIp,jdbcType=VARCHAR},
@@ -281,8 +281,8 @@
     set terminal_network_id = #{terminalNetworkId,jdbcType=VARCHAR},
       parent_id = #{parentId,jdbcType=VARCHAR},
       data_type = #{dataType,jdbcType=CHAR},
-      up_value = #{upValue,jdbcType=INTEGER},
-      down_value = #{downValue,jdbcType=INTEGER},
+      up_value = #{upValue,jdbcType=BIGINT},
+      down_value = #{downValue,jdbcType=BIGINT},
       terminal_ip = #{terminalIp,jdbcType=VARCHAR},
       upload_time = #{uploadTime,jdbcType=TIMESTAMP},
       create_time = #{createTime,jdbcType=TIMESTAMP},

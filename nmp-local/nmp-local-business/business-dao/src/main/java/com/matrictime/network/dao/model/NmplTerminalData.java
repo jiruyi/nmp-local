@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 基站下一体机信息上报表
  * @author   hexu
- * @date   2023-04-18
+ * @date   2023-08-29
  */
 @Data
 public class NmplTerminalData {
@@ -33,12 +33,12 @@ public class NmplTerminalData {
     /**
      * 上行密钥量
      */
-    private Integer upValue;
+    private Long upValue;
 
     /**
      * 下行密钥量
      */
-    private Integer downValue;
+    private Long downValue;
 
     /**
      * 一体机ip
@@ -92,19 +92,19 @@ public class NmplTerminalData {
         this.dataType = dataType == null ? null : dataType.trim();
     }
 
-    public Integer getUpValue() {
+    public Long getUpValue() {
         return upValue;
     }
 
-    public void setUpValue(Integer upValue) {
+    public void setUpValue(Long upValue) {
         this.upValue = upValue;
     }
 
-    public Integer getDownValue() {
+    public Long getDownValue() {
         return downValue;
     }
 
-    public void setDownValue(Integer downValue) {
+    public void setDownValue(Long downValue) {
         this.downValue = downValue;
     }
 
