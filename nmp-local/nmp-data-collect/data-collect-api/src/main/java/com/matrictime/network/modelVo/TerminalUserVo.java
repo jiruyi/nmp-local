@@ -12,6 +12,11 @@ import java.util.Date;
 public class TerminalUserVo {
 
     /**
+     * 主键
+     */
+    private Long id;
+
+    /**
      * 用户状态 01:密钥匹配  02:注册  03:上线 04:下线 05:注销
      */
     private String terminalStatus;

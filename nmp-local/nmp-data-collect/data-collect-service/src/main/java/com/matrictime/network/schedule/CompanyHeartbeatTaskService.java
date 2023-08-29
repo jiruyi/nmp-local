@@ -1,10 +1,18 @@
 package com.matrictime.network.schedule;
 
+import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.enums.BusinessDataEnum;
+import com.matrictime.network.base.enums.DeviceTypeEnum;
+import com.matrictime.network.base.util.TcpTransportUtil;
+import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.CompanyHeartbeatDomainService;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
+import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.modelVo.CompanyHeartbeatVo;
 import com.matrictime.network.modelVo.DataCollectVo;
+import com.matrictime.network.netty.client.NettyClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -15,6 +23,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -27,12 +36,21 @@ import java.util.List;
 public class CompanyHeartbeatTaskService implements SchedulingConfigurer {
 
     //默认毫秒值
-    private long timer = 3000;
+    private long timer = 300000;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Resource
     private CompanyHeartbeatDomainService heartbeatDomainService;
+
+    @Autowired
+    private DeviceDomainService deviceDomainService;
+
+    @Autowired
+    private NettyClient nettyClient;
+
+    @Autowired
+    private AlarmDomainService alarmDomainService;
 
     /**
      * 数据流量定时任务
@@ -47,6 +65,21 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer {
                 if(CollectionUtils.isEmpty(list)){
                     return;
                 }
+
+                //查询数据采集和指控中心的入网码
+                String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+                String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+                String reqDataStr = JSONObject.toJSONString(list);
+                //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
+                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyHeartbeat,
+                        reqDataStr,comNetworkId,dataNetworkId));
+                log.info("companyHeartbeatPush this time query data count：{}",list.size());
+                //修改nmpl_data_push_record 数据推送记录表
+                Long maxCompanyHeartId = list.stream().max(Comparator.comparingLong(CompanyHeartbeatVo::getId))
+                        .get().getId();
+                log.info("此次推送的最大 company_heart_id is :{}",maxCompanyHeartId);
+                alarmDomainService.insertDataPushRecord(maxCompanyHeartId);
+
                 log.info("CompanyHeartbeatTaskService this time query data count：{}",list.size());
             }
         }, new Trigger() {

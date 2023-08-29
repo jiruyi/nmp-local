@@ -8,6 +8,23 @@ package com.matrictime.network.base.enums;
  * @desc
  */
 public enum BusinessDataEnum {
+
+    BorderStation("border_station","nmpl_base_station_info"),
+
+    Station("station","nmpl_base_station_info"),
+
+    Device("device","nmpl_device_info"),
+
+    CompanyInfo("company_info","nmpl_company_info"),
+
+    CompanyHeartbeat("company_heartbeat","nmpl_company_heartbeat"),
+
+    DataCollect("data_collect","nmpl_data_collect"),
+
+    SystemHeart("system_heartbeat","nmpl_system_heartbeat"),
+
+    TerminalUser("terminal_user","nmpl_terminal_user"),
+
     AlarmInfo("alarm_info","nmpl_alarm_info");
 
     private String businessCode;
