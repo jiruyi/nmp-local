@@ -12,6 +12,11 @@ import java.util.Date;
 public class CompanyHeartbeatVo {
 
     /**
+     * 主键
+     */
+    private Long id;
+
+    /**
      * 来源Id
      */
     private String sourceCompanyNetworkId;

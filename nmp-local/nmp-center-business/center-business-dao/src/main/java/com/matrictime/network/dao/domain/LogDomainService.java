@@ -2,10 +2,13 @@ package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplOperateLog;
+import com.matrictime.network.modelVo.AlarmInfo;
 import com.matrictime.network.modelVo.LoginDetail;
 import com.matrictime.network.request.AlarmInfoRequest;
 import com.matrictime.network.request.LogRequest;
 import com.matrictime.network.response.PageInfo;
+
+import java.util.List;
 
 /**
  * @author jiruyi
@@ -23,4 +26,6 @@ public interface LogDomainService {
     PageInfo<NmplLoginDetail> queryLoginDetailList(LoginDetail loginDetail);
 
     PageInfo queryAlarmInfoList(AlarmInfoRequest alarmInfoRequest);
+
+    int  batchInsertAlarmData(List<AlarmInfo> alarmInfoList);
 }

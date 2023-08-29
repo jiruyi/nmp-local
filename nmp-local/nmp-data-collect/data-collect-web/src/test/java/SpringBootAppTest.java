@@ -1,6 +1,5 @@
 import com.matrictime.network.DataCollectApplication;
 import com.matrictime.network.netty.client.NettyClient;
-import com.matrictime.network.netty.protocol.message.ReqData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +36,6 @@ public class SpringBootAppTest {
 //                .toBuilder().setVersion(ByteString.copyFromUtf8("1")).setResv(1)
 //                .setUMsgType(0).setUTotalLen(100).setDstRID(5894).setSrcRID(7822).setUIndex(0).setUEncType(0)
 //                .setUEncRate(0).setCheckSum(0).setReqData("hello").build();
-        ReqData reqData = new ReqData();
         Byte[] bytes = new Byte[52];
         /**
          bytes version = 1;

@@ -9,6 +9,13 @@ import lombok.Data;
 @Data
 public class CompanyInfoVo {
 
+    private Long id;
+
+    /**
+     * 单位id
+     */
+    private Long companyId;
+
     /**
      * 小区唯一编号Id
      */

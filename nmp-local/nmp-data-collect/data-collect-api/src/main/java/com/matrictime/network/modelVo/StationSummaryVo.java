@@ -12,6 +12,11 @@ import java.util.Date;
 public class StationSummaryVo {
 
     /**
+     * 主键
+     */
+    private Long id;
+
+    /**
      * 总和类型 01:小区内基站 02:小区边界基站 11:密钥中心 12:网络总数
      */
     private String sumType;

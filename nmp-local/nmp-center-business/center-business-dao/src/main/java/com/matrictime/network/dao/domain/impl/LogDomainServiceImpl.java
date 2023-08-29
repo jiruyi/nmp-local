@@ -11,6 +11,7 @@ import com.matrictime.network.dao.model.NmplAlarmInfoExample;
 import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplOperateLog;
 import com.matrictime.network.dao.model.extend.NmplAlarmInfoExt;
+import com.matrictime.network.modelVo.AlarmInfo;
 import com.matrictime.network.modelVo.LoginDetail;
 import com.matrictime.network.request.AlarmInfoRequest;
 import com.matrictime.network.request.LogRequest;
@@ -103,6 +104,19 @@ public class LogDomainServiceImpl extends SystemBaseService implements LogDomain
         List<NmplAlarmInfoExt> list = alarmInfoMapper.selectListFromAlarmAndCompany(alarmInfoExample);
         PageInfo<NmplAlarmInfoExt> pageResult =  new PageInfo<>((int)page.getTotal(), page.getPages(), list);
         return pageResult;
+    }
+
+    /**
+      * @title batchInsertAlarmData
+      * @param [alarmInfoList]
+      * @return int
+      * @description
+      * @author jiruyi
+      * @create 2023/8/29 0029 14:56
+      */
+    @Override
+    public int batchInsertAlarmData(List<AlarmInfo> alarmInfoList) {
+        return  alarmInfoMapper.batchInsert(alarmInfoList);
     }
 
 
