@@ -117,6 +117,7 @@ public class AlarmInfoTaskService implements BusinessDataService,SchedulingConfi
      * @author jiruyi
      * @create 2023/7/20 0020 11:19
      */
+    @Override
     public void updateTimer(long timer){
         this.timer = timer;
     }
