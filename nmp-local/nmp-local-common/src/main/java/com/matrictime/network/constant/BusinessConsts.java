@@ -19,4 +19,12 @@ public class BusinessConsts {
     public static final String RESOURCE_TYPE_EXT = "5";
 
     public static final String ALARM_SOURCE_TYPE_RESOURCE = "00";
+
+    // 通用开关：开
+    public static final String COMMON_SWITCH_ON = "1";
+    // 通用开关：关
+    public static final String COMMON_SWITCH_OFF = "0";
+
+    // 数据采集开关配置code
+    public static final String SWITCH_CONFIGCODE = "dataSwitch";
 }
