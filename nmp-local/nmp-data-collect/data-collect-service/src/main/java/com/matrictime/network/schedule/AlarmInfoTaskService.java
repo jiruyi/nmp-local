@@ -1,12 +1,14 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
 import com.matrictime.network.netty.client.NettyClient;
+import com.matrictime.network.service.BusinessDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -31,7 +33,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class AlarmInfoTaskService implements SchedulingConfigurer {
+public class AlarmInfoTaskService implements BusinessDataService,SchedulingConfigurer {
 
     //默认毫秒值
     private long timer = 300000;
@@ -60,23 +62,7 @@ public class AlarmInfoTaskService implements SchedulingConfigurer {
             @Override
             public void run() {
                 try {
-                    //告警日志业务逻辑 查询数据
-                    List<NmplAlarmInfo> alarmInfoList =  alarmDomainService.queryAlarmList();
-                    if(CollectionUtils.isEmpty(alarmInfoList)){
-                        return;
-                    }
-                    //查询数据采集和指控中心的入网码
-                    String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-                    String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-                    String reqDataStr = JSONObject.toJSONString(alarmInfoList);
-                    //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-                    nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(reqDataStr,comNetworkId,dataNetworkId));
-                    log.info("alarmPush this time query data count：{}",alarmInfoList.size());
-                    //修改nmpl_data_push_record 数据推送记录表
-                    Long maxAlarmId = alarmInfoList.stream().max(Comparator.comparingLong(NmplAlarmInfo::getAlarmId))
-                            .get().getAlarmId();
-                    log.info("此次推送的最大 alarm_id is :{}",maxAlarmId);
-                    alarmDomainService.insertDataPushRecord(maxAlarmId);
+                    businessData();
                 }catch (Exception e) {
                     log.error("AlarmInfoTaskService configureTasks exception:{}",e);
                 }
@@ -91,6 +77,36 @@ public class AlarmInfoTaskService implements SchedulingConfigurer {
                 return nextExecutionTime;
             }
         });
+    }
+
+    /**
+      * @title businessData
+      * @param []
+      * @return void
+      * @description
+      * @author jiruyi
+      * @create 2023/8/28 0028 17:44
+      */
+    @Override
+    public void businessData(){
+        //告警日志业务逻辑 查询数据
+        List<NmplAlarmInfo> alarmInfoList =  alarmDomainService.queryAlarmList();
+        if(CollectionUtils.isEmpty(alarmInfoList)){
+            return;
+        }
+        //查询数据采集和指控中心的入网码
+        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+        String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+        String reqDataStr = JSONObject.toJSONString(alarmInfoList);
+        //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
+        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.AlarmInfo,
+                reqDataStr,comNetworkId,dataNetworkId));
+        log.info("alarmPush this time query data count：{}",alarmInfoList.size());
+        //修改nmpl_data_push_record 数据推送记录表
+        Long maxAlarmId = alarmInfoList.stream().max(Comparator.comparingLong(NmplAlarmInfo::getAlarmId))
+                .get().getAlarmId();
+        log.info("此次推送的最大 alarm_id is :{}",maxAlarmId);
+        alarmDomainService.insertDataPushRecord(maxAlarmId);
     }
 
     /**
