@@ -1,14 +1,10 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
-import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
-import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
-import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
-import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.StationSummaryVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
@@ -20,14 +16,12 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author by wangqiang

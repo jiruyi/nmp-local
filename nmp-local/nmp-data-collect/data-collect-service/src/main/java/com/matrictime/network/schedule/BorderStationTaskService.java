@@ -1,9 +1,7 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
-import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
-import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;

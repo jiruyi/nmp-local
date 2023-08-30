@@ -1,14 +1,11 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
-import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
-import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.modelVo.StationSummaryVo;
-import com.matrictime.network.modelVo.TerminalUserVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +21,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
 
 /**

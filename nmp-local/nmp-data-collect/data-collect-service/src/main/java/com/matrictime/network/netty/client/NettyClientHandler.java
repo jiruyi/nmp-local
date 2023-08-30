@@ -1,6 +1,5 @@
 package com.matrictime.network.netty.client;
 
-import com.matrictime.network.netty.protocol.message.MessageBase;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * @desc
  */
 @Slf4j
-public class NettyClientHandler  extends SimpleChannelInboundHandler<MessageBase.Message> {
+public class NettyClientHandler  extends SimpleChannelInboundHandler<Object> {
     /**
      * 如果服务端发生消息给客户端，下面方法进行接收消息
      *
@@ -22,7 +21,7 @@ public class NettyClientHandler  extends SimpleChannelInboundHandler<MessageBase
      * @throws Exception
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageBase.Message msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         log.info("客户端收到消息：{}",msg.toString());
     }
 
@@ -36,7 +35,7 @@ public class NettyClientHandler  extends SimpleChannelInboundHandler<MessageBase
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        log.info("消息发送异常：{}",cause);
         ctx.close();
     }
 }
