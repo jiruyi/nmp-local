@@ -1,7 +1,10 @@
 package com.matrictime.network.dao.mapper.extend;
 
 import com.matrictime.network.dao.model.NmplDataCollect;
+import com.matrictime.network.modelVo.CompanyHeartbeatVo;
+import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.request.DataCollectRequest;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -15,6 +18,6 @@ public interface DataCollectExtMapper {
 
     List<NmplDataCollect> selectLoadData(DataCollectRequest dataCollectRequest);
 
-
+    int insertData(@Param("list") List<DataCollectVo> dataCollectVoList);
 
 }
