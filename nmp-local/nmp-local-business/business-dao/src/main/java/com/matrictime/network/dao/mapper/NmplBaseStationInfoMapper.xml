@@ -985,6 +985,6 @@
   <select id="selectAllDevice" parameterType="com.matrictime.network.request.SystemHeartbeatRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
     select station_id,station_name from nmpl_base_station_info where is_exist = 1 and relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
     union
-    select device_id as station_id,device_name as station_name from nmpl_device_info where is_exist = 1 and relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
+    select device_id as station_id,device_name as station_name from nmpl_device_info where is_exist = 1 and device_type != '20' and relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
   </select>
 </mapper>
