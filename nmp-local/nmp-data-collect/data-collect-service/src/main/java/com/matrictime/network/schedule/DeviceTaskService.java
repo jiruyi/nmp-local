@@ -19,6 +19,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -43,9 +44,6 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
 
     @Autowired
     private NettyClient nettyClient;
-
-    @Autowired
-    private AlarmDomainService alarmDomainService;
 
     @Resource
     private StationSummaryDomainService summaryDomainService;
@@ -83,15 +81,18 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
         //查询数据采集和指控中心的入网码
         String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
         String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(comNetworkId)){
+            return;
+        }
         String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
         //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Device,
-                reqDataStr,comNetworkId,dataNetworkId));
+//        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Device,
+//                reqDataStr,comNetworkId,dataNetworkId));
         log.info("devicePush this time query data count：{}",stationSummaryVo);
         //修改nmpl_data_push_record 数据推送记录表
         Long maxDeviceId = stationSummaryVo.getId();
         log.info("此次推送的最大 device_id is :{}",maxDeviceId);
-        alarmDomainService.insertDataPushRecord(maxDeviceId);
+        summaryDomainService.insertDataPushRecord(maxDeviceId,BusinessDataEnum.Device.getTableName());
 
         log.info("DeviceTaskService this time query data count：{}",stationSummaryVo);
     }
