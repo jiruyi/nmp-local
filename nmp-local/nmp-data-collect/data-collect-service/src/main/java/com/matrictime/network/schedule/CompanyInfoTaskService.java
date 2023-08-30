@@ -1,15 +1,11 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
-import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
-import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.CompanyInfoDomainService;
-import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.modelVo.CompanyInfoVo;
-import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
 import lombok.extern.slf4j.Slf4j;
@@ -89,14 +85,14 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
             String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
             String reqDataStr = JSONObject.toJSONString(companyInfoVos);
             //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-            nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyInfo,
-                    reqDataStr,comNetworkId,dataNetworkId));
+           // nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyInfo,
+           //         reqDataStr,comNetworkId,dataNetworkId));
             log.info("companyPush this time query data count：{}",companyInfoVos.size());
             //修改nmpl_data_push_record 数据推送记录表
             Long maxCompanyId = companyInfoVos.stream().max(Comparator.comparingLong(CompanyInfoVo::getId))
                     .get().getId();
             log.info("此次推送的最大 company_id is :{}",maxCompanyId);
-            alarmDomainService.insertDataPushRecord(maxCompanyId);
+           // alarmDomainService.insertDataPushRecord(maxCompanyId);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,14 +1,10 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
-import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
-import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
-import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
-import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.StationSummaryVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
@@ -20,13 +16,11 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author by wangqiang
@@ -90,13 +84,13 @@ public class StationTaskService implements SchedulingConfigurer, BusinessDataSer
         String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
         String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
         //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Station,
-                reqDataStr,comNetworkId,dataNetworkId));
-        log.info("stationPush this time query data count：{}",stationSummaryVo);
-        //修改nmpl_data_push_record 数据推送记录表
-        Long maxStationId = stationSummaryVo.getId();
-        log.info("此次推送的最大 Station_id is :{}",maxStationId);
-        alarmDomainService.insertDataPushRecord(maxStationId);
+//        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Station,
+//                reqDataStr,comNetworkId,dataNetworkId));
+//        log.info("stationPush this time query data count：{}",stationSummaryVo);
+//        //修改nmpl_data_push_record 数据推送记录表
+//        Long maxStationId = stationSummaryVo.getId();
+//        log.info("此次推送的最大 Station_id is :{}",maxStationId);
+//        alarmDomainService.insertDataPushRecord(maxStationId);
         log.info("StationTaskService this time query data count：{}",stationSummaryVo);
     }
 

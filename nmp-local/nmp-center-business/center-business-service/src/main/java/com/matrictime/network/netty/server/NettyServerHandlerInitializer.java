@@ -18,7 +18,7 @@ public class NettyServerHandlerInitializer extends ChannelInitializer<Channel> {
     protected void initChannel(Channel ch) throws Exception {
         ch.pipeline()
                 //空闲检测
-                .addLast(new ServerIdleStateHandler())
+                //.addLast(new ServerIdleStateHandler())
                 .addLast(new ByteArrayDecoder())
                 .addLast(new ByteArrayEncoder())
                 .addLast(new NettyServerHandler());

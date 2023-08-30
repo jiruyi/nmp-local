@@ -6,10 +6,8 @@ import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.CompanyHeartbeatDomainService;
-import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.modelVo.CompanyHeartbeatVo;
-import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
 import lombok.extern.slf4j.Slf4j;
@@ -95,7 +93,7 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
         Long maxCompanyHeartId = list.stream().max(Comparator.comparingLong(CompanyHeartbeatVo::getId))
                 .get().getId();
         log.info("此次推送的最大 company_heart_id is :{}",maxCompanyHeartId);
-        alarmDomainService.insertDataPushRecord(maxCompanyHeartId);
+       // alarmDomainService.insertDataPushRecord(maxCompanyHeartId);
 
         log.info("CompanyHeartbeatTaskService this time query data count：{}",list.size());
     }
