@@ -8,6 +8,7 @@ import com.matrictime.network.base.SystemException;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.enums.ConfigEnum;
 import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
@@ -75,6 +76,12 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
 
     @Value("${proxy.port}")
     private String proxyPort;
+
+    @Value("${datacollect.context-path}")
+    private String dataCollectPath;
+
+    @Value("${datacollect.port}")
+    private String dataCollectPort;
 
     /**
      * 系统设置查询接口（支持分页查询）
@@ -510,6 +517,94 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
         return result;
     }
 
+    /**
+     * 同数据采集基础配置同步（支持全量同步）
+     * @param req
+     * @return
+     */
+    @Override
+    public Result syncDataCollectConfig(SyncConfigReq req) {
+        Result result;
+
+        try {
+            SyncConfigResp resp = new SyncConfigResp();
+            checkSyncConfigParam(req);
+
+            List<String> successIds = new ArrayList<>();// 返回成功id列表
+            List<String> failIds = new ArrayList<>();// 返回失败id列表
+            Set<String> configIds = new HashSet<>();// 返回成功配置id列表
+            List<Map<String,Object>> httpList = getDataCollectHttpList(req);// 同步多线程处理业务列表
+
+            if (!CollectionUtils.isEmpty(httpList)){
+                List<Future> futures = new ArrayList<>();
+                if (httpList.size()>maxPoolSize){// 超出最大线程池数量则每个线程池执行多个任务
+                    List<List<Map<String, Object>>> splitList = splitList(httpList);
+                    for (List<Map<String, Object>> tmpList : splitList){
+                        Future<Map<String, List<String>>> mapFuture = asyncService.httpSyncDataCollectConfig(tmpList);
+                        futures.add(mapFuture);
+                    }
+                }else {
+                    Future<Map<String, List<String>>> mapFuture = asyncService.httpSyncDataCollectConfig(httpList);
+                    futures.add(mapFuture);
+                }
+
+                Date timeout = DateUtils.addMinuteForDate(new Date(), asyncTimeOut);
+                while (true) {
+                    if (!CollectionUtils.isEmpty(futures)) {
+                        boolean isAllDone = true;
+                        for (Future future : futures) {
+                            if (null == future || !future.isDone()) {
+                                isAllDone = false;
+                            }else {
+                                try {
+                                    Map<String, List<String>> msg =  (Map<String, List<String>>) future.get();
+                                    if (!CollectionUtils.isEmpty(msg)) {
+                                        if (!CollectionUtils.isEmpty(msg.get(KEY_SUCCESS_IDS))){
+                                            successIds.addAll(msg.get(KEY_SUCCESS_IDS));
+                                        }
+                                        if (!CollectionUtils.isEmpty(msg.get(KEY_FAIL_IDS))){
+                                            failIds.addAll(msg.get(KEY_FAIL_IDS));
+                                        }
+                                        if (!CollectionUtils.isEmpty(msg.get(KEY_CONFIG_IDS))){
+                                            configIds.addAll(msg.get(KEY_CONFIG_IDS));
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    log.info("同步配置线程池处理单个批次配置出错！error:{}",e.getMessage());
+                                }
+                            }
+                        }
+                        if (isAllDone || new Date().after(timeout)) {
+                            break;
+                        }
+                    }else {
+                        break;
+                    }
+                }
+                if (!CollectionUtils.isEmpty(configIds)){
+                    List<Long> ids = configIds.stream().map(s->Long.parseLong(s.trim())).collect(Collectors.toList());
+                    NmplConfigExample example = new NmplConfigExample();
+                    example.createCriteria().andIdIn(ids);
+                    NmplConfig nmplConfig = new NmplConfig();
+                    nmplConfig.setStatus(SYNC_KEY_YES);
+                    nmplConfigMapper.updateByExampleSelective(nmplConfig,example);
+                }
+            }
+
+            resp.setSuccessIds(successIds);
+            resp.setFailIds(failIds);
+            result = buildResult(resp);
+        }catch (SystemException e){
+            log.error("ConfigServiceImpl.syncDataCollectConfig SystemException:{}",e.getMessage());
+            result = failResult(e.getMessage());
+        }catch (Exception e){
+            log.error("ConfigServiceImpl.syncDataCollectConfig Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+
     private List<Map<String,Object>> getHttpList(SyncConfigReq req) throws Exception{
         List<Map<String,Object>> httpList = new ArrayList<>();
 
@@ -582,7 +677,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                     break;
                 case DataConstants.EDIT_RANGE_ALL:
                     NmplDeviceInfoExample aExample = new NmplDeviceInfoExample();
-                    aExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+                    aExample.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andIsExistEqualTo(IS_EXIST);
                     deviceInfos = nmplDeviceInfoMapper.selectByExample(aExample);
                     break;
                 default:
@@ -599,6 +694,81 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 }
             }
         }
+        return httpList;
+    }
+
+    private List<Map<String,Object>> getDataCollectHttpList(SyncConfigReq req) throws Exception{
+        List<Map<String,Object>> httpList = new ArrayList<>();
+
+        List<NmplConfigVo> configVos = new ArrayList<>();
+        List<NmplReportBusiness> reportBusinesses = new ArrayList<>();
+        // 根据配置同步范围查询配置信息
+        switch (req.getConfigRange()){
+            case CONFIG_RANGE_SINGLE:// 单条根据配置id查找配置信息
+                NmplConfig nmplConfig = nmplConfigMapper.selectByPrimaryKey(req.getConfigId());
+                if (nmplConfig != null){
+                    if (ConfigEnum.REPORT_PERIOD.getCode().equals(nmplConfig.getConfigCode())){
+                        NmplReportBusinessExample reportBusinessExample = new NmplReportBusinessExample();
+                        reportBusinessExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+                        reportBusinesses = nmplReportBusinessMapper.selectByExample(reportBusinessExample);
+                    }
+                    NmplConfigVo vo = new NmplConfigVo();
+                    BeanUtils.copyProperties(nmplConfig,vo);
+                    configVos.add(vo);
+                }
+                break;
+            case CONFIG_RANGE_ALL:// 全量根据设备类型和有效标志位查找配置信息
+                NmplConfigExample example = new NmplConfigExample();
+                example.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andIsExistEqualTo(IS_EXIST);
+                List<NmplConfig> nmplConfigs = nmplConfigMapper.selectByExample(example);
+                if (!CollectionUtils.isEmpty(nmplConfigs)){
+                    for (NmplConfig config : nmplConfigs){
+                        NmplConfigVo vo = new NmplConfigVo();
+                        BeanUtils.copyProperties(config,vo);
+                        configVos.add(vo);
+                        if (ConfigEnum.REPORT_PERIOD.getCode().equals(config.getConfigCode())){
+                            NmplReportBusinessExample reportBusinessExample = new NmplReportBusinessExample();
+                            reportBusinessExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+                            reportBusinesses = nmplReportBusinessMapper.selectByExample(reportBusinessExample);
+                        }
+                    }
+                }
+                break;
+            default:
+                throw new Exception("configRange"+PARAM_IS_UNEXPECTED_MSG);
+        }
+        if (CollectionUtils.isEmpty(configVos)){// 没有找到配置信息直接跳出方法
+            throw new SystemException(ErrorCode.SYSTEM_ERROR,DO_NOT_GET_CONFIG);
+        }
+
+        // 查询同步到对应数据采集的设备信息
+        List<NmplDeviceInfo> deviceInfos;
+        switch (req.getEditRange()){
+            case DataConstants.EDIT_RANGE_PART:
+                NmplDeviceInfoExample pExample = new NmplDeviceInfoExample();
+                pExample.createCriteria().andDeviceIdIn(req.getDeviceIds()).andIsExistEqualTo(IS_EXIST);
+                deviceInfos = nmplDeviceInfoMapper.selectByExample(pExample);
+                break;
+            case DataConstants.EDIT_RANGE_ALL:
+                NmplDeviceInfoExample aExample = new NmplDeviceInfoExample();
+                aExample.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andIsExistEqualTo(IS_EXIST);
+                deviceInfos = nmplDeviceInfoMapper.selectByExample(aExample);
+                break;
+            default:
+                throw new Exception("editRange"+ PARAM_IS_UNEXPECTED_MSG);
+        }
+        if (!CollectionUtils.isEmpty(deviceInfos)){
+            for (NmplDeviceInfo info:deviceInfos){
+                Map<String,Object> httpParam = new HashMap<>(8);
+                httpParam.put(KEY_CONFIGVOS, configVos);
+                httpParam.put(KEY_REPORT_BUSINESS,reportBusinesses);
+                httpParam.put(KEY_DEVICE_TYPE, req.getDeviceType());
+                httpParam.put(KEY_DEVICE_ID,info.getDeviceId());
+                httpParam.put(KEY_URL,HttpClientUtil.getUrl(info.getLanIp(),dataCollectPort,dataCollectPath+DATA_SYNC_CONFIG_URL));
+                httpList.add(httpParam);
+            }
+        }
+
         return httpList;
     }
 

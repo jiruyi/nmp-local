@@ -140,6 +140,60 @@ public class AsyncService{
         return new AsyncResult<>(result);
     }
 
+    @Async("taskExecutor")
+    public Future<Map<String,List<String>>> httpSyncDataCollectConfig(List<Map<String, Object>> list) {
+
+        Map<String,List<String>> result = new HashMap<>();
+        List<String> successIds = new ArrayList<>(list.size());
+        List<String> failIds = new ArrayList<>();
+        List<String> configIds = new ArrayList<>();
+        String deviceId = "";
+        try {
+            for (Map<String,Object> map : list){
+                log.info("AsyncService.httpSyncDataCollectConfig map:{},isremote:{}",JSONObject.toJSONString(map),isremote);
+                deviceId = (String) map.get(KEY_DEVICE_ID);
+                JSONObject jsonReq = new JSONObject();
+                jsonReq.put(KEY_CONFIGVOS, map.get(KEY_CONFIGVOS));
+                jsonReq.put(KEY_REPORT_BUSINESS,map.get(KEY_REPORT_BUSINESS));
+                boolean flag = false;
+                try{
+                    // TODO: 2022/3/31 返回值暂时写死，配置同步需要和站点联调获取返回值
+                    if (map.containsKey(KEY_URL)){
+                        String post = "";
+                        if (isremote == 1){
+                            post = HttpClientUtil.post((String) map.get(KEY_URL), jsonReq.toJSONString());
+                        }else {
+                            Result tempResult = new Result(true,"");
+                            post = JSONObject.toJSONString(tempResult);
+                        }
+                        log.info("AsyncService.httpSyncDataCollectConfig result deviceId:{},req:{},post:{}",deviceId,jsonReq.toJSONString(),post);
+                        JSONObject jsonObject = JSONObject.parseObject(post);
+                        if (jsonObject != null && jsonObject.containsKey(SUCCESS_MSG)){
+                            flag = (Boolean) jsonObject.get(SUCCESS_MSG);
+                        }
+                    }
+                }catch (Exception e){
+                    log.warn("httpSyncDataCollectConfig.HttpClientUtil Exception:{},deviceId:{},map:{}",e.getMessage(),deviceId,JSONObject.toJSONString(map));
+                }
+                if (flag){
+                    successIds.add(deviceId);
+                    List<NmplConfigVo> configVos = (List<NmplConfigVo>) map.get(KEY_CONFIGVOS);
+                    for (NmplConfigVo vo : configVos){
+                        configIds.add(String.valueOf(vo.getId()));
+                    }
+                }else {
+                    failIds.add(deviceId);
+                }
+            }
+        }catch (Exception e){
+            log.warn("AsyncService.httpSyncDataCollectConfig Exception:{}",e.getMessage());
+        }
+        result.put(KEY_SUCCESS_IDS,successIds);
+        result.put(KEY_FAIL_IDS,failIds);
+        result.put(KEY_CONFIG_IDS,configIds);
+        return new AsyncResult<>(result);
+    }
+
 
     @Async("taskExecutor")
     public Future<Map<String,List<String>>> httpSignalIo(List<Map<String, String>> list) {

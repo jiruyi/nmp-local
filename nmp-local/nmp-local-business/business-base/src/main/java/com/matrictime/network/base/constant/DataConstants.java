@@ -132,6 +132,8 @@ public class DataConstants {
     public static final String KEY_EDIT_TYPE = "editType";
     public static final String KEY_DEVICE_TYPE = "deviceType";
     public static final String KEY_CONFIGVOS = "configVos";
+
+    public static final String KEY_REPORT_BUSINESS = "reportBusiness";
     public static final String KEY_SUCCESS_IDS = "successIds";
     public static final String KEY_FAIL_IDS = "failIds";
 
@@ -263,5 +265,7 @@ public class DataConstants {
     public static final String EDIT_CONFIG_URL = "/config/editConfig";
 
     public static final String SYNC_CONFIG_URL = "/config/syncConfig";
+
+    public static final String DATA_SYNC_CONFIG_URL = "/task/syncConfig";
 
 }
