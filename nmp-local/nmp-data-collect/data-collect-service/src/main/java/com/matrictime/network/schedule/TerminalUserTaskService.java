@@ -1,6 +1,7 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
@@ -8,6 +9,7 @@ import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.modelVo.TerminalUserVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
+import com.matrictime.network.strategy.annotation.BusinessType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -30,6 +32,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@BusinessType(businessType = BusinessTypeEnum.TERMINAL_USER)
 public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDataService {
 
     //默认毫秒值
