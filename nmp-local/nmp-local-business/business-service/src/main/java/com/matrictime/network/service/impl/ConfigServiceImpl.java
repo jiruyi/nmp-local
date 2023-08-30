@@ -719,7 +719,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 break;
             case CONFIG_RANGE_ALL:// 全量根据设备类型和有效标志位查找配置信息
                 NmplConfigExample example = new NmplConfigExample();
-                example.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andIsExistEqualTo(IS_EXIST);
+                example.createCriteria().andDeviceTypeEqualTo(req.getDeviceType()).andConfigCodeNotEqualTo(SWITCH_CONFIGCODE).andIsExistEqualTo(IS_EXIST);
                 List<NmplConfig> nmplConfigs = nmplConfigMapper.selectByExample(example);
                 if (!CollectionUtils.isEmpty(nmplConfigs)){
                     for (NmplConfig config : nmplConfigs){

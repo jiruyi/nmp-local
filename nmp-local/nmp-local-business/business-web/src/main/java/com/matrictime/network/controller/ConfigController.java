@@ -363,7 +363,6 @@ public class ConfigController {
     public Result<SyncConfigResp> syncDataCollectConfig(@RequestBody SyncConfigReq req){
         try {
             req.setDeviceType(DeviceTypeEnum.DATA_BASE.getCode());
-            req.setEditRange(EDIT_RANGE_ALL);
             return configService.syncDataCollectConfig(req);
         }catch (Exception e){
             log.error("ConfigController.syncDataCollectConfig exception:{}",e.getMessage());
