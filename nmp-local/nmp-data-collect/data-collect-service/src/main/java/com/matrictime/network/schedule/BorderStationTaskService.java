@@ -2,6 +2,7 @@ package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.enums.BusinessDataEnum;
+import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
@@ -9,6 +10,7 @@ import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.modelVo.StationSummaryVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
+import com.matrictime.network.strategy.annotation.BusinessType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -30,6 +32,7 @@ import java.util.Date;
  */
 @Slf4j
 @Component
+@BusinessType(businessType = BusinessTypeEnum.BORDER_STATION_DATA)
 public class BorderStationTaskService implements SchedulingConfigurer, BusinessDataService {
 
     //默认毫秒值
