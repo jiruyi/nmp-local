@@ -2,6 +2,7 @@ package com.matrictime.network.schedule;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
@@ -96,7 +97,7 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
         Long maxDataCollectId = dataCollectVos.stream().max(Comparator.comparingLong(DataCollectVo::getId))
                 .get().getId();
         log.info("此次推送的最大 data_collect_id is :{}",maxDataCollectId);
-        summaryDomainService.insertDataPushRecord(maxDataCollectId,BusinessDataEnum.DataCollect.getTableName());
+        summaryDomainService.insertDataPushRecord(maxDataCollectId, BusinessDataEnum.DataCollect.getTableName());
 
         log.info("DataCollectTaskService this time query data count：{}",dataCollectVos.size());
     }

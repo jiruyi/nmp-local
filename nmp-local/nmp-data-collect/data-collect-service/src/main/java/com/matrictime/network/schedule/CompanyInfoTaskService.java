@@ -1,6 +1,7 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.*;
@@ -98,7 +99,7 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
             Long maxCompanyId = companyInfoVos.stream().max(Comparator.comparingLong(CompanyInfoVo::getId))
                     .get().getId();
             log.info("此次推送的最大 company_id is :{}",maxCompanyId);
-            summaryDomainService.insertDataPushRecord(maxCompanyId,BusinessDataEnum.CompanyInfo.getTableName());
+            summaryDomainService.insertDataPushRecord(maxCompanyId, BusinessDataEnum.CompanyInfo.getTableName());
 
         } catch (Exception e) {
             e.printStackTrace();

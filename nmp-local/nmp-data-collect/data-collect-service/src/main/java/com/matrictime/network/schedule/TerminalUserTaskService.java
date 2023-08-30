@@ -1,9 +1,11 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
+import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.modelVo.TerminalUserVo;
 import com.matrictime.network.netty.client.NettyClient;
@@ -95,7 +97,7 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
         Long maxTerminalUserId = terminalUserVoList.stream().max(Comparator.comparingLong(TerminalUserVo::getId))
                 .get().getId();
         log.info("此次推送的最大 terminal_user_id is :{}",maxTerminalUserId);
-        summaryDomainService.insertDataPushRecord(maxTerminalUserId,BusinessDataEnum.TerminalUser.getTableName());
+        summaryDomainService.insertDataPushRecord(maxTerminalUserId, BusinessDataEnum.TerminalUser.getTableName());
     }
 
     /**

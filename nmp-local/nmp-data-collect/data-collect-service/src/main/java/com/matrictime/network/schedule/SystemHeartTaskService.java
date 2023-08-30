@@ -1,6 +1,7 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
@@ -90,7 +91,7 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
         //修改nmpl_data_push_record 数据推送记录表
         Long maxSystemHeartId = stationSummaryVo.getId();
         log.info("此次推送的最大 system_heart_id is :{}",maxSystemHeartId);
-        summaryDomainService.insertDataPushRecord(maxSystemHeartId,BusinessDataEnum.SystemHeart.getTableName());
+        summaryDomainService.insertDataPushRecord(maxSystemHeartId, BusinessDataEnum.SystemHeart.getTableName());
         log.info("SystemHeartTaskService this time query data count：{}",stationSummaryVo);
 
     }
