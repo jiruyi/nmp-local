@@ -108,4 +108,8 @@ public class ErrorMessageContants {
 	public static final String NO_LOAD_VERSION = "所选设备已运行或无加载版本";
 
 	public static final String NO_DEVICE_CAN_RUN = "所选设备都无法执行命令";
+
+	public static final String PROHIBIT_REPORT="上报项为空或禁止上报时,无法手动上报";
+
+	public static final String REPORT_ERROR = "上报失败,请稍后重试";
 }

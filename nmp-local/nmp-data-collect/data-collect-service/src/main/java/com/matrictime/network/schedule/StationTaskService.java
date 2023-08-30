@@ -32,7 +32,7 @@ import java.util.Date;
  */
 @Slf4j
 @Component
-@BusinessType(businessType = BusinessTypeEnum.KEY_CENTER_DATA)
+@BusinessType(businessType = BusinessTypeEnum.STATION_NUMBER)
 public class StationTaskService implements SchedulingConfigurer, BusinessDataService {
 
 
