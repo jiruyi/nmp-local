@@ -12,16 +12,6 @@ public interface DataCollectService {
 
     Result<PageInfo> queryByConditon(DataCollectReq dataCollectReq);
 
-//    Future<Result> save(DataCollectReq dataCollectReq);
-
-    /**
-     * 状态监控统计数据（已废弃）
-     */
-//  Result monitorData(MonitorReq monitorReq);
-    /**
-     * 状态监控top10（已废弃）
-     */
-//    Result monitorDataTopTen(MonitorReq monitorReq);
 
 
     Result selectAllDevice(DataCollectReq dataCollectReq);
