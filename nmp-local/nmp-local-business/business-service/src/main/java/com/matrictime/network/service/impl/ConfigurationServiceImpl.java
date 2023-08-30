@@ -1,8 +1,14 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.matrictime.network.base.SystemBaseService;
+import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.ConfigurationDomainService;
+import com.matrictime.network.dao.mapper.NmplConfigMapper;
 import com.matrictime.network.dao.mapper.NmplReportBusinessMapper;
+import com.matrictime.network.dao.model.NmplConfig;
+import com.matrictime.network.dao.model.NmplConfigExample;
 import com.matrictime.network.dao.model.NmplReportBusiness;
 import com.matrictime.network.dao.model.NmplReportBusinessExample;
 import com.matrictime.network.model.Result;
@@ -10,11 +16,21 @@ import com.matrictime.network.modelVo.NmplCompanyInfoVo;
 import com.matrictime.network.request.ConfigurationReq;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.ConfigurationService;
+import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.matrictime.network.base.constant.DataConstants.*;
+import static com.matrictime.network.base.exception.ErrorMessageContants.PROHIBIT_REPORT;
+import static com.matrictime.network.base.exception.ErrorMessageContants.REPORT_ERROR;
+import static com.matrictime.network.constant.BusinessConsts.*;
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
 @Service
 @Slf4j
@@ -24,6 +40,9 @@ public class ConfigurationServiceImpl extends SystemBaseService implements Confi
     ConfigurationDomainService configurationDomainService;
     @Autowired(required = false)
     private NmplReportBusinessMapper nmplReportBusinessMapper;
+    @Autowired
+    private NmplConfigMapper nmplConfigMapper;
+
 
 
     @Override
@@ -54,12 +73,43 @@ public class ConfigurationServiceImpl extends SystemBaseService implements Confi
     @Override
     public Result reportBusinessData() {
         Result result = new Result<>();
-        NmplReportBusinessExample nmplReportBusinessExample=  new NmplReportBusinessExample();
-        nmplReportBusinessExample.createCriteria().andBusinessValueEqualTo("1");
-        List<NmplReportBusiness> nmplReportBusinesses = nmplReportBusinessMapper.selectByExample(nmplReportBusinessExample);
-        //根据业务code来上报对应的服务
-        for (NmplReportBusiness nmplReportBusiness : nmplReportBusinesses) {
-
+        try {
+            NmplConfigExample collectConfig = new NmplConfigExample();
+            collectConfig.createCriteria().andConfigCodeEqualTo(SWITCH_CONFIGCODE).andIsExistEqualTo(IS_EXIST).andConfigValueEqualTo(COMMON_SWITCH_ON);
+            List<NmplConfig> collectConfigs = nmplConfigMapper.selectByExample(collectConfig);
+            NmplReportBusinessExample nmplReportBusinessExample=  new NmplReportBusinessExample();
+            nmplReportBusinessExample.createCriteria().andBusinessValueEqualTo(COMMON_SWITCH_ON);
+            List<NmplReportBusiness> nmplReportBusinesses = nmplReportBusinessMapper.selectByExample(nmplReportBusinessExample);
+            //当上报项为空 或者禁止上报时 无法手动上报
+            if(CollectionUtils.isEmpty(nmplReportBusinesses)||CollectionUtils.isEmpty(collectConfigs)){
+                throw new SystemException(PROHIBIT_REPORT);
+            }
+            List<String> codeList = new ArrayList<>();
+            JSONObject jsonObject = new JSONObject();
+            //根据业务code来上报对应的服务
+            for (NmplReportBusiness nmplReportBusiness : nmplReportBusinesses) {
+                codeList.add(nmplReportBusiness.getBusinessCode());
+            }
+            jsonObject.put("codeList",codeList);
+            //发送指令到数据采集
+            String url = HTTP_TITLE+LOCAL_IP+KEY_SPLIT+COLLEECT_REPORT_URL;
+            String postResp = HttpClientUtil.post(url,jsonObject.toJSONString());
+            JSONObject json = JSONObject.parseObject(postResp);
+            if (json != null) {
+                Object success = json.get(KEY_SUCCESS);
+                if (success != null && success instanceof Boolean) {
+                    if (!(Boolean) success) {
+                        throw new SystemException(REPORT_ERROR);
+                    }
+                }
+            }
+            result = buildResult("");
+        }catch (SystemException e){
+            log.error("手动上报业务数据异常：",e.getMessage());
+            result = failResult(e);
+        }catch (Exception e){
+            log.error("手动上报业务数据异常：",e.getMessage());
+            result = failResult("");
         }
         return result;
     }
