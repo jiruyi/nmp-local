@@ -12,5 +12,5 @@ public class TaskReq implements Serializable {
 
     private List<String> codeList = new ArrayList<>();
 
-    private  long timer;
+    private  Long timer;
 }
