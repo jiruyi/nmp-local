@@ -43,8 +43,8 @@ public class NettyClient {
       * @author jiruyi
       * @create 2023/8/24 0024 17:19
       */
-    public void  sendMsg(Object msg) {
-        socketChannel.writeAndFlush(msg);
+    public ChannelFuture  sendMsg(Object msg) {
+        return  socketChannel.writeAndFlush(msg);
     }
 
     /**

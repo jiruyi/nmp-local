@@ -2,6 +2,7 @@ package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.enums.BusinessDataEnum;
+import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
@@ -9,6 +10,8 @@ import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
+import com.matrictime.network.strategy.annotation.BusinessType;
+import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -33,26 +37,28 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class AlarmInfoTaskService implements BusinessDataService,SchedulingConfigurer {
+@BusinessType(businessType = BusinessTypeEnum.ALARM_DATA)
+public class AlarmInfoTaskService implements BusinessDataService, SchedulingConfigurer {
 
     //默认毫秒值
-    private long timer = 300000;
+    private long timer = 30000;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
-    private  AlarmDomainService alarmDomainService;
+    private AlarmDomainService alarmDomainService;
 
     @Autowired
     private DeviceDomainService deviceDomainService;
 
     @Autowired
     private NettyClient nettyClient;
+
     /**
-     * @title configureTasks
      * @param [scheduledTaskRegistrar]
      * @return void
-     * @description  注册定时任务
+     * @title configureTasks
+     * @description 注册定时任务
      * @author jiruyi
      * @create 2023/7/20 0020 11:19
      */
@@ -61,11 +67,7 @@ public class AlarmInfoTaskService implements BusinessDataService,SchedulingConfi
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                try {
-                    businessData();
-                }catch (Exception e) {
-                    log.error("AlarmInfoTaskService configureTasks exception:{}",e);
-                }
+                businessData();
             }
         }, new Trigger() {
             @Override
@@ -80,45 +82,64 @@ public class AlarmInfoTaskService implements BusinessDataService,SchedulingConfi
     }
 
     /**
-      * @title businessData
-      * @param []
-      * @return void
-      * @description
-      * @author jiruyi
-      * @create 2023/8/28 0028 17:44
-      */
+     * @param []
+     * @return void
+     * @title businessData
+     * @description
+     * @author jiruyi
+     * @create 2023/8/28 0028 17:44
+     */
     @Override
-    public void businessData(){
-        //告警日志业务逻辑 查询数据
-        List<NmplAlarmInfo> alarmInfoList =  alarmDomainService.queryAlarmList();
-        if(CollectionUtils.isEmpty(alarmInfoList)){
+    public void businessData() {
+        List<NmplAlarmInfo> alarmInfoList = new ArrayList<>();
+        try {
+            //告警日志业务逻辑 查询数据
+            alarmInfoList = alarmDomainService.queryAlarmList();
+            if (CollectionUtils.isEmpty(alarmInfoList)) {
+                return;
+            }
+            //查询数据采集和指控中心的入网码
+            String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+            String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+//            if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(comNetworkId)){
+//                return;
+//            }
+            String reqDataStr = JSONObject.toJSONString(alarmInfoList);
+            //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
+            ChannelFuture channelFuture =
+                    nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.AlarmInfo,
+                            reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
+            channelFuture.get();
+            if(channelFuture.isDone()){
+                if (!channelFuture.isSuccess()){
+                    log.info("alarmPush  nettyClient.sendMsg error :{}", channelFuture.cause());
+                    return;
+                }
+                if(channelFuture.isSuccess()){
+                    //修改nmpl_data_push_record 数据推送记录表
+                    Long maxAlarmId = alarmInfoList.stream().max(Comparator.comparingLong(NmplAlarmInfo::getAlarmId))
+                            .get().getAlarmId();
+                    log.info("此次推送的最大 alarm_id is :{}", maxAlarmId);
+                    alarmDomainService.insertDataPushRecord(maxAlarmId);
+                }
+            }
+            log.info("alarmPush this time query data count：{}", alarmInfoList.size());
+        } catch (Exception e) {
+            log.error("AlarmInfoTaskService configureTasks exception:{}", e);
             return;
         }
-        //查询数据采集和指控中心的入网码
-        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-        String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-        String reqDataStr = JSONObject.toJSONString(alarmInfoList);
-        //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.AlarmInfo,
-                reqDataStr,comNetworkId,dataNetworkId));
-        log.info("alarmPush this time query data count：{}",alarmInfoList.size());
-        //修改nmpl_data_push_record 数据推送记录表
-        Long maxAlarmId = alarmInfoList.stream().max(Comparator.comparingLong(NmplAlarmInfo::getAlarmId))
-                .get().getAlarmId();
-        log.info("此次推送的最大 alarm_id is :{}",maxAlarmId);
-        alarmDomainService.insertDataPushRecord(maxAlarmId);
     }
 
     /**
-     * @title updateCron
      * @param [cron]
      * @return void
-     * @description  修改定时任务
+     * @title updateCron
+     * @description 修改定时任务
      * @author jiruyi
      * @create 2023/7/20 0020 11:19
      */
     @Override
-    public void updateTimer(long timer){
+    public void updateTimer(long timer) {
         this.timer = timer;
     }
 

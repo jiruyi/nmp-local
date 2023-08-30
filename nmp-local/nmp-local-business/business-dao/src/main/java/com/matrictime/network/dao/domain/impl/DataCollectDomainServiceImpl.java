@@ -63,6 +63,8 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             dataCollectReq.setEndTime(LocalDateTime.now().toString());
         }
         if(dataCollectReq.getDeviceType().equals(StationTypeEnum.BASE.getCode())){
+            dataCollectReq.setAccessType(StationTypeEnum.INSIDE.getCode());
+            dataCollectReq.setBorderType(StationTypeEnum.BOUNDARY.getCode());
             page = PageHelper.startPage(dataCollectReq.getPageNo(),dataCollectReq.getPageSize());
             dataCollectVos = nmplDataCollectExtMapper.stationLinkQuery(dataCollectReq);
         }else {

@@ -94,4 +94,9 @@ public class DataCollectReq extends BaseRequest implements Serializable {
      * 结束时间
      */
     private String endTime;
+
+
+    private String accessType;
+
+    private String borderType;
 }

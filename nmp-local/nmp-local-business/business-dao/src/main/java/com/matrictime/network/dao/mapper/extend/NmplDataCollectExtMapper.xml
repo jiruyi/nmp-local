@@ -65,7 +65,7 @@
             and a.device_name = #{deviceName,jdbcType=VARCHAR}
         </if>
         <if test="deviceType != null">
-            and a.device_type = #{deviceType,jdbcType=VARCHAR}
+            and a.device_type = #{accessType,jdbcType=VARCHAR} or a.device_type = #{borderType,jdbcType=VARCHAR}
         </if>
         <if test="dataItemName != null">
             and a.data_item_name = #{dataItemName,jdbcType=VARCHAR}

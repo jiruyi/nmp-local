@@ -18,7 +18,7 @@ public class ClientHandlerInitilizer extends ChannelInitializer<Channel> {
     @Override
     protected void initChannel(Channel ch) throws Exception {
         ch.pipeline()
-                .addLast(new IdleStateHandler(0, 10, 0))
+                .addLast(new IdleStateHandler(0, 18000, 0))
                 .addLast(new ByteArrayDecoder())
                 .addLast(new ByteArrayEncoder())
                 .addLast(new HeartbeatHandler())

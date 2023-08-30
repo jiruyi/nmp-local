@@ -268,4 +268,12 @@ public class DataConstants {
 
     public static final String DATA_SYNC_CONFIG_URL = "/task/syncConfig";
 
+
+    public static final String HTTP_TITLE = "http://";
+
+    public static final String LOCAL_IP = "127.0.0.1";
+
+    public static final String COLLEECT_REPORT_URL = "8012/nmp-data-collect/task/report";
+
+
 }

@@ -17,6 +17,7 @@
     </resultMap>
     <select id="selectDataCollect" resultMap="BaseResultMap">
         SELECT
+            a.id,
             a.data_item_code,
             a.data_item_value,
             a.upload_time,

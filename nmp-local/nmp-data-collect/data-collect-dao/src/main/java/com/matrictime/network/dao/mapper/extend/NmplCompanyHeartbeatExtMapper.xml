@@ -14,7 +14,7 @@
     </resultMap>
     <select id="selectCompanyHeartbeat" resultMap="BaseResultMap">
         select
-            s.source_network_id,s.target_network_id,s.status,s.up_value,s.down_value,s.upload_time
+            s.id,s.source_network_id,s.target_network_id,s.status,s.up_value,s.down_value,s.upload_time
         from
             nmpl_company_heartbeat s,
             (

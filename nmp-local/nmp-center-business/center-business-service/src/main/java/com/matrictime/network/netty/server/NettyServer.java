@@ -1,6 +1,8 @@
 package com.matrictime.network.netty.server;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -44,6 +46,7 @@ public class NettyServer {
     @PostConstruct
     public void start() throws InterruptedException {
         ServerBootstrap bootstrap = new ServerBootstrap();
+        ByteBufAllocator byteBufAllocator = new PooledByteBufAllocator();
         bootstrap.group(boss, work)
                 // 指定Channel
                 .channel(NioServerSocketChannel.class)
@@ -58,6 +61,7 @@ public class NettyServer {
 
                 //将小的数据包包装成更大的帧进行传送，提高网络的负载,即TCP延迟传输
                 .childOption(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.ALLOCATOR,byteBufAllocator)
 
                 .childHandler(new NettyServerHandlerInitializer());
         ChannelFuture future = bootstrap.bind().sync();
@@ -72,4 +76,5 @@ public class NettyServer {
         work.shutdownGracefully().sync();
         log.info("关闭Netty");
     }
+
 }

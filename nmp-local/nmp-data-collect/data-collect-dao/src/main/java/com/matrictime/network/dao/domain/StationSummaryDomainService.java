@@ -18,4 +18,6 @@ public interface StationSummaryDomainService {
 
     StationSummaryVo selectBorderStation();
 
+    int insertDataPushRecord(Long maxId,String businessDataEnum);
+
 }
