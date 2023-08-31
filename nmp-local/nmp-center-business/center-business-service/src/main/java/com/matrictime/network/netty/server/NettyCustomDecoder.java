@@ -18,6 +18,7 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
 
     //判断传送客户端传送过来的数据是否按照协议传输，头部信息的大小应该是 48
     private static final int HEADER_SIZE = 48;
+    private static final int REQ_DATA_INDEX = 47;
 
     //版本
     byte version = 1;
@@ -68,15 +69,14 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
       */
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
-        ByteBuf buf = (ByteBuf) in;
         // 数据包长度
-        int uTotalLen = in.getInt(4);
+        int uTotalLen = in.getIntLE(4);
         if(in.readableBytes() != uTotalLen){
             return null;
         }
         log.info("收到客户端的业务消息长度：{}",uTotalLen);
         log.info("收到客户端的组包后消息长度：{}",in.readableBytes());
-        String reqDataJsonStr = in.toString(47,uTotalLen-47, CharsetUtil.UTF_8);
+        String reqDataJsonStr = in.toString(REQ_DATA_INDEX,uTotalLen-REQ_DATA_INDEX, CharsetUtil.UTF_8);
         in.clear();
         return  reqDataJsonStr;
     }
