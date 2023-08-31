@@ -1,7 +1,7 @@
 package com.matrictime.network.service.impl;
 
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONArray;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.convert.AlarmInfoConvert;
 import com.matrictime.network.convert.LoginLogConvert;
@@ -119,7 +119,7 @@ public class LogServiceImpl extends SystemBaseService implements LogService, Dat
                 return;
             }
             String alarmInfoStr = dataPushBody.getBusiDataJsonStr();
-            logDomainService.batchInsertAlarmData(JSONObject.parseObject(alarmInfoStr,List.class));
+            logDomainService.batchInsertAlarmData(JSONArray.parseArray(alarmInfoStr,AlarmInfo.class));
         }catch (Exception e){
             log.error("handlerData exception :{}",e);
         }
