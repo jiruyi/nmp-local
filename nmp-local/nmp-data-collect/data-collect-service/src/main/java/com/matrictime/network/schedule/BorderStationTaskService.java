@@ -55,7 +55,7 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                businessData();
+                //businessData();
             }
         }, new Trigger() {
             @Override

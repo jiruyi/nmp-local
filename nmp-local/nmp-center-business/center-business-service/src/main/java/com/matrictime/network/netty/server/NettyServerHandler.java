@@ -13,7 +13,6 @@ import org.springframework.util.ObjectUtils;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 /**
  * @author jiruyi
@@ -32,11 +31,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<byte[]> {
             if(ObjectUtils.isEmpty(msg)){
                 log.info("收到客户端的业务消息为空：{}",msg);
             }
-            DataPushBody pushBody = parseMsg(msg);
-            Executor executor = (Executor) SpringContextUtils.getBean("taskExecutor");
-            executor.execute(() ->{
-                handlerMapping(pushBody);
-            });
+//            DataPushBody pushBody = parseMsg(msg);
+//            Executor executor = (Executor) SpringContextUtils.getBean("taskExecutor");
+//            executor.execute(() ->{
+//                handlerMapping(pushBody);
+//            });
         }catch (Exception e){
             log.error("NettyServerHandler channelRead0 error:{}",e);
         }

@@ -55,7 +55,7 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                businessData();
+                //businessData();
             }
         }, new Trigger() {
             @Override

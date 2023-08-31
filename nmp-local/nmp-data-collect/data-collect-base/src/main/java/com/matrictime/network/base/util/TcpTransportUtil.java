@@ -10,7 +10,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +34,7 @@ public class TcpTransportUtil {
      */
     public static byte[] convertByte(Byte a) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(1);
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        //byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         byteBuffer.put(a);
         return byteBuffer.array();
     }
@@ -49,7 +48,7 @@ public class TcpTransportUtil {
      */
     public static byte[] convertShort(Short a) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(2);
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        ///byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         byteBuffer.putShort(a);
         return byteBuffer.array();
     }
@@ -64,7 +63,7 @@ public class TcpTransportUtil {
      */
     public static byte[] convertInt(int a) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(4);
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+      //  byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         byteBuffer.putInt(a);
         return byteBuffer.array();
     }
@@ -82,7 +81,7 @@ public class TcpTransportUtil {
             return null;
         }
         ByteBuffer byteBuffer = ByteBuffer.allocate(a.getBytes(StandardCharsets.UTF_8).length);
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+       // byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         byteBuffer.put(a.getBytes(StandardCharsets.UTF_8));
         return byteBuffer.array();
     }

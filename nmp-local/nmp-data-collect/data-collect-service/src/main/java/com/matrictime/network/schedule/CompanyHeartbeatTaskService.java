@@ -1,10 +1,8 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
-import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
-import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.CompanyHeartbeatDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
@@ -62,7 +60,7 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-               businessData();
+               //businessData();
             }
         }, new Trigger() {
             @Override
@@ -89,9 +87,9 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
         String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
         String reqDataStr = JSONObject.toJSONString(list);
         //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyHeartbeat,
-                reqDataStr,comNetworkId,dataNetworkId));
-        log.info("companyHeartbeatPush this time query data count：{}",list.size());
+//        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyHeartbeat,
+//                reqDataStr,comNetworkId,dataNetworkId));
+//        log.info("companyHeartbeatPush this time query data count：{}",list.size());
         //修改nmpl_data_push_record 数据推送记录表
         Long maxCompanyHeartId = list.stream().max(Comparator.comparingLong(CompanyHeartbeatVo::getId))
                 .get().getId();
