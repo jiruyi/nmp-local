@@ -56,4 +56,11 @@ public interface ConfigService {
      */
     Result editDataBusinessConfig(EditDataBusinessConfigReq req);
 
+    /**
+     * 同数据采集基础配置同步（支持全量同步）
+     * @param req
+     * @return
+     */
+    Result syncDataCollectConfig(SyncConfigReq req);
+
 }

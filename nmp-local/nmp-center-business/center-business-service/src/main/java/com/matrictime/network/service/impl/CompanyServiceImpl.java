@@ -1,15 +1,19 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.domain.CompanyDomainService;
 import com.matrictime.network.dao.model.NmplCompanyInfo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CompanyInfoVo;
+import com.matrictime.network.modelVo.DataPushBody;
 import com.matrictime.network.response.CompanyInfoResponse;
 import com.matrictime.network.service.CompanyService;
+import com.matrictime.network.service.DataHandlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -20,7 +24,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class CompanyServiceImpl implements CompanyService {
+public class CompanyServiceImpl implements CompanyService, DataHandlerService {
 
     @Resource
     private CompanyDomainService companyDomainService;
@@ -47,5 +51,30 @@ public class CompanyServiceImpl implements CompanyService {
             result.setErrorMsg(e.getMessage());
         }
         return result;
+    }
+
+    /**
+     * netty接受数据插入数据库
+     * @param dataPushBody
+     */
+    @Override
+    public void handlerData(DataPushBody dataPushBody) {
+        try {
+            if(ObjectUtils.isEmpty(dataPushBody)){
+                return;
+            }
+            String dataJsonStr = dataPushBody.getBusiDataJsonStr();
+            List list = JSONObject.parseObject(dataJsonStr, List.class);
+            for(Object companyInfoVo: list){
+                List<NmplCompanyInfo> companyInfos = companyDomainService.selectCompany((CompanyInfoVo) companyInfoVo);
+                if(CollectionUtils.isEmpty(companyInfos)){
+                    companyDomainService.insertCompany((CompanyInfoVo) companyInfoVo);
+                }else {
+                    companyDomainService.updateCompany((CompanyInfoVo) companyInfoVo);
+                }
+            }
+        }catch (Exception e){
+            log.error("handlerData exception :{}",e);
+        }
     }
 }

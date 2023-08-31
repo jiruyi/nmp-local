@@ -1,15 +1,19 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.DataPushBody;
 import com.matrictime.network.modelVo.DataTimeVo;
 import com.matrictime.network.modelVo.PercentageFlowVo;
 import com.matrictime.network.request.DataCollectRequest;
 import com.matrictime.network.response.DataCollectResponse;
 import com.matrictime.network.service.DataCollectService;
+import com.matrictime.network.service.DataHandlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -22,7 +26,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class DataCollectServiceImpl implements DataCollectService {
+public class DataCollectServiceImpl implements DataCollectService, DataHandlerService {
 
     @Resource
     private DataCollectDomainService dataCollectDomainService;
@@ -79,7 +83,7 @@ public class DataCollectServiceImpl implements DataCollectService {
                 return new Result<>(false,"上传数据为空");
             }
             result.setSuccess(true);
-            result.setResultObj(dataCollectDomainService.insertDataCollect(dataCollectResponse));
+            result.setResultObj(dataCollectDomainService.insertDataCollect(dataCollectResponse.getList()));
         }catch (Exception e){
             log.info("insertDataCollect:{}",e.getMessage());
             result.setSuccess(false);
@@ -109,6 +113,16 @@ public class DataCollectServiceImpl implements DataCollectService {
     }
 
 
-
-
+    @Override
+    public void handlerData(DataPushBody dataPushBody) {
+        try {
+            if(ObjectUtils.isEmpty(dataPushBody)){
+                return;
+            }
+            String dataJsonStr = dataPushBody.getBusiDataJsonStr();
+            dataCollectDomainService.insertDataCollect(JSONObject.parseObject(dataJsonStr,List.class));
+        }catch (Exception e){
+            log.error("handlerData exception :{}",e);
+        }
+    }
 }

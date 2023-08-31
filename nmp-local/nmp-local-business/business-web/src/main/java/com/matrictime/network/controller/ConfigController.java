@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.matrictime.network.constant.DataConstants.EDIT_RANGE_ALL;
 import static com.matrictime.network.constant.DataConstants.EDIT_TYPE_UPD;
 
 
@@ -345,6 +346,26 @@ public class ConfigController {
             return  configService.resetDefaultConfig(req);
         }catch (Exception e){
             log.error("ConfigController.resetDataCollectConfig exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+
+    /**
+     * 数据采集基础配置同步（支持全量同步）
+     * @author hexu
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/syncDataCollectConfig",method = RequestMethod.POST)
+    @SystemLog(opermodul = "系统设置",operDesc = "数据采集基础配置同步（支持全量同步）",operType = "同步",operLevl = "2")
+    @RequiresPermissions("sys:parmDataCollect:syncBase")
+    public Result<SyncConfigResp> syncDataCollectConfig(@RequestBody SyncConfigReq req){
+        try {
+            req.setDeviceType(DeviceTypeEnum.DATA_BASE.getCode());
+            return configService.syncDataCollectConfig(req);
+        }catch (Exception e){
+            log.error("ConfigController.syncDataCollectConfig exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

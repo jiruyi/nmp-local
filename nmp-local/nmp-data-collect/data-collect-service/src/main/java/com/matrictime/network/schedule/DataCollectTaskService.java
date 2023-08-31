@@ -2,13 +2,17 @@ package com.matrictime.network.schedule;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.enums.BusinessDataEnum;
+import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
+import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
+import com.matrictime.network.strategy.annotation.BusinessType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -18,6 +22,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -31,6 +36,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@BusinessType(businessType = BusinessTypeEnum.DATA_TRAFFIC)
 public class DataCollectTaskService implements SchedulingConfigurer, BusinessDataService {
     //默认毫秒值
     private long timer = 300000;
@@ -43,8 +49,8 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
     @Autowired
     private NettyClient nettyClient;
 
-    @Autowired
-    private AlarmDomainService alarmDomainService;
+    @Resource
+    private StationSummaryDomainService summaryDomainService;
 
     @Resource
     private DataCollectDomainService collectDomainService;
@@ -82,16 +88,19 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
         //查询数据采集和指控中心的入网码
         String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
         String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(comNetworkId)){
+            return;
+        }
         String reqDataStr = JSONObject.toJSONString(dataCollectVos);
         //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-        //nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.DataCollect,
-          //      reqDataStr,comNetworkId,dataNetworkId));
+//        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.DataCollect,
+//                reqDataStr,comNetworkId,dataNetworkId));
         log.info("dataCollectPush this time query data count：{}",dataCollectVos.size());
         //修改nmpl_data_push_record 数据推送记录表
         Long maxDataCollectId = dataCollectVos.stream().max(Comparator.comparingLong(DataCollectVo::getId))
                 .get().getId();
         log.info("此次推送的最大 data_collect_id is :{}",maxDataCollectId);
-        //alarmDomainService.insertDataPushRecord(maxDataCollectId);
+        summaryDomainService.insertDataPushRecord(maxDataCollectId, BusinessDataEnum.DataCollect.getTableName());
 
         log.info("DataCollectTaskService this time query data count：{}",dataCollectVos.size());
     }

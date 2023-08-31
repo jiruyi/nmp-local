@@ -1,13 +1,17 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.enums.BusinessDataEnum;
+import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
+import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.modelVo.TerminalUserVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
+import com.matrictime.network.strategy.annotation.BusinessType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -17,6 +21,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -30,6 +35,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@BusinessType(businessType = BusinessTypeEnum.TERMINAL_USER)
 public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDataService {
 
     //默认毫秒值
@@ -37,8 +43,8 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    @Autowired
-    private AlarmDomainService alarmDomainService;
+    @Resource
+    private StationSummaryDomainService summaryDomainService;
 
     @Resource
     private TerminalUserDomainService terminalUserDomainService;
@@ -82,16 +88,19 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
         //查询数据采集和指控中心的入网码
         String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
         String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(comNetworkId)){
+            return;
+        }
         String reqDataStr = JSONObject.toJSONString(terminalUserVoList);
         //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-      //  nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.TerminalUser,
-        //        reqDataStr,comNetworkId,dataNetworkId));
+//        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.TerminalUser,
+//                reqDataStr,comNetworkId,dataNetworkId));
         log.info("terminalUserPush this time query data count：{}",terminalUserVoList.size());
         //修改nmpl_data_push_record 数据推送记录表
         Long maxTerminalUserId = terminalUserVoList.stream().max(Comparator.comparingLong(TerminalUserVo::getId))
                 .get().getId();
         log.info("此次推送的最大 terminal_user_id is :{}",maxTerminalUserId);
-        //alarmDomainService.insertDataPushRecord(maxTerminalUserId);
+        summaryDomainService.insertDataPushRecord(maxTerminalUserId, BusinessDataEnum.TerminalUser.getTableName());
     }
 
     /**

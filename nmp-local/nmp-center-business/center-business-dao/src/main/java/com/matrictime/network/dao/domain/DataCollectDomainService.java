@@ -1,5 +1,6 @@
 package com.matrictime.network.dao.domain;
 
+import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.DataTimeVo;
 import com.matrictime.network.modelVo.PercentageFlowVo;
 import com.matrictime.network.request.DataCollectRequest;
@@ -17,7 +18,7 @@ public interface DataCollectDomainService {
 
     Double sumDataValue(DataCollectRequest dataCollectRequest);
 
-    int insertDataCollect(DataCollectResponse dataCollectResponse);
+    int insertDataCollect(List<DataCollectVo> list);
 
     List<PercentageFlowVo> selectCompanyData();
 }

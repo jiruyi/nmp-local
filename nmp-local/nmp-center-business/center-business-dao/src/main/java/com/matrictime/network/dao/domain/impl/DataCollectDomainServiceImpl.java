@@ -127,20 +127,13 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
 
     /**
      * 负载数据插入
-     * @param dataCollectResponse
+     * @param list
      * @return
      */
     @Transactional
     @Override
-    public int insertDataCollect(DataCollectResponse dataCollectResponse) {
-        List<DataCollectVo> list = dataCollectResponse.getList();
-        int i = 0;
-        for(DataCollectVo dataCollectVo: list){
-            NmplDataCollect dataCollect = new NmplDataCollect();
-            BeanUtils.copyProperties(dataCollectVo,dataCollect);
-            i = dataCollectMapper.insertSelective(dataCollect);
-        }
-        return i;
+    public int insertDataCollect(List<DataCollectVo> list) {
+        return dataCollectExtMapper.insertData(list);
     }
 
     /**

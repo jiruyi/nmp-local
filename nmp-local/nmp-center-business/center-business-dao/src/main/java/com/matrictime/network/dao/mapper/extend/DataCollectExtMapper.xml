@@ -71,4 +71,11 @@
                     &gt;= a.upload_time
             )
     </select>
+    <insert id="insertData" parameterType="com.matrictime.network.modelVo.DataCollectVo">
+        insert into nmpl_data_collect ( sum_number, company_network_id,
+        data_item_code, unit, upload_time) values
+        <foreach collection ="list" item="data" separator =",">
+            ( #{data.sumNumber},#{data.companyNetworkId}, #{data.dataItemCode}, #{data.unit}, #{data.uploadTime})
+        </foreach >
+    </insert>
 </mapper>

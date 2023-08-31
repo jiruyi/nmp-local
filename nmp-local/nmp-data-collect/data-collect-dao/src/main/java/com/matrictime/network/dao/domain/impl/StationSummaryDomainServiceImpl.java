@@ -1,13 +1,16 @@
 package com.matrictime.network.dao.domain.impl;
 
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.util.NetworkIdUtil;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDataPushRecordMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplSystemHeartbeatExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.StationSummaryEnum;
 import com.matrictime.network.modelVo.StationSummaryVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -29,6 +32,9 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
 
     @Resource
     private NmplDeviceInfoMapper deviceInfoMapper;
+
+    @Resource
+    private NmplDataPushRecordMapper dataPushRecordMapper;
 
     /**
      * 查询总网络数
@@ -123,6 +129,20 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         stationSummaryVo.setSumType(StationSummaryEnum.BORDER_BASE_STATION.getCode());
         stationSummaryVo.setSumNumber(String.valueOf(baseStationInfos.size()));
         return stationSummaryVo;
+    }
+
+    /**
+     * 插入记录表
+     * @param maxId
+     * @param businessDataEnum
+     * @return
+     */
+    @Override
+    public int insertDataPushRecord(Long maxId, String businessDataEnum) {
+        NmplDataPushRecord record = new NmplDataPushRecord();
+        record.setDataId(maxId);
+        record.setTableName(businessDataEnum);
+        return  dataPushRecordMapper.insertSelective(record);
     }
 
     /**

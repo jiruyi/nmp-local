@@ -110,3 +110,7 @@ thread:
 proxy:
   context-path: /nmp-local-proxy
   port: 8008
+datacollect:
+  context-path: /nmp-data-collect
+  port: 8012
+
