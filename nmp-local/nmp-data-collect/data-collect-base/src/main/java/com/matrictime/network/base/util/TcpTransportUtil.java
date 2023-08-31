@@ -5,11 +5,13 @@ import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.modelVo.DataPushBody;
 import com.matrictime.network.modelVo.TcpDataPushVo;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -33,10 +35,11 @@ public class TcpTransportUtil {
      * @create 2023/8/25 0025 10:08
      */
     public static byte[] convertByte(Byte a) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(1);
-        //byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        byteBuffer.put(a);
-        return byteBuffer.array();
+        ByteBuf byteBuf = Unpooled.buffer(1);
+
+        //ByteBuf.order(ByteOrder.LITTLE_ENDIAN);
+        byteBuf.writeByte(a);
+        return byteBuf.array();
     }
     /**
      * @title convertShort
@@ -47,10 +50,10 @@ public class TcpTransportUtil {
      * @create 2023/8/25 0025 10:08
      */
     public static byte[] convertShort(Short a) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(2);
-        ///byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        byteBuffer.putShort(a);
-        return byteBuffer.array();
+        ByteBuf byteBuf = Unpooled.buffer(2);
+        ///ByteBuf.order(ByteOrder.LITTLE_ENDIAN);
+        byteBuf.writeShort(a);
+        return byteBuf.array();
     }
 
     /**
@@ -62,10 +65,10 @@ public class TcpTransportUtil {
      * @create 2023/8/25 0025 10:08
      */
     public static byte[] convertInt(int a) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
-      //  byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        byteBuffer.putInt(a);
-        return byteBuffer.array();
+        ByteBuf byteBuf = Unpooled.buffer(4);
+        //  ByteBuf.order(ByteOrder.LITTLE_ENDIAN);
+        byteBuf.writeInt(a);
+        return byteBuf.array();
     }
 
     /**
@@ -80,10 +83,10 @@ public class TcpTransportUtil {
         if(StringUtils.isEmpty(a)){
             return null;
         }
-        ByteBuffer byteBuffer = ByteBuffer.allocate(a.getBytes(StandardCharsets.UTF_8).length);
-       // byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        byteBuffer.put(a.getBytes(StandardCharsets.UTF_8));
-        return byteBuffer.array();
+        ByteBuf byteBuf =Unpooled.buffer(a.getBytes(CharsetUtil.UTF_8).length);
+        // ByteBuf.order(ByteOrder.LITTLE_ENDIAN);
+        byteBuf.writeBytes(a.getBytes(CharsetUtil.UTF_8));
+        return byteBuf.array();
     }
 
     /**
@@ -95,20 +98,20 @@ public class TcpTransportUtil {
      * @create 2023/8/25 0025 16:09
      */
     public static byte[] convertNetWorkId(String networkId) {
-        ByteBuffer totalBuffer = ByteBuffer.allocate(16);
+        ByteBuf totalBuffer = Unpooled.buffer(16);
         if(StringUtils.isEmpty(networkId)){
             return null;
         }
         List<String> netIds = Arrays.asList(networkId.split(DataConstants.SPLIT_LINE)) ;
         for (int i= 0; i<netIds.size(); i++){
             if( i< 4){
-                totalBuffer.put(convertShort(Short.parseShort(netIds.get(i))));
+                totalBuffer.writeBytes(convertShort(Short.parseShort(netIds.get(i))));
             }else{
-                totalBuffer.put(convertInt(Integer.parseInt(netIds.get(i))));
+                totalBuffer.writeBytes(convertInt(Integer.parseInt(netIds.get(i))));
             }
         }
         //补位4个字节
-        totalBuffer.put(convertInt(0));
+        totalBuffer.writeBytes(convertInt(0));
         return totalBuffer.array();
     }
     /**
@@ -132,21 +135,21 @@ public class TcpTransportUtil {
         int capacity = tdp.getUTotalLen()+ reqData.getBytes(StandardCharsets.UTF_8).length;
         log.info("TcpDataPushVo uTotalLen is :{}",capacity);
         //组装数据
-        ByteBuffer byteBuffer = ByteBuffer.allocate(capacity);
-        byteBuffer.put(convertByte(tdp.getVersion()));
-        byteBuffer.put(convertByte(tdp.getResv()));
-        byteBuffer.put(convertShort(tdp.getUMsgType()));
+        ByteBuf byteBuf = Unpooled.buffer(capacity);
+        byteBuf.writeBytes(convertByte(tdp.getVersion()));
+        byteBuf.writeBytes(convertByte(tdp.getResv()));
+        byteBuf.writeBytes(convertShort(tdp.getUMsgType()));
         //数据字节长度
-        byteBuffer.put(convertInt(capacity));
+        byteBuf.writeBytes(convertInt(capacity));
         //入网码
-        byteBuffer.put(convertNetWorkId(dstRID));
-        byteBuffer.put(convertNetWorkId(srcRID));
-        byteBuffer.put(convertInt(tdp.getUIndex()));
-        byteBuffer.put(convertByte(tdp.getUEncType()));
-        byteBuffer.put(convertByte(tdp.getUEncRate()));
-        byteBuffer.put(convertShort(tdp.getCheckSum()));
+        byteBuf.writeBytes(convertNetWorkId(dstRID));
+        byteBuf.writeBytes(convertNetWorkId(srcRID));
+        byteBuf.writeBytes(convertInt(tdp.getUIndex()));
+        byteBuf.writeBytes(convertByte(tdp.getUEncType()));
+        byteBuf.writeBytes(convertByte(tdp.getUEncRate()));
+        byteBuf.writeBytes(convertShort(tdp.getCheckSum()));
         //业务数据
-        byteBuffer.put(convertStr(reqData));
-        return byteBuffer.array();
+        byteBuf.writeBytes(convertStr(reqData));
+        return byteBuf.array();
     }
 }
