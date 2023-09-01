@@ -371,5 +371,35 @@ public class BaseStationController {
         }
     }
 
+    /**
+     * 插入边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @RequestMapping(value = "/insertBorderBaseStation",method = RequestMethod.POST)
+    public Result<Integer> insertBorderBaseStation(@RequestBody BorderBaseStationInfoRequest borderBaseStationInfoRequest){
+        try {
+            return baseStationInfoService.insertBorderBaseStation(borderBaseStationInfoRequest);
+        }catch (Exception e){
+            log.info("insertBorderBaseStation:{}",e.getMessage());
+            return new Result<>(false,"插入失败");
+        }
+    }
+
+    /**
+     * 边界基站查询
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @RequestMapping(value = "/selectBorderBaseStationInfo",method = RequestMethod.POST)
+    public Result<PageInfo> selectBorderBaseStationInfo(@RequestBody BorderBaseStationInfoRequest borderBaseStationInfoRequest){
+        try {
+            return baseStationInfoService.selectBorderBaseStationInfo(borderBaseStationInfoRequest);
+        }catch (Exception e){
+            log.info("selectBorderBaseStationInfo:{}",e.getMessage());
+            return new Result<>(false,"查询边界基站失败");
+        }
+    }
+
 
 }

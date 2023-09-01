@@ -2,10 +2,12 @@ package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.BorderBaseStationInfoVo;
 import com.matrictime.network.modelVo.CommunityBaseStationVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.BorderBaseStationInfoRequest;
 import com.matrictime.network.request.CurrentCountRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.BelongInformationResponse;
@@ -56,4 +58,8 @@ public interface BaseStationInfoService {
     Result<Integer> updateCurrentConnectCount(CurrentCountRequest currentCountRequest);
 
     Result<BelongInformationResponse> selectAllBelongInformation();
+
+    Result<Integer> insertBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
+
+    Result<PageInfo> selectBorderBaseStationInfo(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
 }

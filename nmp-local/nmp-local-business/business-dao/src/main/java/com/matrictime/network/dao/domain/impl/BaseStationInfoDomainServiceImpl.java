@@ -1,5 +1,8 @@
 package com.matrictime.network.dao.domain.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONStreamAware;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemException;
@@ -10,9 +13,11 @@ import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.NmplDeviceExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorMessageContants;
+import com.matrictime.network.model.PublicNetworkIp;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.BorderBaseStationInfoRequest;
 import com.matrictime.network.request.CurrentCountRequest;
 import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.CountBaseStationResponse;
@@ -71,7 +76,6 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         insertCheckUnique(baseStationInfoRequest);
         NmplBaseStation nmplbaseStation = new NmplBaseStation();
         BeanUtils.copyProperties(baseStationInfoRequest,nmplbaseStation);
-//        return nmplBaseStationInfoMapper.insertBaseStationInfo(baseStationInfoRequest);
         return nmplbaseStationMapper.insertSelective(nmplbaseStation);
     }
 
@@ -85,7 +89,6 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         nmplBaseStationInfoExample.clear();
         nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(nmplBaseStationInfo.getStationId());
         return nmplBaseStationInfoMapper.updateByExampleSelective(nmplBaseStationInfo,nmplBaseStationInfoExample);
-        //return nmplBaseStationInfoMapper.updateBaseStationInfo(baseStationInfoRequest);
     }
 
     @Override
@@ -477,6 +480,81 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         }
         belongInformationResponse.setList(regionBelongVoList);
         return belongInformationResponse;
+    }
+
+    /**
+     * 插入边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @Override
+    public int insertBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        //做唯一校验
+
+        NmplBaseStation nmplbaseStation = new NmplBaseStation();
+        BeanUtils.copyProperties(borderBaseStationInfoRequest,nmplbaseStation);
+        PublicNetworkIp publicNetworkIp = borderBaseStationInfoRequest.getPublicNetworkIp();
+        //将ip转换成字符串
+        String jsonString = JSON.toJSONString(publicNetworkIp);
+        nmplbaseStation.setPublicNetworkIp(jsonString);
+        return nmplbaseStationMapper.insertSelective(nmplbaseStation);
+
+    }
+
+    /**
+     * 更新边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @Override
+    public int updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        //校验唯一性
+
+        //数据更新
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        NmplBaseStationInfo nmplBaseStationInfo = new NmplBaseStationInfo();
+        BeanUtils.copyProperties(borderBaseStationInfoRequest,nmplBaseStationInfo);
+        PublicNetworkIp publicNetworkIp = borderBaseStationInfoRequest.getPublicNetworkIp();
+        String jsonString = JSON.toJSONString(publicNetworkIp);
+        nmplBaseStationInfo.setPublicNetworkIp(jsonString);
+        nmplBaseStationInfoExample.clear();
+        nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(nmplBaseStationInfo.getStationId());
+        return nmplBaseStationInfoMapper.updateByExampleSelective(nmplBaseStationInfo,nmplBaseStationInfoExample);
+
+
+    }
+
+    @Override
+    public PageInfo<BorderBaseStationInfoVo> selectBorderBaseStationInfo(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        //构建查询条件
+        BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
+        if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getRelationOperatorId())){
+            baseStationInfoRequest.setRelationOperatorId(borderBaseStationInfoRequest.getRelationOperatorId());
+        }
+        if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getStationNetworkId())){
+            baseStationInfoRequest.setRelationOperatorId(borderBaseStationInfoRequest.getStationNetworkId());
+        }
+        if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getStationName())){
+            baseStationInfoRequest.setRelationOperatorId(borderBaseStationInfoRequest.getStationName());
+        }
+        baseStationInfoRequest.setStationType(StationTypeEnum.BOUNDARY.getCode());
+        //进行分页查询
+        Page page = PageHelper.startPage(borderBaseStationInfoRequest.getPageNo(),borderBaseStationInfoRequest.getPageSize());
+        List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationInfo(baseStationInfoRequest);
+        List<BorderBaseStationInfoVo> list = new ArrayList<>();
+        for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
+            BorderBaseStationInfoVo borderBaseStationInfoVo = new BorderBaseStationInfoVo();
+            BeanUtils.copyProperties(baseStationInfoVo,borderBaseStationInfoVo);
+            //数据转换
+            PublicNetworkIp publicNetworkIp = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkIp(), PublicNetworkIp.class);
+            borderBaseStationInfoVo.setPublicNetworkIp(publicNetworkIp);
+            list.add(borderBaseStationInfoVo);
+        }
+        PageInfo<BorderBaseStationInfoVo> pageResult =  new PageInfo<>();
+        pageResult.setList(list);
+        pageResult.setCount((int) page.getTotal());
+        pageResult.setPages(page.getPages());
+        return  pageResult;
     }
 
     /**
