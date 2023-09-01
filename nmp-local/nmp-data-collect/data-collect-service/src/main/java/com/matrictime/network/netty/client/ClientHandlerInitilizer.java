@@ -15,13 +15,20 @@ import io.netty.handler.timeout.IdleStateHandler;
  */
 public class ClientHandlerInitilizer extends ChannelInitializer<Channel> {
 
+    private  NettyClient nettyClient;
+
+    public  ClientHandlerInitilizer( NettyClient nettyClient){
+        this.nettyClient = nettyClient;
+    }
+
+
     @Override
     protected void initChannel(Channel ch) throws Exception {
         ch.pipeline()
                 .addLast(new IdleStateHandler(0, 18000, 0))
                 .addLast(new ByteArrayDecoder())
                 .addLast(new ByteArrayEncoder())
-                .addLast(new HeartbeatHandler())
+                .addLast(new HeartbeatHandler(nettyClient))
                 .addLast(new NettyClientHandler());
     }
 }
