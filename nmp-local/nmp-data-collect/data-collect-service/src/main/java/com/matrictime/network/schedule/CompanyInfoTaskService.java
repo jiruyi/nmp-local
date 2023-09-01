@@ -13,6 +13,7 @@ import com.matrictime.network.modelVo.CompanyInfoVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
 import com.matrictime.network.strategy.annotation.BusinessType;
+import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -29,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author by wangqiang
@@ -88,21 +90,38 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
             companyInfoVos = companyInfoDomainService.selectCompanyInfo();
 
             //查询数据采集和指控中心的入网码
-            String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-            String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-            if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(comNetworkId)){
-                return;
-            }
+//            String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+//            String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+//            if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(comNetworkId)){
+//                return;
+//            }
             String reqDataStr = JSONObject.toJSONString(companyInfoVos);
             //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-//            nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyInfo,
-//                    reqDataStr,comNetworkId,dataNetworkId));
             log.info("companyPush this time query data count：{}",companyInfoVos.size());
-            //修改nmpl_data_push_record 数据推送记录表
-            Long maxCompanyId = companyInfoVos.stream().max(Comparator.comparingLong(CompanyInfoVo::getId))
-                    .get().getId();
-            log.info("此次推送的最大 company_id is :{}",maxCompanyId);
-            summaryDomainService.insertDataPushRecord(maxCompanyId, BusinessDataEnum.CompanyInfo.getTableName());
+            ChannelFuture channelFuture =
+                    nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.AlarmInfo,
+                            reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
+            try {
+                channelFuture.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            if(channelFuture.isDone()){
+                if (!channelFuture.isSuccess()){
+                    log.info("companyInfoPush  nettyClient.sendMsg error :{}", channelFuture.cause());
+                    return;
+                }
+                if(channelFuture.isSuccess()){
+
+                    //修改nmpl_data_push_record 数据推送记录表
+                    Long maxCompanyId = companyInfoVos.stream().max(Comparator.comparingLong(CompanyInfoVo::getId))
+                            .get().getId();
+                    log.info("此次推送的最大 company_id is :{}",maxCompanyId);
+                    summaryDomainService.insertDataPushRecord(maxCompanyId, BusinessDataEnum.CompanyInfo.getTableName());
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
