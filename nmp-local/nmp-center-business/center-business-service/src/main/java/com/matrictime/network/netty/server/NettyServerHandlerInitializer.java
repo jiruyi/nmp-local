@@ -2,8 +2,6 @@ package com.matrictime.network.netty.server;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
-import io.netty.handler.codec.bytes.ByteArrayDecoder;
-import io.netty.handler.codec.bytes.ByteArrayEncoder;
 
 /**
  * @author jiruyi
@@ -14,13 +12,19 @@ import io.netty.handler.codec.bytes.ByteArrayEncoder;
  */
 public class NettyServerHandlerInitializer extends ChannelInitializer<Channel> {
 
+    private static final int MAX_FRAME_LENGTH = 1024 * 1024;
+    private static final int LENGTH_FIELD_OFFSET = 4;
+    private static final int LENGTH_FIELD_LENGTH = 4;
+    private static final int LENGTH_ADJUSTMENT = 0;
+    private static final int INITIAL_BYTES_TO_STRIP = 0;
     @Override
     protected void initChannel(Channel ch) throws Exception {
         ch.pipeline()
-                //空闲检测
-                //.addLast(new ServerIdleStateHandler())
-                .addLast(new ByteArrayDecoder())
-                .addLast(new ByteArrayEncoder())
+//                .addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH,LENGTH_FIELD_OFFSET,
+//                        LENGTH_FIELD_LENGTH,LENGTH_ADJUSTMENT,INITIAL_BYTES_TO_STRIP))
+                .addLast(new NettyCustomDecoder(MAX_FRAME_LENGTH,LENGTH_FIELD_OFFSET,
+                        LENGTH_FIELD_LENGTH,LENGTH_ADJUSTMENT,INITIAL_BYTES_TO_STRIP,false))
+                //.addLast(new ByteArrayDecoder())
                 .addLast(new NettyServerHandler());
     }
 }

@@ -41,7 +41,7 @@ import java.util.List;
 public class AlarmInfoTaskService implements BusinessDataService, SchedulingConfigurer {
 
     //默认毫秒值
-    private long timer = 30000;
+    private long timer = 60000;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
