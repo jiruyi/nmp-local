@@ -61,9 +61,11 @@ public interface BaseStationInfoDomainService {
 
     BelongInformationResponse selectAllBelongInformation();
 
-    int insertBorderBaseStation(BorderBaseStationInfoRequest baseStationInfoRequest);
+    int insertBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
 
-    int updateBorderBaseStation(BorderBaseStationInfoRequest baseStationInfoRequest);
+    int updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
+
+    int deleteBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
 
     PageInfo<BorderBaseStationInfoVo> selectBorderBaseStationInfo(BorderBaseStationInfoRequest baseStationInfoRequest);
 }

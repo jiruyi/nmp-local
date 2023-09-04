@@ -61,5 +61,9 @@ public interface BaseStationInfoService {
 
     Result<Integer> insertBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
 
+    Result<Integer> deleteBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
+
+    Result<Integer> updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
+
     Result<PageInfo> selectBorderBaseStationInfo(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
 }

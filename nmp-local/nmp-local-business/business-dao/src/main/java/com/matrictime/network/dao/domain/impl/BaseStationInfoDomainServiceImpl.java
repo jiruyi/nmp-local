@@ -489,8 +489,14 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
      */
     @Override
     public int insertBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
-        //做唯一校验
-
+        BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
+        List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationInfo(baseStationInfoRequest);
+        if(!CollectionUtils.isEmpty(baseStationInfoVoList)){
+            if(!checkIpPort(borderBaseStationInfoRequest, baseStationInfoVoList)){
+                throw new RuntimeException("端口ip不唯一");
+            }
+        }
+        //数据插入
         NmplBaseStation nmplbaseStation = new NmplBaseStation();
         BeanUtils.copyProperties(borderBaseStationInfoRequest,nmplbaseStation);
         PublicNetworkIp publicNetworkIp = borderBaseStationInfoRequest.getPublicNetworkIp();
@@ -508,8 +514,20 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
      */
     @Override
     public int updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
-        //校验唯一性
-
+        BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
+        List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationInfo(baseStationInfoRequest);
+        for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
+            if(baseStationInfoVo.getStationId().equals(borderBaseStationInfoRequest.getStationId())){
+                baseStationInfoVoList.remove(baseStationInfoVo);
+                break;
+            }
+        }
+        if(!CollectionUtils.isEmpty(baseStationInfoVoList)){
+            //校验唯一性
+            if(!checkIpPort(borderBaseStationInfoRequest, baseStationInfoVoList)){
+                throw new RuntimeException("端口ip不唯一");
+            }
+        }
         //数据更新
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfo nmplBaseStationInfo = new NmplBaseStationInfo();
@@ -524,6 +542,18 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
 
     }
 
+    /**
+     * 删除边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @Override
+    public int deleteBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
+        baseStationInfoRequest.setStationId(borderBaseStationInfoRequest.getStationId());
+        return nmplBaseStationInfoMapper.deleteBaseStationInfo(baseStationInfoRequest);
+    }
+
     @Override
     public PageInfo<BorderBaseStationInfoVo> selectBorderBaseStationInfo(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
         //构建查询条件
@@ -536,6 +566,9 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         }
         if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getStationName())){
             baseStationInfoRequest.setRelationOperatorId(borderBaseStationInfoRequest.getStationName());
+        }
+        if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getStationId())){
+            baseStationInfoRequest.setStationId(borderBaseStationInfoRequest.getStationId());
         }
         baseStationInfoRequest.setStationType(StationTypeEnum.BOUNDARY.getCode());
         //进行分页查询
@@ -556,6 +589,58 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         pageResult.setPages(page.getPages());
         return  pageResult;
     }
+
+    /**
+     * 校验插入端口ip
+     * @param borderBaseStationInfoRequest
+     * @param baseStationInfoVoList
+     * @return
+     */
+    private boolean checkIpPort(BorderBaseStationInfoRequest borderBaseStationInfoRequest, List<BaseStationInfoVo> baseStationInfoVoList){
+        //做唯一校验
+        List<String> portList = new ArrayList<>();
+        List<String> insertPortList = new ArrayList<>();
+        for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
+            //判断是不是边界基站
+            if(StationTypeEnum.BOUNDARY.getCode().equals(baseStationInfoVo.getStationType())){
+                PublicNetworkIp publicNetworkIp = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkIp(), PublicNetworkIp.class);
+                if(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP().
+                        equals(publicNetworkIp.getCommunicationIP())){
+                    return false;
+                }
+                //将所有数据库中公共的ip用一个list收集
+                portList.addAll(publicNetworkIp.getEphemeralPort());
+                portList.addAll(publicNetworkIp.getSignalingPort());
+                portList.addAll(publicNetworkIp.getTrunkPort());
+            }else {
+                portList.add(baseStationInfoVo.getPublicNetworkPort());
+            }
+        }
+        //将所有要插入的ip用一个list收集
+        insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getTrunkPort());
+        insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getSignalingPort());
+        insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getEphemeralPort());
+        //判断端口是否重复插入
+        return checkPort(portList, insertPortList);
+    }
+
+    /**
+     * 判断端口是否重复
+     * @param portList
+     * @param insertPortList
+     * @return
+     */
+    private boolean checkPort(List<String> portList,List<String> insertPortList){
+        for(String insertPort: insertPortList){
+            for(String port: portList){
+                if(insertPort.equals(port)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     /**
      * 构建大区

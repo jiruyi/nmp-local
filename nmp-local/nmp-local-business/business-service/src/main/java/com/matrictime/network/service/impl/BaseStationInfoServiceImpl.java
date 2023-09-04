@@ -571,7 +571,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             borderBaseStationInfoRequest.setCreateTime(getFormatDate(date));
             borderBaseStationInfoRequest.setUpdateTime(getFormatDate(date));
             borderBaseStationInfoRequest.setStationId(SnowFlake.nextId_String());
-            borderBaseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
+            //borderBaseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             borderBaseStationInfoRequest.setIsExist("1");
             borderBaseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
 
@@ -599,6 +599,46 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         }catch (Exception e){
             log.error("边界基站新增{}新增异常：{}",e.getMessage());
             result = failResult("");
+        }
+        return result;
+    }
+
+    /**
+     * 删除边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @Override
+    public Result<Integer> deleteBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        Result<Integer> result = new Result<>();
+        try {
+            int i = baseStationInfoDomainService.deleteBorderBaseStation(borderBaseStationInfoRequest);
+            result.setResultObj(i);
+            result.setSuccess(true);
+        }catch (Exception e){
+            log.info("deleteBorderBaseStation:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 更新边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @Override
+    public Result<Integer> updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        Result<Integer> result = new Result<>();
+        try {
+            int i = baseStationInfoDomainService.updateBorderBaseStation(borderBaseStationInfoRequest);
+            result.setResultObj(i);
+            result.setSuccess(true);
+        }catch (Exception e){
+            log.info("updateBorderBaseStation:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
         }
         return result;
     }
