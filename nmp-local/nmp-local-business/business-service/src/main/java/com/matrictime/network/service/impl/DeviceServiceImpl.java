@@ -348,6 +348,7 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         Integer insertFlag = null;
         try {
             deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
+            deviceInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
             deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             checkDataBaseParam(deviceInfoRequest);
             deviceInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(deviceInfoRequest.getStationNetworkId()));
@@ -466,6 +467,8 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         if(StringUtil.isEmpty(preBID)){
             throw  new SystemException(NOT_EXIST_VILLAGE);
         }
+        String NetworkId = preBID + "-" + deviceInfoRequest.getStationNetworkId();
+        deviceInfoRequest.setStationNetworkId(NetworkId);
     }
 
 
