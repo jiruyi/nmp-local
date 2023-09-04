@@ -99,7 +99,7 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
             //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
             log.info("companyPush this time query data count：{}",companyInfoVos.size());
             ChannelFuture channelFuture =
-                    nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.AlarmInfo,
+                    nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyInfo,
                             reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
             try {
                 channelFuture.get();

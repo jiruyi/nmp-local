@@ -98,7 +98,7 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
         //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
         log.info("terminalUserPush this time query data count：{}",terminalUserVoList.size());
         ChannelFuture channelFuture =
-                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.AlarmInfo,
+                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.TerminalUser,
                         reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
         try {
             channelFuture.get();

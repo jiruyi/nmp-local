@@ -94,7 +94,7 @@ public class StationTaskService implements SchedulingConfigurer, BusinessDataSer
         //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
         log.info("stationPush this time query data count：{}",stationSummaryVo);
         ChannelFuture channelFuture =
-                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.AlarmInfo,
+                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Station,
                         reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
         try {
             channelFuture.get();

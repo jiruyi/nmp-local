@@ -100,7 +100,7 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
         log.info("dataCollectPush this time query data count：{}",dataCollectVos.size());
 
         ChannelFuture channelFuture =
-                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.AlarmInfo,
+                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.DataCollect,
                         reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
         try {
             channelFuture.get();
