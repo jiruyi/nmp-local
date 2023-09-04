@@ -571,7 +571,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             borderBaseStationInfoRequest.setCreateTime(getFormatDate(date));
             borderBaseStationInfoRequest.setUpdateTime(getFormatDate(date));
             borderBaseStationInfoRequest.setStationId(SnowFlake.nextId_String());
-            //borderBaseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
+            borderBaseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             borderBaseStationInfoRequest.setIsExist("1");
             borderBaseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
 
@@ -588,7 +588,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 result.setResultObj(insertFlag);
                 result.setSuccess(true);
                 //推送到代理
-                //pushToProxy(borderBaseStationInfoRequest.getStationId(),DataConstants.URL_STATION_INSERT);
+                pushToProxy(borderBaseStationInfoRequest.getStationId(),DataConstants.URL_STATION_INSERT);
             }else {
                 result.setResultObj(insertFlag);
                 result.setSuccess(false);
@@ -612,9 +612,13 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     public Result<Integer> deleteBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
         Result<Integer> result = new Result<>();
         try {
-            int i = baseStationInfoDomainService.deleteBorderBaseStation(borderBaseStationInfoRequest);
-            result.setResultObj(i);
-            result.setSuccess(true);
+            Integer deleteFlag = baseStationInfoDomainService.deleteBorderBaseStation(borderBaseStationInfoRequest);
+            if(deleteFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
+                result.setSuccess(true);
+                result.setResultObj(deleteFlag);
+                //推送到代理
+                pushToProxy(borderBaseStationInfoRequest.getStationId(),DataConstants.URL_STATION_UPDATE);
+            }
         }catch (Exception e){
             log.info("deleteBorderBaseStation:{}",e.getMessage());
             result.setSuccess(false);
@@ -632,9 +636,13 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     public Result<Integer> updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
         Result<Integer> result = new Result<>();
         try {
-            int i = baseStationInfoDomainService.updateBorderBaseStation(borderBaseStationInfoRequest);
-            result.setResultObj(i);
-            result.setSuccess(true);
+            Integer i = baseStationInfoDomainService.updateBorderBaseStation(borderBaseStationInfoRequest);
+            if(i.equals(INSERT_OR_UPDATE_SUCCESS)){
+                result.setSuccess(true);
+                result.setResultObj(i);
+                //推送到代理
+                pushToProxy(borderBaseStationInfoRequest.getStationId(),DataConstants.URL_STATION_UPDATE);
+            }
         }catch (Exception e){
             log.info("updateBorderBaseStation:{}",e.getMessage());
             result.setSuccess(false);
