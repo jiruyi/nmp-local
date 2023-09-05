@@ -131,6 +131,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
             //参数校验
             checkParam(baseStationInfoRequest);
+            baseStationInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(baseStationInfoRequest.getStationNetworkId()));
+            baseStationInfoRequest.setPrefixNetworkId(DecimalConversionUtil.getPreBid(baseStationInfoRequest.getByteNetworkId()));
+            baseStationInfoRequest.setSuffixNetworkId(DecimalConversionUtil.getSuffBid(baseStationInfoRequest.getByteNetworkId()));
 
             updateFlag = baseStationInfoDomainService.updateBaseStationInfo(baseStationInfoRequest);
             if(updateFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
