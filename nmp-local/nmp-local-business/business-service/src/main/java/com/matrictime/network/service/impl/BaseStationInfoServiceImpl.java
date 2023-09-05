@@ -596,7 +596,11 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         }catch (SystemException e){
             log.info("边界基站创建异常",e.getMessage());
             result = failResult(e);
-        }catch (Exception e){
+        }catch (RuntimeException e){
+            log.error("ip端口不唯一",e.getMessage());
+            result = failResult(e.getMessage());
+        }
+        catch (Exception e){
             log.error("边界基站新增{}新增异常：{}",e.getMessage());
             result = failResult("");
         }

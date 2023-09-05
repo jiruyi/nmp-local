@@ -43,6 +43,8 @@ public class BorderBaseStationInfoVo {
 
     private String relationOperatorId;
 
+    private String companyName;
+
     private String createUser;
 
     private String createTime;

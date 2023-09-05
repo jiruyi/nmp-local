@@ -13,6 +13,7 @@ import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.NmplDeviceExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorMessageContants;
+import com.matrictime.network.model.PortModel;
 import com.matrictime.network.model.PublicNetworkIp;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.BaseStationCountRequest;
@@ -499,10 +500,14 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         //数据插入
         NmplBaseStation nmplbaseStation = new NmplBaseStation();
         BeanUtils.copyProperties(borderBaseStationInfoRequest,nmplbaseStation);
+        PortModel portModel = new PortModel();
         PublicNetworkIp publicNetworkIp = borderBaseStationInfoRequest.getPublicNetworkIp();
-        //将ip转换成字符串
-        String jsonString = JSON.toJSONString(publicNetworkIp);
-        nmplbaseStation.setPublicNetworkIp(jsonString);
+        portModel.setEphemeralPort(publicNetworkIp.getEphemeralPort());
+        portModel.setSignalingPort(publicNetworkIp.getSignalingPort());
+        portModel.setTrunkPort(publicNetworkIp.getTrunkPort());
+        //将端口转换成字符串
+        nmplbaseStation.setPublicNetworkPort(JSON.toJSONString(portModel));
+        nmplbaseStation.setPublicNetworkIp(publicNetworkIp.getCommunicationIP());
         return nmplbaseStationMapper.insertSelective(nmplbaseStation);
 
     }
@@ -533,8 +538,13 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         NmplBaseStationInfo nmplBaseStationInfo = new NmplBaseStationInfo();
         BeanUtils.copyProperties(borderBaseStationInfoRequest,nmplBaseStationInfo);
         PublicNetworkIp publicNetworkIp = borderBaseStationInfoRequest.getPublicNetworkIp();
-        String jsonString = JSON.toJSONString(publicNetworkIp);
-        nmplBaseStationInfo.setPublicNetworkIp(jsonString);
+        PortModel portModel = new PortModel();
+        portModel.setEphemeralPort(publicNetworkIp.getEphemeralPort());
+        portModel.setSignalingPort(publicNetworkIp.getSignalingPort());
+        portModel.setTrunkPort(publicNetworkIp.getTrunkPort());
+        //将端口转换成字符串
+        nmplBaseStationInfo.setPublicNetworkPort(JSON.toJSONString(portModel));
+        nmplBaseStationInfo.setPublicNetworkIp(publicNetworkIp.getCommunicationIP());
         nmplBaseStationInfoExample.clear();
         nmplBaseStationInfoExample.createCriteria().andStationIdEqualTo(nmplBaseStationInfo.getStationId());
         return nmplBaseStationInfoMapper.updateByExampleSelective(nmplBaseStationInfo,nmplBaseStationInfoExample);
@@ -562,25 +572,29 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
             baseStationInfoRequest.setRelationOperatorId(borderBaseStationInfoRequest.getRelationOperatorId());
         }
         if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getStationNetworkId())){
-            baseStationInfoRequest.setRelationOperatorId(borderBaseStationInfoRequest.getStationNetworkId());
+            baseStationInfoRequest.setStationNetworkId(borderBaseStationInfoRequest.getStationNetworkId());
         }
         if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getStationName())){
-            baseStationInfoRequest.setRelationOperatorId(borderBaseStationInfoRequest.getStationName());
-        }
-        if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getStationId())){
-            baseStationInfoRequest.setStationId(borderBaseStationInfoRequest.getStationId());
+            baseStationInfoRequest.setStationName(borderBaseStationInfoRequest.getStationName());
         }
         baseStationInfoRequest.setStationType(StationTypeEnum.BOUNDARY.getCode());
         //进行分页查询
         Page page = PageHelper.startPage(borderBaseStationInfoRequest.getPageNo(),borderBaseStationInfoRequest.getPageSize());
-        List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationInfo(baseStationInfoRequest);
+        List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationList(baseStationInfoRequest);
         List<BorderBaseStationInfoVo> list = new ArrayList<>();
         for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
             BorderBaseStationInfoVo borderBaseStationInfoVo = new BorderBaseStationInfoVo();
             BeanUtils.copyProperties(baseStationInfoVo,borderBaseStationInfoVo);
             //数据转换
-            PublicNetworkIp publicNetworkIp = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkIp(), PublicNetworkIp.class);
+            PortModel portModel = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkPort(), PortModel.class);
+            //构建ip返回体
+            PublicNetworkIp publicNetworkIp = new PublicNetworkIp();
+            publicNetworkIp.setCommunicationIP(baseStationInfoVo.getPublicNetworkIp());
+            publicNetworkIp.setEphemeralPort(portModel.getEphemeralPort());
+            publicNetworkIp.setSignalingPort(portModel.getSignalingPort());
+            publicNetworkIp.setTrunkPort(portModel.getTrunkPort());
             borderBaseStationInfoVo.setPublicNetworkIp(publicNetworkIp);
+            borderBaseStationInfoVo.setPublicNetworkPort(null);
             list.add(borderBaseStationInfoVo);
         }
         PageInfo<BorderBaseStationInfoVo> pageResult =  new PageInfo<>();
@@ -603,15 +617,15 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
             //判断是不是边界基站
             if(StationTypeEnum.BOUNDARY.getCode().equals(baseStationInfoVo.getStationType())){
-                PublicNetworkIp publicNetworkIp = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkIp(), PublicNetworkIp.class);
+                PortModel portModel = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkPort(), PortModel.class);
                 if(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP().
-                        equals(publicNetworkIp.getCommunicationIP())){
+                        equals(baseStationInfoVo.getPublicNetworkIp())){
                     return false;
                 }
                 //将所有数据库中公共的ip用一个list收集
-                portList.addAll(publicNetworkIp.getEphemeralPort());
-                portList.addAll(publicNetworkIp.getSignalingPort());
-                portList.addAll(publicNetworkIp.getTrunkPort());
+                portList.addAll(portModel.getEphemeralPort());
+                portList.addAll(portModel.getSignalingPort());
+                portList.addAll(portModel.getTrunkPort());
             }else {
                 portList.add(baseStationInfoVo.getPublicNetworkPort());
             }
