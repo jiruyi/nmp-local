@@ -1,16 +1,10 @@
 package com.matrictime.network.netty.server;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.matrictime.network.modelVo.AlarmInfo;
-import com.matrictime.network.modelVo.DataPushBody;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
-
-import java.nio.ByteOrder;
-import java.util.List;
 
 /**
  * @author jiruyi
@@ -24,6 +18,7 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
 
     //判断传送客户端传送过来的数据是否按照协议传输，头部信息的大小应该是 48
     private static final int HEADER_SIZE = 48;
+    private static final int REQ_DATA_INDEX = 47;
 
     //版本
     byte version = 1;
@@ -64,46 +59,25 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
                 lengthAdjustment, initialBytesToStrip, failFast);
     }
 
+    /**
+      * @title decode
+      * @param [ctx, in]
+      * @return java.lang.Object
+      * @description 
+      * @author jiruyi
+      * @create 2023/8/31 0031 19:03
+      */
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
-        if (in == null) {
+        // 数据包长度
+        int uTotalLen = in.getIntLE(4);
+        if(in.readableBytes() != uTotalLen){
             return null;
         }
-//        if (in.readableBytes() < HEADER_SIZE) {
-//            throw new Exception("可读信息段比头部信息都小，你在逗我？");
-//        }
-        //注意在读的过程中，readIndex的指针也在移动
-        //版本
-        byte version = in.readByte();
-        //预留
-        byte resv = in.readByte();
-        //消息类型
-        short uMsgType = in.readShort();
-        //数据总长度
-        int uTotalLen = in.readInt();
-        //目标入网码
-        ByteBuf dstRID = in.readBytes(16);
-        //源入网码
-        ByteBuf srcRID = in.readBytes(16);
-        //消息编号
-        int uIndex = in.readInt();
-        //加密算法
-        byte uEncType = in.readByte();
-        //加密比例
-        byte uEncRate = in.readByte();
-        //checksum
-        short checkSum = in.readShort();
-//        if (in.readableBytes() < uTotalLen-HEADER_SIZE) {
-//            throw new Exception("body字段你告诉我长度是"+(uTotalLen-HEADER_SIZE)+",但是真实情况是没有这么多，你又逗我？");
-//        }
-        ByteBuf buf = in.readBytes(uTotalLen-HEADER_SIZE);
-        byte[] req = new byte[buf.readableBytes()];
-        buf.order(ByteOrder.LITTLE_ENDIAN);
-        buf.readBytes(req);
-        String reqData = new String(req, "UTF-8");
-        DataPushBody dataPushBody = JSONObject.parseObject(reqData, DataPushBody.class);
-        List<AlarmInfo> alarmInfos =  JSONArray.parseArray(dataPushBody.getBusiDataJsonStr(), AlarmInfo.class);
-        log.info("alarmInfos is:{}",alarmInfos);
-        return null;
+        log.info("收到客户端的业务消息长度：{}",uTotalLen);
+        log.info("收到客户端的组包后消息长度：{}",in.readableBytes());
+        String reqDataJsonStr = in.toString(REQ_DATA_INDEX,uTotalLen-REQ_DATA_INDEX, CharsetUtil.UTF_8);
+        in.clear();
+        return  reqDataJsonStr;
     }
 }

@@ -1,10 +1,12 @@
 package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.BorderBaseStationInfoVo;
 import com.matrictime.network.modelVo.CommunityBaseStationVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.BorderBaseStationInfoRequest;
 import com.matrictime.network.request.CurrentCountRequest;
 import com.matrictime.network.response.BelongInformationResponse;
 import com.matrictime.network.response.CountBaseStationResponse;
@@ -58,4 +60,12 @@ public interface BaseStationInfoDomainService {
     int updateCurrentConnectCount(CurrentCountRequest currentCountRequest);
 
     BelongInformationResponse selectAllBelongInformation();
+
+    int insertBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
+
+    int updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
+
+    int deleteBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
+
+    PageInfo<BorderBaseStationInfoVo> selectBorderBaseStationInfo(BorderBaseStationInfoRequest baseStationInfoRequest);
 }

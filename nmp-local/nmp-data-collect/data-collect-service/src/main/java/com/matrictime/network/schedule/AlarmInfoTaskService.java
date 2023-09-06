@@ -24,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -108,20 +109,20 @@ public class AlarmInfoTaskService implements BusinessDataService, SchedulingConf
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.AlarmInfo,
                             reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
-//            channelFuture.get();
-//            if(channelFuture.isDone()){
-//                if (!channelFuture.isSuccess()){
-//                    log.info("alarmPush  nettyClient.sendMsg error :{}", channelFuture.cause());
-//                    return;
-//                }
-//                if(channelFuture.isSuccess()){
-//                    //修改nmpl_data_push_record 数据推送记录表
-//                    Long maxAlarmId = alarmInfoList.stream().max(Comparator.comparingLong(NmplAlarmInfo::getAlarmId))
-//                            .get().getAlarmId();
-//                    log.info("此次推送的最大 alarm_id is :{}", maxAlarmId);
-//                    alarmDomainService.insertDataPushRecord(maxAlarmId);
-//                }
-//            }
+            channelFuture.get();
+            if(channelFuture.isDone()){
+                if (!channelFuture.isSuccess()){
+                    log.info("alarmPush  nettyClient.sendMsg error :{}", channelFuture.cause());
+                    return;
+                }
+                if(channelFuture.isSuccess()){
+                    //修改nmpl_data_push_record 数据推送记录表
+                    Long maxAlarmId = alarmInfoList.stream().max(Comparator.comparingLong(NmplAlarmInfo::getAlarmId))
+                            .get().getAlarmId();
+                    log.info("此次推送的最大 alarm_id is :{}", maxAlarmId);
+                    alarmDomainService.insertDataPushRecord(maxAlarmId);
+                }
+            }
             log.info("alarmPush this time query data count：{}", alarmInfoList.size());
         } catch (Exception e) {
             log.error("AlarmInfoTaskService configureTasks exception:{}", e);

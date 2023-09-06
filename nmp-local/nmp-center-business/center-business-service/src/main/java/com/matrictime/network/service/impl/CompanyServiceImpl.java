@@ -22,7 +22,7 @@ import java.util.List;
  * @author by wangqiang
  * @date 2023/8/18.
  */
-@Service
+@Service("company_info")
 @Slf4j
 public class CompanyServiceImpl implements CompanyService, DataHandlerService {
 
