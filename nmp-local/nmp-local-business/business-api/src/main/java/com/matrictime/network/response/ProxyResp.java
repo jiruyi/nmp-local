@@ -20,7 +20,7 @@ public class ProxyResp implements Serializable {
 
     private List<ProxyRouteInfoVo> roteVoList = new ArrayList<>();
 
-    private List<ProxyLinkRelationVo> linkRelationVoList = new ArrayList<>();
+    private List<LinkVo> linkVos = new ArrayList<>();
 
     private boolean isExist=false;
 

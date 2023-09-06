@@ -117,9 +117,9 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                             }
                             // 初始化链路列表信息
                             JSONArray linkRelationVoList = resultObj.getJSONArray("linkRelationVoList");
-                            List<CenterLinkRelationVo> centerLinkRelationVos = linkRelationVoList.toJavaList(CenterLinkRelationVo.class);
-                            if (!CollectionUtils.isEmpty(centerLinkRelationVos)){
-                                linkRelationService.initInfo(centerLinkRelationVos);
+                            List<LinkVo> linkVos = linkRelationVoList.toJavaList(LinkVo.class);
+                            if (!CollectionUtils.isEmpty(linkVos)){
+                                linkRelationService.initInfo(linkVos);
                             }
                             // 初始化一体机列表信息
                             JSONArray nmplOutlinePcInfoList = resultObj.getJSONArray("nmplOutlinePcInfoVos");

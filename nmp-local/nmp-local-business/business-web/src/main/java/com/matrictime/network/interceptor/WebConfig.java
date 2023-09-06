@@ -64,6 +64,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/monitor/physicalDeviceHeartbeat")
                 .excludePathPatterns("/monitor/physicalDeviceResource")
                 .excludePathPatterns("/monitor/systemResource")
-                .excludePathPatterns("/baseStation/updateCurrentConnectCount");
+                .excludePathPatterns("/baseStation/updateCurrentConnectCount")
+                .excludePathPatterns("/link/selectDevice")
+                .excludePathPatterns("/link/selectBaseStation");
     }
 }

@@ -133,4 +133,6 @@ public class ErrorMessageContants {
 
 	public static final String DO_NOT_GET_CONFIG = "没有找到配置信息";
 
+	public static final String DATA_CANNOT_FIND_INDB = "数据库中找不到数据";
+
 }

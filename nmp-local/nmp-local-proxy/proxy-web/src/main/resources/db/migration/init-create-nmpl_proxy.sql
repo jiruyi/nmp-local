@@ -458,3 +458,24 @@ CREATE TABLE IF NOT EXISTS `nmpl_update_info_boundary` (
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 ALTER TABLE `nmpl_terminal_user` MODIFY `user_type` char(2) DEFAULT '01' COMMENT '用户类型 01:一体机  02:安全服务器';
+
+DROP TABLE IF EXISTS `nmpl_link_relation`;
+CREATE TABLE IF NOT EXISTS `nmpl_link` (
+    `id` bigint NOT NULL COMMENT '主键',
+    `link_name` varchar(32) DEFAULT NULL COMMENT '链路名称',
+    `link_type` smallint DEFAULT NULL COMMENT '链路类型: 1:单向,2:双向',
+    `link_relation` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '链路关系: 01:边界基站-边界基站,02:接入基站-密钥中心,03:边界基站-密钥中心,04:采集系统-边界基站',
+    `main_device_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '主设备id',
+    `follow_device_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备id',
+    `follow_network_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备入网码',
+    `follow_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备ip',
+    `follow_port` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备端口',
+    `active_auth` tinyint(1) DEFAULT NULL COMMENT '主动发起认证 1:开启 0:关闭',
+    `is_on` tinyint(1) DEFAULT NULL COMMENT '是否启用 1:启动 0:禁止',
+    `create_user` varchar(100) DEFAULT NULL COMMENT '创建人',
+    `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+    `update_user` varchar(100) DEFAULT NULL COMMENT '修改人',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '修改时间',
+    `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT '链路信息表';

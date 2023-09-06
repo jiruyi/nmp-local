@@ -5,6 +5,7 @@ import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.enums.LinkEnum;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
@@ -41,7 +42,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
     NmplRouteMapper nmplRouteMapper;
 
     @Resource
-    NmplLinkRelationMapper nmplLinkRelationMapper;
+    NmplLinkMapper nmplLinkMapper;
 
     @Resource
     NmplOutlinePcInfoMapper nmplOutlinePcInfoMapper;
@@ -206,45 +207,45 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      * @param proxyResp
      */
     private void getlinkRelationVoList(List<String>deviceIds,ProxyResp proxyResp){
-        //只推送主设备
-        NmplLinkRelationExample nmplLinkRelationExample = new NmplLinkRelationExample();
-        nmplLinkRelationExample.createCriteria().andMainDeviceIdIn(deviceIds);
-        List<NmplLinkRelation> nmplLinkRelations = nmplLinkRelationMapper.selectByExample(nmplLinkRelationExample);
-        /**
-         * 创建设备ID映射设备类型 hash表
-         */
-        Map<String,String> deviceTypeMap = new HashMap<>();
-        if(null != proxyResp.getLocalStation()){
-            deviceTypeMap.put(proxyResp.getLocalStation().getStationId(),StationTypeEnum.BASE.getCode());
-        }
-        if(!CollectionUtils.isEmpty(proxyResp.getLocalDeviceInfoVos())){
-            for (ProxyDeviceInfoVo deviceInfoVo : proxyResp.getLocalDeviceInfoVos()) {
-                deviceTypeMap.put(deviceInfoVo.getDeviceId(),deviceInfoVo.getDeviceType());
-            }
-        }
+        NmplLinkExample sourceExample = new NmplLinkExample();
+        sourceExample.createCriteria().andMainDeviceIdIn(deviceIds).andLinkRelationNotEqualTo(LinkEnum.DB.getCode());
+        List<NmplLink> sourceLinks = nmplLinkMapper.selectByExample(sourceExample);
+
+        NmplLinkExample targetExample = new NmplLinkExample();
+        targetExample.createCriteria().andFollowDeviceIdIn(deviceIds).andLinkRelationNotEqualTo(LinkEnum.DB.getCode());
+        List<NmplLink> targetLinks = nmplLinkMapper.selectByExample(targetExample);
+
         /**
          * 获取链路的设备类型 通知代理更新对应的表
          */
-        List<ProxyLinkRelationVo> linkRelationVos = new ArrayList<>();
-        for (NmplLinkRelation nmplLinkRelation : nmplLinkRelations) {
-            ProxyLinkRelationVo linkRelationVo = new ProxyLinkRelationVo();
-            BeanUtils.copyProperties(nmplLinkRelation,linkRelationVo);
-            if(deviceTypeMap.get(linkRelationVo.getMainDeviceId())!=null){
-                linkRelationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getMainDeviceId()));
-//                //当两种设备在同一个ip下并且有链路关系 此时多加一条数据推送
-//                if(deviceTypeMap.get(linkRelationVo.getFollowDeviceId())!=null){
-//                    ProxyLinkRelationVo relationVo = new ProxyLinkRelationVo();
-//                    BeanUtils.copyProperties(linkRelationVo,relationVo);
-//                    relationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getFollowDeviceId()));
-//                    linkRelationVos.add(relationVo);
-//                }
+        List<LinkVo> linkVos = new ArrayList<>();
+        for (NmplLink nmplLink : sourceLinks) {
+            LinkVo linkVo = new LinkVo();
+            BeanUtils.copyProperties(nmplLink,linkVo);
+            String deviceId = nmplLink.getMainDeviceId();
+            NmplBaseStationExample example = new NmplBaseStationExample();
+            example.createCriteria().andStationIdEqualTo(deviceId);
+            List<NmplBaseStation> stations = nmplBaseStationMapper.selectByExample(example);
+            if(!CollectionUtils.isEmpty(stations)){
+                linkVo.setNoticeDeviceType(stations.get(0).getStationType());
             }
-//            else {
-//                linkRelationVo.setNoticeDeviceType(deviceTypeMap.get(linkRelationVo.getFollowDeviceId()));
-//            }
-            linkRelationVos.add(linkRelationVo);
+            linkVos.add(linkVo);
         }
-        proxyResp.setLinkRelationVoList(linkRelationVos);
+        for (NmplLink nmplLink : targetLinks) {
+            if (LinkEnum.AK.getCode().equals(nmplLink.getLinkRelation()) || LinkEnum.BK.equals(nmplLink.getLinkRelation())){
+                LinkVo linkVo = new LinkVo();
+                BeanUtils.copyProperties(nmplLink,linkVo);
+                String deviceId = nmplLink.getMainDeviceId();
+                NmplDeviceExample example = new NmplDeviceExample();
+                example.createCriteria().andDeviceIdEqualTo(deviceId);
+                List<NmplDevice> nmplDevices = nmplDeviceMapper.selectByExample(example);
+                if(!CollectionUtils.isEmpty(nmplDevices)){
+                    linkVo.setNoticeDeviceType(nmplDevices.get(0).getDeviceType());
+                }
+                linkVos.add(linkVo);
+            }
+        }
+        proxyResp.setLinkVos(linkVos);
         log.info("link query sucess");
 
     }

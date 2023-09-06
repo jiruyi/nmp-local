@@ -3,6 +3,7 @@ package com.matrictime.network.controller;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.LinkRelationVo;
+import com.matrictime.network.modelVo.LinkVo;
 import com.matrictime.network.service.LinkRelationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +35,14 @@ public class LinkRelationController extends SystemBaseService {
      */
 
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Result addLinkRelation(@RequestBody LinkRelationVo req){
-        Result result;
+    public Result<Integer> addLink(@RequestBody LinkVo req){
+        Result<Integer> result;
         try {
-            List<LinkRelationVo> voList = new ArrayList<>();
+            List<LinkVo> voList = new ArrayList<>();
             voList.add(req);
-            result = linkRelationService.addLinkRelation(voList);
+            result = linkRelationService.addLink(voList);
         }catch (Exception e){
-            log.info("LinkRelationController.addLinkRelation{}",e.getMessage());
+            log.info("LinkRelationController.addLink{}",e.getMessage());
             result = failResult("");
         }
         return result;
@@ -53,12 +54,14 @@ public class LinkRelationController extends SystemBaseService {
      * @return
      */
     @RequestMapping(value = "/update",method = RequestMethod.POST)
-    public Result updateLinkRelation(@RequestBody LinkRelationVo req){
-        Result result;
+    public Result<Integer> updateLink(@RequestBody LinkVo req){
+        Result<Integer> result;
         try {
-            result = linkRelationService.updateLinkRelation(req);
+            List<LinkVo> voList = new ArrayList<>();
+            voList.add(req);
+            result = linkRelationService.updateLink(voList);
         }catch (Exception e){
-            log.info("LinkRelationController.updateLinkRelation{}",e.getMessage());
+            log.info("LinkRelationController.updateLink{}",e.getMessage());
             result = failResult("");
         }
         return result;

@@ -137,7 +137,7 @@ public class DataConstants {
 
     public static final String NMPL_STATIC_ROUTE = "nmpl_static_route";
 
-    public static final String NMPL_LINK_RELATION = "nmpl_link_relation";
+    public static final String NMPL_LINK = "nmpl_link";
 
     public static final String NMPL_OUTLINE_PC_INFO = "nmpl_outline_pc_info";
 
