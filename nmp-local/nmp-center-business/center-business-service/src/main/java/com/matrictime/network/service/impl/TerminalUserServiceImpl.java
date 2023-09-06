@@ -24,7 +24,7 @@ import java.util.List;
  * @author by wangqiang
  * @date 2023/8/17.
  */
-@Service
+@Service("terminal_user")
 @Slf4j
 public class TerminalUserServiceImpl implements TerminalUserService, DataHandlerService {
 

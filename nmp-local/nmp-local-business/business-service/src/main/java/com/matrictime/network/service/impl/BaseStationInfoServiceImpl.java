@@ -21,10 +21,12 @@ import com.matrictime.network.dao.mapper.NmplDeviceMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
+import com.matrictime.network.modelVo.BorderBaseStationInfoVo;
 import com.matrictime.network.modelVo.CommunityBaseStationVo;
 import com.matrictime.network.modelVo.StationVo;
 import com.matrictime.network.request.BaseStationCountRequest;
 import com.matrictime.network.request.BaseStationInfoRequest;
+import com.matrictime.network.request.BorderBaseStationInfoRequest;
 import com.matrictime.network.request.CurrentCountRequest;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.BelongInformationResponse;
@@ -83,7 +85,6 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Result<Integer> result = new Result<>();
         Date date = new Date();
         Integer insertFlag = null;
-        BaseStationInfoRequest infoRequest = new BaseStationInfoRequest();
         try {
             baseStationInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
             baseStationInfoRequest.setCreateTime(getFormatDate(date));
@@ -130,6 +131,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             baseStationInfoRequest.setUpdateTime(getFormatDate(date));
             //参数校验
             checkParam(baseStationInfoRequest);
+            baseStationInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(baseStationInfoRequest.getStationNetworkId()));
+            baseStationInfoRequest.setPrefixNetworkId(DecimalConversionUtil.getPreBid(baseStationInfoRequest.getByteNetworkId()));
+            baseStationInfoRequest.setSuffixNetworkId(DecimalConversionUtil.getSuffBid(baseStationInfoRequest.getByteNetworkId()));
 
             updateFlag = baseStationInfoDomainService.updateBaseStationInfo(baseStationInfoRequest);
             if(updateFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
@@ -418,6 +422,21 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     }
 
+    private void checkBorderBaseStationParam(BorderBaseStationInfoRequest borderBaseStationInfoRequest){
+        if(!CommonCheckUtil.checkStringLength(borderBaseStationInfoRequest.getStationName(),null,16)){
+            throw new SystemException(PARAM_LENTH_ERROR_MSG);
+        }
+
+        //获取BID前缀信息
+        String preBID = companyInfoDomainService.getPreBID(borderBaseStationInfoRequest.getRelationOperatorId());
+        if(StringUtil.isEmpty(preBID)){
+            throw  new SystemException(NOT_EXIST_VILLAGE);
+        }
+        String networkId = preBID + "-" + borderBaseStationInfoRequest.getStationNetworkId();
+        borderBaseStationInfoRequest.setStationNetworkId(networkId);
+
+    }
+
 
     @Override
     public void initBaseStation() {
@@ -541,6 +560,119 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             log.info("selectAllBelongInformation:{}",e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg("");
+        }
+        return result;
+    }
+
+    @Override
+    public Result<Integer> insertBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        Result<Integer> result = new Result<>();
+        Date date = new Date();
+        Integer insertFlag = null;
+        try {
+            borderBaseStationInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
+            borderBaseStationInfoRequest.setCreateTime(getFormatDate(date));
+            borderBaseStationInfoRequest.setUpdateTime(getFormatDate(date));
+            borderBaseStationInfoRequest.setStationId(SnowFlake.nextId_String());
+            borderBaseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
+            borderBaseStationInfoRequest.setIsExist("1");
+            borderBaseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
+
+            //校验参数
+            checkBorderBaseStationParam(borderBaseStationInfoRequest);
+
+            borderBaseStationInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(borderBaseStationInfoRequest.getStationNetworkId()));
+            borderBaseStationInfoRequest.setPrefixNetworkId(DecimalConversionUtil.getPreBid(borderBaseStationInfoRequest.getByteNetworkId()));
+            borderBaseStationInfoRequest.setSuffixNetworkId(DecimalConversionUtil.getSuffBid(borderBaseStationInfoRequest.getByteNetworkId()));
+
+            insertFlag = baseStationInfoDomainService.insertBorderBaseStation(borderBaseStationInfoRequest);
+
+            if(insertFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
+                result.setResultObj(insertFlag);
+                result.setSuccess(true);
+                //推送到代理
+                pushToProxy(borderBaseStationInfoRequest.getStationId(),DataConstants.URL_STATION_INSERT);
+            }else {
+                result.setResultObj(insertFlag);
+                result.setSuccess(false);
+            }
+        }catch (SystemException e){
+            log.info("边界基站创建异常",e.getMessage());
+            result = failResult(e);
+        }catch (RuntimeException e){
+            log.error("ip端口不唯一",e.getMessage());
+            result = failResult(e.getMessage());
+        }
+        catch (Exception e){
+            log.error("边界基站新增{}新增异常：{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+    /**
+     * 删除边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @Override
+    public Result<Integer> deleteBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        Result<Integer> result = new Result<>();
+        try {
+            Integer deleteFlag = baseStationInfoDomainService.deleteBorderBaseStation(borderBaseStationInfoRequest);
+            if(deleteFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
+                result.setSuccess(true);
+                result.setResultObj(deleteFlag);
+                //推送到代理
+                pushToProxy(borderBaseStationInfoRequest.getStationId(),DataConstants.URL_STATION_UPDATE);
+            }
+        }catch (Exception e){
+            log.info("deleteBorderBaseStation:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 更新边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @Override
+    public Result<Integer> updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        Result<Integer> result = new Result<>();
+        try {
+            Integer i = baseStationInfoDomainService.updateBorderBaseStation(borderBaseStationInfoRequest);
+            if(i.equals(INSERT_OR_UPDATE_SUCCESS)){
+                result.setSuccess(true);
+                result.setResultObj(i);
+                //推送到代理
+                pushToProxy(borderBaseStationInfoRequest.getStationId(),DataConstants.URL_STATION_UPDATE);
+            }
+        }catch (Exception e){
+            log.info("updateBorderBaseStation:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 查询边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @Override
+    public Result<PageInfo> selectBorderBaseStationInfo(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        Result<PageInfo> result = new Result<>();
+        try {
+            PageInfo pageInfo = baseStationInfoDomainService.selectBorderBaseStationInfo(borderBaseStationInfoRequest);
+            result.setResultObj(pageInfo);
+            result.setSuccess(true);
+        } catch (Exception e){
+            result.setErrorMsg("参数异常");
+            result.setSuccess(false);
         }
         return result;
     }

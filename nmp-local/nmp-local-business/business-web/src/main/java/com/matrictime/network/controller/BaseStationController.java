@@ -371,5 +371,65 @@ public class BaseStationController {
         }
     }
 
+    /**
+     * 插入边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @RequestMapping(value = "/insertBorderBaseStation",method = RequestMethod.POST)
+    public Result<Integer> insertBorderBaseStation(@RequestBody BorderBaseStationInfoRequest borderBaseStationInfoRequest){
+        try {
+            return baseStationInfoService.insertBorderBaseStation(borderBaseStationInfoRequest);
+        }catch (Exception e){
+            log.info("insertBorderBaseStation:{}",e.getMessage());
+            return new Result<>(false,"插入失败");
+        }
+    }
+
+    /**
+     * 删除边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @RequestMapping(value = "/deleteBorderBaseStation",method = RequestMethod.POST)
+    public Result<Integer> deleteBorderBaseStation(@RequestBody BorderBaseStationInfoRequest borderBaseStationInfoRequest){
+        try {
+            return baseStationInfoService.deleteBorderBaseStation(borderBaseStationInfoRequest);
+        }catch (Exception e){
+            log.info("deleteBorderBaseStation:{}",e.getMessage());
+            return new Result<>(false,"删除失败");
+        }
+    }
+
+    /**
+     * 更新边界基站
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @RequestMapping(value = "/updateBorderBaseStation",method = RequestMethod.POST)
+    public Result<Integer> updateBorderBaseStation(@RequestBody BorderBaseStationInfoRequest borderBaseStationInfoRequest){
+        try {
+            return baseStationInfoService.updateBorderBaseStation(borderBaseStationInfoRequest);
+        }catch (Exception e){
+            log.info("updateBorderBaseStation:{}",e.getMessage());
+            return new Result<>(false,"更新失败");
+        }
+    }
+
+    /**
+     * 边界基站查询
+     * @param borderBaseStationInfoRequest
+     * @return
+     */
+    @RequestMapping(value = "/selectBorderBaseStationInfo",method = RequestMethod.POST)
+    public Result<PageInfo> selectBorderBaseStationInfo(@RequestBody BorderBaseStationInfoRequest borderBaseStationInfoRequest){
+        try {
+            return baseStationInfoService.selectBorderBaseStationInfo(borderBaseStationInfoRequest);
+        }catch (Exception e){
+            log.info("selectBorderBaseStationInfo:{}",e.getMessage());
+            return new Result<>(false,"查询边界基站失败");
+        }
+    }
+
 
 }

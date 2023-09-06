@@ -25,7 +25,7 @@ import java.util.List;
  * @date 2023/8/10.
  */
 @Slf4j
-@Service
+@Service("data_collect")
 public class DataCollectServiceImpl implements DataCollectService, DataHandlerService {
 
     @Resource

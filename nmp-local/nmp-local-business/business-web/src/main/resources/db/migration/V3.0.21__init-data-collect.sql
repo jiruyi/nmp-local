@@ -109,6 +109,20 @@ update nmpl_outline_pc_info set swing_in = '1',`swing_out`='1';
 ALTER TABLE `nmpl_company_info` ADD COLUMN `position` varchar(30) DEFAULT NULL COMMENT '经纬度位置';
 
 alter table nmpl_terminal_data modify `terminal_ip` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机ip';
+
+--删除基站详情
+delete from `nmp_local`.`nmpl_menu` where menu_id in ('148','30','31','32','91','92','93','94','199','200','201');
+UPDATE `nmp_local`.`nmpl_menu` SET `parent_menu_id`='92' WHERE (`parent_menu_id`='30');
+UPDATE `nmp_local`.`nmpl_menu` SET `parent_menu_id`='93' WHERE (`parent_menu_id`='31');
+UPDATE `nmp_local`.`nmpl_menu` SET `parent_menu_id`='94' WHERE (`parent_menu_id`='32');
+UPDATE `nmp_local`.`nmpl_menu` SET  `menu_name`='接入基站管理',`url`='/node/instation',`component`='node/instation' WHERE (`menu_id`='29');
+INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`, `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('91', '边界基站管理', '28', '/node/boundarystation', '0', '1', '1', 'sys:boundarystation:query',  NULL, '1', '', '0', 'node/boundarystation');
+INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`, `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('92', '密钥中心管理', '28', '/node/dispenser', '0', '1', '1', 'sys:dispenser:query',  NULL, '1', '', '0', 'node/dispenser');
+INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`, `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('93', '密钥生成管理', '28', '/node/generate', '0', '1', '1', 'sys:generator:query',  NULL, '1', '', '0', 'node/generate');
+INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`, `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('94', '缓存机管理', '28', '/node/cache', '0', '1', '1', 'sys:cache:query', NULL, '1', '', '0', 'node/cache');
+INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('199', '新建基站', '91', NULL, '0', '2', '1', 'sys:boundarystation:save',  NULL, '1', '', '0', '');
+INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('200', '删除基站', '91', NULL, '0', '2', '1', 'sys:boundarystation:delete', NULL, '1', '', '0', '');
+INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('201', '编辑基站', '91', NULL, '0', '2', '1', 'sys:boundarystation:update',  NULL, '1', '', '0', '');
 -- zyj
 
 
@@ -143,3 +157,5 @@ CREATE TABLE IF NOT EXISTS `nmpl_company_heartbeat` (
     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区业务心跳';
+
+ALTER TABLE nmpl_base_station_info MODIFY `public_network_port` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '公网端口';

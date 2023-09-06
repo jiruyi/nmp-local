@@ -4,13 +4,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
+import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
+import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.StationSummaryVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
 import com.matrictime.network.strategy.annotation.BusinessType;
+import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
@@ -24,7 +27,9 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author by wangqiang
@@ -81,21 +86,41 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
         }
 
         //查询数据采集和指控中心的入网码
-        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-        String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(comNetworkId)){
-            return;
-        }
+//        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+//        String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+//        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(comNetworkId)){
+//            return;
+//        }
         String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
         //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-//        nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.SystemHeart,
-//                reqDataStr,comNetworkId,dataNetworkId));
         log.info("systemHeartPush this time query data count：{}",stationSummaryVo);
-        //修改nmpl_data_push_record 数据推送记录表
-        Long maxSystemHeartId = stationSummaryVo.getId();
-        log.info("此次推送的最大 system_heart_id is :{}",maxSystemHeartId);
-        summaryDomainService.insertDataPushRecord(maxSystemHeartId, BusinessDataEnum.SystemHeart.getTableName());
-        log.info("SystemHeartTaskService this time query data count：{}",stationSummaryVo);
+        ChannelFuture channelFuture =
+                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.SystemHeart,
+                        reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
+        try {
+            channelFuture.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        if(channelFuture.isDone()){
+            if (!channelFuture.isSuccess()){
+                log.info("systemHeartPush nettyClient.sendMsg error :{}", channelFuture.cause());
+                return;
+            }
+            if(channelFuture.isSuccess()){
+                //修改nmpl_data_push_record 数据推送记录表
+                Long maxSystemHeartId = stationSummaryVo.getId();
+                log.info("此次推送的最大 system_heart_id is :{}",maxSystemHeartId);
+                summaryDomainService.insertDataPushRecord(maxSystemHeartId, BusinessDataEnum.SystemHeart.getTableName());
+                log.info("SystemHeartTaskService this time query data count：{}",stationSummaryVo);
+            }
+        }
+
+
+
+
 
     }
 
