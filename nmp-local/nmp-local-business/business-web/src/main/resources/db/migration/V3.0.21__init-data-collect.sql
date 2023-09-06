@@ -110,7 +110,7 @@ ALTER TABLE `nmpl_company_info` ADD COLUMN `position` varchar(30) DEFAULT NULL C
 
 alter table nmpl_terminal_data modify `terminal_ip` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机ip';
 
---删除基站详情
+
 delete from `nmp_local`.`nmpl_menu` where menu_id in ('148','30','31','32','91','92','93','94','199','200','201');
 UPDATE `nmp_local`.`nmpl_menu` SET `parent_menu_id`='92' WHERE (`parent_menu_id`='30');
 UPDATE `nmp_local`.`nmpl_menu` SET `parent_menu_id`='93' WHERE (`parent_menu_id`='31');
@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_link` (
 
 
 
-CREATE TABLE IF EXISTS `nmpl_data_push_record` (
+CREATE TABLE IF NOT EXISTS `nmpl_data_push_record` (
      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
      `table_name` varchar(50) NOT NULL COMMENT '表名',
      `data_id` bigint DEFAULT NULL COMMENT '数据表id',
