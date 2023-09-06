@@ -155,3 +155,57 @@ INSERT INTO `nmp_center`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, 
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+CREATE TABLE IF NOT EXISTS `nmpl_alarm_info` (
+       `alarm_id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+       `alarm_source_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '业务系统id  物理设备无',
+       `alarm_source_ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '设备ip',
+       `alarm_content` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '告警内容',
+       `alarm_level` char(2) DEFAULT NULL COMMENT '级别 1严重 2 紧急 3 一般',
+       `alarm_upload_time` datetime(2) NOT NULL COMMENT '操作时间',
+       `alarm_source_type` char(2) DEFAULT NULL COMMENT '来源类型： 1资源告警 2接入告警  3 边界  4 密钥中心',
+       `alarm_content_type` char(2) DEFAULT '5' COMMENT '告警内容类型  1: cpu 2 内存 3 磁盘 4流量 5 其他',
+       `alarm_area_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '小区编码',
+       `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+       `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+       PRIMARY KEY (`alarm_id`),
+       KEY `idx_device_id` (`alarm_source_id`),
+       KEY `idx_source_ip` (`alarm_source_ip`),
+       KEY `upload_time_key` (`alarm_upload_time`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci  COMMENT='告警信息表';
+
+
+CREATE TABLE  IF NOT EXISTS `nmpl_login_detail` (
+         `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+         `login_account` varchar(32) DEFAULT NULL COMMENT '用户名字',
+         `nick_name` varchar(30) DEFAULT NULL COMMENT '昵称',
+         `login_ip` varchar(16) DEFAULT NULL COMMENT '登录ip',
+         `login_addr` varchar(64) DEFAULT NULL COMMENT '登录地址',
+         `login_type` tinyint DEFAULT NULL COMMENT '登录方式  1:密码登录 2：手机验证码',
+         `is_success` tinyint(1) DEFAULT NULL COMMENT '1:成功 2:失败',
+         `fail_cause` varchar(64) DEFAULT NULL COMMENT '失败原因',
+         `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+         `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+         PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=206 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci  COMMENT='登录详情信息表';
+
+CREATE TABLE IF NOT EXISTS `nmpl_operate_log` (
+        `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',
+        `channel_type` tinyint DEFAULT NULL COMMENT '1:网管pc 2：基站',
+        `oper_modul` varchar(64) DEFAULT NULL COMMENT '操作模块',
+        `oper_url` varchar(64) DEFAULT NULL COMMENT '请求的url',
+        `oper_type` varchar(32) DEFAULT NULL COMMENT '操作类型(新增 修改 编辑等)',
+        `oper_desc` varchar(1000) DEFAULT NULL COMMENT '操作描述',
+        `oper_requ_param` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '请求参数',
+        `oper_resp_param` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '服务名字',
+        `oper_method` varchar(128) DEFAULT NULL COMMENT '操作方法',
+        `oper_user_id` varchar(64) DEFAULT NULL COMMENT '操作人id',
+        `oper_user_name` varchar(32) DEFAULT NULL COMMENT '操作人姓名',
+        `is_success` tinyint(1) DEFAULT NULL COMMENT '1 成功  2 失败',
+        `source_ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '操作ip',
+        `oper_level` varchar(15) DEFAULT NULL COMMENT '操作级别(1:高危 2 危险 3 警告 4 常规)',
+        `oper_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '操作时间',
+        `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+        `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+        `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+        PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14006 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='操作日志信息表';
