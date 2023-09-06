@@ -180,3 +180,14 @@ CREATE TABLE IF NOT EXISTS `nmpl_link` (
     `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT '链路信息表';
+
+
+
+CREATE TABLE IF EXISTS `nmpl_data_push_record` (
+     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+     `table_name` varchar(50) NOT NULL COMMENT '表名',
+     `data_id` bigint DEFAULT NULL COMMENT '数据表id',
+     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+     PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=494 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT '数据推送记录表';
