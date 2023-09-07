@@ -61,83 +61,8 @@ public class NmplAlarmInfo {
      */
     private Date updateTime;
 
-    public Long getAlarmId() {
-        return alarmId;
-    }
-
-    public void setAlarmId(Long alarmId) {
-        this.alarmId = alarmId;
-    }
-
-    public String getAlarmSourceId() {
-        return alarmSourceId;
-    }
-
-    public void setAlarmSourceId(String alarmSourceId) {
-        this.alarmSourceId = alarmSourceId == null ? null : alarmSourceId.trim();
-    }
-
-    public String getAlarmSourceIp() {
-        return alarmSourceIp;
-    }
-
-    public void setAlarmSourceIp(String alarmSourceIp) {
-        this.alarmSourceIp = alarmSourceIp == null ? null : alarmSourceIp.trim();
-    }
-
-    public String getAlarmContent() {
-        return alarmContent;
-    }
-
-    public void setAlarmContent(String alarmContent) {
-        this.alarmContent = alarmContent == null ? null : alarmContent.trim();
-    }
-
-    public String getAlarmLevel() {
-        return alarmLevel;
-    }
-
-    public void setAlarmLevel(String alarmLevel) {
-        this.alarmLevel = alarmLevel == null ? null : alarmLevel.trim();
-    }
-
-    public Date getAlarmUploadTime() {
-        return alarmUploadTime;
-    }
-
-    public void setAlarmUploadTime(Date alarmUploadTime) {
-        this.alarmUploadTime = alarmUploadTime;
-    }
-
-    public String getAlarmSourceType() {
-        return alarmSourceType;
-    }
-
-    public void setAlarmSourceType(String alarmSourceType) {
-        this.alarmSourceType = alarmSourceType == null ? null : alarmSourceType.trim();
-    }
-
-    public String getAlarmContentType() {
-        return alarmContentType;
-    }
-
-    public void setAlarmContentType(String alarmContentType) {
-        this.alarmContentType = alarmContentType == null ? null : alarmContentType.trim();
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+    /**
+     * 小区编码
+     */
+    private String alarmAreaCode;
 }

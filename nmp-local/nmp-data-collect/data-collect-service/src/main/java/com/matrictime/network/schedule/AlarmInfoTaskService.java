@@ -21,6 +21,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -93,22 +94,28 @@ public class AlarmInfoTaskService implements BusinessDataService, SchedulingConf
     public void businessData() {
         List<NmplAlarmInfo> alarmInfoList = new ArrayList<>();
         try {
+            nettyClient.start();
             //告警日志业务逻辑 查询数据
             alarmInfoList = alarmDomainService.queryAlarmList();
             if (CollectionUtils.isEmpty(alarmInfoList)) {
                 return;
             }
-            //查询数据采集和指控中心的入网码
+            //查询本机数据采集和本运营商的指控中心的入网码
             String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-            String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-//            if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(comNetworkId)){
-//                return;
-//            }
+            String commandNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+            log.info("AlarmInfoTask  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
+
+            if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(commandNetworkId)){
+                log.info("查询dataNetworkId 或commandNetworkId为空,作返回处理");
+                return;
+            }
+            //业务数据转jsonstring
             String reqDataStr = JSONObject.toJSONString(alarmInfoList);
-            //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
+            //发送TCP数据包
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.AlarmInfo,
-                            reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
+                            reqDataStr, commandNetworkId, dataNetworkId));
+            //阻塞等待结果
             channelFuture.get();
             if(channelFuture.isDone()){
                 if (!channelFuture.isSuccess()){

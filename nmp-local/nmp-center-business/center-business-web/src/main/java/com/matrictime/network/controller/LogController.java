@@ -10,7 +10,6 @@ import com.matrictime.network.service.LogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +37,7 @@ public class LogController {
      */
     @ApiOperation(value = "查询网关日志记录",notes = "查询网关日志记录")
     @SystemLog(opermodul = "日志管理模块",operDesc = "查询操作日志",operType = "查询")
-    @RequiresPermissions("sys:operateLog:query")
+ //   @RequiresPermissions("sys:operateLog:query")
     @RequestMapping(value = "/oper/query",method = RequestMethod.POST)
     public Result<PageInfo> queryLogList(@RequestBody LogRequest logRequest){
         try {
@@ -59,7 +58,7 @@ public class LogController {
      */
     @ApiOperation(value = "查询用户登录明细",notes = "查询用户登录明细")
     @SystemLog(opermodul = "日志管理模块",operDesc = "查询用户登录明细",operType = "查询")
-    @RequiresPermissions("sys:loginLog:query")
+   // @RequiresPermissions("sys:loginLog:query")
     @RequestMapping(value = "/login/detail",method = RequestMethod.POST)
     public Result<PageInfo> queryLoginDetailList(@RequestBody LoginDetail loginDetail){
         try {
@@ -79,9 +78,9 @@ public class LogController {
       * @author jiruyi
       * @create 2023/8/17 0017 19:44
       */
-    @ApiOperation(value = "查询用户登录明细",notes = "查询用户登录明细")
+    @ApiOperation(value = "查询告警日志",notes = "查询告警日志")
     @SystemLog(opermodul = "日志管理模块",operDesc = "查询告警日志",operType = "查询")
-    @RequiresPermissions("sys:accusation:query")
+    //@RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/alarm/query",method = RequestMethod.POST)
     public Result<PageInfo> queryAlarmInfoList(@RequestBody AlarmInfoRequest alarmInfoRequest){
         try {

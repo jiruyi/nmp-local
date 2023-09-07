@@ -1,5 +1,7 @@
 package com.matrictime.network.netty.client;
 
+import com.matrictime.network.dao.domain.DeviceDomainService;
+import com.matrictime.network.dao.model.NmplBaseStationInfo;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -9,8 +11,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
@@ -26,11 +29,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class NettyClient {
     private EventLoopGroup group = new NioEventLoopGroup();
-    @Value("${netty.port}")
-    private int port;
-    @Value("${netty.host}")
-    private String host;
     private   SocketChannel socketChannel;
+    @Autowired
+    private DeviceDomainService deviceDomainService;
 
 
 
@@ -58,9 +59,17 @@ public class NettyClient {
     @PostConstruct
     public void start()  {
         Bootstrap bootstrap = new Bootstrap();
+        //查询本机数据采集系统链路信息对应的边界基站
+        NmplBaseStationInfo stationInfo = deviceDomainService.getStationInfoByLocalDCLink();
+        log.info("查询本机数据采集系统链路信息对应的边界基站：{}",stationInfo);
+        if(ObjectUtils.isEmpty(stationInfo)){
+            log.info("查询本机数据采集系统链路信息对应的边界基站为空,作返回处理");
+            return;
+        }
+        //查询数据采集到边界的链路
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
-                .remoteAddress(host, port)
+                .remoteAddress(stationInfo.getLanIp(), Integer.valueOf(stationInfo.getLanPort()))
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.TCP_NODELAY, true)
                 .handler(new ClientHandlerInitilizer(this));

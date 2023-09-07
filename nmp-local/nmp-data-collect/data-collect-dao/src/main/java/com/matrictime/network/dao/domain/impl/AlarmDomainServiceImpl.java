@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author jiruyi
@@ -60,9 +62,40 @@ public class AlarmDomainServiceImpl implements AlarmDomainService {
         NmplAlarmInfoExample example = new NmplAlarmInfoExample();
         example.createCriteria().andAlarmIdGreaterThan(startAlarmId).andAlarmIdLessThanOrEqualTo(endAlarmId);
         List<NmplAlarmInfo> infoList =  alarmInfoMapper.selectByExample(example);
+        //4.0 设置小区入网码
+        setAreaCode(infoList);
         return infoList;
     }
 
+    /**
+      * @title setAreaCode
+      * @param [nmplAlarmInfos]
+      * @return void
+      * @description 
+      * @author jiruyi
+      * @create 2023/9/7 0007 15:48
+      */
+    public void setAreaCode(List<NmplAlarmInfo> nmplAlarmInfos){
+        if(CollectionUtils.isEmpty(nmplAlarmInfos)){
+            return;
+        }
+        //收集ip
+        List<String> ips = nmplAlarmInfos.stream().map(NmplAlarmInfo::getAlarmSourceIp).collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(ips)){
+            return;
+        }
+        //ip对应小区id
+        List<Map<String,String>>  maps =  alarmInfoMapper.selectAreaNetworkIdByIps(ips);
+        //对入网码去除设备编号
+        Map<String,String> ipKeyMap =  maps.stream().collect(Collectors.toMap(entry -> entry.get("lanIp"),entry -> {
+                    String netWorkId =  entry.get("networkId");
+                    netWorkId = netWorkId.substring(0, netWorkId.lastIndexOf("-"));
+                    return  netWorkId;},(v1,v2) ->v2));
+        //放入
+        nmplAlarmInfos.stream().forEach(nmplAlarmInfo -> {
+            nmplAlarmInfo.setAlarmAreaCode(ipKeyMap.get(nmplAlarmInfo.getAlarmSourceIp()));
+        });
+    }
 
     /**
       * @title insertDataPushRecord

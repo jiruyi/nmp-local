@@ -5,6 +5,7 @@ import com.matrictime.network.dao.model.NmplAlarmInfoExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NmplAlarmInfoMapper {
     long countByExample(NmplAlarmInfoExample example);
@@ -30,4 +31,6 @@ public interface NmplAlarmInfoMapper {
     int updateByPrimaryKeySelective(NmplAlarmInfo record);
 
     int updateByPrimaryKey(NmplAlarmInfo record);
+
+    List<Map<String,String>>  selectAreaNetworkIdByIps(@Param("list") List<String> list);
 }

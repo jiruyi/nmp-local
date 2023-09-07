@@ -336,12 +336,13 @@
   <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.AlarmInfo">
     insert into nmpl_alarm_info (alarm_source_id, alarm_source_ip,
     alarm_content, alarm_level, alarm_upload_time,
-    alarm_source_type, alarm_content_type) values
+    alarm_source_type, alarm_content_type,alarm_area_code) values
     <foreach collection="alarmInfoList" item="alarm" separator=",">
       (#{alarm.alarmSourceId,jdbcType=VARCHAR}, #{alarm.alarmSourceIp,jdbcType=VARCHAR},
       #{alarm.alarmContent,jdbcType=VARCHAR}, #{alarm.alarmLevel,jdbcType=CHAR},
       #{alarm.alarmUploadTime,jdbcType=TIMESTAMP},
-      #{alarm.alarmSourceType,jdbcType=CHAR}, #{alarm.alarmContentType,jdbcType=CHAR})
+      #{alarm.alarmSourceType,jdbcType=CHAR}, #{alarm.alarmContentType,jdbcType=CHAR},
+      #{alarm.alarmAreaCode,jdbcType=VARCHAR},)
     </foreach>
   </insert>
 </mapper>
