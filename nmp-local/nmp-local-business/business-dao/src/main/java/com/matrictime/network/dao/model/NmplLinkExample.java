@@ -1154,6 +1154,76 @@ public class NmplLinkExample {
             addCriterion("is_exist not between", value1, value2, "isExist");
             return (Criteria) this;
         }
+
+        public Criteria andFollowDeviceNameIsNull() {
+            addCriterion("follow_device_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameIsNotNull() {
+            addCriterion("follow_device_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameEqualTo(String value) {
+            addCriterion("follow_device_name =", value, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameNotEqualTo(String value) {
+            addCriterion("follow_device_name <>", value, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameGreaterThan(String value) {
+            addCriterion("follow_device_name >", value, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameGreaterThanOrEqualTo(String value) {
+            addCriterion("follow_device_name >=", value, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameLessThan(String value) {
+            addCriterion("follow_device_name <", value, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameLessThanOrEqualTo(String value) {
+            addCriterion("follow_device_name <=", value, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameLike(String value) {
+            addCriterion("follow_device_name like", value, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameNotLike(String value) {
+            addCriterion("follow_device_name not like", value, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameIn(List<String> values) {
+            addCriterion("follow_device_name in", values, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameNotIn(List<String> values) {
+            addCriterion("follow_device_name not in", values, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameBetween(String value1, String value2) {
+            addCriterion("follow_device_name between", value1, value2, "followDeviceName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowDeviceNameNotBetween(String value1, String value2) {
+            addCriterion("follow_device_name not between", value1, value2, "followDeviceName");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
