@@ -376,6 +376,7 @@ public class BaseStationController {
      * @param borderBaseStationInfoRequest
      * @return
      */
+    @RequiresPermissions("sys:boundarystation:save")
     @RequestMapping(value = "/insertBorderBaseStation",method = RequestMethod.POST)
     public Result<Integer> insertBorderBaseStation(@RequestBody BorderBaseStationInfoRequest borderBaseStationInfoRequest){
         try {
@@ -391,6 +392,7 @@ public class BaseStationController {
      * @param borderBaseStationInfoRequest
      * @return
      */
+    @RequiresPermissions("sys:boundarystation:delete")
     @RequestMapping(value = "/deleteBorderBaseStation",method = RequestMethod.POST)
     public Result<Integer> deleteBorderBaseStation(@RequestBody BorderBaseStationInfoRequest borderBaseStationInfoRequest){
         try {
@@ -406,6 +408,7 @@ public class BaseStationController {
      * @param borderBaseStationInfoRequest
      * @return
      */
+    @RequiresPermissions("sys:boundarystation:update")
     @RequestMapping(value = "/updateBorderBaseStation",method = RequestMethod.POST)
     public Result<Integer> updateBorderBaseStation(@RequestBody BorderBaseStationInfoRequest borderBaseStationInfoRequest){
         try {
@@ -421,6 +424,7 @@ public class BaseStationController {
      * @param borderBaseStationInfoRequest
      * @return
      */
+    @RequiresPermissions("sys:boundarystation:query")
     @RequestMapping(value = "/selectBorderBaseStationInfo",method = RequestMethod.POST)
     public Result<PageInfo> selectBorderBaseStationInfo(@RequestBody BorderBaseStationInfoRequest borderBaseStationInfoRequest){
         try {
