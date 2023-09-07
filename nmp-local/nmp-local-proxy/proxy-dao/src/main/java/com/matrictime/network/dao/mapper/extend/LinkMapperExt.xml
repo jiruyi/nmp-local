@@ -18,6 +18,7 @@
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="follow_device_name" jdbcType="VARCHAR" property="followDeviceName" />
   </resultMap>
 
 
@@ -27,7 +28,7 @@
     follow_network_id, follow_ip, follow_port,
     active_auth, is_on, create_user,
     create_time, update_user, update_time,
-    is_exist)
+    is_exist, follow_device_name)
     values
     <foreach collection ="list" item="vo" separator =",">
       (#{vo.id,jdbcType=BIGINT}, #{vo.linkName,jdbcType=VARCHAR}, #{vo.linkType,jdbcType=SMALLINT},
@@ -35,7 +36,7 @@
       #{vo.followNetworkId,jdbcType=VARCHAR}, #{vo.followIp,jdbcType=VARCHAR}, #{vo.followPort,jdbcType=VARCHAR},
       #{vo.activeAuth,jdbcType=BIT}, #{vo.isOn,jdbcType=BIT}, #{vo.createUser,jdbcType=VARCHAR},
       #{vo.createTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP},
-      #{vo.isExist,jdbcType=BIT})
+      #{vo.isExist,jdbcType=BIT}, #{vo.followDeviceName,jdbcType=VARCHAR})
     </foreach >
   </insert>
 
@@ -87,6 +88,9 @@
         </if>
         <if test="info.isExist != null">
           is_exist = #{info.isExist,jdbcType=BIT},
+        </if>
+        <if test="info.followDeviceName != null">
+          follow_device_name = #{info.followDeviceName,jdbcType=VARCHAR},
         </if>
       </set>
       where id = #{info.id,jdbcType=BIGINT}

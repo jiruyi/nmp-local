@@ -479,3 +479,5 @@ CREATE TABLE IF NOT EXISTS `nmpl_link` (
     `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT '链路信息表';
+
+ALTER TABLE `nmpl_link` add column `follow_device_name` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备名称';

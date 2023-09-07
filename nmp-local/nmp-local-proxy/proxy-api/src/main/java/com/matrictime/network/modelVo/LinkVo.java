@@ -94,4 +94,9 @@ public class LinkVo implements Serializable {
      * 通知设备类型（01：接入基站 02：边界基站 11：秘钥中心）
      */
     private String noticeDeviceType;
+
+    /**
+     * 从设备名称
+     */
+    private String followDeviceName;
 }

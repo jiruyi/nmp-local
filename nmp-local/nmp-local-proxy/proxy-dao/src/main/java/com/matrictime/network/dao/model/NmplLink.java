@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 链路信息表
  * @author   cxk
- * @date   2023-09-06
+ * @date   2023-09-07
  */
 @Data
 public class NmplLink {
@@ -89,6 +89,11 @@ public class NmplLink {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * 从设备名称
+     */
+    private String followDeviceName;
 
     public Long getId() {
         return id;
@@ -216,5 +221,13 @@ public class NmplLink {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public String getFollowDeviceName() {
+        return followDeviceName;
+    }
+
+    public void setFollowDeviceName(String followDeviceName) {
+        this.followDeviceName = followDeviceName == null ? null : followDeviceName.trim();
     }
 }
