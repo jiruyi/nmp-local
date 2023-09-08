@@ -94,7 +94,6 @@ public class AlarmInfoTaskService implements BusinessDataService, SchedulingConf
     public void businessData() {
         List<NmplAlarmInfo> alarmInfoList = new ArrayList<>();
         try {
-            nettyClient.start();
             //告警日志业务逻辑 查询数据
             alarmInfoList = alarmDomainService.queryAlarmList();
             if (CollectionUtils.isEmpty(alarmInfoList)) {
