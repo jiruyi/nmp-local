@@ -494,6 +494,7 @@ ALTER TABLE `nmpl_system_heartbeat` DROP PRIMARY KEY;
 
 ALTER TABLE `nmpl_system_heartbeat` ADD COLUMN `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id' PRIMARY KEY;
 
+ALTER TABLE `nmpl_base_station_info` MODIFY `public_network_port` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '公网端口';
 
 CREATE TABLE IF NOT EXISTS `nmpl_station_connect_count` (
                                                             `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
