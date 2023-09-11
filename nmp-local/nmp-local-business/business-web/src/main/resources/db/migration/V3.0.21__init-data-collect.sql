@@ -197,10 +197,6 @@ CREATE TABLE IF NOT EXISTS `nmpl_data_push_record` (
 
 ALTER TABLE `nmpl_link` add column `follow_device_name` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备名称';
 
-ALTER TABLE `nmpl_pc_data` add column `data_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '数据类型 01:剩余 02:补充 02:使用';
-
-ALTER TABLE `nmpl_pc_data` add column varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机ip';
-
 ALTER TABLE `nmpl_terminal_user` DROP PRIMARY KEY;
 
 ALTER TABLE `nmpl_terminal_user` ADD COLUMN `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id' PRIMARY KEY;
