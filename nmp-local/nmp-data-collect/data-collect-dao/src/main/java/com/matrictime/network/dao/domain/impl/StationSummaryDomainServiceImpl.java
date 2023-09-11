@@ -65,10 +65,25 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      */
     @Override
     public StationSummaryVo selectStation() {
+
+        //起止id
+        Long startId = 0l;
+        //Long endAlarmId = startAlarmId+DataConstants.ALARM_INFO_EVERY_COUNT;
+        // 查询上次推送到的位置
+        NmplDataPushRecordExample pushRecordExample = new NmplDataPushRecordExample();
+        pushRecordExample.createCriteria().andTableNameEqualTo(DataConstants.NMPL_ALARM_INFO);
+        pushRecordExample.setOrderByClause("id desc");
+        List<NmplDataPushRecord> dataPushRecords = dataPushRecordMapper.selectByExample(pushRecordExample);
+        if(!CollectionUtils.isEmpty(dataPushRecords)){
+            Long lastId = dataPushRecords.get(0).getDataId();
+            startId= lastId;
+        }
+        //基站查询
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
         criteria.andIsExistEqualTo(true);
         criteria.andStationTypeEqualTo(StationSummaryEnum.BASE_STATION.getCode());
+        criteria.andIdGreaterThan(startId);
         List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(baseStationInfoExample);
         if(CollectionUtils.isEmpty(baseStationInfos)){
             return null;
@@ -89,10 +104,25 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      */
     @Override
     public StationSummaryVo selectDevice() {
+        //起止id
+        Long startId = 0l;
+        //Long endAlarmId = startAlarmId+DataConstants.ALARM_INFO_EVERY_COUNT;
+        // 查询上次推送到的位置
+        NmplDataPushRecordExample pushRecordExample = new NmplDataPushRecordExample();
+        pushRecordExample.createCriteria().andTableNameEqualTo(DataConstants.NMPL_ALARM_INFO);
+        pushRecordExample.setOrderByClause("id desc");
+        List<NmplDataPushRecord> dataPushRecords = dataPushRecordMapper.selectByExample(pushRecordExample);
+        if(!CollectionUtils.isEmpty(dataPushRecords)){
+            Long lastId = dataPushRecords.get(0).getDataId();
+            startId= lastId;
+        }
+
+        //设备查询
         NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
         NmplDeviceInfoExample.Criteria criteria = deviceInfoExample.createCriteria();
         criteria.andIsExistEqualTo(true);
         criteria.andDeviceTypeEqualTo(StationSummaryEnum.KET_CENTER.getCode());
+        criteria.andIdGreaterThan(startId);
         List<NmplDeviceInfo> nmplDeviceInfoList = deviceInfoMapper.selectByExample(deviceInfoExample);
         if(CollectionUtils.isEmpty(nmplDeviceInfoList)){
             return null;
@@ -113,10 +143,25 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      */
     @Override
     public StationSummaryVo selectBorderStation() {
+        //起止id
+        Long startId = 0l;
+        //Long endAlarmId = startAlarmId+DataConstants.ALARM_INFO_EVERY_COUNT;
+        // 查询上次推送到的位置
+        NmplDataPushRecordExample pushRecordExample = new NmplDataPushRecordExample();
+        pushRecordExample.createCriteria().andTableNameEqualTo(DataConstants.NMPL_ALARM_INFO);
+        pushRecordExample.setOrderByClause("id desc");
+        List<NmplDataPushRecord> dataPushRecords = dataPushRecordMapper.selectByExample(pushRecordExample);
+        if(!CollectionUtils.isEmpty(dataPushRecords)){
+            Long lastId = dataPushRecords.get(0).getDataId();
+            startId= lastId;
+        }
+
+        //边界基站查询
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
         criteria.andIsExistEqualTo(true);
         criteria.andStationTypeEqualTo(StationSummaryEnum.BORDER_BASE_STATION.getCode());
+        criteria.andIdGreaterThan(startId);
         List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(baseStationInfoExample);
         if(CollectionUtils.isEmpty(baseStationInfos)){
             return null;

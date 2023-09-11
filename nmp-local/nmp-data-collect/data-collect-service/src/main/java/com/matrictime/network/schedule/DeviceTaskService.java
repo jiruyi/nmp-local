@@ -86,16 +86,16 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
         }
 
         //查询数据采集和指控中心的入网码
-//        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-//        String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-//        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(comNetworkId)){
-//            return;
-//        }
+        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+        String commandNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(commandNetworkId)){
+            return;
+        }
         String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
         //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
         ChannelFuture channelFuture =
-                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Device,
-                        reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
+                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyHeartbeat,
+                        reqDataStr, commandNetworkId, dataNetworkId));
         try {
             channelFuture.get();
         } catch (InterruptedException e) {

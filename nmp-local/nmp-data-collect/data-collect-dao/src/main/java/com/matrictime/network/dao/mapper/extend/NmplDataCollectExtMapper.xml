@@ -24,19 +24,9 @@
             a.device_id,
             a.device_type
         FROM
-            nmpl_data_collect a,
-            (
-                SELECT
-                    max(upload_time) AS q,
-                    data_item_code
-                FROM
-                    nmpl_data_collect
-                GROUP BY
-                    data_item_code
-            ) AS b
+            nmpl_data_collect a
         WHERE
-        a.upload_time = b.q
-        AND a.data_item_code = b.data_item_code
+        a.upload_time &gt;= (select date_add(now(), interval -30 minute))
         and a.data_item_code in('10018','10020','10021','10019')
     </select>
 </mapper>

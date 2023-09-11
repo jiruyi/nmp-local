@@ -22,6 +22,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -85,14 +86,17 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
         }
 
         //查询数据采集和指控中心的入网码
-//        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-//        String comNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+        String commandNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
+        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(commandNetworkId)){
+            return;
+        }
         String reqDataStr = JSONObject.toJSONString(list);
         //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-        //修改nmpl_data_push_record 数据推送记录表
+        log.info("companyHeartbeatPush this time query data count：{}",list);
         ChannelFuture channelFuture =
                 nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyHeartbeat,
-                        reqDataStr, "8600-0001-0001-0001-00000008", "8600-0001-0001-0001-00000008"));
+                        reqDataStr, commandNetworkId, dataNetworkId));
         try {
             channelFuture.get();
         } catch (InterruptedException e) {
@@ -109,7 +113,8 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
                 Long maxCompanyHeartId = list.stream().max(Comparator.comparingLong(CompanyHeartbeatVo::getId))
                         .get().getId();
                 log.info("此次推送的最大 company_heart_id is :{}", maxCompanyHeartId);
-                // alarmDomainService.insertDataPushRecord(maxCompanyHeartId);
+
+                heartbeatDomainService.insertDataPushRecord(maxCompanyHeartId, BusinessDataEnum.CompanyHeartbeat.getTableName());
 
                 log.info("CompanyHeartbeatTaskService this time query data count：{}", list.size());
             }

@@ -12,4 +12,6 @@ public interface CompanyHeartbeatDomainService {
 
     List<CompanyHeartbeatVo> selectCompanyHeartbeat();
 
+    int insertDataPushRecord(Long maxId,String businessDataEnum);
+
 }

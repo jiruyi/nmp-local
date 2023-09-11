@@ -37,18 +37,7 @@
             a.upload_time,
             a.unit
         FROM
-            nmpl_data_collect a,
-            (
-                SELECT
-                    max(upload_time) AS q,
-                    device_id,
-                    data_item_code
-                FROM
-                    nmpl_data_collect
-                GROUP BY
-                    device_id,
-                    data_item_code
-            ) AS b
+            nmpl_data_collect a
         WHERE
                 a.device_id IN (
                 SELECT
@@ -67,9 +56,7 @@
                     )
                   AND b.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
             )
-          AND a.upload_time = b.q
-          AND a.data_item_code = b.data_item_code
-          AND a.device_id = b.device_id
+          AND a.upload_time &gt;= (select date_add(now(), interval -30 minute))
           AND a.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
     </select>
 
@@ -83,18 +70,7 @@
             a.upload_time,
             a.unit
         FROM
-            nmpl_data_collect a,
-            (
-                SELECT
-                    max(upload_time) AS q,
-                    device_id,
-                    data_item_code
-                FROM
-                    nmpl_data_collect
-                GROUP BY
-                    device_id,
-                    data_item_code
-            ) AS b
+            nmpl_data_collect a
         WHERE
                 a.device_id IN (
                 SELECT
@@ -113,9 +89,7 @@
                     )
                   AND d.relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
             )
-          AND a.upload_time = b.q
-          AND a.data_item_code = b.data_item_code
-          AND a.device_id = b.device_id
+          AND a.upload_time &gt;= (select date_add(now(), interval -30 minute))
           AND a.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
     </select>
 
