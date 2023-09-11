@@ -132,6 +132,10 @@ INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `
 
 ALTER TABLE `nmpl_terminal_user` add column `user_type` char(2) DEFAULT '21' COMMENT '用户类型 21:一体机  22:安全服务器';
 
+alter table nmpl_terminal_data modify `up_value` bigint NOT NULL COMMENT '上行密钥量';
+
+alter table nmpl_terminal_data modify `down_value` bigint NOT NULL COMMENT '下行密钥量';
+
 
 
 CREATE TABLE IF NOT EXISTS `nmpl_station_connect_count` (
@@ -193,3 +197,15 @@ CREATE TABLE IF NOT EXISTS `nmpl_data_push_record` (
 ) ENGINE=InnoDB AUTO_INCREMENT=494 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT '数据推送记录表';
 
 ALTER TABLE `nmpl_link` add column `follow_device_name` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备名称';
+
+ALTER TABLE `nmpl_pc_data` add column `data_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '数据类型 01:剩余 02:补充 02:使用';
+
+ALTER TABLE `nmpl_pc_data` add column varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机ip';
+
+ALTER TABLE `nmpl_terminal_user` DROP PRIMARY KEY;
+
+ALTER TABLE `nmpl_terminal_user` ADD COLUMN `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id' PRIMARY KEY;
+
+ALTER TABLE `nmpl_system_heartbeat` DROP PRIMARY KEY;
+
+ALTER TABLE `nmpl_system_heartbeat` ADD COLUMN `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id' PRIMARY KEY;

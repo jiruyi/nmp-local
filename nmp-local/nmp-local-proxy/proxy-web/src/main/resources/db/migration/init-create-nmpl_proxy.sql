@@ -457,7 +457,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_update_info_boundary` (
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-ALTER TABLE `nmpl_terminal_user` MODIFY `user_type` char(2) DEFAULT '01' COMMENT '用户类型 01:一体机  02:安全服务器';
+ALTER TABLE `nmpl_terminal_user` add column `user_type` char(2) DEFAULT '01' COMMENT '用户类型 01:一体机  02:安全服务器';
 
 DROP TABLE IF EXISTS `nmpl_link_relation`;
 CREATE TABLE IF NOT EXISTS `nmpl_link` (
@@ -481,3 +481,21 @@ CREATE TABLE IF NOT EXISTS `nmpl_link` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT '链路信息表';
 
 ALTER TABLE `nmpl_link` add column `follow_device_name` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备名称';
+
+alter table nmpl_terminal_data modify `up_value` bigint NOT NULL COMMENT '上行密钥量';
+
+alter table nmpl_terminal_data modify `down_value` bigint NOT NULL COMMENT '下行密钥量';
+
+
+ALTER TABLE `nmpl_pc_data` add column `data_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '数据类型 01:剩余 02:补充 02:使用';
+
+ALTER TABLE `nmpl_pc_data` add column varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机ip';
+
+
+ALTER TABLE `nmpl_terminal_user` DROP PRIMARY KEY;
+
+ALTER TABLE `nmpl_terminal_user` ADD COLUMN `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id' PRIMARY KEY;
+
+ALTER TABLE `nmpl_system_heartbeat` DROP PRIMARY KEY;
+
+ALTER TABLE `nmpl_system_heartbeat` ADD COLUMN `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id' PRIMARY KEY;

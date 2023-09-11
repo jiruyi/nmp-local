@@ -209,3 +209,71 @@ CREATE TABLE IF NOT EXISTS `nmpl_operate_log` (
         `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '更新时间',
         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14006 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='操作日志信息表';
+
+CREATE TABLE IF NOT EXISTS `nmpl_data_collect` (
+                                     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                     `sum_number` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '每个小区每个流量类型总和',
+                                     `company_network_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '小区唯一编号Id',
+                                     `data_item_code` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '收集项编号',
+                                     `unit` varchar(32) DEFAULT NULL COMMENT '单位',
+                                     `upload_time` datetime(2) NOT NULL COMMENT '创建时间',
+                                     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                     PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3737600 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区流量收集表';
+
+CREATE TABLE IF NOT EXISTS `nmpl_company_info` (
+                                     `company_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '小区唯一编号Id',
+                                     `company_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '单位名称',
+                                     `unit_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '单位名称',
+                                     `country_code` varchar(50) DEFAULT NULL COMMENT '国家码',
+                                     `company_code` varchar(50) DEFAULT NULL COMMENT '单位编码',
+                                     `company_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '00:运营商 01:大区 02：小区',
+                                     `telephone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '联系电话',
+                                     `email` varchar(30) DEFAULT NULL COMMENT '联系邮箱',
+                                     `status` tinyint(1) DEFAULT '1' COMMENT '1:正常 0停用',
+                                     `addr` varchar(50) DEFAULT NULL COMMENT '联系地址',
+                                     `parent_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '父单位编码',
+                                     `create_user` varchar(50) DEFAULT NULL COMMENT '创建人',
+                                     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                     `update_user` varchar(50) DEFAULT NULL COMMENT '更新人',
+                                     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                     `position` varchar(30) DEFAULT NULL COMMENT '经纬度位置',
+                                     `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+                                     PRIMARY KEY (`company_network_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `nmpl_terminal_user` (
+                                      `sum_number` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '每个小区用户状态总数',
+                                      `terminal_status` char(2) NOT NULL DEFAULT '01' COMMENT '用户状态 01:密钥匹配  02:注册  03:上线 04:下线 05:注销',
+                                      `user_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '01' COMMENT '用户类型 21:一体机  22:安全服务器',
+                                      `company_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '小区唯一编号Id',
+                                      `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
+                                      `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                      `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                      PRIMARY KEY (`terminal_status`,`company_network_id`,`user_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区用户汇总表';
+
+CREATE TABLE IF NOT EXISTS `nmpl_station_summary` (
+                                        `sum_number` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '每个小区各个设备类型总数',
+                                        `sum_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '01' COMMENT '总和类型 01:小区内基站 02:小区边界基站 11:密钥中心 12:网络总数',
+                                        `company_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '小区唯一编号Id',
+                                        `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
+                                        `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                        `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                        PRIMARY KEY (`sum_type`,`company_network_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区汇总表';
+
+CREATE TABLE IF NOT EXISTS `nmpl_company_heartbeat` (
+                                          `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                          `source_company_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '来源Id',
+                                          `target_company_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '目标Id',
+                                          `status` char(2) DEFAULT '01' COMMENT '连接状态 01:通  02:不通',
+                                          `up_value` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '上行流量',
+                                          `down_value` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '下行流量',
+                                          `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
+                                          `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                          `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                          PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区业务心跳';
+
