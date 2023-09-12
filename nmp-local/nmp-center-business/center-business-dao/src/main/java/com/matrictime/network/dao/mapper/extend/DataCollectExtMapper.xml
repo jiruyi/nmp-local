@@ -18,29 +18,12 @@
             a.upload_time,
             a.company_network_id
         FROM
-            nmpl_data_collect as a,
-        (
-            SELECT
-                max(upload_time) AS q,
-                data_item_code,
-                company_network_id
-            FROM
-                nmpl_data_collect
-            GROUP BY
-                data_item_code,
-                company_network_id
-        ) AS t
+            nmpl_data_collect as a
         WHERE
-            a.upload_time = t.q
+            a.upload_time &gt;= (SELECT
+        DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE - INTERVAL 30 MINUTE)
         and
             a.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
-        and
-            t.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
-        and
-            t.company_network_id = a.company_network_id
-        <if test="companyNetworkId != null">
-            and t.company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
-        </if>
         <if test="companyNetworkId != null">
             and a.company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
         </if>
