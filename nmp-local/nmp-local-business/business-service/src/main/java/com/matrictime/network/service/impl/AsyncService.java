@@ -415,6 +415,7 @@ public class AsyncService{
                 post = HttpClientUtil.post(url, jsonString);
             } catch (IOException e) {
                 log.warn("AsyncService.syncLink IOException:{}",e.getMessage());
+                throw new IOException(e);
             }
         }else {
             Result tempResult = new Result(true,"");

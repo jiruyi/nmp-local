@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_link` (
     `follow_device_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备id',
     `follow_network_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备入网码',
     `follow_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备ip',
-    `follow_port` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备端口',
+    `follow_port` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '从设备端口',
     `active_auth` tinyint(1) DEFAULT NULL COMMENT '主动发起认证 1:开启 0:关闭',
     `is_on` tinyint(1) DEFAULT NULL COMMENT '是否启用 1:启动 0:禁止',
     `create_user` varchar(100) DEFAULT NULL COMMENT '创建人',

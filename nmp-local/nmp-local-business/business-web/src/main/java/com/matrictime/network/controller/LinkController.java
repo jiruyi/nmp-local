@@ -99,7 +99,7 @@ public class LinkController {
     @RequestMapping(value = "/deleteLink",method = RequestMethod.POST)
     public Result<Integer> deleteLink(@RequestBody EditLinkReq req){
         try {
-            req.setEditType(EDIT_TYPE_UPD);
+            req.setEditType(EDIT_TYPE_DEL);
             return linkService.editLink(req);
         }catch (Exception e){
             log.error("LinkController.deleteLink exception:{}",e.getMessage());

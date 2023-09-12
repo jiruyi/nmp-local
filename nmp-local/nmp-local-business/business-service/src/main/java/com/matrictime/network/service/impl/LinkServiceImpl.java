@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -10,6 +11,7 @@ import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.enums.LinkEnum;
 import com.matrictime.network.exception.ErrorMessageContants;
+import com.matrictime.network.model.PortModel;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.LinkDevice;
 import com.matrictime.network.modelVo.LinkVo;
@@ -20,6 +22,7 @@ import com.matrictime.network.service.LinkService;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +39,7 @@ import java.util.List;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.KEY_SPLIT;
 import static com.matrictime.network.constant.DataConstants.SUCCESS_MSG;
 import static com.matrictime.network.exception.ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG;
 
@@ -138,10 +142,25 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         syncLink(vo,localLink,req.getEditType());
                     }
                     break;
-                // 批量删除(暂未使用)
+                // 逻辑删除
                 case DataConstants.EDIT_TYPE_DEL:
-                    for (Long id : req.getDelIds()){
-                        nmplLinkMapper.deleteByPrimaryKey(id);
+                    for (LinkVo vo : req.getLinkVos()){
+                        // 校验id是否为空
+                        if (vo.getId() == null){
+                            throw new Exception("LinkVos.id"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
+                        }
+                        NmplLink localLink = nmplLinkMapper.selectByPrimaryKey(vo.getId());
+                        if (localLink == null){
+                            throw new Exception("link"+ ErrorMessageContants.DATA_CANNOT_FIND_INDB);
+                        }
+                        NmplLink link = new NmplLink();
+                        BeanUtils.copyProperties(vo,link);
+                        nmplLinkMapper.updateByPrimaryKeySelective(link);
+                        // 同步代理
+                        vo.setLinkRelation(localLink.getLinkRelation());
+                        vo.setMainDeviceId(localLink.getMainDeviceId());
+                        vo.setFollowDeviceId(localLink.getFollowDeviceId());
+                        syncLink(vo,null,req.getEditType());
                     }
                     break;
                 default:
@@ -185,7 +204,12 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 NmplBaseStationInfo info = stationInfos.get(0);
                 linkDevice.setDeviceName(info.getStationName());
                 linkDevice.setPublicNetworkIp(info.getPublicNetworkIp());
-                linkDevice.setPublicNetworkPort(info.getPublicNetworkPort());
+                if (DeviceTypeEnum.STATION_BOUNDARY.getCode().equals(info.getStationType())){
+                    String networkPort = info.getPublicNetworkPort();
+                    linkDevice.setPublicNetworkPort(getBoundaryPublicNetworkPort(networkPort));
+                }else {
+                    linkDevice.setPublicNetworkPort(info.getPublicNetworkPort());
+                }
                 linkDevice.setLanIp(info.getLanIp());
                 linkDevice.setLanPort(info.getLanPort());
             }
@@ -201,6 +225,29 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
         return linkDevice;
     }
 
+    /**
+     * 获取兼容的边界基站ip
+     * @param networkPort
+     * @return
+     */
+    private String getBoundaryPublicNetworkPort(String networkPort){
+        if (!ParamCheckUtil.checkVoStrBlank(networkPort) && networkPort.contains(KEY_SPLIT)){
+            PortModel portModel = JSONObject.parseObject(networkPort, PortModel.class);
+            List<String> signalingPort = portModel.getSignalingPort();
+            if (!CollectionUtils.isEmpty(signalingPort)){
+                return signalingPort.get(NumberUtils.INTEGER_ZERO);
+            }
+        }
+        return networkPort;
+    }
+
+    /**
+     * 同步链路
+     * @param newLink
+     * @param oldLink
+     * @param editType
+     * @throws Exception
+     */
     private void syncLink(LinkVo newLink, NmplLink oldLink, String editType)throws Exception{
         if (DataConstants.EDIT_TYPE_ADD.equals(editType) || DataConstants.EDIT_TYPE_DEL.equals(editType)){// 新增和删除都是直接通知两个节点即可
             String relation = newLink.getLinkRelation();
@@ -216,7 +263,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
             if (LinkEnum.BK.getCode().equals(relation) || LinkEnum.BK.getCode().equals(relation)){
                 // 宿设备为密钥中心时通知密钥中心
                 NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
-                deviceInfoExample.createCriteria().andDeviceIdEqualTo(newLink.getMainDeviceId());
+                deviceInfoExample.createCriteria().andDeviceIdEqualTo(newLink.getFollowDeviceId());
                 List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(deviceInfoExample);
                 if (!CollectionUtils.isEmpty(deviceInfos)){
                     String url = HttpClientUtil.getUrl(deviceInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
@@ -226,8 +273,8 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
             }
         }else if (DataConstants.EDIT_TYPE_UPD.equals(editType)){// 修改要区分多种情况
             String relation = newLink.getLinkRelation();
-            if (LinkEnum.BB.getCode().equals(relation)){
-                if (LinkEnum.BK.getCode().equals(oldLink.getLinkRelation()) || LinkEnum.BK.getCode().equals(oldLink.getLinkRelation())){// 从边界-密钥，接入-密钥修改为边界-边界，通知之前的节点删除链路
+            if (LinkEnum.BB.getCode().equals(relation)){// 新链路关系为边界-边界
+                if (LinkEnum.BK.getCode().equals(oldLink.getLinkRelation()) || LinkEnum.AK.getCode().equals(oldLink.getLinkRelation())){// 从边界-密钥，接入-密钥修改为边界-边界，通知之前的节点删除链路
                     NmplBaseStationInfoExample stationInfoExample = new NmplBaseStationInfoExample();
                     stationInfoExample.createCriteria().andStationIdEqualTo(oldLink.getMainDeviceId());
                     List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(stationInfoExample);
@@ -260,7 +307,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                     newLink.setNoticeDeviceType(stationInfos.get(0).getStationType());
                     asyncService.syncLink(JSONObject.toJSONString(newLink),url);
                 }
-            }else if (LinkEnum.BK.getCode().equals(relation) || LinkEnum.BK.getCode().equals(relation)){
+            }else if (LinkEnum.BK.getCode().equals(relation) || LinkEnum.AK.getCode().equals(relation)){
                 // 判断源设备是否更改，若更改，删除老节点的链路信息
                 if (!newLink.getMainDeviceId().equals(oldLink.getMainDeviceId())){// 源设备被更改，同步删除修改前设备的链路
                     NmplBaseStationInfoExample stationInfoExample = new NmplBaseStationInfoExample();
@@ -300,7 +347,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 }
                 // 宿设备为密钥中心时通知密钥中心
                 NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
-                deviceInfoExample.createCriteria().andDeviceIdEqualTo(newLink.getMainDeviceId());
+                deviceInfoExample.createCriteria().andDeviceIdEqualTo(newLink.getFollowDeviceId());
                 List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(deviceInfoExample);
                 if (!CollectionUtils.isEmpty(deviceInfos)){
                     String url = HttpClientUtil.getUrl(deviceInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
@@ -311,27 +358,6 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
         }else {
             throw new Exception("EditType"+ PARAM_IS_UNEXPECTED_MSG);
         }
-    }
-
-    private boolean syncProxy(String jsonString,String url){
-        boolean flag = false;
-        String post = "";
-        if (isremote == 1){
-            try {
-                post = HttpClientUtil.post(url, jsonString);
-            } catch (IOException e) {
-                log.warn("LinkServiceImpl.syncProxy IOException:{}",e.getMessage());
-            }
-        }else {
-            Result tempResult = new Result(true,"");
-            post = JSONObject.toJSONString(tempResult);
-        }
-        log.info("LinkServiceImpl.syncProxy result url:{},req:{},post:{}",url,jsonString,post);
-        JSONObject jsonObject = JSONObject.parseObject(post);
-        if (jsonObject != null && jsonObject.containsKey(SUCCESS_MSG)){
-            flag = (Boolean) jsonObject.get(SUCCESS_MSG);
-        }
-        return flag;
     }
 
     private void checkEditLinkParam(EditLinkReq req) throws Exception{
