@@ -27,12 +27,14 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.IS_EXIST;
+import static com.matrictime.network.constant.DataConstants.SUCCESS_MSG;
 
 @Service
 @Slf4j
@@ -401,6 +403,31 @@ public class AsyncService{
         String data = map.get(KEY_DATA);
         String postResp = HttpClientUtil.post(url,data);
         log.info("AsyncService.httpPush url:{}, deviceId:{} , req:{}, postResp:{}",url,deviceId, data,postResp);
+    }
+
+    @Async("taskExecutor")
+    @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 1000,multiplier = 1.5))
+    public void syncLink(String jsonString,String url) throws Exception{
+        boolean flag = false;
+        String post = "";
+        if (isremote == 1){
+            try {
+                post = HttpClientUtil.post(url, jsonString);
+            } catch (IOException e) {
+                log.warn("AsyncService.syncLink IOException:{}",e.getMessage());
+            }
+        }else {
+            Result tempResult = new Result(true,"");
+            post = JSONObject.toJSONString(tempResult);
+        }
+        log.info("AsyncService.syncLink result url:{},req:{},post:{}",url,jsonString,post);
+        JSONObject jsonObject = JSONObject.parseObject(post);
+        if (jsonObject != null && jsonObject.containsKey(SUCCESS_MSG)){
+            flag = (Boolean) jsonObject.get(SUCCESS_MSG);
+        }
+        if (!flag){
+            throw new Exception("AsyncService.syncLink remoteBack.false");
+        }
     }
 
     @Recover
