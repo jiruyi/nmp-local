@@ -175,6 +175,8 @@ public class DataConstants {
 
     public static final String UPDATE_CURRENT_URL = "/nmp-local-business/stationConnectCount/updateStationConnectCount";
 
+    public static final String INSERT_COMPANY_HEART = "/nmp-local-business/companyHeartbeat/insertCompanyHeartbeat";
+
     public static final Integer ERROR_MSG_MAXLENGTH = 250;
 
     public static final Integer HEART_REPORT_SPACE = 30;

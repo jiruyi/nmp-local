@@ -3,6 +3,7 @@ package com.matrictime.network.facade;
 import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
+import com.matrictime.network.response.CompanyHeartbeatResponse;
 import com.matrictime.network.response.StationConnectCountResponse;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
@@ -78,6 +79,9 @@ public interface AlarmDataFacade {
 
     @RequestMapping(value= "/stationConnectCount/insertStationConnectCount",method = RequestMethod.POST)
     Result insertStationConnectCount(StationConnectCountResponse stationConnectCountResponse);
+
+    @RequestMapping(value= "/companyHeartbeat/insertCompanyHeartbeat",method = RequestMethod.POST)
+    Result insertCompanyHeartbeat(CompanyHeartbeatResponse companyHeartbeatResponse);
 
 
 }

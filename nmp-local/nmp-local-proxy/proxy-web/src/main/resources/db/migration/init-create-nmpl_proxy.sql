@@ -457,7 +457,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_update_info_boundary` (
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-ALTER TABLE `nmpl_terminal_user` add column `user_type` char(2) DEFAULT '01' COMMENT '用户类型 01:一体机  02:安全服务器';
+ALTER TABLE `nmpl_terminal_user` add column `user_type` char(2) DEFAULT '21' COMMENT '用户类型 21:一体机  22:安全服务器';
 
 DROP TABLE IF EXISTS `nmpl_link_relation`;
 CREATE TABLE IF NOT EXISTS `nmpl_link` (
@@ -508,3 +508,16 @@ CREATE TABLE IF NOT EXISTS `nmpl_station_connect_count` (
     `upload_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '上传时间',
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='当前用户在线表';
+
+CREATE TABLE `nmpl_company_heartbeat` (
+                                          `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                          `source_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '来源Id',
+                                          `target_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '目标Id',
+                                          `status` char(2) DEFAULT '01' COMMENT '连接状态 01:通  02:不通',
+                                          `up_value` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '上行流量',
+                                          `down_value` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '下行流量',
+                                          `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
+                                          `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                          `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                          PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区业务心跳';

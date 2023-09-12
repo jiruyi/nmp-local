@@ -246,7 +246,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_company_info` (
 CREATE TABLE IF NOT EXISTS `nmpl_terminal_user` (
                                       `sum_number` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '每个小区用户状态总数',
                                       `terminal_status` char(2) NOT NULL DEFAULT '01' COMMENT '用户状态 01:密钥匹配  02:注册  03:上线 04:下线 05:注销',
-                                      `user_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '01' COMMENT '用户类型 21:一体机  22:安全服务器',
+                                      `user_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '21' COMMENT '用户类型 21:一体机  22:安全服务器',
                                       `company_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '小区唯一编号Id',
                                       `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
                                       `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',

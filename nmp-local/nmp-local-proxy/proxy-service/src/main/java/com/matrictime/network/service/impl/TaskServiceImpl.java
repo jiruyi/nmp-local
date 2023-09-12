@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.AlarmPhyConTypeEnum;
 import com.matrictime.network.base.enums.LevelEnum;
-import com.matrictime.network.dao.domain.LocalBaseStationDomainService;
-import com.matrictime.network.dao.domain.StationConnectCountDomainService;
-import com.matrictime.network.dao.domain.SystemHeartbeatDomainService;
-import com.matrictime.network.dao.domain.TerminalUserDomainService;
+import com.matrictime.network.dao.domain.*;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.dao.model.NmplTerminalData;
@@ -16,6 +13,7 @@ import com.matrictime.network.facade.AlarmDataFacade;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.*;
+import com.matrictime.network.response.CompanyHeartbeatResponse;
 import com.matrictime.network.response.StationConnectCountResponse;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
@@ -86,6 +84,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private StationConnectCountDomainService connectCountDomainService;
+
+    @Resource
+    private CompanyHeartbeatDomainService companyHeartbeatDomainService;
 
 
     @Autowired
@@ -464,6 +465,25 @@ public class TaskServiceImpl implements TaskService {
             flag = true;
             msg = e.getMessage();
             log.info("updateCurrentConnectCount push Exception:{}",e.getMessage());
+        }finally {
+            logError(result,url,data,flag,msg);
+        }
+    }
+
+    @Override
+    public void CompanyHeartbeat(String url) {
+        CompanyHeartbeatResponse companyHeartbeatResponse = companyHeartbeatDomainService.selectCompanyHeartbeat();
+        Boolean flag = false;
+        Result result = null;
+        String data = "";
+        String msg =null;
+        try {
+            result = alarmDataFacade.insertCompanyHeartbeat(companyHeartbeatResponse);
+            log.info("CompanyHeartbeat push result:{}",result);
+        }catch (Exception e){
+            flag = true;
+            msg = e.getMessage();
+            log.info("CompanyHeartbeat push Exception:{}",e.getMessage());
         }finally {
             logError(result,url,data,flag,msg);
         }

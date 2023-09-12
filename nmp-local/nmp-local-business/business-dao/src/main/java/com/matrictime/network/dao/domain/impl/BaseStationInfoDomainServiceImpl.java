@@ -32,10 +32,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -490,6 +487,9 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
      */
     @Override
     public int insertBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+
+
+
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationInfo(baseStationInfoRequest);
         if(!CollectionUtils.isEmpty(baseStationInfoVoList)){
@@ -614,7 +614,10 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         //做唯一校验
         List<String> portList = new ArrayList<>();
         List<String> insertPortList = new ArrayList<>();
+        String lanPort = borderBaseStationInfoRequest.getLanPort();
         for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
+
+
             //判断是不是边界基站
             if(StationTypeEnum.BOUNDARY.getCode().equals(baseStationInfoVo.getStationType())){
                 PortModel portModel = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkPort(), PortModel.class);
@@ -626,6 +629,7 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
                 portList.addAll(portModel.getEphemeralPort());
                 portList.addAll(portModel.getSignalingPort());
                 portList.addAll(portModel.getTrunkPort());
+                portList.add(baseStationInfoVo.getLanPort());
             }else {
                 portList.add(baseStationInfoVo.getPublicNetworkPort());
             }
@@ -634,8 +638,23 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getTrunkPort());
         insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getSignalingPort());
         insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getEphemeralPort());
+        insertPortList.add(lanPort);
+
         //判断端口是否重复插入
         return checkPort(portList, insertPortList);
+    }
+
+    /**
+     * 判断插入的端口有没有重复的数据
+     * @param insertPortList
+     * @return
+     */
+    private boolean checkInsertPort(List<String> insertPortList){
+        Set<String> stringSet=new HashSet<>(insertPortList);
+        if (insertPortList.size() == stringSet.size()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -645,6 +664,9 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
      * @return
      */
     private boolean checkPort(List<String> portList,List<String> insertPortList){
+        if(checkInsertPort(insertPortList)){
+            return true;
+        }
         for(String insertPort: insertPortList){
             for(String port: portList){
                 if(insertPort.equals(port)){

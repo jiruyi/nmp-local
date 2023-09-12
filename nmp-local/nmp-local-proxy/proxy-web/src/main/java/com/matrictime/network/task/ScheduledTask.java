@@ -162,5 +162,13 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================updateCurrentConnectCount end=============================");
     }
 
+    @Scheduled(cron = "0 0/30 * * * ?")
+    @Async
+    public void insertCompanyHeartbeat(){
+        log.info(Thread.currentThread().getName()+"======================insertCompanyHeartbeat begin=============================");
+        taskService.CompanyHeartbeat(ip + KEY_SPLIT + port + INSERT_COMPANY_HEART);
+        log.info(Thread.currentThread().getName()+"======================insertCompanyHeartbeat end=============================");
+    }
+
 }
 

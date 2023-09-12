@@ -53,4 +53,10 @@ public interface TaskService {
      */
     void updateCurrentConnectCount(String url);
 
+    /**
+     * 推送小区心跳
+     * @param url
+     */
+    void CompanyHeartbeat(String url);
+
 }
