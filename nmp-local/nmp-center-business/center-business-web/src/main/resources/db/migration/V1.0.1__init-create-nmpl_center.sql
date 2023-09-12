@@ -186,7 +186,7 @@ CREATE TABLE  IF NOT EXISTS `nmpl_login_detail` (
          `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
          `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
          PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=206 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci  COMMENT='登录详情信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci  COMMENT='登录详情信息表';
 
 CREATE TABLE IF NOT EXISTS `nmpl_operate_log` (
         `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',
@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_operate_log` (
         `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
         `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '更新时间',
         PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14006 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='操作日志信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='操作日志信息表';
 
 CREATE TABLE IF NOT EXISTS `nmpl_data_collect` (
                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS `nmpl_data_collect` (
                                      `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
                                      `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
                                      PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3737600 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区流量收集表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区流量收集表';
 
 CREATE TABLE IF NOT EXISTS `nmpl_company_info` (
                                      `company_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '小区唯一编号Id',
@@ -275,5 +275,5 @@ CREATE TABLE IF NOT EXISTS `nmpl_company_heartbeat` (
                                           `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
                                           `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
                                           PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区业务心跳';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区业务心跳';
 

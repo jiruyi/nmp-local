@@ -9,7 +9,6 @@ import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
-import com.matrictime.network.dao.mapper.extend.NmplPcDataExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.request.DataCollectReq;
@@ -46,8 +45,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     @Resource
     NmplDataCollectForLoadMapper nmplDataCollectForLoadMapper;
 
-    @Resource
-    private NmplPcDataExtMapper nmplPcDataExtMapper;
+
 
 
 
@@ -130,26 +128,26 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         return nmplDataCollectMapper.selectByExample(nmplDataCollectExample);
     }
 
-    /**
-     * 统计小区下在线人数
-     * @param monitorReq
-     * @return
-     */
-    @Override
-    public Integer countDeviceNumber(MonitorReq monitorReq) {
-        return nmplPcDataExtMapper.countDeviceNumber(monitorReq);
-    }
+//    /**
+//     * 统计小区下在线人数
+//     * @param monitorReq
+//     * @return
+//     */
+//    @Override
+//    public Integer countDeviceNumber(MonitorReq monitorReq) {
+//        return nmplPcDataExtMapper.countDeviceNumber(monitorReq);
+//    }
 
-    /**
-     * 统计带宽总量
-     * @param monitorReq
-     * @return
-     */
-    @Override
-    public Double sumDataItemValue(MonitorReq monitorReq) {
-
-        return nmplPcDataExtMapper.sumDataItemValue(monitorReq);
-    }
+//    /**
+//     * 统计带宽总量
+//     * @param monitorReq
+//     * @return
+//     */
+//    @Override
+//    public Double sumDataItemValue(MonitorReq monitorReq) {
+//
+//        return nmplPcDataExtMapper.sumDataItemValue(monitorReq);
+//    }
 
 
     @Override

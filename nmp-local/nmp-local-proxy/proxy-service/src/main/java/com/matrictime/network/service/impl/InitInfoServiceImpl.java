@@ -116,7 +116,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                                 routeService.staticRouteInitInfo(nmplStaticRouteVos);
                             }
                             // 初始化链路列表信息
-                            JSONArray linkRelationVoList = resultObj.getJSONArray("linkRelationVoList");
+                            JSONArray linkRelationVoList = resultObj.getJSONArray("linkVos");
                             List<LinkVo> linkVos = linkRelationVoList.toJavaList(LinkVo.class);
                             if (!CollectionUtils.isEmpty(linkVos)){
                                 linkRelationService.initInfo(linkVos);
@@ -131,7 +131,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                     }
                 }
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("InitInfoServiceImpl.initInfo:{}",e);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             }
         }

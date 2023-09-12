@@ -342,7 +342,7 @@
       #{alarm.alarmContent,jdbcType=VARCHAR}, #{alarm.alarmLevel,jdbcType=CHAR},
       #{alarm.alarmUploadTime,jdbcType=TIMESTAMP},
       #{alarm.alarmSourceType,jdbcType=CHAR}, #{alarm.alarmContentType,jdbcType=CHAR},
-      #{alarm.alarmAreaCode,jdbcType=VARCHAR},)
+      #{alarm.alarmAreaCode,jdbcType=VARCHAR})
     </foreach>
   </insert>
 </mapper>

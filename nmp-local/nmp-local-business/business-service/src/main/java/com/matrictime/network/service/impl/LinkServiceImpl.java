@@ -21,6 +21,7 @@ import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +60,9 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
 
     @Value("${proxy.port}")
     private String proxyPort;
+
+    @Autowired
+    private AsyncService asyncService;
 
     @Override
     public Result<PageInfo<LinkVo>> queryLink(QueryLinkReq req) {
@@ -198,7 +202,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
     }
 
     private void syncLink(LinkVo newLink, NmplLink oldLink, String editType)throws Exception{
-        if (DataConstants.EDIT_TYPE_ADD.equals(editType) || DataConstants.EDIT_TYPE_DEL.equals(editType)){
+        if (DataConstants.EDIT_TYPE_ADD.equals(editType) || DataConstants.EDIT_TYPE_DEL.equals(editType)){// 新增和删除都是直接通知两个节点即可
             String relation = newLink.getLinkRelation();
             // 除了数据采集外所有情况源设备都通知
             NmplBaseStationInfoExample example = new NmplBaseStationInfoExample();
@@ -207,7 +211,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
             if (!CollectionUtils.isEmpty(stationInfos)){
                 String url = HttpClientUtil.getUrl(stationInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
                 newLink.setNoticeDeviceType(stationInfos.get(0).getStationType());
-                syncProxy(JSONObject.toJSONString(newLink),url);
+                asyncService.syncLink(JSONObject.toJSONString(newLink),url);
             }
             if (LinkEnum.BK.getCode().equals(relation) || LinkEnum.BK.getCode().equals(relation)){
                 // 宿设备为密钥中心时通知密钥中心
@@ -217,10 +221,10 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 if (!CollectionUtils.isEmpty(deviceInfos)){
                     String url = HttpClientUtil.getUrl(deviceInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
                     newLink.setNoticeDeviceType(deviceInfos.get(0).getDeviceType());
-                    syncProxy(JSONObject.toJSONString(newLink),url);
+                    asyncService.syncLink(JSONObject.toJSONString(newLink),url);
                 }
             }
-        }else if (DataConstants.EDIT_TYPE_UPD.equals(editType)){
+        }else if (DataConstants.EDIT_TYPE_UPD.equals(editType)){// 修改要区分多种情况
             String relation = newLink.getLinkRelation();
             if (LinkEnum.BB.getCode().equals(relation)){
                 if (LinkEnum.BK.getCode().equals(oldLink.getLinkRelation()) || LinkEnum.BK.getCode().equals(oldLink.getLinkRelation())){// 从边界-密钥，接入-密钥修改为边界-边界，通知之前的节点删除链路
@@ -233,7 +237,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         LinkVo tempLink = new LinkVo();
                         tempLink.setId(newLink.getId());
                         tempLink.setIsExist(IS_NOT_EXIST);
-                        syncProxy(JSONObject.toJSONString(tempLink),url);
+                        asyncService.syncLink(JSONObject.toJSONString(tempLink),url);
                     }
                     NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
                     deviceInfoExample.createCriteria().andDeviceIdEqualTo(oldLink.getFollowDeviceId());
@@ -244,7 +248,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         LinkVo tempLink = new LinkVo();
                         tempLink.setId(newLink.getId());
                         tempLink.setIsExist(IS_NOT_EXIST);
-                        syncProxy(JSONObject.toJSONString(newLink),url);
+                        asyncService.syncLink(JSONObject.toJSONString(newLink),url);
                     }
                 }
                 // 边界-边界新节点更新链路信息
@@ -254,7 +258,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 if (!CollectionUtils.isEmpty(stationInfos)){
                     String url = HttpClientUtil.getUrl(stationInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
                     newLink.setNoticeDeviceType(stationInfos.get(0).getStationType());
-                    syncProxy(JSONObject.toJSONString(newLink),url);
+                    asyncService.syncLink(JSONObject.toJSONString(newLink),url);
                 }
             }else if (LinkEnum.BK.getCode().equals(relation) || LinkEnum.BK.getCode().equals(relation)){
                 // 判断源设备是否更改，若更改，删除老节点的链路信息
@@ -268,7 +272,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         LinkVo tempLink = new LinkVo();
                         tempLink.setId(newLink.getId());
                         tempLink.setIsExist(IS_NOT_EXIST);
-                        syncProxy(JSONObject.toJSONString(tempLink),url);
+                        asyncService.syncLink(JSONObject.toJSONString(tempLink),url);
                     }
                 }
                 if (!newLink.getFollowDeviceId().equals(oldLink.getFollowDeviceId()) && LinkEnum.BB.getCode().equals(oldLink.getLinkRelation())){// 宿设备被更改，同步删除修改前设备的链路
@@ -282,7 +286,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         LinkVo tempLink = new LinkVo();
                         tempLink.setId(newLink.getId());
                         tempLink.setIsExist(IS_NOT_EXIST);
-                        syncProxy(JSONObject.toJSONString(newLink),url);
+                        asyncService.syncLink(JSONObject.toJSONString(newLink),url);
                     }
                 }
                 // 源设备更新链路信息
@@ -292,7 +296,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 if (!CollectionUtils.isEmpty(stationInfos)){
                     String url = HttpClientUtil.getUrl(stationInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
                     newLink.setNoticeDeviceType(stationInfos.get(0).getStationType());
-                    syncProxy(JSONObject.toJSONString(newLink),url);
+                    asyncService.syncLink(JSONObject.toJSONString(newLink),url);
                 }
                 // 宿设备为密钥中心时通知密钥中心
                 NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
@@ -301,7 +305,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 if (!CollectionUtils.isEmpty(deviceInfos)){
                     String url = HttpClientUtil.getUrl(deviceInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
                     newLink.setNoticeDeviceType(deviceInfos.get(0).getDeviceType());
-                    syncProxy(JSONObject.toJSONString(newLink),url);
+                    asyncService.syncLink(JSONObject.toJSONString(newLink),url);
                 }
             }
         }else {

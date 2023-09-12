@@ -53,8 +53,6 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     @Resource
     private NmplLinkRelationMapper nmplLinkRelationMapper;
 
-    @Resource
-    private NmplPcDataMapper nmplPcDataMapper;
 
     @Resource
     private NmplStaticRouteMapper nmplStaticRouteMapper;
@@ -254,11 +252,10 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
 
         List<NmplLinkRelation> nmplLinkRelations = nmplLinkRelationMapper.selectByExample(nmplLinkRelationExample);
 
-        List<NmplPcData> nmplPcData = nmplPcDataMapper.selectByExample(nmplPcDataExample);
 
         List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
 
-        if(!CollectionUtils.isEmpty(nmplLinkRelations)||!CollectionUtils.isEmpty(nmplPcData)||!CollectionUtils.isEmpty(nmplStaticRoutes)){
+        if(!CollectionUtils.isEmpty(nmplLinkRelations)||!CollectionUtils.isEmpty(nmplStaticRoutes)){
             throw new SystemException(ErrorMessageContants.DEVICE_IS_ASSOCIATED);
         }
 
