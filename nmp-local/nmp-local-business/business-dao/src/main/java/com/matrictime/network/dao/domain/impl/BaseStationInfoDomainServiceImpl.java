@@ -585,16 +585,23 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
             BorderBaseStationInfoVo borderBaseStationInfoVo = new BorderBaseStationInfoVo();
             BeanUtils.copyProperties(baseStationInfoVo,borderBaseStationInfoVo);
-            //数据转换
-            PortModel portModel = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkPort(), PortModel.class);
-            //构建ip返回体
-            PublicNetworkIp publicNetworkIp = new PublicNetworkIp();
-            publicNetworkIp.setCommunicationIP(baseStationInfoVo.getPublicNetworkIp());
-            publicNetworkIp.setEphemeralPort(portModel.getEphemeralPort());
-            publicNetworkIp.setSignalingPort(portModel.getSignalingPort());
-            publicNetworkIp.setTrunkPort(portModel.getTrunkPort());
-            borderBaseStationInfoVo.setPublicNetworkIp(publicNetworkIp);
-            borderBaseStationInfoVo.setPublicNetworkPort(null);
+            String publicNetworkPort = baseStationInfoVo.getPublicNetworkPort();
+            if(publicNetworkPort.contains("{")){
+                //数据转换
+                PortModel portModel = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkPort(), PortModel.class);
+                //构建ip返回体
+                PublicNetworkIp publicNetworkIp = new PublicNetworkIp();
+                publicNetworkIp.setCommunicationIP(baseStationInfoVo.getPublicNetworkIp());
+                publicNetworkIp.setEphemeralPort(portModel.getEphemeralPort());
+                publicNetworkIp.setSignalingPort(portModel.getSignalingPort());
+                publicNetworkIp.setTrunkPort(portModel.getTrunkPort());
+                borderBaseStationInfoVo.setPublicNetworkIp(publicNetworkIp);
+                borderBaseStationInfoVo.setPublicNetworkPort(null);
+            }else {
+                PublicNetworkIp publicNetworkIp = new PublicNetworkIp();
+                publicNetworkIp.setCommunicationIP(baseStationInfoVo.getPublicNetworkIp());
+                borderBaseStationInfoVo.setPublicNetworkIp(publicNetworkIp);
+            }
             list.add(borderBaseStationInfoVo);
         }
         PageInfo<BorderBaseStationInfoVo> pageResult =  new PageInfo<>();

@@ -6,6 +6,7 @@ import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
+import com.matrictime.network.dao.domain.ConfigDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
@@ -15,6 +16,7 @@ import com.matrictime.network.service.BusinessDataService;
 import com.matrictime.network.strategy.annotation.BusinessType;
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.generator.api.dom.java.Interface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
@@ -54,6 +56,9 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
     @Autowired
     private NettyClient nettyClient;
 
+    @Resource
+    private ConfigDomainService configDomainService;
+
 
     /**
      * 数据流量定时任务
@@ -63,7 +68,7 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                //businessData();
+                businessData();
             }
         }, new Trigger() {
             @Override
@@ -80,7 +85,10 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
 
     @Override
     public void businessData() {
-
+        Boolean report = configDomainService.isReport(BusinessTypeEnum.BORDER_STATION_DATA.getCode());
+        if(!report){
+            return;
+        }
         nettyClient.start();
         //业务逻辑 查询数据
         StationSummaryVo stationSummaryVo = summaryDomainService.selectBorderStation();

@@ -5,10 +5,7 @@ import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
-import com.matrictime.network.dao.domain.AlarmDomainService;
-import com.matrictime.network.dao.domain.DeviceDomainService;
-import com.matrictime.network.dao.domain.StationSummaryDomainService;
-import com.matrictime.network.dao.domain.TerminalUserDomainService;
+import com.matrictime.network.dao.domain.*;
 import com.matrictime.network.modelVo.TerminalUserVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
@@ -58,6 +55,9 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
     @Autowired
     private NettyClient nettyClient;
 
+    @Resource
+    private ConfigDomainService configDomainService;
+
     /**
      * 数据流量定时任务
      */
@@ -66,7 +66,7 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-               // businessData();
+               businessData();
             }
         }, new Trigger() {
             @Override
@@ -82,6 +82,12 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
 
     @Override
     public void businessData() {
+
+        Boolean report = configDomainService.isReport(BusinessTypeEnum.TERMINAL_USER.getCode());
+        if(!report){
+            return;
+        }
+
         //业务逻辑 查询数据
         List<TerminalUserVo> terminalUserVoList = terminalUserDomainService.selectTerminalUser();
         if(ObjectUtils.isEmpty(terminalUserVoList)){

@@ -6,6 +6,7 @@ import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
+import com.matrictime.network.dao.domain.ConfigDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.modelVo.CompanyHeartbeatVo;
@@ -55,6 +56,9 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
     @Resource
     private StationSummaryDomainService summaryDomainService;
 
+    @Resource
+    private ConfigDomainService configDomainService;
+
     /**
      * 数据流量定时任务
      */
@@ -63,7 +67,7 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                //businessData();
+                businessData();
             }
         }, new Trigger() {
             @Override
@@ -79,6 +83,12 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
 
     @Override
     public void businessData() {
+
+        Boolean report = configDomainService.isReport(BusinessTypeEnum.KEY_CENTER_DATA.getCode());
+        if(!report){
+            return;
+        }
+
         //业务逻辑 查询数据
         StationSummaryVo stationSummaryVo = summaryDomainService.selectDevice();
         if(ObjectUtils.isEmpty(stationSummaryVo)){

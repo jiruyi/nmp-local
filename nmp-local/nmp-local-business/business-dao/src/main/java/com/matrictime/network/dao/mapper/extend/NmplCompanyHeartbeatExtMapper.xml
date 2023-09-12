@@ -3,8 +3,8 @@
 <mapper namespace="com.matrictime.network.dao.mapper.extend.NmplCompanyHeartbeatExtMapper">
     <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplCompanyHeartbeat">
         <id column="id" jdbcType="BIGINT" property="id" />
-        <result column="source_company_network_id" jdbcType="VARCHAR" property="sourceCompanyNetworkId" />
-        <result column="target_company_network_id" jdbcType="VARCHAR" property="targetCompanyNetworkId" />
+        <result column="source_network_id" jdbcType="VARCHAR" property="sourceNetworkId" />
+        <result column="target_network_id" jdbcType="VARCHAR" property="targetNetworkId" />
         <result column="status" jdbcType="CHAR" property="status" />
         <result column="up_value" jdbcType="VARCHAR" property="upValue" />
         <result column="down_value" jdbcType="VARCHAR" property="downValue" />
@@ -13,11 +13,11 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
     <insert id="insertCompanyHeartbeat" parameterType="com.matrictime.network.modelVo.CompanyHeartbeatVo">
-        insert into nmpl_company_heartbeat ( source_company_network_id, target_company_network_id,
+        insert into nmpl_company_heartbeat ( source_network_id, target_network_id,
         status, up_value, down_value,
         upload_time) values
         <foreach collection ="list" item="data" separator =",">
-            ( #{data.sourceCompanyNetworkId},#{data.targetCompanyNetworkId}, #{data.status}, #{data.upValue}, #{data.downValue},
+            ( #{data.sourceNetworkId},#{data.targetNetworkId}, #{data.status}, #{data.upValue}, #{data.downValue},
             #{data.uploadTime})
         </foreach >
     </insert>

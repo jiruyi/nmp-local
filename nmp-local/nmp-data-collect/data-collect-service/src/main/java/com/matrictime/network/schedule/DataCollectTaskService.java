@@ -6,10 +6,7 @@ import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
-import com.matrictime.network.dao.domain.AlarmDomainService;
-import com.matrictime.network.dao.domain.DataCollectDomainService;
-import com.matrictime.network.dao.domain.DeviceDomainService;
-import com.matrictime.network.dao.domain.StationSummaryDomainService;
+import com.matrictime.network.dao.domain.*;
 import com.matrictime.network.modelVo.CompanyInfoVo;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.netty.client.NettyClient;
@@ -59,6 +56,9 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
     @Resource
     private DataCollectDomainService collectDomainService;
 
+    @Resource
+    private ConfigDomainService configDomainService;
+
     /**
      * 数据流量定时任务
      */
@@ -67,7 +67,7 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                //businessData();
+                businessData();
             }
         }, new Trigger() {
             @Override
@@ -83,6 +83,12 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
 
     @Override
     public void businessData() {
+        Boolean report = configDomainService.isReport(BusinessTypeEnum.DATA_TRAFFIC.getCode());
+        if(!report){
+            return;
+        }
+
+
         //业务逻辑 查询数据
         List<DataCollectVo> dataCollectVos = collectDomainService.selectDataCollect();
         if(CollectionUtils.isEmpty(dataCollectVos)){

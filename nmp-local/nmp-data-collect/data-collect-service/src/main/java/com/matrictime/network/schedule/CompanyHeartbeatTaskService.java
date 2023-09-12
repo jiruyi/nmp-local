@@ -7,6 +7,7 @@ import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.CompanyHeartbeatDomainService;
+import com.matrictime.network.dao.domain.ConfigDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.modelVo.CompanyHeartbeatVo;
 import com.matrictime.network.netty.client.NettyClient;
@@ -54,6 +55,9 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
     @Autowired
     private NettyClient nettyClient;
 
+    @Resource
+    private ConfigDomainService configDomainService;
+
 
     /**
      * 数据流量定时任务
@@ -63,7 +67,7 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-               //businessData();
+               businessData();
             }
         }, new Trigger() {
             @Override
@@ -79,6 +83,12 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
 
     @Override
     public void businessData() {
+
+        Boolean report = configDomainService.isReport(BusinessTypeEnum.COMMUNITY_HEART.getCode());
+        if(!report){
+            return;
+        }
+
         //业务逻辑 查询数据
         List<CompanyHeartbeatVo> list = heartbeatDomainService.selectCompanyHeartbeat();
         if(CollectionUtils.isEmpty(list)){

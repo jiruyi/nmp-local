@@ -60,6 +60,9 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
     @Resource
     private StationSummaryDomainService summaryDomainService;
 
+    @Resource
+    private ConfigDomainService configDomainService;
+
     /**
      * 数据流量定时任务
      */
@@ -68,7 +71,7 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-                //businessData();
+                businessData();
             }
         }, new Trigger() {
             @Override
@@ -84,6 +87,12 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
 
     @Override
     public void businessData() {
+
+        Boolean report = configDomainService.isReport(BusinessTypeEnum.COMMUNITY_INFO.getCode());
+        if(!report){
+            return;
+        }
+
         //业务逻辑 查询数据
         List<CompanyInfoVo> companyInfoVos = null;
         try {
