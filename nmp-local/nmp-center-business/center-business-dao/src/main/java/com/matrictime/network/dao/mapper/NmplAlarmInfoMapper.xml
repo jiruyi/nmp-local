@@ -110,7 +110,7 @@
     alarm_id, alarm_source_id, alarm_source_ip, alarm_content, alarm_level, alarm_upload_time,
     alarm_source_type, alarm_content_type, alarm_area_code, company_name
     from nmpl_alarm_info
-    join nmpl_company_info
+    left join nmpl_company_info
     on alarm_area_code = company_network_id
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />

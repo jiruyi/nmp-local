@@ -6,6 +6,7 @@ import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.AlarmDomainService;
+import com.matrictime.network.dao.domain.ConfigDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
 import com.matrictime.network.netty.client.NettyClient;
@@ -55,6 +56,9 @@ public class AlarmInfoTaskService implements BusinessDataService, SchedulingConf
     @Autowired
     private NettyClient nettyClient;
 
+    @Autowired
+    private ConfigDomainService configDomainService;
+
     /**
      * @param [scheduledTaskRegistrar]
      * @return void
@@ -68,6 +72,10 @@ public class AlarmInfoTaskService implements BusinessDataService, SchedulingConf
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
+                //业务是否可以上报
+                if(!configDomainService.isReport(BusinessTypeEnum.ALARM_DATA.getCode())){
+                    return;
+                }
                 businessData();
             }
         }, new Trigger() {
