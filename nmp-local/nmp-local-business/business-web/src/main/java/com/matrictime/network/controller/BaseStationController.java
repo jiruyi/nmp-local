@@ -9,8 +9,6 @@ import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
 import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.service.DeviceService;
-import com.matrictime.network.service.PcDataService;
-import com.matrictime.network.util.ListSplitUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -41,8 +39,6 @@ public class BaseStationController {
     @Resource
     private DeviceService deviceService;
 
-    @Resource
-    PcDataService pcDataService;
 
     @Value("${thread.batchMaxSize}")
     Integer maxSize;
@@ -228,46 +224,8 @@ public class BaseStationController {
     }
 
 
-    @ApiOperation(value = "基站下挂一体机数据多条件查询接口",notes = "基站下挂一体机数据多条件查询接口")
-    @RequestMapping(value = "/queryPcDataByConditon",method = RequestMethod.POST)
-    @RequiresPermissions("sys:station:detail")
-    @SystemLog(opermodul = "基站管理模块",operDesc = "查询基站下挂一体机数据",operType = "查询")
-    public Result<PageInfo> queryPcDataByConditon(@RequestBody PcDataReq pcDataReq){
-        return pcDataService.queryByConditon(pcDataReq);
-    }
 
 
-    /**
-     * 基站下挂一体机数据上报
-     * @param pcDataReq
-     * @return
-     */
-    @RequestMapping(value = "/savePcData",method = RequestMethod.POST)
-    public Result savePcData(@RequestBody PcDataReq pcDataReq){
-        Result result = null;
-        try {
-            if (pcDataReq.getNmplPcDataVoList()!=null&&pcDataReq.getNmplPcDataVoList().size()>maxSize){
-                List<Result> resultList = new ArrayList<>();
-                List<List<PcDataVo>> data = ListSplitUtil.split(pcDataReq.getNmplPcDataVoList(),maxSize);
-                for (List<PcDataVo> datum : data) {
-                    PcDataReq req = new PcDataReq();
-                    req.setNmplPcDataVoList(datum);
-                    resultList.add(pcDataService.save(req).get());
-                }
-                result = new Result<>();
-                result.setSuccess(true);
-                result.setResultObj(resultList);
-            }else {
-                result = pcDataService.save(pcDataReq).get();
-            }
-        } catch (InterruptedException e) {
-            log.info(e.getMessage());
-        } catch (ExecutionException e) {
-            log.info(e.getMessage());
-        }finally {
-            return result;
-        }
-    }
 
     /**
      * 查询归属信息

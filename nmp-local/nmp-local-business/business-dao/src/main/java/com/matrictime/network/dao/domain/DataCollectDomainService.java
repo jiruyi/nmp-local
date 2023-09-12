@@ -16,9 +16,9 @@ public interface DataCollectDomainService {
 
     public List<NmplDataCollect> queryMonitorData(MonitorReq monitorReq) throws Exception;
 
-    Integer countDeviceNumber(MonitorReq monitorReq);
-
-    Double sumDataItemValue(MonitorReq monitorReq);
+//    Integer countDeviceNumber(MonitorReq monitorReq);
+//
+//    Double sumDataItemValue(MonitorReq monitorReq);
 
     public List<DataCollectVo> queryTopTen(MonitorReq monitorReq);
 }

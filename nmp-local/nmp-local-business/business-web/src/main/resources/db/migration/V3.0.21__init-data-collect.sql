@@ -122,6 +122,9 @@ INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `
 INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('199', '新建基站', '91', NULL, '0', '2', '1', 'sys:boundarystation:save',  NULL, '1', '', '0', '');
 INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('200', '删除基站', '91', NULL, '0', '2', '1', 'sys:boundarystation:delete', NULL, '1', '', '0', '');
 INSERT INTO `nmp_local`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`,  `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('201', '编辑基站', '91', NULL, '0', '2', '1', 'sys:boundarystation:update',  NULL, '1', '', '0', '');
+
+DROP TABLE IF EXISTS `nmpl_pc_data`;
+
 -- zyj
 
 

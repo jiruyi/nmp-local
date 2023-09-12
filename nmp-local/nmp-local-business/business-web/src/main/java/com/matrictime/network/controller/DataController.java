@@ -9,7 +9,6 @@ import com.matrictime.network.request.*;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DataCollectService;
-import com.matrictime.network.service.PcDataService;
 import com.matrictime.network.service.TerminalDataService;
 import com.matrictime.network.util.ListSplitUtil;
 import io.swagger.annotations.Api;
@@ -24,12 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * 统计管理
