@@ -26,7 +26,8 @@
         FROM
             nmpl_data_collect a
         WHERE
-        a.upload_time &gt;= (select date_add(now(), interval -30 minute))
+        a.upload_time &gt;= (SELECT
+                                 DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE - INTERVAL 30 MINUTE)
         and a.data_item_code in('10018','10020','10021','10019')
     </select>
 </mapper>
