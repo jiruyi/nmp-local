@@ -23,7 +23,7 @@
 
 
   <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.LinkVo">
-    insert into nmpl_link_relation (id, link_name, link_type,
+    insert into nmpl_link (id, link_name, link_type,
     link_relation, main_device_id, follow_device_id,
     follow_network_id, follow_ip, follow_port,
     active_auth, is_on, create_user,
@@ -42,7 +42,7 @@
 
   <update id="batchUpdate" parameterType="com.matrictime.network.modelVo.LinkVo">
     <foreach collection="list" separator=";" item="info">
-      update nmpl_link_relation
+      update nmpl_link
       <set>
         <if test="info.linkName != null">
           link_name = #{info.linkName,jdbcType=VARCHAR},

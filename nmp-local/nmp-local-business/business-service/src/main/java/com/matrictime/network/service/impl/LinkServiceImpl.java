@@ -35,7 +35,9 @@ import javax.annotation.Resource;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
@@ -121,7 +123,11 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         BeanUtils.copyProperties(vo,link);
                         nmplLinkMapper.insertSelective(link);
                         // 同步代理
-                        syncLink(vo,null,req.getEditType());
+                        try {
+                            syncLink(vo,null,req.getEditType());
+                        }catch (Exception e){
+                            log.error("LinkServiceImpl.editLink Exception:{}",e);
+                        }
                     }
                     break;
                 //批量修改
@@ -139,7 +145,12 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         BeanUtils.copyProperties(vo,link);
                         nmplLinkMapper.updateByPrimaryKeySelective(link);
                         // 同步代理
-                        syncLink(vo,localLink,req.getEditType());
+                        try{
+                            syncLink(vo,localLink,req.getEditType());
+                        }catch (Exception e){
+                            log.error("LinkServiceImpl.editLink Exception:{}",e);
+                        }
+
                     }
                     break;
                 // 逻辑删除
@@ -160,7 +171,11 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         vo.setLinkRelation(localLink.getLinkRelation());
                         vo.setMainDeviceId(localLink.getMainDeviceId());
                         vo.setFollowDeviceId(localLink.getFollowDeviceId());
-                        syncLink(vo,null,req.getEditType());
+                        try{
+                            syncLink(vo,null,req.getEditType());
+                        }catch (Exception e){
+                            log.error("LinkServiceImpl.editLink Exception:{}",e);
+                        }
                     }
                     break;
                 default:
@@ -258,7 +273,10 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
             if (!CollectionUtils.isEmpty(stationInfos)){
                 String url = HttpClientUtil.getUrl(stationInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
                 newLink.setNoticeDeviceType(stationInfos.get(0).getStationType());
-                asyncService.syncLink(JSONObject.toJSONString(newLink),url);
+                Map<String,String> map = new HashMap<>();
+                map.put(KEY_DATA,JSONObject.toJSONString(newLink));
+                map.put(KEY_URL,url);
+                asyncService.syncLink(map);
             }
             if (LinkEnum.BK.getCode().equals(relation) || LinkEnum.BK.getCode().equals(relation)){
                 // 宿设备为密钥中心时通知密钥中心
@@ -268,7 +286,10 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 if (!CollectionUtils.isEmpty(deviceInfos)){
                     String url = HttpClientUtil.getUrl(deviceInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
                     newLink.setNoticeDeviceType(deviceInfos.get(0).getDeviceType());
-                    asyncService.syncLink(JSONObject.toJSONString(newLink),url);
+                    Map<String,String> map = new HashMap<>();
+                    map.put(KEY_DATA,JSONObject.toJSONString(newLink));
+                    map.put(KEY_URL,url);
+                    asyncService.syncLink(map);
                 }
             }
         }else if (DataConstants.EDIT_TYPE_UPD.equals(editType)){// 修改要区分多种情况
@@ -284,7 +305,10 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         LinkVo tempLink = new LinkVo();
                         tempLink.setId(newLink.getId());
                         tempLink.setIsExist(IS_NOT_EXIST);
-                        asyncService.syncLink(JSONObject.toJSONString(tempLink),url);
+                        Map<String,String> map = new HashMap<>();
+                        map.put(KEY_DATA,JSONObject.toJSONString(tempLink));
+                        map.put(KEY_URL,url);
+                        asyncService.syncLink(map);
                     }
                     NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
                     deviceInfoExample.createCriteria().andDeviceIdEqualTo(oldLink.getFollowDeviceId());
@@ -295,7 +319,10 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         LinkVo tempLink = new LinkVo();
                         tempLink.setId(newLink.getId());
                         tempLink.setIsExist(IS_NOT_EXIST);
-                        asyncService.syncLink(JSONObject.toJSONString(newLink),url);
+                        Map<String,String> map = new HashMap<>();
+                        map.put(KEY_DATA,JSONObject.toJSONString(newLink));
+                        map.put(KEY_URL,url);
+                        asyncService.syncLink(map);
                     }
                 }
                 // 边界-边界新节点更新链路信息
@@ -305,7 +332,10 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 if (!CollectionUtils.isEmpty(stationInfos)){
                     String url = HttpClientUtil.getUrl(stationInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
                     newLink.setNoticeDeviceType(stationInfos.get(0).getStationType());
-                    asyncService.syncLink(JSONObject.toJSONString(newLink),url);
+                    Map<String,String> map = new HashMap<>();
+                    map.put(KEY_DATA,JSONObject.toJSONString(newLink));
+                    map.put(KEY_URL,url);
+                    asyncService.syncLink(map);
                 }
             }else if (LinkEnum.BK.getCode().equals(relation) || LinkEnum.AK.getCode().equals(relation)){
                 // 判断源设备是否更改，若更改，删除老节点的链路信息
@@ -319,7 +349,10 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         LinkVo tempLink = new LinkVo();
                         tempLink.setId(newLink.getId());
                         tempLink.setIsExist(IS_NOT_EXIST);
-                        asyncService.syncLink(JSONObject.toJSONString(tempLink),url);
+                        Map<String,String> map = new HashMap<>();
+                        map.put(KEY_DATA,JSONObject.toJSONString(tempLink));
+                        map.put(KEY_URL,url);
+                        asyncService.syncLink(map);
                     }
                 }
                 if (!newLink.getFollowDeviceId().equals(oldLink.getFollowDeviceId()) && LinkEnum.BB.getCode().equals(oldLink.getLinkRelation())){// 宿设备被更改，同步删除修改前设备的链路
@@ -333,7 +366,10 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         LinkVo tempLink = new LinkVo();
                         tempLink.setId(newLink.getId());
                         tempLink.setIsExist(IS_NOT_EXIST);
-                        asyncService.syncLink(JSONObject.toJSONString(newLink),url);
+                        Map<String,String> map = new HashMap<>();
+                        map.put(KEY_DATA,JSONObject.toJSONString(newLink));
+                        map.put(KEY_URL,url);
+                        asyncService.syncLink(map);
                     }
                 }
                 // 源设备更新链路信息
@@ -343,7 +379,10 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 if (!CollectionUtils.isEmpty(stationInfos)){
                     String url = HttpClientUtil.getUrl(stationInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
                     newLink.setNoticeDeviceType(stationInfos.get(0).getStationType());
-                    asyncService.syncLink(JSONObject.toJSONString(newLink),url);
+                    Map<String,String> map = new HashMap<>();
+                    map.put(KEY_DATA,JSONObject.toJSONString(newLink));
+                    map.put(KEY_URL,url);
+                    asyncService.syncLink(map);
                 }
                 // 宿设备为密钥中心时通知密钥中心
                 NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
@@ -352,7 +391,10 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 if (!CollectionUtils.isEmpty(deviceInfos)){
                     String url = HttpClientUtil.getUrl(deviceInfos.get(0).getLanIp(), proxyPort, proxyPath + URL_LINK_RELATION_UPDATE);
                     newLink.setNoticeDeviceType(deviceInfos.get(0).getDeviceType());
-                    asyncService.syncLink(JSONObject.toJSONString(newLink),url);
+                    Map<String,String> map = new HashMap<>();
+                    map.put(KEY_DATA,JSONObject.toJSONString(newLink));
+                    map.put(KEY_URL,url);
+                    asyncService.syncLink(map);
                 }
             }
         }else {
@@ -365,15 +407,9 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
         if (ParamCheckUtil.checkVoStrBlank(req.getEditType())){
             throw new Exception("EditType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        // 校验操作类型为新增时入参是否合法
-        if (DataConstants.EDIT_TYPE_ADD.equals(req.getEditType()) || DataConstants.EDIT_TYPE_UPD.equals(req.getEditType())){
-            if (CollectionUtils.isEmpty(req.getLinkVos())){
+        if (CollectionUtils.isEmpty(req.getLinkVos())){
                 throw new Exception("LinkVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-            }
         }
-        // 校验操作类型为删除时入参是否合法
-        if (DataConstants.EDIT_TYPE_DEL.equals(req.getEditType()) && CollectionUtils.isEmpty(req.getDelIds())){
-            throw new Exception("DelIds"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
+
     }
 }

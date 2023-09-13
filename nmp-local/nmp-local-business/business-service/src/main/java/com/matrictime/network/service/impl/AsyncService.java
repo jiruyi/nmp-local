@@ -407,12 +407,14 @@ public class AsyncService{
 
     @Async("taskExecutor")
     @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 1000,multiplier = 1.5))
-    public void syncLink(String jsonString,String url) throws Exception{
+    public void syncLink(Map<String, String> map) throws Exception{
         boolean flag = false;
         String post = "";
+        String url = map.get(KEY_URL);
+        String data = map.get(KEY_DATA);
         if (isremote == 1){
             try {
-                post = HttpClientUtil.post(url, jsonString);
+                post = HttpClientUtil.post(url, data);
             } catch (IOException e) {
                 log.warn("AsyncService.syncLink IOException:{}",e.getMessage());
                 throw new IOException(e);
@@ -421,7 +423,7 @@ public class AsyncService{
             Result tempResult = new Result(true,"");
             post = JSONObject.toJSONString(tempResult);
         }
-        log.info("AsyncService.syncLink result url:{},req:{},post:{}",url,jsonString,post);
+        log.info("AsyncService.syncLink result url:{},req:{},post:{}",url,data,post);
         JSONObject jsonObject = JSONObject.parseObject(post);
         if (jsonObject != null && jsonObject.containsKey(SUCCESS_MSG)){
             flag = (Boolean) jsonObject.get(SUCCESS_MSG);

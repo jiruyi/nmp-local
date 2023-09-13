@@ -110,34 +110,41 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             List<LinkVo> updateVos = new ArrayList<>();
             Date createTime = new Date();
             Map<String,Integer> opMap = new HashMap<>();
+            Set<Long> ids = new HashSet<>();
             for (int i=0; i<voList.size();i++){
                 LinkVo infoVo = voList.get(i);
+                Long id = infoVo.getId();
                 infoVo.setUpdateTime(createTime);
                 NmplLink link = nmplLinkMapper.selectByPrimaryKey(infoVo.getId());
                 if (link != null){
-                    updateVos.add(infoVo);
+                    if (!ids.contains(id)){
+                        updateVos.add(infoVo);
+                    }
                     if (opMap.containsKey(infoVo.getNoticeDeviceType())){
                         opMap.put(infoVo.getNoticeDeviceType(),opMap.get(infoVo.getNoticeDeviceType())+UPDATE_NUM);
                     }else {
                         opMap.put(infoVo.getNoticeDeviceType(),UPDATE_NUM);
                     }
                 }else {
-                    addVos.add(infoVo);
+                    if (!ids.contains(id)) {
+                        addVos.add(infoVo);
+                    }
                     if (opMap.containsKey(infoVo.getNoticeDeviceType())){
                         opMap.put(infoVo.getNoticeDeviceType(),opMap.get(infoVo.getNoticeDeviceType())+ADD_NUM);
                     }else {
                         opMap.put(infoVo.getNoticeDeviceType(),ADD_NUM);
                     }
                 }
+                ids.add(id);
             }
 
             // 更新链路关系
             Integer batchNum=0;
             if (!CollectionUtils.isEmpty(addVos)){
-                batchNum = batchNum + linkDomainService.insertLink(voList);
+                batchNum = batchNum + linkDomainService.insertLink(addVos);
             }
             if (!CollectionUtils.isEmpty(updateVos)){
-                batchNum = batchNum + linkDomainService.updateLink(voList);
+                batchNum = batchNum + linkDomainService.updateLink(updateVos);
             }
             log.info("LinkRelationServiceImpl.updateLink：batchNum:{}",batchNum);
 
@@ -203,21 +210,17 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
     public void initInfo(List<LinkVo> linkVos) {
         List<NmplLink> nmplLinks = nmplLinkMapper.selectByExample(new NmplLinkExample());
         if (CollectionUtils.isEmpty(nmplLinks)){// 链路表为空，直接插入数据
-            List<LinkVo> voList = new ArrayList<>(linkVos.size());
-            for (NmplLink vo:nmplLinks){
-                LinkVo temp = new LinkVo();
-                BeanUtils.copyProperties(vo,temp);
-                voList.add(temp);
-            }
-            addLink(voList);
+            updateLink(linkVos);
         }else {// 链路表不为空，更新数据
-            List<LinkVo> voList = new ArrayList<>();
             List<Long> ids = new ArrayList<>();
+            List<Long> linkVoIds = new ArrayList<>();
+            for (LinkVo vo: linkVos){
+                linkVoIds.add(vo.getId());
+            }
             for (NmplLink vo:nmplLinks){
-                LinkVo temp = new LinkVo();
-                BeanUtils.copyProperties(vo,temp);
-                voList.add(temp);
-                ids.add(vo.getId());
+                if (linkVoIds.contains(vo.getId())){
+                    ids.add(vo.getId());
+                }
             }
             NmplLinkExample example = new NmplLinkExample();
             example.createCriteria().andIdNotIn(ids);
@@ -226,9 +229,9 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
                 LinkVo temp = new LinkVo();
                 BeanUtils.copyProperties(link,temp);
                 temp.setIsExist(IS_NOT_EXIST);
-                voList.add(temp);
+                linkVos.add(temp);
             }
-            updateLink(voList);
+            updateLink(linkVos);
         }
     }
 }
