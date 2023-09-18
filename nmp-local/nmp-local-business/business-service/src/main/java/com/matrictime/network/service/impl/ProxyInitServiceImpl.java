@@ -65,7 +65,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
         try {
             checkParam(req);
             ProxyResp proxyResp = new ProxyResp();
-//            List<String> deviceIds = getLocalDeviceIds(proxyResp,req);
+            List<String> deviceIds = getLocalDeviceIds(proxyResp,req);
             if(!proxyResp.isExist()){
                 return buildResult(proxyResp);
             }
