@@ -34,19 +34,19 @@ public class LinkRelationController extends SystemBaseService {
      * @return
      */
 
-    @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Result<Integer> addLink(@RequestBody LinkVo req){
-        Result<Integer> result;
-        try {
-            List<LinkVo> voList = new ArrayList<>();
-            voList.add(req);
-            result = linkRelationService.addLink(voList);
-        }catch (Exception e){
-            log.info("LinkRelationController.addLink{}",e.getMessage());
-            result = failResult("");
-        }
-        return result;
-    }
+//    @RequestMapping(value = "/insert",method = RequestMethod.POST)
+//    public Result<Integer> addLink(@RequestBody LinkVo req){
+//        Result<Integer> result;
+//        try {
+//            List<LinkVo> voList = new ArrayList<>();
+//            voList.add(req);
+//            result = linkRelationService.addLink(voList);
+//        }catch (Exception e){
+//            log.info("LinkRelationController.addLink{}",e.getMessage());
+//            result = failResult("");
+//        }
+//        return result;
+//    }
 
     /**
      * 链路更新

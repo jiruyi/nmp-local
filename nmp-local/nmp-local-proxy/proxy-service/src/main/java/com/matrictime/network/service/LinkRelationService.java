@@ -12,7 +12,9 @@ import java.util.List;
 
 public interface LinkRelationService {
 
-    Result<Integer> addLink(List<LinkVo> list);
+//    Result<Integer> addLink(List<LinkVo> list);
+
+//    Result<Integer> updateLink(List<LinkVo> list);
 
     Result<Integer> updateLink(List<LinkVo> list);
 

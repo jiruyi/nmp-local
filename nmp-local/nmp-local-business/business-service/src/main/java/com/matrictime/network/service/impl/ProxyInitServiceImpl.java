@@ -65,14 +65,14 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
         try {
             checkParam(req);
             ProxyResp proxyResp = new ProxyResp();
-            List<String> deviceIds = getLocalDeviceIds(proxyResp,req);
+//            List<String> deviceIds = getLocalDeviceIds(proxyResp,req);
             if(!proxyResp.isExist()){
                 return buildResult(proxyResp);
             }
             getStationInfoList(proxyResp);
             getDeviceInfoList(proxyResp);
             getRouteVoList(proxyResp);
-            getlinkRelationVoList(deviceIds,proxyResp);
+            getlinkRelationVoList(proxyResp);
             getOutlinePcInfoList(proxyResp);
             result = buildResult(proxyResp);
         }catch (Exception e){
@@ -199,6 +199,26 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
         }
 
         log.info("route query sucess");
+    }
+
+    /**
+     * 获取所有链路关系
+     */
+    private void getlinkRelationVoList(ProxyResp proxyResp){
+        NmplLinkExample example = new NmplLinkExample();
+        List<NmplLink> links = nmplLinkMapper.selectByExample(example);
+
+        /**
+         * 获取链路的设备类型 通知代理更新对应的表
+         */
+        List<LinkVo> linkVos = new ArrayList<>();
+        for (NmplLink nmplLink : links) {
+            LinkVo linkVo = new LinkVo();
+            BeanUtils.copyProperties(nmplLink,linkVo);
+            linkVos.add(linkVo);
+        }
+        proxyResp.setLinkVos(linkVos);
+        log.info("link query sucess");
     }
 
     /**
