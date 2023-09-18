@@ -34,6 +34,8 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.*;
 
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
+
 
 @Service
 @Slf4j
@@ -49,9 +51,12 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
 
     @Resource
     private NmplBaseStationMapper nmplbaseStationMapper;
+//
+//    @Resource
+//    private NmplLinkRelationMapper nmplLinkRelationMapper;
 
     @Resource
-    private NmplLinkRelationMapper nmplLinkRelationMapper;
+    private NmplLinkMapper nmplLinkMapper;
 
 
     @Resource
@@ -238,24 +243,18 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
 
         String stationId = baseStationInfoRequest.getStationId();
 
-        NmplLinkRelationExample nmplLinkRelationExample = new NmplLinkRelationExample();
-        NmplLinkRelationExample.Criteria criteria = nmplLinkRelationExample.createCriteria();
-        criteria.andMainDeviceIdEqualTo(stationId).andIsExistEqualTo("1");
-        nmplLinkRelationExample.or().andFollowDeviceIdEqualTo(stationId).andIsExistEqualTo("1");
-
-
-        NmplPcDataExample nmplPcDataExample = new NmplPcDataExample();
-        nmplPcDataExample.createCriteria().andStationIdEqualTo(stationId);
+        NmplLinkExample nmplLinkExample = new NmplLinkExample();
+        NmplLinkExample.Criteria criteria = nmplLinkExample.createCriteria();
+        criteria.andMainDeviceIdEqualTo(stationId).andIsExistEqualTo(IS_EXIST);
+        nmplLinkExample.or().andFollowDeviceIdEqualTo(stationId).andIsExistEqualTo(IS_EXIST);
 
         NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
-        nmplStaticRouteExample.createCriteria().andStationIdEqualTo(stationId).andIsExistEqualTo(true);
+        nmplStaticRouteExample.createCriteria().andStationIdEqualTo(stationId).andIsExistEqualTo(IS_EXIST);
 
-        List<NmplLinkRelation> nmplLinkRelations = nmplLinkRelationMapper.selectByExample(nmplLinkRelationExample);
-
-
+        List<NmplLink> nmplLinks = nmplLinkMapper.selectByExample(nmplLinkExample);
         List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
 
-        if(!CollectionUtils.isEmpty(nmplLinkRelations)||!CollectionUtils.isEmpty(nmplStaticRoutes)){
+        if(!CollectionUtils.isEmpty(nmplLinks)||!CollectionUtils.isEmpty(nmplStaticRoutes)){
             throw new SystemException(ErrorMessageContants.DEVICE_IS_ASSOCIATED);
         }
 
