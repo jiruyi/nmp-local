@@ -6,11 +6,10 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.ConfigurationDomainService;
 import com.matrictime.network.dao.mapper.NmplConfigMapper;
+import com.matrictime.network.dao.mapper.NmplDeviceMapper;
 import com.matrictime.network.dao.mapper.NmplReportBusinessMapper;
-import com.matrictime.network.dao.model.NmplConfig;
-import com.matrictime.network.dao.model.NmplConfigExample;
-import com.matrictime.network.dao.model.NmplReportBusiness;
-import com.matrictime.network.dao.model.NmplReportBusinessExample;
+import com.matrictime.network.dao.model.*;
+import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.NmplCompanyInfoVo;
 import com.matrictime.network.request.ConfigurationReq;
@@ -23,12 +22,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
-import static com.matrictime.network.base.exception.ErrorMessageContants.PROHIBIT_REPORT;
-import static com.matrictime.network.base.exception.ErrorMessageContants.REPORT_ERROR;
+import static com.matrictime.network.base.exception.ErrorMessageContants.*;
 import static com.matrictime.network.constant.BusinessConsts.*;
 import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
@@ -42,6 +41,8 @@ public class ConfigurationServiceImpl extends SystemBaseService implements Confi
     private NmplReportBusinessMapper nmplReportBusinessMapper;
     @Autowired
     private NmplConfigMapper nmplConfigMapper;
+    @Resource
+    private NmplDeviceMapper nmplDeviceMapper;
 
 
 
@@ -84,6 +85,18 @@ public class ConfigurationServiceImpl extends SystemBaseService implements Confi
             if(CollectionUtils.isEmpty(nmplReportBusinesses)||CollectionUtils.isEmpty(collectConfigs)){
                 throw new SystemException(PROHIBIT_REPORT);
             }
+            //查询数据采集信息
+            NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
+            nmplDeviceExample.createCriteria().andDeviceTypeEqualTo(String.valueOf(DeviceTypeEnum.DATA_BASE)).andIsExistEqualTo(true);
+            List<NmplDevice> nmplDeviceList = nmplDeviceMapper.selectByExample(nmplDeviceExample);
+            if(nmplDeviceList.isEmpty()){
+                throw new SystemException(DATACOLLECT_NOT_EXIST);
+            }
+            List<String> ipList=  new ArrayList<>();
+            for (NmplDevice nmplDevice : nmplDeviceList) {
+                ipList.add(nmplDevice.getLanIp());
+            }
+
             List<String> codeList = new ArrayList<>();
             JSONObject jsonObject = new JSONObject();
             //根据业务code来上报对应的服务
@@ -91,15 +104,17 @@ public class ConfigurationServiceImpl extends SystemBaseService implements Confi
                 codeList.add(nmplReportBusiness.getBusinessCode());
             }
             jsonObject.put("codeList",codeList);
-            //发送指令到数据采集
-            String url = HTTP_TITLE+LOCAL_IP+KEY_SPLIT+COLLEECT_REPORT_URL;
-            String postResp = HttpClientUtil.post(url,jsonObject.toJSONString());
-            JSONObject json = JSONObject.parseObject(postResp);
-            if (json != null) {
-                Object success = json.get(KEY_SUCCESS);
-                if (success != null && success instanceof Boolean) {
-                    if (!(Boolean) success) {
-                        throw new SystemException(REPORT_ERROR);
+            for (String ip : ipList) {
+                //发送指令到数据采集
+                String url = HTTP_TITLE+ip+KEY_SPLIT+COLLEECT_REPORT_URL;
+                String postResp = HttpClientUtil.post(url,jsonObject.toJSONString());
+                JSONObject json = JSONObject.parseObject(postResp);
+                if (json != null) {
+                    Object success = json.get(KEY_SUCCESS);
+                    if (success != null && success instanceof Boolean) {
+                        if (!(Boolean) success) {
+                            throw new SystemException(REPORT_ERROR);
+                        }
                     }
                 }
             }
