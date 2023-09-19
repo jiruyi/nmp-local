@@ -199,6 +199,44 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         }
     }
 
+    /**
+     * 插入边界基站校验
+     * @param borderBaseStationInfoRequest
+     */
+    public void insertCheckBorder(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        //同设备ip不可相同
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(borderBaseStationInfoRequest.getLanIp()).andIsExistEqualTo(true);
+        nmplBaseStationInfoExample.or().andStationNetworkIdEqualTo(borderBaseStationInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
+        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+
+        NmplDeviceExtraInfoExample nmplDeviceExtraInfoExample = new NmplDeviceExtraInfoExample();
+        nmplDeviceExtraInfoExample.createCriteria().andLanIpEqualTo(borderBaseStationInfoRequest.getLanIp()).andIsExistEqualTo(true).andDeviceTypeEqualTo("00");
+        nmplDeviceExtraInfoExample.or().andStationNetworkIdEqualTo(borderBaseStationInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
+        List<NmplDeviceExtraInfo> nmplDeviceExtraInfos =  nmplDeviceExtraInfoMapper.selectByExample(nmplDeviceExtraInfoExample);
+
+        if(!CollectionUtils.isEmpty(nmplBaseStationInfos)||!CollectionUtils.isEmpty(nmplDeviceExtraInfos)){
+            throw new SystemException("同设备ip或入网码重复");
+        }
+
+        //不同设备 ip+端口不能相同
+        NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+        nmplDeviceInfoExample.createCriteria().andLanIpEqualTo(borderBaseStationInfoRequest.getLanIp())
+                .andLanPortEqualTo(borderBaseStationInfoRequest.getLanPort()).andIsExistEqualTo(true);
+        nmplDeviceInfoExample.or().andStationNetworkIdEqualTo(borderBaseStationInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
+        List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+
+        nmplDeviceExtraInfoExample.clear();
+        nmplDeviceExtraInfoExample.createCriteria().andLanIpEqualTo(borderBaseStationInfoRequest.getLanIp())
+                .andLanPortEqualTo(borderBaseStationInfoRequest.getLanPort()).andIsExistEqualTo(true).andDeviceTypeNotEqualTo("00");
+        nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(nmplDeviceExtraInfoExample);
+
+        if(!CollectionUtils.isEmpty(nmplDeviceInfos)||!CollectionUtils.isEmpty(nmplDeviceExtraInfos)){
+            throw new SystemException("不同设备ip+端口或入网码重复");
+        }
+    }
+
+
 
     @Override
     public void updateCheckUnique(BaseStationInfoRequest baseStationInfoRequest) {
@@ -237,6 +275,49 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
             throw new SystemException("不同设备ip+端口或入网码重复");
         }
     }
+
+
+    /**
+     * 边界基站更新校验
+     * @param borderBaseStationInfoRequest
+     */
+    public void updateCheckBorder(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        //修改时不能修改设备号 以及ip
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        nmplBaseStationInfoExample.createCriteria().andStationNetworkIdEqualTo(borderBaseStationInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
+        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+
+        NmplDeviceExtraInfoExample nmplDeviceExtraInfoExample = new NmplDeviceExtraInfoExample();
+        nmplDeviceExtraInfoExample.or().andStationNetworkIdEqualTo(borderBaseStationInfoRequest.getStationNetworkId()).andIsExistEqualTo(true).andDeviceTypeEqualTo("00");
+        List<NmplDeviceExtraInfo> nmplDeviceExtraInfos =  nmplDeviceExtraInfoMapper.selectByExample(nmplDeviceExtraInfoExample);
+
+        if(!CollectionUtils.isEmpty(nmplBaseStationInfos)){
+            //如果被修改的设备是自己
+            if(!nmplBaseStationInfos.get(0).getStationId().equals(borderBaseStationInfoRequest.getStationId())){
+                throw new SystemException("基站入网码重复");
+            }
+        }
+        if(!CollectionUtils.isEmpty(nmplDeviceExtraInfos)){
+            throw new SystemException("备用设备入网码重复");
+        }
+
+        //不同设备 ip+端口不能相同
+        NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+        nmplDeviceInfoExample.createCriteria().andLanIpEqualTo(borderBaseStationInfoRequest.getLanIp())
+                .andLanPortEqualTo(borderBaseStationInfoRequest.getLanPort()).andIsExistEqualTo(true);
+        nmplDeviceInfoExample.or().andStationNetworkIdEqualTo(borderBaseStationInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
+        List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+
+        nmplDeviceExtraInfoExample.clear();
+        nmplDeviceExtraInfoExample.createCriteria().andLanIpEqualTo(borderBaseStationInfoRequest.getLanIp())
+                .andLanPortEqualTo(borderBaseStationInfoRequest.getLanPort()).andIsExistEqualTo(true).andDeviceTypeNotEqualTo("00");
+        nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(nmplDeviceExtraInfoExample);
+
+        if(!CollectionUtils.isEmpty(nmplDeviceInfos)||!CollectionUtils.isEmpty(nmplDeviceExtraInfos)){
+            throw new SystemException("不同设备ip+端口或入网码重复");
+        }
+    }
+
 
     @Override
     public void deleteCheck(BaseStationInfoRequest baseStationInfoRequest) {
@@ -483,9 +564,8 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
      */
     @Override
     public int insertBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
-
-
-
+        //插入校验
+        insertCheckBorder(borderBaseStationInfoRequest);
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationInfo(baseStationInfoRequest);
         if(!CollectionUtils.isEmpty(baseStationInfoVoList)){
@@ -515,6 +595,9 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
      */
     @Override
     public int updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+
+        //更新校验
+        updateCheckBorder(borderBaseStationInfoRequest);
         BaseStationInfoRequest baseStationInfoRequest = new BaseStationInfoRequest();
         List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationInfo(baseStationInfoRequest);
         for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
