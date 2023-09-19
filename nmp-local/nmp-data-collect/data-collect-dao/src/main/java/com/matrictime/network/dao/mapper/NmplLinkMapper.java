@@ -2,9 +2,8 @@ package com.matrictime.network.dao.mapper;
 
 import com.matrictime.network.dao.model.NmplLink;
 import com.matrictime.network.dao.model.NmplLinkExample;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface NmplLinkMapper {
     long countByExample(NmplLinkExample example);

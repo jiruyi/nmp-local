@@ -1,13 +1,12 @@
 package com.matrictime.network.dao.model;
 
-import lombok.Data;
-
 import java.util.Date;
+import lombok.Data;
 
 /**
  * 链路信息表
- * @author   hexu
- * @date   2023-09-06
+ * @author   cxk
+ * @date   2023-09-18
  */
 @Data
 public class NmplLink {
@@ -90,6 +89,11 @@ public class NmplLink {
      * 1:存在 0:删除
      */
     private Boolean isExist;
+
+    /**
+     * 从设备名称
+     */
+    private String followDeviceName;
 
     public Long getId() {
         return id;
@@ -217,5 +221,13 @@ public class NmplLink {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public String getFollowDeviceName() {
+        return followDeviceName;
+    }
+
+    public void setFollowDeviceName(String followDeviceName) {
+        this.followDeviceName = followDeviceName == null ? null : followDeviceName.trim();
     }
 }

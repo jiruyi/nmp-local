@@ -121,6 +121,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         nmplLinkMapper.insertSelective(link);
                         // 同步代理
                         try {
+                            vo.setId(link.getId());
                             syncLink(vo);
                         }catch (Exception e){
                             log.error("LinkServiceImpl.editLink Exception:{}",e);
