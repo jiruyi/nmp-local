@@ -128,7 +128,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{isExist,jdbcType=BIT}, #{followDeviceName,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplLink">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"  parameterType="com.matrictime.network.dao.model.NmplLink">
     insert into nmpl_link
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
