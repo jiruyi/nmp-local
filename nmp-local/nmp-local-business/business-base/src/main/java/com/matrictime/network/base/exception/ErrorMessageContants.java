@@ -112,4 +112,6 @@ public class ErrorMessageContants {
 	public static final String PROHIBIT_REPORT="上报项为空或禁止上报时,无法手动上报";
 
 	public static final String REPORT_ERROR = "上报失败,请稍后重试";
+
+	public static final String DATACOLLECT_NOT_EXIST = "数据采集设备不存在";
 }
