@@ -24,6 +24,11 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(sessionHandlerInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/**/user/login/**");
+                .excludePathPatterns("/**/user/login/**")
+                .excludePathPatterns("/**/dataCollect/selectCompanyLoadData/**")
+                .excludePathPatterns("/**/companyHeartbeat/insertCompanyHeartbeat/**")
+                .excludePathPatterns("/**/companyStationSummary/receiveStationSummary/**")
+                .excludePathPatterns("/**/companyTerminalUser/receiveTerminalUser/**")
+                .excludePathPatterns("/**/dataCollect/insertDataCollect/**");
     }
 }
