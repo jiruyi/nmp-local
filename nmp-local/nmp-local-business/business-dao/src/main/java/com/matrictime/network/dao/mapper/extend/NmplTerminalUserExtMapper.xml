@@ -11,6 +11,7 @@
     </resultMap>
     <select id="selectTerminalUser" parameterType="com.matrictime.network.request.TerminalUserResquest" resultMap="BaseResultMap">
         SELECT
+            DISTINCT
             a.terminal_network_id,
             a.parent_device_id,
             a.upload_time,
