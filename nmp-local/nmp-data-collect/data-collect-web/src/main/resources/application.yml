@@ -45,7 +45,7 @@ spring:
       max-request-size: 215MB
   redis:
     database: 0
-    host: 192.168.72.14
+    host: 192.168.72.225
     port: 6379
     password: 123456
     timeout: 5000
@@ -71,16 +71,6 @@ eureka:
   client:
     register-with-eureka: false #客户端注册进eureka服务列表内
     fetch-registry: false
-#    service-url:
-#       defaultZone: http://192.168.72.105:7002/eureka/
-#  instance:
-#    instance-id: nmp-center-business
-#    prefer-ip-address: true     #访问路径可以显示IP地址
-
-netmanage:
-  ip: http://192.168.72.14
-  port: 8001
-
 
 info: 
   app.name: nmp-data-collect
