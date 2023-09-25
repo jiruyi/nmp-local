@@ -834,6 +834,216 @@ public class NmplStaticRouteExample {
             addCriterion("ip_v6 not between", value1, value2, "ipV6");
             return (Criteria) this;
         }
+
+        public Criteria andCompanyNameIsNull() {
+            addCriterion("company_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameIsNotNull() {
+            addCriterion("company_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameEqualTo(String value) {
+            addCriterion("company_name =", value, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameNotEqualTo(String value) {
+            addCriterion("company_name <>", value, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameGreaterThan(String value) {
+            addCriterion("company_name >", value, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameGreaterThanOrEqualTo(String value) {
+            addCriterion("company_name >=", value, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameLessThan(String value) {
+            addCriterion("company_name <", value, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameLessThanOrEqualTo(String value) {
+            addCriterion("company_name <=", value, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameLike(String value) {
+            addCriterion("company_name like", value, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameNotLike(String value) {
+            addCriterion("company_name not like", value, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameIn(List<String> values) {
+            addCriterion("company_name in", values, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameNotIn(List<String> values) {
+            addCriterion("company_name not in", values, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameBetween(String value1, String value2) {
+            addCriterion("company_name between", value1, value2, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyNameNotBetween(String value1, String value2) {
+            addCriterion("company_name not between", value1, value2, "companyName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdIsNull() {
+            addCriterion("company_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdIsNotNull() {
+            addCriterion("company_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdEqualTo(String value) {
+            addCriterion("company_id =", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdNotEqualTo(String value) {
+            addCriterion("company_id <>", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdGreaterThan(String value) {
+            addCriterion("company_id >", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdGreaterThanOrEqualTo(String value) {
+            addCriterion("company_id >=", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdLessThan(String value) {
+            addCriterion("company_id <", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdLessThanOrEqualTo(String value) {
+            addCriterion("company_id <=", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdLike(String value) {
+            addCriterion("company_id like", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdNotLike(String value) {
+            addCriterion("company_id not like", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdIn(List<String> values) {
+            addCriterion("company_id in", values, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdNotIn(List<String> values) {
+            addCriterion("company_id not in", values, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdBetween(String value1, String value2) {
+            addCriterion("company_id between", value1, value2, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdNotBetween(String value1, String value2) {
+            addCriterion("company_id not between", value1, value2, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameIsNull() {
+            addCriterion("server_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameIsNotNull() {
+            addCriterion("server_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameEqualTo(String value) {
+            addCriterion("server_name =", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameNotEqualTo(String value) {
+            addCriterion("server_name <>", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameGreaterThan(String value) {
+            addCriterion("server_name >", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameGreaterThanOrEqualTo(String value) {
+            addCriterion("server_name >=", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameLessThan(String value) {
+            addCriterion("server_name <", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameLessThanOrEqualTo(String value) {
+            addCriterion("server_name <=", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameLike(String value) {
+            addCriterion("server_name like", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameNotLike(String value) {
+            addCriterion("server_name not like", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameIn(List<String> values) {
+            addCriterion("server_name in", values, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameNotIn(List<String> values) {
+            addCriterion("server_name not in", values, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameBetween(String value1, String value2) {
+            addCriterion("server_name between", value1, value2, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameNotBetween(String value1, String value2) {
+            addCriterion("server_name not between", value1, value2, "serverName");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

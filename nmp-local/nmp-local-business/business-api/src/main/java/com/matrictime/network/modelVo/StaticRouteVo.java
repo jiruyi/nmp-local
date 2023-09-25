@@ -21,24 +21,14 @@ public class StaticRouteVo {
     private String routeId;
 
     /**
-     * 基站id
-     */
-    private String stationId;
-
-    /**
      * 设备入网码
      */
     private String networkId;
 
     /**
-     * 服务器ip
+     * 服务器ip_v6
      */
     private String serverIp;
-
-    /**
-     * ipV6
-     */
-    private String ipV6;
 
     /**
      * 删除标志（1代表存在 0代表删除）
@@ -64,6 +54,36 @@ public class StaticRouteVo {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 基站id
+     */
+    private String stationId;
+
+    /**
+     * 服务器ip_v6
+     */
+    private String ipV6;
+
+    /**
+     * 小区名称
+     */
+    private String companyName;
+
+    /**
+     * 小区id
+     */
+    private String companyId;
+
+    /**
+     * 服务名称
+     */
+    private String serverName;
+
+    /**
+     * 设备入网码
+     */
+    private byte[] byteNetworkId;
 
 
     private String routeNetworkId;

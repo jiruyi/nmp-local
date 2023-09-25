@@ -21,7 +21,7 @@ public class BusinessRouteVo {
     private String routeId;
 
     /**
-     * 业务类型
+     * 业务类型 11:根密钥中心 31:指控中心 41:计费中心
      */
     private String businessType;
 
@@ -31,14 +31,9 @@ public class BusinessRouteVo {
     private String networkId;
 
     /**
-     * ip
+     * ip_v4
      */
     private String ip;
-
-    /**
-     * ipV6
-     */
-    private String ipV6;
 
     /**
      * 创建者
@@ -59,4 +54,19 @@ public class BusinessRouteVo {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 1:存在 0:删除
+     */
+    private Boolean isExist;
+
+    /**
+     * ip_v6
+     */
+    private String ipV6;
+
+    /**
+     * 设备入网码
+     */
+    private byte[] byteNetworkId;
 }

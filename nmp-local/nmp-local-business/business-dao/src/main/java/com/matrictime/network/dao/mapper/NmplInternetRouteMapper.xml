@@ -12,6 +12,8 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
     <result column="ip_v6" jdbcType="VARCHAR" property="ipV6" />
+    <result column="next_network_id" jdbcType="VARCHAR" property="nextNetworkId" />
+    <result column="hop_count" jdbcType="VARCHAR" property="hopCount" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplInternetRoute">
     <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
@@ -76,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, route_id, network_id, boundary_station_ip, create_user, create_time, update_user, 
-    update_time, is_exist, ip_v6
+    update_time, is_exist, ip_v6, next_network_id, hop_count
   </sql>
   <sql id="Blob_Column_List">
     byte_network_id
@@ -135,11 +137,13 @@
     insert into nmpl_internet_route (id, route_id, network_id, 
       boundary_station_ip, create_user, create_time, 
       update_user, update_time, is_exist, 
-      ip_v6, byte_network_id)
+      ip_v6, next_network_id, hop_count, 
+      byte_network_id)
     values (#{id,jdbcType=BIGINT}, #{routeId,jdbcType=VARCHAR}, #{networkId,jdbcType=VARCHAR}, 
       #{boundaryStationIp,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}, 
-      #{ipV6,jdbcType=VARCHAR}, #{byteNetworkId,jdbcType=LONGVARBINARY})
+      #{ipV6,jdbcType=VARCHAR}, #{nextNetworkId,jdbcType=VARCHAR}, #{hopCount,jdbcType=VARCHAR}, 
+      #{byteNetworkId,jdbcType=LONGVARBINARY})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplInternetRoute">
     insert into nmpl_internet_route
@@ -173,6 +177,12 @@
       </if>
       <if test="ipV6 != null">
         ip_v6,
+      </if>
+      <if test="nextNetworkId != null">
+        next_network_id,
+      </if>
+      <if test="hopCount != null">
+        hop_count,
       </if>
       <if test="byteNetworkId != null">
         byte_network_id,
@@ -208,6 +218,12 @@
       </if>
       <if test="ipV6 != null">
         #{ipV6,jdbcType=VARCHAR},
+      </if>
+      <if test="nextNetworkId != null">
+        #{nextNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="hopCount != null">
+        #{hopCount,jdbcType=VARCHAR},
       </if>
       <if test="byteNetworkId != null">
         #{byteNetworkId,jdbcType=LONGVARBINARY},
@@ -253,6 +269,12 @@
       <if test="record.ipV6 != null">
         ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
       </if>
+      <if test="record.nextNetworkId != null">
+        next_network_id = #{record.nextNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hopCount != null">
+        hop_count = #{record.hopCount,jdbcType=VARCHAR},
+      </if>
       <if test="record.byteNetworkId != null">
         byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
@@ -273,6 +295,8 @@
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       is_exist = #{record.isExist,jdbcType=BIT},
       ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
+      next_network_id = #{record.nextNetworkId,jdbcType=VARCHAR},
+      hop_count = #{record.hopCount,jdbcType=VARCHAR},
       byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -289,7 +313,9 @@
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       is_exist = #{record.isExist,jdbcType=BIT},
-      ip_v6 = #{record.ipV6,jdbcType=VARCHAR}
+      ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
+      next_network_id = #{record.nextNetworkId,jdbcType=VARCHAR},
+      hop_count = #{record.hopCount,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -324,6 +350,12 @@
       <if test="ipV6 != null">
         ip_v6 = #{ipV6,jdbcType=VARCHAR},
       </if>
+      <if test="nextNetworkId != null">
+        next_network_id = #{nextNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="hopCount != null">
+        hop_count = #{hopCount,jdbcType=VARCHAR},
+      </if>
       <if test="byteNetworkId != null">
         byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
@@ -341,6 +373,8 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       is_exist = #{isExist,jdbcType=BIT},
       ip_v6 = #{ipV6,jdbcType=VARCHAR},
+      next_network_id = #{nextNetworkId,jdbcType=VARCHAR},
+      hop_count = #{hopCount,jdbcType=VARCHAR},
       byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -354,7 +388,9 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       is_exist = #{isExist,jdbcType=BIT},
-      ip_v6 = #{ipV6,jdbcType=VARCHAR}
+      ip_v6 = #{ipV6,jdbcType=VARCHAR},
+      next_network_id = #{nextNetworkId,jdbcType=VARCHAR},
+      hop_count = #{hopCount,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -78,10 +78,7 @@ public class BusinessRouteDomainServiceImpl implements BusinessRouteDomainServic
         NmplBusinessRouteExample.Criteria criteria = nmplBusinessRouteExample.createCriteria();
         nmplBusinessRouteExample.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(businessRouteRequest.getBusinessType())){
-            criteria.andBusinessTypeLike("%"+businessRouteRequest.getBusinessType()+"%");
-        }
-        if(!StringUtils.isEmpty(businessRouteRequest.getIp())){
-            criteria.andIpLike("%"+businessRouteRequest.getIp()+"%");
+            criteria.andBusinessTypeEqualTo(businessRouteRequest.getBusinessType());
         }
         criteria.andIsExistEqualTo(true);
         //分页查询数据

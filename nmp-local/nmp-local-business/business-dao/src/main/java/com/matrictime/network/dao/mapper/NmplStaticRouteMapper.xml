@@ -13,6 +13,9 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="station_id" jdbcType="VARCHAR" property="stationId" />
     <result column="ip_v6" jdbcType="VARCHAR" property="ipV6" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="server_name" jdbcType="VARCHAR" property="serverName" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplStaticRoute">
     <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
@@ -77,7 +80,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, route_id, network_id, server_ip, is_exist, create_user, create_time, update_user, 
-    update_time, station_id, ip_v6
+    update_time, station_id, ip_v6, company_name, company_id, server_name
   </sql>
   <sql id="Blob_Column_List">
     byte_network_id
@@ -136,12 +139,14 @@
     insert into nmpl_static_route (id, route_id, network_id, 
       server_ip, is_exist, create_user, 
       create_time, update_user, update_time, 
-      station_id, ip_v6, byte_network_id
+      station_id, ip_v6, company_name, 
+      company_id, server_name, byte_network_id
       )
     values (#{id,jdbcType=BIGINT}, #{routeId,jdbcType=VARCHAR}, #{networkId,jdbcType=VARCHAR}, 
       #{serverIp,jdbcType=VARCHAR}, #{isExist,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{stationId,jdbcType=VARCHAR}, #{ipV6,jdbcType=VARCHAR}, #{byteNetworkId,jdbcType=LONGVARBINARY}
+      #{stationId,jdbcType=VARCHAR}, #{ipV6,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, 
+      #{companyId,jdbcType=VARCHAR}, #{serverName,jdbcType=VARCHAR}, #{byteNetworkId,jdbcType=LONGVARBINARY}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplStaticRoute">
@@ -180,6 +185,15 @@
       <if test="ipV6 != null">
         ip_v6,
       </if>
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="serverName != null">
+        server_name,
+      </if>
       <if test="byteNetworkId != null">
         byte_network_id,
       </if>
@@ -217,6 +231,15 @@
       </if>
       <if test="ipV6 != null">
         #{ipV6,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="serverName != null">
+        #{serverName,jdbcType=VARCHAR},
       </if>
       <if test="byteNetworkId != null">
         #{byteNetworkId,jdbcType=LONGVARBINARY},
@@ -265,6 +288,15 @@
       <if test="record.ipV6 != null">
         ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
       </if>
+      <if test="record.companyName != null">
+        company_name = #{record.companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.companyId != null">
+        company_id = #{record.companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serverName != null">
+        server_name = #{record.serverName,jdbcType=VARCHAR},
+      </if>
       <if test="record.byteNetworkId != null">
         byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
@@ -286,6 +318,9 @@
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       station_id = #{record.stationId,jdbcType=VARCHAR},
       ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
+      company_name = #{record.companyName,jdbcType=VARCHAR},
+      company_id = #{record.companyId,jdbcType=VARCHAR},
+      server_name = #{record.serverName,jdbcType=VARCHAR},
       byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -303,7 +338,10 @@
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       station_id = #{record.stationId,jdbcType=VARCHAR},
-      ip_v6 = #{record.ipV6,jdbcType=VARCHAR}
+      ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
+      company_name = #{record.companyName,jdbcType=VARCHAR},
+      company_id = #{record.companyId,jdbcType=VARCHAR},
+      server_name = #{record.serverName,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -341,6 +379,15 @@
       <if test="ipV6 != null">
         ip_v6 = #{ipV6,jdbcType=VARCHAR},
       </if>
+      <if test="companyName != null">
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="serverName != null">
+        server_name = #{serverName,jdbcType=VARCHAR},
+      </if>
       <if test="byteNetworkId != null">
         byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
@@ -359,6 +406,9 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       station_id = #{stationId,jdbcType=VARCHAR},
       ip_v6 = #{ipV6,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      company_id = #{companyId,jdbcType=VARCHAR},
+      server_name = #{serverName,jdbcType=VARCHAR},
       byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -373,7 +423,10 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       station_id = #{stationId,jdbcType=VARCHAR},
-      ip_v6 = #{ipV6,jdbcType=VARCHAR}
+      ip_v6 = #{ipV6,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      company_id = #{companyId,jdbcType=VARCHAR},
+      server_name = #{serverName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

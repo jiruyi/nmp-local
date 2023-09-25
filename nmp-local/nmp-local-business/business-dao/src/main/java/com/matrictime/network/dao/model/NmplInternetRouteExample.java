@@ -764,6 +764,146 @@ public class NmplInternetRouteExample {
             addCriterion("ip_v6 not between", value1, value2, "ipV6");
             return (Criteria) this;
         }
+
+        public Criteria andNextNetworkIdIsNull() {
+            addCriterion("next_network_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdIsNotNull() {
+            addCriterion("next_network_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdEqualTo(String value) {
+            addCriterion("next_network_id =", value, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdNotEqualTo(String value) {
+            addCriterion("next_network_id <>", value, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdGreaterThan(String value) {
+            addCriterion("next_network_id >", value, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdGreaterThanOrEqualTo(String value) {
+            addCriterion("next_network_id >=", value, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdLessThan(String value) {
+            addCriterion("next_network_id <", value, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdLessThanOrEqualTo(String value) {
+            addCriterion("next_network_id <=", value, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdLike(String value) {
+            addCriterion("next_network_id like", value, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdNotLike(String value) {
+            addCriterion("next_network_id not like", value, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdIn(List<String> values) {
+            addCriterion("next_network_id in", values, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdNotIn(List<String> values) {
+            addCriterion("next_network_id not in", values, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdBetween(String value1, String value2) {
+            addCriterion("next_network_id between", value1, value2, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextNetworkIdNotBetween(String value1, String value2) {
+            addCriterion("next_network_id not between", value1, value2, "nextNetworkId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountIsNull() {
+            addCriterion("hop_count is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountIsNotNull() {
+            addCriterion("hop_count is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountEqualTo(String value) {
+            addCriterion("hop_count =", value, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountNotEqualTo(String value) {
+            addCriterion("hop_count <>", value, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountGreaterThan(String value) {
+            addCriterion("hop_count >", value, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountGreaterThanOrEqualTo(String value) {
+            addCriterion("hop_count >=", value, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountLessThan(String value) {
+            addCriterion("hop_count <", value, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountLessThanOrEqualTo(String value) {
+            addCriterion("hop_count <=", value, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountLike(String value) {
+            addCriterion("hop_count like", value, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountNotLike(String value) {
+            addCriterion("hop_count not like", value, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountIn(List<String> values) {
+            addCriterion("hop_count in", values, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountNotIn(List<String> values) {
+            addCriterion("hop_count not in", values, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountBetween(String value1, String value2) {
+            addCriterion("hop_count between", value1, value2, "hopCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHopCountNotBetween(String value1, String value2) {
+            addCriterion("hop_count not between", value1, value2, "hopCount");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
