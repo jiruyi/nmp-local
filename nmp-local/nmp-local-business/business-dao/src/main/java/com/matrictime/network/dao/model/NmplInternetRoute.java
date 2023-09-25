@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 出网路由
  * @author   hexu
- * @date   2022-10-27
+ * @date   2023-09-22
  */
 @Data
 public class NmplInternetRoute {
@@ -59,6 +59,16 @@ public class NmplInternetRoute {
      * 边界基站ip_v6
      */
     private String ipV6;
+
+    /**
+     * 下一条入网码
+     */
+    private String nextNetworkId;
+
+    /**
+     * 跳数
+     */
+    private String hopCount;
 
     /**
      * 设备入网码
@@ -143,6 +153,22 @@ public class NmplInternetRoute {
 
     public void setIpV6(String ipV6) {
         this.ipV6 = ipV6 == null ? null : ipV6.trim();
+    }
+
+    public String getNextNetworkId() {
+        return nextNetworkId;
+    }
+
+    public void setNextNetworkId(String nextNetworkId) {
+        this.nextNetworkId = nextNetworkId == null ? null : nextNetworkId.trim();
+    }
+
+    public String getHopCount() {
+        return hopCount;
+    }
+
+    public void setHopCount(String hopCount) {
+        this.hopCount = hopCount == null ? null : hopCount.trim();
     }
 
     public byte[] getByteNetworkId() {

@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 业务服务路由
  * @author   hexu
- * @date   2022-10-27
+ * @date   2023-09-22
  */
 @Data
 public class NmplBusinessRoute {
@@ -21,7 +21,7 @@ public class NmplBusinessRoute {
     private String routeId;
 
     /**
-     * 业务类型
+     * 业务类型 11:根密钥中心 31:指控中心 41:计费中心
      */
     private String businessType;
 

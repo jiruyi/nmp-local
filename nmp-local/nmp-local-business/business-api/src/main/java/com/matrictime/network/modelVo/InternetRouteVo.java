@@ -26,14 +26,9 @@ public class InternetRouteVo {
     private String networkId;
 
     /**
-     * 边界基站ip
+     * 边界基站ip_v4
      */
     private String boundaryStationIp;
-
-    /**
-     * ipV6
-     */
-    private String ipV6;
 
     /**
      * 创建者
@@ -54,4 +49,29 @@ public class InternetRouteVo {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 1:存在 0:删除
+     */
+    private Boolean isExist;
+
+    /**
+     * 边界基站ip_v6
+     */
+    private String ipV6;
+
+    /**
+     * 下一条入网码
+     */
+    private String nextNetworkId;
+
+    /**
+     * 跳数
+     */
+    private String hopCount;
+
+    /**
+     * 设备入网码
+     */
+    private byte[] byteNetworkId;
 }

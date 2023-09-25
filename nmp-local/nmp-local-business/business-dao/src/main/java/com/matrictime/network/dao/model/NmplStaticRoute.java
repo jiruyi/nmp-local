@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 静态路由
  * @author   hexu
- * @date   2022-10-27
+ * @date   2023-09-22
  */
 @Data
 public class NmplStaticRoute {
@@ -64,6 +64,21 @@ public class NmplStaticRoute {
      * 服务器ip_v6
      */
     private String ipV6;
+
+    /**
+     * 小区名称
+     */
+    private String companyName;
+
+    /**
+     * 小区id
+     */
+    private String companyId;
+
+    /**
+     * 服务名称
+     */
+    private String serverName;
 
     /**
      * 设备入网码
@@ -156,6 +171,30 @@ public class NmplStaticRoute {
 
     public void setIpV6(String ipV6) {
         this.ipV6 = ipV6 == null ? null : ipV6.trim();
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName == null ? null : companyName.trim();
+    }
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId == null ? null : companyId.trim();
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName == null ? null : serverName.trim();
     }
 
     public byte[] getByteNetworkId() {
