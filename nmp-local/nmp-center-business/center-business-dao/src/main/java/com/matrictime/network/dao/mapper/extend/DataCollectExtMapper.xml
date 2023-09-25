@@ -43,16 +43,23 @@
         </if>
         and
             (
-                SELECT
-                    FROM_UNIXTIME(UNIX_TIMESTAMP(CAST(SYSDATE()AS DATE) - INTERVAL 1 DAY))
-                    &lt;= a.upload_time
+        SELECT
+        FROM_UNIXTIME(
+        UNIX_TIMESTAMP(
+        CAST(SYSDATE() AS DATE)
+        )
+        )
+        &lt;= a.upload_time
             )
         and
             (
-                SELECT
-                    FROM_UNIXTIME(UNIX_TIMESTAMP(CAST(SYSDATE() AS DATE)))
+        FROM_UNIXTIME(
+        UNIX_TIMESTAMP(CAST(SYSDATE() AS DATE) + INTERVAL 1 DAY)
+        )
                     &gt;= a.upload_time
             )
+
+
     </select>
     <insert id="insertData" parameterType="com.matrictime.network.modelVo.DataCollectVo">
         insert into nmpl_data_collect ( sum_number, company_network_id,
