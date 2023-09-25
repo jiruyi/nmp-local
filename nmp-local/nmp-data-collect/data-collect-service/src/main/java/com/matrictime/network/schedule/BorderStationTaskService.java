@@ -120,15 +120,6 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
                 log.info("borderStationPush nettyClient.sendMsg error :{}", channelFuture.cause());
                 return;
             }
-            if(channelFuture.isSuccess()){
-
-                //修改nmpl_data_push_record 数据推送记录表
-                Long maxBorderStationId = stationSummaryVo.getId();
-                log.info("此次推送的最大 border_station_id is :{}",maxBorderStationId);
-                summaryDomainService.insertDataPushRecord(maxBorderStationId, BusinessDataEnum.BorderStation.getTableName());
-
-                log.info("BorderStationTaskService this time query data count：{}",stationSummaryVo);
-            }
         }
 
 

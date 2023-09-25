@@ -118,13 +118,6 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
                 log.info("systemHeartPush nettyClient.sendMsg error :{}", channelFuture.cause());
                 return;
             }
-            if(channelFuture.isSuccess()){
-                //修改nmpl_data_push_record 数据推送记录表
-                Long maxSystemHeartId = stationSummaryVo.getId();
-                log.info("此次推送的最大 system_heart_id is :{}",maxSystemHeartId);
-                summaryDomainService.insertDataPushRecord(maxSystemHeartId, BusinessDataEnum.SystemHeart.getTableName());
-                log.info("SystemHeartTaskService this time query data count：{}",stationSummaryVo);
-            }
         }
 
 

@@ -118,13 +118,6 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
                 log.info("terminalUserPush nettyClient.sendMsg error :{}", channelFuture.cause());
                 return;
             }
-            if(channelFuture.isSuccess()){
-                //修改nmpl_data_push_record 数据推送记录表
-                Long maxTerminalUserId = terminalUserVoList.stream().max(Comparator.comparingLong(TerminalUserVo::getId))
-                        .get().getId();
-                log.info("此次推送的最大 terminal_user_id is :{}",maxTerminalUserId);
-                summaryDomainService.insertDataPushRecord(maxTerminalUserId, BusinessDataEnum.TerminalUser.getTableName());
-            }
         }
 
     }

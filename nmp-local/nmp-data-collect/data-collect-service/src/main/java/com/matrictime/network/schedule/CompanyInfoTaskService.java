@@ -122,14 +122,6 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
                     log.info("companyInfoPush  nettyClient.sendMsg error :{}", channelFuture.cause());
                     return;
                 }
-                if(channelFuture.isSuccess()){
-
-                    //修改nmpl_data_push_record 数据推送记录表
-                    Long maxCompanyId = companyInfoVos.stream().max(Comparator.comparingLong(CompanyInfoVo::getId))
-                            .get().getId();
-                    log.info("此次推送的最大 company_id is :{}",maxCompanyId);
-                    summaryDomainService.insertDataPushRecord(maxCompanyId, BusinessDataEnum.CompanyInfo.getTableName());
-                }
             }
 
         } catch (Exception e) {

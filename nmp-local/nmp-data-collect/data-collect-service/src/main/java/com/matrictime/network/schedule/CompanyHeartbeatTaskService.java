@@ -119,17 +119,6 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
                 log.info("companyHeartbeatPush  nettyClient.sendMsg error :{}", channelFuture.cause());
                 return;
             }
-            if (channelFuture.isSuccess()) {
-                Long maxCompanyHeartId = list.stream().max(Comparator.comparingLong(CompanyHeartbeatVo::getId))
-                        .get().getId();
-                log.info("此次推送的最大 company_heart_id is :{}", maxCompanyHeartId);
-
-                heartbeatDomainService.insertDataPushRecord(maxCompanyHeartId, BusinessDataEnum.CompanyHeartbeat.getTableName());
-
-                log.info("CompanyHeartbeatTaskService this time query data count：{}", list.size());
-            }
-
-
         }
 
     }

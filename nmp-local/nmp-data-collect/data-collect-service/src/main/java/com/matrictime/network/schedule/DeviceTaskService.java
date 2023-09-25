@@ -118,17 +118,6 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
                 log.info("devicePush nettyClient.sendMsg error :{}", channelFuture.cause());
                 return;
             }
-            if (channelFuture.isSuccess()) {
-                log.info("devicePush this time query data count：{}",stationSummaryVo);
-                //修改nmpl_data_push_record 数据推送记录表
-                Long maxDeviceId = stationSummaryVo.getId();
-                log.info("此次推送的最大 device_id is :{}",maxDeviceId);
-                summaryDomainService.insertDataPushRecord(maxDeviceId, BusinessDataEnum.Device.getTableName());
-
-                log.info("DeviceTaskService this time query data count：{}",stationSummaryVo);
-            }
-
-
         }
 
 
