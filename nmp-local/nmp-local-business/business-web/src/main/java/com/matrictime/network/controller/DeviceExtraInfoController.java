@@ -3,10 +3,16 @@ package com.matrictime.network.controller;
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
+import com.matrictime.network.request.DeviceInfoRequest;
+import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.DeviceInfoExtResponse;
+import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
+import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.service.DeviceExtraInfoService;
+import com.matrictime.network.service.DeviceService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -29,6 +35,12 @@ public class DeviceExtraInfoController {
 
     @Resource
     private DeviceExtraInfoService deviceExtraInfoService;
+
+    @Resource
+    private BaseStationInfoService baseStationInfoService;
+
+    @Resource
+    private DeviceService deviceService;
 
     /**
      * 备用设备插入
@@ -125,6 +137,38 @@ public class DeviceExtraInfoController {
             result.setSuccess(false);
             result.setErrorMsg(e.getMessage());
             log.info("主设备查询:selectRelDecive{}",e.getMessage());
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/selectBaseStation",method = RequestMethod.POST)
+    public Result<BaseStationInfoResponse> selectBaseStation(@RequestBody BaseStationInfoRequest baseStationInfoRequest){
+        Result<BaseStationInfoResponse> result = new Result<>();
+        try {
+            result = baseStationInfoService.selectForRoute(baseStationInfoRequest);
+        }catch (Exception e){
+            log.info("链路查询基站设备异常:selectBaseStation{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("基站设备异常");
+        }
+        return result;
+    }
+
+
+    /**
+     * 链路查询设备
+     * @param deviceInfoRequest
+     * @return
+     */
+    @RequestMapping(value = "/selectDevice",method = RequestMethod.POST)
+    public Result<DeviceResponse> selectDevice(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<DeviceResponse> result = new Result<>();
+        try {
+            result = deviceService.selectDeviceForLinkRelation(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("链路查询设备异常:selectDevice{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("查询设备异常");
         }
         return result;
     }

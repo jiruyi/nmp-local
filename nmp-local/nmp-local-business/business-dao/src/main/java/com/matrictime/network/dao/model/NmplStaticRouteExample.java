@@ -1044,6 +1044,76 @@ public class NmplStaticRouteExample {
             addCriterion("server_name not between", value1, value2, "serverName");
             return (Criteria) this;
         }
+
+        public Criteria andStationNameIsNull() {
+            addCriterion("station_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameIsNotNull() {
+            addCriterion("station_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameEqualTo(String value) {
+            addCriterion("station_name =", value, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameNotEqualTo(String value) {
+            addCriterion("station_name <>", value, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameGreaterThan(String value) {
+            addCriterion("station_name >", value, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameGreaterThanOrEqualTo(String value) {
+            addCriterion("station_name >=", value, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameLessThan(String value) {
+            addCriterion("station_name <", value, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameLessThanOrEqualTo(String value) {
+            addCriterion("station_name <=", value, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameLike(String value) {
+            addCriterion("station_name like", value, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameNotLike(String value) {
+            addCriterion("station_name not like", value, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameIn(List<String> values) {
+            addCriterion("station_name in", values, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameNotIn(List<String> values) {
+            addCriterion("station_name not in", values, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameBetween(String value1, String value2) {
+            addCriterion("station_name between", value1, value2, "stationName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationNameNotBetween(String value1, String value2) {
+            addCriterion("station_name not between", value1, value2, "stationName");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

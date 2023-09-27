@@ -61,6 +61,11 @@ public class StaticRouteVo {
     private String stationId;
 
     /**
+     * 接入基站名称
+     */
+    private String stationName;
+
+    /**
      * 服务器ip_v6
      */
     private String ipV6;

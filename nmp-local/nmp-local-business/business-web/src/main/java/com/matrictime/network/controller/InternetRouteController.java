@@ -28,15 +28,15 @@ public class InternetRouteController {
     @Resource
     private InternetRouteService internetRouteService;
 
-    @RequiresPermissions("sys:internetRoute:insert")
+    //@RequiresPermissions("sys:internetRoute:insert")
     @RequestMapping(value = "/insertInternetRoute",method = RequestMethod.POST)
     public Result<Integer> insertInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
             if(StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
             }
-            if(StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp()) && StringUtils.isEmpty(internetRouteRequest.getIpV6())){
-                return new Result<>(false,ErrorMessageContants.DEVICE_IP_IS_NULL_MSG);
+            if(StringUtils.isEmpty(internetRouteRequest.getNextNetworkId())){
+                return new Result<>(false, ErrorMessageContants.NEXT_NETWORK_ID_IS_NULL_MSG);
             }
             return internetRouteService.insert(internetRouteRequest);
         }catch (Exception e){
@@ -45,7 +45,7 @@ public class InternetRouteController {
         }
     }
 
-    @RequiresPermissions("sys:internetRoute:delete")
+    //@RequiresPermissions("sys:internetRoute:delete")
     @RequestMapping(value = "/deleteInternetRoute",method = RequestMethod.POST)
     public Result<Integer> deleteInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
@@ -59,15 +59,12 @@ public class InternetRouteController {
         }
     }
 
-    @RequiresPermissions("sys:internetRoute:update")
+    //@RequiresPermissions("sys:internetRoute:update")
     @RequestMapping(value = "/updateInternetRoute",method = RequestMethod.POST)
     public Result<Integer> updateInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
             if(StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
-            }
-            if(StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp()) && StringUtils.isEmpty(internetRouteRequest.getIpV6())){
-                return new Result<>(false,ErrorMessageContants.DEVICE_IP_IS_NULL_MSG);
             }
             return internetRouteService.update(internetRouteRequest);
         }catch (Exception e){
@@ -76,7 +73,7 @@ public class InternetRouteController {
         }
     }
 
-    @RequiresPermissions("sys:internetRoute:select")
+    //@RequiresPermissions("sys:internetRoute:select")
     @RequestMapping(value = "/selectInternetRoute",method = RequestMethod.POST)
     public Result<PageInfo> selectInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {

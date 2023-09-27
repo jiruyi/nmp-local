@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 静态路由
  * @author   hexu
- * @date   2023-09-22
+ * @date   2023-09-26
  */
 @Data
 public class NmplStaticRoute {
@@ -79,6 +79,11 @@ public class NmplStaticRoute {
      * 服务名称
      */
     private String serverName;
+
+    /**
+     * 接入基站名称
+     */
+    private String stationName;
 
     /**
      * 设备入网码
@@ -195,6 +200,14 @@ public class NmplStaticRoute {
 
     public void setServerName(String serverName) {
         this.serverName = serverName == null ? null : serverName.trim();
+    }
+
+    public String getStationName() {
+        return stationName;
+    }
+
+    public void setStationName(String stationName) {
+        this.stationName = stationName == null ? null : stationName.trim();
     }
 
     public byte[] getByteNetworkId() {
