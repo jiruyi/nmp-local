@@ -89,7 +89,6 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
         if(!report){
             return;
         }
-        nettyClient.start();
         //业务逻辑 查询数据
         StationSummaryVo stationSummaryVo = summaryDomainService.selectBorderStation();
         if(ObjectUtils.isEmpty(stationSummaryVo)){
