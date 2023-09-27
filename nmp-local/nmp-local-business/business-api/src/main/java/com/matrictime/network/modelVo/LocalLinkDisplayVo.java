@@ -6,9 +6,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class LinkVo implements Serializable {
+public class LocalLinkDisplayVo implements Serializable {
 
-    private static final long serialVersionUID = 2160601734224471697L;
+    private static final long serialVersionUID = -1095357652551829576L;
+
     /**
      * 主键
      */
@@ -25,32 +26,32 @@ public class LinkVo implements Serializable {
     private Short linkType;
 
     /**
-     * 链路关系: 01:边界基站-边界基站,02:接入基站-密钥中心,03:边界基站-密钥中心,04:采集系统-边界基站
-     */
-    private String linkRelation;
-
-    /**
-     * 主设备id
+     * 本端设备id
      */
     private String mainDeviceId;
 
     /**
-     * 从设备id
+     * 设备类型 01:小区内基站 02:小区边界基站 11:密钥中心 12:生成机 13:缓存机 20:采集设备 21:指控中心
+     */
+    private String mainDeviceType;
+
+    /**
+     * 对端设备id
      */
     private String followDeviceId;
 
     /**
-     * 从设备入网码
+     * 对端设备入网ID
      */
     private String followNetworkId;
 
     /**
-     * 从设备ip
+     * 对端设备IP
      */
     private String followIp;
 
     /**
-     * 从设备端口
+     * 对端设备端口
      */
     private String followPort;
 
@@ -60,52 +61,43 @@ public class LinkVo implements Serializable {
     private Boolean activeAuth;
 
     /**
-     * 是否启用 1:启动 0:禁止
+     * 链路是否启用 1:启动 0:禁止
      */
     private Boolean isOn;
 
     /**
-     * 创建人
+     * 链路创建人
      */
     private String createUser;
 
     /**
-     * 创建时间
+     * 链路创建时间
      */
     private Date createTime;
 
     /**
-     * 修改人
+     * 链路修改人
      */
     private String updateUser;
 
     /**
-     * 修改时间
+     * 链路修改时间
      */
     private Date updateTime;
 
     /**
-     * 1:存在 0:删除
+     * 链路是否存在 1:存在 0:删除
      */
     private Boolean isExist;
 
     /**
-     * 主设备信息
+     * 本端设备名称
      */
-    private LinkDevice mainDeviceInfo;
+    private String mainDeviceName;
 
     /**
-     * 从设备信息
-     */
-    private LinkDevice followDeviceInfo;
-
-    /**
-     * 通知设备类型（01：接入基站 02：边界基站 11：秘钥中心）
-     */
-    private String noticeDeviceType;
-
-    /**
-     * 从设备名称
+     * 对端设备名称
      */
     private String followDeviceName;
+
 }

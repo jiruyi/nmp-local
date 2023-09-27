@@ -12,8 +12,6 @@ import com.matrictime.network.service.LinkRelationService;
 import com.matrictime.network.service.UpdateInfoService;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,168 +47,9 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
 
     private final Integer UPDATE_NUM = 2;
 
-    /**
-     * 新增链路
-     * @param voList
-     * @return
-     */
-//    @Override
-//    @Transactional
-//    public Result<Integer> addLink(List<LinkVo> voList) {
-//        Result result = new Result<>();
-//        try {
-//            if (CollectionUtils.isEmpty(voList)){
-//                throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
-//            }
-//            Date createTime = new Date();
-//            Set<String> set = new HashSet();
-//            for (LinkVo infoVo : voList){
-//                infoVo.setUpdateTime(createTime);
-//                set.add(infoVo.getNoticeDeviceType());
-//            }
-//
-//            // 插入链路关系
-//            int batchNum = linkDomainService.insertLink(voList);
-//            log.info("LinkRelationServiceImpl.addLinkRelation：batchNum:{}",batchNum);
-//
-//            // 通知接入基站
-//            if (set.contains(DeviceTypeEnum.STATION_INSIDE.getCode())){
-//                int insideNum = updateInfoService.updateInfo(DeviceTypeEnum.STATION_INSIDE.getCode(),NMPL_LINK,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-//                log.info("LinkRelationServiceImpl.addLinkRelation：insideNum:{}",insideNum);
-//            }
-//
-//            // 通知边界基站
-//            if (set.contains(DeviceTypeEnum.STATION_BOUNDARY.getCode())){
-//                int boundaryNum = updateInfoService.updateInfo(DeviceTypeEnum.STATION_BOUNDARY.getCode(),NMPL_LINK,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-//                log.info("LinkRelationServiceImpl.addLinkRelation：boundaryNum:{}",boundaryNum);
-//            }
-//
-//            // 通知密钥中心
-//            if (set.contains(DeviceTypeEnum.DEVICE_DISPENSER.getCode())){
-//                int keycenterNum = updateInfoService.updateInfo(DeviceTypeEnum.DEVICE_DISPENSER.getCode(),NMPL_LINK,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-//                log.info("LinkRelationServiceImpl.addLinkRelation：keycenterNum:{}",keycenterNum);
-//            }
-//
-//
-//        }catch (Exception e){
-//            log.error("LinkRelationServiceImpl.addLinkRelation：{}",e.getMessage());
-//            result = failResult("");
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//        }
-//        return result;
-//    }
-
-    /**
-     * 更新链路(只同步相关节点)
-     * @param voList
-     * @return
-     */
-//    @Override
-//    @Transactional
-//    public Result<Integer> updateLink(List<LinkVo> voList) {
-//        Result result = new Result<>();
-//        try {
-//            if (CollectionUtils.isEmpty(voList)){
-//                throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
-//            }
-//            List<LinkVo> addVos = new ArrayList<>();
-//            List<LinkVo> updateVos = new ArrayList<>();
-//            Date createTime = new Date();
-//            Map<String,Integer> opMap = new HashMap<>();
-//            Set<Long> ids = new HashSet<>();
-//            for (int i=0; i<voList.size();i++){
-//                LinkVo infoVo = voList.get(i);
-//                Long id = infoVo.getId();
-//                infoVo.setUpdateTime(createTime);
-//                NmplLink link = nmplLinkMapper.selectByPrimaryKey(infoVo.getId());
-//                if (link != null){
-//                    if (!ids.contains(id)){
-//                        updateVos.add(infoVo);
-//                    }
-//                    if (opMap.containsKey(infoVo.getNoticeDeviceType())){
-//                        opMap.put(infoVo.getNoticeDeviceType(),opMap.get(infoVo.getNoticeDeviceType())+UPDATE_NUM);
-//                    }else {
-//                        opMap.put(infoVo.getNoticeDeviceType(),UPDATE_NUM);
-//                    }
-//                }else {
-//                    if (!ids.contains(id)) {
-//                        addVos.add(infoVo);
-//                    }
-//                    if (opMap.containsKey(infoVo.getNoticeDeviceType())){
-//                        opMap.put(infoVo.getNoticeDeviceType(),opMap.get(infoVo.getNoticeDeviceType())+ADD_NUM);
-//                    }else {
-//                        opMap.put(infoVo.getNoticeDeviceType(),ADD_NUM);
-//                    }
-//                }
-//                ids.add(id);
-//            }
-//
-//            // 更新链路关系
-//            Integer batchNum=0;
-//            if (!CollectionUtils.isEmpty(addVos)){
-//                batchNum = batchNum + linkDomainService.insertLink(addVos);
-//            }
-//            if (!CollectionUtils.isEmpty(updateVos)){
-//                batchNum = batchNum + linkDomainService.updateLink(updateVos);
-//            }
-//            log.info("LinkRelationServiceImpl.updateLink：batchNum:{}",batchNum);
-//
-//            // 通知接入基站
-//            if (opMap.containsKey(DeviceTypeEnum.STATION_INSIDE.getCode())){
-//                Integer opValue = opMap.get(DeviceTypeEnum.STATION_INSIDE.getCode());
-//                int insideNum = 0;
-//                if (opValue.equals(UPDATE_NUM)){
-//                    insideNum = insideNum + updateInfoService.updateInfo(DeviceTypeEnum.STATION_INSIDE.getCode(),NMPL_LINK,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
-//                }else if (opValue.equals(ADD_NUM)){
-//                    insideNum = insideNum + updateInfoService.updateInfo(DeviceTypeEnum.STATION_INSIDE.getCode(),NMPL_LINK,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-//                }else if (opValue.equals(UPDATE_NUM+ADD_NUM)){
-//                    insideNum = insideNum + updateInfoService.updateInfo(DeviceTypeEnum.STATION_INSIDE.getCode(),NMPL_LINK,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-//                    insideNum = insideNum + updateInfoService.updateInfo(DeviceTypeEnum.STATION_INSIDE.getCode(),NMPL_LINK,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
-//                }
-//                log.info("LinkRelationServiceImpl.updateLink：insideNum:{}",insideNum);
-//            }
-//
-//            // 通知边界基站
-//            if (opMap.containsKey(DeviceTypeEnum.STATION_BOUNDARY.getCode())){
-//                Integer opValue = opMap.get(DeviceTypeEnum.STATION_BOUNDARY.getCode());
-//                int boundaryNum = 0;
-//                if (opValue.equals(UPDATE_NUM)){
-//                    boundaryNum = boundaryNum + updateInfoService.updateInfo(DeviceTypeEnum.STATION_BOUNDARY.getCode(),NMPL_LINK,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
-//                }else if (opValue.equals(ADD_NUM)){
-//                    boundaryNum = boundaryNum + updateInfoService.updateInfo(DeviceTypeEnum.STATION_BOUNDARY.getCode(),NMPL_LINK,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-//                }else if (opValue.equals(UPDATE_NUM+ADD_NUM)){
-//                    boundaryNum = boundaryNum + updateInfoService.updateInfo(DeviceTypeEnum.STATION_BOUNDARY.getCode(),NMPL_LINK,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-//                    boundaryNum = boundaryNum + updateInfoService.updateInfo(DeviceTypeEnum.STATION_BOUNDARY.getCode(),NMPL_LINK,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
-//                }
-//                log.info("LinkRelationServiceImpl.updateLink：boundaryNum:{}",boundaryNum);
-//            }
-//
-//            // 通知密钥中心
-//            if (opMap.containsKey(DeviceTypeEnum.DEVICE_DISPENSER.getCode())){
-//                Integer opValue = opMap.get(DeviceTypeEnum.DEVICE_DISPENSER.getCode());
-//                int keycenterNum = 0;
-//                if (opValue.equals(UPDATE_NUM)){
-//                    keycenterNum = keycenterNum + updateInfoService.updateInfo(DeviceTypeEnum.DEVICE_DISPENSER.getCode(),NMPL_LINK,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
-//                }else if (opValue.equals(ADD_NUM)){
-//                    keycenterNum = keycenterNum + updateInfoService.updateInfo(DeviceTypeEnum.DEVICE_DISPENSER.getCode(),NMPL_LINK,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-//                }else if (opValue.equals(UPDATE_NUM+ADD_NUM)){
-//                    keycenterNum = keycenterNum + updateInfoService.updateInfo(DeviceTypeEnum.DEVICE_DISPENSER.getCode(),NMPL_LINK,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-//                    keycenterNum = keycenterNum + updateInfoService.updateInfo(DeviceTypeEnum.DEVICE_DISPENSER.getCode(),NMPL_LINK,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
-//                }
-//                log.info("LinkRelationServiceImpl.updateLink：keycenterNum:{}",keycenterNum);
-//            }
-//            buildResult(batchNum);
-//        }catch (Exception e){
-//            log.error("LinkRelationServiceImpl.updateLink：{}",e.getMessage());
-//            result = failResult("");
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//        }
-//        return result;
-//    }
-
     @Override
     @Transactional
-    public Result<Integer> updateLink(List<LinkVo> voList) {
+    public Result<Integer> updateLink(List<ProxyLinkVo> voList) {
         Result result = new Result<>();
         try {
             if (CollectionUtils.isEmpty(voList)){
@@ -242,11 +81,11 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
      * @param createTime
      * @return
      */
-    private Integer updateLocalLink(List<LinkVo> voList,Integer batchNum,Map<String,Integer> opMap,Date createTime){
-        List<LinkVo> addVos = new ArrayList<>();
-        List<LinkVo> updateVos = new ArrayList<>();
+    private Integer updateLocalLink(List<ProxyLinkVo> voList, Integer batchNum, Map<String,Integer> opMap, Date createTime){
+        List<ProxyLinkVo> addVos = new ArrayList<>();
+        List<ProxyLinkVo> updateVos = new ArrayList<>();
         for (int i=0; i<voList.size();i++){
-            LinkVo infoVo = voList.get(i);
+            ProxyLinkVo infoVo = voList.get(i);
             infoVo.setUpdateTime(createTime);
             NmplLink link = nmplLinkMapper.selectByPrimaryKey(infoVo.getId());
             if (link != null){// 链路已存在，则做更新通知
@@ -329,17 +168,17 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
     }
 
     /**
-     * 根据链路的主从设备id获取通知设备类型列表
-     * @param linkVo
+     * 根据链路获取通知设备类型列表
+     * @param proxyLinkVo
      * @return
      */
-    private Set<String> getNoticeDeviceType(LinkVo linkVo){
+    private Set<String> getNoticeDeviceType(ProxyLinkVo proxyLinkVo){
         Set<String> resultSet = new HashSet<>();
-        List<String> deviceIds = new ArrayList<>();
-        deviceIds.add(linkVo.getMainDeviceId());
-        deviceIds.add(linkVo.getFollowDeviceId());
+//        List<String> deviceIds = new ArrayList<>();
+//        deviceIds.add(ProxyLinkVo.getMainDeviceId());
+//        deviceIds.add(ProxyLinkVo.getFollowDeviceId());
         NmplLocalBaseStationInfoExample baseExample = new NmplLocalBaseStationInfoExample();
-        baseExample.createCriteria().andStationIdIn(deviceIds).andIsExistEqualTo(IS_EXIST);
+        baseExample.createCriteria().andStationIdEqualTo(proxyLinkVo.getMainDeviceId()).andIsExistEqualTo(IS_EXIST);
         List<NmplLocalBaseStationInfo> stationInfos = localBaseStationInfoMapper.selectByExample(baseExample);
         if (!CollectionUtils.isEmpty(stationInfos)){
             for (NmplLocalBaseStationInfo info : stationInfos){
@@ -347,14 +186,14 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             }
         }
 
-        NmplLocalDeviceInfoExample deviceExample = new NmplLocalDeviceInfoExample();
-        deviceExample.createCriteria().andDeviceIdIn(deviceIds).andIsExistEqualTo(IS_EXIST);
-        List<NmplLocalDeviceInfo> deviceInfos = localDeviceInfoMapper.selectByExample(deviceExample);
-        if (!CollectionUtils.isEmpty(deviceInfos)){
-            for (NmplLocalDeviceInfo info : deviceInfos){
-                resultSet.add(info.getDeviceType());
-            }
-        }
+//        NmplLocalDeviceInfoExample deviceExample = new NmplLocalDeviceInfoExample();
+//        deviceExample.createCriteria().andDeviceIdEqualTo(proxyLinkVo.getMainDeviceId()).andIsExistEqualTo(IS_EXIST);
+//        List<NmplLocalDeviceInfo> deviceInfos = localDeviceInfoMapper.selectByExample(deviceExample);
+//        if (!CollectionUtils.isEmpty(deviceInfos)){
+//            for (NmplLocalDeviceInfo info : deviceInfos){
+//                resultSet.add(info.getDeviceType());
+//            }
+//        }
         return resultSet;
     }
 
@@ -394,13 +233,13 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
 
     /**
      * 链路初始化（全量同步，只通知本地相关设备）
-     * @param linkVos
+     * @param ProxyLinkVos
      */
     @Override
     @Transactional
-    public void initInfo(List<LinkVo> linkVos) {
-        if (!CollectionUtils.isEmpty(linkVos)){
-            updateLink(linkVos);
+    public void initInfo(List<ProxyLinkVo> ProxyLinkVos) {
+        if (!CollectionUtils.isEmpty(ProxyLinkVos)){
+            updateLink(ProxyLinkVos);
         }
     }
 }

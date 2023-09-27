@@ -2,12 +2,12 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.LinkVo;
+import com.matrictime.network.modelVo.LocalLinkDisplayVo;
+import com.matrictime.network.modelVo.LocalLinkVo;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.BaseStationInfoResponse;
 import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
-import com.matrictime.network.response.QueryLinkResp;
 import com.matrictime.network.service.BaseStationInfoService;
 import com.matrictime.network.service.DeviceService;
 import com.matrictime.network.service.LinkService;
@@ -133,7 +133,7 @@ public class LinkController {
     @RequiresPermissions("sys:link:query")
     @SystemLog(opermodul = "链路管理模块",operDesc = "查询链路信息",operType = "查询链路信息")
     @RequestMapping(value = "/selectLink",method = RequestMethod.POST)
-    public Result<PageInfo<LinkVo>> selectLink(@RequestBody QueryLinkReq req){
+    public Result<PageInfo<LocalLinkDisplayVo>> selectLink(@RequestBody QueryLinkReq req){
         try {
             return linkService.queryLink(req);
         }catch (Exception e){

@@ -2,7 +2,7 @@ package com.matrictime.network.dao.domain.impl;
 
 import com.matrictime.network.dao.domain.LinkDomainService;
 import com.matrictime.network.dao.mapper.extend.LinkMapperExt;
-import com.matrictime.network.modelVo.LinkVo;
+import com.matrictime.network.modelVo.ProxyLinkVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +19,13 @@ public class LinkDomainServiceImpl implements LinkDomainService {
 
     @Override
     @Transactional
-    public int insertLink(List<LinkVo> list) {
+    public int insertLink(List<ProxyLinkVo> list) {
         return linkMapperExt.batchInsert(list);
     }
 
     @Override
     @Transactional
-    public int updateLink(List<LinkVo> list) {
+    public int updateLink(List<ProxyLinkVo> list) {
         return linkMapperExt.batchUpdate(list);
     }
 }

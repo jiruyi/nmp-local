@@ -2,8 +2,7 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.LinkRelationVo;
-import com.matrictime.network.modelVo.LinkVo;
+import com.matrictime.network.modelVo.ProxyLinkVo;
 import com.matrictime.network.service.LinkRelationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,37 +26,16 @@ public class LinkRelationController extends SystemBaseService {
     @Autowired
     private LinkRelationService linkRelationService;
 
-
-    /**
-     * 链路插入
-     * @param req
-     * @return
-     */
-
-//    @RequestMapping(value = "/insert",method = RequestMethod.POST)
-//    public Result<Integer> addLink(@RequestBody LinkVo req){
-//        Result<Integer> result;
-//        try {
-//            List<LinkVo> voList = new ArrayList<>();
-//            voList.add(req);
-//            result = linkRelationService.addLink(voList);
-//        }catch (Exception e){
-//            log.info("LinkRelationController.addLink{}",e.getMessage());
-//            result = failResult("");
-//        }
-//        return result;
-//    }
-
     /**
      * 链路更新
      * @param req
      * @return
      */
     @RequestMapping(value = "/update",method = RequestMethod.POST)
-    public Result<Integer> updateLink(@RequestBody LinkVo req){
+    public Result<Integer> updateLink(@RequestBody ProxyLinkVo req){
         Result<Integer> result;
         try {
-            List<LinkVo> voList = new ArrayList<>();
+            List<ProxyLinkVo> voList = new ArrayList<>();
             voList.add(req);
             result = linkRelationService.updateLink(voList);
         }catch (Exception e){

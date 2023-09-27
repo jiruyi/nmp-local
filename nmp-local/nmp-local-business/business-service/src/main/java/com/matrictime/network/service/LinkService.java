@@ -1,11 +1,11 @@
 package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.LinkVo;
+import com.matrictime.network.modelVo.LocalLinkDisplayVo;
+import com.matrictime.network.modelVo.LocalLinkVo;
 import com.matrictime.network.request.EditLinkReq;
 import com.matrictime.network.request.QueryLinkReq;
 import com.matrictime.network.response.PageInfo;
-import com.matrictime.network.response.QueryLinkResp;
 
 public interface LinkService {
 
@@ -14,7 +14,7 @@ public interface LinkService {
      * @param req
      * @return
      */
-    Result<PageInfo<LinkVo>> queryLink(QueryLinkReq req);
+    Result<PageInfo<LocalLinkDisplayVo>> queryLink(QueryLinkReq req);
 
     /**
      * 配置链路

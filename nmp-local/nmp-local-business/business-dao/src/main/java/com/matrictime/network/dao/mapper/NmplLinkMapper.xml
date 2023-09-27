@@ -5,8 +5,8 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="link_name" jdbcType="VARCHAR" property="linkName" />
     <result column="link_type" jdbcType="SMALLINT" property="linkType" />
-    <result column="link_relation" jdbcType="VARCHAR" property="linkRelation" />
     <result column="main_device_id" jdbcType="VARCHAR" property="mainDeviceId" />
+    <result column="main_device_type" jdbcType="CHAR" property="mainDeviceType" />
     <result column="follow_device_id" jdbcType="VARCHAR" property="followDeviceId" />
     <result column="follow_network_id" jdbcType="VARCHAR" property="followNetworkId" />
     <result column="follow_ip" jdbcType="VARCHAR" property="followIp" />
@@ -18,7 +18,6 @@
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
-    <result column="follow_device_name" jdbcType="VARCHAR" property="followDeviceName" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -79,9 +78,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, link_name, link_type, link_relation, main_device_id, follow_device_id, follow_network_id, 
+    id, link_name, link_type, main_device_id, main_device_type, follow_device_id, follow_network_id, 
     follow_ip, follow_port, active_auth, is_on, create_user, create_time, update_user, 
-    update_time, is_exist, follow_device_name
+    update_time, is_exist
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplLinkExample" resultMap="BaseResultMap">
     select
@@ -116,19 +115,19 @@
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplLink">
     insert into nmpl_link (id, link_name, link_type, 
-      link_relation, main_device_id, follow_device_id, 
+      main_device_id, main_device_type, follow_device_id, 
       follow_network_id, follow_ip, follow_port, 
       active_auth, is_on, create_user, 
       create_time, update_user, update_time, 
-      is_exist, follow_device_name)
+      is_exist)
     values (#{id,jdbcType=BIGINT}, #{linkName,jdbcType=VARCHAR}, #{linkType,jdbcType=SMALLINT}, 
-      #{linkRelation,jdbcType=VARCHAR}, #{mainDeviceId,jdbcType=VARCHAR}, #{followDeviceId,jdbcType=VARCHAR}, 
+      #{mainDeviceId,jdbcType=VARCHAR}, #{mainDeviceType,jdbcType=CHAR}, #{followDeviceId,jdbcType=VARCHAR}, 
       #{followNetworkId,jdbcType=VARCHAR}, #{followIp,jdbcType=VARCHAR}, #{followPort,jdbcType=VARCHAR}, 
       #{activeAuth,jdbcType=BIT}, #{isOn,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{isExist,jdbcType=BIT}, #{followDeviceName,jdbcType=VARCHAR})
+      #{isExist,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"  parameterType="com.matrictime.network.dao.model.NmplLink">
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplLink">
     insert into nmpl_link
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -140,11 +139,11 @@
       <if test="linkType != null">
         link_type,
       </if>
-      <if test="linkRelation != null">
-        link_relation,
-      </if>
       <if test="mainDeviceId != null">
         main_device_id,
+      </if>
+      <if test="mainDeviceType != null">
+        main_device_type,
       </if>
       <if test="followDeviceId != null">
         follow_device_id,
@@ -179,9 +178,6 @@
       <if test="isExist != null">
         is_exist,
       </if>
-      <if test="followDeviceName != null">
-        follow_device_name,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -193,11 +189,11 @@
       <if test="linkType != null">
         #{linkType,jdbcType=SMALLINT},
       </if>
-      <if test="linkRelation != null">
-        #{linkRelation,jdbcType=VARCHAR},
-      </if>
       <if test="mainDeviceId != null">
         #{mainDeviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="mainDeviceType != null">
+        #{mainDeviceType,jdbcType=CHAR},
       </if>
       <if test="followDeviceId != null">
         #{followDeviceId,jdbcType=VARCHAR},
@@ -232,9 +228,6 @@
       <if test="isExist != null">
         #{isExist,jdbcType=BIT},
       </if>
-      <if test="followDeviceName != null">
-        #{followDeviceName,jdbcType=VARCHAR},
-      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplLinkExample" resultType="java.lang.Long">
@@ -255,11 +248,11 @@
       <if test="record.linkType != null">
         link_type = #{record.linkType,jdbcType=SMALLINT},
       </if>
-      <if test="record.linkRelation != null">
-        link_relation = #{record.linkRelation,jdbcType=VARCHAR},
-      </if>
       <if test="record.mainDeviceId != null">
         main_device_id = #{record.mainDeviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mainDeviceType != null">
+        main_device_type = #{record.mainDeviceType,jdbcType=CHAR},
       </if>
       <if test="record.followDeviceId != null">
         follow_device_id = #{record.followDeviceId,jdbcType=VARCHAR},
@@ -294,9 +287,6 @@
       <if test="record.isExist != null">
         is_exist = #{record.isExist,jdbcType=BIT},
       </if>
-      <if test="record.followDeviceName != null">
-        follow_device_name = #{record.followDeviceName,jdbcType=VARCHAR},
-      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -307,8 +297,8 @@
     set id = #{record.id,jdbcType=BIGINT},
       link_name = #{record.linkName,jdbcType=VARCHAR},
       link_type = #{record.linkType,jdbcType=SMALLINT},
-      link_relation = #{record.linkRelation,jdbcType=VARCHAR},
       main_device_id = #{record.mainDeviceId,jdbcType=VARCHAR},
+      main_device_type = #{record.mainDeviceType,jdbcType=CHAR},
       follow_device_id = #{record.followDeviceId,jdbcType=VARCHAR},
       follow_network_id = #{record.followNetworkId,jdbcType=VARCHAR},
       follow_ip = #{record.followIp,jdbcType=VARCHAR},
@@ -319,8 +309,7 @@
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      is_exist = #{record.isExist,jdbcType=BIT},
-      follow_device_name = #{record.followDeviceName,jdbcType=VARCHAR}
+      is_exist = #{record.isExist,jdbcType=BIT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -334,11 +323,11 @@
       <if test="linkType != null">
         link_type = #{linkType,jdbcType=SMALLINT},
       </if>
-      <if test="linkRelation != null">
-        link_relation = #{linkRelation,jdbcType=VARCHAR},
-      </if>
       <if test="mainDeviceId != null">
         main_device_id = #{mainDeviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="mainDeviceType != null">
+        main_device_type = #{mainDeviceType,jdbcType=CHAR},
       </if>
       <if test="followDeviceId != null">
         follow_device_id = #{followDeviceId,jdbcType=VARCHAR},
@@ -373,9 +362,6 @@
       <if test="isExist != null">
         is_exist = #{isExist,jdbcType=BIT},
       </if>
-      <if test="followDeviceName != null">
-        follow_device_name = #{followDeviceName,jdbcType=VARCHAR},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -383,8 +369,8 @@
     update nmpl_link
     set link_name = #{linkName,jdbcType=VARCHAR},
       link_type = #{linkType,jdbcType=SMALLINT},
-      link_relation = #{linkRelation,jdbcType=VARCHAR},
       main_device_id = #{mainDeviceId,jdbcType=VARCHAR},
+      main_device_type = #{mainDeviceType,jdbcType=CHAR},
       follow_device_id = #{followDeviceId,jdbcType=VARCHAR},
       follow_network_id = #{followNetworkId,jdbcType=VARCHAR},
       follow_ip = #{followIp,jdbcType=VARCHAR},
@@ -395,8 +381,7 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      is_exist = #{isExist,jdbcType=BIT},
-      follow_device_name = #{followDeviceName,jdbcType=VARCHAR}
+      is_exist = #{isExist,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

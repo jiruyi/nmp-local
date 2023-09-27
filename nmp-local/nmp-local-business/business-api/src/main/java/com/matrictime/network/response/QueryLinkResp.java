@@ -1,6 +1,6 @@
 package com.matrictime.network.response;
 
-import com.matrictime.network.modelVo.LinkVo;
+import com.matrictime.network.modelVo.LocalLinkVo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,5 +14,5 @@ public class QueryLinkResp implements Serializable {
     /**
      * 链路列表信息
      */
-    private List<LinkVo> linkVos;
+    private List<LocalLinkVo> localLinkVos;
 }

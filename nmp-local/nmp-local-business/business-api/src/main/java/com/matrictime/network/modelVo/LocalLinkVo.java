@@ -6,10 +6,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class LinkVo implements Serializable {
+public class LocalLinkVo implements Serializable {
 
     private static final long serialVersionUID = 2160601734224471697L;
-
     /**
      * 主键
      */
@@ -26,32 +25,32 @@ public class LinkVo implements Serializable {
     private Short linkType;
 
     /**
-     * 链路关系: 01:边界基站-边界基站,02:接入基站-密钥中心,03:边界基站-密钥中心,04:采集系统-边界基站
-     */
-    private String linkRelation;
-
-    /**
-     * 主设备id
+     * 本端设备id
      */
     private String mainDeviceId;
 
     /**
-     * 从设备id
+     * 设备类型 01:小区内基站 02:小区边界基站 11:密钥中心 12:生成机 13:缓存机 20:采集设备 21:指控中心
+     */
+    private String mainDeviceType;
+
+    /**
+     * 对端设备id
      */
     private String followDeviceId;
 
     /**
-     * 从设备入网码
+     * 对端设备入网ID
      */
     private String followNetworkId;
 
     /**
-     * 从设备ip
+     * 对端设备IP
      */
     private String followIp;
 
     /**
-     * 从设备端口
+     * 对端设备端口
      */
     private String followPort;
 
@@ -89,14 +88,4 @@ public class LinkVo implements Serializable {
      * 1:存在 0:删除
      */
     private Boolean isExist;
-
-    /**
-     * 通知设备类型（01：接入基站 02：边界基站 11：秘钥中心）
-     */
-    private String noticeDeviceType;
-
-    /**
-     * 从设备名称
-     */
-    private String followDeviceName;
 }

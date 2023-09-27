@@ -1,6 +1,5 @@
 package com.matrictime.network.response;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.matrictime.network.modelVo.*;
 import lombok.Data;
 
@@ -20,7 +19,7 @@ public class ProxyResp implements Serializable {
 
     private List<ProxyRouteInfoVo> roteVoList = new ArrayList<>();
 
-    private List<LinkVo> linkVos = new ArrayList<>();
+    private List<LocalLinkVo> localLinkVos = new ArrayList<>();
 
     private boolean isExist=false;
 
