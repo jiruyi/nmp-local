@@ -40,12 +40,17 @@ public interface DeviceDomainService {
 
     CountBaseStationResponse countBaseStation(DeviceInfoRequest deviceInfoRequest);
 
-    int updateConnectCount(BaseStationCountRequest baseStationCountRequest);
+   // int updateConnectCount(BaseStationCountRequest baseStationCountRequest);
 
     int insertDataBase(DeviceInfoRequest deviceInfoRequest);
 
     int deleteDataBase(DeviceInfoRequest deviceInfoRequest);
 
     int updateDataBase(DeviceInfoRequest deviceInfoRequest);
+
+    int insertCenter(DeviceInfoRequest deviceInfoRequest);
+
+    int updateCenter(DeviceInfoRequest deviceInfoRequest);
+
 
 }
