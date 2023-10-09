@@ -62,13 +62,17 @@ public class InternetRouteDomainServiceImpl implements InternetRouteDomainServic
         NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
         NmplInternetRouteExample.Criteria criteria1 = nmplInternetRouteExample.createCriteria();
         nmplInternetRouteExample.setOrderByClause("update_time desc");
-        if(!StringUtils.isEmpty(internetRouteRequest.getNetworkId())){
-            criteria.andNetworkIdLike("%"+internetRouteRequest.getNetworkId()+"%");
-            criteria1.andNetworkIdLike("%"+internetRouteRequest.getNetworkId()+"%");
+        if(!StringUtils.isEmpty(internetRouteRequest.getDeviceId())){
+            criteria.andDeviceIdEqualTo(internetRouteRequest.getDeviceId());
+            criteria1.andDeviceIdEqualTo(internetRouteRequest.getDeviceId());
         }
-        if(!StringUtils.isEmpty(internetRouteRequest.getBoundaryStationIp())){
-            criteria.andBoundaryStationIpLike("%"+internetRouteRequest.getBoundaryStationIp()+"%");
-            criteria1.andIpV6Like("%"+internetRouteRequest.getBoundaryStationIp()+"%");
+        if(!StringUtils.isEmpty(internetRouteRequest.getDeviceType())){
+            criteria.andDeviceTypeEqualTo(internetRouteRequest.getDeviceType());
+            criteria1.andDeviceTypeEqualTo(internetRouteRequest.getDeviceType());
+        }
+        if(!StringUtils.isEmpty(internetRouteRequest.getDeviceName())){
+            criteria.andDeviceNameEqualTo(internetRouteRequest.getDeviceName());
+            criteria1.andDeviceNameEqualTo(internetRouteRequest.getDeviceName());
         }
         criteria1.andIsExistEqualTo(true);
         criteria.andIsExistEqualTo(true);

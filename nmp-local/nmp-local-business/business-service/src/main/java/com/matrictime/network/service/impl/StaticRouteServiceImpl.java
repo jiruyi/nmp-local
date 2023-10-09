@@ -70,10 +70,10 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     public Result<Integer> insert(StaticRouteRequest staticRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            if(!CommonCheckUtil.isIpv4Legal(staticRouteRequest.getServerIp()) &&
-                    !CommonCheckUtil.isIpv6Legal(staticRouteRequest.getIpV6())){
-                throw new RuntimeException(IP_FORMAT_ERROR_MSG);
-            }
+//            if(!CommonCheckUtil.isIpv4Legal(staticRouteRequest.getServerIp()) &&
+//                    !CommonCheckUtil.isIpv6Legal(staticRouteRequest.getIpV6())){
+//                throw new RuntimeException(IP_FORMAT_ERROR_MSG);
+//            }
             //字段校验
             if(!ObjectUtils.isEmpty(checkDataOnly(staticRouteRequest))){
                 return checkDataOnly(staticRouteRequest);
@@ -88,7 +88,12 @@ public class StaticRouteServiceImpl implements StaticRouteService {
                 List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExampleWithBLOBs(nmplStaticRouteExample);
                 sendRoute(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO),DataConstants.INSERT_STATIC_ROUTE);
             }
-        }catch (Exception e){
+        }catch (RuntimeException e){
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+            log.info("insert:{}",e.getMessage());
+        }
+        catch (Exception e){
             result.setSuccess(false);
             result.setErrorMsg("系统异常，请稍后重试！");
             log.info("insert:{}",e.getMessage());
@@ -120,10 +125,10 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     public Result<Integer> update(StaticRouteRequest staticRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            if(!CommonCheckUtil.isIpv4Legal(staticRouteRequest.getServerIp()) &&
-                    !CommonCheckUtil.isIpv6Legal(staticRouteRequest.getIpV6())){
-                throw new RuntimeException(IP_FORMAT_ERROR_MSG);
-            }
+//            if(!CommonCheckUtil.isIpv4Legal(staticRouteRequest.getServerIp()) &&
+//                    !CommonCheckUtil.isIpv6Legal(staticRouteRequest.getIpV6())){
+//                throw new RuntimeException(IP_FORMAT_ERROR_MSG);
+//            }
             //字段校验
             if(!ObjectUtils.isEmpty(checkDataOnly(staticRouteRequest))){
                 return checkDataOnly(staticRouteRequest);

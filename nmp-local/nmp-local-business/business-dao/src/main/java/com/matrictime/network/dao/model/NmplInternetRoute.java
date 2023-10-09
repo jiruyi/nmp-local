@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 出网路由
  * @author   hexu
- * @date   2023-09-22
+ * @date   2023-09-27
  */
 @Data
 public class NmplInternetRoute {
@@ -69,6 +69,31 @@ public class NmplInternetRoute {
      * 跳数
      */
     private String hopCount;
+
+    /**
+     * 小区名称
+     */
+    private String companyName;
+
+    /**
+     * 小区id
+     */
+    private String companyId;
+
+    /**
+     * 设备类型
+     */
+    private String deviceType;
+
+    /**
+     * 设备名称
+     */
+    private String deviceName;
+
+    /**
+     * 设备ID
+     */
+    private String deviceId;
 
     /**
      * 设备入网码
@@ -169,6 +194,46 @@ public class NmplInternetRoute {
 
     public void setHopCount(String hopCount) {
         this.hopCount = hopCount == null ? null : hopCount.trim();
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName == null ? null : companyName.trim();
+    }
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId == null ? null : companyId.trim();
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType == null ? null : deviceType.trim();
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName == null ? null : deviceName.trim();
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId == null ? null : deviceId.trim();
     }
 
     public byte[] getByteNetworkId() {

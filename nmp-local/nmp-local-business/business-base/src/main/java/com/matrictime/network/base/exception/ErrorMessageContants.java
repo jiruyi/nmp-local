@@ -90,6 +90,8 @@ public class ErrorMessageContants {
 
 	public static final String NETWORK_ID_IS_NULL_MSG = "入网Id不能为空";
 
+	public static final String NEXT_NETWORK_ID_IS_NULL_MSG = "下一跳ID不能为空";
+
 	public static final String ID_IS_NULL_MSG = "Id不能为空";
 
 

@@ -33,15 +33,12 @@ public class StaticRouteController {
      * @param staticRouteRequest
      * @return
      */
-    @RequiresPermissions("sys:staticRoute:insert")
+   // @RequiresPermissions("sys:staticRoute:insert")
     @RequestMapping(value = "/insertStaticRoute",method = RequestMethod.POST)
     public Result<Integer> insertStaticRoute(@RequestBody StaticRouteRequest staticRouteRequest){
         try {
             if(StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
-            }
-            if(StringUtils.isEmpty(staticRouteRequest.getServerIp()) && StringUtils.isEmpty(staticRouteRequest.getIpV6())){
-                return new Result<>(false,ErrorMessageContants.DEVICE_IP_IS_NULL_MSG);
             }
             return staticRouteService.insert(staticRouteRequest);
         }catch (Exception e){
@@ -55,7 +52,7 @@ public class StaticRouteController {
      * @param staticRouteRequest
      * @return
      */
-    @RequiresPermissions("sys:staticRoute:delete")
+    //@RequiresPermissions("sys:staticRoute:delete")
     @RequestMapping(value = "/deleteStaticRoute",method = RequestMethod.POST)
     public Result<Integer> deleteStaticRoute(@RequestBody StaticRouteRequest staticRouteRequest){
         try {
@@ -74,16 +71,16 @@ public class StaticRouteController {
      * @param staticRouteRequest
      * @return
      */
-    @RequiresPermissions("sys:staticRoute:update")
+    //@RequiresPermissions("sys:staticRoute:update")
     @RequestMapping(value = "/updateStaticRoute",method = RequestMethod.POST)
     public Result<Integer> updateStaticRoute(@RequestBody StaticRouteRequest staticRouteRequest){
         try {
             if(StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
             }
-            if(StringUtils.isEmpty(staticRouteRequest.getServerIp()) && StringUtils.isEmpty(staticRouteRequest.getIpV6())){
-                return new Result<>(false,ErrorMessageContants.DEVICE_IP_IS_NULL_MSG);
-            }
+//            if(StringUtils.isEmpty(staticRouteRequest.getServerIp()) && StringUtils.isEmpty(staticRouteRequest.getIpV6())){
+//                return new Result<>(false,ErrorMessageContants.DEVICE_IP_IS_NULL_MSG);
+//            }
             return staticRouteService.update(staticRouteRequest);
         }catch (Exception e){
             log.info("updateStaticRoute:{}",e.getMessage());
@@ -96,7 +93,7 @@ public class StaticRouteController {
      * @param staticRouteRequest
      * @return
      */
-    @RequiresPermissions("sys:staticRoute:select")
+   // @RequiresPermissions("sys:staticRoute:select")
     @RequestMapping(value = "/selectStaticRoute",method = RequestMethod.POST)
     public Result<PageInfo> selectStaticRoute(@RequestBody StaticRouteRequest staticRouteRequest){
         try {

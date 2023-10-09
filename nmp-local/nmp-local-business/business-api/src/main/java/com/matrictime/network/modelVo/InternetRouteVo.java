@@ -70,6 +70,33 @@ public class InternetRouteVo {
      */
     private String hopCount;
 
+
+    /**
+     * 小区名称
+     */
+    private String companyName;
+
+    /**
+     * 小区id
+     */
+    private String companyId;
+
+    /**
+     * 设备类型
+     */
+    private String deviceType;
+
+    /**
+     * 设备名称
+     */
+    private String deviceName;
+
+    /**
+     * 设备ID
+     */
+    private String deviceId;
+
+
     /**
      * 设备入网码
      */

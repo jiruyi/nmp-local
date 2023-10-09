@@ -71,15 +71,15 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     public Result<Integer> insert(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            if(!CommonCheckUtil.isIpv4Legal(internetRouteRequest.getBoundaryStationIp()) &&
-                    !CommonCheckUtil.isIpv6Legal(internetRouteRequest.getIpV6())){
-                throw new RuntimeException(IP_FORMAT_ERROR_MSG);
-            }
+//            if(!CommonCheckUtil.isIpv4Legal(internetRouteRequest.getBoundaryStationIp()) &&
+//                    !CommonCheckUtil.isIpv6Legal(internetRouteRequest.getIpV6())){
+//                throw new RuntimeException(IP_FORMAT_ERROR_MSG);
+//            }
             if(!ObjectUtils.isEmpty(checkDataOnly(internetRouteRequest))){
                 return checkDataOnly(internetRouteRequest);
             }
             internetRouteRequest.setRouteId(SnowFlake.nextId_String());
-            internetRouteRequest.setUpdateUser(RequestContext.getUser().getCreateUser());
+            //internetRouteRequest.setUpdateUser(RequestContext.getUser().getCreateUser());
             int insert = internetRouteDomainService.insert(internetRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
@@ -100,7 +100,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     public Result<Integer> delete(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            internetRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
+            //internetRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
             int delete = internetRouteDomainService.delete(internetRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
@@ -120,14 +120,14 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     public Result<Integer> update(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            if(!CommonCheckUtil.isIpv4Legal(internetRouteRequest.getBoundaryStationIp()) &&
-                    !CommonCheckUtil.isIpv6Legal(internetRouteRequest.getIpV6())){
-                throw new RuntimeException(IP_FORMAT_ERROR_MSG);
-            }
+//            if(!CommonCheckUtil.isIpv4Legal(internetRouteRequest.getBoundaryStationIp()) &&
+//                    !CommonCheckUtil.isIpv6Legal(internetRouteRequest.getIpV6())){
+//                throw new RuntimeException(IP_FORMAT_ERROR_MSG);
+//            }
             if(!ObjectUtils.isEmpty(checkDataOnly(internetRouteRequest))){
                 return checkDataOnly(internetRouteRequest);
             }
-            internetRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
+            //internetRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
             int update = internetRouteDomainService.update(internetRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
@@ -202,6 +202,20 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             }
             criteria1.andIsExistEqualTo(IS_EXIST);
             List<NmplInternetRoute> nmplInternetRoutes1 = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample1);
+
+            nmplInternetRoutes.addAll(nmplInternetRoutes1);
+        }
+
+        if(!StringUtils.isEmpty(internetRouteRequest.getNetworkId()) && !StringUtils.isEmpty(internetRouteRequest.getNextNetworkId())){
+            NmplInternetRouteExample nmplInternetRouteExample = new NmplInternetRouteExample();
+            NmplInternetRouteExample.Criteria criteria1 = nmplInternetRouteExample.createCriteria();
+            criteria1.andNetworkIdEqualTo(internetRouteRequest.getNetworkId());
+            criteria1.andNextNetworkIdEqualTo(internetRouteRequest.getNextNetworkId());
+            if(!ObjectUtils.isEmpty(internetRouteRequest.getId())){
+                criteria1.andIdNotEqualTo(internetRouteRequest.getId());
+            }
+            criteria1.andIsExistEqualTo(IS_EXIST);
+            List<NmplInternetRoute> nmplInternetRoutes1 = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
 
             nmplInternetRoutes.addAll(nmplInternetRoutes1);
         }
