@@ -17,6 +17,13 @@ public interface LinkService {
     Result<PageInfo<LocalLinkDisplayVo>> queryLink(QueryLinkReq req);
 
     /**
+     * 查询密钥中心分配
+     * @param req
+     * @return
+     */
+    Result<PageInfo<LocalLinkDisplayVo>> queryKeycenterLink(QueryLinkReq req);
+
+    /**
      * 配置链路
      * @param req
      * @return

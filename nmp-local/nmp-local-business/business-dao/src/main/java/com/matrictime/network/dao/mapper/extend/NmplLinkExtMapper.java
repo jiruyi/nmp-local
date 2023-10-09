@@ -10,5 +10,7 @@ public interface NmplLinkExtMapper {
 
     List<LocalLinkDisplayVo> queryLink(QueryLinkReq req);
 
+    List<LocalLinkDisplayVo> queryKeycenterLink(QueryLinkReq req);
+
     int insertSelectiveWithId(NmplLink record);
 }

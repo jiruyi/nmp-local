@@ -29,10 +29,125 @@
   </sql>
 
   <select id="queryLink" parameterType="com.matrictime.network.request.QueryLinkReq" resultMap="BaseResultMap">
-    select
-    *
-    from nmpl_link
+    select id,
+           link_name,
+           link_type,
+           main_device_id,
+           main_device_type,
+           follow_device_id,
+           follow_network_id,
+           follow_ip,
+           follow_port,
+           active_auth,
+           is_on,
+           create_user,
+           create_time,
+           update_user,
+           update_time,
+           is_exist,
+           main_device_name
+    from (select l1.id,
+                 l1.link_name,
+                 l1.link_type,
+                 l1.main_device_id,
+                 l1.main_device_type,
+                 l1.follow_device_id,
+                 l1.follow_network_id,
+                 l1.follow_ip,
+                 l1.follow_port,
+                 l1.active_auth,
+                 l1.is_on,
+                 l1.create_user,
+                 l1.create_time,
+                 l1.update_user,
+                 l1.update_time,
+                 l1.is_exist,
+                 b.station_name as main_device_name
+          from nmpl_link l1
+                 left join nmpl_base_station_info b on l1.main_device_id = b.station_id
+          union all
+          select l2.id,
+                 l2.link_name,
+                 l2.link_type,
+                 l2.main_device_id,
+                 l2.main_device_type,
+                 l2.follow_device_id,
+                 l2.follow_network_id,
+                 l2.follow_ip,
+                 l2.follow_port,
+                 l2.active_auth,
+                 l2.is_on,
+                 l2.create_user,
+                 l2.create_time,
+                 l2.update_user,
+                 l2.update_time,
+                 l2.is_exist,
+                 d.device_name as main_device_name
+          from nmpl_link l2
+                 left join nmpl_device_info d on l2.main_device_id = d.device_id) as link
+    where link.main_device_name is not null
+      <if test="linkName != null">
+        and link.link_name = #{linkName,jdbcType=VARCHAR}
+      </if>
+      <if test="mainDeviceType != null">
+        and link.main_device_type = #{mainDeviceType,jdbcType=VARCHAR}
+      </if>
+      <if test="mainDeviceName != null">
+        and link.main_device_name = #{mainDeviceName,jdbcType=VARCHAR}
+      </if>
+      <if test="mainDeviceId != null">
+        and link.main_device_id = #{mainDeviceId,jdbcType=VARCHAR}
+      </if>
+      <if test="followDeviceId != null">
+        and link.follow_device_id = #{followDeviceId,jdbcType=VARCHAR}
+      </if>
+      <if test="followIp != null">
+        and link.follow_ip = #{followIp,jdbcType=VARCHAR}
+      </if>
+  </select>
 
+
+  <select id="queryKeycenterLink" parameterType="com.matrictime.network.request.QueryLinkReq" resultMap="BaseResultMap">
+    select link.id,
+           link.link_name,
+           link.link_type,
+           link.main_device_id,
+           link.main_device_type,
+           link.follow_device_id,
+           link.follow_network_id,
+           d.lan_ip as follow_ip,
+           d.lan_port as follow_port,
+           link.active_auth,
+           link.is_on,
+           link.create_user,
+           link.create_time,
+           link.update_user,
+           link.update_time,
+           link.is_exist,
+           b.station_name as main_device_name,
+           d.device_name as follow_device_name
+    from nmpl_link link
+            left join nmpl_base_station_info b on link.main_device_id = b.station_id
+            left join nmpl_device_info d on link.follow_device_id = d.device_id
+    where follow_device_id is not null
+    <if test="linkName != null">
+      and link_name = #{linkName,jdbcType=VARCHAR}
+    </if>
+    <if test="mainDeviceType != null">
+      and main_device_type = #{mainDeviceType,jdbcType=VARCHAR}
+    </if>
+    <if test="mainDeviceName != null">
+      and main_device_name = #{mainDeviceName,jdbcType=VARCHAR}
+    </if>
+    <if test="mainDeviceId != null">
+      and main_device_id = #{mainDeviceId,jdbcType=VARCHAR}
+    </if>
+    <if test="followDeviceId != null">
+      and follow_device_id = #{followDeviceId,jdbcType=VARCHAR}
+    </if>
+    <if test="followDeviceName != null">
+      and follow_device_name = #{followDeviceName,jdbcType=VARCHAR}
+    </if>
   </select>
 
   <insert id="insertSelectiveWithId" useGeneratedKeys="true" keyProperty="id" parameterType="com.matrictime.network.dao.model.NmplLink">

@@ -126,18 +126,125 @@ public class LinkController {
     }
 
     /**
+     * 启停链路信息
+     * @param req
+     * @return
+     */
+    @RequiresPermissions("sys:link:switch")
+    @SystemLog(opermodul = "链路管理模块",operDesc = "禁用链路信息",operType = "禁用链路信息",operLevl = "2")
+    @RequestMapping(value = "/closeLink",method = RequestMethod.POST)
+    public Result<Integer> closeLink(@RequestBody EditLinkReq req){
+        try {
+            req.setEditType(EDIT_TYPE_UPD);
+            return linkService.editLink(req);
+        }catch (Exception e){
+            log.error("LinkController.closeLink exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
      * 查询链路信息
      * @param req
      * @return
      */
     @RequiresPermissions("sys:link:query")
     @SystemLog(opermodul = "链路管理模块",operDesc = "查询链路信息",operType = "查询链路信息")
-    @RequestMapping(value = "/selectLink",method = RequestMethod.POST)
-    public Result<PageInfo<LocalLinkDisplayVo>> selectLink(@RequestBody QueryLinkReq req){
+    @RequestMapping(value = "/queryLink",method = RequestMethod.POST)
+    public Result<PageInfo<LocalLinkDisplayVo>> queryLink(@RequestBody QueryLinkReq req){
         try {
             return linkService.queryLink(req);
         }catch (Exception e){
             log.error("LinkController.selectLink exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 插入密钥中心分配
+     * @param req
+     * @return
+     */
+    @RequiresPermissions("sys:keyCenterAllocate:insert")
+    @SystemLog(opermodul = "密钥中心分配模块",operDesc = "插入密钥中心分配",operType = "插入密钥中心分配")
+    @RequestMapping(value = "/insertKeycenterLink",method = RequestMethod.POST)
+    public Result<Integer> insertKeycenterLink(@RequestBody EditLinkReq req){
+        try {
+            req.setEditType(EDIT_TYPE_ADD);
+            return linkService.editLink(req);
+        }catch (Exception e){
+            log.error("LinkController.insertKeycenterLink exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 删除密钥中心分配
+     * @param req
+     * @return
+     */
+    @RequiresPermissions("sys:keyCenterAllocate:delete")
+    @SystemLog(opermodul = "密钥中心分配模块",operDesc = "删除密钥中心分配",operType = "删除密钥中心分配",operLevl = "2")
+    @RequestMapping(value = "/deleteKeycenterLink",method = RequestMethod.POST)
+    public Result<Integer> deleteKeycenterLink(@RequestBody EditLinkReq req){
+        try {
+            req.setEditType(EDIT_TYPE_DEL);
+            return linkService.editLink(req);
+        }catch (Exception e){
+            log.error("LinkController.deleteKeycenterLink exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 更新密钥中心分配
+     * @param req
+     * @return
+     */
+    @RequiresPermissions("sys:keyCenterAllocate:modify")
+    @SystemLog(opermodul = "密钥中心分配模块",operDesc = "更新密钥中心分配",operType = "更新密钥中心分配",operLevl = "2")
+    @RequestMapping(value = "/updateKeycenterLink",method = RequestMethod.POST)
+    public Result<Integer> updateKeycenterLink(@RequestBody EditLinkReq req){
+        try {
+            req.setEditType(EDIT_TYPE_UPD);
+            return linkService.editLink(req);
+        }catch (Exception e){
+            log.error("LinkController.updateKeycenterLink exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 启停密钥中心分配
+     * @param req
+     * @return
+     */
+    @RequiresPermissions("sys:keyCenterAllocate:switch")
+    @SystemLog(opermodul = "密钥中心分配模块",operDesc = "禁用密钥中心分配",operType = "禁用密钥中心分配",operLevl = "2")
+    @RequestMapping(value = "/closeKeycenterLink",method = RequestMethod.POST)
+    public Result<Integer> closeKeycenterLink(@RequestBody EditLinkReq req){
+        try {
+            req.setEditType(EDIT_TYPE_UPD);
+            return linkService.editLink(req);
+        }catch (Exception e){
+            log.error("LinkController.closeKeycenterLink exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
+        }
+    }
+
+    /**
+     * 查询密钥中心分配
+     * @param req
+     * @return
+     */
+    @RequiresPermissions("sys:keyCenterAllocate:query")
+    @SystemLog(opermodul = "密钥中心分配模块",operDesc = "查询密钥中心分配",operType = "查询密钥中心分配")
+    @RequestMapping(value = "/queryKeycenterLink",method = RequestMethod.POST)
+    public Result<PageInfo<LocalLinkDisplayVo>> queryKeycenterLink(@RequestBody QueryLinkReq req){
+        try {
+            return linkService.queryKeycenterLink(req);
+        }catch (Exception e){
+            log.error("LinkController.queryKeycenterLink exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

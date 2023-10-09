@@ -8,12 +8,8 @@ import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.NmplLinkExtMapper;
 import com.matrictime.network.dao.model.*;
-import com.matrictime.network.enums.DeviceTypeEnum;
-import com.matrictime.network.enums.LinkEnum;
 import com.matrictime.network.exception.ErrorMessageContants;
-import com.matrictime.network.model.PortModel;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.LinkDevice;
 import com.matrictime.network.modelVo.LocalLinkDisplayVo;
 import com.matrictime.network.modelVo.LocalLinkVo;
 import com.matrictime.network.request.EditLinkReq;
@@ -23,7 +19,6 @@ import com.matrictime.network.service.LinkService;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,6 +69,27 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
 
             // 根据条件查询链路列表
             List<LocalLinkDisplayVo> displayVos = nmplLinkExtMapper.queryLink(req);
+            PageInfo<LocalLinkDisplayVo> pageResult =  new PageInfo<>();
+
+            pageResult.setList(displayVos);
+            pageResult.setCount((int) page.getTotal());
+            pageResult.setPages(page.getPages());
+            result = buildResult(pageResult);
+        }catch (Exception e){
+            log.error("LinkServiceImpl.queryLink Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+    @Override
+    public Result<PageInfo<LocalLinkDisplayVo>> queryKeycenterLink(QueryLinkReq req) {
+        Result result;
+        try {
+            Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
+
+            // 根据条件查询密钥中心分配列表
+            List<LocalLinkDisplayVo> displayVos = nmplLinkExtMapper.queryKeycenterLink(req);
             PageInfo<LocalLinkDisplayVo> pageResult =  new PageInfo<>();
 
             pageResult.setList(displayVos);
