@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.NmplInternetRouteMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplInternetRoute">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="route_id" jdbcType="VARCHAR" property="routeId" />
+    <result column="network_id" jdbcType="VARCHAR" property="networkId" />
+    <result column="boundary_station_ip" jdbcType="VARCHAR" property="boundaryStationIp" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="ip_v6" jdbcType="VARCHAR" property="ipV6" />
+    <result column="next_network_id" jdbcType="VARCHAR" property="nextNetworkId" />
+    <result column="hop_count" jdbcType="VARCHAR" property="hopCount" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="device_type" jdbcType="VARCHAR" property="deviceType" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplInternetRoute">
+    <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, route_id, network_id, boundary_station_ip, create_user, create_time, update_user, 
+    update_time, is_exist, ip_v6, next_network_id, hop_count, company_name, company_id, 
+    device_type, device_name, device_id
+  </sql>
+  <sql id="Blob_Column_List">
+    byte_network_id
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplInternetRouteExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from nmpl_internet_route
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplInternetRouteExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from nmpl_internet_route
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from nmpl_internet_route
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nmpl_internet_route
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmplInternetRouteExample">
+    delete from nmpl_internet_route
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplInternetRoute">
+    insert into nmpl_internet_route (id, route_id, network_id, 
+      boundary_station_ip, create_user, create_time, 
+      update_user, update_time, is_exist, 
+      ip_v6, next_network_id, hop_count, 
+      company_name, company_id, device_type, 
+      device_name, device_id, byte_network_id
+      )
+    values (#{id,jdbcType=BIGINT}, #{routeId,jdbcType=VARCHAR}, #{networkId,jdbcType=VARCHAR}, 
+      #{boundaryStationIp,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}, 
+      #{ipV6,jdbcType=VARCHAR}, #{nextNetworkId,jdbcType=VARCHAR}, #{hopCount,jdbcType=VARCHAR}, 
+      #{companyName,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{deviceType,jdbcType=VARCHAR}, 
+      #{deviceName,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, #{byteNetworkId,jdbcType=LONGVARBINARY}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplInternetRoute">
+    insert into nmpl_internet_route
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="routeId != null">
+        route_id,
+      </if>
+      <if test="networkId != null">
+        network_id,
+      </if>
+      <if test="boundaryStationIp != null">
+        boundary_station_ip,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="isExist != null">
+        is_exist,
+      </if>
+      <if test="ipV6 != null">
+        ip_v6,
+      </if>
+      <if test="nextNetworkId != null">
+        next_network_id,
+      </if>
+      <if test="hopCount != null">
+        hop_count,
+      </if>
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="deviceType != null">
+        device_type,
+      </if>
+      <if test="deviceName != null">
+        device_name,
+      </if>
+      <if test="deviceId != null">
+        device_id,
+      </if>
+      <if test="byteNetworkId != null">
+        byte_network_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="routeId != null">
+        #{routeId,jdbcType=VARCHAR},
+      </if>
+      <if test="networkId != null">
+        #{networkId,jdbcType=VARCHAR},
+      </if>
+      <if test="boundaryStationIp != null">
+        #{boundaryStationIp,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isExist != null">
+        #{isExist,jdbcType=BIT},
+      </if>
+      <if test="ipV6 != null">
+        #{ipV6,jdbcType=VARCHAR},
+      </if>
+      <if test="nextNetworkId != null">
+        #{nextNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="hopCount != null">
+        #{hopCount,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        #{deviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceName != null">
+        #{deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null">
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="byteNetworkId != null">
+        #{byteNetworkId,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmplInternetRouteExample" resultType="java.lang.Long">
+    select count(*) from nmpl_internet_route
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update nmpl_internet_route
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.routeId != null">
+        route_id = #{record.routeId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.networkId != null">
+        network_id = #{record.networkId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.boundaryStationIp != null">
+        boundary_station_ip = #{record.boundaryStationIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createUser != null">
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null">
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isExist != null">
+        is_exist = #{record.isExist,jdbcType=BIT},
+      </if>
+      <if test="record.ipV6 != null">
+        ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nextNetworkId != null">
+        next_network_id = #{record.nextNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hopCount != null">
+        hop_count = #{record.hopCount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.companyName != null">
+        company_name = #{record.companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.companyId != null">
+        company_id = #{record.companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deviceType != null">
+        device_type = #{record.deviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deviceName != null">
+        device_name = #{record.deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deviceId != null">
+        device_id = #{record.deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.byteNetworkId != null">
+        byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update nmpl_internet_route
+    set id = #{record.id,jdbcType=BIGINT},
+      route_id = #{record.routeId,jdbcType=VARCHAR},
+      network_id = #{record.networkId,jdbcType=VARCHAR},
+      boundary_station_ip = #{record.boundaryStationIp,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{record.isExist,jdbcType=BIT},
+      ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
+      next_network_id = #{record.nextNetworkId,jdbcType=VARCHAR},
+      hop_count = #{record.hopCount,jdbcType=VARCHAR},
+      company_name = #{record.companyName,jdbcType=VARCHAR},
+      company_id = #{record.companyId,jdbcType=VARCHAR},
+      device_type = #{record.deviceType,jdbcType=VARCHAR},
+      device_name = #{record.deviceName,jdbcType=VARCHAR},
+      device_id = #{record.deviceId,jdbcType=VARCHAR},
+      byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update nmpl_internet_route
+    set id = #{record.id,jdbcType=BIGINT},
+      route_id = #{record.routeId,jdbcType=VARCHAR},
+      network_id = #{record.networkId,jdbcType=VARCHAR},
+      boundary_station_ip = #{record.boundaryStationIp,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{record.isExist,jdbcType=BIT},
+      ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
+      next_network_id = #{record.nextNetworkId,jdbcType=VARCHAR},
+      hop_count = #{record.hopCount,jdbcType=VARCHAR},
+      company_name = #{record.companyName,jdbcType=VARCHAR},
+      company_id = #{record.companyId,jdbcType=VARCHAR},
+      device_type = #{record.deviceType,jdbcType=VARCHAR},
+      device_name = #{record.deviceName,jdbcType=VARCHAR},
+      device_id = #{record.deviceId,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplInternetRoute">
+    update nmpl_internet_route
+    <set>
+      <if test="routeId != null">
+        route_id = #{routeId,jdbcType=VARCHAR},
+      </if>
+      <if test="networkId != null">
+        network_id = #{networkId,jdbcType=VARCHAR},
+      </if>
+      <if test="boundaryStationIp != null">
+        boundary_station_ip = #{boundaryStationIp,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isExist != null">
+        is_exist = #{isExist,jdbcType=BIT},
+      </if>
+      <if test="ipV6 != null">
+        ip_v6 = #{ipV6,jdbcType=VARCHAR},
+      </if>
+      <if test="nextNetworkId != null">
+        next_network_id = #{nextNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="hopCount != null">
+        hop_count = #{hopCount,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        device_type = #{deviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceName != null">
+        device_name = #{deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null">
+        device_id = #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="byteNetworkId != null">
+        byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplInternetRoute">
+    update nmpl_internet_route
+    set route_id = #{routeId,jdbcType=VARCHAR},
+      network_id = #{networkId,jdbcType=VARCHAR},
+      boundary_station_ip = #{boundaryStationIp,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{isExist,jdbcType=BIT},
+      ip_v6 = #{ipV6,jdbcType=VARCHAR},
+      next_network_id = #{nextNetworkId,jdbcType=VARCHAR},
+      hop_count = #{hopCount,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      company_id = #{companyId,jdbcType=VARCHAR},
+      device_type = #{deviceType,jdbcType=VARCHAR},
+      device_name = #{deviceName,jdbcType=VARCHAR},
+      device_id = #{deviceId,jdbcType=VARCHAR},
+      byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplInternetRoute">
+    update nmpl_internet_route
+    set route_id = #{routeId,jdbcType=VARCHAR},
+      network_id = #{networkId,jdbcType=VARCHAR},
+      boundary_station_ip = #{boundaryStationIp,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      is_exist = #{isExist,jdbcType=BIT},
+      ip_v6 = #{ipV6,jdbcType=VARCHAR},
+      next_network_id = #{nextNetworkId,jdbcType=VARCHAR},
+      hop_count = #{hopCount,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      company_id = #{companyId,jdbcType=VARCHAR},
+      device_type = #{deviceType,jdbcType=VARCHAR},
+      device_name = #{deviceName,jdbcType=VARCHAR},
+      device_id = #{deviceId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
