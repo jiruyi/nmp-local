@@ -35,6 +35,11 @@ public class QueryLinkReq extends BaseRequest implements Serializable {
     private String followDeviceId;
 
     /**
+     * 对端设备入网ID
+     */
+    private String followNetworkId;
+
+    /**
      * 对端设备IP
      */
     private String followIp;

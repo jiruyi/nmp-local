@@ -10,10 +10,13 @@ import com.matrictime.network.dao.mapper.extend.NmplLinkExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.LocalLinkDisplayVo;
 import com.matrictime.network.modelVo.LocalLinkVo;
 import com.matrictime.network.request.EditLinkReq;
+import com.matrictime.network.request.QueryDeviceForLinkReq;
 import com.matrictime.network.request.QueryLinkReq;
+import com.matrictime.network.response.DeviceResponse;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.LinkService;
 import com.matrictime.network.util.HttpClientUtil;
@@ -62,7 +65,27 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
     private AsyncService asyncService;
 
     @Override
-    public Result<PageInfo<LocalLinkDisplayVo>> queryLink(QueryLinkReq req) {
+    public Result<DeviceResponse> queryDeviceForLink(QueryDeviceForLinkReq req) {
+        Result result;
+        try {
+            // 入参校验
+            if (ParamCheckUtil.checkVoStrBlank(req.getDeviceType())){
+                throw new Exception("DeviceType"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            DeviceResponse resp = new DeviceResponse();
+            // 根据条件查询链路设备列表
+            List<DeviceInfoVo> deviceInfoVos = nmplLinkExtMapper.QueryDeviceForLink(req);
+            resp.setDeviceInfoVos(deviceInfoVos);
+            result = buildResult(resp);
+        }catch (Exception e){
+            log.error("LinkServiceImpl.queryDeviceForLink Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+    @Override
+    public Result<PageInfo<LocalLinkDisplayVo>> queryLinkPage(QueryLinkReq req) {
         Result result;
         try {
             Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
@@ -76,14 +99,14 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
             pageResult.setPages(page.getPages());
             result = buildResult(pageResult);
         }catch (Exception e){
-            log.error("LinkServiceImpl.queryLink Exception:{}",e.getMessage());
+            log.error("LinkServiceImpl.queryLinkPage Exception:{}",e.getMessage());
             result = failResult("");
         }
         return result;
     }
 
     @Override
-    public Result<PageInfo<LocalLinkDisplayVo>> queryKeycenterLink(QueryLinkReq req) {
+    public Result<PageInfo<LocalLinkDisplayVo>> queryKeycenterLinkPage(QueryLinkReq req) {
         Result result;
         try {
             Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
@@ -96,6 +119,34 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
             pageResult.setCount((int) page.getTotal());
             pageResult.setPages(page.getPages());
             result = buildResult(pageResult);
+        }catch (Exception e){
+            log.error("LinkServiceImpl.queryKeycenterLinkPage Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+    @Override
+    public Result<LocalLinkDisplayVo> queryLink(QueryLinkReq req) {
+        Result result;
+        try {
+            // 根据条件查询链路列表
+            List<LocalLinkDisplayVo> displayVos = nmplLinkExtMapper.queryLink(req);
+            result = buildResult(displayVos);
+        }catch (Exception e){
+            log.error("LinkServiceImpl.queryLink Exception:{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+    @Override
+    public Result<LocalLinkDisplayVo> queryKeycenterLink(QueryLinkReq req) {
+        Result result;
+        try {
+            // 根据条件查询密钥中心分配列表
+            List<LocalLinkDisplayVo> displayVos = nmplLinkExtMapper.queryKeycenterLink(req);
+            result = buildResult(displayVos);
         }catch (Exception e){
             log.error("LinkServiceImpl.queryLink Exception:{}",e.getMessage());
             result = failResult("");
@@ -226,7 +277,7 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
             throw new Exception("EditType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (CollectionUtils.isEmpty(req.getLocalLinkVos())){
-                throw new Exception("LinkVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            throw new Exception("LinkVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
 
     }
