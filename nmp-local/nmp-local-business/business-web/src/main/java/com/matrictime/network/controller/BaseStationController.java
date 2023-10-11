@@ -279,24 +279,24 @@ public class BaseStationController {
         }
     }
 
-    /**
-     * 更新基站下的用户数
-     * @return
-     */
-    @SystemLog(opermodul = "设备管理模块",operDesc = "更新设备下的用户数",operType = "更新")
-    @RequestMapping(value = "/updateConnectCount",method = RequestMethod.POST)
-    public Result<Integer> updateConnectCount(@RequestBody BaseStationCountRequest baseStationCountRequest){
-        try {
-            if(StringUtils.isEmpty(baseStationCountRequest.getDeviceId()) &&
-                    StringUtils.isEmpty(baseStationCountRequest.getCurrentConnectCount())){
-                throw new RuntimeException("缺少必传参数");
-            }
-            return deviceService.updateConnectCount(baseStationCountRequest);
-        }catch (Exception e){
-            log.info("updateConnectCount:{}",e.getMessage());
-            return new Result<>(false,"");
-        }
-    }
+//    /**
+//     * 更新基站下的用户数
+//     * @return
+//     */
+//    @SystemLog(opermodul = "设备管理模块",operDesc = "更新设备下的用户数",operType = "更新")
+//    @RequestMapping(value = "/updateConnectCount",method = RequestMethod.POST)
+//    public Result<Integer> updateConnectCount(@RequestBody BaseStationCountRequest baseStationCountRequest){
+//        try {
+//            if(StringUtils.isEmpty(baseStationCountRequest.getDeviceId()) &&
+//                    StringUtils.isEmpty(baseStationCountRequest.getCurrentConnectCount())){
+//                throw new RuntimeException("缺少必传参数");
+//            }
+//            return deviceService.updateConnectCount(baseStationCountRequest);
+//        }catch (Exception e){
+//            log.info("updateConnectCount:{}",e.getMessage());
+//            return new Result<>(false,"");
+//        }
+//    }
 
     /**
      * 查询不同Ip物理设备
@@ -394,4 +394,12 @@ public class BaseStationController {
     }
 
 
+
+    /**
+     * 获取设备id sequence
+     */
+    @RequestMapping(value = "/getDeviceId",method = RequestMethod.POST)
+    public Result getDeviceId() {
+        return baseStationInfoService.getDeviceId();
+    }
 }

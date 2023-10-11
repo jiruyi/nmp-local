@@ -36,8 +36,8 @@ public class DeviceExtraInfoServiceImpl extends SystemBaseService implements Dev
         Result<Integer> result = new Result<>();
         NmplDeviceExtraInfo nmplDeviceExtraInfo = new NmplDeviceExtraInfo();
         try {
-            Integer stationNetworkId = nmplBaseStationInfoMapper.getSequenceId();
-            deviceExtraInfoRequest.setStationNetworkId(stationNetworkId.toString());
+//            Integer stationNetworkId = nmplBaseStationInfoMapper.getSequenceId();
+//            deviceExtraInfoRequest.setStationNetworkId(stationNetworkId.toString());
             if(!CommonCheckUtil.checkStringLength(deviceExtraInfoRequest.getDeviceName(),null,16)){
                 return new Result<>(false, ErrorMessageContants.SYSTEM_ERROR);
             }

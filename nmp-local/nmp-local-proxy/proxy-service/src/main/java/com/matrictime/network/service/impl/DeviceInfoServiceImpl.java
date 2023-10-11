@@ -5,6 +5,8 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.enums.DeviceStatusEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
+import com.matrictime.network.base.util.DataChangeUtil;
+import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.domain.DeviceInfoDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
@@ -67,7 +69,9 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
         try {
             Date createTime = new Date();
             infoVo.setUpdateTime(createTime);
-
+            if(infoVo.getStationNetworkId()!=null){
+                infoVo.setStationNetworkId(DataChangeUtil.BidChange(infoVo.getStationNetworkId()));
+            }
             if (infoVo.getIsLocal()){
                 NmplLocalDeviceInfo deviceInfo = new NmplLocalDeviceInfo();
                 BeanUtils.copyProperties(infoVo,deviceInfo);
@@ -104,7 +108,10 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
         try {
             Date createTime = new Date();
             infoVo.setUpdateTime(createTime);
-
+            //统一处理 将StationNetworkId转化为16进制形式
+            if(infoVo.getStationNetworkId()!=null){
+                infoVo.setStationNetworkId(DataChangeUtil.BidChange(infoVo.getStationNetworkId()));
+            }
             if (infoVo.getIsLocal()){
                 NmplLocalDeviceInfo stationInfo = new NmplLocalDeviceInfo();
                 BeanUtils.copyProperties(infoVo,stationInfo);
@@ -170,22 +177,29 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
             return nmplUpdateInfoGeneratorMapper.insertSelective(updateInfo);
         }
 
-        throw new SystemException(ErrorMessageContants.OPER_TYPE_IS_ERROR_MSG);
+//        throw new SystemException(ErrorMessageContants.OPER_TYPE_IS_ERROR_MSG);
+        return DataConstants.ZERO;
     }
 
     /**
-     * 初始化本机设备
+     * 初始化本机设备  local表中暂时不放数据采集和指控中心 无交互业务
      * @param deviceInfoVos
      */
     @Override
     @Transactional
     public void initLocalInfo(List<CenterDeviceInfoVo> deviceInfoVos) {
+
         // 处理集合方便遍历操作
         Map<String, List<CenterDeviceInfoVo>> infoVoMap = new HashMap<>();
         List<CenterDeviceInfoVo> keycenter = new ArrayList<>();
         List<CenterDeviceInfoVo> cache = new ArrayList<>();
         List<CenterDeviceInfoVo> generator = new ArrayList<>();
         for (CenterDeviceInfoVo vo:deviceInfoVos){
+            //统一处理 将StationNetworkId转化为16进制形式
+            if(vo.getStationNetworkId()!=null){
+                vo.setStationNetworkId(DataChangeUtil.BidChange(vo.getStationNetworkId()));
+            }
+
             if (DeviceTypeEnum.DISPENSER.getCode().equals(vo.getDeviceType())){
                 keycenter.add(vo);
             }
@@ -195,6 +209,7 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
             if (DeviceTypeEnum.CACHE.getCode().equals(vo.getDeviceType())){
                 cache.add(vo);
             }
+
         }
 
         infoVoMap.put(DeviceTypeEnum.DISPENSER.getCode(),keycenter);
@@ -267,6 +282,9 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
         List<DeviceInfoVo> deviceInfos = new ArrayList<>(deviceInfoVos.size());
         for (CenterDeviceInfoVo vo : deviceInfoVos){
             DeviceInfoVo deviceInfoVo = new DeviceInfoVo();
+            if(vo.getStationNetworkId()!=null){
+                vo.setStationNetworkId(DataChangeUtil.BidChange(vo.getStationNetworkId()));
+            }
             BeanUtils.copyProperties(vo,deviceInfoVo);
             deviceInfoVo.setUpdateTime(createTime);
             deviceInfos.add(deviceInfoVo);

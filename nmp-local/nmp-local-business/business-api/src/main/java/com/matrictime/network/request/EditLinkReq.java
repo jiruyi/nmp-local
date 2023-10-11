@@ -1,6 +1,6 @@
 package com.matrictime.network.request;
 
-import com.matrictime.network.modelVo.LinkVo;
+import com.matrictime.network.modelVo.LocalLinkVo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -20,7 +20,7 @@ public class EditLinkReq implements Serializable {
     /**
      * 批量编辑对象-修改必输
      */
-    private List<LinkVo> linkVos;
+    private List<LocalLinkVo> localLinkVos;
 
     /**
      * 批量删除id列表（单条删除亦可）-删除必输

@@ -426,34 +426,110 @@ public class DeviceController {
         return result;
     }
 
-    /**
-     * 更新基站下的用户数
-     * @param baseStationCountRequest
-     * @return
-     */
-    @SystemLog(opermodul = "更新基站下的用户数",operDesc = "更新基站下的用户数",operType = "更新")
-    @RequestMapping(value = "/updateConnectCount",method = RequestMethod.POST)
-    public Result<Integer> updateConnectCount(@RequestBody BaseStationCountRequest baseStationCountRequest){
+//    /**
+//     * 更新基站下的用户数
+//     * @param baseStationCountRequest
+//     * @return
+//     */
+//    @SystemLog(opermodul = "更新基站下的用户数",operDesc = "更新基站下的用户数",operType = "更新")
+//    @RequestMapping(value = "/updateConnectCount",method = RequestMethod.POST)
+//    public Result<Integer> updateConnectCount(@RequestBody BaseStationCountRequest baseStationCountRequest){
+//        Result<Integer> result = new Result<>();
+//        try {
+//            result = deviceService.updateConnectCount(baseStationCountRequest);
+//        }catch (Exception e){
+//            log.info("updateConnectCount:{}",e.getMessage());
+//            result.setSuccess(false);
+//            result.setErrorMsg("系统异常，请稍后再试");
+//        }
+//        return result;
+//    }
+
+
+    //-----------------------------------指控中心
+
+    @RequiresPermissions("sys:center:save")
+    @SystemLog(opermodul = "指控中心",operDesc = "新增指控中心",operType = "新增指控中心")
+    @RequestMapping(value = "/insertCenter",method = RequestMethod.POST)
+    @ApiOperation(value = "新增指控中心",notes = "新增指控中心")
+    public Result<Integer> insertCenter(@RequestBody DeviceInfoRequest deviceInfoRequest){
         Result<Integer> result = new Result<>();
         try {
-            result = deviceService.updateConnectCount(baseStationCountRequest);
+            deviceInfoRequest.setDeviceType(com.matrictime.network.enums.DeviceTypeEnum.ACCUSE_CENTER.getCode());
+            result = deviceService.insertCenter(deviceInfoRequest);
         }catch (Exception e){
-            log.info("updateConnectCount:{}",e.getMessage());
+            log.info("新增指控中心异常:insertDispenser{}",e.getMessage());
             result.setSuccess(false);
-            result.setErrorMsg("系统异常，请稍后再试");
+            result.setErrorMsg("新增指控中心异常");
         }
         return result;
     }
 
+    /**
+     * 删除指控中心信息
+     * @param deviceInfoRequest
+     * @return
+     */
+    @RequiresPermissions("sys:center:delete")
+    @SystemLog(opermodul = "指控中心管理模块",operDesc = "删除指控中心",operType = "删除指控中心",operLevl = "2")
+    @RequestMapping(value = "/deleteCenter",method = RequestMethod.POST)
+    @ApiOperation(value = "删除指控中心",notes = "删除指控中心")
+    public Result<Integer> deleteCenter(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            deviceInfoRequest.setDeviceType(com.matrictime.network.enums.DeviceTypeEnum.ACCUSE_CENTER.getCode());
+            result = deviceService.deleteCenter(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("删除指控中心异常:deleteDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("删除指控中心信息异常");
+        }
+        return result;
+    }
 
+    /**
+     * 更新指控中心信息
+     * @param deviceInfoRequest
+     * @return
+     */
+    @RequiresPermissions("sys:center:update")
+    @SystemLog(opermodul = "指控中心管理模块",operDesc = "更新指控中心信息",operType = "更新指控中心信息",operLevl = "2")
+    @RequestMapping(value = "/updateCenter",method = RequestMethod.POST)
+    @ApiOperation(value = "更新指控中心接口",notes = "更新指控中心信息")
+    public Result<Integer> updateCenter(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<Integer> result = new Result<>();
+        try {
+            deviceInfoRequest.setDeviceType(com.matrictime.network.enums.DeviceTypeEnum.ACCUSE_CENTER.getCode());
+            result = deviceService.updateCenter(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("更新指控中心信息异常:updateDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("更新指控中心信息异常");
+        }
+        return result;
+    }
 
-
-
-
-
-
-
-
+    /**
+     * 查询指控中心信息
+     * @param deviceInfoRequest
+     * @return
+     */
+    @RequiresPermissions("sys:center:query")
+    @SystemLog(opermodul = "指控中心管理模块",operDesc = "查询指控中心信息",operType = "查询指控中心信息")
+    @RequestMapping(value = "/selectCenter",method = RequestMethod.POST)
+    @ApiOperation(value = "查询指控中心接口",notes = "查询指控中心信息")
+    public Result<PageInfo> selectCenter(@RequestBody DeviceInfoRequest deviceInfoRequest){
+        Result<PageInfo> result = new Result<>();
+        try {
+            deviceInfoRequest.setDeviceType(com.matrictime.network.enums.DeviceTypeEnum.ACCUSE_CENTER.getCode());
+            result = deviceService.selectDeviceALl(deviceInfoRequest);
+        }catch (Exception e){
+            log.info("查询指控中心信息异常:selectDispenser{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg("查询指控中心信息异常");
+        }
+        return result;
+    }
 
 
 

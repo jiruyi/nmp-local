@@ -4,18 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.modelVo.*;
-import com.matrictime.network.base.enums.DeviceStatusEnum;
-import com.matrictime.network.dao.domain.OutlinePcDomainService;
-import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.InitInfoReq;
-import com.matrictime.network.request.OutlinePcReq;
-import com.matrictime.network.response.ProxyResp;
 import com.matrictime.network.service.*;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.math.NumberUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,9 +17,6 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.matrictime.network.base.constant.DataConstants.INIT_URL;
@@ -117,9 +107,9 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                             }
                             // 初始化链路列表信息
                             JSONArray linkRelationVoList = resultObj.getJSONArray("linkVos");
-                            List<LinkVo> linkVos = linkRelationVoList.toJavaList(LinkVo.class);
-                            if (!CollectionUtils.isEmpty(linkVos)){
-                                linkRelationService.initInfo(linkVos);
+                            List<ProxyLinkVo> localLinkVos = linkRelationVoList.toJavaList(ProxyLinkVo.class);
+                            if (!CollectionUtils.isEmpty(localLinkVos)){
+                                linkRelationService.initInfo(localLinkVos);
                             }
                             // 初始化一体机列表信息
                             JSONArray nmplOutlinePcInfoList = resultObj.getJSONArray("nmplOutlinePcInfoVos");

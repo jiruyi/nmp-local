@@ -49,6 +49,19 @@ public class DeviceInfoRequest extends BaseRequest{
      */
     private byte[] byteNetworkId;
 
+//    /**
+//     * 指控中心入网id
+//     */
+//    private String centerNetworkId;
+//
+//    public String getCenterNetworkId() {
+//        return centerNetworkId;
+//    }
+//
+//    public void setCenterNetworkId(String centerNetworkId) {
+//        this.centerNetworkId = centerNetworkId;
+//    }
+
     public byte[] getByteNetworkId() {
         return byteNetworkId;
     }

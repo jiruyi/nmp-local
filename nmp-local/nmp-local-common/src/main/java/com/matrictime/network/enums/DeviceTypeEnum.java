@@ -10,7 +10,8 @@ public enum DeviceTypeEnum {
     DEVICE_GENERATOR("12","生成机"),
     DEVICE_CACHE("13","缓存机"),
 
-    DATA_BASE("20","数据采集");
+    DATA_BASE("20","数据采集"),
+    ACCUSE_CENTER("21","指控中心");
     private String code;
     private String conditionDesc;
 

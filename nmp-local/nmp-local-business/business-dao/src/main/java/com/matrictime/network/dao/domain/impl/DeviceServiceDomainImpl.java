@@ -7,6 +7,7 @@ import com.matrictime.network.base.SystemException;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.StationVo;
@@ -128,27 +129,7 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
             throw new SystemException("同设备ip或入网码重复");
         }
 
-        //不同设备 ip+端口不能相同
-        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-        nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(deviceInfoRequest.getLanIp())
-                .andLanPortEqualTo(deviceInfoRequest.getLanPort()).andIsExistEqualTo(true);
-        nmplBaseStationInfoExample.or().andStationNetworkIdEqualTo(deviceInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
-        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-
-        nmplDeviceExtraInfoExample.clear();
-        nmplDeviceExtraInfoExample.createCriteria().andLanIpEqualTo(deviceInfoRequest.getLanIp())
-                .andLanPortEqualTo(deviceInfoRequest.getLanPort()).andIsExistEqualTo(true).andDeviceTypeNotEqualTo(deviceInfoRequest.getDeviceType());
-        nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(nmplDeviceExtraInfoExample);
-
-        nmplDeviceInfoExample.clear();
-        nmplDeviceInfoExample.createCriteria().andLanIpEqualTo(deviceInfoRequest.getLanIp())
-                .andLanPortEqualTo(deviceInfoRequest.getLanPort()).andIsExistEqualTo(true).andDeviceTypeNotEqualTo(deviceInfoRequest.getDeviceType());
-        List<NmplDeviceInfo> nmplDeviceInfos1 = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
-
-        if(!CollectionUtils.isEmpty(nmplBaseStationInfos)||!CollectionUtils.isEmpty(nmplDeviceExtraInfos)
-            || !CollectionUtils.isEmpty(nmplDeviceInfos1)){
-            throw new SystemException("不同设备ip+端口或入网码重复");
-        }
+        ipPortCheck(deviceInfoRequest);
     }
 
     @Override
@@ -171,29 +152,39 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
         if(!CollectionUtils.isEmpty(nmplDeviceExtraInfos)){
             throw new SystemException("备用设备入网码重复");
         }
+        ipPortCheck(deviceInfoRequest);
 
-        //不同设备 ip+端口不能相同
-        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-        nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(deviceInfoRequest.getLanIp())
-                .andLanPortEqualTo(deviceInfoRequest.getLanPort()).andIsExistEqualTo(true);
-        nmplBaseStationInfoExample.or().andStationNetworkIdEqualTo(deviceInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
-        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+    }
 
-        nmplDeviceExtraInfoExample.clear();
-        nmplDeviceExtraInfoExample.createCriteria().andLanIpEqualTo(deviceInfoRequest.getLanIp())
-                .andLanPortEqualTo(deviceInfoRequest.getLanPort()).andIsExistEqualTo(true).andDeviceTypeNotEqualTo(deviceInfoRequest.getDeviceType());
-        nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(nmplDeviceExtraInfoExample);
+    private void ipPortCheck(DeviceInfoRequest deviceInfoRequest){
+        //不同设备 ip+端口不能相同  指控中心数据采集不做此校验
+        if(!deviceInfoRequest.getDeviceType().equals(DeviceTypeEnum.DATA_BASE.getCode())) {
 
-        nmplDeviceInfoExample.clear();
-        nmplDeviceInfoExample.createCriteria().andLanIpEqualTo(deviceInfoRequest.getLanIp())
-                .andLanPortEqualTo(deviceInfoRequest.getLanPort()).andIsExistEqualTo(true).andDeviceTypeNotEqualTo(deviceInfoRequest.getDeviceType());
-        List<NmplDeviceInfo> nmplDeviceInfos1 = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+            NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
+            NmplDeviceExtraInfoExample nmplDeviceExtraInfoExample = new NmplDeviceExtraInfoExample();
+            NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+            nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(deviceInfoRequest.getLanIp())
+                    .andLanPortEqualTo(deviceInfoRequest.getLanPort()).andIsExistEqualTo(true);
+            nmplBaseStationInfoExample.or().andStationNetworkIdEqualTo(deviceInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
+            List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
 
-        if(!CollectionUtils.isEmpty(nmplBaseStationInfos)||!CollectionUtils.isEmpty(nmplDeviceExtraInfos)
-                || !CollectionUtils.isEmpty(nmplDeviceInfos1)){
-            throw new SystemException("不同设备ip+端口或入网码重复");
+            nmplDeviceExtraInfoExample.clear();
+            nmplDeviceExtraInfoExample.createCriteria().andLanIpEqualTo(deviceInfoRequest.getLanIp())
+                    .andLanPortEqualTo(deviceInfoRequest.getLanPort()).andIsExistEqualTo(true).andDeviceTypeNotEqualTo(deviceInfoRequest.getDeviceType());
+            List<NmplDeviceExtraInfo> nmplDeviceExtraInfos = nmplDeviceExtraInfoMapper.selectByExample(nmplDeviceExtraInfoExample);
+
+            nmplDeviceInfoExample.clear();
+            nmplDeviceInfoExample.createCriteria().andLanIpEqualTo(deviceInfoRequest.getLanIp())
+                    .andLanPortEqualTo(deviceInfoRequest.getLanPort()).andIsExistEqualTo(true).andDeviceTypeNotEqualTo(deviceInfoRequest.getDeviceType());
+            List<NmplDeviceInfo> nmplDeviceInfos1 = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
+
+            if (!CollectionUtils.isEmpty(nmplBaseStationInfos) || !CollectionUtils.isEmpty(nmplDeviceExtraInfos)
+                    || !CollectionUtils.isEmpty(nmplDeviceInfos1)) {
+                throw new SystemException("不同设备ip+端口或入网码重复");
+            }
         }
     }
+
 
     /**
      * 查询密钥生成机总数
@@ -230,20 +221,20 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
         return countBaseStationResponse;
     }
 
-    /**
-     * 更新基站下面的用户数
-     * @param baseStationCountRequest
-     * @return
-     */
-    @Override
-    public int updateConnectCount(BaseStationCountRequest baseStationCountRequest) {
-        NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
-        NmplDeviceCountExample.Criteria criteria = nmplDeviceCountExample.createCriteria();
-        criteria.andDeviceIdEqualTo(baseStationCountRequest.getDeviceId());
-        NmplDeviceCount nmplDeviceCount = new NmplDeviceCount();
-        BeanUtils.copyProperties(baseStationCountRequest,nmplDeviceCount);
-        return nmplDeviceCountMapper.updateByExampleSelective(nmplDeviceCount,nmplDeviceCountExample);
-    }
+//    /**
+//     * 更新基站下面的用户数
+//     * @param baseStationCountRequest
+//     * @return
+//     */
+//    @Override
+//    public int updateConnectCount(BaseStationCountRequest baseStationCountRequest) {
+//        NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
+//        NmplDeviceCountExample.Criteria criteria = nmplDeviceCountExample.createCriteria();
+//        criteria.andDeviceIdEqualTo(baseStationCountRequest.getDeviceId());
+//        NmplDeviceCount nmplDeviceCount = new NmplDeviceCount();
+//        BeanUtils.copyProperties(baseStationCountRequest,nmplDeviceCount);
+//        return nmplDeviceCountMapper.updateByExampleSelective(nmplDeviceCount,nmplDeviceCountExample);
+//    }
 
     /**
      * 插入采集设备
@@ -280,5 +271,23 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
     }
 
 
+    @Override
+    public int insertCenter(DeviceInfoRequest deviceInfoRequest) {
+        NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
+        nmplDeviceExample.createCriteria().andDeviceTypeEqualTo(deviceInfoRequest.getDeviceType()).andIsExistEqualTo(true);
+        List<NmplDevice> nmplDeviceList = nmplDeviceMapper.selectByExample(nmplDeviceExample);
+        if(!nmplDeviceList.isEmpty()){
+            throw new SystemException("无法创建多个指控中心");
+        }
+        NmplDevice nmplDevice = new NmplDevice();
+        BeanUtils.copyProperties(deviceInfoRequest,nmplDevice);
+        return nmplDeviceMapper.insertSelective(nmplDevice);
+    }
 
+    @Override
+    public int updateCenter(DeviceInfoRequest deviceInfoRequest) {
+        NmplDevice nmplDevice = new NmplDevice();
+        BeanUtils.copyProperties(deviceInfoRequest,nmplDevice);
+        return nmplDeviceMapper.updateByPrimaryKeySelective(nmplDevice);
+    }
 }

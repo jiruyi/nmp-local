@@ -72,12 +72,9 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
     public Result<Integer> insertDevice(DeviceInfoRequest deviceInfoRequest) {
         Result<Integer> result = new Result<>();
         Integer insertFlag = null;
-        Date date = new Date();
-        DeviceInfoRequest infoRequest = new DeviceInfoRequest();
         try {
 
-            deviceInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
-            deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
+            deviceInfoRequest.setDeviceId(deviceInfoRequest.getStationNetworkId());
             deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
 
             checkParam(deviceInfoRequest);
@@ -324,23 +321,23 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         return result;
     }
 
-    /**
-     * 更新基站下面的用户数
-     * @param baseStationCountRequest
-     * @return
-     */
-    @Override
-    public Result<Integer> updateConnectCount(BaseStationCountRequest baseStationCountRequest) {
-        Result<Integer> result = new Result<>();
-        try {
-            result.setResultObj(deviceDomainService.updateConnectCount(baseStationCountRequest));
-        }catch (Exception e){
-            result.setErrorMsg("");
-            result.setSuccess(false);
-            log.info("updateConnectCount:{}",e.getMessage());
-        }
-        return result;
-    }
+//    /**
+//     * 更新基站下面的用户数
+//     * @param baseStationCountRequest
+//     * @return
+//     */
+//    @Override
+//    public Result<Integer> updateConnectCount(BaseStationCountRequest baseStationCountRequest) {
+//        Result<Integer> result = new Result<>();
+//        try {
+//            result.setResultObj(deviceDomainService.updateConnectCount(baseStationCountRequest));
+//        }catch (Exception e){
+//            result.setErrorMsg("");
+//            result.setSuccess(false);
+//            log.info("updateConnectCount:{}",e.getMessage());
+//        }
+//        return result;
+//    }
 
     @Override
     public Result<Integer> insertDataBase(DeviceInfoRequest deviceInfoRequest) {
@@ -348,7 +345,7 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         Integer insertFlag = null;
         try {
             deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
-            deviceInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
+            //deviceInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
             deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             checkDataBaseParam(deviceInfoRequest);
             deviceInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(deviceInfoRequest.getStationNetworkId()));
@@ -427,16 +424,32 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         if(!CommonCheckUtil.checkStringLength(deviceInfoRequest.getDeviceName(),null,16)){
             throw new SystemException(DEVICENAME_LENTH_ERROR_MSG);
         }
-        boolean publicIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getPublicNetworkIp());
-        boolean lanIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getLanIp());
+        //校验ip格式
+        boolean publicIpReg = true;
+        boolean lanIpReg = true;
+        if(!ParamCheckUtil.checkVoStrBlank(deviceInfoRequest.getPublicNetworkIp())){
+            publicIpReg =  CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getPublicNetworkIp());
+        }
+        if(!ParamCheckUtil.checkVoStrBlank(deviceInfoRequest.getLanIp())){
+            lanIpReg = CommonCheckUtil.isIpv4Legal(deviceInfoRequest.getLanIp());
+        }
         if(publicIpReg == false || lanIpReg == false){
             throw  new SystemException(IP_FORMAT_ERROR_MSG);
         }
-        boolean publicPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getPublicNetworkPort());
-        boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getLanPort());
+
+        //校验端口格式
+        boolean publicPortReg =true;
+        if(!ParamCheckUtil.checkVoStrBlank(deviceInfoRequest.getPublicNetworkPort())){
+            publicPortReg =  CommonCheckUtil.isPortLegal(deviceInfoRequest.getPublicNetworkPort());
+        }
+        boolean lanPortReg = true;
+        if(!ParamCheckUtil.checkVoStrBlank(deviceInfoRequest.getLanPort())){
+            lanPortReg =  CommonCheckUtil.isPortLegal(deviceInfoRequest.getLanPort());
+        }
         if(publicPortReg == false || lanPortReg == false){
             throw  new SystemException(PORT_FORMAT_ERROR_MSG);
         }
+
         //判断小区是否正确
         String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
         if(StringUtil.isEmpty(preBID)){
@@ -472,4 +485,74 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
     }
 
 
+    @Override
+    public Result<Integer> insertCenter(DeviceInfoRequest deviceInfoRequest) {
+        Result<Integer> result = new Result<>();
+        Integer insertFlag = null;
+        try {
+            deviceInfoRequest.setDeviceId(deviceInfoRequest.getStationNetworkId());
+            deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
+
+            checkParam(deviceInfoRequest);
+
+            deviceInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(deviceInfoRequest.getStationNetworkId()));
+
+            insertFlag = deviceDomainService.insertCenter(deviceInfoRequest);
+            if(insertFlag.equals(INSERT_OR_UPDATE_SUCCESS) ){
+                result.setResultObj(insertFlag);
+                result.setSuccess(true);
+                pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_INSERT);
+            }
+        }catch (SystemException e){
+            log.info("设备新增异常",e.getMessage());
+            result = failResult(e);
+        }catch (Exception e){
+            log.error("设备新增异常：{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+    @Override
+    public Result<Integer> deleteCenter(DeviceInfoRequest deviceInfoRequest) {
+        Result<Integer> result = new Result<>();
+        Integer deleteFlag;
+        try {
+            deleteFlag = deviceDomainService.deleteDevice(deviceInfoRequest);
+            if(deleteFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
+                result.setResultObj(deleteFlag);
+                result.setSuccess(true);
+                pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_UPDATE);
+            }
+        }catch (SystemException e){
+            log.info("设备删除异常",e.getMessage());
+            result = failResult(e);
+        }catch (Exception e){
+            log.error("设备删除异常：{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+    @Override
+    public Result<Integer> updateCenter(DeviceInfoRequest deviceInfoRequest) {
+        Result<Integer> result = new Result<>();
+        Integer updateFlag;
+        try {
+            checkParam(deviceInfoRequest);
+            updateFlag = deviceDomainService.updateCenter(deviceInfoRequest);
+            if(updateFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
+                result.setResultObj(updateFlag);
+                result.setSuccess(true);
+                pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_UPDATE);
+            }
+        }catch (SystemException e){
+            log.info("设备修改异常",e.getMessage());
+            result = failResult(e);
+        }catch (Exception e){
+            log.error("设备修改异常：{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
 }

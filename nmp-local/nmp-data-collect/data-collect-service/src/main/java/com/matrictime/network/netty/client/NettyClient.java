@@ -1,7 +1,9 @@
 package com.matrictime.network.netty.client;
 
 import com.matrictime.network.dao.domain.DeviceDomainService;
-import com.matrictime.network.dao.model.NmplBaseStationInfo;
+import com.matrictime.network.dao.model.NmplBusinessRoute;
+import com.matrictime.network.dao.model.NmplInternetRoute;
+import com.matrictime.network.dao.model.NmplLink;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -30,9 +32,9 @@ import java.util.concurrent.TimeUnit;
 public class NettyClient {
     private EventLoopGroup group = new NioEventLoopGroup();
     private   SocketChannel socketChannel;
+
     @Autowired
     private DeviceDomainService deviceDomainService;
-
 
 
 
@@ -59,17 +61,31 @@ public class NettyClient {
     @PostConstruct
     public void start()  {
         Bootstrap bootstrap = new Bootstrap();
-        //查询本机数据采集系统链路信息对应的边界基站
-        NmplBaseStationInfo stationInfo = deviceDomainService.getStationInfoByLocalDCLink();
-        log.info("查询本机数据采集系统链路信息对应的边界基站：{}",stationInfo);
-        if(ObjectUtils.isEmpty(stationInfo)){
-            log.info("查询本机数据采集系统链路信息对应的边界基站为空,作返回处理");
+        //1.0 查询数据采集对应的指控中心入网码（业务服务）
+        NmplBusinessRoute route = deviceDomainService.getBusinessRoute();
+        log.info("查询本机数据采集系统配置的指控中心：{}",route);
+        if(ObjectUtils.isEmpty(route)){
+            log.info("查询本机数据采集系统配置的指控中心为空,作返回处理");
             return;
         }
-        //查询数据采集到边界的链路
+        //2.0 用指控中心入网码作为目标查询路由
+        NmplInternetRoute internetRoute = deviceDomainService.getInternetRoute(route.getNetworkId());
+        log.info("查询本机数据采集系统路由配置为空：{}",internetRoute);
+        if(ObjectUtils.isEmpty(internetRoute)){
+            log.info("查询本机数据采集系统路由配置为空,作返回处理");
+            return;
+        }
+        //查询本机数据采集系统链路信息对应的边界基站
+        NmplLink link = deviceDomainService.getDataCollectLink(internetRoute.getNextNetworkId());
+        log.info("查询本机数据采集系统链路信息是：{}",link);
+        if(ObjectUtils.isEmpty(link)){
+            log.info("查询本机数据采集系统链路信息为空,作返回处理");
+            return;
+        }
+        //查询数据采集到边界(指控中心)的链路
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
-                .remoteAddress(stationInfo.getLanIp(), Integer.valueOf(stationInfo.getLanPort()))
+                .remoteAddress(link.getFollowIp(), Integer.valueOf(link.getFollowPort()))
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.TCP_NODELAY, true)
                 .handler(new ClientHandlerInitilizer(this));

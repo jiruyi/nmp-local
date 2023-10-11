@@ -5,8 +5,8 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="link_name" jdbcType="VARCHAR" property="linkName" />
     <result column="link_type" jdbcType="SMALLINT" property="linkType" />
-    <result column="link_relation" jdbcType="VARCHAR" property="linkRelation" />
     <result column="main_device_id" jdbcType="VARCHAR" property="mainDeviceId" />
+    <result column="main_device_type" jdbcType="CHAR" property="mainDeviceType" />
     <result column="follow_device_id" jdbcType="VARCHAR" property="followDeviceId" />
     <result column="follow_network_id" jdbcType="VARCHAR" property="followNetworkId" />
     <result column="follow_ip" jdbcType="VARCHAR" property="followIp" />
@@ -18,82 +18,78 @@
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
-    <result column="follow_device_name" jdbcType="VARCHAR" property="followDeviceName" />
   </resultMap>
 
 
-  <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.LinkVo">
+  <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.ProxyLinkVo">
     insert into nmpl_link (id, link_name, link_type,
-    link_relation, main_device_id, follow_device_id,
+    main_device_id, main_device_type, follow_device_id,
     follow_network_id, follow_ip, follow_port,
     active_auth, is_on, create_user,
     create_time, update_user, update_time,
-    is_exist, follow_device_name)
+    is_exist)
     values
     <foreach collection ="list" item="vo" separator =",">
       (#{vo.id,jdbcType=BIGINT}, #{vo.linkName,jdbcType=VARCHAR}, #{vo.linkType,jdbcType=SMALLINT},
-      #{vo.linkRelation,jdbcType=VARCHAR}, #{vo.mainDeviceId,jdbcType=VARCHAR}, #{vo.followDeviceId,jdbcType=VARCHAR},
+      #{vo.mainDeviceId,jdbcType=VARCHAR}, #{mainDeviceType,jdbcType=CHAR}, #{vo.followDeviceId,jdbcType=VARCHAR},
       #{vo.followNetworkId,jdbcType=VARCHAR}, #{vo.followIp,jdbcType=VARCHAR}, #{vo.followPort,jdbcType=VARCHAR},
-      #{vo.activeAuth,jdbcType=BIT}, #{vo.isOn,jdbcType=BIT}, #{vo.createUser,jdbcType=VARCHAR},
-      #{vo.createTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP},
-      #{vo.isExist,jdbcType=BIT}, #{vo.followDeviceName,jdbcType=VARCHAR})
+      #{vo.activeAuth,jdbcType=BIT},#{vo.isOn,jdbcType=BIT}, #{vo.createUser,jdbcType=VARCHAR}, #{vo.createTime,jdbcType=TIMESTAMP},
+      #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT}
+      )
     </foreach >
   </insert>
 
-  <update id="batchUpdate" parameterType="com.matrictime.network.modelVo.LinkVo">
-    <foreach collection="list" separator=";" item="info">
+  <update id="batchUpdate" parameterType="com.matrictime.network.modelVo.ProxyLinkVo">
+    <foreach collection="list" separator=";" item="vo">
       update nmpl_link
       <set>
-        <if test="info.linkName != null">
-          link_name = #{info.linkName,jdbcType=VARCHAR},
+        <if test="vo.linkName != null">
+          link_name = #{vo.linkName,jdbcType=VARCHAR},
         </if>
-        <if test="info.linkType != null">
-          link_type = #{info.linkType,jdbcType=SMALLINT},
+        <if test="vo.linkType != null">
+          link_type = #{vo.linkType,jdbcType=SMALLINT},
         </if>
-        <if test="info.linkRelation != null">
-          link_relation = #{info.linkRelation,jdbcType=VARCHAR},
+        <if test="vo.mainDeviceId != null">
+          main_device_id = #{vo.mainDeviceId,jdbcType=VARCHAR},
         </if>
-        <if test="info.mainDeviceId != null">
-          main_device_id = #{info.mainDeviceId,jdbcType=VARCHAR},
+        <if test="vo.mainDeviceType != null">
+          main_device_type = #{vo.mainDeviceType,jdbcType=CHAR},
         </if>
-        <if test="info.followDeviceId != null">
-          follow_device_id = #{info.followDeviceId,jdbcType=VARCHAR},
+        <if test="vo.followDeviceId != null">
+          follow_device_id = #{vo.followDeviceId,jdbcType=VARCHAR},
         </if>
-        <if test="info.followNetworkId != null">
-          follow_network_id = #{info.followNetworkId,jdbcType=VARCHAR},
+        <if test="vo.followNetworkId != null">
+          follow_network_id = #{vo.followNetworkId,jdbcType=VARCHAR},
         </if>
-        <if test="info.followIp != null">
-          follow_ip = #{info.followIp,jdbcType=VARCHAR},
+        <if test="vo.followIp != null">
+          follow_ip = #{vo.followIp,jdbcType=VARCHAR},
         </if>
-        <if test="info.followPort != null">
-          follow_port = #{info.followPort,jdbcType=VARCHAR},
+        <if test="vo.followPort != null">
+          follow_port = #{vo.followPort,jdbcType=VARCHAR},
         </if>
-        <if test="info.activeAuth != null">
-          active_auth = #{info.activeAuth,jdbcType=BIT},
+        <if test="vo.activeAuth != null">
+          active_auth = #{vo.activeAuth,jdbcType=BIT},
         </if>
-        <if test="info.isOn != null">
-          is_on = #{info.isOn,jdbcType=BIT},
+        <if test="vo.isOn != null">
+          is_on = #{vo.isOn,jdbcType=BIT},
         </if>
-        <if test="info.createUser != null">
-          create_user = #{info.createUser,jdbcType=VARCHAR},
+        <if test="vo.createUser != null">
+          create_user = #{vo.createUser,jdbcType=VARCHAR},
         </if>
-        <if test="info.createTime != null">
-          create_time = #{info.createTime,jdbcType=TIMESTAMP},
+        <if test="vo.createTime != null">
+          create_time = #{vo.createTime,jdbcType=TIMESTAMP},
         </if>
-        <if test="info.updateUser != null">
-          update_user = #{info.updateUser,jdbcType=VARCHAR},
+        <if test="vo.updateUser != null">
+          update_user = #{vo.updateUser,jdbcType=VARCHAR},
         </if>
-        <if test="info.updateTime != null">
-          update_time = #{info.updateTime,jdbcType=TIMESTAMP},
+        <if test="vo.updateTime != null">
+          update_time = #{vo.updateTime,jdbcType=TIMESTAMP},
         </if>
-        <if test="info.isExist != null">
-          is_exist = #{info.isExist,jdbcType=BIT},
-        </if>
-        <if test="info.followDeviceName != null">
-          follow_device_name = #{info.followDeviceName,jdbcType=VARCHAR},
+        <if test="vo.isExist != null">
+          is_exist = #{vo.isExist,jdbcType=BIT},
         </if>
       </set>
-      where id = #{info.id,jdbcType=BIGINT}
+      where id = #{vo.id,jdbcType=BIGINT}
     </foreach>
   </update>
 </mapper>

@@ -1,8 +1,10 @@
 package com.matrictime.network.dao.domain;
 
 
-import com.matrictime.network.dao.model.NmplBaseStationInfo;
+import com.matrictime.network.dao.model.NmplBusinessRoute;
 import com.matrictime.network.dao.model.NmplDeviceInfo;
+import com.matrictime.network.dao.model.NmplInternetRoute;
+import com.matrictime.network.dao.model.NmplLink;
 
 public interface DeviceDomainService {
 
@@ -10,5 +12,9 @@ public interface DeviceDomainService {
 
    NmplDeviceInfo getLocalDeviceInfo(String deviceType);
 
-   NmplBaseStationInfo getStationInfoByLocalDCLink();
+   NmplLink getDataCollectLink(String followNetId);
+
+   NmplBusinessRoute getBusinessRoute();
+
+   NmplInternetRoute getInternetRoute(String targetNetId);
 }

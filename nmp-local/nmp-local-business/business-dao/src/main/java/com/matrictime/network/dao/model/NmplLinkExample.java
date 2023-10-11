@@ -295,76 +295,6 @@ public class NmplLinkExample {
             return (Criteria) this;
         }
 
-        public Criteria andLinkRelationIsNull() {
-            addCriterion("link_relation is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationIsNotNull() {
-            addCriterion("link_relation is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationEqualTo(String value) {
-            addCriterion("link_relation =", value, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationNotEqualTo(String value) {
-            addCriterion("link_relation <>", value, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationGreaterThan(String value) {
-            addCriterion("link_relation >", value, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationGreaterThanOrEqualTo(String value) {
-            addCriterion("link_relation >=", value, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationLessThan(String value) {
-            addCriterion("link_relation <", value, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationLessThanOrEqualTo(String value) {
-            addCriterion("link_relation <=", value, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationLike(String value) {
-            addCriterion("link_relation like", value, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationNotLike(String value) {
-            addCriterion("link_relation not like", value, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationIn(List<String> values) {
-            addCriterion("link_relation in", values, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationNotIn(List<String> values) {
-            addCriterion("link_relation not in", values, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationBetween(String value1, String value2) {
-            addCriterion("link_relation between", value1, value2, "linkRelation");
-            return (Criteria) this;
-        }
-
-        public Criteria andLinkRelationNotBetween(String value1, String value2) {
-            addCriterion("link_relation not between", value1, value2, "linkRelation");
-            return (Criteria) this;
-        }
-
         public Criteria andMainDeviceIdIsNull() {
             addCriterion("main_device_id is null");
             return (Criteria) this;
@@ -432,6 +362,76 @@ public class NmplLinkExample {
 
         public Criteria andMainDeviceIdNotBetween(String value1, String value2) {
             addCriterion("main_device_id not between", value1, value2, "mainDeviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeIsNull() {
+            addCriterion("main_device_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeIsNotNull() {
+            addCriterion("main_device_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeEqualTo(String value) {
+            addCriterion("main_device_type =", value, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeNotEqualTo(String value) {
+            addCriterion("main_device_type <>", value, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeGreaterThan(String value) {
+            addCriterion("main_device_type >", value, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("main_device_type >=", value, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeLessThan(String value) {
+            addCriterion("main_device_type <", value, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeLessThanOrEqualTo(String value) {
+            addCriterion("main_device_type <=", value, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeLike(String value) {
+            addCriterion("main_device_type like", value, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeNotLike(String value) {
+            addCriterion("main_device_type not like", value, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeIn(List<String> values) {
+            addCriterion("main_device_type in", values, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeNotIn(List<String> values) {
+            addCriterion("main_device_type not in", values, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeBetween(String value1, String value2) {
+            addCriterion("main_device_type between", value1, value2, "mainDeviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMainDeviceTypeNotBetween(String value1, String value2) {
+            addCriterion("main_device_type not between", value1, value2, "mainDeviceType");
             return (Criteria) this;
         }
 
@@ -1152,76 +1152,6 @@ public class NmplLinkExample {
 
         public Criteria andIsExistNotBetween(Boolean value1, Boolean value2) {
             addCriterion("is_exist not between", value1, value2, "isExist");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameIsNull() {
-            addCriterion("follow_device_name is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameIsNotNull() {
-            addCriterion("follow_device_name is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameEqualTo(String value) {
-            addCriterion("follow_device_name =", value, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameNotEqualTo(String value) {
-            addCriterion("follow_device_name <>", value, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameGreaterThan(String value) {
-            addCriterion("follow_device_name >", value, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameGreaterThanOrEqualTo(String value) {
-            addCriterion("follow_device_name >=", value, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameLessThan(String value) {
-            addCriterion("follow_device_name <", value, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameLessThanOrEqualTo(String value) {
-            addCriterion("follow_device_name <=", value, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameLike(String value) {
-            addCriterion("follow_device_name like", value, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameNotLike(String value) {
-            addCriterion("follow_device_name not like", value, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameIn(List<String> values) {
-            addCriterion("follow_device_name in", values, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameNotIn(List<String> values) {
-            addCriterion("follow_device_name not in", values, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameBetween(String value1, String value2) {
-            addCriterion("follow_device_name between", value1, value2, "followDeviceName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFollowDeviceNameNotBetween(String value1, String value2) {
-            addCriterion("follow_device_name not between", value1, value2, "followDeviceName");
             return (Criteria) this;
         }
     }

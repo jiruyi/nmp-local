@@ -2,7 +2,6 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
-import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.LinkEnum;
@@ -10,13 +9,10 @@ import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.ProxyReq;
-import com.matrictime.network.request.RouteRequest;
 import com.matrictime.network.response.ProxyResp;
 import com.matrictime.network.service.ProxyInitService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -72,7 +68,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             getStationInfoList(proxyResp);
             getDeviceInfoList(proxyResp);
             getRouteVoList(proxyResp);
-            getlinkRelationVoList(proxyResp);
+            getlinkVoList(proxyResp);
             getOutlinePcInfoList(proxyResp);
             result = buildResult(proxyResp);
         }catch (Exception e){
@@ -204,71 +200,23 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
     /**
      * 获取所有链路关系
      */
-    private void getlinkRelationVoList(ProxyResp proxyResp){
+    private void getlinkVoList(ProxyResp proxyResp){
         NmplLinkExample example = new NmplLinkExample();
         List<NmplLink> links = nmplLinkMapper.selectByExample(example);
 
         /**
-         * 获取链路的设备类型 通知代理更新对应的表
+         * 获取链路的设备类型
          */
-        List<LinkVo> linkVos = new ArrayList<>();
+        List<LocalLinkVo> localLinkVos = new ArrayList<>();
         for (NmplLink nmplLink : links) {
-            LinkVo linkVo = new LinkVo();
-            BeanUtils.copyProperties(nmplLink,linkVo);
-            linkVos.add(linkVo);
+            LocalLinkVo localLinkVo = new LocalLinkVo();
+            BeanUtils.copyProperties(nmplLink, localLinkVo);
+            localLinkVos.add(localLinkVo);
         }
-        proxyResp.setLinkVos(linkVos);
+        proxyResp.setLocalLinkVos(localLinkVos);
         log.info("link query sucess");
     }
 
-    /**
-     * 获取该ip下所有关联的链路关系
-     * @param deviceIds
-     * @param proxyResp
-     */
-    private void getlinkRelationVoList(List<String>deviceIds,ProxyResp proxyResp){
-        NmplLinkExample sourceExample = new NmplLinkExample();
-        sourceExample.createCriteria().andMainDeviceIdIn(deviceIds).andLinkRelationNotEqualTo(LinkEnum.DB.getCode());
-        List<NmplLink> sourceLinks = nmplLinkMapper.selectByExample(sourceExample);
-
-        NmplLinkExample targetExample = new NmplLinkExample();
-        targetExample.createCriteria().andFollowDeviceIdIn(deviceIds).andLinkRelationNotEqualTo(LinkEnum.DB.getCode());
-        List<NmplLink> targetLinks = nmplLinkMapper.selectByExample(targetExample);
-
-        /**
-         * 获取链路的设备类型 通知代理更新对应的表
-         */
-        List<LinkVo> linkVos = new ArrayList<>();
-        for (NmplLink nmplLink : sourceLinks) {
-            LinkVo linkVo = new LinkVo();
-            BeanUtils.copyProperties(nmplLink,linkVo);
-            String deviceId = nmplLink.getMainDeviceId();
-            NmplBaseStationExample example = new NmplBaseStationExample();
-            example.createCriteria().andStationIdEqualTo(deviceId);
-            List<NmplBaseStation> stations = nmplBaseStationMapper.selectByExample(example);
-            if(!CollectionUtils.isEmpty(stations)){
-                linkVo.setNoticeDeviceType(stations.get(0).getStationType());
-            }
-            linkVos.add(linkVo);
-        }
-        for (NmplLink nmplLink : targetLinks) {
-            if (LinkEnum.AK.getCode().equals(nmplLink.getLinkRelation()) || LinkEnum.BK.equals(nmplLink.getLinkRelation())){
-                LinkVo linkVo = new LinkVo();
-                BeanUtils.copyProperties(nmplLink,linkVo);
-                String deviceId = nmplLink.getMainDeviceId();
-                NmplDeviceExample example = new NmplDeviceExample();
-                example.createCriteria().andDeviceIdEqualTo(deviceId);
-                List<NmplDevice> nmplDevices = nmplDeviceMapper.selectByExample(example);
-                if(!CollectionUtils.isEmpty(nmplDevices)){
-                    linkVo.setNoticeDeviceType(nmplDevices.get(0).getDeviceType());
-                }
-                linkVos.add(linkVo);
-            }
-        }
-        proxyResp.setLinkVos(linkVos);
-        log.info("link query sucess");
-
-    }
 
     /**
      * 当该ip下存在设备、基站 获取所有的基站信息

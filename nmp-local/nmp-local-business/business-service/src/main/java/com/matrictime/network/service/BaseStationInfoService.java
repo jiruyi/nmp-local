@@ -66,4 +66,6 @@ public interface BaseStationInfoService {
     Result<Integer> updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
 
     Result<PageInfo> selectBorderBaseStationInfo(BorderBaseStationInfoRequest borderBaseStationInfoRequest);
+
+    Result getDeviceId();
 }

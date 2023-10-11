@@ -83,13 +83,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     @Override
     public Result<Integer> insertBaseStationInfo(BaseStationInfoRequest baseStationInfoRequest) {
         Result<Integer> result = new Result<>();
-        Date date = new Date();
         Integer insertFlag = null;
         try {
-            baseStationInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
-            baseStationInfoRequest.setCreateTime(getFormatDate(date));
-            baseStationInfoRequest.setUpdateTime(getFormatDate(date));
-            baseStationInfoRequest.setStationId(SnowFlake.nextId_String());
+            //将设备id由雪花数改成sequence
+            baseStationInfoRequest.setStationId(baseStationInfoRequest.getStationNetworkId());
             baseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             baseStationInfoRequest.setIsExist("1");
             baseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
@@ -103,20 +100,20 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
             insertFlag = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoRequest);
 
-            if(insertFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
+            if (insertFlag.equals(INSERT_OR_UPDATE_SUCCESS)) {
                 result.setResultObj(insertFlag);
                 result.setSuccess(true);
                 //推送到代理
-                pushToProxy(baseStationInfoRequest.getStationId(),DataConstants.URL_STATION_INSERT);
-            }else {
+                pushToProxy(baseStationInfoRequest.getStationId(), DataConstants.URL_STATION_INSERT);
+            } else {
                 result.setResultObj(insertFlag);
                 result.setSuccess(false);
             }
-        }catch (SystemException e){
-            log.info("基站创建异常",e.getMessage());
+        } catch (SystemException e) {
+            log.info("基站创建异常", e.getMessage());
             result = failResult(e);
-        }catch (Exception e){
-            log.error("基站新增{}新增异常：{}",e.getMessage());
+        } catch (Exception e) {
+            log.error("基站新增{}新增异常：{}", e.getMessage());
             result = failResult("");
         }
         return result;
@@ -128,7 +125,6 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Date date = new Date();
         Integer updateFlag;
         try {
-            baseStationInfoRequest.setUpdateTime(getFormatDate(date));
             //参数校验
             checkParam(baseStationInfoRequest);
             baseStationInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(baseStationInfoRequest.getStationNetworkId()));
@@ -136,17 +132,17 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             baseStationInfoRequest.setSuffixNetworkId(DecimalConversionUtil.getSuffBid(baseStationInfoRequest.getByteNetworkId()));
 
             updateFlag = baseStationInfoDomainService.updateBaseStationInfo(baseStationInfoRequest);
-            if(updateFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
+            if (updateFlag.equals(INSERT_OR_UPDATE_SUCCESS)) {
                 result.setSuccess(true);
                 result.setResultObj(updateFlag);
                 //推送到代理
-                pushToProxy(baseStationInfoRequest.getStationId(),DataConstants.URL_STATION_UPDATE);
+                pushToProxy(baseStationInfoRequest.getStationId(), DataConstants.URL_STATION_UPDATE);
             }
-        }catch (SystemException e){
-            log.info("基站修改异常",e.getMessage());
+        } catch (SystemException e) {
+            log.info("基站修改异常", e.getMessage());
             result = failResult(e);
-        }catch (Exception e){
-            log.error("基站修改异常：{}",e.getMessage());
+        } catch (Exception e) {
+            log.error("基站修改异常：{}", e.getMessage());
             result = failResult("");
         }
         return result;
@@ -157,21 +153,21 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Result<Integer> result = new Result<>();
         Integer deleteFlag;
         try {
-            if(RequestContext.getUser().getRoleId().equals(DataConstants.SUPER_ADMIN)){
-                throw new SystemException(NO_ADMIN_ERROR_MSG);
-            }
+//            if(RequestContext.getUser().getRoleId().equals(DataConstants.SUPER_ADMIN)){
+//                throw new SystemException(NO_ADMIN_ERROR_MSG);
+//            }
             deleteFlag = baseStationInfoDomainService.deleteBaseStationInfo(baseStationInfoRequest);
-            if(deleteFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
+            if (deleteFlag.equals(INSERT_OR_UPDATE_SUCCESS)) {
                 result.setSuccess(true);
                 result.setResultObj(deleteFlag);
                 //推送到代理
-                pushToProxy(baseStationInfoRequest.getStationId(),DataConstants.URL_STATION_UPDATE);
+                pushToProxy(baseStationInfoRequest.getStationId(), DataConstants.URL_STATION_UPDATE);
             }
-        }catch (SystemException e){
-            log.info("基站删除异常",e.getMessage());
+        } catch (SystemException e) {
+            log.info("基站删除异常", e.getMessage());
             result = failResult(e);
-        }catch (Exception e){
-            log.error("基站删除异常：{}",e.getMessage());
+        } catch (Exception e) {
+            log.error("基站删除异常：{}", e.getMessage());
             result = failResult("");
         }
         return result;
@@ -179,43 +175,44 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     /**
      * 基站推送到代理
+     *
      * @param stationId 基站id
-     * @param suffix 推送url后缀信息
+     * @param suffix    推送url后缀信息
      * @throws Exception
      */
     @Override
-    public void pushToProxy(String stationId, String suffix)throws Exception{
+    public void pushToProxy(String stationId, String suffix) throws Exception {
         //推送到代理
         NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
         nmplBaseStationExample.createCriteria().andStationIdEqualTo(stationId);
         List<NmplBaseStation> nmplBaseStationInfoList = nmplBaseStationMapper.selectByExampleWithBLOBs(nmplBaseStationExample);
-        if(!CollectionUtils.isEmpty(nmplBaseStationInfoList)){
-            Map<String,String> deviceMap = getAllUrl(nmplBaseStationInfoList.get(0).getRelationOperatorId());
-            deviceMap.put(nmplBaseStationInfoList.get(0).getLanIp(),nmplBaseStationInfoList.get(0).getStationId());
+        if (!CollectionUtils.isEmpty(nmplBaseStationInfoList)) {
+            Map<String, String> deviceMap = getAllUrl(nmplBaseStationInfoList.get(0).getRelationOperatorId());
+            deviceMap.put(nmplBaseStationInfoList.get(0).getLanIp(), nmplBaseStationInfoList.get(0).getStationId());
             Set<String> set = deviceMap.keySet();
             for (String lanIp : set) {
                 //默认为非本机
                 NmplBaseStation request = new NmplBaseStation();
-                BeanUtils.copyProperties(nmplBaseStationInfoList.get(0),request);
+                BeanUtils.copyProperties(nmplBaseStationInfoList.get(0), request);
                 request.setIsLocal(false);
-                if(lanIp.equals(request.getLanIp())){
+                if (lanIp.equals(request.getLanIp())) {
                     request.setIsLocal(true);
                 }
                 String data = "";
-                if(suffix.equals(DataConstants.URL_STATION_INSERT)){
+                if (suffix.equals(DataConstants.URL_STATION_INSERT)) {
                     data = firstPushData(request);
-                }else {
+                } else {
                     data = JSONObject.toJSONString(request);
                 }
-                Map<String,String> map = new HashMap<>();
-                map.put(DataConstants.KEY_DEVICE_ID,deviceMap.get(lanIp));
-                map.put(DataConstants.KEY_DATA,data);
-                String url = "http://"+lanIp+":"+port+contextPath+suffix;
-                map.put(DataConstants.KEY_URL,url);
+                Map<String, String> map = new HashMap<>();
+                map.put(DataConstants.KEY_DEVICE_ID, deviceMap.get(lanIp));
+                map.put(DataConstants.KEY_DATA, data);
+                String url = "http://" + lanIp + ":" + port + contextPath + suffix;
+                map.put(DataConstants.KEY_URL, url);
                 asyncService.httpPush(map);
             }
-        }else {
-            log.info("stationId not found:"+stationId);
+        } else {
+            log.info("stationId not found:" + stationId);
         }
 
     }
@@ -227,7 +224,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             PageInfo pageInfo = baseStationInfoDomainService.selectBaseStationInfo(baseStationInfoRequest);
             result.setResultObj(pageInfo);
             result.setSuccess(true);
-        } catch (Exception e){
+        } catch (Exception e) {
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
@@ -246,7 +243,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                     selectLinkBaseStationInfo(baseStationInfoRequest));
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
@@ -265,7 +262,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                     selectForRoute(baseStationInfoRequest));
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
@@ -281,7 +278,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                     selectActiveBaseStationInfo(baseStationInfoRequest));
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
@@ -297,7 +294,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                     selectBaseStationBatch(list));
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
@@ -310,7 +307,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         try {
             result.setResultObj(baseStationInfoDomainService.selectDeviceId(baseStationInfoRequest));
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
@@ -322,7 +319,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         BaseStationInfoVo result = new BaseStationInfoVo();
         try {
             result = baseStationInfoDomainService.selectByNetworkId(baseStationInfoRequest);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info("selectByNetworkId{} 查询异常");
         }
         return result;
@@ -336,7 +333,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             baseStationInfoResponse.setBaseStationInfoList(baseStationInfoDomainService.selectByOperatorId(baseStationInfoRequest));
             result.setResultObj(baseStationInfoResponse);
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
@@ -350,7 +347,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             PageInfo pageInfo = baseStationInfoDomainService.selectBaseStationList(baseStationInfoRequest);
             result.setResultObj(pageInfo);
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
@@ -359,78 +356,72 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     }
 
 
-    private String getFormatDate(Date date){
-        String creatDate = "yyyy-MM-dd HH:mm:ss";
-        SimpleDateFormat creatDateToString = new SimpleDateFormat(creatDate);
-        return creatDateToString.format(date);
-    }
-
-
-    private Map<String,String> getAllUrl(String relationOperatorId){
-        Map<String,String> map = new HashMap<>();
-        NmplBaseStationInfoExample nmplBaseStationInfoExample  = new NmplBaseStationInfoExample();
+    private Map<String, String> getAllUrl(String relationOperatorId) {
+        Map<String, String> map = new HashMap<>();
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
         nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
         List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
         for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
-            map.put(nmplBaseStationInfo.getLanIp(),nmplBaseStationInfo.getStationId());
+            map.put(nmplBaseStationInfo.getLanIp(), nmplBaseStationInfo.getStationId());
         }
         for (NmplDeviceInfo nmplDeviceInfo : nmplDeviceInfos) {
-            map.put(nmplDeviceInfo.getLanIp(),nmplDeviceInfo.getDeviceId());
+            map.put(nmplDeviceInfo.getLanIp(), nmplDeviceInfo.getDeviceId());
         }
-        return  map;
+        return map;
     }
-    private String firstPushData(NmplBaseStation nmplBaseStation){
+
+    private String firstPushData(NmplBaseStation nmplBaseStation) {
         JSONObject jsonObject = new JSONObject();
-        if(nmplBaseStation.getIsLocal()){
+        if (nmplBaseStation.getIsLocal()) {
             List<NmplBaseStation> nmplBaseStationInfos = nmplBaseStationMapper.selectByExampleWithBLOBs(null);
             NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
             nmplDeviceExample.createCriteria().andRelationOperatorIdEqualTo(nmplBaseStation.getRelationOperatorId());
             List<NmplDevice> nmplDeviceInfos = nmplDeviceMapper.selectByExampleWithBLOBs(nmplDeviceExample);
-            jsonObject.put("stationInfoVos",nmplBaseStationInfos);
-            jsonObject.put("deviceInfoVos",nmplDeviceInfos);
+            jsonObject.put("stationInfoVos", nmplBaseStationInfos);
+            jsonObject.put("deviceInfoVos", nmplDeviceInfos);
         }
-        jsonObject.put("localBaseInfo",nmplBaseStation);
+        jsonObject.put("localBaseInfo", nmplBaseStation);
         return jsonObject.toJSONString();
     }
 
 
-    private void checkParam(BaseStationInfoRequest baseStationInfoRequest){
-        if(!CommonCheckUtil.checkStringLength(baseStationInfoRequest.getStationName(),null,16)){
-           throw new SystemException(PARAM_LENTH_ERROR_MSG);
+    private void checkParam(BaseStationInfoRequest baseStationInfoRequest) {
+        if (!CommonCheckUtil.checkStringLength(baseStationInfoRequest.getStationName(), null, 16)) {
+            throw new SystemException(PARAM_LENTH_ERROR_MSG);
         }
         //参数格式校验
         boolean publicIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getPublicNetworkIp());
         boolean lanIpReg = CommonCheckUtil.isIpv4Legal(baseStationInfoRequest.getLanIp());
-        if(publicIpReg == false || lanIpReg == false){
-           throw  new SystemException(IP_FORMAT_ERROR_MSG);
+        if (publicIpReg == false || lanIpReg == false) {
+            throw new SystemException(IP_FORMAT_ERROR_MSG);
         }
         boolean publicPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getPublicNetworkPort());
         boolean lanPortReg = CommonCheckUtil.isPortLegal(baseStationInfoRequest.getLanPort());
-        if(publicPortReg == false || lanPortReg == false){
-            throw  new SystemException(PORT_FORMAT_ERROR_MSG);
+        if (publicPortReg == false || lanPortReg == false) {
+            throw new SystemException(PORT_FORMAT_ERROR_MSG);
         }
         //获取BID前缀信息
         String preBID = companyInfoDomainService.getPreBID(baseStationInfoRequest.getRelationOperatorId());
-        if(StringUtil.isEmpty(preBID)){
-            throw  new SystemException(NOT_EXIST_VILLAGE);
+        if (StringUtil.isEmpty(preBID)) {
+            throw new SystemException(NOT_EXIST_VILLAGE);
         }
         String networkId = preBID + "-" + baseStationInfoRequest.getStationNetworkId();
         baseStationInfoRequest.setStationNetworkId(networkId);
 
     }
 
-    private void checkBorderBaseStationParam(BorderBaseStationInfoRequest borderBaseStationInfoRequest){
-        if(!CommonCheckUtil.checkStringLength(borderBaseStationInfoRequest.getStationName(),null,16)){
+    private void checkBorderBaseStationParam(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
+        if (!CommonCheckUtil.checkStringLength(borderBaseStationInfoRequest.getStationName(), null, 16)) {
             throw new SystemException(PARAM_LENTH_ERROR_MSG);
         }
 
         //获取BID前缀信息
         String preBID = companyInfoDomainService.getPreBID(borderBaseStationInfoRequest.getRelationOperatorId());
-        if(StringUtil.isEmpty(preBID)){
-            throw  new SystemException(NOT_EXIST_VILLAGE);
+        if (StringUtil.isEmpty(preBID)) {
+            throw new SystemException(NOT_EXIST_VILLAGE);
         }
         String networkId = preBID + "-" + borderBaseStationInfoRequest.getStationNetworkId();
         borderBaseStationInfoRequest.setStationNetworkId(networkId);
@@ -446,13 +437,14 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         List<NmplBaseStation> nmplBaseStations = nmplBaseStationMapper.selectByExample(nmplBaseStationExample);
         for (NmplBaseStation nmplBaseStation : nmplBaseStations) {
             nmplBaseStation.setStationStatus(DeviceStatusEnum.OFFLINE.getCode());
-            log.info("baseStation init deviceId:"+nmplBaseStation.getStationId());
+            log.info("baseStation init deviceId:" + nmplBaseStation.getStationId());
             nmplBaseStationMapper.updateByPrimaryKeySelective(nmplBaseStation);
         }
     }
 
     /**
      * 查询归属信息
+     *
      * @return
      */
     @Override
@@ -463,8 +455,8 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             BelongInformationResponse belongInformationResponse = baseStationInfoDomainService.selectBelongInformation();
             result.setResultObj(belongInformationResponse);
             result.setSuccess(true);
-        }catch (Exception e){
-            log.info("selectBelongInformation:{}",e.getMessage());
+        } catch (Exception e) {
+            log.info("selectBelongInformation:{}", e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg("");
         }
@@ -473,6 +465,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     /**
      * 查询基站总数
+     *
      * @param baseStationInfoRequest
      * @return
      */
@@ -482,10 +475,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         try {
             result.setResultObj(baseStationInfoDomainService.countBaseStation(baseStationInfoRequest));
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setSuccess(false);
             result.setErrorMsg("");
-            log.info("countBaseStation:{}",e.getMessage());
+            log.info("countBaseStation:{}", e.getMessage());
         }
         return result;
     }
@@ -496,16 +489,17 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         try {
             result.setResultObj(baseStationInfoDomainService.updateConnectCount(baseStationCountRequest));
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setSuccess(false);
             result.setErrorMsg("");
-            log.info("updateConnectCount:{}",e.getMessage());
+            log.info("updateConnectCount:{}", e.getMessage());
         }
         return result;
     }
 
     /**
      * 查询不同Ip物理设备
+     *
      * @param baseStationInfoRequest
      * @return
      */
@@ -516,10 +510,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             List<CommunityBaseStationVo> list = baseStationInfoDomainService.selectPhysicalDevice(baseStationInfoRequest);
             result.setSuccess(true);
             result.setResultObj(list);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setSuccess(false);
             result.setErrorMsg("");
-            log.info("selectPhysicalDevice:{}",e.getMessage());
+            log.info("selectPhysicalDevice:{}", e.getMessage());
         }
 
         return result;
@@ -527,6 +521,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     /**
      * 更新当前用户数
+     *
      * @param currentCountRequest
      * @return
      */
@@ -536,10 +531,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         try {
             result.setResultObj(baseStationInfoDomainService.updateCurrentConnectCount(currentCountRequest));
             result.setSuccess(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setSuccess(false);
             result.setErrorMsg("");
-            log.info("updateCurrentConnectCount:{}",e.getMessage());
+            log.info("updateCurrentConnectCount:{}", e.getMessage());
         }
 
         return result;
@@ -547,6 +542,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     /**
      * 归属信息查询
+     *
      * @return
      */
     @Override
@@ -556,8 +552,8 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             BelongInformationResponse belongInformationResponse = baseStationInfoDomainService.selectAllBelongInformation();
             result.setResultObj(belongInformationResponse);
             result.setSuccess(true);
-        }catch (Exception e){
-            log.info("selectAllBelongInformation:{}",e.getMessage());
+        } catch (Exception e) {
+            log.info("selectAllBelongInformation:{}", e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg("");
         }
@@ -567,13 +563,10 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     @Override
     public Result<Integer> insertBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
         Result<Integer> result = new Result<>();
-        Date date = new Date();
         Integer insertFlag = null;
         try {
-            borderBaseStationInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
-            borderBaseStationInfoRequest.setCreateTime(getFormatDate(date));
-            borderBaseStationInfoRequest.setUpdateTime(getFormatDate(date));
-            borderBaseStationInfoRequest.setStationId(SnowFlake.nextId_String());
+            //将设备id由雪花数改成sequence
+            borderBaseStationInfoRequest.setStationId(borderBaseStationInfoRequest.getStationNetworkId());
             borderBaseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             borderBaseStationInfoRequest.setIsExist("1");
             borderBaseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
@@ -587,24 +580,23 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
             insertFlag = baseStationInfoDomainService.insertBorderBaseStation(borderBaseStationInfoRequest);
 
-            if(insertFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
+            if (insertFlag.equals(INSERT_OR_UPDATE_SUCCESS)) {
                 result.setResultObj(insertFlag);
                 result.setSuccess(true);
                 //推送到代理
-                pushToProxy(borderBaseStationInfoRequest.getStationId(),DataConstants.URL_STATION_INSERT);
-            }else {
+                pushToProxy(borderBaseStationInfoRequest.getStationId(), DataConstants.URL_STATION_INSERT);
+            } else {
                 result.setResultObj(insertFlag);
                 result.setSuccess(false);
             }
-        }catch (SystemException e){
-            log.info("边界基站创建异常",e.getMessage());
+        } catch (SystemException e) {
+            log.info("边界基站创建异常", e.getMessage());
             result = failResult(e);
-        }catch (RuntimeException e){
-            log.error("ip端口不唯一",e.getMessage());
+        } catch (RuntimeException e) {
+            log.error("ip端口不唯一", e.getMessage());
             result = failResult(e.getMessage());
-        }
-        catch (Exception e){
-            log.error("边界基站新增{}新增异常：{}",e.getMessage());
+        } catch (Exception e) {
+            log.error("边界基站新增{}新增异常：{}", e.getMessage());
             result = failResult("");
         }
         return result;
@@ -612,6 +604,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     /**
      * 删除边界基站
+     *
      * @param borderBaseStationInfoRequest
      * @return
      */
@@ -620,14 +613,14 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Result<Integer> result = new Result<>();
         try {
             Integer deleteFlag = baseStationInfoDomainService.deleteBorderBaseStation(borderBaseStationInfoRequest);
-            if(deleteFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
+            if (deleteFlag.equals(INSERT_OR_UPDATE_SUCCESS)) {
                 result.setSuccess(true);
                 result.setResultObj(deleteFlag);
                 //推送到代理
-                pushToProxy(borderBaseStationInfoRequest.getStationId(),DataConstants.URL_STATION_UPDATE);
+                pushToProxy(borderBaseStationInfoRequest.getStationId(), DataConstants.URL_STATION_UPDATE);
             }
-        }catch (Exception e){
-            log.info("deleteBorderBaseStation:{}",e.getMessage());
+        } catch (Exception e) {
+            log.info("deleteBorderBaseStation:{}", e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg(e.getMessage());
         }
@@ -636,6 +629,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     /**
      * 更新边界基站
+     *
      * @param borderBaseStationInfoRequest
      * @return
      */
@@ -644,14 +638,14 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Result<Integer> result = new Result<>();
         try {
             Integer i = baseStationInfoDomainService.updateBorderBaseStation(borderBaseStationInfoRequest);
-            if(i.equals(INSERT_OR_UPDATE_SUCCESS)){
+            if (i.equals(INSERT_OR_UPDATE_SUCCESS)) {
                 result.setSuccess(true);
                 result.setResultObj(i);
                 //推送到代理
-                pushToProxy(borderBaseStationInfoRequest.getStationId(),DataConstants.URL_STATION_UPDATE);
+                pushToProxy(borderBaseStationInfoRequest.getStationId(), DataConstants.URL_STATION_UPDATE);
             }
-        }catch (Exception e){
-            log.info("updateBorderBaseStation:{}",e.getMessage());
+        } catch (Exception e) {
+            log.info("updateBorderBaseStation:{}", e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg(e.getMessage());
         }
@@ -660,6 +654,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     /**
      * 查询边界基站
+     *
      * @param borderBaseStationInfoRequest
      * @return
      */
@@ -670,12 +665,26 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             PageInfo pageInfo = baseStationInfoDomainService.selectBorderBaseStationInfo(borderBaseStationInfoRequest);
             result.setResultObj(pageInfo);
             result.setSuccess(true);
-        } catch (Exception e){
+        } catch (Exception e) {
             result.setErrorMsg("参数异常");
             result.setSuccess(false);
         }
         return result;
     }
 
-
+    @Override
+    public Result getDeviceId() {
+        Result result;
+        try {
+            String deviceId = String.valueOf(nmplBaseStationInfoMapper.getSequenceId());
+            result = buildResult(deviceId);
+        } catch (SystemException e) {
+            log.info("获取设备id异常", e.getMessage());
+            result = failResult(e);
+        } catch (Exception e) {
+            log.error("获取设备id异常：{}", e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
 }

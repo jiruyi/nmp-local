@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplLinkExtMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.LocalLinkDisplayVo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="link_name" jdbcType="VARCHAR" property="linkName" />
+    <result column="link_type" jdbcType="SMALLINT" property="linkType" />
+    <result column="main_device_id" jdbcType="VARCHAR" property="mainDeviceId" />
+    <result column="follow_device_id" jdbcType="VARCHAR" property="followDeviceId" />
+    <result column="follow_network_id" jdbcType="VARCHAR" property="followNetworkId" />
+    <result column="follow_ip" jdbcType="VARCHAR" property="followIp" />
+    <result column="follow_port" jdbcType="VARCHAR" property="followPort" />
+    <result column="active_auth" jdbcType="BIT" property="activeAuth" />
+    <result column="is_on" jdbcType="BIT" property="isOn" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="main_device_type" jdbcType="VARCHAR" property="mainDeviceType" />
+    <result column="main_device_name" jdbcType="VARCHAR" property="mainDeviceName" />
+    <result column="follow_device_name" jdbcType="VARCHAR" property="followDeviceName" />
+  </resultMap>
+
+  <resultMap id="DeviceForLinkMap" type="com.matrictime.network.dao.model.NmplDeviceInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_type" jdbcType="CHAR" property="deviceType" />
+    <result column="other_type" jdbcType="CHAR" property="otherType" />
+    <result column="enter_network_time" jdbcType="TIMESTAMP" property="enterNetworkTime" />
+    <result column="device_admain" jdbcType="VARCHAR" property="deviceAdmain" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="public_network_ip" jdbcType="VARCHAR" property="publicNetworkIp" />
+    <result column="public_network_port" jdbcType="VARCHAR" property="publicNetworkPort" />
+    <result column="lan_ip" jdbcType="VARCHAR" property="lanIp" />
+    <result column="lan_port" jdbcType="VARCHAR" property="lanPort" />
+    <result column="station_status" jdbcType="CHAR" property="stationStatus" />
+    <result column="station_network_id" jdbcType="VARCHAR" property="stationNetworkId" />
+    <result column="station_random_seed" jdbcType="VARCHAR" property="stationRandomSeed" />
+    <result column="relation_operator_id" jdbcType="VARCHAR" property="relationOperatorId" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, link_name, link_type, main_device_id, follow_device_id, follow_network_id, follow_ip, 
+    follow_port, active_auth, is_on, create_user, create_time, update_user, update_time, 
+    is_exist
+  </sql>
+
+  <sql id="QueryDeviceForLink_Column_List">
+    id,device_id,device_name,device_type,enter_network_time,public_network_ip,public_network_port,
+    lan_ip,lan_port,station_status,station_network_id,create_time,update_time,is_exist
+  </sql>
+
+  <select id="QueryDeviceForLink" parameterType="com.matrictime.network.request.QueryDeviceForLinkReq" resultMap="DeviceForLinkMap">
+      select
+          <include refid="QueryDeviceForLink_Column_List" />
+      from (
+               select
+                   <include refid="QueryDeviceForLink_Column_List" />
+               from nmpl_device_info
+               union all
+               select id,
+                      station_id   as device_id,
+                      station_name as device_name,
+                      station_type as device_type,
+                      enter_network_time,
+                      public_network_ip,
+                      public_network_port,
+                      lan_ip,
+                      lan_port,
+                      station_status,
+                      station_network_id,
+                      create_time,
+                      update_time,
+                      is_exist
+               from nmpl_base_station_info) as a
+      where device_type = #{deviceType,jdbcType=VARCHAR}
+      and is_exist = '1'
+  </select>
+
+  <select id="queryLink" parameterType="com.matrictime.network.request.QueryLinkReq" resultMap="BaseResultMap">
+    select id,
+           link_name,
+           link_type,
+           main_device_id,
+           main_device_type,
+           follow_device_id,
+           follow_network_id,
+           follow_ip,
+           follow_port,
+           active_auth,
+           is_on,
+           create_user,
+           create_time,
+           update_user,
+           update_time,
+           is_exist,
+           main_device_name
+    from (select l1.id,
+                 l1.link_name,
+                 l1.link_type,
+                 l1.main_device_id,
+                 l1.main_device_type,
+                 l1.follow_device_id,
+                 l1.follow_network_id,
+                 l1.follow_ip,
+                 l1.follow_port,
+                 l1.active_auth,
+                 l1.is_on,
+                 l1.create_user,
+                 l1.create_time,
+                 l1.update_user,
+                 l1.update_time,
+                 l1.is_exist,
+                 b.station_name as main_device_name
+          from nmpl_link l1
+                 left join nmpl_base_station_info b on l1.main_device_id = b.station_id
+          union all
+          select l2.id,
+                 l2.link_name,
+                 l2.link_type,
+                 l2.main_device_id,
+                 l2.main_device_type,
+                 l2.follow_device_id,
+                 l2.follow_network_id,
+                 l2.follow_ip,
+                 l2.follow_port,
+                 l2.active_auth,
+                 l2.is_on,
+                 l2.create_user,
+                 l2.create_time,
+                 l2.update_user,
+                 l2.update_time,
+                 l2.is_exist,
+                 d.device_name as main_device_name
+          from nmpl_link l2
+                 left join nmpl_device_info d on l2.main_device_id = d.device_id) as link
+    where link.main_device_name is not null
+      <if test="linkName != null">
+        and link.link_name = #{linkName,jdbcType=VARCHAR}
+      </if>
+      <if test="mainDeviceType != null">
+        and link.main_device_type = #{mainDeviceType,jdbcType=VARCHAR}
+      </if>
+      <if test="mainDeviceName != null">
+        and link.main_device_name = #{mainDeviceName,jdbcType=VARCHAR}
+      </if>
+      <if test="mainDeviceId != null">
+        and link.main_device_id = #{mainDeviceId,jdbcType=VARCHAR}
+      </if>
+      <if test="followNetworkId != null">
+        and link.follow_network_id = #{followNetworkId,jdbcType=VARCHAR}
+      </if>
+      <if test="followIp != null">
+        and link.follow_ip = #{followIp,jdbcType=VARCHAR}
+      </if>
+  </select>
+
+
+  <select id="queryKeycenterLink" parameterType="com.matrictime.network.request.QueryLinkReq" resultMap="BaseResultMap">
+      select id,
+             link_name,
+             link_type,
+             main_device_id,
+             main_device_type,
+             follow_device_id,
+             follow_network_id,
+             follow_ip,
+             follow_port,
+             active_auth,
+             is_on,
+             create_user,
+             create_time,
+             update_user,
+             update_time,
+             is_exist,
+             main_device_name,
+             follow_device_name
+      from (
+        select link.id,
+               link.link_name,
+               link.link_type,
+               link.main_device_id,
+               link.main_device_type,
+               link.follow_device_id,
+               link.follow_network_id,
+               d.lan_ip       as follow_ip,
+               d.lan_port     as follow_port,
+               link.active_auth,
+               link.is_on,
+               link.create_user,
+               link.create_time,
+               link.update_user,
+               link.update_time,
+               link.is_exist,
+               b.station_name as main_device_name,
+               d.device_name  as follow_device_name
+      from nmpl_link link
+        left join nmpl_base_station_info b on link.main_device_id = b.station_id
+        left join nmpl_device_info d on link.follow_device_id = d.device_id) as a
+      where follow_device_id is not null
+    <if test="linkName != null">
+      and link_name = #{linkName,jdbcType=VARCHAR}
+    </if>
+    <if test="mainDeviceType != null">
+      and main_device_type = #{mainDeviceType,jdbcType=VARCHAR}
+    </if>
+    <if test="mainDeviceName != null">
+      and main_device_name = #{mainDeviceName,jdbcType=VARCHAR}
+    </if>
+    <if test="mainDeviceId != null">
+      and main_device_id = #{mainDeviceId,jdbcType=VARCHAR}
+    </if>
+    <if test="followDeviceId != null">
+      and follow_device_id = #{followDeviceId,jdbcType=VARCHAR}
+    </if>
+    <if test="followDeviceName != null">
+      and follow_device_name = #{followDeviceName,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <insert id="insertSelectiveWithId" useGeneratedKeys="true" keyProperty="id" parameterType="com.matrictime.network.dao.model.NmplLink">
+    insert into nmpl_link
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="linkName != null">
+        link_name,
+      </if>
+      <if test="linkType != null">
+        link_type,
+      </if>
+      <if test="mainDeviceId != null">
+        main_device_id,
+      </if>
+      <if test="mainDeviceType != null">
+        main_device_type,
+      </if>
+      <if test="followDeviceId != null">
+        follow_device_id,
+      </if>
+      <if test="followNetworkId != null">
+        follow_network_id,
+      </if>
+      <if test="followIp != null">
+        follow_ip,
+      </if>
+      <if test="followPort != null">
+        follow_port,
+      </if>
+      <if test="activeAuth != null">
+        active_auth,
+      </if>
+      <if test="isOn != null">
+        is_on,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="isExist != null">
+        is_exist,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="linkName != null">
+        #{linkName,jdbcType=VARCHAR},
+      </if>
+      <if test="linkType != null">
+        #{linkType,jdbcType=SMALLINT},
+      </if>
+      <if test="mainDeviceId != null">
+        #{mainDeviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="mainDeviceType != null">
+        #{mainDeviceType,jdbcType=CHAR},
+      </if>
+      <if test="followDeviceId != null">
+        #{followDeviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="followNetworkId != null">
+        #{followNetworkId,jdbcType=VARCHAR},
+      </if>
+      <if test="followIp != null">
+        #{followIp,jdbcType=VARCHAR},
+      </if>
+      <if test="followPort != null">
+        #{followPort,jdbcType=VARCHAR},
+      </if>
+      <if test="activeAuth != null">
+        #{activeAuth,jdbcType=BIT},
+      </if>
+      <if test="isOn != null">
+        #{isOn,jdbcType=BIT},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isExist != null">
+        #{isExist,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+
+</mapper>

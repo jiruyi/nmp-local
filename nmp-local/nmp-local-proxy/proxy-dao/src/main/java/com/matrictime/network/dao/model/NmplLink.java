@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 链路信息表
  * @author   cxk
- * @date   2023-09-07
+ * @date   2023-09-27
  */
 @Data
 public class NmplLink {
@@ -26,32 +26,32 @@ public class NmplLink {
     private Short linkType;
 
     /**
-     * 链路关系: 01:边界基站-边界基站,02:接入基站-密钥中心,03:边界基站-密钥中心,04:采集系统-边界基站
-     */
-    private String linkRelation;
-
-    /**
-     * 主设备id
+     * 本端设备id
      */
     private String mainDeviceId;
 
     /**
-     * 从设备id
+     * 设备类型 01:小区内基站 02:小区边界基站 11:密钥中心 12:生成机 13:缓存机 20:采集设备 21:指控中心
+     */
+    private String mainDeviceType;
+
+    /**
+     * 对端设备id
      */
     private String followDeviceId;
 
     /**
-     * 从设备入网码
+     * 对端设备入网ID
      */
     private String followNetworkId;
 
     /**
-     * 从设备ip
+     * 对端设备IP
      */
     private String followIp;
 
     /**
-     * 从设备端口
+     * 对端设备端口
      */
     private String followPort;
 
@@ -90,11 +90,6 @@ public class NmplLink {
      */
     private Boolean isExist;
 
-    /**
-     * 从设备名称
-     */
-    private String followDeviceName;
-
     public Long getId() {
         return id;
     }
@@ -119,20 +114,20 @@ public class NmplLink {
         this.linkType = linkType;
     }
 
-    public String getLinkRelation() {
-        return linkRelation;
-    }
-
-    public void setLinkRelation(String linkRelation) {
-        this.linkRelation = linkRelation == null ? null : linkRelation.trim();
-    }
-
     public String getMainDeviceId() {
         return mainDeviceId;
     }
 
     public void setMainDeviceId(String mainDeviceId) {
         this.mainDeviceId = mainDeviceId == null ? null : mainDeviceId.trim();
+    }
+
+    public String getMainDeviceType() {
+        return mainDeviceType;
+    }
+
+    public void setMainDeviceType(String mainDeviceType) {
+        this.mainDeviceType = mainDeviceType == null ? null : mainDeviceType.trim();
     }
 
     public String getFollowDeviceId() {
@@ -221,13 +216,5 @@ public class NmplLink {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
-    }
-
-    public String getFollowDeviceName() {
-        return followDeviceName;
-    }
-
-    public void setFollowDeviceName(String followDeviceName) {
-        this.followDeviceName = followDeviceName == null ? null : followDeviceName.trim();
     }
 }
