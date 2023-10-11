@@ -250,7 +250,7 @@ public class LinkController {
     @RequiresPermissions("sys:link:query")
     @SystemLog(opermodul = "链路管理模块",operDesc = "查询链路信息",operType = "查询链路信息")
     @RequestMapping(value = "/queryLink",method = RequestMethod.POST)
-    public Result<LocalLinkDisplayVo> queryLink(@RequestBody QueryLinkReq req){
+    public Result<PageInfo<LocalLinkDisplayVo>> queryLink(@RequestBody QueryLinkReq req){
         try {
             return linkService.queryLink(req);
         }catch (Exception e){
@@ -457,7 +457,7 @@ public class LinkController {
     @RequiresPermissions("sys:keyCenterAllocate:query")
     @SystemLog(opermodul = "密钥中心分配模块",operDesc = "查询密钥中心分配",operType = "查询密钥中心分配")
     @RequestMapping(value = "/queryKeycenterLink",method = RequestMethod.POST)
-    public Result<LocalLinkDisplayVo> queryKeycenterLink(@RequestBody QueryLinkReq req){
+    public Result<PageInfo<LocalLinkDisplayVo>> queryKeycenterLink(@RequestBody QueryLinkReq req){
         try {
             return linkService.queryKeycenterLink(req);
         }catch (Exception e){

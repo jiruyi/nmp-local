@@ -49,7 +49,8 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
 
     @Override
     @Transactional
-    public Result<Integer> updateLink(List<ProxyLinkVo> voList) {
+    public Result<Integer>
+    updateLink(List<ProxyLinkVo> voList) {
         Result result = new Result<>();
         try {
             if (CollectionUtils.isEmpty(voList)){

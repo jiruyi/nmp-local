@@ -142,6 +142,8 @@
           from nmpl_link l2
                  left join nmpl_device_info d on l2.main_device_id = d.device_id) as link
     where link.main_device_name is not null
+      and link.follow_device_id is null
+      and link.is_exist = '1'
       <if test="linkName != null">
         and link.link_name = #{linkName,jdbcType=VARCHAR}
       </if>
@@ -205,6 +207,7 @@
         left join nmpl_base_station_info b on link.main_device_id = b.station_id
         left join nmpl_device_info d on link.follow_device_id = d.device_id) as a
       where follow_device_id is not null
+        and is_exist = '1'
     <if test="linkName != null">
       and link_name = #{linkName,jdbcType=VARCHAR}
     </if>

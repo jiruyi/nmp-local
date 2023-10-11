@@ -49,7 +49,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
     private String port;
 
     @Override
-    @Transactional
+//    @Transactional
     public void initInfo(InitInfoReq req) {
         String localIp = req.getLocalIp();
         if (!ParamCheckUtil.checkVoStrBlank(localIp)){
@@ -106,7 +106,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                                 routeService.staticRouteInitInfo(nmplStaticRouteVos);
                             }
                             // 初始化链路列表信息
-                            JSONArray linkRelationVoList = resultObj.getJSONArray("linkVos");
+                            JSONArray linkRelationVoList = resultObj.getJSONArray("localLinkVos");
                             List<ProxyLinkVo> localLinkVos = linkRelationVoList.toJavaList(ProxyLinkVo.class);
                             if (!CollectionUtils.isEmpty(localLinkVos)){
                                 linkRelationService.initInfo(localLinkVos);
@@ -122,7 +122,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                 }
             } catch (Exception e) {
                 log.error("InitInfoServiceImpl.initInfo:{}",e);
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             }
         }
     }
