@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplInternetRouteExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.DeviceInfoVo">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+        <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    </resultMap>
+
+    <select id="selectDevice" parameterType="com.matrictime.network.request.InternetRouteRequest" resultType="com.matrictime.network.modelVo.DeviceInfoVo">
+        select station_id as device_id , station_name as device_name from nmpl_base_station_info
+        where
+        is_exist = 1
+        and station_type = #{deviceType,jdbcType=VARCHAR}
+        union
+        select device_id,device_name from nmpl_device_info
+        where
+        is_exist = 1
+        and device_type = #{deviceType,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

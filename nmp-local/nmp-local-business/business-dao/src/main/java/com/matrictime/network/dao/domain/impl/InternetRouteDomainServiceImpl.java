@@ -6,9 +6,11 @@ import com.matrictime.network.base.util.DecimalConversionUtil;
 import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.dao.domain.InternetRouteDomainService;
 import com.matrictime.network.dao.mapper.NmplInternetRouteMapper;
+import com.matrictime.network.dao.mapper.extend.NmplInternetRouteExtMapper;
 import com.matrictime.network.dao.model.NmplInternetRoute;
 import com.matrictime.network.dao.model.NmplInternetRouteExample;
 import com.matrictime.network.modelVo.BusinessRouteVo;
+import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.InternetRouteVo;
 import com.matrictime.network.request.InternetRouteRequest;
 import com.matrictime.network.response.PageInfo;
@@ -30,6 +32,9 @@ public class InternetRouteDomainServiceImpl implements InternetRouteDomainServic
 
     @Resource
     private NmplInternetRouteMapper nmplInternetRouteMapper;
+
+    @Resource
+    private NmplInternetRouteExtMapper nmplInternetRouteExtMapper;
 
     @Override
     public int insert(InternetRouteRequest internetRouteRequest) {
@@ -90,6 +95,17 @@ public class InternetRouteDomainServiceImpl implements InternetRouteDomainServic
         pageInfo.setCount((int) page.getTotal());
         pageInfo.setPages(page.getPages());
         return pageInfo;
+    }
+
+    /**
+     * 查询设备
+     * @param internetRouteRequest
+     * @return
+     */
+    @Override
+    public List<DeviceInfoVo> selectDevice(InternetRouteRequest internetRouteRequest) {
+        List<DeviceInfoVo> deviceInfoVos = nmplInternetRouteExtMapper.selectDevice(internetRouteRequest);
+        return deviceInfoVos;
     }
 
 
