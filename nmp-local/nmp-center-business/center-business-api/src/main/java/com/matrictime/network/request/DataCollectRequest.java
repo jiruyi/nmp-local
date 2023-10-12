@@ -31,6 +31,8 @@ public class DataCollectRequest extends CenterBaseRequest{
      */
     private String dataItemCode;
 
+    private String deviceType;
+
     /**
      * 单位
      */

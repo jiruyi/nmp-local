@@ -185,6 +185,8 @@ public class DataConstants {
 
     public static final String INSERT_INTERNET_ROUTE = "/route/addInternetRoute";
 
+    public static final String INSERT_BUSINESS_ROUTE = "/route/addBusinessRoute";
+
     public static final String UPDATE_BUSINESS_ROUTE = "/route/updateBusinessRoute";
 
 

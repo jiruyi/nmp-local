@@ -5,8 +5,8 @@ import lombok.Data;
 
 /**
  * 小区流量收集表
- * @author   wangqiang
- * @date   2023-08-07
+ * @author   hexu
+ * @date   2023-10-11
  */
 @Data
 public class NmplDataCollect {
@@ -49,6 +49,11 @@ public class NmplDataCollect {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 设备类别(01接入基站、02边界基站、11密钥中心、12生成机、13缓存机)
+     */
+    private String deviceType;
 
     public Long getId() {
         return id;
@@ -112,5 +117,13 @@ public class NmplDataCollect {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType == null ? null : deviceType.trim();
     }
 }

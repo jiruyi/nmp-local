@@ -78,7 +78,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
             if(!ObjectUtils.isEmpty(checkDataOnly(staticRouteRequest))){
                 return checkDataOnly(staticRouteRequest);
             }
-            staticRouteRequest.setCreateUser(RequestContext.getUser().getCreateUser());
+            //staticRouteRequest.setCreateUser(RequestContext.getUser().getCreateUser());
             staticRouteRequest.setRouteId(SnowFlake.nextId_String());
             int insert = staticRouteDomainService.insert(staticRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){

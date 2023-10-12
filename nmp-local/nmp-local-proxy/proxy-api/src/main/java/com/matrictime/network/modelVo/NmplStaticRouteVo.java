@@ -31,7 +31,7 @@ public class NmplStaticRouteVo implements Serializable {
     private String networkId;
 
     /**
-     * 服务器ip
+     * 服务器ip_v6
      */
     private String serverIp;
 
@@ -66,10 +66,36 @@ public class NmplStaticRouteVo implements Serializable {
     private String stationId;
 
     /**
-     * ip_v6
+     * 接入基站名称
+     */
+    private String stationName;
+
+    /**
+     * 服务器ip_v6
      */
     private String ipV6;
 
+    /**
+     * 小区名称
+     */
+    private String companyName;
+
+    /**
+     * 小区id
+     */
+    private String companyId;
+
+    /**
+     * 服务名称
+     */
+    private String serverName;
+
+    /**
+     * 设备入网码
+     */
     private byte[] byteNetworkId;
+
+
+    private String routeNetworkId;
 
 }
