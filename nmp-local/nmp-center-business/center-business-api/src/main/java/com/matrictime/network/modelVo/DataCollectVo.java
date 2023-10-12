@@ -25,6 +25,8 @@ public class DataCollectVo {
      */
     private String dataItemCode;
 
+    private String deviceType;
+
     /**
      * 单位
      */

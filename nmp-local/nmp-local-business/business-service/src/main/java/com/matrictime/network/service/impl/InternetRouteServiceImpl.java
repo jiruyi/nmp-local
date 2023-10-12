@@ -12,6 +12,7 @@ import com.matrictime.network.dao.model.NmplInternetRouteExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.BusinessRouteVo;
+import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.InternetRouteVo;
 import com.matrictime.network.request.BaseStationInfoRequest;
 import com.matrictime.network.request.BusinessRouteRequest;
@@ -79,7 +80,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
                 return checkDataOnly(internetRouteRequest);
             }
             internetRouteRequest.setRouteId(SnowFlake.nextId_String());
-            //internetRouteRequest.setUpdateUser(RequestContext.getUser().getCreateUser());
+            internetRouteRequest.setUpdateUser(RequestContext.getUser().getCreateUser());
             int insert = internetRouteDomainService.insert(internetRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
@@ -100,7 +101,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     public Result<Integer> delete(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            //internetRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
+            internetRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
             int delete = internetRouteDomainService.delete(internetRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
@@ -127,7 +128,7 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             if(!ObjectUtils.isEmpty(checkDataOnly(internetRouteRequest))){
                 return checkDataOnly(internetRouteRequest);
             }
-            //internetRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
+            internetRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
             int update = internetRouteDomainService.update(internetRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
@@ -151,6 +152,24 @@ public class InternetRouteServiceImpl implements InternetRouteService {
             result.setSuccess(false);
             result.setErrorMsg("系统异常，请稍后重试！");
             log.info("select:{}",e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 查询设备
+     * @param internetRouteRequest
+     * @return
+     */
+    @Override
+    public Result<List<DeviceInfoVo>> selectDevice(InternetRouteRequest internetRouteRequest) {
+        Result<List<DeviceInfoVo>> result = new Result<>();
+        try {
+            result.setResultObj(internetRouteDomainService.selectDevice(internetRouteRequest));
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg("系统异常，请稍后重试！");
+            log.info("selectDevice:{}",e.getMessage());
         }
         return result;
     }

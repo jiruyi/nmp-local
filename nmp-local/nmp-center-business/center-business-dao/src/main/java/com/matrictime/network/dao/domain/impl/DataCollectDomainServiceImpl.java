@@ -4,13 +4,16 @@ import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.mapper.NmplCompanyInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
 import com.matrictime.network.dao.mapper.extend.DataCollectExtMapper;
+import com.matrictime.network.dao.mapper.extend.StationSummaryExtMapper;
 import com.matrictime.network.dao.model.NmplCompanyInfo;
 import com.matrictime.network.dao.model.NmplCompanyInfoExample;
 import com.matrictime.network.dao.model.NmplDataCollect;
 import com.matrictime.network.dao.model.NmplDataCollectExample;
 import com.matrictime.network.enums.DataCollectEnum;
+import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.DataTimeVo;
+import com.matrictime.network.modelVo.LoanVo;
 import com.matrictime.network.modelVo.PercentageFlowVo;
 import com.matrictime.network.request.DataCollectRequest;
 import com.matrictime.network.response.DataCollectResponse;
@@ -42,6 +45,9 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
 
     @Resource
     private NmplCompanyInfoMapper companyInfoMapper;
+
+    @Resource
+    private StationSummaryExtMapper stationSummaryExtMapper;
 
     /**
      * 查询负载流浪图
@@ -137,7 +143,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     }
 
     /**
-     * 查询单个小区流量
+     * 查询各个小区各个流量值
      * @param
      * @return
      */
@@ -151,46 +157,46 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         if(CollectionUtils.isEmpty(companyInfos)){
             return null;
         }
-        //求总接入负载
-        DataCollectRequest dataCollectRequest = new DataCollectRequest();
-        dataCollectRequest.setDataItemCode(DataCollectEnum.ACCESS_LOAD.getCode());
-        double accessSum = getSum(dataCollectRequest);
         for(NmplCompanyInfo nmplCompanyInfo: companyInfos){
-            PercentageFlowVo percentageFlowVo = setValue(DataCollectEnum.ACCESS_LOAD.getCode(), nmplCompanyInfo.getCompanyNetworkId());
-            percentageFlowVo.setCode(DataCollectEnum.ACCESS_LOAD.getCode());
-            String value = percentageFlowVo.getValue();
-            if(accessSum != 0d){
-                percentageFlowVo.setValue(avgData(Double.parseDouble(value)/accessSum));
-            }else {
-                percentageFlowVo.setValue("0");
-            }
-            percentageFlowVo.setCompanyName(nmplCompanyInfo.getCompanyName());
-            list.add(percentageFlowVo);
+            //接入负责
+            list.add(setValue(DeviceTypeEnum.STATION_INSIDE.getCode(), nmplCompanyInfo));
+            //区间负载
+            list.add(setValue(DeviceTypeEnum.STATION_BOUNDARY.getCode(), nmplCompanyInfo));
+            //密钥负载
+            list.add(setValue(DeviceTypeEnum.DEVICE_DISPENSER.getCode(), nmplCompanyInfo));
         }
-
-        //求总跨区负载
-        DataCollectRequest request = new DataCollectRequest();
-        request.setDataItemCode(DataCollectEnum.CROSS_ZONE_LOAD.getCode());
-        double crossSum = getSum(request);
-        for(NmplCompanyInfo nmplCompanyInfo: companyInfos){
-            PercentageFlowVo percentageFlowVo = setValue(DataCollectEnum.CROSS_ZONE_LOAD.getCode(),
-                    nmplCompanyInfo.getCompanyNetworkId());
-            percentageFlowVo.setCompanyName(nmplCompanyInfo.getCompanyName());
-            percentageFlowVo.setCode(DataCollectEnum.CROSS_ZONE_LOAD.getCode());
-            String value = percentageFlowVo.getValue();
-            if(crossSum != 0d){
-                percentageFlowVo.setValue(avgData(Double.parseDouble(value)/crossSum));
-            }else {
-                percentageFlowVo.setValue("0");
-            }
-
-            list.add(percentageFlowVo);
-
-        }
-
-
         return list;
     }
+
+    /**
+     * 查询所有带宽
+     * @param dataCollectRequest
+     * @return
+     */
+    @Override
+    public List<LoanVo> selectLoan(DataCollectRequest dataCollectRequest) {
+        List<LoanVo> list = new ArrayList<>();
+        //获取所有基站总数
+        LoanVo stationLoanVo = new LoanVo();
+        Long stationSum = stationSummaryExtMapper.getSum(DeviceTypeEnum.STATION_INSIDE.getCode(), dataCollectRequest.getCompanyNetworkId());
+        stationLoanVo.setDeviceType(DeviceTypeEnum.STATION_INSIDE.getCode());
+        stationLoanVo.setValue(String.valueOf(stationSum * 10));
+        list.add(stationLoanVo);
+        //获取所有边界基站总数
+        LoanVo borderLoanVo = new LoanVo();
+        Long borderSum = stationSummaryExtMapper.getSum(DeviceTypeEnum.STATION_BOUNDARY.getCode(), dataCollectRequest.getCompanyNetworkId());
+        borderLoanVo.setDeviceType(DeviceTypeEnum.STATION_BOUNDARY.getCode());
+        borderLoanVo.setValue(String.valueOf(borderSum * 10));
+        list.add(borderLoanVo);
+        //获取指控中心总数
+        LoanVo deviceLoanVo = new LoanVo();
+        Long deviceSum = stationSummaryExtMapper.getSum(DeviceTypeEnum.DEVICE_DISPENSER.getCode(), dataCollectRequest.getCompanyNetworkId());
+        deviceLoanVo.setDeviceType(DeviceTypeEnum.DEVICE_DISPENSER.getCode());
+        deviceLoanVo.setValue(String.valueOf(deviceSum * 10));
+        list.add(deviceLoanVo);
+        return list;
+    }
+
 
     /**
      * 求流量总和
@@ -222,22 +228,19 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     }
 
     /**
-     * 构建流量值
+     * 构建返回值
      * @param code
-     * @param companyNetworkId
+     * @param nmplCompanyInfo
      * @return
      */
-    private PercentageFlowVo setValue(String code,String companyNetworkId){
+    private PercentageFlowVo setValue(String code,NmplCompanyInfo nmplCompanyInfo){
+        DataCollectRequest dataCollectRequest = new DataCollectRequest();
+        dataCollectRequest.setDeviceType(code);
+        dataCollectRequest.setCompanyNetworkId(nmplCompanyInfo.getCompanyNetworkId());
         PercentageFlowVo percentageFlowVo = new PercentageFlowVo();
-        NmplDataCollectExample dataCollectExample = new NmplDataCollectExample();
-        NmplDataCollectExample.Criteria criteria1 = dataCollectExample.createCriteria();
-        criteria1.andCompanyNetworkIdEqualTo(companyNetworkId);
-        criteria1.andDataItemCodeEqualTo(code);
-        dataCollectExample.setOrderByClause("upload_time desc");
-        List<NmplDataCollect> nmplDataCollects = dataCollectMapper.selectByExample(dataCollectExample);
-        if(CollectionUtils.isEmpty(nmplDataCollects)){
-            percentageFlowVo.setValue("0");
-        }
+        percentageFlowVo.setValue(String.valueOf(getSum(dataCollectRequest)));
+        percentageFlowVo.setCompanyName(nmplCompanyInfo.getCompanyName());
+        percentageFlowVo.setCode(code);
         return percentageFlowVo;
     }
 }

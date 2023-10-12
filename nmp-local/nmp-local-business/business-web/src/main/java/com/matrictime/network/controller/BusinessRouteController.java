@@ -36,7 +36,7 @@ public class BusinessRouteController {
      * @return
      */
 
-    //@RequiresPermissions("sys:businessRoute:insert")
+    @RequiresPermissions("sys:businessRoute:insert")
     @RequestMapping(value = "/insertBusinessRoute",method = RequestMethod.POST)
     public Result<Integer> insertBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
@@ -55,7 +55,7 @@ public class BusinessRouteController {
      * @param businessRouteRequest
      * @return
      */
-    //@RequiresPermissions("sys:businessRoute:delete")
+    @RequiresPermissions("sys:businessRoute:delete")
     @RequestMapping(value = "/deleteBusinessRoute",method = RequestMethod.POST)
     public Result<Integer> deleteBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
@@ -74,7 +74,7 @@ public class BusinessRouteController {
      * @param businessRouteRequest
      * @return
      */
-   // @RequiresPermissions("sys:businessRoute:update")
+    @RequiresPermissions("sys:businessRoute:update")
     @RequestMapping(value = "/updateBusinessRoute",method = RequestMethod.POST)
     public Result<Integer> updateBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {
@@ -114,7 +114,7 @@ public class BusinessRouteController {
      * @param businessRouteRequest
      * @return
      */
-   // @RequiresPermissions("sys:businessRoute:select")
+    @RequiresPermissions("sys:businessRoute:select")
     @RequestMapping(value = "/selectBusinessRoute",method = RequestMethod.POST)
     public Result<PageInfo> selectBusinessRoute(@RequestBody BusinessRouteRequest businessRouteRequest){
         try {

@@ -8,7 +8,7 @@ public enum BusinessRouteEnum {
 
     DISPENSER("11","根密钥中心"),
 
-    ALLEGATION_CENTER("31","指控中心"),
+    ALLEGATION_CENTER("21","指控中心"),
 
     BILLING_CENTER("41","计费中心");
 

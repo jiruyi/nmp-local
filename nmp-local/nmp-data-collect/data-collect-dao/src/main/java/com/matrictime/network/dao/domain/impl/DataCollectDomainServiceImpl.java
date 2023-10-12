@@ -1,5 +1,6 @@
 package com.matrictime.network.dao.domain.impl;
 
+import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.NetworkIdUtil;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
@@ -7,10 +8,7 @@ import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.DataCollectEnum;
-import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.modelVo.DataCollectVo;
-import com.matrictime.network.modelVo.NmplDataCollectVo;
-import com.matrictime.network.request.DataCollectRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -47,6 +45,30 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         if(CollectionUtils.isEmpty(nmplDataCollects)){
             return null;
         }
+        //基站数组
+        List<NmplDataCollect> stationList = new ArrayList<>();
+        for(NmplDataCollect nmplDataCollect: nmplDataCollects){
+            if(DeviceTypeEnum.BASE_STATION.getCode().equals(nmplDataCollect.getDeviceType())){
+                stationList.add(nmplDataCollect);
+            }
+
+        }
+        //边界基站数组
+        List<NmplDataCollect> borderList = new ArrayList<>();
+        for(NmplDataCollect nmplDataCollect: nmplDataCollects){
+            if(DeviceTypeEnum.BORDER_BASE_STATION.getCode().equals(nmplDataCollect.getDeviceType())){
+                borderList.add(nmplDataCollect);
+            }
+
+        }
+        //密钥中心数组
+        List<NmplDataCollect> dList = new ArrayList<>();
+        for(NmplDataCollect nmplDataCollect: nmplDataCollects){
+            if(DeviceTypeEnum.DISPENSER.getCode().equals(nmplDataCollect.getDeviceType())){
+                dList.add(nmplDataCollect);
+            }
+
+        }
         //查询小区Id唯一标识符
         String stationNetworkId = getStationNetworkId(nmplDataCollects.get(0));
         //切割小区唯一标识符
@@ -56,26 +78,72 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         Set<String> strings = map.keySet();
         //按照流量类型求流量总和
         for(String code: strings){
+            //基站求和
+            double stationSum = 0d;
+            BigDecimal stationSumBig = new BigDecimal(Double.toString(stationSum));
+            DataCollectVo stationCollectVo = new DataCollectVo();
+            for(NmplDataCollect nmplDataCollect: stationList){
+                if(code.equals(nmplDataCollect.getDataItemCode())){
+                    BigDecimal itemValue = new BigDecimal(nmplDataCollect.getDataItemValue());
+                    stationSumBig = stationSumBig.add(itemValue);
+                    stationCollectVo.setUploadTime(nmplDataCollect.getUploadTime());
+
+                }
+
+            }
+            stationCollectVo.setDeviceType(DeviceTypeEnum.BASE_STATION.getCode());
+            stationCollectVo.setDataItemCode(code);
+            //数据转换
+            stationCollectVo.setSumNumber(changeSum(String.valueOf(stationSumBig)));
+            stationCollectVo.setCompanyNetworkId(networkIdString);
+            list.add(stationCollectVo);
+
+            //边界基站求和
+            double borderSum = 0d;
+            BigDecimal borderSumBig = new BigDecimal(Double.toString(borderSum));
+            DataCollectVo borderCollectVo = new DataCollectVo();
+            for(NmplDataCollect nmplDataCollect: borderList){
+                if(code.equals(nmplDataCollect.getDataItemCode())){
+                    BigDecimal itemValue = new BigDecimal(nmplDataCollect.getDataItemValue());
+                    borderSumBig = borderSumBig.add(itemValue);
+                    borderCollectVo.setUploadTime(nmplDataCollect.getUploadTime());
+                }
+
+            }
+            borderCollectVo.setDeviceType(DeviceTypeEnum.BORDER_BASE_STATION.getCode());
+            borderCollectVo.setDataItemCode(code);
+            //数据转换
+            borderCollectVo.setSumNumber(changeSum(String.valueOf(borderSumBig)));
+            borderCollectVo.setCompanyNetworkId(networkIdString);
+            list.add(borderCollectVo);
+
+            //密钥中心求和
             double sum = 0d;
             BigDecimal sumBig = new BigDecimal(Double.toString(sum));
             DataCollectVo dataCollectVo = new DataCollectVo();
-            //根据流量类型进行过滤
-            for(NmplDataCollect nmplDataCollect: nmplDataCollects){
+            for(NmplDataCollect nmplDataCollect: dList){
                 if(code.equals(nmplDataCollect.getDataItemCode())){
                     BigDecimal itemValue = new BigDecimal(nmplDataCollect.getDataItemValue());
-                    sumBig = sumBig.add(itemValue);
+                    borderSumBig = borderSumBig.add(itemValue);
                     dataCollectVo.setUploadTime(nmplDataCollect.getUploadTime());
+
                 }
+
             }
+            dataCollectVo.setDeviceType(DeviceTypeEnum.DISPENSER.getCode());
             dataCollectVo.setDataItemCode(code);
             //数据转换
             dataCollectVo.setSumNumber(changeSum(String.valueOf(sumBig)));
             dataCollectVo.setCompanyNetworkId(networkIdString);
             list.add(dataCollectVo);
+
         }
-
-
         return list;
+    }
+
+
+    private DataCollectVo setDataCollectVo(){
+        return null;
     }
 
     /**
@@ -98,7 +166,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     public String getStationNetworkId(NmplDataCollect nmplDataCollect){
         String stationNetworkId = "";
         if(Integer.parseInt(nmplDataCollect.getDeviceType())
-                < Integer.parseInt(DeviceTypeEnum.DEVICE_DISPENSER.getCode())){
+                < Integer.parseInt(DeviceTypeEnum.DISPENSER.getCode())){
             NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
             NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
             criteria.andStationIdEqualTo(nmplDataCollect.getDeviceId());

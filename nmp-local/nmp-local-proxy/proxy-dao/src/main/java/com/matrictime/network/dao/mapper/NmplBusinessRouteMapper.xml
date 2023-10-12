@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplBusinessRoute">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="route_id" jdbcType="VARCHAR" property="routeId" />
-    <result column="business_type" jdbcType="VARCHAR" property="businessType" />
+    <result column="business_type" jdbcType="CHAR" property="businessType" />
     <result column="network_id" jdbcType="VARCHAR" property="networkId" />
     <result column="ip" jdbcType="VARCHAR" property="ip" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
@@ -138,7 +138,7 @@
       create_time, update_user, update_time, 
       is_exist, ip_v6, byte_network_id
       )
-    values (#{id,jdbcType=BIGINT}, #{routeId,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{routeId,jdbcType=VARCHAR}, #{businessType,jdbcType=CHAR}, 
       #{networkId,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{isExist,jdbcType=BIT}, #{ipV6,jdbcType=VARCHAR}, #{byteNetworkId,jdbcType=LONGVARBINARY}
@@ -192,7 +192,7 @@
         #{routeId,jdbcType=VARCHAR},
       </if>
       <if test="businessType != null">
-        #{businessType,jdbcType=VARCHAR},
+        #{businessType,jdbcType=CHAR},
       </if>
       <if test="networkId != null">
         #{networkId,jdbcType=VARCHAR},
@@ -239,7 +239,7 @@
         route_id = #{record.routeId,jdbcType=VARCHAR},
       </if>
       <if test="record.businessType != null">
-        business_type = #{record.businessType,jdbcType=VARCHAR},
+        business_type = #{record.businessType,jdbcType=CHAR},
       </if>
       <if test="record.networkId != null">
         network_id = #{record.networkId,jdbcType=VARCHAR},
@@ -277,7 +277,7 @@
     update nmpl_business_route
     set id = #{record.id,jdbcType=BIGINT},
       route_id = #{record.routeId,jdbcType=VARCHAR},
-      business_type = #{record.businessType,jdbcType=VARCHAR},
+      business_type = #{record.businessType,jdbcType=CHAR},
       network_id = #{record.networkId,jdbcType=VARCHAR},
       ip = #{record.ip,jdbcType=VARCHAR},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -295,7 +295,7 @@
     update nmpl_business_route
     set id = #{record.id,jdbcType=BIGINT},
       route_id = #{record.routeId,jdbcType=VARCHAR},
-      business_type = #{record.businessType,jdbcType=VARCHAR},
+      business_type = #{record.businessType,jdbcType=CHAR},
       network_id = #{record.networkId,jdbcType=VARCHAR},
       ip = #{record.ip,jdbcType=VARCHAR},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -315,7 +315,7 @@
         route_id = #{routeId,jdbcType=VARCHAR},
       </if>
       <if test="businessType != null">
-        business_type = #{businessType,jdbcType=VARCHAR},
+        business_type = #{businessType,jdbcType=CHAR},
       </if>
       <if test="networkId != null">
         network_id = #{networkId,jdbcType=VARCHAR},
@@ -350,7 +350,7 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplBusinessRoute">
     update nmpl_business_route
     set route_id = #{routeId,jdbcType=VARCHAR},
-      business_type = #{businessType,jdbcType=VARCHAR},
+      business_type = #{businessType,jdbcType=CHAR},
       network_id = #{networkId,jdbcType=VARCHAR},
       ip = #{ip,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},
@@ -365,7 +365,7 @@
   <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplBusinessRoute">
     update nmpl_business_route
     set route_id = #{routeId,jdbcType=VARCHAR},
-      business_type = #{businessType,jdbcType=VARCHAR},
+      business_type = #{businessType,jdbcType=CHAR},
       network_id = #{networkId,jdbcType=VARCHAR},
       ip = #{ip,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},

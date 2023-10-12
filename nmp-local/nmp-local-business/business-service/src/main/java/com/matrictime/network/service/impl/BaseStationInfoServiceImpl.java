@@ -567,7 +567,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         try {
             //将设备id由雪花数改成sequence
             borderBaseStationInfoRequest.setStationId(borderBaseStationInfoRequest.getStationNetworkId());
-            borderBaseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
+            //borderBaseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             borderBaseStationInfoRequest.setIsExist("1");
             borderBaseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
 

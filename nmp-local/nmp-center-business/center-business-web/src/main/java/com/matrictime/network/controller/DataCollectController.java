@@ -2,6 +2,7 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataTimeVo;
+import com.matrictime.network.modelVo.LoanVo;
 import com.matrictime.network.modelVo.PercentageFlowVo;
 import com.matrictime.network.request.DataCollectRequest;
 import com.matrictime.network.response.DataCollectResponse;
@@ -41,7 +42,7 @@ public class DataCollectController {
     public Result<Double> sumDataCollect(@RequestBody DataCollectRequest dataCollectRequest){
         Result<Double> result = new Result<>();
         try {
-            if(StringUtils.isEmpty(dataCollectRequest.getDataItemCode())){
+            if(StringUtils.isEmpty(dataCollectRequest.getDeviceType())){
                 return new Result<>(false,"缺少必传参数");
             }
             result = dataCollectService.sumDataValue(dataCollectRequest);
@@ -63,7 +64,7 @@ public class DataCollectController {
     public Result<Double> sumCompanyDataCollect(@RequestBody DataCollectRequest dataCollectRequest){
         Result<Double> result = new Result<>();
         try {
-            if(StringUtils.isEmpty(dataCollectRequest.getDataItemCode())){
+            if(StringUtils.isEmpty(dataCollectRequest.getDeviceType())){
                 return new Result<>(false,"缺少必传参数");
             }
             if(StringUtils.isEmpty(dataCollectRequest.getCompanyNetworkId())){
@@ -88,9 +89,6 @@ public class DataCollectController {
     public Result<List<DataTimeVo>> selectLoadData(@RequestBody DataCollectRequest dataCollectRequest){
         Result<List<DataTimeVo> > result = new Result<>();
         try {
-            if(StringUtils.isEmpty(dataCollectRequest.getDataItemCode())){
-                return new Result<>(false,"缺少必传参数");
-            }
             result = dataCollectService.selectLoadData(dataCollectRequest);
         }catch (Exception e){
             log.info("selectLoadData:{}",e.getMessage());
@@ -102,15 +100,15 @@ public class DataCollectController {
 
     /**
      * 查询单个小区流量值占比
-     * @param dataCollectRequest
+     * @param
      * @return
      */
     @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/selectCompanyData",method = RequestMethod.POST)
-    public Result<List<PercentageFlowVo>> selectCompanyData(@RequestBody DataCollectRequest dataCollectRequest){
+    public Result<List<PercentageFlowVo>> selectCompanyData(){
         Result<List<PercentageFlowVo>> result = new Result<>();
         try {
-            result = dataCollectService.selectCompanyData(dataCollectRequest);
+            result = dataCollectService.selectCompanyData();
         }catch (Exception e){
             log.info("selectCompanyData:{}",e.getMessage());
             result.setSuccess(false);
@@ -129,7 +127,7 @@ public class DataCollectController {
     public Result<List<DataTimeVo>> selectCompanyLoadData(@RequestBody DataCollectRequest dataCollectRequest){
         Result<List<DataTimeVo>> result = new Result<>();
         try {
-            if(StringUtils.isEmpty(dataCollectRequest.getDataItemCode())){
+            if(StringUtils.isEmpty(dataCollectRequest.getDeviceType())){
                 return new Result<>(false,"缺少必传参数");
             }
             if(StringUtils.isEmpty(dataCollectRequest.getCompanyNetworkId())){
@@ -138,6 +136,24 @@ public class DataCollectController {
             result = dataCollectService.selectLoadData(dataCollectRequest);
         }catch (Exception e){
             log.info("selectCompanyLoadData:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 查询带宽
+     * @param dataCollectRequest
+     * @return
+     */
+    @RequestMapping(value = "/selectLoan",method = RequestMethod.POST)
+    public Result<List<LoanVo>> selectLoan(@RequestBody DataCollectRequest dataCollectRequest){
+        Result<List<LoanVo>> result = new Result<>();
+        try {
+            result = dataCollectService.selectLoan(dataCollectRequest);
+        }catch (Exception e){
+            log.info("selectLoan:{}",e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg(e.getMessage());
         }
