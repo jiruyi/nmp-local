@@ -111,7 +111,7 @@ public class DeviceDomainServiceImpl implements DeviceDomainService {
         //查询链路关系 数据采集到边界基站(或者指控中心)
         NmplLinkExample linkExample = new NmplLinkExample();
         linkExample.createCriteria().andMainDeviceTypeEqualTo(DeviceTypeEnum.DAT_COLLECT.getCode())
-                .andFollowDeviceIdEqualTo(followNetId)
+                .andFollowNetworkIdEqualTo(followNetId)
                 .andIsExistEqualTo(true).andIsOnEqualTo(true);
         List<NmplLink>  linkList =  linkMapper.selectByExample(linkExample);
         if(CollectionUtils.isEmpty(linkList)){

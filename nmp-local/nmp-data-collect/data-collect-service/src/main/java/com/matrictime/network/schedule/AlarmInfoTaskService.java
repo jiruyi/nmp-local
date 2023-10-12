@@ -9,6 +9,7 @@ import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.ConfigDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.model.NmplAlarmInfo;
+import com.matrictime.network.dao.model.NmplBusinessRoute;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
 import com.matrictime.network.strategy.annotation.BusinessType;
@@ -22,6 +23,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -109,13 +111,15 @@ public class AlarmInfoTaskService implements BusinessDataService, SchedulingConf
             }
             //查询本机数据采集和本运营商的指控中心的入网码
             String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-            String commandNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-            log.info("AlarmInfoTask  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
-
-            if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(commandNetworkId)){
-                log.info("查询dataNetworkId 或commandNetworkId为空,作返回处理");
+            NmplBusinessRoute route = deviceDomainService.getBusinessRoute();
+            if(StringUtils.isEmpty(dataNetworkId) || ObjectUtils.isEmpty(route)){
+                log.info("查询dataNetworkId 或 commandNetworkId为空,作返回处理");
                 return;
             }
+            String commandNetworkId = route.getNetworkId();
+            log.info("AlarmInfoTask  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
+
+
             //业务数据转jsonstring
             String reqDataStr = JSONObject.toJSONString(alarmInfoList);
             //发送TCP数据包

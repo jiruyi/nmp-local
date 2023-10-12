@@ -344,8 +344,7 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         Result<Integer> result = new Result<>();
         Integer insertFlag = null;
         try {
-            deviceInfoRequest.setDeviceId(SnowFlake.nextId_String());
-            //deviceInfoRequest.setStationNetworkId(String.valueOf(nmplBaseStationInfoMapper.getSequenceId()));
+            deviceInfoRequest.setDeviceId(deviceInfoRequest.getStationNetworkId());
             deviceInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
             checkDataBaseParam(deviceInfoRequest);
             deviceInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(deviceInfoRequest.getStationNetworkId()));
