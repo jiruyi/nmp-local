@@ -21,7 +21,7 @@ public interface DataCollectService {
 
     Result<Integer> insertDataCollect(DataCollectResponse dataCollectResponse);
 
-    Result<List<PercentageFlowVo>> selectCompanyData(DataCollectRequest dataCollectRequest);
+    Result<List<PercentageFlowVo>> selectCompanyData();
 
 
 }

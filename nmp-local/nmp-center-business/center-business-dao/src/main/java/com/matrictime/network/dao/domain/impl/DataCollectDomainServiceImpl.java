@@ -9,6 +9,7 @@ import com.matrictime.network.dao.model.NmplCompanyInfoExample;
 import com.matrictime.network.dao.model.NmplDataCollect;
 import com.matrictime.network.dao.model.NmplDataCollectExample;
 import com.matrictime.network.enums.DataCollectEnum;
+import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.DataTimeVo;
 import com.matrictime.network.modelVo.PercentageFlowVo;
@@ -137,7 +138,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     }
 
     /**
-     * 查询单个小区流量
+     * 查询各个小区各个流量值
      * @param
      * @return
      */
@@ -151,46 +152,17 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         if(CollectionUtils.isEmpty(companyInfos)){
             return null;
         }
-        //求总接入负载
-        DataCollectRequest dataCollectRequest = new DataCollectRequest();
-        dataCollectRequest.setDataItemCode(DataCollectEnum.ACCESS_LOAD.getCode());
-        double accessSum = getSum(dataCollectRequest);
         for(NmplCompanyInfo nmplCompanyInfo: companyInfos){
-            PercentageFlowVo percentageFlowVo = setValue(DataCollectEnum.ACCESS_LOAD.getCode(), nmplCompanyInfo.getCompanyNetworkId());
-            percentageFlowVo.setCode(DataCollectEnum.ACCESS_LOAD.getCode());
-            String value = percentageFlowVo.getValue();
-            if(accessSum != 0d){
-                percentageFlowVo.setValue(avgData(Double.parseDouble(value)/accessSum));
-            }else {
-                percentageFlowVo.setValue("0");
-            }
-            percentageFlowVo.setCompanyName(nmplCompanyInfo.getCompanyName());
-            list.add(percentageFlowVo);
+            //接入负责
+            list.add(setValue(DeviceTypeEnum.STATION_INSIDE.getCode(), nmplCompanyInfo));
+            //区间负载
+            list.add(setValue(DeviceTypeEnum.STATION_BOUNDARY.getCode(), nmplCompanyInfo));
+            //密钥负载
+            list.add(setValue(DeviceTypeEnum.DEVICE_DISPENSER.getCode(), nmplCompanyInfo));
         }
-
-        //求总跨区负载
-        DataCollectRequest request = new DataCollectRequest();
-        request.setDataItemCode(DataCollectEnum.CROSS_ZONE_LOAD.getCode());
-        double crossSum = getSum(request);
-        for(NmplCompanyInfo nmplCompanyInfo: companyInfos){
-            PercentageFlowVo percentageFlowVo = setValue(DataCollectEnum.CROSS_ZONE_LOAD.getCode(),
-                    nmplCompanyInfo.getCompanyNetworkId());
-            percentageFlowVo.setCompanyName(nmplCompanyInfo.getCompanyName());
-            percentageFlowVo.setCode(DataCollectEnum.CROSS_ZONE_LOAD.getCode());
-            String value = percentageFlowVo.getValue();
-            if(crossSum != 0d){
-                percentageFlowVo.setValue(avgData(Double.parseDouble(value)/crossSum));
-            }else {
-                percentageFlowVo.setValue("0");
-            }
-
-            list.add(percentageFlowVo);
-
-        }
-
-
         return list;
     }
+
 
     /**
      * 求流量总和
@@ -222,22 +194,19 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     }
 
     /**
-     * 构建流量值
+     * 构建返回值
      * @param code
-     * @param companyNetworkId
+     * @param nmplCompanyInfo
      * @return
      */
-    private PercentageFlowVo setValue(String code,String companyNetworkId){
+    private PercentageFlowVo setValue(String code,NmplCompanyInfo nmplCompanyInfo){
+        DataCollectRequest dataCollectRequest = new DataCollectRequest();
+        dataCollectRequest.setDeviceType(code);
+        dataCollectRequest.setCompanyNetworkId(nmplCompanyInfo.getCompanyNetworkId());
         PercentageFlowVo percentageFlowVo = new PercentageFlowVo();
-        NmplDataCollectExample dataCollectExample = new NmplDataCollectExample();
-        NmplDataCollectExample.Criteria criteria1 = dataCollectExample.createCriteria();
-        criteria1.andCompanyNetworkIdEqualTo(companyNetworkId);
-        criteria1.andDataItemCodeEqualTo(code);
-        dataCollectExample.setOrderByClause("upload_time desc");
-        List<NmplDataCollect> nmplDataCollects = dataCollectMapper.selectByExample(dataCollectExample);
-        if(CollectionUtils.isEmpty(nmplDataCollects)){
-            percentageFlowVo.setValue("0");
-        }
+        percentageFlowVo.setValue(String.valueOf(getSum(dataCollectRequest)));
+        percentageFlowVo.setCompanyName(nmplCompanyInfo.getCompanyName());
+        percentageFlowVo.setCode(code);
         return percentageFlowVo;
     }
 }

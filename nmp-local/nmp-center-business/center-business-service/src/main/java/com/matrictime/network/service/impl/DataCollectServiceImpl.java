@@ -98,7 +98,7 @@ public class DataCollectServiceImpl implements DataCollectService, DataHandlerSe
      * @return
      */
     @Override
-    public Result<List<PercentageFlowVo>> selectCompanyData(DataCollectRequest dataCollectRequest) {
+    public Result<List<PercentageFlowVo>> selectCompanyData() {
         Result<List<PercentageFlowVo>> result = new Result<>();
         try {
             List<PercentageFlowVo> list = dataCollectDomainService.selectCompanyData();
