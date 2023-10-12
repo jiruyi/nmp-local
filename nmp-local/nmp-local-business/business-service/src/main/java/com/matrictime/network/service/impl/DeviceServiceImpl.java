@@ -471,10 +471,10 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         if(lanIpReg == false){
             throw  new SystemException(IP_FORMAT_ERROR_MSG);
         }
-        boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getLanPort());
-        if(lanPortReg == false){
-            throw  new SystemException(PORT_FORMAT_ERROR_MSG);
-        }
+//        boolean lanPortReg = CommonCheckUtil.isPortLegal(deviceInfoRequest.getLanPort());
+//        if(lanPortReg == false){
+//            throw  new SystemException(PORT_FORMAT_ERROR_MSG);
+//        }
         //判断小区是否正确
         String preBID = companyInfoDomainService.getPreBID(deviceInfoRequest.getRelationOperatorId());
         if(StringUtil.isEmpty(preBID)){
@@ -504,10 +504,10 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
                 pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_INSERT);
             }
         }catch (SystemException e){
-            log.info("设备新增异常",e.getMessage());
+            log.info("指控中心新增异常",e.getMessage());
             result = failResult(e);
         }catch (Exception e){
-            log.error("设备新增异常：{}",e.getMessage());
+            log.error("指控中心新增异常：{}",e.getMessage());
             result = failResult("");
         }
         return result;
@@ -525,10 +525,10 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
                 pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_UPDATE);
             }
         }catch (SystemException e){
-            log.info("设备删除异常",e.getMessage());
+            log.info("指控中心删除异常",e.getMessage());
             result = failResult(e);
         }catch (Exception e){
-            log.error("设备删除异常：{}",e.getMessage());
+            log.error("指控中心删除异常：{}",e.getMessage());
             result = failResult("");
         }
         return result;
@@ -539,6 +539,7 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
         Result<Integer> result = new Result<>();
         Integer updateFlag;
         try {
+            //指控中心唯一 且不能修改小区以及ip 此处无需校验
             checkParam(deviceInfoRequest);
             updateFlag = deviceDomainService.updateCenter(deviceInfoRequest);
             if(updateFlag.equals(INSERT_OR_UPDATE_SUCCESS)){
@@ -547,10 +548,10 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
                 pushToProxy(deviceInfoRequest.getDeviceId(),DataConstants.URL_DEVICE_UPDATE);
             }
         }catch (SystemException e){
-            log.info("设备修改异常",e.getMessage());
+            log.info("指控中心修改异常",e.getMessage());
             result = failResult(e);
         }catch (Exception e){
-            log.error("设备修改异常：{}",e.getMessage());
+            log.error("指控中心修改异常：{}",e.getMessage());
             result = failResult("");
         }
         return result;

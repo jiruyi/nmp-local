@@ -98,7 +98,7 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
     @Override
     public PageInfo<DeviceInfoVo> selectDeviceALl(DeviceInfoRequest deviceInfoRequest) {
         Page page = PageHelper.startPage(deviceInfoRequest.getPageNo(),deviceInfoRequest.getPageSize());
-        List<DeviceInfoVo> deviceInfoVoList = nmplDeviceInfoMapper.selectDeviceALl(deviceInfoRequest);
+        List<DeviceInfoVo> deviceInfoVoList = nmplDeviceInfoMapper.selectDeviceList(deviceInfoRequest);
         PageInfo<DeviceInfoVo> pageResult =  new PageInfo<>();
         pageResult.setList(deviceInfoVoList);
         pageResult.setCount((int) page.getTotal());
@@ -288,6 +288,8 @@ public class DeviceServiceDomainImpl implements DeviceDomainService {
     public int updateCenter(DeviceInfoRequest deviceInfoRequest) {
         NmplDevice nmplDevice = new NmplDevice();
         BeanUtils.copyProperties(deviceInfoRequest,nmplDevice);
-        return nmplDeviceMapper.updateByPrimaryKeySelective(nmplDevice);
+        NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
+        nmplDeviceExample.createCriteria().andDeviceIdEqualTo(nmplDevice.getDeviceId());
+        return nmplDeviceMapper.updateByExampleSelective(nmplDevice,nmplDeviceExample);
     }
 }
