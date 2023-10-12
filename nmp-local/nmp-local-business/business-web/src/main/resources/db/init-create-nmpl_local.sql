@@ -978,7 +978,7 @@ INSERT INTO nmp_local.nmpl_report_business (business_name, business_code, busine
 INSERT INTO nmp_local.nmpl_user (village_id, login_account, nick_name, user_type, email, phone_number, password, role_id, status, is_exist, create_user, create_time, update_user, update_time, remark) VALUES (null, 'superAdmin', 'superAdmin', '00', null, '00000000000', 'j2sivmjjihBLggve6ed5lw==', '1', 1, 1, '-1', '2022-12-12 14:11:02.76', null, '2022-12-12 14:11:02.76', null);
 INSERT INTO nmp_local.nmpl_user (village_id, login_account, nick_name, user_type, email, phone_number, password, role_id, status, is_exist, create_user, create_time, update_user, update_time, remark) VALUES (null, 'admin', 'admin', '00', null, '00000000000', 'j2sivmjjihBLggve6ed5lw==', '2', 1, 1, '-1', '2022-12-12 14:11:02.76', null, '2022-12-12 14:11:02.76', null);
 
-
+INSERT INTO nmp_local.sys_sequence (seq_name, min_value, max_value, current_value, increment_value) VALUES ('seq_name1', 1, 2000000000, 1, 1);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -19,10 +19,12 @@ import com.matrictime.network.request.DeleteBaseStationInfoRequest;
 import com.matrictime.network.request.InitInfoReq;
 import com.matrictime.network.response.ProxyResp;
 import com.matrictime.network.service.BaseStationInfoService;
+import com.matrictime.network.service.UpdateInfoService;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,9 +50,6 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     private BaseStationInfoDomainService baseStationInfoDomainService;
 
     @Resource
-    private DeviceInfoDomainService deviceInfoDomainService;
-
-    @Resource
     private NmplUpdateInfoBaseMapper nmplUpdateInfoBaseMapper;
 
     @Resource
@@ -59,11 +58,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     @Resource
     private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
 
-    @Resource
-    private NmplRouteMapper nmplRouteMapper;
+    @Autowired
+    private UpdateInfoService updateInfoService;
 
-    @Resource
-    private NmplLinkRelationMapper nmplLinkRelationMapper;
 
 
     /**
@@ -91,63 +88,28 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 BeanUtils.copyProperties(infoVo,stationInfo);
                 int addlocal = nmplLocalBaseStationInfoMapper.insertSelective(stationInfo);
 
-                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-                updateInfo.setTableName(NMPL_LOCAL_BASE_STATION_INFO);
-                updateInfo.setOperationType(EDIT_TYPE_ADD);
-                updateInfo.setCreateTime(createTime);
-                updateInfo.setCreateUser(SYSTEM_NM);
-
-                int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-
-                // 插入所有基站信息
-//                int addBase = 0;
-//                int updateBase = 0;
-//                List<BaseStationInfoVo> stationVos = req.getStationInfoVos();
-//                if (!CollectionUtils.isEmpty(stationVos)){
-//                    for (int i=0;i<stationVos.size();i++){
-//                        stationVos.get(i).setUpdateTime(createTime);
-//                    }
-//                    addBase = baseStationInfoDomainService.insertBaseStationInfo(stationVos);
-//                    // 插入通知表通知base表更新
-//                    updateInfo.setTableName(NMPL_BASE_STATION_INFO);
-//                    updateBase = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-//                }
-//
-//                int addDevice =0;
-//                int updateDevice =0;
-//                List<DeviceInfoVo> deviceInfoVos = req.getDeviceInfoVos();
-//                if (!CollectionUtils.isEmpty(deviceInfoVos)){
-//                    for (int i=0;i<deviceInfoVos.size();i++){
-//                        deviceInfoVos.get(i).setUpdateTime(createTime);
-//                    }
-//                    addDevice = deviceInfoDomainService.insertDeviceInfo(deviceInfoVos);
-//                    // 插入通知表通知base表更新
-//                    updateInfo.setTableName(NMPL_DEVICE_INFO);
-//
-//                    updateDevice = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-//                }
+                int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
 
                 log.info("BaseStationInfoServiceImpl.addBaseStationInfo：" +
                                 "addlocal:{},updateLocal:{}",
                         addlocal,updateLocal);
             }
-//            else {
-            /* 其他基站的推送插入 */
 
-            // 插入通知表通知base表更新
-            NmplUpdateInfoBase updateTable = new NmplUpdateInfoBase();
-            updateTable.setTableName(NMPL_BASE_STATION_INFO);
-            updateTable.setOperationType(EDIT_TYPE_ADD);
-            updateTable.setCreateTime(createTime);
-            updateTable.setCreateUser(SYSTEM_NM);
+            NmplLocalBaseStationInfoExample localBaseExample = new NmplLocalBaseStationInfoExample();
+            localBaseExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+            List<NmplLocalBaseStationInfo> localBaseStationInfoList = nmplLocalBaseStationInfoMapper.selectByExample(localBaseExample);
+            int addTable = 0;
 
-            int addTable = nmplUpdateInfoBaseMapper.insertSelective(updateTable);
+            for (NmplLocalBaseStationInfo info : localBaseStationInfoList){
+                // 插入通知表更新
+                addTable = updateInfoService.updateInfo(info.getStationType(),NMPL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
+            }
 
             NmplBaseStationInfo baseStationInfo = new NmplBaseStationInfo();
             BeanUtils.copyProperties(infoVo,baseStationInfo);
             int addStation = baseStationInfoDomainService.insert(baseStationInfo);
             log.info("BaseStationInfoServiceImpl.addBaseStationInfo：addTable:{},addStation:{}",addTable,addStation);
-//            }
+
         }catch (Exception e){
             log.error("BaseStationInfoServiceImpl.addBaseStationInfo：{}",e.getMessage());
             result = failResult("");
@@ -179,25 +141,22 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 BeanUtils.copyProperties(infoVo,stationInfo);
                 int local = nmplLocalBaseStationInfoMapper.updateByPrimaryKeySelective(stationInfo);
 
-                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-                updateInfo.setTableName(NMPL_LOCAL_BASE_STATION_INFO);
-                updateInfo.setOperationType(EDIT_TYPE_UPD);
-                updateInfo.setCreateTime(createTime);
-                updateInfo.setCreateUser(SYSTEM_NM);
+                int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
 
-                int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
                 log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：local:{},updateLocal:{}",local,updateLocal);
             }
 
             /* 其他基站的推送更新 */
 
-            // 插入通知表通知base表更新
-            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-            updateInfo.setTableName(NMPL_BASE_STATION_INFO);
-            updateInfo.setOperationType(EDIT_TYPE_UPD);
-            updateInfo.setCreateTime(createTime);
-            updateInfo.setCreateUser(SYSTEM_NM);
-            int updateTable = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+            NmplLocalBaseStationInfoExample localBaseExample = new NmplLocalBaseStationInfoExample();
+            localBaseExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+            List<NmplLocalBaseStationInfo> localBaseStationInfoList = nmplLocalBaseStationInfoMapper.selectByExample(localBaseExample);
+            int updateTable = 0;
+
+            for (NmplLocalBaseStationInfo info : localBaseStationInfoList){
+                // 插入通知表更新
+                updateTable = updateInfoService.updateInfo(info.getStationType(),NMPL_BASE_STATION_INFO,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
+            }
 
             NmplBaseStationInfo baseStationInfo = new NmplBaseStationInfo();
             BeanUtils.copyProperties(infoVo,baseStationInfo);
@@ -256,13 +215,8 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             stationInfo.setUpdateTime(createTime);
             int addlocal = nmplLocalBaseStationInfoMapper.insertSelective(stationInfo);
 
-            NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-            updateInfo.setTableName(NMPL_LOCAL_BASE_STATION_INFO);
-            updateInfo.setOperationType(EDIT_TYPE_ADD);
-            updateInfo.setCreateTime(createTime);
-            updateInfo.setCreateUser(SYSTEM_NM);
+            int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
 
-            int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
         }else {// 本机有基站数据
             NmplLocalBaseStationInfo tempLocalBase = stationInfos.get(0);
             String stationStatus = tempLocalBase.getStationStatus();
@@ -276,13 +230,8 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 stationInfo.setUpdateTime(createTime);
                 int addlocal = nmplLocalBaseStationInfoMapper.insertSelective(stationInfo);
 
-                NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-                updateInfo.setTableName(NMPL_LOCAL_BASE_STATION_INFO);
-                updateInfo.setOperationType(EDIT_TYPE_ADD);
-                updateInfo.setCreateTime(createTime);
-                updateInfo.setCreateUser(SYSTEM_NM);
+                int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
 
-                int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
             }else {// 本机基站状态是除了未激活，此时只能编辑部分信息
 
                 // 更新本机基站信息
@@ -292,16 +241,8 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 stationInfo.setUpdateTime(createTime);
                 nmplLocalBaseStationInfoMapper.updateByPrimaryKeySelective(stationInfo);
 
-                // 如果端口被修改，则更新通知基站表
-                if (!tempLocalBase.getPublicNetworkPort().equals(infoVo.getPublicNetworkPort()) || !tempLocalBase.getLanPort().equals(infoVo.getLanPort())){
-                    NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-                    updateInfo.setTableName(NMPL_LOCAL_BASE_STATION_INFO);
-                    updateInfo.setOperationType(EDIT_TYPE_UPD);
-                    updateInfo.setCreateTime(createTime);
-                    updateInfo.setCreateUser(SYSTEM_NM);
+                int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
 
-                    int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
-                }
             }
         }
     }
@@ -329,13 +270,16 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         }
         int addCount = baseStationInfoDomainService.insertBaseStationInfo(baseStationInfoVos);
 
-        NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
-        updateInfo.setTableName(NMPL_BASE_STATION_INFO);
-        updateInfo.setOperationType(EDIT_TYPE_ADD);
-        updateInfo.setCreateTime(createTime);
-        updateInfo.setCreateUser(SYSTEM_NM);
 
-        int updateLocal = nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+        NmplLocalBaseStationInfoExample localBaseExample = new NmplLocalBaseStationInfoExample();
+        localBaseExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+        List<NmplLocalBaseStationInfo> localBaseStationInfoList = nmplLocalBaseStationInfoMapper.selectByExample(localBaseExample);
+        int updateTable = 0;
+
+        for (NmplLocalBaseStationInfo info : localBaseStationInfoList){
+            // 插入通知表更新
+            updateTable = updateInfoService.updateInfo(info.getStationType(),NMPL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
+        }
     }
 
 }
