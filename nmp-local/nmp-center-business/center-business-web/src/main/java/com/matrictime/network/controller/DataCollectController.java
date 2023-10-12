@@ -2,6 +2,7 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataTimeVo;
+import com.matrictime.network.modelVo.LoanVo;
 import com.matrictime.network.modelVo.PercentageFlowVo;
 import com.matrictime.network.request.DataCollectRequest;
 import com.matrictime.network.response.DataCollectResponse;
@@ -36,7 +37,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
-    //@RequiresPermissions("sys:accusation:query")
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/sumDataCollect",method = RequestMethod.POST)
     public Result<Double> sumDataCollect(@RequestBody DataCollectRequest dataCollectRequest){
         Result<Double> result = new Result<>();
@@ -58,7 +59,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
-    //@RequiresPermissions("sys:accusation:query")
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/sumCompanyDataCollect",method = RequestMethod.POST)
     public Result<Double> sumCompanyDataCollect(@RequestBody DataCollectRequest dataCollectRequest){
         Result<Double> result = new Result<>();
@@ -83,7 +84,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
-    //@RequiresPermissions("sys:accusation:query")
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/selectLoadData",method = RequestMethod.POST)
     public Result<List<DataTimeVo>> selectLoadData(@RequestBody DataCollectRequest dataCollectRequest){
         Result<List<DataTimeVo> > result = new Result<>();
@@ -102,7 +103,7 @@ public class DataCollectController {
      * @param
      * @return
      */
-    //@RequiresPermissions("sys:accusation:query")
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/selectCompanyData",method = RequestMethod.POST)
     public Result<List<PercentageFlowVo>> selectCompanyData(){
         Result<List<PercentageFlowVo>> result = new Result<>();
@@ -121,7 +122,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
-    //@RequiresPermissions("sys:accusation:query")
+    @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/selectCompanyLoadData",method = RequestMethod.POST)
     public Result<List<DataTimeVo>> selectCompanyLoadData(@RequestBody DataCollectRequest dataCollectRequest){
         Result<List<DataTimeVo>> result = new Result<>();
@@ -135,6 +136,24 @@ public class DataCollectController {
             result = dataCollectService.selectLoadData(dataCollectRequest);
         }catch (Exception e){
             log.info("selectCompanyLoadData:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 查询带宽
+     * @param dataCollectRequest
+     * @return
+     */
+    @RequestMapping(value = "/selectLoan",method = RequestMethod.POST)
+    public Result<List<LoanVo>> selectLoan(@RequestBody DataCollectRequest dataCollectRequest){
+        Result<List<LoanVo>> result = new Result<>();
+        try {
+            result = dataCollectService.selectLoan(dataCollectRequest);
+        }catch (Exception e){
+            log.info("selectLoan:{}",e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg(e.getMessage());
         }

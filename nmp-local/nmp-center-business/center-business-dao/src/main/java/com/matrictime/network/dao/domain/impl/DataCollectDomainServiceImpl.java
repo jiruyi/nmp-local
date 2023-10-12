@@ -4,6 +4,7 @@ import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.mapper.NmplCompanyInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDataCollectMapper;
 import com.matrictime.network.dao.mapper.extend.DataCollectExtMapper;
+import com.matrictime.network.dao.mapper.extend.StationSummaryExtMapper;
 import com.matrictime.network.dao.model.NmplCompanyInfo;
 import com.matrictime.network.dao.model.NmplCompanyInfoExample;
 import com.matrictime.network.dao.model.NmplDataCollect;
@@ -12,6 +13,7 @@ import com.matrictime.network.enums.DataCollectEnum;
 import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.DataTimeVo;
+import com.matrictime.network.modelVo.LoanVo;
 import com.matrictime.network.modelVo.PercentageFlowVo;
 import com.matrictime.network.request.DataCollectRequest;
 import com.matrictime.network.response.DataCollectResponse;
@@ -43,6 +45,9 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
 
     @Resource
     private NmplCompanyInfoMapper companyInfoMapper;
+
+    @Resource
+    private StationSummaryExtMapper stationSummaryExtMapper;
 
     /**
      * 查询负载流浪图
@@ -160,6 +165,35 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             //密钥负载
             list.add(setValue(DeviceTypeEnum.DEVICE_DISPENSER.getCode(), nmplCompanyInfo));
         }
+        return list;
+    }
+
+    /**
+     * 查询所有带宽
+     * @param dataCollectRequest
+     * @return
+     */
+    @Override
+    public List<LoanVo> selectLoan(DataCollectRequest dataCollectRequest) {
+        List<LoanVo> list = new ArrayList<>();
+        //获取所有基站总数
+        LoanVo stationLoanVo = new LoanVo();
+        Long stationSum = stationSummaryExtMapper.getSum(DeviceTypeEnum.STATION_INSIDE.getCode(), dataCollectRequest.getCompanyNetworkId());
+        stationLoanVo.setDeviceType(DeviceTypeEnum.STATION_INSIDE.getCode());
+        stationLoanVo.setValue(String.valueOf(stationSum * 10));
+        list.add(stationLoanVo);
+        //获取所有边界基站总数
+        LoanVo borderLoanVo = new LoanVo();
+        Long borderSum = stationSummaryExtMapper.getSum(DeviceTypeEnum.STATION_BOUNDARY.getCode(), dataCollectRequest.getCompanyNetworkId());
+        borderLoanVo.setDeviceType(DeviceTypeEnum.STATION_BOUNDARY.getCode());
+        borderLoanVo.setValue(String.valueOf(borderSum * 10));
+        list.add(borderLoanVo);
+        //获取指控中心总数
+        LoanVo deviceLoanVo = new LoanVo();
+        Long deviceSum = stationSummaryExtMapper.getSum(DeviceTypeEnum.DEVICE_DISPENSER.getCode(), dataCollectRequest.getCompanyNetworkId());
+        deviceLoanVo.setDeviceType(DeviceTypeEnum.DEVICE_DISPENSER.getCode());
+        deviceLoanVo.setValue(String.valueOf(deviceSum * 10));
+        list.add(deviceLoanVo);
         return list;
     }
 

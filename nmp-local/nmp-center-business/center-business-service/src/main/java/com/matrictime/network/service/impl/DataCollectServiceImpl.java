@@ -5,6 +5,7 @@ import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataPushBody;
 import com.matrictime.network.modelVo.DataTimeVo;
+import com.matrictime.network.modelVo.LoanVo;
 import com.matrictime.network.modelVo.PercentageFlowVo;
 import com.matrictime.network.request.DataCollectRequest;
 import com.matrictime.network.response.DataCollectResponse;
@@ -94,7 +95,7 @@ public class DataCollectServiceImpl implements DataCollectService, DataHandlerSe
 
     /**
      * 查询单个小区流量占比
-     * @param dataCollectRequest
+     * @param
      * @return
      */
     @Override
@@ -106,6 +107,26 @@ public class DataCollectServiceImpl implements DataCollectService, DataHandlerSe
             result.setSuccess(true);
         }catch (Exception e){
             log.info("selectCompanyData:{}",e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 查询带宽
+     * @param dataCollectRequest
+     * @return
+     */
+    @Override
+    public Result<List<LoanVo>> selectLoan(DataCollectRequest dataCollectRequest) {
+        Result<List<LoanVo>> result = new Result<>();
+        try {
+            List<LoanVo> list = dataCollectDomainService.selectLoan(dataCollectRequest);
+            result.setResultObj(list);
+            result.setSuccess(true);
+        }catch (Exception e){
+            log.info("selectLoan:{}",e.getMessage());
             result.setSuccess(false);
             result.setErrorMsg(e.getMessage());
         }
