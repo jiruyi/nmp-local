@@ -1,8 +1,8 @@
 package com.matrictime.network.enums;
 
 public enum ConfigEnum {
-    COLLECT_PERIOD("20000","采集周期"),
-    REPORT_PERIOD("20001","上报周期");
+    COLLECT_PERIOD("dc0001","采集周期"),
+    REPORT_PERIOD("dc0002","上报周期");
     private String code;
     private String name;
 

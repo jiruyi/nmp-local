@@ -433,6 +433,32 @@ public class AsyncService{
         }
     }
 
+    @Async("taskExecutor")
+    public void updateDataCollectNetty(Map<String, String> map) throws Exception{
+        boolean flag = false;
+        String post = "";
+        String url = map.get(KEY_URL);
+        if (isremote == 1){
+            try {
+                post = HttpClientUtil.post(url);
+            } catch (IOException e) {
+                log.warn("AsyncService.updateDataCollectNetty IOException:{}",e.getMessage());
+                throw new IOException(e);
+            }
+        }else {
+            Result tempResult = new Result(true,"");
+            post = JSONObject.toJSONString(tempResult);
+        }
+        log.info("AsyncService.updateDataCollectNetty result url:{},post:{}",url,post);
+        JSONObject jsonObject = JSONObject.parseObject(post);
+        if (jsonObject != null && jsonObject.containsKey(SUCCESS_MSG)){
+            flag = (Boolean) jsonObject.get(SUCCESS_MSG);
+        }
+        if (!flag){
+            throw new Exception("AsyncService.updateDataCollectNetty remoteBack.false");
+        }
+    }
+
     @Recover
     public void recover(Exception e,Map<String, String> map) {
         String deviceId = map.get(KEY_DEVICE_ID);

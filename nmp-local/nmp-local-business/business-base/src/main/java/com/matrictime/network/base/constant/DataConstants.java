@@ -270,6 +270,8 @@ public class DataConstants {
 
     public static final String DATA_SYNC_CONFIG_URL = "/task/syncConfig";
 
+    public static final String UPDATE_DATA_COLLECT_NETTY_URL = "/netty/update";
+
 
     public static final String HTTP_TITLE = "http://";
 
