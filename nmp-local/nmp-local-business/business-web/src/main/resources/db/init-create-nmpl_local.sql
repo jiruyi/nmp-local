@@ -768,6 +768,8 @@ create table sys_sequence
     increment_value int                            not null
 );
 
+set global log_bin_trust_function_creators=TRUE;
+DELIMITER $$
 create
 definer = root@`%` function _nextval(name varchar(50)) returns bigint
 begin
@@ -787,7 +789,7 @@ where seq_name = name ;
 end if;
 return _cur;
 
-end;
+end$$
 
 INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config_value, default_value, unit, status, create_time, create_user, update_time, update_user, is_exist, remark) VALUES ('01', '加强密度配置（128bit-128k）', 'as0001', '1：1', '1：1', null, 0, '2023-09-19 09:53:21', null, '2023-09-19 09:53:21', null, 1, null);
 INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config_value, default_value, unit, status, create_time, create_user, update_time, update_user, is_exist, remark) VALUES ('01', '加强密度配置（>128k ）', 'as0002', '1：32', '1：32', null, 0, '2023-09-19 09:53:21', null, '2023-09-19 09:53:21', null, 1, null);
