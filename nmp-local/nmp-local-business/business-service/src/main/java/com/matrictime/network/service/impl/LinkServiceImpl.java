@@ -8,6 +8,7 @@ import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.NmplLinkExtMapper;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DeviceInfoVo;
@@ -60,6 +61,12 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
 
     @Value("${proxy.port}")
     private String proxyPort;
+
+    @Value("${datacollect.context-path}")
+    private String dataCollectPath;
+
+    @Value("${datacollect.port}")
+    private String dataCollectPort;
 
     @Autowired
     private AsyncService asyncService;
@@ -127,12 +134,14 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
     }
 
     @Override
-    public Result<LocalLinkDisplayVo> queryLink(QueryLinkReq req) {
+    public Result<PageInfo<LocalLinkDisplayVo>> queryLink(QueryLinkReq req) {
         Result result;
         try {
             // 根据条件查询链路列表
             List<LocalLinkDisplayVo> displayVos = nmplLinkExtMapper.queryLink(req);
-            result = buildResult(displayVos);
+            PageInfo<LocalLinkDisplayVo> pageResult =  new PageInfo<>();
+            pageResult.setList(displayVos);
+            result = buildResult(pageResult);
         }catch (Exception e){
             log.error("LinkServiceImpl.queryLink Exception:{}",e.getMessage());
             result = failResult("");
@@ -141,12 +150,14 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
     }
 
     @Override
-    public Result<LocalLinkDisplayVo> queryKeycenterLink(QueryLinkReq req) {
+    public Result<PageInfo<LocalLinkDisplayVo>> queryKeycenterLink(QueryLinkReq req) {
         Result result;
         try {
             // 根据条件查询密钥中心分配列表
             List<LocalLinkDisplayVo> displayVos = nmplLinkExtMapper.queryKeycenterLink(req);
-            result = buildResult(displayVos);
+            PageInfo<LocalLinkDisplayVo> pageResult =  new PageInfo<>();
+            pageResult.setList(displayVos);
+            result = buildResult(pageResult);
         }catch (Exception e){
             log.error("LinkServiceImpl.queryLink Exception:{}",e.getMessage());
             result = failResult("");
@@ -176,6 +187,12 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                         }catch (Exception e){
                             log.error("LinkServiceImpl.editLink Exception:{}",e);
                         }
+                        // 同步数据采集
+                        try {
+                            updateDataCollectNetty(vo);
+                        }catch (Exception e){
+                            log.error("LinkServiceImpl.editLink Exception:{}",e);
+                        }
                     }
                     break;
 
@@ -200,6 +217,14 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                             log.error("LinkServiceImpl.editLink Exception:{}",e);
                         }
 
+                        // 修改时同步数据采集
+                        if (EDIT_TYPE_UPD.equals(req.getEditType())){
+                            try {
+                                updateDataCollectNetty(vo);
+                            }catch (Exception e){
+                                log.error("LinkServiceImpl.editLink Exception:{}",e);
+                            }
+                        }
                     }
                     break;
                 default:
@@ -267,6 +292,25 @@ public class LinkServiceImpl extends SystemBaseService implements LinkService {
                 map.put(KEY_DATA,JSONObject.toJSONString(vo));
                 map.put(KEY_URL,url);
                 asyncService.syncLink(map);
+            }
+        }
+    }
+
+    /**
+     * 新增修改本端设备为数据采集时同步至对应的数据采集系统
+     * @param vo
+     * @throws Exception
+     */
+    private void updateDataCollectNetty(LocalLinkVo vo) throws Exception{
+        if (DeviceTypeEnum.DATA_BASE.getCode().equals(vo.getMainDeviceType())){
+            NmplDeviceInfoExample example = new NmplDeviceInfoExample();
+            example.createCriteria().andDeviceIdEqualTo(vo.getMainDeviceId()).andIsExistEqualTo(IS_EXIST);
+            List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(example);
+            if (!CollectionUtils.isEmpty(deviceInfos)){
+                String url = HttpClientUtil.getUrl(deviceInfos.get(0).getLanIp(), dataCollectPort, dataCollectPath + UPDATE_DATA_COLLECT_NETTY_URL);
+                Map<String,String> map = new HashMap<>();
+                map.put(KEY_URL,url);
+                asyncService.updateDataCollectNetty(map);
             }
         }
     }

@@ -31,7 +31,7 @@
     values
     <foreach collection ="list" item="vo" separator =",">
       (#{vo.id,jdbcType=BIGINT}, #{vo.linkName,jdbcType=VARCHAR}, #{vo.linkType,jdbcType=SMALLINT},
-      #{vo.mainDeviceId,jdbcType=VARCHAR}, #{mainDeviceType,jdbcType=CHAR}, #{vo.followDeviceId,jdbcType=VARCHAR},
+      #{vo.mainDeviceId,jdbcType=VARCHAR}, #{vo.mainDeviceType,jdbcType=CHAR}, #{vo.followDeviceId,jdbcType=VARCHAR},
       #{vo.followNetworkId,jdbcType=VARCHAR}, #{vo.followIp,jdbcType=VARCHAR}, #{vo.followPort,jdbcType=VARCHAR},
       #{vo.activeAuth,jdbcType=BIT},#{vo.isOn,jdbcType=BIT}, #{vo.createUser,jdbcType=VARCHAR}, #{vo.createTime,jdbcType=TIMESTAMP},
       #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.isExist,jdbcType=BIT}

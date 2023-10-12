@@ -155,6 +155,34 @@ public class HttpClientUtil {
     /**
      * 封装HTTP POST方法
      *
+     * @param url
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    public static String post(String url) throws ClientProtocolException, IOException {
+        String httpEntityContent = "";
+        try {
+            HttpPost httpPost = new HttpPost(url);
+            //设置请求和传输超时时间
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(SOCKET_TIME_OUT).setConnectTimeout(CONNECT_TIME_OUT).build();
+            httpPost.setConfig(requestConfig);
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+            httpEntityContent = getHttpEntityContent(response);
+            httpPost.abort();
+        }catch (ClientProtocolException e){
+            httpClient.close();
+            throw new ClientProtocolException(e);
+        }catch (IOException e){
+            httpClient.close();
+            throw new IOException(e);
+        }
+        return httpEntityContent;
+    }
+
+    /**
+     * 封装HTTP POST方法
+     *
      * @param
      * @param （如JSON串）
      * @return

@@ -38,14 +38,14 @@ public interface LinkService {
      * @param req
      * @return
      */
-    Result<LocalLinkDisplayVo> queryLink(QueryLinkReq req);
+    Result<PageInfo<LocalLinkDisplayVo>> queryLink(QueryLinkReq req);
 
     /**
      * 查询密钥中心分配（不分页）
      * @param req
      * @return
      */
-    Result<LocalLinkDisplayVo> queryKeycenterLink(QueryLinkReq req);
+    Result<PageInfo<LocalLinkDisplayVo>> queryKeycenterLink(QueryLinkReq req);
 
     /**
      * 配置链路
