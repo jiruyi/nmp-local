@@ -2,6 +2,7 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.request.InternetRouteRequest;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.InternetRouteService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author by wangqiang
@@ -28,7 +30,7 @@ public class InternetRouteController {
     @Resource
     private InternetRouteService internetRouteService;
 
-    //@RequiresPermissions("sys:internetRoute:insert")
+    @RequiresPermissions("sys:internetRoute:insert")
     @RequestMapping(value = "/insertInternetRoute",method = RequestMethod.POST)
     public Result<Integer> insertInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
@@ -45,7 +47,7 @@ public class InternetRouteController {
         }
     }
 
-    //@RequiresPermissions("sys:internetRoute:delete")
+    @RequiresPermissions("sys:internetRoute:delete")
     @RequestMapping(value = "/deleteInternetRoute",method = RequestMethod.POST)
     public Result<Integer> deleteInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
@@ -59,7 +61,7 @@ public class InternetRouteController {
         }
     }
 
-    //@RequiresPermissions("sys:internetRoute:update")
+    @RequiresPermissions("sys:internetRoute:update")
     @RequestMapping(value = "/updateInternetRoute",method = RequestMethod.POST)
     public Result<Integer> updateInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
@@ -73,13 +75,28 @@ public class InternetRouteController {
         }
     }
 
-    //@RequiresPermissions("sys:internetRoute:select")
+    @RequiresPermissions("sys:internetRoute:select")
     @RequestMapping(value = "/selectInternetRoute",method = RequestMethod.POST)
     public Result<PageInfo> selectInternetRoute(@RequestBody InternetRouteRequest internetRouteRequest){
         try {
             return internetRouteService.select(internetRouteRequest);
         }catch (Exception e){
             log.info("selectInternetRoute:{}",e.getMessage());
+            return new Result<>(false,"系统异常，请稍后重试！");
+        }
+    }
+
+    /**
+     * 查询设备
+     * @param internetRouteRequest
+     * @return
+     */
+    @RequestMapping(value = "/selectDevice",method = RequestMethod.POST)
+    public Result<List<DeviceInfoVo>> selectDevice(@RequestBody InternetRouteRequest internetRouteRequest){
+        try {
+            return internetRouteService.selectDevice(internetRouteRequest);
+        }catch (Exception e){
+            log.info("selectDevice:{}",e.getMessage());
             return new Result<>(false,"系统异常，请稍后重试！");
         }
     }

@@ -7,6 +7,8 @@ public enum DataCollectEnum {
     ACCESS_BANDWITH("10018","接入带宽","byte"),
     INTERVAL_BANDWITH("10019","区间带宽","byte"),
     ACCESS_LOAD("10020","接入负载","byte"),
+    COMM_LOAD_UP_FLOW("10010","通信负载上行流量","byte"),
+    COMM_LOAD_DOWN_FLOW("10011","通信负载下行流量","byte"),
     CROSS_ZONE_LOAD("10021","转发负载","byte");
 
 
@@ -33,10 +35,8 @@ public enum DataCollectEnum {
 
     private static Map<String,DataCollectEnum> map = new HashMap<String,DataCollectEnum>(){
         {
-            put("10018",ACCESS_BANDWITH);
-            put("10019",INTERVAL_BANDWITH);
-            put("10020",ACCESS_LOAD);
-            put("10021",CROSS_ZONE_LOAD);
+            put("10010",COMM_LOAD_UP_FLOW);
+            put("10011",COMM_LOAD_DOWN_FLOW);
         }
     };
 

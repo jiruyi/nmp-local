@@ -44,8 +44,8 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
     @Override
     public int insert(StaticRouteRequest staticRouteRequest) {
         NmplStaticRoute nmplStaticRoute = new NmplStaticRoute();
-        String substring = staticRouteRequest.getNetworkId().substring(staticRouteRequest.getNetworkId().length() - 1);
-        if(!checkID(substring,staticRouteRequest)){
+        String[] split = staticRouteRequest.getNetworkId().split("-");
+        if(!checkID(split[split.length - 1],staticRouteRequest)){
             throw new RuntimeException("ID重复");
         }
         BeanUtils.copyProperties(staticRouteRequest,nmplStaticRoute);
@@ -63,8 +63,8 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
 
     @Override
     public int update(StaticRouteRequest staticRouteRequest) {
-        String substring = staticRouteRequest.getNetworkId().substring(staticRouteRequest.getNetworkId().length() - 1);
-        if(!checkID(substring,staticRouteRequest)){
+        String[] split = staticRouteRequest.getNetworkId().split("-");
+        if(!checkID(split[split.length - 1],staticRouteRequest)){
             throw new RuntimeException("ID重复");
         }
         NmplStaticRouteExample nmplStaticRouteExample = constructUpdateCondition(staticRouteRequest);
@@ -80,10 +80,10 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
         NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
         NmplStaticRouteExample.Criteria criteria1 = nmplStaticRouteExample.createCriteria();
         nmplStaticRouteExample.setOrderByClause("update_time desc");
-        if(!StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
-            criteria.andNetworkIdLike("%"+staticRouteRequest.getNetworkId()+"%");
-            criteria1.andNetworkIdLike("%"+staticRouteRequest.getNetworkId()+"%");
-        }
+//        if(!StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
+//            criteria.andNetworkIdLike("%"+staticRouteRequest.getNetworkId()+"%");
+//            criteria1.andNetworkIdLike("%"+staticRouteRequest.getNetworkId()+"%");
+//        }
         if(!StringUtils.isEmpty(staticRouteRequest.getStationId())){
             criteria.andStationIdEqualTo(staticRouteRequest.getStationId());
             criteria1.andStationIdEqualTo(staticRouteRequest.getStationId());

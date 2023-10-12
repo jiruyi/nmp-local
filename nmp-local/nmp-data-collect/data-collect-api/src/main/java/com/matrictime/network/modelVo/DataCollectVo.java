@@ -32,6 +32,11 @@ public class DataCollectVo {
     private String dataItemCode;
 
     /**
+     * 设备类别(01接入基站、02边界基站、11密钥中心、12生成机、13缓存机)
+     */
+    private String deviceType;
+
+    /**
      * 单位
      */
     private String unit;

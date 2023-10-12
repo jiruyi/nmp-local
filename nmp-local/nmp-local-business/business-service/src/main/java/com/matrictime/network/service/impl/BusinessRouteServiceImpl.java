@@ -9,6 +9,8 @@ import com.matrictime.network.dao.domain.BusinessRouteDomainService;
 import com.matrictime.network.dao.mapper.NmplBusinessRouteMapper;
 import com.matrictime.network.dao.model.NmplBusinessRoute;
 import com.matrictime.network.dao.model.NmplBusinessRouteExample;
+import com.matrictime.network.dao.model.NmplStaticRoute;
+import com.matrictime.network.dao.model.NmplStaticRouteExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.BusinessRouteVo;
@@ -73,10 +75,14 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
                 return checkDataOnly(businessRouteRequest);
             }
             businessRouteRequest.setRouteId(SnowFlake.nextId_String());
-            //businessRouteRequest.setCreateUser(RequestContext.getUser().getCreateUser());
+            businessRouteRequest.setCreateUser(RequestContext.getUser().getCreateUser());
             int insert = businessRouteDomainService.insert(businessRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(insert);
+                NmplBusinessRouteExample nmplBusinessRouteExample = new NmplBusinessRouteExample();
+                nmplBusinessRouteExample.createCriteria().andRouteIdEqualTo(businessRouteRequest.getRouteId());
+                List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExampleWithBLOBs(nmplBusinessRouteExample);
+                sendRoute(nmplBusinessRoutes.get(NumberUtils.INTEGER_ZERO),DataConstants.INSERT_BUSINESS_ROUTE);
             }
         }catch (Exception e){
             result.setSuccess(false);
@@ -90,7 +96,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
     public Result<Integer> delete(BusinessRouteRequest businessRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            //businessRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
+            businessRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
             int delete = businessRouteDomainService.delete(businessRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
@@ -117,7 +123,7 @@ public class BusinessRouteServiceImpl implements BusinessRouteService {
             if(!ObjectUtils.isEmpty(checkDataOnly(businessRouteRequest))){
                 return checkDataOnly(businessRouteRequest);
             }
-            //businessRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
+            businessRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
             int update = businessRouteDomainService.update(businessRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);

@@ -624,6 +624,76 @@ public class NmplDataCollectExample {
             addCriterion("update_time not between", value1, value2, "updateTime");
             return (Criteria) this;
         }
+
+        public Criteria andDeviceTypeIsNull() {
+            addCriterion("device_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeIsNotNull() {
+            addCriterion("device_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeEqualTo(String value) {
+            addCriterion("device_type =", value, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeNotEqualTo(String value) {
+            addCriterion("device_type <>", value, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeGreaterThan(String value) {
+            addCriterion("device_type >", value, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("device_type >=", value, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeLessThan(String value) {
+            addCriterion("device_type <", value, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeLessThanOrEqualTo(String value) {
+            addCriterion("device_type <=", value, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeLike(String value) {
+            addCriterion("device_type like", value, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeNotLike(String value) {
+            addCriterion("device_type not like", value, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeIn(List<String> values) {
+            addCriterion("device_type in", values, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeNotIn(List<String> values) {
+            addCriterion("device_type not in", values, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeBetween(String value1, String value2) {
+            addCriterion("device_type between", value1, value2, "deviceType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceTypeNotBetween(String value1, String value2) {
+            addCriterion("device_type not between", value1, value2, "deviceType");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

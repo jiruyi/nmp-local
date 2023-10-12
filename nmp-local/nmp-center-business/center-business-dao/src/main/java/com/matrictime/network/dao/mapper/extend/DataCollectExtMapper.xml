@@ -6,6 +6,7 @@
         <result column="sum_number" jdbcType="VARCHAR" property="sumNumber" />
         <result column="company_network_id" jdbcType="VARCHAR" property="companyNetworkId" />
         <result column="data_item_code" jdbcType="VARCHAR" property="dataItemCode" />
+        <result column="device_type" jdbcType="VARCHAR" property="deviceType" />
         <result column="unit" jdbcType="VARCHAR" property="unit" />
         <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -16,14 +17,15 @@
             a.sum_number,
             a.data_item_code,
             a.upload_time,
-            a.company_network_id
+            a.company_network_id,
+            a.device_type
         FROM
             nmpl_data_collect as a
         WHERE
             a.upload_time &gt;= (SELECT
         DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE - INTERVAL 30 MINUTE)
         and
-            a.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
+            a.device_type = #{deviceType,jdbcType=VARCHAR}
         <if test="companyNetworkId != null">
             and a.company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
         </if>
@@ -33,11 +35,12 @@
             a.sum_number,
             a.data_item_code,
             a.upload_time,
-            a.company_network_id
+            a.company_network_id,
+            a.device_type
         from
             nmpl_data_collect as a
         where
-            a.data_item_code = #{dataItemCode,jdbcType=VARCHAR}
+        a.device_type = #{deviceType,jdbcType=VARCHAR}
         <if test="companyNetworkId != null">
             and a.company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
         </if>
@@ -63,9 +66,9 @@
     </select>
     <insert id="insertData" parameterType="com.matrictime.network.modelVo.DataCollectVo">
         insert into nmpl_data_collect ( sum_number, company_network_id,
-        data_item_code, unit, upload_time) values
+        data_item_code,unit, upload_time,device_type) values
         <foreach collection ="list" item="data" separator =",">
-            ( #{data.sumNumber},#{data.companyNetworkId}, #{data.dataItemCode}, #{data.unit}, #{data.uploadTime})
+            ( #{data.sumNumber},#{data.companyNetworkId}, #{data.dataItemCode}, #{data.unit}, #{data.uploadTime},#{data.deviceType})
         </foreach >
     </insert>
 </mapper>
