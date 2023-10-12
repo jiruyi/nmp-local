@@ -6,8 +6,11 @@ import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.*;
+import com.matrictime.network.dao.model.NmplBusinessRoute;
+import com.matrictime.network.modelVo.StationSummaryVo;
 import com.matrictime.network.modelVo.TerminalUserVo;
 import com.matrictime.network.netty.client.NettyClient;
+import com.matrictime.network.response.TerminalUserResponse;
 import com.matrictime.network.service.BusinessDataService;
 import com.matrictime.network.strategy.annotation.BusinessType;
 import io.netty.channel.ChannelFuture;
@@ -42,9 +45,6 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
     private long timer = 300000;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    @Resource
-    private StationSummaryDomainService summaryDomainService;
 
     @Resource
     private TerminalUserDomainService terminalUserDomainService;
@@ -82,42 +82,46 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
 
     @Override
     public void businessData() {
-
         Boolean report = configDomainService.isReport(BusinessTypeEnum.TERMINAL_USER.getCode());
         if(!report){
             return;
         }
-
-        //业务逻辑 查询数据
-        List<TerminalUserVo> terminalUserVoList = terminalUserDomainService.selectTerminalUser();
-        if(ObjectUtils.isEmpty(terminalUserVoList)){
-            return;
-        }
-
-        //查询数据采集和指控中心的入网码
-        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-        String commandNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(commandNetworkId)){
-            return;
-        }
-        String reqDataStr = JSONObject.toJSONString(terminalUserVoList);
-        //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-        log.info("terminalUserPush this time query data count：{}",terminalUserVoList.size());
-        ChannelFuture channelFuture =
-                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyHeartbeat,
-                        reqDataStr, commandNetworkId, dataNetworkId));
         try {
-            channelFuture.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        if(channelFuture.isDone()){
-            if (!channelFuture.isSuccess()){
-                log.info("terminalUserPush nettyClient.sendMsg error :{}", channelFuture.cause());
+            //业务逻辑 查询数据
+            List<TerminalUserVo> terminalUserVoList = terminalUserDomainService.selectTerminalUser();
+            if(ObjectUtils.isEmpty(terminalUserVoList)){
                 return;
             }
+            TerminalUserResponse terminalUserResponse = new TerminalUserResponse();
+            terminalUserResponse.setList(terminalUserVoList);
+            //查询本机数据采集和本运营商的指控中心的入网码
+            String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+            NmplBusinessRoute route = deviceDomainService.getBusinessRoute();
+            if(StringUtils.isEmpty(dataNetworkId) || ObjectUtils.isEmpty(route)){
+                log.info("查询dataNetworkId 或 commandNetworkId为空,作返回处理");
+                return;
+            }
+            String commandNetworkId = route.getNetworkId();
+            //业务数据转jsonString
+            String reqDataStr = JSONObject.toJSONString(terminalUserResponse);
+            //发送TCP数据包
+            ChannelFuture channelFuture =
+                    nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.TerminalUser,
+                            reqDataStr, commandNetworkId, dataNetworkId));
+            //阻塞等待结果
+            channelFuture.get();
+            if(channelFuture.isDone()){
+                if (!channelFuture.isSuccess()){
+                    log.info("terminalUserTaskService  nettyClient.sendMsg error :{}", channelFuture.cause());
+                    return;
+                }
+                if(channelFuture.isSuccess()){
+
+                }
+            }
+        } catch (Exception e) {
+            log.error("TerminalUserTaskService configureTasks exception:{}", e);
+            return;
         }
 
     }

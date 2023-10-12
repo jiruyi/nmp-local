@@ -7,9 +7,11 @@ import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.TcpTransportUtil;
 import com.matrictime.network.dao.domain.*;
+import com.matrictime.network.dao.model.NmplBusinessRoute;
 import com.matrictime.network.modelVo.CompanyInfoVo;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.netty.client.NettyClient;
+import com.matrictime.network.response.DataCollectResponse;
 import com.matrictime.network.service.BusinessDataService;
 import com.matrictime.network.strategy.annotation.BusinessType;
 import io.netty.channel.ChannelFuture;
@@ -22,6 +24,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -49,9 +52,6 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
 
     @Autowired
     private NettyClient nettyClient;
-
-    @Resource
-    private StationSummaryDomainService summaryDomainService;
 
     @Resource
     private DataCollectDomainService collectDomainService;
@@ -83,55 +83,48 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
 
     @Override
     public void businessData() {
+
         Boolean report = configDomainService.isReport(BusinessTypeEnum.DATA_TRAFFIC.getCode());
         if(!report){
             return;
         }
-
-
-        //业务逻辑 查询数据
-        List<DataCollectVo> dataCollectVos = collectDomainService.selectDataCollect();
-        if(CollectionUtils.isEmpty(dataCollectVos)){
-            return;
-        }
-
-        //查询数据采集和指控中心的入网码
-        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-        String commandNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(commandNetworkId)){
-            return;
-        }
-        String reqDataStr = JSONObject.toJSONString(dataCollectVos);
-        //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-        log.info("dataCollectPush this time query data count：{}",dataCollectVos.size());
-        ChannelFuture channelFuture =
-                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyHeartbeat,
-                        reqDataStr, commandNetworkId, dataNetworkId));
         try {
-            channelFuture.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        if(channelFuture.isDone()){
-            if (!channelFuture.isSuccess()){
-                log.info("dataCollectPush nettyClient.sendMsg error :{}", channelFuture.cause());
+            //业务逻辑 查询数据
+            List<DataCollectVo> dataCollectVos = collectDomainService.selectDataCollect();
+            if(CollectionUtils.isEmpty(dataCollectVos)){
                 return;
             }
-            if(channelFuture.isSuccess()){
-
-                //修改nmpl_data_push_record 数据推送记录表
-                Long maxDataCollectId = dataCollectVos.stream().max(Comparator.comparingLong(DataCollectVo::getId))
-                        .get().getId();
-                log.info("此次推送的最大 data_collect_id is :{}",maxDataCollectId);
-                summaryDomainService.insertDataPushRecord(maxDataCollectId, BusinessDataEnum.DataCollect.getTableName());
-
-                log.info("DataCollectTaskService this time query data count：{}",dataCollectVos.size());
+            DataCollectResponse dataCollectResponse = new DataCollectResponse();
+            dataCollectResponse.setList(dataCollectVos);
+            //查询本机数据采集和本运营商的指控中心的入网码
+            String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+            NmplBusinessRoute route = deviceDomainService.getBusinessRoute();
+            if(StringUtils.isEmpty(dataNetworkId) || ObjectUtils.isEmpty(route)){
+                log.info("查询dataNetworkId 或 commandNetworkId为空,作返回处理");
+                return;
             }
+            String commandNetworkId = route.getNetworkId();
+            //业务数据转jsonString
+            String reqDataStr = JSONObject.toJSONString(dataCollectResponse);
+            //发送TCP数据包
+            ChannelFuture channelFuture =
+                    nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.DataCollect,
+                            reqDataStr, commandNetworkId, dataNetworkId));
+            //阻塞等待结果
+            channelFuture.get();
+            if(channelFuture.isDone()){
+                if (!channelFuture.isSuccess()){
+                    log.info("dataCollectTaskService  nettyClient.sendMsg error :{}", channelFuture.cause());
+                    return;
+                }
+                if(channelFuture.isSuccess()){
+
+                }
+            }
+        } catch (Exception e) {
+            log.error("DataCollectTaskService configureTasks exception:{}", e);
+            return;
         }
-
-
 
 
     }

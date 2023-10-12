@@ -9,7 +9,9 @@ import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.ConfigDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
+import com.matrictime.network.dao.model.NmplBusinessRoute;
 import com.matrictime.network.modelVo.CompanyHeartbeatVo;
+import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.StationSummaryVo;
 import com.matrictime.network.netty.client.NettyClient;
 import com.matrictime.network.service.BusinessDataService;
@@ -23,6 +25,7 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +33,7 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -88,39 +92,42 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
         if(!report){
             return;
         }
-
-        //业务逻辑 查询数据
-        StationSummaryVo stationSummaryVo = summaryDomainService.selectDevice();
-        if(ObjectUtils.isEmpty(stationSummaryVo)){
-            return;
-        }
-
-        //查询数据采集和指控中心的入网码
-        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-        String commandNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(commandNetworkId)){
-            return;
-        }
-        String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
-        //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-        ChannelFuture channelFuture =
-                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyHeartbeat,
-                        reqDataStr, commandNetworkId, dataNetworkId));
         try {
-            channelFuture.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        if(channelFuture.isDone()) {
-            if (!channelFuture.isSuccess()) {
-                log.info("devicePush nettyClient.sendMsg error :{}", channelFuture.cause());
+            //业务逻辑 查询数据
+            StationSummaryVo stationSummaryVo = summaryDomainService.selectDevice();
+            if(ObjectUtils.isEmpty(stationSummaryVo)){
                 return;
             }
+
+            //查询本机数据采集和本运营商的指控中心的入网码
+            String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+            NmplBusinessRoute route = deviceDomainService.getBusinessRoute();
+            if(StringUtils.isEmpty(dataNetworkId) || ObjectUtils.isEmpty(route)){
+                log.info("查询dataNetworkId 或 commandNetworkId为空,作返回处理");
+                return;
+            }
+            String commandNetworkId = route.getNetworkId();
+            //业务数据转jsonString
+            String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
+            //发送TCP数据包
+            ChannelFuture channelFuture =
+                    nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Device,
+                            reqDataStr, commandNetworkId, dataNetworkId));
+            //阻塞等待结果
+            channelFuture.get();
+            if(channelFuture.isDone()){
+                if (!channelFuture.isSuccess()){
+                    log.info("deviceTaskService  nettyClient.sendMsg error :{}", channelFuture.cause());
+                    return;
+                }
+                if(channelFuture.isSuccess()){
+
+                }
+            }
+        } catch (Exception e) {
+            log.error("DeviceTaskService configureTasks exception:{}", e);
+            return;
         }
-
-
 
     }
 

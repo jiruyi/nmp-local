@@ -9,8 +9,11 @@ import com.matrictime.network.dao.domain.AlarmDomainService;
 import com.matrictime.network.dao.domain.CompanyHeartbeatDomainService;
 import com.matrictime.network.dao.domain.ConfigDomainService;
 import com.matrictime.network.dao.domain.DeviceDomainService;
+import com.matrictime.network.dao.model.NmplBusinessRoute;
 import com.matrictime.network.modelVo.CompanyHeartbeatVo;
+import com.matrictime.network.modelVo.StationSummaryVo;
 import com.matrictime.network.netty.client.NettyClient;
+import com.matrictime.network.response.CompanyHeartbeatResponse;
 import com.matrictime.network.service.BusinessDataService;
 import com.matrictime.network.strategy.annotation.BusinessType;
 import io.netty.channel.ChannelFuture;
@@ -23,6 +26,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -88,37 +92,42 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
         if(!report){
             return;
         }
-
-        //业务逻辑 查询数据
-        List<CompanyHeartbeatVo> list = heartbeatDomainService.selectCompanyHeartbeat();
-        if(CollectionUtils.isEmpty(list)){
-            return;
-        }
-
-        //查询数据采集和指控中心的入网码
-        String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
-        String commandNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.COMMAND_CENTER.getCode());
-        if(StringUtils.isEmpty(dataNetworkId) || StringUtils.isEmpty(commandNetworkId)){
-            return;
-        }
-        String reqDataStr = JSONObject.toJSONString(list);
-        //todo 与边界基站通信 netty ip port 需要查询链路关系 并做出变更
-        log.info("companyHeartbeatPush this time query data count：{}",list);
-        ChannelFuture channelFuture =
-                nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyHeartbeat,
-                        reqDataStr, commandNetworkId, dataNetworkId));
         try {
-            channelFuture.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        if(channelFuture.isDone()) {
-            if (!channelFuture.isSuccess()) {
-                log.info("companyHeartbeatPush  nettyClient.sendMsg error :{}", channelFuture.cause());
+            //业务逻辑 查询数据
+            List<CompanyHeartbeatVo> list = heartbeatDomainService.selectCompanyHeartbeat();
+            if(CollectionUtils.isEmpty(list)){
                 return;
             }
+            CompanyHeartbeatResponse companyHeartbeatResponse = new CompanyHeartbeatResponse();
+            companyHeartbeatResponse.setList(list);
+            //查询本机数据采集和本运营商的指控中心的入网码
+            String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
+            NmplBusinessRoute route = deviceDomainService.getBusinessRoute();
+            if(StringUtils.isEmpty(dataNetworkId) || ObjectUtils.isEmpty(route)){
+                log.info("查询dataNetworkId 或 commandNetworkId为空,作返回处理");
+                return;
+            }
+            String commandNetworkId = route.getNetworkId();
+            //业务数据转jsonString
+            String reqDataStr = JSONObject.toJSONString(companyHeartbeatResponse);
+            //发送TCP数据包
+            ChannelFuture channelFuture =
+                    nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyHeartbeat,
+                            reqDataStr, commandNetworkId, dataNetworkId));
+            //阻塞等待结果
+            channelFuture.get();
+            if(channelFuture.isDone()){
+                if (!channelFuture.isSuccess()){
+                    log.info("companyHeartbeatTaskService  nettyClient.sendMsg error :{}", channelFuture.cause());
+                    return;
+                }
+                if(channelFuture.isSuccess()){
+
+                }
+            }
+        } catch (Exception e) {
+            log.error("CompanyHeartbeatTaskService configureTasks exception:{}", e);
+            return;
         }
 
     }
