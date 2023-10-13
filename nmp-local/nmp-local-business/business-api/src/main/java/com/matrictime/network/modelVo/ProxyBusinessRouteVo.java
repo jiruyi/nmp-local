@@ -19,7 +19,7 @@ public class ProxyBusinessRouteVo implements Serializable {
     private String routeId;
 
     /**
-     * 业务类型
+     * 业务类型 11:根密钥中心 31:指控中心 41:计费中心
      */
     private String businessType;
 
@@ -29,7 +29,7 @@ public class ProxyBusinessRouteVo implements Serializable {
     private String networkId;
 
     /**
-     * ip
+     * ip_v4
      */
     private String ip;
 
@@ -63,5 +63,8 @@ public class ProxyBusinessRouteVo implements Serializable {
      */
     private String ipV6;
 
+    /**
+     * 设备入网码
+     */
     private byte[] byteNetworkId;
 }

@@ -24,7 +24,7 @@ public class ProxyInternetRouteVo implements Serializable {
     private String networkId;
 
     /**
-     * 边界基站ip
+     * 边界基站ip_v4
      */
     private String boundaryStationIp;
 
@@ -54,9 +54,47 @@ public class ProxyInternetRouteVo implements Serializable {
     private Boolean isExist;
 
     /**
-     * ipV6
+     * 边界基站ip_v6
      */
     private String ipV6;
 
+    /**
+     * 下一条入网码
+     */
+    private String nextNetworkId;
+
+    /**
+     * 跳数
+     */
+    private String hopCount;
+
+    /**
+     * 小区名称
+     */
+    private String companyName;
+
+    /**
+     * 小区id
+     */
+    private String companyId;
+
+    /**
+     * 设备类型
+     */
+    private String deviceType;
+
+    /**
+     * 设备名称
+     */
+    private String deviceName;
+
+    /**
+     * 设备ID
+     */
+    private String deviceId;
+
+    /**
+     * 设备入网码
+     */
     private byte[] byteNetworkId;
 }
