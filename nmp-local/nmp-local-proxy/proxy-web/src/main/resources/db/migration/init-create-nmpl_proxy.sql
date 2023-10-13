@@ -446,6 +446,56 @@ create table nmpl_update_info_keycenter
     comment '数据更新信息表(秘钥中心专用)';
 
 
+CREATE TABLE `nmpl_system_heartbeat` (
+                                         `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                         `source_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '来源Id',
+                                         `target_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '目标Id',
+                                         `status` char(2) DEFAULT '01' COMMENT '连接状态 01:通  02:不通',
+                                         `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
+                                         `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                         `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                         PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='业务心跳';
+
+CREATE TABLE `nmpl_company_heartbeat` (
+                                          `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                          `source_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '来源Id',
+                                          `target_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '目标Id',
+                                          `status` char(2) DEFAULT '01' COMMENT '连接状态 01:通  02:不通',
+                                          `up_value` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '上行流量',
+                                          `down_value` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '下行流量',
+                                          `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
+                                          `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                          `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                          PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区业务心跳';
+
+CREATE TABLE `nmpl_terminal_data` (
+                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+                                      `terminal_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机设备id',
+                                      `parent_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '基站设备id',
+                                      `data_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '数据类型 01:剩余 02:补充 03:使用',
+                                      `up_value` bigint NOT NULL COMMENT '上行密钥量',
+                                      `down_value` bigint NOT NULL COMMENT '下行密钥量',
+                                      `terminal_ip` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机ip',
+                                      `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
+                                      `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                      `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                      PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='基站下一体机信息上报表';
+
+CREATE TABLE `nmpl_terminal_user` (
+                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                      `terminal_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '终端设备Id',
+                                      `parent_device_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '所属设备Id',
+                                      `terminal_status` char(2) DEFAULT '01' COMMENT '用户状态 01:密钥匹配  02:注册  03:上线 04:下线 05:注销',
+                                      `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
+                                      `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                      `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                      `user_type` char(2) DEFAULT '01' COMMENT '用户类型 01:一体机  02:安全服务器',
+                                      PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='终端用户表';
+
 
 
 
