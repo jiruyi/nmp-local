@@ -124,6 +124,7 @@ create table nmpl_data_collect
     device_id       varchar(128)                             not null comment '设备id',
     device_name     varchar(30)                              null comment '设备名字',
     device_type     varchar(30)                              not null comment '设备类别(00基站、11密钥中心、12生成机、13缓存机)',
+    device_ip       varchar(16)                              NOT NULL COMMENT '设备ip',
     data_item_name  varchar(50)                              not null comment '统计项名(剩余秘钥量;使用秘钥量)',
     data_item_code  varchar(32) charset utf8                 not null comment '收集项编号(10003;10001)',
     data_item_value varchar(32)                              not null comment '值',
