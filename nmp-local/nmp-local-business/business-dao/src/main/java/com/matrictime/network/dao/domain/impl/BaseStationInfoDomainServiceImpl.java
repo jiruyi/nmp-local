@@ -650,8 +650,8 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getRelationOperatorId())){
             baseStationInfoRequest.setRelationOperatorId(borderBaseStationInfoRequest.getRelationOperatorId());
         }
-        if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getStationNetworkId())){
-            baseStationInfoRequest.setStationNetworkId(borderBaseStationInfoRequest.getStationNetworkId());
+        if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getStationId())){
+            baseStationInfoRequest.setStationId(borderBaseStationInfoRequest.getStationId());
         }
         if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getStationName())){
             baseStationInfoRequest.setStationName(borderBaseStationInfoRequest.getStationName());
