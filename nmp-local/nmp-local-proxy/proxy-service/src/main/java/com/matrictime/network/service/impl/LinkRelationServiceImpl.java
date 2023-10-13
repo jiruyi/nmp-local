@@ -96,7 +96,7 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
                     infoVo.setMainDeviceId(link.getMainDeviceId());
                 }
                 if (ParamCheckUtil.checkVoStrBlank(infoVo.getFollowDeviceId())){
-                    infoVo.setMainDeviceId(link.getFollowDeviceId());
+                    infoVo.setFollowDeviceId(link.getFollowDeviceId());
                 }
                 Set<String> noticeDeviceType = getNoticeDeviceType(infoVo);
                 for (String notice : noticeDeviceType){
