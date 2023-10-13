@@ -94,8 +94,6 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
             if(CollectionUtils.isEmpty(dataCollectVos)){
                 return;
             }
-            DataCollectResponse dataCollectResponse = new DataCollectResponse();
-            dataCollectResponse.setList(dataCollectVos);
             //查询本机数据采集和本运营商的指控中心的入网码
             String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
             NmplBusinessRoute route = deviceDomainService.getBusinessRoute();
@@ -105,7 +103,7 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
             }
             String commandNetworkId = route.getNetworkId();
             //业务数据转jsonString
-            String reqDataStr = JSONObject.toJSONString(dataCollectResponse);
+            String reqDataStr = JSONObject.toJSONString(dataCollectVos);
             //发送TCP数据包
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.DataCollect,

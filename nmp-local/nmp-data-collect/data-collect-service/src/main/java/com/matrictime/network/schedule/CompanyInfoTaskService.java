@@ -99,8 +99,6 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
             if(ObjectUtils.isEmpty(companyInfoVos)){
                 return;
             }
-            CompanyInfoResponse companyInfoResponse = new CompanyInfoResponse();
-            companyInfoResponse.setList(companyInfoVos);
             //查询本机数据采集和本运营商的指控中心的入网码
             String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
             NmplBusinessRoute route = deviceDomainService.getBusinessRoute();
@@ -110,7 +108,7 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
             }
             String commandNetworkId = route.getNetworkId();
             //业务数据转jsonString
-            String reqDataStr = JSONObject.toJSONString(companyInfoResponse);
+            String reqDataStr = JSONObject.toJSONString(companyInfoVos);
             //发送TCP数据包
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyInfo,

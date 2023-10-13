@@ -92,8 +92,6 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
             if(ObjectUtils.isEmpty(terminalUserVoList)){
                 return;
             }
-            TerminalUserResponse terminalUserResponse = new TerminalUserResponse();
-            terminalUserResponse.setList(terminalUserVoList);
             //查询本机数据采集和本运营商的指控中心的入网码
             String dataNetworkId = deviceDomainService.getNetworkIdByType(DeviceTypeEnum.DAT_COLLECT.getCode());
             NmplBusinessRoute route = deviceDomainService.getBusinessRoute();
@@ -103,7 +101,7 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
             }
             String commandNetworkId = route.getNetworkId();
             //业务数据转jsonString
-            String reqDataStr = JSONObject.toJSONString(terminalUserResponse);
+            String reqDataStr = JSONObject.toJSONString(terminalUserVoList);
             //发送TCP数据包
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.TerminalUser,
