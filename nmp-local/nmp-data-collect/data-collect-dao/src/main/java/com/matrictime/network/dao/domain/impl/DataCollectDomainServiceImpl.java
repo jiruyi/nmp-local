@@ -46,29 +46,11 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             return null;
         }
         //基站数组
-        List<NmplDataCollect> stationList = new ArrayList<>();
-        for(NmplDataCollect nmplDataCollect: nmplDataCollects){
-            if(DeviceTypeEnum.BASE_STATION.getCode().equals(nmplDataCollect.getDeviceType())){
-                stationList.add(nmplDataCollect);
-            }
-
-        }
+        List<NmplDataCollect> stationList = generateList(nmplDataCollects,DeviceTypeEnum.BASE_STATION.getCode());
         //边界基站数组
-        List<NmplDataCollect> borderList = new ArrayList<>();
-        for(NmplDataCollect nmplDataCollect: nmplDataCollects){
-            if(DeviceTypeEnum.BORDER_BASE_STATION.getCode().equals(nmplDataCollect.getDeviceType())){
-                borderList.add(nmplDataCollect);
-            }
-
-        }
+        List<NmplDataCollect> borderList = generateList(nmplDataCollects,DeviceTypeEnum.BORDER_BASE_STATION.getCode());
         //密钥中心数组
-        List<NmplDataCollect> dList = new ArrayList<>();
-        for(NmplDataCollect nmplDataCollect: nmplDataCollects){
-            if(DeviceTypeEnum.DISPENSER.getCode().equals(nmplDataCollect.getDeviceType())){
-                dList.add(nmplDataCollect);
-            }
-
-        }
+        List<NmplDataCollect> dList = generateList(nmplDataCollects,DeviceTypeEnum.DISPENSER.getCode());
         //查询小区Id唯一标识符
         String stationNetworkId = getStationNetworkId(nmplDataCollects.get(0));
         //切割小区唯一标识符
@@ -79,72 +61,65 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         //按照流量类型求流量总和
         for(String code: strings){
             //基站求和
-            double stationSum = 0d;
-            BigDecimal stationSumBig = new BigDecimal(Double.toString(stationSum));
-            DataCollectVo stationCollectVo = new DataCollectVo();
-            for(NmplDataCollect nmplDataCollect: stationList){
-                if(code.equals(nmplDataCollect.getDataItemCode())){
-                    BigDecimal itemValue = new BigDecimal(nmplDataCollect.getDataItemValue());
-                    stationSumBig = stationSumBig.add(itemValue);
-                    stationCollectVo.setUploadTime(nmplDataCollect.getUploadTime());
-
-                }
-
+            if(!CollectionUtils.isEmpty(stationList)){
+                DataCollectVo stationCollectVo = setDataCollectVo(stationList, code, networkIdString);
+                list.add(stationCollectVo);
             }
-            stationCollectVo.setDeviceType(DeviceTypeEnum.BASE_STATION.getCode());
-            stationCollectVo.setDataItemCode(code);
-            //数据转换
-            stationCollectVo.setSumNumber(changeSum(String.valueOf(stationSumBig)));
-            stationCollectVo.setCompanyNetworkId(networkIdString);
-            list.add(stationCollectVo);
-
             //边界基站求和
-            double borderSum = 0d;
-            BigDecimal borderSumBig = new BigDecimal(Double.toString(borderSum));
-            DataCollectVo borderCollectVo = new DataCollectVo();
-            for(NmplDataCollect nmplDataCollect: borderList){
-                if(code.equals(nmplDataCollect.getDataItemCode())){
-                    BigDecimal itemValue = new BigDecimal(nmplDataCollect.getDataItemValue());
-                    borderSumBig = borderSumBig.add(itemValue);
-                    borderCollectVo.setUploadTime(nmplDataCollect.getUploadTime());
-                }
-
+            if(!CollectionUtils.isEmpty(borderList)){
+                DataCollectVo borderCollectVo = setDataCollectVo(borderList, code, networkIdString);
+                list.add(borderCollectVo);
             }
-            borderCollectVo.setDeviceType(DeviceTypeEnum.BORDER_BASE_STATION.getCode());
-            borderCollectVo.setDataItemCode(code);
-            //数据转换
-            borderCollectVo.setSumNumber(changeSum(String.valueOf(borderSumBig)));
-            borderCollectVo.setCompanyNetworkId(networkIdString);
-            list.add(borderCollectVo);
-
             //密钥中心求和
-            double sum = 0d;
-            BigDecimal sumBig = new BigDecimal(Double.toString(sum));
-            DataCollectVo dataCollectVo = new DataCollectVo();
-            for(NmplDataCollect nmplDataCollect: dList){
-                if(code.equals(nmplDataCollect.getDataItemCode())){
-                    BigDecimal itemValue = new BigDecimal(nmplDataCollect.getDataItemValue());
-                    borderSumBig = borderSumBig.add(itemValue);
-                    dataCollectVo.setUploadTime(nmplDataCollect.getUploadTime());
-
-                }
-
+            if(!CollectionUtils.isEmpty(dList)){
+                DataCollectVo dataCollectVo = setDataCollectVo(dList, code, networkIdString);
+                list.add(dataCollectVo);
             }
-            dataCollectVo.setDeviceType(DeviceTypeEnum.DISPENSER.getCode());
-            dataCollectVo.setDataItemCode(code);
-            //数据转换
-            dataCollectVo.setSumNumber(changeSum(String.valueOf(sumBig)));
-            dataCollectVo.setCompanyNetworkId(networkIdString);
-            list.add(dataCollectVo);
-
         }
         return list;
     }
 
-
-    private DataCollectVo setDataCollectVo(){
-        return null;
+    /**
+     * 生成数组
+     * @return
+     */
+    private List<NmplDataCollect> generateList(List<NmplDataCollect> nmplDataCollects,String code){
+        List<NmplDataCollect> list = new ArrayList<>();
+        for(NmplDataCollect nmplDataCollect: nmplDataCollects){
+            if(code.equals(nmplDataCollect.getDeviceType())){
+                list.add(nmplDataCollect);
+            }
+        }
+        return list;
     }
+
+    /**
+     * 生成data返回体
+     * @param list 基站数组
+     * @param codeEnum 流量编码
+     * @param networkIdString 唯一标识
+     * @return
+     */
+    private DataCollectVo setDataCollectVo(List<NmplDataCollect> list,String codeEnum,String networkIdString){
+        double stationSum = 0d;
+        BigDecimal stationSumBig = new BigDecimal(Double.toString(stationSum));
+        DataCollectVo dataCollectVo = new DataCollectVo();
+        for(NmplDataCollect nmplDataCollect: list){
+            if(codeEnum.equals(nmplDataCollect.getDataItemCode())){
+                BigDecimal itemValue = new BigDecimal(nmplDataCollect.getDataItemValue());
+                stationSumBig = stationSumBig.add(itemValue);
+                dataCollectVo.setUploadTime(nmplDataCollect.getUploadTime());
+                dataCollectVo.setDeviceType(nmplDataCollect.getDeviceType());
+
+            }
+        }
+        dataCollectVo.setDataItemCode(codeEnum);
+        //数据转换
+        dataCollectVo.setSumNumber(changeSum(String.valueOf(stationSumBig)));
+        dataCollectVo.setCompanyNetworkId(networkIdString);
+        return dataCollectVo;
+    }
+
 
     /**
      * 数据转换
