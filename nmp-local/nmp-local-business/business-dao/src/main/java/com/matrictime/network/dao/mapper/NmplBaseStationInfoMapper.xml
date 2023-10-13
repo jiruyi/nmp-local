@@ -906,6 +906,54 @@
     </where>
   </select>
 
+
+  <select id="selectBorderBaseStationList" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
+    select
+    id,station_id, station_name, station_type,station_status,
+    remark, public_network_ip,public_network_port,
+    lan_ip, station_network_id,lan_port,create_time,
+    relation_operator_id, nick_name,company_name
+    from(
+    select id,station_id, station_name, station_type,station_status,
+    nmpl_base_station_info.remark, public_network_ip,public_network_port,
+    nmpl_base_station_info.create_time,
+    lan_ip,station_network_id,lan_port,
+    relation_operator_id, nick_name,company_name
+    from nmpl_base_station_info,nmpl_company_info,nmpl_user
+    <where>
+      nmpl_base_station_info.is_exist = 1
+      and nmpl_company_info.is_exist = 1
+      <if test="stationId != null and stationId != ''">
+        and station_id = #{stationId,jdbcType=VARCHAR}
+      </if>
+      <if test="stationName != null and stationName != ''">
+        and station_name like concat ('%',#{stationName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="relationOperatorId != null and relationOperatorId != ''">
+        and relation_operator_id = #{relationOperatorId,jdbcType=VARCHAR}
+      </if>
+      <if test="stationType != null and stationType != ''">
+        and station_type = #{stationType,jdbcType=VARCHAR}
+      </if>
+      <if test="lanIp != null and lanIp != ''">
+        and lan_ip = #{lanIp,jdbcType=CHAR}
+      </if>
+      <if test="publicNetworkIp != null and publicNetworkIp != ''">
+        and public_network_ip = #{publicNetworkIp,jdbcType=VARCHAR}
+      </if>
+      and nmpl_base_station_info.relation_operator_id = nmpl_company_info.company_id
+      and nmpl_user.user_id = nmpl_base_station_info.create_user
+      and nmpl_company_info.company_type = '02'
+    </where>
+    order by nmpl_base_station_info.update_time desc
+    ) as temp
+    <where>
+      <if test="stationNetworkId != null and stationNetworkId != ''">
+        and station_network_id like concat ('%',#{stationNetworkId,jdbcType=CHAR},'%')
+      </if>
+    </where>
+  </select>
+
   <select id="selectActiveBaseStationInfo" parameterType="com.matrictime.network.request.BaseStationInfoRequest" resultType="com.matrictime.network.modelVo.BaseStationInfoVo">
     select id,station_id, station_name, station_type,station_status,
            nmpl_base_station_info.remark, public_network_ip,public_network_port,

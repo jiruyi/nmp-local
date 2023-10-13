@@ -659,7 +659,7 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         baseStationInfoRequest.setStationType(StationTypeEnum.BOUNDARY.getCode());
         //进行分页查询
         Page page = PageHelper.startPage(borderBaseStationInfoRequest.getPageNo(),borderBaseStationInfoRequest.getPageSize());
-        List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBaseStationList(baseStationInfoRequest);
+        List<BaseStationInfoVo> baseStationInfoVoList = nmplBaseStationInfoMapper.selectBorderBaseStationList(baseStationInfoRequest);
         List<BorderBaseStationInfoVo> list = new ArrayList<>();
         for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
             BorderBaseStationInfoVo borderBaseStationInfoVo = new BorderBaseStationInfoVo();
