@@ -63,7 +63,8 @@ create table nmpl_base_station_info
     is_exist             tinyint(1)  default 1                    null comment '1:存在 0:删除',
     byte_network_id      blob                                     null comment '设备入网码',
     prefix_network_id    bigint                                   null comment '入网码前缀',
-    suffix_network_id    bigint                                   null comment '入网码后缀'
+    suffix_network_id     bigint                                   null comment '入网码后缀',
+    current_connect_count varchar(10)                              null comment '当前用户数'
 )
     comment '基站信息表';
 
@@ -88,9 +89,9 @@ create table nmpl_business_route
     id              bigint                                   not null comment '主键'
         primary key,
     route_id        varchar(128)                             not null comment '路由Id',
-    business_type   varchar(90)                              not null comment '业务类型',
+    business_type   char(2)                                  not null comment '业务类型 11:根密钥中心 21:指控中心 41:计费中心',
     network_id      varchar(50)                              not null comment '设备入网码',
-    ip              varchar(32)                              not null comment 'ip',
+    ip              varchar(32)                              null comment 'ip',
     create_user     varchar(64)                              null comment '创建者',
     create_time     datetime(2) default CURRENT_TIMESTAMP(2) null comment '创建时间',
     update_user     varchar(64)                              null comment '更新者',
@@ -100,6 +101,21 @@ create table nmpl_business_route
     byte_network_id blob                                     null comment '设备入网码(字节存储)'
 )
     comment '业务服务路由' charset = utf8;
+
+create table nmpl_company_heartbeat
+(
+    id                bigint auto_increment comment '主键'
+        primary key,
+    source_network_id varchar(128)                             not null comment '来源Id',
+    target_network_id varchar(128)                             not null comment '目标Id',
+    status            char(2)     default '01'                 null comment '连接状态 01:通  02:不通',
+    up_value          varchar(128)                             not null comment '上行流量',
+    down_value        varchar(128)                             not null comment '下行流量',
+    upload_time       datetime(2)                              null comment '上报时间',
+    create_time       datetime(2) default CURRENT_TIMESTAMP(2) null comment '创建时间',
+    update_time       datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间'
+)
+    comment '小区业务心跳';
 
 create table nmpl_config
 (
@@ -123,13 +139,13 @@ create table nmpl_data_collect
         primary key,
     device_id       varchar(128)                             not null comment '设备id',
     device_name     varchar(30)                              null comment '设备名字',
-    device_type     varchar(30)                              not null comment '设备类别(00基站、11密钥中心、12生成机、13缓存机)',
-    device_ip       varchar(16)                              NOT NULL COMMENT '设备ip',
+    device_type     varchar(30)                              not null comment '设备类别(01接入基站、02边界基站、11密钥中心、12生成机、13缓存机)',
+    device_ip       varchar(16)                              not null comment '设备ip',
     data_item_name  varchar(50)                              not null comment '统计项名(剩余秘钥量;使用秘钥量)',
     data_item_code  varchar(32) charset utf8                 not null comment '收集项编号(10003;10001)',
     data_item_value varchar(32)                              not null comment '值',
     unit            varchar(32)                              null comment '单位',
-    upload_time     datetime(2) default CURRENT_TIMESTAMP(2) null comment '创建时间',
+    upload_time     datetime(2)                              not null comment '创建时间',
     create_time     datetime(2) default CURRENT_TIMESTAMP(2) null comment '创建时间',
     update_time     datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间'
 );
@@ -158,7 +174,8 @@ create table nmpl_device_info
     update_user          varchar(20)                              null comment '修改人',
     update_time          datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '修改时间',
     is_exist             tinyint(1)  default 1                    null comment '1:存在 0:删除',
-    byte_network_id      blob                                     null comment '设备入网码'
+    byte_network_id       blob                                     null comment '设备入网码',
+    current_connect_count varchar(10)                              null comment '当前用户数'
 )
     comment '密钥分发和U盘';
 
@@ -207,7 +224,14 @@ create table nmpl_internet_route
     update_time         datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间',
     is_exist            tinyint(1)  default 1                    null comment '1:存在 0:删除',
     ip_v6               varchar(64) charset utf8mb4              null comment '边界基站ip_v6',
-    byte_network_id     blob                                     not null comment '设备入网码(字节存储)'
+    byte_network_id     blob                                     null comment '设备入网码(字节存储)',
+    next_network_id     varchar(50) charset utf8mb4              not null comment '下一条入网码',
+    hop_count           varchar(3) charset utf8mb4               not null comment '跳数',
+    company_name        varchar(50) charset utf8mb4              null comment '小区名称',
+    company_id          varchar(50) charset utf8mb4              null comment '小区id',
+    device_type         varchar(2) charset utf8mb4               null comment '设备类型',
+    device_name         varchar(50) charset utf8mb4              null comment '设备名称',
+    device_id           varchar(128) charset utf8mb4             null comment '设备ID'
 )
     comment '出网路由' charset = utf8;
 
@@ -270,7 +294,8 @@ create table nmpl_local_base_station_info
     is_exist             tinyint(1)  default 1                    null comment '1:存在 0:删除',
     byte_network_id      blob                                     null comment '设备入网码',
     prefix_network_id    bigint                                   null comment '入网码前缀',
-    suffix_network_id    bigint                                   null comment '入网码后缀'
+    suffix_network_id     bigint                                   null comment '入网码后缀',
+    current_connect_count varchar(10)                              null comment '当前用户数'
 )
     comment '本机基站信息表';
 
@@ -298,7 +323,8 @@ create table nmpl_local_device_info
     update_user          varchar(20)                              null comment '修改人',
     update_time          datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '修改时间',
     is_exist             tinyint(1)  default 1                    null comment '1:存在 0:删除',
-    byte_network_id      blob                                     null comment '设备入网码'
+    byte_network_id       blob                                     null comment '设备入网码',
+    current_connect_count varchar(10)                              null comment '当前用户数'
 )
     comment '本机密钥分发和U盘';
 
@@ -320,19 +346,6 @@ create table nmpl_outline_pc_info
 )
     comment '一体机信息表';
 
-create table nmpl_pc_data
-(
-    id            bigint auto_increment comment '自增主键'
-        primary key,
-    station_id    varchar(128)                             not null comment '基站设备id',
-    device_id     varchar(128)                             not null comment '一体机设备id',
-    pc_network_id varchar(32)                              not null comment '一体机设备入网码',
-    status        tinyint                                  not null comment '设备状态 1:接入  2:未接入',
-    up_key_num    int unsigned                             not null comment '上行消耗密钥量(单位byte)',
-    down_key_num  int unsigned                             not null comment '下行消耗密钥量(单位byte)',
-    report_time   datetime(2) default CURRENT_TIMESTAMP(2) null comment '上报时间'
-)
-    comment '基站下一体机信息上报表';
 
 create table nmpl_static_route
 (
@@ -348,7 +361,11 @@ create table nmpl_static_route
     update_time     datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间',
     station_id      varchar(128)                             not null comment '基站id',
     ip_v6           varchar(64) charset utf8mb4              null comment '服务器ip_v6',
-    byte_network_id blob                                     null comment '设备入网码(字节存储)'
+    byte_network_id blob                                     null comment '设备入网码(字节存储)',
+    company_name    varchar(50) charset utf8mb4              null comment '小区名称',
+    company_id      varchar(50) charset utf8mb4              null comment '小区id',
+    station_name    varchar(16)                              null comment '接入基站名称',
+    server_name     varchar(50) charset utf8mb4              null comment '服务名称'
 )
     comment '静态路由' charset = utf8;
 
@@ -375,6 +392,49 @@ create table nmpl_station_heart_info
 
 create index station_id
     on nmpl_station_heart_info (station_id);
+
+create table nmpl_system_heartbeat
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    source_id   varchar(128)                             not null comment '来源Id',
+    target_id   varchar(128)                             not null comment '目标Id',
+    status      char(2)     default '01'                 null comment '连接状态 01:通  02:不通',
+    upload_time datetime(2)                              null comment '上报时间',
+    create_time datetime(2) default CURRENT_TIMESTAMP(2) null comment '创建时间',
+    update_time datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间'
+)
+    comment '业务心跳';
+
+create table nmpl_terminal_data
+(
+    id                  bigint auto_increment comment '自增主键'
+        primary key,
+    terminal_network_id varchar(128)                             not null comment '一体机设备id',
+    parent_id           varchar(128)                             not null comment '基站设备id',
+    data_type           char(2)                                  not null comment '数据类型 01:剩余 02:补充 03:使用',
+    up_value            bigint                                   not null comment '上行密钥量',
+    down_value          bigint                                   not null comment '下行密钥量',
+    terminal_ip         varchar(64)                              not null comment '一体机ip',
+    upload_time         datetime(2)                              null comment '上报时间',
+    create_time         datetime(2) default CURRENT_TIMESTAMP(2) null comment '创建时间',
+    update_time         datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间'
+)
+    comment '基站下一体机信息上报表';
+
+create table nmpl_terminal_user
+(
+    id                  bigint auto_increment comment '主键'
+        primary key,
+    terminal_network_id varchar(128)                             not null comment '终端设备Id',
+    parent_device_id    varchar(128)                             not null comment '所属设备Id',
+    terminal_status     char(2)     default '01'                 null comment '用户状态 01:密钥匹配  02:注册  03:上线 04:下线 05:注销',
+    upload_time         datetime(2)                              null comment '上报时间',
+    create_time         datetime(2) default CURRENT_TIMESTAMP(2) null comment '创建时间',
+    update_time         datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间',
+    user_type           char(2)     default '21'                 null comment '用户类型 21:一体机  22:安全服务器'
+)
+    comment '终端用户表';
 
 create table nmpl_update_info_base
 (
@@ -445,59 +505,6 @@ create table nmpl_update_info_keycenter
     is_exist       tinyint(1)  default 1                    null comment '1:存在 0:删除'
 )
     comment '数据更新信息表(秘钥中心专用)';
-
-
-CREATE TABLE `nmpl_system_heartbeat` (
-                                         `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-                                         `source_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '来源Id',
-                                         `target_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '目标Id',
-                                         `status` char(2) DEFAULT '01' COMMENT '连接状态 01:通  02:不通',
-                                         `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
-                                         `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
-                                         `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-                                         PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='业务心跳';
-
-CREATE TABLE `nmpl_company_heartbeat` (
-                                          `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-                                          `source_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '来源Id',
-                                          `target_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '目标Id',
-                                          `status` char(2) DEFAULT '01' COMMENT '连接状态 01:通  02:不通',
-                                          `up_value` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '上行流量',
-                                          `down_value` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '下行流量',
-                                          `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
-                                          `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
-                                          `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-                                          PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='小区业务心跳';
-
-CREATE TABLE `nmpl_terminal_data` (
-                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-                                      `terminal_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机设备id',
-                                      `parent_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '基站设备id',
-                                      `data_type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '数据类型 01:剩余 02:补充 03:使用',
-                                      `up_value` bigint NOT NULL COMMENT '上行密钥量',
-                                      `down_value` bigint NOT NULL COMMENT '下行密钥量',
-                                      `terminal_ip` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '一体机ip',
-                                      `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
-                                      `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
-                                      `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-                                      PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='基站下一体机信息上报表';
-
-CREATE TABLE `nmpl_terminal_user` (
-                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-                                      `terminal_network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '终端设备Id',
-                                      `parent_device_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '所属设备Id',
-                                      `terminal_status` char(2) DEFAULT '01' COMMENT '用户状态 01:密钥匹配  02:注册  03:上线 04:下线 05:注销',
-                                      `upload_time` datetime(2) DEFAULT NULL COMMENT '上报时间',
-                                      `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
-                                      `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
-                                      `user_type` char(2) DEFAULT '01' COMMENT '用户类型 01:一体机  02:安全服务器',
-                                      PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='终端用户表';
-
-
 
 
 
