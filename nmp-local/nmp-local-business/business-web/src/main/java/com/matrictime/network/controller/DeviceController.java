@@ -364,7 +364,7 @@ public class DeviceController {
      * @return
      */
     @RequiresPermissions("sys:datacollect:query")
-    @SystemLog(opermodul = "缓存机管理模块",operDesc = "查询采集设备信息",operType = "查询采集设备信息")
+    @SystemLog(opermodul = "查询采集设备信息接口",operDesc = "查询采集设备信息",operType = "查询采集设备信息")
     @RequestMapping(value = "/selectDataBase",method = RequestMethod.POST)
     @ApiOperation(value = "查询采集设备信息接口",notes = "查询采集设备信息")
     public Result<PageInfo> selectDataBase(@RequestBody DeviceInfoRequest deviceInfoRequest){
