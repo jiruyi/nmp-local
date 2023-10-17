@@ -1,9 +1,11 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.domain.CompanyDomainService;
 import com.matrictime.network.dao.model.NmplCompanyInfo;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.CompanyHeartbeatVo;
 import com.matrictime.network.modelVo.CompanyInfoVo;
 import com.matrictime.network.modelVo.DataPushBody;
 import com.matrictime.network.response.CompanyInfoResponse;
@@ -64,13 +66,13 @@ public class CompanyServiceImpl implements CompanyService, DataHandlerService {
                 return;
             }
             String dataJsonStr = dataPushBody.getBusiDataJsonStr();
-            List list = JSONObject.parseObject(dataJsonStr, List.class);
-            for(Object companyInfoVo: list){
-                List<NmplCompanyInfo> companyInfos = companyDomainService.selectCompany((CompanyInfoVo) companyInfoVo);
+            List<CompanyInfoVo> companyInfoVos = JSONArray.parseArray(dataJsonStr, CompanyInfoVo.class);
+            for(CompanyInfoVo companyInfoVo: companyInfoVos){
+                List<NmplCompanyInfo> companyInfos = companyDomainService.selectCompany(companyInfoVo);
                 if(CollectionUtils.isEmpty(companyInfos)){
-                    companyDomainService.insertCompany((CompanyInfoVo) companyInfoVo);
+                    companyDomainService.insertCompany(companyInfoVo);
                 }else {
-                    companyDomainService.updateCompany((CompanyInfoVo) companyInfoVo);
+                    companyDomainService.updateCompany(companyInfoVo);
                 }
             }
         }catch (Exception e){

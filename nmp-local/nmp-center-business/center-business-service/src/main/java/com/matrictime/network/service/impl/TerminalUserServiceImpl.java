@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.dao.model.NmplCompanyInfo;
@@ -63,13 +64,13 @@ public class TerminalUserServiceImpl implements TerminalUserService, DataHandler
                 return;
             }
             String dataJsonStr = dataPushBody.getBusiDataJsonStr();
-            List list = JSONObject.parseObject(dataJsonStr, List.class);
-            for(Object terminalUserVo: list){
-                List<NmplTerminalUser> nmplTerminalUsers = terminalUserDomainService.selectTerminalUser((TerminalUserVo) terminalUserVo);
+            List<TerminalUserVo> terminalUserVoList = JSONArray.parseArray(dataJsonStr, TerminalUserVo.class);
+            for(TerminalUserVo terminalUserVo: terminalUserVoList){
+                List<NmplTerminalUser> nmplTerminalUsers = terminalUserDomainService.selectTerminalUser(terminalUserVo);
                 if(CollectionUtils.isEmpty(nmplTerminalUsers)){
-                    terminalUserDomainService.insertTerminalUser((TerminalUserVo) terminalUserVo);
+                    terminalUserDomainService.insertTerminalUser(terminalUserVo);
                 }else {
-                    terminalUserDomainService.updateTerminalUser((TerminalUserVo) terminalUserVo);
+                    terminalUserDomainService.updateTerminalUser(terminalUserVo);
                 }
             }
         }catch (Exception e){

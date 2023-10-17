@@ -1,12 +1,10 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.DataPushBody;
-import com.matrictime.network.modelVo.DataTimeVo;
-import com.matrictime.network.modelVo.LoanVo;
-import com.matrictime.network.modelVo.PercentageFlowVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.DataCollectRequest;
 import com.matrictime.network.response.DataCollectResponse;
 import com.matrictime.network.service.DataCollectService;
@@ -141,7 +139,7 @@ public class DataCollectServiceImpl implements DataCollectService, DataHandlerSe
                 return;
             }
             String dataJsonStr = dataPushBody.getBusiDataJsonStr();
-            dataCollectDomainService.insertDataCollect(JSONObject.parseObject(dataJsonStr,List.class));
+            dataCollectDomainService.insertDataCollect(JSONArray.parseArray(dataJsonStr, DataCollectVo.class));
         }catch (Exception e){
             log.error("handlerData exception :{}",e);
         }

@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.domain.CompanyHeartbeatDomainService;
 import com.matrictime.network.model.Result;
@@ -51,8 +52,8 @@ public class CompanyHeartbeatServiceImpl implements CompanyHeartbeatService, Dat
             if(ObjectUtils.isEmpty(dataPushBody)){
                 return;
             }
-            String alarmInfoStr = dataPushBody.getBusiDataJsonStr();
-            heartbeatDomainService.insertCompanyHeartbeat(JSONObject.parseObject(alarmInfoStr,List.class));
+            String dataJsonStr = dataPushBody.getBusiDataJsonStr();
+            heartbeatDomainService.insertCompanyHeartbeat(JSONArray.parseArray(dataJsonStr,CompanyHeartbeatVo.class));
         }catch (Exception e){
             log.error("handlerData exception :{}",e);
         }
