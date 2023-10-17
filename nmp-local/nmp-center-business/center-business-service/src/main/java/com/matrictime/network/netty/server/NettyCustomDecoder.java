@@ -60,23 +60,27 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
     }
 
     /**
-      * @title decode
-      * @param [ctx, in]
-      * @return java.lang.Object
-      * @description 
-      * @author jiruyi
-      * @create 2023/8/31 0031 19:03
-      */
+     * @title decode
+     * @param [ctx, in]
+     * @return java.lang.Object
+     * @description
+     * @author jiruyi
+     * @create 2023/8/31 0031 19:03
+     */
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
         // 数据包长度
+        in.markReaderIndex();
         int uTotalLen = in.getIntLE(4);
-        if(in.readableBytes() != uTotalLen){
+        if(in.readableBytes() < uTotalLen){
+            in.resetReaderIndex();
             return null;
         }
         log.info("收到客户端的业务消息长度：{}",uTotalLen);
         log.info("收到客户端的组包后消息长度：{}",in.readableBytes());
-        String reqDataJsonStr = in.toString(REQ_DATA_INDEX,uTotalLen-REQ_DATA_INDEX, CharsetUtil.UTF_8);
+        String messageHeader =  in.toString(0,HEADER_SIZE, CharsetUtil.UTF_8);
+        log.info("收到客户端的业务消息messageHeader:{}",messageHeader);
+        String reqDataJsonStr = in.toString(HEADER_SIZE,uTotalLen-HEADER_SIZE, CharsetUtil.UTF_8);
         in.clear();
         return  reqDataJsonStr;
     }
