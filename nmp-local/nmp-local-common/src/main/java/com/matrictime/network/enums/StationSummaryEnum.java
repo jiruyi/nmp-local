@@ -10,7 +10,7 @@ public enum StationSummaryEnum {
 
     KET_CENTER("11","密钥中心"),
 
-    BORDER_BASE_STATION("01","小区边界基站"),
+    BORDER_BASE_STATION("02","小区边界基站"),
 
     BASE_STATION("01","小区内基站");
 
