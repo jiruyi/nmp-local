@@ -16,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,6 +64,7 @@ public class BorderStationServiceImpl implements BorderStationService, DataHandl
             StationSummaryRequest stationSummaryRequest = new StationSummaryRequest();
             BeanUtils.copyProperties(stationSummaryVo,stationSummaryRequest);
             List<NmplStationSummary> nmplStationSummaries = summaryDomainService.selectStationSummary(stationSummaryRequest);
+            stationSummaryRequest.setUploadTime(new Date());
             if(CollectionUtils.isEmpty(nmplStationSummaries)){
                 summaryDomainService.insertStationSummary(stationSummaryRequest);
             }else {
