@@ -6,6 +6,7 @@ import com.matrictime.network.dao.domain.TerminalUserDomainService;
 import com.matrictime.network.dao.mapper.NmplTerminalUserMapper;
 import com.matrictime.network.dao.model.NmplCompanyInfo;
 import com.matrictime.network.dao.model.NmplTerminalUser;
+import com.matrictime.network.dao.model.NmplTerminalUserExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CompanyInfoVo;
 import com.matrictime.network.modelVo.DataPushBody;
@@ -41,7 +42,6 @@ public class TerminalUserServiceImpl implements TerminalUserService, DataHandler
     public Result<Integer> receiveTerminalUser(TerminalUserResponse terminalUserResponse) {
         Result<Integer> result = new Result<>();
         try {
-            terminalUserMapper.deleteByExample(null);
             List<TerminalUserVo> list = terminalUserResponse.getList();
             int i = 0;
             for(TerminalUserVo terminalUserVo: list){
@@ -68,6 +68,8 @@ public class TerminalUserServiceImpl implements TerminalUserService, DataHandler
             if(ObjectUtils.isEmpty(dataPushBody)){
                 return;
             }
+            NmplTerminalUserExample terminalUserExample = new NmplTerminalUserExample();
+            terminalUserMapper.deleteByExample(terminalUserExample);
             String dataJsonStr = dataPushBody.getBusiDataJsonStr();
             List<TerminalUserVo> terminalUserVoList = JSONArray.parseArray(dataJsonStr, TerminalUserVo.class);
             for(TerminalUserVo terminalUserVo: terminalUserVoList){
