@@ -3,6 +3,7 @@ package com.matrictime.network.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
+import com.matrictime.network.dao.mapper.NmplTerminalUserMapper;
 import com.matrictime.network.dao.model.NmplCompanyInfo;
 import com.matrictime.network.dao.model.NmplTerminalUser;
 import com.matrictime.network.model.Result;
@@ -32,11 +33,15 @@ public class TerminalUserServiceImpl implements TerminalUserService, DataHandler
     @Resource
     private TerminalUserDomainService terminalUserDomainService;
 
+    @Resource
+    private NmplTerminalUserMapper terminalUserMapper;
+
     @Transactional
     @Override
     public Result<Integer> receiveTerminalUser(TerminalUserResponse terminalUserResponse) {
         Result<Integer> result = new Result<>();
         try {
+            terminalUserMapper.deleteByExample(null);
             List<TerminalUserVo> list = terminalUserResponse.getList();
             int i = 0;
             for(TerminalUserVo terminalUserVo: list){

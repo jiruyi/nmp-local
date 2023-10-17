@@ -22,14 +22,14 @@
             (
                 SELECT
                     max(id) AS q,
-                    terminal_status
+                    terminal_network_id
                 FROM
                     nmpl_terminal_user
                 GROUP BY
-                    terminal_status
+                    terminal_network_id
             ) AS b
         WHERE
             a.id = b.q
-          AND a.terminal_status = b.terminal_status
+          AND a.terminal_network_id = b.terminal_network_id
     </select>
 </mapper>
