@@ -86,13 +86,13 @@ public class LogDomainServiceImpl extends SystemBaseService implements LogDomain
     }
 
     /**
-      * @title queryAlarmInfoList
-      * @param [alarmAreaCode]
-      * @return com.matrictime.network.response.PageInfo
-      * @description 
-      * @author jiruyi
-      * @create 2023/8/17 0017 16:52
-      */
+     * @title queryAlarmInfoList
+     * @param [alarmAreaCode]
+     * @return com.matrictime.network.response.PageInfo
+     * @description
+     * @author jiruyi
+     * @create 2023/8/17 0017 16:52
+     */
     @Override
     public PageInfo queryAlarmInfoList(AlarmInfoRequest alarmInfoRequest) {
         Page page = PageHelper.startPage(alarmInfoRequest.getPageNo(),alarmInfoRequest.getPageSize());
@@ -100,6 +100,7 @@ public class LogDomainServiceImpl extends SystemBaseService implements LogDomain
         if(!ObjectUtils.isEmpty(alarmInfoRequest.getAlarmAreaCode())){
             alarmInfoExample.createCriteria().andAlarmAreaCodeEqualTo(alarmInfoRequest.getAlarmAreaCode());
         }
+        alarmInfoExample.setOrderByClause("alarm_upload_time desc");
         //查询告警信息和小区名
         List<NmplAlarmInfoExt> list = alarmInfoMapper.selectListFromAlarmAndCompany(alarmInfoExample);
         PageInfo<NmplAlarmInfoExt> pageResult =  new PageInfo<>((int)page.getTotal(), page.getPages(), list);
@@ -107,13 +108,13 @@ public class LogDomainServiceImpl extends SystemBaseService implements LogDomain
     }
 
     /**
-      * @title batchInsertAlarmData
-      * @param [alarmInfoList]
-      * @return int
-      * @description
-      * @author jiruyi
-      * @create 2023/8/29 0029 14:56
-      */
+     * @title batchInsertAlarmData
+     * @param [alarmInfoList]
+     * @return int
+     * @description
+     * @author jiruyi
+     * @create 2023/8/29 0029 14:56
+     */
     @Override
     public int batchInsertAlarmData(List<AlarmInfo> alarmInfoList) {
         return  alarmInfoMapper.batchInsert(alarmInfoList);
