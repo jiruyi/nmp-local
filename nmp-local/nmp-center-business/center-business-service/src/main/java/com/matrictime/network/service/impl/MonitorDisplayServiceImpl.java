@@ -166,7 +166,9 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
 //                            zombieUser = zombieUser + tempNumber;
                     }else if (TerminalUserEnum.ON_LINE.getCode().equals(terminalStatus)){
                         onlineUser = onlineUser + tempNumber;
+                        accessUser = accessUser + tempNumber;
                     }else if (TerminalUserEnum.OFF_LINE.getCode().equals(terminalStatus)){
+                        accessUser = accessUser + tempNumber;
 //                            zombieUser = zombieUser + tempNumber;
                     }else if (TerminalUserEnum.LOG_OUT.getCode().equals(terminalStatus)){
 //                            zombieUser = zombieUser + tempNumber;
