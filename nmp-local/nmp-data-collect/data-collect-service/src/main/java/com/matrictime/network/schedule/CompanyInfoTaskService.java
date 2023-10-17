@@ -1,6 +1,7 @@
 package com.matrictime.network.schedule;
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.BusinessDataEnum;
 import com.matrictime.network.base.enums.BusinessTypeEnum;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
@@ -53,6 +54,9 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
 
     @Resource
     private CompanyInfoDomainService companyInfoDomainService;
+
+    @Resource
+    private CompanyHeartbeatDomainService heartbeatDomainService;
 
 
     @Autowired
@@ -122,7 +126,9 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
                     return;
                 }
                 if(channelFuture.isSuccess()){
-
+                    Long maxId = companyInfoVos.get(companyInfoVos.size()-1).getId();
+                    log.info("company_info 此次推送的最大 maxId is :{}", maxId);
+                    heartbeatDomainService.insertDataPushRecord(maxId, DataConstants.NMPL_COMPANY_INFO);
                 }
             }
         } catch (Exception e) {

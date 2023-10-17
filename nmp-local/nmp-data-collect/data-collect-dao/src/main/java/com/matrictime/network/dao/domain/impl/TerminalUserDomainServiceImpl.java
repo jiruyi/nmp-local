@@ -46,36 +46,41 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
         String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
         Map<String, TerminalUserEnum> terminalUserEnumMap = TerminalUserEnum.getTerminalUserEnumMap();
         Set<String> strings = terminalUserEnumMap.keySet();
+        //获取一体机数量
         for(String userStatus: strings){
-            int sum = 0;
-            TerminalUserVo terminalUserVo = new TerminalUserVo();
-            for(NmplTerminalUser nmplTerminalUser: list){
-                if(userStatus.equals(nmplTerminalUser.getTerminalStatus())){
-                    sum++;
-                    terminalUserVo.setUploadTime(nmplTerminalUser.getUpdateTime());
-                }
-            }
-            terminalUserVo.setTerminalStatus(userStatus);
-            terminalUserVo.setSumNumber(String.valueOf(sum));
-            terminalUserVo.setCompanyNetworkId(networkIdString);
-            terminalUserVoList.add(terminalUserVo);
-        }
-        //分别查询用户类型总数
-        for(String userType: strings){
-            int sum = 0;
-            TerminalUserVo terminalUserVo = new TerminalUserVo();
-            for(NmplTerminalUser nmplTerminalUser: list){
-                if(userType.equals(nmplTerminalUser.getUserType())){
-                    sum++;
-                    terminalUserVo.setUploadTime(nmplTerminalUser.getUpdateTime());
-                }
-            }
-            terminalUserVo.setUserType(userType);
-            terminalUserVo.setSumNumber(String.valueOf(sum));
-            terminalUserVo.setCompanyNetworkId(networkIdString);
-            terminalUserVoList.add(terminalUserVo);
+            //添加一体机数量
+            TerminalUserVo userMachine = getUserVo(TerminalUserEnum.ONE_MACHINE.getCode(), userStatus, list, networkIdString);
+            terminalUserVoList.add(userMachine);
+            //添加安全服务器数量
+            TerminalUserVo userVo = getUserVo(TerminalUserEnum.SECURITY_SERVER.getCode(), userStatus, list, networkIdString);
+            terminalUserVoList.add(userVo);
         }
         return terminalUserVoList;
+    }
+
+    /**
+     * 构建返回体
+     * @param userType 用户类型
+     * @param userStatus 用户状态
+     * @param list 总用户
+     * @param networkIdString 唯一标识
+     * @return
+     */
+    private TerminalUserVo getUserVo(String userType,String userStatus,List<NmplTerminalUser> list,String networkIdString){
+        int sum = 0;
+        TerminalUserVo terminalUserVo = new TerminalUserVo();
+        for(NmplTerminalUser nmplTerminalUser: list){
+            if(userStatus.equals(nmplTerminalUser.getTerminalStatus()) &&
+                    userType.equals(nmplTerminalUser.getUserType())){
+                sum++;
+                terminalUserVo.setUploadTime(nmplTerminalUser.getUpdateTime());
+                terminalUserVo.setUserType(userType);
+                terminalUserVo.setTerminalStatus(userStatus);
+            }
+        }
+        terminalUserVo.setSumNumber(String.valueOf(sum));
+        terminalUserVo.setCompanyNetworkId(networkIdString);
+        return terminalUserVo;
     }
 
     /**

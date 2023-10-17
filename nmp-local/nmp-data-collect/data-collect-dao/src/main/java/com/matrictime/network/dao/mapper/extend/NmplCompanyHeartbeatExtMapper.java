@@ -1,6 +1,7 @@
 package com.matrictime.network.dao.mapper.extend;
 
 import com.matrictime.network.dao.model.NmplCompanyHeartbeat;
+import com.matrictime.network.request.SelectRequest;
 
 import java.util.List;
 
@@ -10,5 +11,5 @@ import java.util.List;
  */
 public interface NmplCompanyHeartbeatExtMapper {
 
-    List<NmplCompanyHeartbeat> selectCompanyHeartbeat();
+    List<NmplCompanyHeartbeat> selectCompanyHeartbeat(SelectRequest selectRequest);
 }

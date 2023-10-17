@@ -10,6 +10,7 @@ import com.matrictime.network.dao.model.NmplDataPushRecord;
 import com.matrictime.network.dao.model.NmplDataPushRecordExample;
 import com.matrictime.network.modelVo.CompanyHeartbeatVo;
 import com.matrictime.network.modelVo.CompanyInfoVo;
+import com.matrictime.network.request.SelectRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -34,7 +35,25 @@ public class CompanyHeartbeatDomainServiceImpl implements CompanyHeartbeatDomain
     @Override
     public List<CompanyHeartbeatVo> selectCompanyHeartbeat() {
 
-        List<NmplCompanyHeartbeat> nmplCompanyHeartbeats = companyHeartbeatExtMapper.selectCompanyHeartbeat();
+        //起止id
+        Long startId = 0l;
+        Long endId = startId+DataConstants.ALARM_INFO_EVERY_COUNT;
+        //1.0 查询上次推送到的位置
+        NmplDataPushRecordExample pushRecordExample = new NmplDataPushRecordExample();
+        pushRecordExample.createCriteria().andTableNameEqualTo(DataConstants.NMPL_COMPANY_HEARTBEAT);
+        pushRecordExample.setOrderByClause("id desc");
+        List<NmplDataPushRecord> dataPushRecords = dataPushRecordMapper.selectByExample(pushRecordExample);
+        //2.0 配置最新的起止id
+        if(!CollectionUtils.isEmpty(dataPushRecords)){
+            Long lastId = dataPushRecords.get(0).getDataId();
+            startId= lastId;
+            endId = endId +startId;
+        }
+        SelectRequest selectRequest = new SelectRequest();
+        selectRequest.setStartId(startId);
+        selectRequest.setEndId(endId);
+        List<NmplCompanyHeartbeat> nmplCompanyHeartbeats = companyHeartbeatExtMapper.selectCompanyHeartbeat(selectRequest);
+
         if(CollectionUtils.isEmpty(nmplCompanyHeartbeats)){
             return null;
         }
