@@ -21,7 +21,7 @@
             nmpl_terminal_user a,
             (
                 SELECT
-                    max(upload_time) AS q,
+                    max(id) AS q,
                     terminal_status
                 FROM
                     nmpl_terminal_user
@@ -29,7 +29,7 @@
                     terminal_status
             ) AS b
         WHERE
-            a.upload_time = b.q
+            a.id = b.q
           AND a.terminal_status = b.terminal_status
     </select>
 </mapper>
