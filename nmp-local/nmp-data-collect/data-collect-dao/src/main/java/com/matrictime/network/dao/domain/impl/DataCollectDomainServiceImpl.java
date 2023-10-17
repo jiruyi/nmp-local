@@ -1,14 +1,17 @@
 package com.matrictime.network.dao.domain.impl;
 
+import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.NetworkIdUtil;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
+import com.matrictime.network.dao.mapper.NmplDataPushRecordMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.DataCollectEnum;
 import com.matrictime.network.modelVo.DataCollectVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -38,12 +41,26 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     @Resource
     private NmplDeviceInfoMapper deviceInfoMapper;
 
+    @Resource
+    private NmplDataPushRecordMapper dataPushRecordMapper;
+
 
     @Override
     public List<DataCollectVo> selectDataCollect() {
         List<NmplDataCollect> nmplDataCollects = dataCollectExtMapper.selectDataCollect();
         if(CollectionUtils.isEmpty(nmplDataCollects)){
             return null;
+        }
+        NmplDataPushRecordExample pushRecordExample = new NmplDataPushRecordExample();
+        pushRecordExample.createCriteria().andTableNameEqualTo(NMPL_DATA_COLLECT);
+        pushRecordExample.setOrderByClause("id desc");
+        List<NmplDataPushRecord> dataPushRecords = dataPushRecordMapper.selectByExample(pushRecordExample);
+        if(!CollectionUtils.isEmpty(dataPushRecords)){
+            Long id = nmplDataCollects.get(nmplDataCollects.size() - 1).getId();
+            Long dataId = dataPushRecords.get(0).getDataId();
+            if(id <= dataId){
+                return null;
+            }
         }
         //基站数组
         List<NmplDataCollect> stationList = generateList(nmplDataCollects,DeviceTypeEnum.BASE_STATION.getCode());
@@ -110,13 +127,13 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
                 stationSumBig = stationSumBig.add(itemValue);
                 dataCollectVo.setUploadTime(nmplDataCollect.getUploadTime());
                 dataCollectVo.setDeviceType(nmplDataCollect.getDeviceType());
-
+                dataCollectVo.setDataItemCode(codeEnum);
+                //数据转换
+                dataCollectVo.setSumNumber(changeSum(String.valueOf(stationSumBig)));
+                dataCollectVo.setId(nmplDataCollect.getId());
+                dataCollectVo.setCompanyNetworkId(networkIdString);
             }
         }
-        dataCollectVo.setDataItemCode(codeEnum);
-        //数据转换
-        dataCollectVo.setSumNumber(changeSum(String.valueOf(stationSumBig)));
-        dataCollectVo.setCompanyNetworkId(networkIdString);
         return dataCollectVo;
     }
 

@@ -54,10 +54,10 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
     @Resource
     private CompanyHeartbeatDomainService heartbeatDomainService;
 
-    @Autowired
+    @Resource
     private DeviceDomainService deviceDomainService;
 
-    @Autowired
+    @Resource
     private NettyClient nettyClient;
 
     @Resource

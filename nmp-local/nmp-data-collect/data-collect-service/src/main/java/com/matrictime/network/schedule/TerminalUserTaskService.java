@@ -49,10 +49,10 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
     @Resource
     private TerminalUserDomainService terminalUserDomainService;
 
-    @Autowired
+    @Resource
     private DeviceDomainService deviceDomainService;
 
-    @Autowired
+    @Resource
     private NettyClient nettyClient;
 
     @Resource

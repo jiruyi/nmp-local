@@ -11,5 +11,5 @@ import java.util.List;
  */
 public interface NmplCompanyHeartbeatExtMapper {
 
-    List<NmplCompanyHeartbeat> selectCompanyHeartbeat(SelectRequest selectRequest);
+    List<NmplCompanyHeartbeat> selectCompanyHeartbeat();
 }

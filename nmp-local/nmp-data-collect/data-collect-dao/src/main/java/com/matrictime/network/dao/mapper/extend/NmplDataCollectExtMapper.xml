@@ -27,7 +27,11 @@
             nmpl_data_collect a
         WHERE
         a.upload_time &gt;= (SELECT
-                                 DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE - INTERVAL 30 MINUTE)
-        and a.data_item_code in('10010','10011')
+            DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE - INTERVAL 30 MINUTE)
+        and a.upload_time &lt; (
+        SELECT
+            DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE
+        )
+        and a.data_item_code in('10010','10011') order by id asc
     </select>
 </mapper>
