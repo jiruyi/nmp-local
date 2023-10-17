@@ -87,7 +87,7 @@ public class ConfigurationServiceImpl extends SystemBaseService implements Confi
             }
             //查询数据采集信息
             NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
-            nmplDeviceExample.createCriteria().andDeviceTypeEqualTo(String.valueOf(DeviceTypeEnum.DATA_BASE)).andIsExistEqualTo(true);
+            nmplDeviceExample.createCriteria().andDeviceTypeEqualTo(String.valueOf(DeviceTypeEnum.DATA_BASE.getCode())).andIsExistEqualTo(true);
             List<NmplDevice> nmplDeviceList = nmplDeviceMapper.selectByExample(nmplDeviceExample);
             if(nmplDeviceList.isEmpty()){
                 throw new SystemException(DATACOLLECT_NOT_EXIST);
