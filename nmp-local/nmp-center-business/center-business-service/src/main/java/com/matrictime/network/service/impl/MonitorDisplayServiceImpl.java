@@ -5,10 +5,7 @@ import com.matrictime.network.base.util.NumberUtils;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.mapper.extend.StationSummaryExtMapper;
 import com.matrictime.network.dao.model.*;
-import com.matrictime.network.enums.AlarmSysLevelEnum;
-import com.matrictime.network.enums.DataCollectEnum;
-import com.matrictime.network.enums.StationSummaryEnum;
-import com.matrictime.network.enums.TerminalUserEnum;
+import com.matrictime.network.enums.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CompanyHeartbeatVo;
 import com.matrictime.network.modelVo.CompanyInfoVo;
@@ -70,7 +67,7 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
         try {
             QueryCompanyUserResp resp = new QueryCompanyUserResp();
             NmplCompanyInfoExample example = new NmplCompanyInfoExample();
-            example.createCriteria().andIsExistEqualTo(IS_EXIST);
+            example.createCriteria().andCompanyTypeEqualTo(CompanyEnum.SMALL_AREA.getCode()).andIsExistEqualTo(IS_EXIST);
             List<NmplCompanyInfo> nmplCompanyInfos = companyInfoMapper.selectByExample(example);
 
             if (!CollectionUtils.isEmpty(nmplCompanyInfos)){
@@ -273,7 +270,7 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
         try {
             QueryMapInfoResp resp = new QueryMapInfoResp();
             NmplCompanyInfoExample example = new NmplCompanyInfoExample();
-            example.createCriteria().andIsExistEqualTo(IS_EXIST);
+            example.createCriteria().andCompanyTypeEqualTo(CompanyEnum.SMALL_AREA.getCode()).andIsExistEqualTo(IS_EXIST);
             List<NmplCompanyInfo> nmplCompanyInfos = companyInfoMapper.selectByExample(example);
 
             if (!CollectionUtils.isEmpty(nmplCompanyInfos)){
