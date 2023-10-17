@@ -35,34 +35,18 @@ public class CompanyHeartbeatDomainServiceImpl implements CompanyHeartbeatDomain
     @Override
     public List<CompanyHeartbeatVo> selectCompanyHeartbeat() {
 
-        //起止id
-        Long startId = 0l;
-        Long endId = startId+DataConstants.ALARM_INFO_EVERY_COUNT;
-        //1.0 查询上次推送到的位置
-        NmplDataPushRecordExample pushRecordExample = new NmplDataPushRecordExample();
-        pushRecordExample.createCriteria().andTableNameEqualTo(DataConstants.NMPL_COMPANY_HEARTBEAT);
-        pushRecordExample.setOrderByClause("id desc");
-        List<NmplDataPushRecord> dataPushRecords = dataPushRecordMapper.selectByExample(pushRecordExample);
-        //2.0 配置最新的起止id
-        if(!CollectionUtils.isEmpty(dataPushRecords)){
-            Long lastId = dataPushRecords.get(0).getDataId();
-            startId= lastId;
-            endId = endId +startId;
-        }
-        SelectRequest selectRequest = new SelectRequest();
-        selectRequest.setStartId(startId);
-        selectRequest.setEndId(endId);
-        List<NmplCompanyHeartbeat> nmplCompanyHeartbeats = companyHeartbeatExtMapper.selectCompanyHeartbeat(selectRequest);
-
+        List<NmplCompanyHeartbeat> nmplCompanyHeartbeats = companyHeartbeatExtMapper.selectCompanyHeartbeat();
         if(CollectionUtils.isEmpty(nmplCompanyHeartbeats)){
             return null;
         }
         List<CompanyHeartbeatVo> list = new ArrayList<>();
         for(NmplCompanyHeartbeat nmplCompanyHeartbeat: nmplCompanyHeartbeats){
             CompanyHeartbeatVo companyHeartbeatVo = new CompanyHeartbeatVo();
+            String sourceId = changeNetworkId(nmplCompanyHeartbeat.getSourceNetworkId());
+            String targetId = changeNetworkId(nmplCompanyHeartbeat.getTargetNetworkId());
             //获取小区唯一标识
-            companyHeartbeatVo.setSourceCompanyNetworkId(NetworkIdUtil.splitNetworkId(nmplCompanyHeartbeat.getSourceNetworkId()));
-            companyHeartbeatVo.setTargetCompanyNetworkId(NetworkIdUtil.splitNetworkId(nmplCompanyHeartbeat.getTargetNetworkId()));
+            companyHeartbeatVo.setSourceCompanyNetworkId(NetworkIdUtil.splitNetworkId(sourceId));
+            companyHeartbeatVo.setTargetCompanyNetworkId(NetworkIdUtil.splitNetworkId(targetId));
             BeanUtils.copyProperties(nmplCompanyHeartbeat,companyHeartbeatVo);
             list.add(companyHeartbeatVo);
         }
@@ -76,4 +60,20 @@ public class CompanyHeartbeatDomainServiceImpl implements CompanyHeartbeatDomain
         record.setTableName(businessDataEnum);
         return  dataPushRecordMapper.insertSelective(record);
     }
+
+    /**
+     * 入网id1 16转10 进制
+     * @param networkId
+     * @return
+     */
+    private String changeNetworkId(String networkId){
+        String[] split = networkId.split("-");
+        String networkStr = "";
+        for(int i = 0; i <= split.length -1;i++){
+            Integer change = Integer.parseInt(split[i],16);
+            networkStr = networkStr + change + "-";
+        }
+        return networkStr.substring(0,networkStr.length() - 1);
+    }
+
 }

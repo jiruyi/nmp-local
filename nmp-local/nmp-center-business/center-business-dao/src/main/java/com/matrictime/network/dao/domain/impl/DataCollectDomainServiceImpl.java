@@ -21,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -179,20 +180,32 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         //获取所有基站总数
         LoanVo stationLoanVo = new LoanVo();
         Long stationSum = stationSummaryExtMapper.getSum(DeviceTypeEnum.STATION_INSIDE.getCode(), dataCollectRequest.getCompanyNetworkId());
+        if(ObjectUtils.isEmpty(stationSum)){
+            stationLoanVo.setValue("0");
+        }else {
+            stationLoanVo.setValue(String.valueOf(stationSum * 10));
+        }
         stationLoanVo.setDeviceType(DeviceTypeEnum.STATION_INSIDE.getCode());
-        stationLoanVo.setValue(String.valueOf(stationSum * 10));
         list.add(stationLoanVo);
         //获取所有边界基站总数
         LoanVo borderLoanVo = new LoanVo();
         Long borderSum = stationSummaryExtMapper.getSum(DeviceTypeEnum.STATION_BOUNDARY.getCode(), dataCollectRequest.getCompanyNetworkId());
+        if(ObjectUtils.isEmpty(borderSum)){
+            borderLoanVo.setValue("0");
+        }else {
+            borderLoanVo.setValue(String.valueOf(borderSum * 10));
+        }
         borderLoanVo.setDeviceType(DeviceTypeEnum.STATION_BOUNDARY.getCode());
-        borderLoanVo.setValue(String.valueOf(borderSum * 10));
         list.add(borderLoanVo);
         //获取指控中心总数
         LoanVo deviceLoanVo = new LoanVo();
         Long deviceSum = stationSummaryExtMapper.getSum(DeviceTypeEnum.DEVICE_DISPENSER.getCode(), dataCollectRequest.getCompanyNetworkId());
         deviceLoanVo.setDeviceType(DeviceTypeEnum.DEVICE_DISPENSER.getCode());
-        deviceLoanVo.setValue(String.valueOf(deviceSum * 10));
+        if(ObjectUtils.isEmpty(deviceSum)){
+            deviceLoanVo.setValue("0");
+        }else {
+            deviceLoanVo.setValue(String.valueOf(deviceSum * 10));
+        }
         list.add(deviceLoanVo);
         return list;
     }

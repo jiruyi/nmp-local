@@ -10,6 +10,7 @@ import com.matrictime.network.enums.TerminalUserEnum;
 import com.matrictime.network.modelVo.TerminalUserVo;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -50,10 +51,14 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
         for(String userStatus: strings){
             //添加一体机数量
             TerminalUserVo userMachine = getUserVo(TerminalUserEnum.ONE_MACHINE.getCode(), userStatus, list, networkIdString);
-            terminalUserVoList.add(userMachine);
+            if(userMachine.getUserType() != null){
+                terminalUserVoList.add(userMachine);
+            }
             //添加安全服务器数量
             TerminalUserVo userVo = getUserVo(TerminalUserEnum.SECURITY_SERVER.getCode(), userStatus, list, networkIdString);
-            terminalUserVoList.add(userVo);
+            if(userVo.getUserType() != null){
+                terminalUserVoList.add(userVo);
+            }
         }
         return terminalUserVoList;
     }
@@ -73,13 +78,13 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
             if(userStatus.equals(nmplTerminalUser.getTerminalStatus()) &&
                     userType.equals(nmplTerminalUser.getUserType())){
                 sum++;
-                terminalUserVo.setUploadTime(nmplTerminalUser.getUpdateTime());
+                terminalUserVo.setUploadTime(nmplTerminalUser.getUploadTime());
                 terminalUserVo.setUserType(userType);
                 terminalUserVo.setTerminalStatus(userStatus);
+                terminalUserVo.setSumNumber(String.valueOf(sum));
+                terminalUserVo.setCompanyNetworkId(networkIdString);
             }
         }
-        terminalUserVo.setSumNumber(String.valueOf(sum));
-        terminalUserVo.setCompanyNetworkId(networkIdString);
         return terminalUserVo;
     }
 

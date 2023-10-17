@@ -12,7 +12,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
-    <select id="selectCompanyHeartbeat" parameterType="com.matrictime.network.request.SelectRequest" resultMap="BaseResultMap">
+    <select id="selectCompanyHeartbeat" resultMap="BaseResultMap">
         select
             s.id,s.source_network_id,s.target_network_id,s.status,s.up_value,s.down_value,s.upload_time
         from
@@ -26,6 +26,5 @@
                 group by source_network_id,target_network_id
             ) as a
         where s.source_network_id = a.source_network_id and s.target_network_id = a.target_network_id and s.upload_time = a.q
-        and s.id &gt; #{startId,jdbcType=BIGINT} and s.id &lt; #{endId,jdbcType=BIGINT}
     </select>
 </mapper>
