@@ -573,6 +573,13 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
                 throw new RuntimeException("端口ip不唯一");
             }
         }
+        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
+        NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
+        criteria.andPublicNetworkIpEqualTo(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP());
+        List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
+        if(!CollectionUtils.isEmpty(baseStationInfos)){
+            throw new RuntimeException("公共ip不唯一");
+        }
         //数据插入
         NmplBaseStation nmplbaseStation = new NmplBaseStation();
         BeanUtils.copyProperties(borderBaseStationInfoRequest,nmplbaseStation);
@@ -612,6 +619,16 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
                 throw new RuntimeException("端口ip不唯一");
             }
         }
+        //校验公共ip
+        NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
+        NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
+        criteria.andPublicNetworkIpEqualTo(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP());
+        criteria.andStationIdNotEqualTo(borderBaseStationInfoRequest.getStationId());
+        List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
+        if(!CollectionUtils.isEmpty(baseStationInfos)){
+            throw new RuntimeException("公共ip不唯一");
+        }
+
         //数据更新
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfo nmplBaseStationInfo = new NmplBaseStationInfo();
@@ -698,36 +715,40 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
      */
     private boolean checkIpPort(BorderBaseStationInfoRequest borderBaseStationInfoRequest, List<BaseStationInfoVo> baseStationInfoVoList){
         //做唯一校验
-        List<String> portList = new ArrayList<>();
+//        List<String> portList = new ArrayList<>();
         List<String> insertPortList = new ArrayList<>();
-        String lanPort = borderBaseStationInfoRequest.getLanPort();
-        for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
-
-
-            //判断是不是边界基站
-            if(StationTypeEnum.BOUNDARY.getCode().equals(baseStationInfoVo.getStationType())){
-                PortModel portModel = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkPort(), PortModel.class);
-                if(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP().
-                        equals(baseStationInfoVo.getPublicNetworkIp())){
-                    return false;
-                }
-                //将所有数据库中公共的ip用一个list收集
-                portList.addAll(portModel.getEphemeralPort());
-                portList.addAll(portModel.getSignalingPort());
-                portList.addAll(portModel.getTrunkPort());
-                portList.add(baseStationInfoVo.getLanPort());
-            }else {
-                portList.add(baseStationInfoVo.getPublicNetworkPort());
-            }
-        }
+//        for(BaseStationInfoVo baseStationInfoVo: baseStationInfoVoList){
+//            //判断是不是边界基站
+//            if(StationTypeEnum.BOUNDARY.getCode().equals(baseStationInfoVo.getStationType())){
+//                PortModel portModel = JSONObject.parseObject(baseStationInfoVo.getPublicNetworkPort(), PortModel.class);
+//                if(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP().
+//                        equals(baseStationInfoVo.getPublicNetworkIp())){
+//                    return false;
+//                }
+//                //将所有数据库中公共的ip用一个list收集
+//                portList.addAll(portModel.getEphemeralPort());
+//                portList.addAll(portModel.getSignalingPort());
+//                portList.addAll(portModel.getTrunkPort());
+//                portList.add(baseStationInfoVo.getLanPort());
+//            }else {
+//                portList.add(baseStationInfoVo.getPublicNetworkPort());
+//            }
+//        }
         //将所有要插入的ip用一个list收集
-        insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getTrunkPort());
-        insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getSignalingPort());
-        insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getEphemeralPort());
-        insertPortList.add(lanPort);
-
+        List<String> trunkPort = borderBaseStationInfoRequest.getPublicNetworkIp().getTrunkPort();
+        if(!StringUtils.isEmpty(trunkPort.get(0))){
+            insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getTrunkPort());
+        }
+        List<String> signalingPort = borderBaseStationInfoRequest.getPublicNetworkIp().getSignalingPort();
+        if(!StringUtils.isEmpty(signalingPort.get(0))){
+            insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getSignalingPort());
+        }
+        List<String> ephemeralPort = borderBaseStationInfoRequest.getPublicNetworkIp().getEphemeralPort();
+        if(!StringUtils.isEmpty(ephemeralPort.get(0))){
+            insertPortList.addAll(borderBaseStationInfoRequest.getPublicNetworkIp().getEphemeralPort());
+        }
         //判断端口是否重复插入
-        return checkPort(portList, insertPortList);
+        return checkInsertPort(insertPortList);
     }
 
     /**
@@ -749,19 +770,19 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
      * @param insertPortList
      * @return
      */
-    private boolean checkPort(List<String> portList,List<String> insertPortList){
-        if(checkInsertPort(insertPortList)){
-            return true;
-        }
-        for(String insertPort: insertPortList){
-            for(String port: portList){
-                if(insertPort.equals(port)){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+//    private boolean checkPort(List<String> portList,List<String> insertPortList){
+//        if(checkInsertPort(insertPortList)){
+//            return true;
+//        }
+//        for(String insertPort: insertPortList){
+//            for(String port: portList){
+//                if(insertPort.equals(port)){
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
+//    }
 
 
     /**
