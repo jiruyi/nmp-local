@@ -107,6 +107,7 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
                 return;
             }
             String commandNetworkId = route.getNetworkId();
+            log.info("CompanyInfoTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
             String reqDataStr = JSONObject.toJSONString(companyInfoVos);
             //发送TCP数据包

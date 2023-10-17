@@ -107,7 +107,7 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
                 return;
             }
             String commandNetworkId = route.getNetworkId();
-            log.info("AlarmInfoTask  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
+            log.info("BorderStationTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
             String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
             //发送TCP数据包
