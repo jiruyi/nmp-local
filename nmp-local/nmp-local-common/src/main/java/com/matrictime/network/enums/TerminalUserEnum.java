@@ -46,8 +46,6 @@ public enum TerminalUserEnum {
             put("03",ON_LINE);
             put("04",OFF_LINE);
             put("05",LOG_OUT);
-            put("21",ONE_MACHINE);
-            put("22",SECURITY_SERVER);
         }
 
     };
