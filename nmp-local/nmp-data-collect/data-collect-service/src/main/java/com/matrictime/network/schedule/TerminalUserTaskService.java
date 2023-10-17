@@ -100,6 +100,7 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
                 return;
             }
             String commandNetworkId = route.getNetworkId();
+            log.info("TerminalUserTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
             String reqDataStr = JSONObject.toJSONString(terminalUserVoList);
             //发送TCP数据包

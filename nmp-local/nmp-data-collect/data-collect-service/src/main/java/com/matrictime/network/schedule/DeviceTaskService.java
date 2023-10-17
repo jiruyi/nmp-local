@@ -107,6 +107,7 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
                 return;
             }
             String commandNetworkId = route.getNetworkId();
+            log.info("DeviceTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
             String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
             //发送TCP数据包

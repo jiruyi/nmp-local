@@ -103,6 +103,7 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
                 return;
             }
             String commandNetworkId = route.getNetworkId();
+            log.info("SystemHeartTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
             String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
             //发送TCP数据包

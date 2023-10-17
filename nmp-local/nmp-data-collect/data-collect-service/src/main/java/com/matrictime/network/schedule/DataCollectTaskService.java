@@ -102,6 +102,7 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
                 return;
             }
             String commandNetworkId = route.getNetworkId();
+            log.info("DataCollectTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
             String reqDataStr = JSONObject.toJSONString(dataCollectVos);
             //发送TCP数据包
