@@ -42,9 +42,11 @@ public class CompanyHeartbeatDomainServiceImpl implements CompanyHeartbeatDomain
         List<CompanyHeartbeatVo> list = new ArrayList<>();
         for(NmplCompanyHeartbeat nmplCompanyHeartbeat: nmplCompanyHeartbeats){
             CompanyHeartbeatVo companyHeartbeatVo = new CompanyHeartbeatVo();
+            String sourceId = changeNetworkId(nmplCompanyHeartbeat.getSourceNetworkId());
+            String targetId = changeNetworkId(nmplCompanyHeartbeat.getTargetNetworkId());
             //获取小区唯一标识
-            companyHeartbeatVo.setSourceCompanyNetworkId(NetworkIdUtil.splitNetworkId(nmplCompanyHeartbeat.getSourceNetworkId()));
-            companyHeartbeatVo.setTargetCompanyNetworkId(NetworkIdUtil.splitNetworkId(nmplCompanyHeartbeat.getTargetNetworkId()));
+            companyHeartbeatVo.setSourceCompanyNetworkId(NetworkIdUtil.splitNetworkId(sourceId));
+            companyHeartbeatVo.setTargetCompanyNetworkId(NetworkIdUtil.splitNetworkId(targetId));
             BeanUtils.copyProperties(nmplCompanyHeartbeat,companyHeartbeatVo);
             list.add(companyHeartbeatVo);
         }
@@ -58,4 +60,20 @@ public class CompanyHeartbeatDomainServiceImpl implements CompanyHeartbeatDomain
         record.setTableName(businessDataEnum);
         return  dataPushRecordMapper.insertSelective(record);
     }
+
+    /**
+     * 入网id1 16转10 进制
+     * @param networkId
+     * @return
+     */
+    private String changeNetworkId(String networkId){
+        String[] split = networkId.split("-");
+        String networkStr = "";
+        for(int i = 0; i <= split.length -1;i++){
+            Integer change = Integer.parseInt(split[i],16);
+            networkStr = networkStr + change + "-";
+        }
+        return networkStr.substring(0,networkStr.length() - 1);
+    }
+
 }
