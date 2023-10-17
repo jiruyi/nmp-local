@@ -33,6 +33,10 @@ public class DataConstants {
 
     public static final String NMPL_ALARM_INFO  = "nmpl_alarm_info";
 
+    public static final String NMPL_COMPANY_HEARTBEAT  = "nmpl_company_heartbeat";
+
+    public static final String NMPL_COMPANY_INFO = "nmpl_company_info";
+
     public static final Long ALARM_INFO_EVERY_COUNT  = 200l;
 
     public static final String SPLIT_LINE  = "-";
