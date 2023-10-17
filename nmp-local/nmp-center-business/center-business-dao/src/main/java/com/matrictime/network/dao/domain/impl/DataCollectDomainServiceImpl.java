@@ -154,6 +154,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         NmplCompanyInfoExample companyInfoExample = new NmplCompanyInfoExample();
         NmplCompanyInfoExample.Criteria criteria = companyInfoExample.createCriteria();
         criteria.andIsExistEqualTo(true);
+        criteria.andCompanyTypeEqualTo("02");
         List<NmplCompanyInfo> companyInfos = companyInfoMapper.selectByExample(companyInfoExample);
         if(CollectionUtils.isEmpty(companyInfos)){
             return null;
