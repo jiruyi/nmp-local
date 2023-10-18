@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.DataTimeVo;
 import com.matrictime.network.modelVo.LoanVo;
@@ -37,6 +38,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
+    @SystemLog(opermodul = "流量采集",operDesc = "分别获取各个流量的总和",operType = "查询")
     @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/sumDataCollect",method = RequestMethod.POST)
     public Result<Double> sumDataCollect(@RequestBody DataCollectRequest dataCollectRequest){
@@ -59,6 +61,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
+    @SystemLog(opermodul = "流量采集",operDesc = "分别获取单个小区各个流量",operType = "查询")
     @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/sumCompanyDataCollect",method = RequestMethod.POST)
     public Result<Double> sumCompanyDataCollect(@RequestBody DataCollectRequest dataCollectRequest){
@@ -84,6 +87,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
+    @SystemLog(opermodul = "流量采集",operDesc = "查询各个流量时间点的流量图",operType = "查询")
     @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/selectLoadData",method = RequestMethod.POST)
     public Result<List<DataTimeVo>> selectLoadData(@RequestBody DataCollectRequest dataCollectRequest){
@@ -103,6 +107,7 @@ public class DataCollectController {
      * @param
      * @return
      */
+    @SystemLog(opermodul = "流量采集",operDesc = "查询单个小区流量值占比",operType = "查询")
     @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/selectCompanyData",method = RequestMethod.POST)
     public Result<List<PercentageFlowVo>> selectCompanyData(){
@@ -122,6 +127,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
+    @SystemLog(opermodul = "流量采集",operDesc = "查询单个小区流量折线图",operType = "查询")
     @RequiresPermissions("sys:accusation:query")
     @RequestMapping(value = "/selectCompanyLoadData",method = RequestMethod.POST)
     public Result<List<DataTimeVo>> selectCompanyLoadData(@RequestBody DataCollectRequest dataCollectRequest){
@@ -147,6 +153,7 @@ public class DataCollectController {
      * @param dataCollectRequest
      * @return
      */
+    @SystemLog(opermodul = "流量采集",operDesc = "查询带宽",operType = "查询")
     @RequestMapping(value = "/selectLoan",method = RequestMethod.POST)
     public Result<List<LoanVo>> selectLoan(@RequestBody DataCollectRequest dataCollectRequest){
         Result<List<LoanVo>> result = new Result<>();

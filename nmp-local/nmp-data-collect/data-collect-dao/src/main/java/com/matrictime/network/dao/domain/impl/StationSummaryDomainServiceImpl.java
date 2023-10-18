@@ -42,15 +42,13 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      */
     @Override
     public StationSummaryVo selectSystemHeart() {
-
         List<NmplSystemHeartbeat> nmplSystemHeartbeats = systemHeartbeatExtMapper.selectSystemHeart();
         if(CollectionUtils.isEmpty(nmplSystemHeartbeats)){
             return null;
         }
-        String stationNetworkId = getStationNetworkId(nmplSystemHeartbeats.get(0));
+        String stationNetworkId = changeNetworkId(nmplSystemHeartbeats.get(0).getSourceId());
         //切割小区唯一标识符
         String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
-
         StationSummaryVo stationSummaryVo = new StationSummaryVo();
         stationSummaryVo.setSumNumber(String.valueOf(nmplSystemHeartbeats.size()));
         stationSummaryVo.setSumType(StationSummaryEnum.TOTAL_NET_WORKS.getCode());
@@ -178,5 +176,20 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
             stationNetworkId = nmplDeviceInfoList.get(0).getStationNetworkId();
         }
         return stationNetworkId;
+    }
+
+    /**
+     * 入网id1 16转10 进制
+     * @param networkId
+     * @return
+     */
+    private String changeNetworkId(String networkId){
+        String[] split = networkId.split("-");
+        String networkStr = "";
+        for(int i = 0; i <= split.length -1;i++){
+            Integer change = Integer.parseInt(split[i],16);
+            networkStr = networkStr + change + "-";
+        }
+        return networkStr.substring(0,networkStr.length() - 3);
     }
 }

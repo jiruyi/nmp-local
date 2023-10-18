@@ -3,8 +3,10 @@ package com.matrictime.network.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.domain.TerminalUserDomainService;
+import com.matrictime.network.dao.mapper.NmplTerminalUserMapper;
 import com.matrictime.network.dao.model.NmplCompanyInfo;
 import com.matrictime.network.dao.model.NmplTerminalUser;
+import com.matrictime.network.dao.model.NmplTerminalUserExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CompanyInfoVo;
 import com.matrictime.network.modelVo.DataPushBody;
@@ -31,6 +33,9 @@ public class TerminalUserServiceImpl implements TerminalUserService, DataHandler
 
     @Resource
     private TerminalUserDomainService terminalUserDomainService;
+
+    @Resource
+    private NmplTerminalUserMapper terminalUserMapper;
 
     @Transactional
     @Override
@@ -63,6 +68,8 @@ public class TerminalUserServiceImpl implements TerminalUserService, DataHandler
             if(ObjectUtils.isEmpty(dataPushBody)){
                 return;
             }
+            NmplTerminalUserExample terminalUserExample = new NmplTerminalUserExample();
+            terminalUserMapper.deleteByExample(terminalUserExample);
             String dataJsonStr = dataPushBody.getBusiDataJsonStr();
             List<TerminalUserVo> terminalUserVoList = JSONArray.parseArray(dataJsonStr, TerminalUserVo.class);
             for(TerminalUserVo terminalUserVo: terminalUserVoList){

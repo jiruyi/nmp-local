@@ -91,7 +91,7 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
         }
         try {
             //业务逻辑 查询数据
-            StationSummaryVo stationSummaryVo = summaryDomainService.selectStation();
+            StationSummaryVo stationSummaryVo = summaryDomainService.selectSystemHeart();
             if(ObjectUtils.isEmpty(stationSummaryVo)){
                 return;
             }

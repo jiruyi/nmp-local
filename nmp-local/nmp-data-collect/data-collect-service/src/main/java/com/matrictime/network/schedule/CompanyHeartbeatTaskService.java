@@ -123,9 +123,7 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
                     return;
                 }
                 if(channelFuture.isSuccess()){
-                    Long maxId = list.get(list.size()-1).getId();
-                    log.info("company_heartbeat 此次推送的最大 maxId is :{}", maxId);
-                    heartbeatDomainService.insertDataPushRecord(maxId, DataConstants.NMPL_COMPANY_HEARTBEAT);
+                    log.info("companyHeartbeatTaskService 推送成功");
                 }
             }
         } catch (Exception e) {

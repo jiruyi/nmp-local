@@ -21,15 +21,15 @@
             nmpl_terminal_user a,
             (
                 SELECT
-                    max(upload_time) AS q,
-                    terminal_status
+                    max(id) AS q,
+                    terminal_network_id
                 FROM
                     nmpl_terminal_user
                 GROUP BY
-                    terminal_status
+                    terminal_network_id
             ) AS b
         WHERE
-            a.upload_time = b.q
-          AND a.terminal_status = b.terminal_status
+            a.id = b.q
+          AND a.terminal_network_id = b.terminal_network_id
     </select>
 </mapper>
