@@ -47,7 +47,7 @@ import java.util.concurrent.ExecutionException;
 public class BorderStationTaskService implements SchedulingConfigurer, BusinessDataService {
 
     //默认毫秒值
-    private long timer = 3000;
+    private long timer = 300000;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
