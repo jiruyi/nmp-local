@@ -89,11 +89,13 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                     NmplTerminalUserExample onlineExample = new NmplTerminalUserExample();
                     onlineExample.createCriteria().andCompanyNetworkIdEqualTo(companyInfo.getCompanyNetworkId()).andTerminalStatusEqualTo(TerminalUserEnum.ON_LINE.getCode());
                     List<NmplTerminalUser> onlineUsers = terminalUserMapper.selectByExample(onlineExample);
-                    String online = ZERO_STRING;
+                    int online = ZERO;
                     if (!CollectionUtils.isEmpty(onlineUsers)){
-                        online = onlineUsers.get(0).getSumNumber();
+                        for (int i=0;i<onlineUsers.size();i++){
+                            online = online + Integer.valueOf(onlineUsers.get(i).getSumNumber());
+                        }
                     }
-                    onlineUser.add(online);
+                    onlineUser.add(String.valueOf(online));
 
                     // 获取接入用户列表
                     NmplTerminalUserExample accessExample = new NmplTerminalUserExample();
@@ -106,7 +108,7 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                     int access = ZERO;
                     if (!CollectionUtils.isEmpty(accessUsers)){
                         for (int i=0; i<accessUsers.size();i++){
-                            access = access + Integer.valueOf(accessUsers.get(0).getSumNumber());
+                            access = access + Integer.valueOf(accessUsers.get(i).getSumNumber());
                         }
 
                     }
