@@ -9,6 +9,7 @@ import com.matrictime.network.enums.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CompanyHeartbeatVo;
 import com.matrictime.network.modelVo.CompanyInfoVo;
+import com.matrictime.network.modelVo.LoanVo;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.QueryCompanyUserResp;
 import com.matrictime.network.response.QueryDeviceResp;
@@ -21,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -95,7 +97,11 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
 
                     // 获取接入用户列表
                     NmplTerminalUserExample accessExample = new NmplTerminalUserExample();
-                    accessExample.createCriteria().andCompanyNetworkIdEqualTo(companyInfo.getCompanyNetworkId()).andTerminalStatusEqualTo(TerminalUserEnum.REGISTER.getCode());
+                    List<String> terminalStatus = new ArrayList<>();
+                    terminalStatus.add(TerminalUserEnum.REGISTER.getCode());
+                    terminalStatus.add(TerminalUserEnum.ON_LINE.getCode());
+                    terminalStatus.add(TerminalUserEnum.OFF_LINE.getCode());
+                    accessExample.createCriteria().andCompanyNetworkIdEqualTo(companyInfo.getCompanyNetworkId()).andTerminalStatusIn(terminalStatus);
                     List<NmplTerminalUser> accessUsers = terminalUserMapper.selectByExample(accessExample);
                     String access = ZERO_STRING;
                     if (!CollectionUtils.isEmpty(accessUsers)){
@@ -306,23 +312,23 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                     vo.setSameAsCount(String.valueOf(sameAsCount));
 
                     // 获取带宽信息
-                    NmplDataCollectExample accessExample = new NmplDataCollectExample();
-                    accessExample.createCriteria().andDataItemCodeEqualTo(DataCollectEnum.ACCESS_BANDWITH.getCode()).andCompanyNetworkIdEqualTo(companyNetworkId);
-                    List<NmplDataCollect> accessCollects = dataCollectMapper.selectByExample(accessExample);
-                    if (!CollectionUtils.isEmpty(accessCollects)){
-                        String sumNumber = accessCollects.get(0).getSumNumber();
-                        vo.setAccessBandwith(sumNumber);
-                        vo.setAccessBandwithUnit(accessCollects.get(0).getUnit());
-                    }
-
-                    NmplDataCollectExample intervalExample = new NmplDataCollectExample();
-                    intervalExample.createCriteria().andDataItemCodeEqualTo(DataCollectEnum.INTERVAL_BANDWITH.getCode()).andCompanyNetworkIdEqualTo(companyNetworkId);
-                    List<NmplDataCollect> intervalCollects = dataCollectMapper.selectByExample(intervalExample);
-                    if (!CollectionUtils.isEmpty(intervalCollects)){
-                        String sumNumber = intervalCollects.get(0).getSumNumber();
-                        vo.setIntervalBandwith(sumNumber);
-                        vo.setIntervalBandwithUnit(intervalCollects.get(0).getUnit());
-                    }
+//                    NmplDataCollectExample accessExample = new NmplDataCollectExample();
+//                    accessExample.createCriteria().andDataItemCodeEqualTo(DataCollectEnum.ACCESS_BANDWITH.getCode()).andCompanyNetworkIdEqualTo(companyNetworkId);
+//                    List<NmplDataCollect> accessCollects = dataCollectMapper.selectByExample(accessExample);
+//                    if (!CollectionUtils.isEmpty(accessCollects)){
+//                        String sumNumber = accessCollects.get(0).getSumNumber();
+//                        vo.setAccessBandwith(sumNumber);
+//                        vo.setAccessBandwithUnit(accessCollects.get(0).getUnit());
+//                    }
+//
+//                    NmplDataCollectExample intervalExample = new NmplDataCollectExample();
+//                    intervalExample.createCriteria().andDataItemCodeEqualTo(DataCollectEnum.INTERVAL_BANDWITH.getCode()).andCompanyNetworkIdEqualTo(companyNetworkId);
+//                    List<NmplDataCollect> intervalCollects = dataCollectMapper.selectByExample(intervalExample);
+//                    if (!CollectionUtils.isEmpty(intervalCollects)){
+//                        String sumNumber = intervalCollects.get(0).getSumNumber();
+//                        vo.setIntervalBandwith(sumNumber);
+//                        vo.setIntervalBandwithUnit(intervalCollects.get(0).getUnit());
+//                    }
 
                     // 获取设备信息
                     long base = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.BASE_STATION.getCode(), companyNetworkId));
@@ -336,6 +342,13 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                     if (!CollectionUtils.isEmpty(pcTerminalUsers)){
                         vo.setTerminalDevices(pcTerminalUsers.get(0).getSumNumber());
                     }
+
+                    // 获取带宽信息(暂时按设备数*10M计算)
+                    vo.setAccessBandwith(String.valueOf(base * 10));
+                    vo.setAccessBandwithUnit("M");
+                    vo.setIntervalBandwith(String.valueOf(border * 10));
+                    vo.setIntervalBandwithUnit("M");
+
                     companyInfos.add(vo);
                 }
 
