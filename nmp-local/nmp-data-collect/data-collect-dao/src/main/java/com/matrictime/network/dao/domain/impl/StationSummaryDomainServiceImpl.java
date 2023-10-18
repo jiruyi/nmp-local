@@ -46,7 +46,7 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         }
         Set<String> stringSet = new HashSet<String>();
         for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
-            String stationNetworkId = changeNetworkId(nmplSystemHeartbeats.get(0).getSourceId());
+            String stationNetworkId = changeNetworkId(nmplSystemHeartbeat.getSourceId());
             //切割小区唯一标识符
             String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
             nmplSystemHeartbeat.setSourceId(networkIdString);
