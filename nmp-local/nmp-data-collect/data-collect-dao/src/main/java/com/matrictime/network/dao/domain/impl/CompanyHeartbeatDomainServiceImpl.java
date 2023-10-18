@@ -1,16 +1,12 @@
 package com.matrictime.network.dao.domain.impl;
 
-import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.util.NetworkIdUtil;
 import com.matrictime.network.dao.domain.CompanyHeartbeatDomainService;
 import com.matrictime.network.dao.mapper.NmplDataPushRecordMapper;
 import com.matrictime.network.dao.mapper.extend.NmplCompanyHeartbeatExtMapper;
 import com.matrictime.network.dao.model.NmplCompanyHeartbeat;
 import com.matrictime.network.dao.model.NmplDataPushRecord;
-import com.matrictime.network.dao.model.NmplDataPushRecordExample;
 import com.matrictime.network.modelVo.CompanyHeartbeatVo;
-import com.matrictime.network.modelVo.CompanyInfoVo;
-import com.matrictime.network.request.SelectRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -69,7 +65,7 @@ public class CompanyHeartbeatDomainServiceImpl implements CompanyHeartbeatDomain
     private String changeNetworkId(String networkId){
         String[] split = networkId.split("-");
         String networkStr = "";
-        for(int i = 0; i <= split.length -1;i++){
+        for(int i = 0; i <= 4;i++){
             Integer change = Integer.parseInt(split[i],16);
             networkStr = networkStr + change + "-";
         }
