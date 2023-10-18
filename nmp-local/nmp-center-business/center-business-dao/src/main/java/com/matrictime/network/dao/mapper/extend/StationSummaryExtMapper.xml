@@ -9,6 +9,18 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+
+  <resultMap id="CompanyHeartbeatMap" type="com.matrictime.network.dao.model.NmplCompanyHeartbeat">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="source_company_network_id" jdbcType="VARCHAR" property="sourceCompanyNetworkId" />
+    <result column="target_company_network_id" jdbcType="VARCHAR" property="targetCompanyNetworkId" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="up_value" jdbcType="VARCHAR" property="upValue" />
+    <result column="down_value" jdbcType="VARCHAR" property="downValue" />
+    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
   <sql id="Base_Column_List">
     sum_type, company_network_id, sum_number, upload_time, create_time, update_time
   </sql>
@@ -21,5 +33,22 @@
         and company_network_id = #{companyNetworkId,jdbcType=VARCHAR}
       </if>
     </where>
+  </select>
+
+  <select id="queryHeart" resultMap="CompanyHeartbeatMap">
+    select id,
+           a.source_company_network_id as source_company_network_id,
+           a.target_company_network_id as target_company_network_id,
+           status,
+           up_value,
+           down_value,
+           upload_time,
+           create_time,
+           update_time
+    from nmpl_company_heartbeat a,
+         (select max(id) as q, source_company_network_id, target_company_network_id
+          from nmpl_company_heartbeat
+          group by source_company_network_id, target_company_network_id) b
+    where a.id = b.q
   </select>
 </mapper>

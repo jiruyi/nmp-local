@@ -360,8 +360,7 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                 }
 
                 // 小区关联信息
-                NmplCompanyHeartbeatExample heartbeatExample = new NmplCompanyHeartbeatExample();
-                List<NmplCompanyHeartbeat> companyHeartbeats = companyHeartbeatMapper.selectByExample(heartbeatExample);
+                List<NmplCompanyHeartbeat> companyHeartbeats = summaryExtMapper.queryHeart();
                 if (!CollectionUtils.isEmpty(companyHeartbeats)){
                     for (NmplCompanyHeartbeat heartbeat:companyHeartbeats){
                         if (companyNetIds.contains(heartbeat.getSourceCompanyNetworkId()) && companyNetIds.contains(heartbeat.getTargetCompanyNetworkId())){
