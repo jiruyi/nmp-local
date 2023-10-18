@@ -85,17 +85,24 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         if(CollectionUtils.isEmpty(baseStationInfos)){
             return null;
         }
-        baseStationInfos.stream().forEach(item -> NetworkIdUtil.splitNetworkId(item.getStationNetworkId()));
-        Map<String, List<NmplBaseStationInfo>> maps = baseStationInfos.stream().collect(
-                Collectors.groupingBy(NmplBaseStationInfo::getStationNetworkId));
-        //切割小区唯一标识符
+        Set<String> stringSet = new HashSet<String>();
+        for(NmplBaseStationInfo nmplBaseStationInfo: baseStationInfos){
+            //切割小区唯一标识符
+            String networkIdString = NetworkIdUtil.splitNetworkId(nmplBaseStationInfo.getStationNetworkId());
+            stringSet.add(networkIdString);
+        }
         List<StationSummaryVo> summaryVos = new ArrayList<>();
-        for(String netId :maps.keySet()){
-            String networkIdString = NetworkIdUtil.splitNetworkId(netId);
+        for(String networkIdString: stringSet){
+            int i = 0;
+            for(NmplBaseStationInfo nmplBaseStationInfo: baseStationInfos){
+                if(networkIdString.equals(NetworkIdUtil.splitNetworkId(nmplBaseStationInfo.getStationNetworkId()))){
+                    i++;
+                }
+            }
             StationSummaryVo stationSummaryVo = new StationSummaryVo();
             stationSummaryVo.setCompanyNetworkId(networkIdString);
             stationSummaryVo.setSumType(StationSummaryEnum.BASE_STATION.getCode());
-            stationSummaryVo.setSumNumber(String.valueOf(maps.get(netId).size()));
+            stationSummaryVo.setSumNumber(String.valueOf(i));
             summaryVos.add(stationSummaryVo);
         }
         return summaryVos;
@@ -116,17 +123,24 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         if(CollectionUtils.isEmpty(nmplDeviceInfoList)){
             return null;
         }
-        nmplDeviceInfoList.stream().forEach(item -> NetworkIdUtil.splitNetworkId(item.getStationNetworkId()));
-        Map<String, List<NmplDeviceInfo>> maps = nmplDeviceInfoList.stream().collect(
-                Collectors.groupingBy(NmplDeviceInfo::getStationNetworkId));
-        //切割小区唯一标识符
+        Set<String> stringSet = new HashSet<String>();
+        for(NmplDeviceInfo nmplDeviceInfo: nmplDeviceInfoList){
+            //切割小区唯一标识符
+            String networkIdString = NetworkIdUtil.splitNetworkId(nmplDeviceInfo.getStationNetworkId());
+            stringSet.add(networkIdString);
+        }
         List<StationSummaryVo> summaryVos = new ArrayList<>();
-        for(String netId :maps.keySet()){
-            String networkIdString = NetworkIdUtil.splitNetworkId(netId);
+        for(String networkIdString: stringSet){
+            int i = 0;
+            for(NmplDeviceInfo nmplDeviceInfo: nmplDeviceInfoList){
+                if(networkIdString.equals(NetworkIdUtil.splitNetworkId(nmplDeviceInfo.getStationNetworkId()))){
+                    i++;
+                }
+            }
             StationSummaryVo stationSummaryVo = new StationSummaryVo();
             stationSummaryVo.setCompanyNetworkId(networkIdString);
             stationSummaryVo.setSumType(StationSummaryEnum.KET_CENTER.getCode());
-            stationSummaryVo.setSumNumber(String.valueOf(maps.get(netId).size()));
+            stationSummaryVo.setSumNumber(String.valueOf(i));
             summaryVos.add(stationSummaryVo);
         }
         return summaryVos;
@@ -147,17 +161,25 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         if(CollectionUtils.isEmpty(baseStationInfos)){
             return null;
         }
-        baseStationInfos.stream().forEach(item -> NetworkIdUtil.splitNetworkId(item.getStationNetworkId()));
-        Map<String, List<NmplBaseStationInfo>> maps = baseStationInfos.stream().collect(
-                Collectors.groupingBy(NmplBaseStationInfo::getStationNetworkId));
-        //切割小区唯一标识符
+
+        Set<String> stringSet = new HashSet<String>();
+        for(NmplBaseStationInfo nmplBaseStationInfo: baseStationInfos){
+            //切割小区唯一标识符
+            String networkIdString = NetworkIdUtil.splitNetworkId(nmplBaseStationInfo.getStationNetworkId());
+            stringSet.add(networkIdString);
+        }
         List<StationSummaryVo> summaryVos = new ArrayList<>();
-        for(String netId :maps.keySet()){
-            String networkIdString = NetworkIdUtil.splitNetworkId(netId);
+        for(String networkIdString: stringSet){
+            int i = 0;
+            for(NmplBaseStationInfo nmplBaseStationInfo: baseStationInfos){
+                if(networkIdString.equals(NetworkIdUtil.splitNetworkId(nmplBaseStationInfo.getStationNetworkId()))){
+                    i++;
+                }
+            }
             StationSummaryVo stationSummaryVo = new StationSummaryVo();
             stationSummaryVo.setCompanyNetworkId(networkIdString);
             stationSummaryVo.setSumType(StationSummaryEnum.BORDER_BASE_STATION.getCode());
-            stationSummaryVo.setSumNumber(String.valueOf(maps.get(netId).size()));
+            stationSummaryVo.setSumNumber(String.valueOf(i));
             summaryVos.add(stationSummaryVo);
         }
         return summaryVos;
