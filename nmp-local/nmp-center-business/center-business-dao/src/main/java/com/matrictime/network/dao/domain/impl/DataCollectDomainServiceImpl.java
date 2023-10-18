@@ -39,9 +39,6 @@ import java.util.List;
 public class DataCollectDomainServiceImpl implements DataCollectDomainService {
 
     @Resource
-    private NmplDataCollectMapper dataCollectMapper;
-
-    @Resource
     private DataCollectExtMapper dataCollectExtMapper;
 
     @Resource
@@ -63,6 +60,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         List<String> list = getTimeList();
         for(int i = 0;i < list.size();i++){
             double sum = 0d;
+            BigDecimal stationSumBig = new BigDecimal(Double.toString(sum));
             DataTimeVo dataTimeVo = new DataTimeVo();
             for(NmplDataCollect nmplDataCollect: nmplDataCollects){
                 String formatTime = formatter.format(nmplDataCollect.getUploadTime());
@@ -70,11 +68,15 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
                     if(StringUtils.isEmpty(nmplDataCollect.getSumNumber())){
                         nmplDataCollect.setSumNumber("0");
                     }
-                    sum = sum + Double.parseDouble(nmplDataCollect.getSumNumber());
+                    BigDecimal itemValue = new BigDecimal(nmplDataCollect.getSumNumber());
+                    stationSumBig = stationSumBig.add(itemValue);
                 }
             }
+            double v = stationSumBig.doubleValue();
+            BigDecimal last = new BigDecimal(Double.toString(v));
+            v = last.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             dataTimeVo.setTime(list.get(i));
-            dataTimeVo.setDataSum(sum);
+            dataTimeVo.setDataSum(v);
             timeVoList.add(dataTimeVo);
         }
         return timeVoList;
@@ -127,6 +129,8 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             for(NmplDataCollect dataCollect: nmplDataCollects){
                 sum = sum + Double.parseDouble(dataCollect.getSumNumber());
             }
+            BigDecimal last = new BigDecimal(Double.toString(sum));
+            sum = last.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             return sum;
         }
         return 0d;
