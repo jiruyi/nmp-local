@@ -93,6 +93,8 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
             for(SystemHeartbeatVo nmplSystemHeartbeat: systemHeartbeatVoList){
                 nmplSystemHeartbeat.setTargetName(getTargetName(nmplSystemHeartbeat));
                 nmplSystemHeartbeat.setSourceName(getSourceName(nmplSystemHeartbeat));
+                nmplSystemHeartbeat.setSourceId(changeNetworkId(nmplSystemHeartbeat.getSourceId()));
+                nmplSystemHeartbeat.setTargetId(changeNetworkId(nmplSystemHeartbeat.getTargetId()));
                 list.add(nmplSystemHeartbeat);
             }
             systemHeartbeatResponse.setList(list);
@@ -110,12 +112,12 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
         //来源设备
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
-        criteria.andStationIdEqualTo(nmplSystemHeartbeat.getSourceId());
+        criteria.andStationNetworkIdEqualTo(changeNetworkId(nmplSystemHeartbeat.getSourceId()));
         List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         if(CollectionUtils.isEmpty(baseStationInfos)){
             NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
             NmplDeviceCountExample.Criteria criteria1 = nmplDeviceCountExample.createCriteria();
-            criteria1.andDeviceIdEqualTo(nmplSystemHeartbeat.getSourceId());
+            criteria1.andStationNetworkIdEqualTo(changeNetworkId(nmplSystemHeartbeat.getSourceId()));
             List<NmplDeviceCount> nmplDeviceCounts = nmplDeviceCountMapper.selectByExample(nmplDeviceCountExample);
             if(CollectionUtils.isEmpty(nmplDeviceCounts)){
                 return "";
@@ -134,12 +136,12 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
         //目标设备
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
-        criteria.andStationIdEqualTo(nmplSystemHeartbeat.getTargetId());
+        criteria.andStationNetworkIdEqualTo(changeNetworkId(nmplSystemHeartbeat.getTargetId()));
         List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         if(CollectionUtils.isEmpty(baseStationInfos)){
             NmplDeviceCountExample nmplDeviceCountExample = new NmplDeviceCountExample();
             NmplDeviceCountExample.Criteria criteria1 = nmplDeviceCountExample.createCriteria();
-            criteria1.andDeviceIdEqualTo(nmplSystemHeartbeat.getTargetId());
+            criteria1.andStationNetworkIdEqualTo(changeNetworkId(nmplSystemHeartbeat.getTargetId()));
             List<NmplDeviceCount> nmplDeviceCounts = nmplDeviceCountMapper.selectByExample(nmplDeviceCountExample);
             if(CollectionUtils.isEmpty(nmplDeviceCounts)){
                 return "";
@@ -147,6 +149,21 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
             return nmplDeviceCounts.get(0).getDeviceName();
         }
         return baseStationInfos.get(0).getStationName();
+    }
+
+    /**
+     * 入网id1 16转10 进制
+     * @param networkId
+     * @return
+     */
+    private String changeNetworkId(String networkId){
+        String[] split = networkId.split("-");
+        String networkStr = "";
+        for(int i = 0; i <= 4;i++){
+            Integer change = Integer.parseInt(split[i],16);
+            networkStr = networkStr + change + "-";
+        }
+        return networkStr.substring(0,networkStr.length() - 1);
     }
 
 }
