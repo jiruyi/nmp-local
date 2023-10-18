@@ -103,11 +103,14 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                     terminalStatus.add(TerminalUserEnum.OFF_LINE.getCode());
                     accessExample.createCriteria().andCompanyNetworkIdEqualTo(companyInfo.getCompanyNetworkId()).andTerminalStatusIn(terminalStatus);
                     List<NmplTerminalUser> accessUsers = terminalUserMapper.selectByExample(accessExample);
-                    String access = ZERO_STRING;
+                    int access = ZERO;
                     if (!CollectionUtils.isEmpty(accessUsers)){
-                        access = accessUsers.get(0).getSumNumber();
+                        for (int i=0; i<accessUsers.size();i++){
+                            access = access + Integer.valueOf(accessUsers.get(0).getSumNumber());
+                        }
+
                     }
-                    accessUser.add(access);
+                    accessUser.add(String.valueOf(access));
                 }
                 resp.setCompanyInfo(companyInfos);
                 resp.setAccessUser(accessUser);
@@ -341,6 +344,8 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                     List<NmplTerminalUser> pcTerminalUsers = terminalUserMapper.selectByExample(pcUserExample);
                     if (!CollectionUtils.isEmpty(pcTerminalUsers)){
                         vo.setTerminalDevices(pcTerminalUsers.get(0).getSumNumber());
+                    }else {
+                        vo.setTerminalDevices(String.valueOf(ZERO));
                     }
 
                     // 获取带宽信息(暂时按设备数*10M计算)
