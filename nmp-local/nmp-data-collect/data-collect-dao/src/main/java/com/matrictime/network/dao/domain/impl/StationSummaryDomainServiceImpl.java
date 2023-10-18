@@ -181,6 +181,6 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
             Integer change = Integer.parseInt(split[i],16);
             networkStr = networkStr + change + "-";
         }
-        return networkStr.substring(0,networkStr.length() - 1);
+        return networkStr.substring(0,networkStr.length() - 3);
     }
 }
