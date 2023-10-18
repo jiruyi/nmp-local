@@ -15,7 +15,7 @@ public class NetworkIdUtil {
         //切割小区唯一标识符
         String[] split = str.split("-");
         String networkIdString = "";
-        for(int i = 0;i < split.length-1;i++){
+        for(int i = 0;i < 4;i++){
             if(i < split.length-2){
                 networkIdString = networkIdString + split[i] + "-";
             }else {
