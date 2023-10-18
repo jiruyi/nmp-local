@@ -11,7 +11,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
     driver-class-name: com.mysql.cj.jdbc.Driver              # mysql驱动包
-    url: jdbc:mysql://192.168.72.14:3306/nmp_local   # 数据库名称
+    url: jdbc:mysql://192.168.72.225:3306/nmp_local   # 数据库名称
     username: root
     password: Admin@1234
     druid:
@@ -43,18 +43,18 @@ spring:
       file-size-threshold: 2KB
       max-file-size: 300MB
       max-request-size: 215MB
-  redis:
-    database: 0
-    host: 192.168.72.225
-    port: 6379
-    password: 123456
-    timeout: 5000
-    lettuce:
-      pool:
-        max-active: 100
-        max-wait: -1
-        max-idle: 8
-        min-idle: 0
+#  redis:
+#    database: 0
+#    host: 192.168.72.225
+#    port: 6379
+#    password: 123456
+#    timeout: 5000
+#    lettuce:
+#      pool:
+#        max-active: 100
+#        max-wait: -1
+#        max-idle: 8
+#        min-idle: 0
   cloud:
     sentinel:
       transport:
