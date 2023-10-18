@@ -1,6 +1,5 @@
 package com.matrictime.network.dao.domain.impl;
 
-import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.util.NetworkIdUtil;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
@@ -10,13 +9,14 @@ import com.matrictime.network.dao.mapper.extend.NmplSystemHeartbeatExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.StationSummaryEnum;
 import com.matrictime.network.modelVo.StationSummaryVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author by wangqiang
@@ -74,14 +74,23 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         if(CollectionUtils.isEmpty(baseStationInfos)){
             return null;
         }
+        baseStationInfos.stream().forEach(item -> NetworkIdUtil.splitNetworkId(item.getStationNetworkId()));
+        Map<String, List<NmplBaseStationInfo>> maps = baseStationInfos.stream().collect(
+                Collectors.groupingBy(NmplBaseStationInfo::getStationNetworkId));
+
         String stationNetworkId = baseStationInfos.get(0).getStationNetworkId();
         //切割小区唯一标识符
-        String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
-        StationSummaryVo stationSummaryVo = new StationSummaryVo();
-        stationSummaryVo.setCompanyNetworkId(networkIdString);
-        stationSummaryVo.setSumType(StationSummaryEnum.BASE_STATION.getCode());
-        stationSummaryVo.setSumNumber(String.valueOf(baseStationInfos.size()));
-        return stationSummaryVo;
+        List<StationSummaryVo> summaryVos = new ArrayList<>();
+        for(String netId :maps.keySet()){
+            String networkIdString = NetworkIdUtil.splitNetworkId(netId);
+            StationSummaryVo stationSummaryVo = new StationSummaryVo();
+            stationSummaryVo.setCompanyNetworkId(networkIdString);
+            stationSummaryVo.setSumType(StationSummaryEnum.BASE_STATION.getCode());
+            stationSummaryVo.setSumNumber(String.valueOf(maps.get(netId).size()));
+            summaryVos.add(stationSummaryVo);
+        }
+
+        return summaryVos;
     }
 
     /**
