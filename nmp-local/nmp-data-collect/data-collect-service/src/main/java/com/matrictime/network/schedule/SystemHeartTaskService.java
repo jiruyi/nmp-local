@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -91,8 +92,8 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
         }
         try {
             //业务逻辑 查询数据
-            StationSummaryVo stationSummaryVo = summaryDomainService.selectSystemHeart();
-            if(ObjectUtils.isEmpty(stationSummaryVo)){
+            List<StationSummaryVo> list = summaryDomainService.selectSystemHeart();
+            if(ObjectUtils.isEmpty(list)){
                 return;
             }
             //查询本机数据采集和本运营商的指控中心的入网码
@@ -105,7 +106,7 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
             String commandNetworkId = route.getNetworkId();
             log.info("SystemHeartTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
-            String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
+            String reqDataStr = JSONObject.toJSONString(list);
             //发送TCP数据包
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.SystemHeart,

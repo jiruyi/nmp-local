@@ -29,6 +29,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -90,8 +91,8 @@ public class StationTaskService implements SchedulingConfigurer, BusinessDataSer
         }
         try {
             //业务逻辑 查询数据
-            StationSummaryVo stationSummaryVo = summaryDomainService.selectStation();
-            if(ObjectUtils.isEmpty(stationSummaryVo)){
+            List<StationSummaryVo> list = summaryDomainService.selectStation();
+            if(ObjectUtils.isEmpty(list)){
                 return;
             }
             //查询本机数据采集和本运营商的指控中心的入网码
@@ -104,7 +105,7 @@ public class StationTaskService implements SchedulingConfigurer, BusinessDataSer
             String commandNetworkId = route.getNetworkId();
             log.info("StationTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
-            String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
+            String reqDataStr = JSONObject.toJSONString(list);
             //发送TCP数据包
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Station,

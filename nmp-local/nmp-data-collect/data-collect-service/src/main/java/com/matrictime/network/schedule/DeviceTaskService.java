@@ -94,8 +94,8 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
         }
         try {
             //业务逻辑 查询数据
-            StationSummaryVo stationSummaryVo = summaryDomainService.selectDevice();
-            if(ObjectUtils.isEmpty(stationSummaryVo)){
+            List<StationSummaryVo> list = summaryDomainService.selectDevice();
+            if(ObjectUtils.isEmpty(list)){
                 return;
             }
 
@@ -109,7 +109,7 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
             String commandNetworkId = route.getNetworkId();
             log.info("DeviceTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
-            String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
+            String reqDataStr = JSONObject.toJSONString(list);
             //发送TCP数据包
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Device,

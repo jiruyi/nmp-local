@@ -47,7 +47,7 @@ import java.util.concurrent.ExecutionException;
 public class BorderStationTaskService implements SchedulingConfigurer, BusinessDataService {
 
     //默认毫秒值
-    private long timer = 300000;
+    private long timer = 3000;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -95,8 +95,8 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
         }
         try {
             //业务逻辑 查询数据
-            StationSummaryVo stationSummaryVo = summaryDomainService.selectBorderStation();
-            if(ObjectUtils.isEmpty(stationSummaryVo)){
+            List<StationSummaryVo> list = summaryDomainService.selectBorderStation();
+            if(ObjectUtils.isEmpty(list)){
                 return;
             }
             //查询本机数据采集和本运营商的指控中心的入网码
@@ -109,7 +109,7 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
             String commandNetworkId = route.getNetworkId();
             log.info("BorderStationTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
-            String reqDataStr = JSONObject.toJSONString(stationSummaryVo);
+            String reqDataStr = JSONObject.toJSONString(list);
             //发送TCP数据包
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.BorderStation,

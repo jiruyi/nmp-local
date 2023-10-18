@@ -10,13 +10,13 @@ import java.util.List;
  */
 public interface StationSummaryDomainService {
 
-    StationSummaryVo selectSystemHeart();
+    List<StationSummaryVo> selectSystemHeart();
 
-    StationSummaryVo selectStation();
+    List<StationSummaryVo> selectStation();
 
-    StationSummaryVo selectDevice();
+    List<StationSummaryVo> selectDevice();
 
-    StationSummaryVo selectBorderStation();
+    List<StationSummaryVo> selectBorderStation();
 
     int insertDataPushRecord(Long maxId,String businessDataEnum);
 

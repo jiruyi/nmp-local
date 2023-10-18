@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,20 +39,35 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      * @return
      */
     @Override
-    public StationSummaryVo selectSystemHeart() {
+    public List<StationSummaryVo> selectSystemHeart() {
         List<NmplSystemHeartbeat> nmplSystemHeartbeats = systemHeartbeatExtMapper.selectSystemHeart();
         if(CollectionUtils.isEmpty(nmplSystemHeartbeats)){
             return null;
         }
-        String stationNetworkId = changeNetworkId(nmplSystemHeartbeats.get(0).getSourceId());
-        //切割小区唯一标识符
-        String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
-        StationSummaryVo stationSummaryVo = new StationSummaryVo();
-        stationSummaryVo.setSumNumber(String.valueOf(nmplSystemHeartbeats.size()));
-        stationSummaryVo.setSumType(StationSummaryEnum.TOTAL_NET_WORKS.getCode());
-        stationSummaryVo.setUploadTime(nmplSystemHeartbeats.get(0).getUploadTime());
-        stationSummaryVo.setCompanyNetworkId(networkIdString);
-        return stationSummaryVo;
+        Set<String> stringSet = new HashSet<String>();
+        for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
+            String stationNetworkId = changeNetworkId(nmplSystemHeartbeats.get(0).getSourceId());
+            //切割小区唯一标识符
+            String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
+            nmplSystemHeartbeat.setSourceId(networkIdString);
+            stringSet.add(networkIdString);
+
+        }
+        List<StationSummaryVo> summaryVos = new ArrayList<>();
+        for(String networkIdString: stringSet){
+           int i = 0;
+           for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
+               if(networkIdString.equals(nmplSystemHeartbeat.getSourceId())){
+                   i++;
+               }
+           }
+           StationSummaryVo stationSummaryVo = new StationSummaryVo();
+           stationSummaryVo.setCompanyNetworkId(networkIdString);
+           stationSummaryVo.setSumType(StationSummaryEnum.TOTAL_NET_WORKS.getCode());
+           stationSummaryVo.setSumNumber(String.valueOf(i));
+           summaryVos.add(stationSummaryVo);
+       }
+       return summaryVos;
     }
 
     /**
@@ -62,7 +75,7 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      * @return
      */
     @Override
-    public StationSummaryVo selectStation() {
+    public List<StationSummaryVo> selectStation() {
         //基站查询
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
@@ -75,8 +88,6 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         baseStationInfos.stream().forEach(item -> NetworkIdUtil.splitNetworkId(item.getStationNetworkId()));
         Map<String, List<NmplBaseStationInfo>> maps = baseStationInfos.stream().collect(
                 Collectors.groupingBy(NmplBaseStationInfo::getStationNetworkId));
-
-        String stationNetworkId = baseStationInfos.get(0).getStationNetworkId();
         //切割小区唯一标识符
         List<StationSummaryVo> summaryVos = new ArrayList<>();
         for(String netId :maps.keySet()){
@@ -87,7 +98,6 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
             stationSummaryVo.setSumNumber(String.valueOf(maps.get(netId).size()));
             summaryVos.add(stationSummaryVo);
         }
-
         return summaryVos;
     }
 
@@ -96,7 +106,7 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      * @return
      */
     @Override
-    public StationSummaryVo selectDevice() {
+    public List<StationSummaryVo> selectDevice() {
         //设备查询
         NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
         NmplDeviceInfoExample.Criteria criteria = deviceInfoExample.createCriteria();
@@ -106,14 +116,20 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         if(CollectionUtils.isEmpty(nmplDeviceInfoList)){
             return null;
         }
-        String stationNetworkId = nmplDeviceInfoList.get(0).getStationNetworkId();
+        nmplDeviceInfoList.stream().forEach(item -> NetworkIdUtil.splitNetworkId(item.getStationNetworkId()));
+        Map<String, List<NmplDeviceInfo>> maps = nmplDeviceInfoList.stream().collect(
+                Collectors.groupingBy(NmplDeviceInfo::getStationNetworkId));
         //切割小区唯一标识符
-        String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
-        StationSummaryVo stationSummaryVo = new StationSummaryVo();
-        stationSummaryVo.setCompanyNetworkId(networkIdString);
-        stationSummaryVo.setSumType(StationSummaryEnum.KET_CENTER.getCode());
-        stationSummaryVo.setSumNumber(String.valueOf(nmplDeviceInfoList.size()));
-        return stationSummaryVo;
+        List<StationSummaryVo> summaryVos = new ArrayList<>();
+        for(String netId :maps.keySet()){
+            String networkIdString = NetworkIdUtil.splitNetworkId(netId);
+            StationSummaryVo stationSummaryVo = new StationSummaryVo();
+            stationSummaryVo.setCompanyNetworkId(networkIdString);
+            stationSummaryVo.setSumType(StationSummaryEnum.KET_CENTER.getCode());
+            stationSummaryVo.setSumNumber(String.valueOf(maps.get(netId).size()));
+            summaryVos.add(stationSummaryVo);
+        }
+        return summaryVos;
     }
 
     /**
@@ -121,7 +137,7 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      * @return
      */
     @Override
-    public StationSummaryVo selectBorderStation() {
+    public List<StationSummaryVo> selectBorderStation() {
         //边界基站查询
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
@@ -131,14 +147,20 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         if(CollectionUtils.isEmpty(baseStationInfos)){
             return null;
         }
-        String stationNetworkId = baseStationInfos.get(0).getStationNetworkId();
+        baseStationInfos.stream().forEach(item -> NetworkIdUtil.splitNetworkId(item.getStationNetworkId()));
+        Map<String, List<NmplBaseStationInfo>> maps = baseStationInfos.stream().collect(
+                Collectors.groupingBy(NmplBaseStationInfo::getStationNetworkId));
         //切割小区唯一标识符
-        String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
-        StationSummaryVo stationSummaryVo = new StationSummaryVo();
-        stationSummaryVo.setCompanyNetworkId(networkIdString);
-        stationSummaryVo.setSumType(StationSummaryEnum.BORDER_BASE_STATION.getCode());
-        stationSummaryVo.setSumNumber(String.valueOf(baseStationInfos.size()));
-        return stationSummaryVo;
+        List<StationSummaryVo> summaryVos = new ArrayList<>();
+        for(String netId :maps.keySet()){
+            String networkIdString = NetworkIdUtil.splitNetworkId(netId);
+            StationSummaryVo stationSummaryVo = new StationSummaryVo();
+            stationSummaryVo.setCompanyNetworkId(networkIdString);
+            stationSummaryVo.setSumType(StationSummaryEnum.BORDER_BASE_STATION.getCode());
+            stationSummaryVo.setSumNumber(String.valueOf(maps.get(netId).size()));
+            summaryVos.add(stationSummaryVo);
+        }
+        return summaryVos;
     }
 
     /**

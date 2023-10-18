@@ -1,9 +1,11 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.dao.model.NmplStationSummary;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.modelVo.DataPushBody;
 import com.matrictime.network.modelVo.StationSummaryVo;
 import com.matrictime.network.request.StationSummaryRequest;
@@ -60,15 +62,17 @@ public class BorderStationServiceImpl implements BorderStationService, DataHandl
                 return;
             }
             String dataJsonStr = dataPushBody.getBusiDataJsonStr();
-            StationSummaryVo stationSummaryVo = JSONObject.parseObject(dataJsonStr, StationSummaryVo.class);
-            StationSummaryRequest stationSummaryRequest = new StationSummaryRequest();
-            BeanUtils.copyProperties(stationSummaryVo,stationSummaryRequest);
-            List<NmplStationSummary> nmplStationSummaries = summaryDomainService.selectStationSummary(stationSummaryRequest);
-            stationSummaryRequest.setUploadTime(new Date());
-            if(CollectionUtils.isEmpty(nmplStationSummaries)){
-                summaryDomainService.insertStationSummary(stationSummaryRequest);
-            }else {
-                summaryDomainService.updateStationSummary(stationSummaryRequest);
+            List<StationSummaryVo> list = JSONArray.parseArray(dataJsonStr, StationSummaryVo.class);
+            for(StationSummaryVo stationSummaryVo: list){
+                StationSummaryRequest stationSummaryRequest = new StationSummaryRequest();
+                BeanUtils.copyProperties(stationSummaryVo,stationSummaryRequest);
+                List<NmplStationSummary> nmplStationSummaries = summaryDomainService.selectStationSummary(stationSummaryRequest);
+                stationSummaryRequest.setUploadTime(new Date());
+                if(CollectionUtils.isEmpty(nmplStationSummaries)){
+                    summaryDomainService.insertStationSummary(stationSummaryRequest);
+                }else {
+                    summaryDomainService.updateStationSummary(stationSummaryRequest);
+                }
             }
         }catch (Exception e){
             log.error("handlerData exception :{}",e);
