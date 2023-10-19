@@ -477,14 +477,17 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             NmplBusinessRouteExample.Criteria criteria = nmplBusinessRouteExample.createCriteria();
             criteria.andIdEqualTo(businessRouteVo.getId());
             List<NmplBusinessRoute> nmplBusinessRoutes = nmplBusinessRouteMapper.selectByExample(nmplBusinessRouteExample);
-            if(nmplBusinessRoutes.size() > NumberUtils.INTEGER_ZERO &&
-                    !StringUtils.isEmpty(nmplBusinessRoutes.get(0).getNetworkId())){
-                if(!StringUtils.isEmpty(nmplBusinessRoutes.get(0).getIp())||!StringUtils.isEmpty(nmplBusinessRoutes.get(0).getIpV6())){
-                    nmplBusinessRouteMapper.updateByExampleSelective(nmplBusinessRoute,nmplBusinessRouteExample);
-                }
+            if(nmplBusinessRoutes.size() > NumberUtils.INTEGER_ZERO){
+                nmplBusinessRouteMapper.updateByExampleSelective(nmplBusinessRoute,nmplBusinessRouteExample);
+                //更新路由
+                int notice = notice(NMPL_BUSINESS_ROUTE, EDIT_TYPE_UPD, SYSTEM_NM);
+                log.info("businessRoute   更新通知",notice);
             }
             if(nmplBusinessRoutes.size() <= NumberUtils.INTEGER_ZERO){
                 nmplBusinessRouteMapper.insertSelective(nmplBusinessRoute);
+                //businessRoute插入通知
+                int notice = notice(NMPL_BUSINESS_ROUTE, EDIT_TYPE_ADD, SYSTEM_NM);
+                log.info("businessRoute   插入通知",notice);
             }
         }
 
@@ -500,15 +503,16 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             NmplInternetRouteExample.Criteria criteria = nmplInternetRouteExample.createCriteria();
             criteria.andIdEqualTo(nmplInternetRoute.getId());
             List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExample(nmplInternetRouteExample);
-            if(nmplInternetRoutes.size() > NumberUtils.INTEGER_ZERO &&
-                    !StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getNetworkId())){
-                if(!StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getBoundaryStationIp())||
-                        !StringUtils.isEmpty(nmplInternetRoutes.get(NumberUtils.INTEGER_ZERO).getIpV6())){
-                    nmplInternetRouteMapper.updateByExampleSelective(nmplInternetRoute,nmplInternetRouteExample);
-                }
+            if(nmplInternetRoutes.size() > NumberUtils.INTEGER_ZERO){
+                nmplInternetRouteMapper.updateByExampleSelective(nmplInternetRoute,nmplInternetRouteExample);
+                int notice = notice(NMPL_INTERNET_ROUTE, EDIT_TYPE_UPD, SYSTEM_NM);
+                log.info("internetRoute   更新通知",notice);
             }
             if(nmplInternetRoutes.size() <= NumberUtils.INTEGER_ZERO){
                 nmplInternetRouteMapper.insertSelective(nmplInternetRoute);
+                // 通知基站有路由信息变更
+                int notice = notice(NMPL_INTERNET_ROUTE, EDIT_TYPE_ADD, SYSTEM_NM);
+                log.info("internetRoute   插入通知",notice);
             }
         }
     }
@@ -523,16 +527,35 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
             criteria.andIdEqualTo(nmplStaticRoute.getId());
             List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
-            if(nmplStaticRoutes.size() > NumberUtils.INTEGER_ZERO &&
-                    !StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getNetworkId())){
-                if(!StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getServerIp())
-                        ||!StringUtils.isEmpty(nmplStaticRoutes.get(NumberUtils.INTEGER_ZERO).getIpV6())){
-                    nmplStaticRouteMapper.updateByExampleSelective(nmplStaticRoute,nmplStaticRouteExample);
-                }
+            Date createTime = new Date();
+            if(nmplStaticRoutes.size() > NumberUtils.INTEGER_ZERO){
+                nmplStaticRouteMapper.updateByExampleSelective(nmplStaticRoute,nmplStaticRouteExample);
+                int notice = notice(NMPL_STATIC_ROUTE, EDIT_TYPE_UPD, SYSTEM_NM);
+                log.info("staticRoute   更新通知",notice);
             }
             if(nmplStaticRoutes.size() <= NumberUtils.INTEGER_ZERO){
                 nmplStaticRouteMapper.insertSelective(nmplStaticRoute);
+                int notice = notice(NMPL_STATIC_ROUTE, EDIT_TYPE_ADD, SYSTEM_NM);
+                log.info("staticRoute   插入通知",notice);
             }
         }
     }
+
+    /**
+     * 路由更新通知
+     * @param table 表名称
+     * @param type 1是插入，2是更新
+     * @param user 操作人
+     * @return
+     */
+    private int notice(String table,String type,String user){
+        Date createTime = new Date();
+        NmplUpdateInfoBase updateInfo = new NmplUpdateInfoBase();
+        updateInfo.setTableName(table);
+        updateInfo.setOperationType(type);
+        updateInfo.setCreateTime(createTime);
+        updateInfo.setCreateUser(user);
+        return nmplUpdateInfoBaseMapper.insertSelective(updateInfo);
+    }
+
 }
