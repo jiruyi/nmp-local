@@ -30,42 +30,42 @@ public class RouteController extends SystemBaseService {
     private RouteService routeService;
 
 
-    /**
-     * 路由插入
-     * @param req
-     * @return
-     */
-
-    @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Result addRoute(@RequestBody RouteVo req){
-        Result result;
-        try {
-            List<RouteVo> voList = new ArrayList<>();
-            voList.add(req);
-            result = routeService.addRoute(voList);
-        }catch (Exception e){
-            log.info("RouteController.addRoute{}",e.getMessage());
-            result = failResult("");
-        }
-        return result;
-    }
-
-    /**
-     * 路由更新
-     * @param req
-     * @return
-     */
-    @RequestMapping(value = "/update",method = RequestMethod.POST)
-    public Result updateRoute(@RequestBody RouteVo req){
-        Result result;
-        try {
-            result = routeService.updateRoute(req);
-        }catch (Exception e){
-            log.info("RouteController.updateRoute{}",e.getMessage());
-            result = failResult("");
-        }
-        return result;
-    }
+//    /**
+//     * 路由插入
+//     * @param req
+//     * @return
+//     */
+//
+//    @RequestMapping(value = "/insert",method = RequestMethod.POST)
+//    public Result addRoute(@RequestBody RouteVo req){
+//        Result result;
+//        try {
+//            List<RouteVo> voList = new ArrayList<>();
+//            voList.add(req);
+//            result = routeService.addRoute(voList);
+//        }catch (Exception e){
+//            log.info("RouteController.addRoute{}",e.getMessage());
+//            result = failResult("");
+//        }
+//        return result;
+//    }
+//
+//    /**
+//     * 路由更新
+//     * @param req
+//     * @return
+//     */
+//    @RequestMapping(value = "/update",method = RequestMethod.POST)
+//    public Result updateRoute(@RequestBody RouteVo req){
+//        Result result;
+//        try {
+//            result = routeService.updateRoute(req);
+//        }catch (Exception e){
+//            log.info("RouteController.updateRoute{}",e.getMessage());
+//            result = failResult("");
+//        }
+//        return result;
+//    }
 
     /**
      * 业务路由插入

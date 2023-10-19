@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface RouteService {
 
-    Result<Integer> addRoute(List<RouteVo> voList);
-
-    Result<Integer> updateRoute(RouteVo vo);
+//    Result<Integer> addRoute(List<RouteVo> voList);
+//
+//    Result<Integer> updateRoute(RouteVo vo);
 
     Result<Integer> addBusinessRoute(NmplBusinessRouteVo vo);
 
@@ -25,7 +25,7 @@ public interface RouteService {
 
     Result<Integer> updateStaticRoute(NmplStaticRouteVo vo);
 
-    void initInfo(List<CenterRouteVo> centerRouteVos);
+//    void initInfo(List<CenterRouteVo> centerRouteVos);
 
     void businessRouteInitInfo(List<NmplBusinessRouteVo> nmplBusinessRouteVo);
 
