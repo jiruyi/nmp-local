@@ -85,6 +85,7 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
     private Integer updateLocalLink(List<ProxyLinkVo> voList, Integer batchNum, Map<String,Integer> opMap, Date createTime){
         List<ProxyLinkVo> addVos = new ArrayList<>();
         List<ProxyLinkVo> updateVos = new ArrayList<>();
+        Integer noticeType = ADD_NUM;
         for (int i=0; i<voList.size();i++){
             ProxyLinkVo infoVo = voList.get(i);
             infoVo.setUpdateTime(createTime);
@@ -92,26 +93,29 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             if (link != null){// 链路已存在，则做更新通知
                 updateVos.add(infoVo);
                 // 逻辑删除的时候可能没有mainDeviceId和followDeviceId
-                if (ParamCheckUtil.checkVoStrBlank(infoVo.getMainDeviceId())){
-                    infoVo.setMainDeviceId(link.getMainDeviceId());
-                }
-                if (ParamCheckUtil.checkVoStrBlank(infoVo.getFollowDeviceId())){
-                    infoVo.setFollowDeviceId(link.getFollowDeviceId());
-                }
-                Set<String> noticeDeviceType = getNoticeDeviceType(infoVo);
-                for (String notice : noticeDeviceType){
-                    if (!opMap.containsKey(notice)) {
-                        opMap.put(notice, UPDATE_NUM);
-                    }
+//                if (ParamCheckUtil.checkVoStrBlank(infoVo.getMainDeviceId())){
+//                    infoVo.setMainDeviceId(link.getMainDeviceId());
+//                }
+//                if (ParamCheckUtil.checkVoStrBlank(infoVo.getFollowDeviceId())){
+//                    infoVo.setFollowDeviceId(link.getFollowDeviceId());
+//                }
+//                Set<String> noticeDeviceType = getNoticeDeviceType(infoVo);
+//                for (String notice : noticeDeviceType){
+//                    if (!opMap.containsKey(notice)) {
+//                        opMap.put(notice, UPDATE_NUM);
+//                    }
+//                }
+                if (ADD_NUM.equals(noticeType)){
+                    noticeType = UPDATE_NUM;
                 }
             }else {// 链路不存在，则做新增通知
                 addVos.add(infoVo);
-                Set<String> noticeDeviceType = getNoticeDeviceType(infoVo);
-                for (String notice : noticeDeviceType){
-                    if (!opMap.containsKey(notice)){
-                        opMap.put(notice,ADD_NUM);
-                    }
-                }
+//                Set<String> noticeDeviceType = getNoticeDeviceType(infoVo);
+//                for (String notice : noticeDeviceType){
+//                    if (!opMap.containsKey(notice)){
+//                        opMap.put(notice,ADD_NUM);
+//                    }
+//                }
             }
         }
 
@@ -123,6 +127,17 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             batchNum = batchNum + linkDomainService.updateLink(updateVos);
         }
         log.info("LinkRelationServiceImpl.updateLocalLink：batchNum:{}",batchNum);
+
+        // 获取变更通知列表信息
+        Set<String> noticeDeviceTypes = getNoticeDeviceType(null);
+        if (!CollectionUtils.isEmpty(noticeDeviceTypes)){
+            Iterator<String> iterator = noticeDeviceTypes.iterator();
+            while (iterator.hasNext()){
+                String noticeDeviceType = iterator.next();
+                opMap.put(noticeDeviceType,noticeType);
+            }
+        }
+
         return batchNum;
     }
 
@@ -175,11 +190,17 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
      */
     private Set<String> getNoticeDeviceType(ProxyLinkVo proxyLinkVo){
         Set<String> resultSet = new HashSet<>();
-//        List<String> deviceIds = new ArrayList<>();
-//        deviceIds.add(ProxyLinkVo.getMainDeviceId());
-//        deviceIds.add(ProxyLinkVo.getFollowDeviceId());
+//        NmplLocalBaseStationInfoExample baseExample = new NmplLocalBaseStationInfoExample();
+//        baseExample.createCriteria().andStationIdEqualTo(proxyLinkVo.getMainDeviceId()).andIsExistEqualTo(IS_EXIST);
+//        List<NmplLocalBaseStationInfo> stationInfos = localBaseStationInfoMapper.selectByExample(baseExample);
+//        if (!CollectionUtils.isEmpty(stationInfos)){
+//            for (NmplLocalBaseStationInfo info : stationInfos){
+//                resultSet.add(info.getStationType());
+//            }
+//        }
+
         NmplLocalBaseStationInfoExample baseExample = new NmplLocalBaseStationInfoExample();
-        baseExample.createCriteria().andStationIdEqualTo(proxyLinkVo.getMainDeviceId()).andIsExistEqualTo(IS_EXIST);
+        baseExample.createCriteria().andIsExistEqualTo(IS_EXIST);
         List<NmplLocalBaseStationInfo> stationInfos = localBaseStationInfoMapper.selectByExample(baseExample);
         if (!CollectionUtils.isEmpty(stationInfos)){
             for (NmplLocalBaseStationInfo info : stationInfos){
@@ -187,14 +208,14 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
             }
         }
 
-//        NmplLocalDeviceInfoExample deviceExample = new NmplLocalDeviceInfoExample();
-//        deviceExample.createCriteria().andDeviceIdEqualTo(proxyLinkVo.getMainDeviceId()).andIsExistEqualTo(IS_EXIST);
-//        List<NmplLocalDeviceInfo> deviceInfos = localDeviceInfoMapper.selectByExample(deviceExample);
-//        if (!CollectionUtils.isEmpty(deviceInfos)){
-//            for (NmplLocalDeviceInfo info : deviceInfos){
-//                resultSet.add(info.getDeviceType());
-//            }
-//        }
+        NmplLocalDeviceInfoExample deviceExample = new NmplLocalDeviceInfoExample();
+        deviceExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+        List<NmplLocalDeviceInfo> deviceInfos = localDeviceInfoMapper.selectByExample(deviceExample);
+        if (!CollectionUtils.isEmpty(deviceInfos)){
+            for (NmplLocalDeviceInfo info : deviceInfos){
+                resultSet.add(info.getDeviceType());
+            }
+        }
         return resultSet;
     }
 
