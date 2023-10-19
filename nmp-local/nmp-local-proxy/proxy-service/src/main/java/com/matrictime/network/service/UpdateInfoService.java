@@ -1,6 +1,9 @@
 package com.matrictime.network.service;
 
+import com.matrictime.network.modelVo.ProxyLinkVo;
+
 import java.util.Date;
+import java.util.Set;
 
 public interface UpdateInfoService {
 
@@ -14,4 +17,10 @@ public interface UpdateInfoService {
      * @return
      */
     int updateInfo(String deviceType,String tableName, String operationType, String createUser, Date createTime);
+
+    /**
+     * 获取本机设备类型列表
+     * @return
+     */
+    Set<String> getNoticeDeviceTypes();
 }

@@ -1,20 +1,22 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
-import com.matrictime.network.dao.mapper.NmplUpdateInfoBaseMapper;
-import com.matrictime.network.dao.mapper.NmplUpdateInfoBoundaryMapper;
-import com.matrictime.network.dao.mapper.NmplUpdateInfoKeycenterMapper;
-import com.matrictime.network.dao.model.NmplUpdateInfoBase;
-import com.matrictime.network.dao.model.NmplUpdateInfoBoundary;
-import com.matrictime.network.dao.model.NmplUpdateInfoKeycenter;
+import com.matrictime.network.dao.mapper.*;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.service.UpdateInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
 @Service
 @Slf4j
@@ -28,6 +30,12 @@ public class UpdateInfoServiceImpl extends SystemBaseService implements UpdateIn
 
     @Resource
     private NmplUpdateInfoKeycenterMapper nmplUpdateInfoKeycenterMapper;
+
+    @Resource
+    private NmplLocalDeviceInfoMapper localDeviceInfoMapper;
+
+    @Resource
+    private NmplLocalBaseStationInfoMapper localBaseStationInfoMapper;
 
     @Override
     @Transactional
@@ -56,5 +64,32 @@ public class UpdateInfoServiceImpl extends SystemBaseService implements UpdateIn
             result = nmplUpdateInfoKeycenterMapper.insertSelective(updateInfo);
         }
         return result;
+    }
+
+    /**
+     * 获取本机设备类型列表
+     * @return
+     */
+    @Override
+    public Set<String> getNoticeDeviceTypes() {
+        Set<String> resultSet = new HashSet<>();
+        NmplLocalBaseStationInfoExample baseExample = new NmplLocalBaseStationInfoExample();
+        baseExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+        List<NmplLocalBaseStationInfo> stationInfos = localBaseStationInfoMapper.selectByExample(baseExample);
+        if (!CollectionUtils.isEmpty(stationInfos)){
+            for (NmplLocalBaseStationInfo info : stationInfos){
+                resultSet.add(info.getStationType());
+            }
+        }
+
+        NmplLocalDeviceInfoExample deviceExample = new NmplLocalDeviceInfoExample();
+        deviceExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+        List<NmplLocalDeviceInfo> deviceInfos = localDeviceInfoMapper.selectByExample(deviceExample);
+        if (!CollectionUtils.isEmpty(deviceInfos)){
+            for (NmplLocalDeviceInfo info : deviceInfos){
+                resultSet.add(info.getDeviceType());
+            }
+        }
+        return resultSet;
     }
 }

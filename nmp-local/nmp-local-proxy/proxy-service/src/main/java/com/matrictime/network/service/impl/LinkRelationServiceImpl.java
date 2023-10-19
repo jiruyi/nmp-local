@@ -129,7 +129,7 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
         log.info("LinkRelationServiceImpl.updateLocalLink：batchNum:{}",batchNum);
 
         // 获取变更通知列表信息
-        Set<String> noticeDeviceTypes = getNoticeDeviceType(null);
+        Set<String> noticeDeviceTypes = updateInfoService.getNoticeDeviceTypes();
         if (!CollectionUtils.isEmpty(noticeDeviceTypes)){
             Iterator<String> iterator = noticeDeviceTypes.iterator();
             while (iterator.hasNext()){
@@ -190,30 +190,12 @@ public class LinkRelationServiceImpl extends SystemBaseService implements LinkRe
      */
     private Set<String> getNoticeDeviceType(ProxyLinkVo proxyLinkVo){
         Set<String> resultSet = new HashSet<>();
-//        NmplLocalBaseStationInfoExample baseExample = new NmplLocalBaseStationInfoExample();
-//        baseExample.createCriteria().andStationIdEqualTo(proxyLinkVo.getMainDeviceId()).andIsExistEqualTo(IS_EXIST);
-//        List<NmplLocalBaseStationInfo> stationInfos = localBaseStationInfoMapper.selectByExample(baseExample);
-//        if (!CollectionUtils.isEmpty(stationInfos)){
-//            for (NmplLocalBaseStationInfo info : stationInfos){
-//                resultSet.add(info.getStationType());
-//            }
-//        }
-
         NmplLocalBaseStationInfoExample baseExample = new NmplLocalBaseStationInfoExample();
-        baseExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+        baseExample.createCriteria().andStationIdEqualTo(proxyLinkVo.getMainDeviceId()).andIsExistEqualTo(IS_EXIST);
         List<NmplLocalBaseStationInfo> stationInfos = localBaseStationInfoMapper.selectByExample(baseExample);
         if (!CollectionUtils.isEmpty(stationInfos)){
             for (NmplLocalBaseStationInfo info : stationInfos){
                 resultSet.add(info.getStationType());
-            }
-        }
-
-        NmplLocalDeviceInfoExample deviceExample = new NmplLocalDeviceInfoExample();
-        deviceExample.createCriteria().andIsExistEqualTo(IS_EXIST);
-        List<NmplLocalDeviceInfo> deviceInfos = localDeviceInfoMapper.selectByExample(deviceExample);
-        if (!CollectionUtils.isEmpty(deviceInfos)){
-            for (NmplLocalDeviceInfo info : deviceInfos){
-                resultSet.add(info.getDeviceType());
             }
         }
         return resultSet;
