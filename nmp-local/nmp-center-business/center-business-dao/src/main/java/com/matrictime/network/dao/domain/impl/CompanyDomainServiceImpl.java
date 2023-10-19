@@ -33,7 +33,6 @@ public class CompanyDomainServiceImpl implements CompanyDomainService {
     public int updateCompany(CompanyInfoVo companyInfoVo) {
         NmplCompanyInfoExample companyInfoExample = new NmplCompanyInfoExample();
         NmplCompanyInfoExample.Criteria criteria = companyInfoExample.createCriteria();
-        criteria.andIsExistEqualTo(true);
         criteria.andCompanyNetworkIdEqualTo(companyInfoVo.getCompanyNetworkId());
         NmplCompanyInfo companyInfo = new NmplCompanyInfo();
         BeanUtils.copyProperties(companyInfoVo,companyInfo);
@@ -44,7 +43,6 @@ public class CompanyDomainServiceImpl implements CompanyDomainService {
     public List<NmplCompanyInfo> selectCompany(CompanyInfoVo companyInfoVo) {
         NmplCompanyInfoExample companyInfoExample = new NmplCompanyInfoExample();
         NmplCompanyInfoExample.Criteria criteria = companyInfoExample.createCriteria();
-        criteria.andIsExistEqualTo(true);
         criteria.andCompanyNetworkIdEqualTo(companyInfoVo.getCompanyNetworkId());
         List<NmplCompanyInfo> companyInfos = companyInfoMapper.selectByExample(companyInfoExample);
         return companyInfos;
