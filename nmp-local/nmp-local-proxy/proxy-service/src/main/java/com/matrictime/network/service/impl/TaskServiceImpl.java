@@ -17,6 +17,7 @@ import com.matrictime.network.response.CompanyHeartbeatResponse;
 import com.matrictime.network.response.StationConnectCountResponse;
 import com.matrictime.network.response.SystemHeartbeatResponse;
 import com.matrictime.network.response.TerminalUserResponse;
+import com.matrictime.network.service.InitInfoService;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
 import lombok.extern.slf4j.Slf4j;
@@ -137,6 +138,9 @@ public class TaskServiceImpl implements TaskService {
 
     private static final String DATACOLLECT_PUSH_LAST_MAXI_ID= ":datacollect_last_push_max_id";
 
+    @Resource
+    private InitInfoService initInfoService;
+
 
     /**
      * 站点状态上报
@@ -200,11 +204,9 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 统计数据推送
-     * @param url
-     * @param localIp
      */
     @Override
-    public void dataCollectPush(String url,String localIp) {
+    public void dataCollectPush() {
         try {
             NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
             NmplDataCollectExample.Criteria criteria = nmplDataCollectExample.createCriteria();
@@ -214,7 +216,7 @@ public class TaskServiceImpl implements TaskService {
                 criteria.andIdLessThanOrEqualTo(Long.valueOf(lastMaxId.toString()));
                 int thisCount = nmplDataCollectMapper.deleteByExample(nmplDataCollectExample);
                 nmplDataCollectExample.clear();
-                log.info("ip is:{} last alarmPush lastMaxId is:{} deletecount is:{} ",localIp,lastMaxId,thisCount);
+                log.info("ip is:{} last dataCollect lastMaxId is:{} deletecount is:{} ",localIp,lastMaxId,thisCount);
             }
             // 查询所有的统计数据
             nmplDataCollectExample.setOrderByClause("id desc");
@@ -792,4 +794,11 @@ public class TaskServiceImpl implements TaskService {
         return resList;
     }
 
+
+    @Override
+    public void init() {
+        InitInfoReq req = new InitInfoReq();
+        req.setLocalIp(localIp);
+        initInfoService.initInfo(req);
+    }
 }
