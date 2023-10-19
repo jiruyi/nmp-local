@@ -10,6 +10,7 @@ import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.DataCollectEnum;
+import com.matrictime.network.enums.TerminalUserEnum;
 import com.matrictime.network.modelVo.DataCollectVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.base.constant.DataConstants.RESERVE_DIGITS;
@@ -62,36 +60,55 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
                 return null;
             }
         }
+
+        //唯一标识分类
+        Set<String> stringSet = new HashSet();
+        for(NmplDataCollect nmplDataCollect: nmplDataCollects){
+            String stationNetworkId = getStationNetworkId(nmplDataCollect);
+            String s = NetworkIdUtil.splitNetworkId(stationNetworkId);
+            stringSet.add(s);
+        }
         //基站数组
         List<NmplDataCollect> stationList = generateList(nmplDataCollects,DeviceTypeEnum.BASE_STATION.getCode());
         //边界基站数组
         List<NmplDataCollect> borderList = generateList(nmplDataCollects,DeviceTypeEnum.BORDER_BASE_STATION.getCode());
         //密钥中心数组
         List<NmplDataCollect> dList = generateList(nmplDataCollects,DeviceTypeEnum.DISPENSER.getCode());
-        //查询小区Id唯一标识符
-        String stationNetworkId = getStationNetworkId(nmplDataCollects.get(0));
-        //切割小区唯一标识符
-        String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
+        //生成返回体
         List<DataCollectVo> list = new ArrayList<>();
-        Map<String, DataCollectEnum> map = DataCollectEnum.getMap();
-        Set<String> strings = map.keySet();
-        //按照流量类型求流量总和
-        for(String code: strings){
-            //基站求和
+        for(String networkIdString: stringSet){
+            //基站通信上行流量
             if(!CollectionUtils.isEmpty(stationList)){
-                DataCollectVo stationCollectVo = setDataCollectVo(stationList, code, networkIdString);
+                DataCollectVo stationCollectVo = setDataCollectVo(stationList, DataCollectEnum.COMM_LOAD_UP_FLOW.getCode(), networkIdString);
                 list.add(stationCollectVo);
             }
-            //边界基站求和
+            //边界基站通信上行流量
             if(!CollectionUtils.isEmpty(borderList)){
-                DataCollectVo borderCollectVo = setDataCollectVo(borderList, code, networkIdString);
-                list.add(borderCollectVo);
+                DataCollectVo stationCollectVo = setDataCollectVo(borderList, DataCollectEnum.COMM_LOAD_UP_FLOW.getCode(), networkIdString);
+                list.add(stationCollectVo);
             }
-            //密钥中心求和
+            //密钥中心通信上行流量
             if(!CollectionUtils.isEmpty(dList)){
-                DataCollectVo dataCollectVo = setDataCollectVo(dList, code, networkIdString);
-                list.add(dataCollectVo);
+                DataCollectVo stationCollectVo = setDataCollectVo(dList, DataCollectEnum.COMM_LOAD_UP_FLOW.getCode(), networkIdString);
+                list.add(stationCollectVo);
             }
+
+            //基站通信下行流量
+            if(!CollectionUtils.isEmpty(stationList)){
+                DataCollectVo stationCollectVo = setDataCollectVo(stationList, DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode(), networkIdString);
+                list.add(stationCollectVo);
+            }
+            //边界基站通信下行流量
+            if(!CollectionUtils.isEmpty(borderList)){
+                DataCollectVo stationCollectVo = setDataCollectVo(borderList, DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode(), networkIdString);
+                list.add(stationCollectVo);
+            }
+            //密钥中心通信下行流量
+            if(!CollectionUtils.isEmpty(dList)){
+                DataCollectVo stationCollectVo = setDataCollectVo(dList, DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode(), networkIdString);
+                list.add(stationCollectVo);
+            }
+
         }
         return list;
     }
@@ -122,7 +139,11 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         BigDecimal stationSumBig = new BigDecimal(Double.toString(stationSum));
         DataCollectVo dataCollectVo = new DataCollectVo();
         for(NmplDataCollect nmplDataCollect: list){
-            if(codeEnum.equals(nmplDataCollect.getDataItemCode())){
+            //获取唯一标识
+            String networkId = getStationNetworkId(nmplDataCollect);
+            String idString = NetworkIdUtil.splitNetworkId(networkId);
+            if(codeEnum.equals(nmplDataCollect.getDataItemCode()) &&
+                    networkIdString.equals(idString)){
                 BigDecimal itemValue = new BigDecimal(nmplDataCollect.getDataItemValue());
                 stationSumBig = stationSumBig.add(itemValue);
                 dataCollectVo.setUploadTime(nmplDataCollect.getUploadTime());

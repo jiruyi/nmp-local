@@ -24,5 +24,6 @@
                 group by source_id,target_id
             ) as a
         where s.source_id = a.source_id and s.target_id = a.target_id and s.upload_time = a.q
+        and s.status = '01'
     </select>
 </mapper>
