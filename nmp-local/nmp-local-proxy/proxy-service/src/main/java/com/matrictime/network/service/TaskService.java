@@ -10,7 +10,7 @@ public interface TaskService {
      */
     void heartReport(Date excuteTime);
 
-    void dataCollectPush(String url,String localIp);
+    void dataCollectPush();
 
     /**
      * 物理设备心跳上报服务
@@ -58,5 +58,7 @@ public interface TaskService {
      * @param url
      */
     void CompanyHeartbeat(String url);
+
+    void init();
 
 }

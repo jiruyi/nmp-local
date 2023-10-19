@@ -35,9 +35,6 @@ public class ScheduledTask {
     @Value("${netmanage.port}")
     private String port;
 
-    @Value("${local.ip}")
-    private String localIp;
-
 
     /**
      * @title heartReport
@@ -81,7 +78,7 @@ public class ScheduledTask {
     @Async
     public void dataCollectPush(){
         log.info(Thread.currentThread().getName()+"======================dataCollect begin=============================");
-        taskService.dataCollectPush(ip + KEY_SPLIT + port + DATA_COLLECT_URL,localIp);
+        taskService.dataCollectPush();
         log.info(Thread.currentThread().getName()+"======================dataCollect end=============================");
     }
 
@@ -168,6 +165,15 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================insertCompanyHeartbeat begin=============================");
         taskService.CompanyHeartbeat(ip + KEY_SPLIT + port + INSERT_COMPANY_HEART);
         log.info(Thread.currentThread().getName()+"======================insertCompanyHeartbeat end=============================");
+    }
+
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    @Async
+    public void initService(){
+        log.info(Thread.currentThread().getName()+"======================init service begin=============================");
+        taskService.init();
+        log.info(Thread.currentThread().getName()+"======================init service end=============================");
     }
 
 }

@@ -66,7 +66,7 @@ public class LogHandlerAspect {
                 networkLog.setIsSuccess(result.isSuccess());
             }
             //日志保存
-           // logDomainService.saveLog(networkLog);
+            logDomainService.saveLog(networkLog);
 
         } catch (Exception e) {
             logger.info("日志切面后置通知异常:{}", e.getMessage());
