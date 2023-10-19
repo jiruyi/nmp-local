@@ -35,7 +35,6 @@ public class CompanyInfoDomainServiceImpl implements CompanyInfoDomainService {
     public List<CompanyInfoVo> selectCompanyInfo() throws Exception {
         List<CompanyInfoVo> companyInfoVoList = new ArrayList<>();
         NmplCompanyInfoExample nmplCompanyInfoExample = new NmplCompanyInfoExample();
-        nmplCompanyInfoExample.createCriteria().andIsExistEqualTo(true);
         List<NmplCompanyInfo> infos = companyInfoMapper.selectByExample(nmplCompanyInfoExample);
         Map<String,NmplCompanyInfo> map = new HashMap<>();
         Map<String,String> bidMap = new HashMap<>();

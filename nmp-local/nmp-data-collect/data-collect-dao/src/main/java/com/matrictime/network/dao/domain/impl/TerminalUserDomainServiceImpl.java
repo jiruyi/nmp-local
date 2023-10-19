@@ -13,10 +13,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author by wangqiang
@@ -41,23 +38,60 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
         if(CollectionUtils.isEmpty(list)){
             return null;
         }
-        List<TerminalUserVo> terminalUserVoList = new ArrayList<>();
-        String stationNetworkId = getStationNetworkId(list.get(0));
-        //切割小区唯一标识符
-        String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
-        Map<String, TerminalUserEnum> terminalUserEnumMap = TerminalUserEnum.getTerminalUserEnumMap();
-        Set<String> strings = terminalUserEnumMap.keySet();
-        //获取一体机数量
-        for(String userStatus: strings){
-            //添加一体机数量
-            TerminalUserVo userMachine = getUserVo(TerminalUserEnum.ONE_MACHINE.getCode(), userStatus, list, networkIdString);
-            if(userMachine.getUserType() != null){
-                terminalUserVoList.add(userMachine);
+        //唯一标识分类
+        Set<String> stringSet = new HashSet();
+        List<NmplTerminalUser> machineList = new ArrayList<>();
+        List<NmplTerminalUser> serverList = new ArrayList<>();
+        for(NmplTerminalUser nmplTerminalUser: list){
+            String stationNetworkId = getStationNetworkId(nmplTerminalUser);
+            String s = NetworkIdUtil.splitNetworkId(stationNetworkId);
+            stringSet.add(s);
+            if(TerminalUserEnum.ONE_MACHINE.getCode().equals(nmplTerminalUser.getUserType())){
+                machineList.add(nmplTerminalUser);
             }
-            //添加安全服务器数量
-            TerminalUserVo userVo = getUserVo(TerminalUserEnum.SECURITY_SERVER.getCode(), userStatus, list, networkIdString);
-            if(userVo.getUserType() != null){
-                terminalUserVoList.add(userVo);
+            if(TerminalUserEnum.SECURITY_SERVER.getCode().equals(nmplTerminalUser.getUserType())){
+                serverList.add(nmplTerminalUser);
+            }
+        }
+
+        List<TerminalUserVo> terminalUserVoList = new ArrayList<>();
+        for(String idString: stringSet){
+            for(NmplTerminalUser nmplTerminalUser: machineList){
+                //获取唯一标识
+                String networkId = getStationNetworkId(nmplTerminalUser);
+                String networkIdString = NetworkIdUtil.splitNetworkId(networkId);
+                //过滤唯一标识用户
+                if(idString.equals(networkIdString)){
+                    Map<String, TerminalUserEnum> terminalUserEnumMap = TerminalUserEnum.getTerminalUserEnumMap();
+                    Set<String> strings = terminalUserEnumMap.keySet();
+                    //获取一体机数量
+                    for(String userStatus: strings){
+                        //添加一体机数量
+                        TerminalUserVo userMachine = getUserVo(TerminalUserEnum.ONE_MACHINE.getCode(), userStatus, machineList, idString);
+                        if(userMachine.getUserType() != null){
+                            terminalUserVoList.add(userMachine);
+                        }
+                    }
+                }
+            }
+
+            for(NmplTerminalUser nmplTerminalUser: serverList){
+                //获取唯一标识
+                String networkId = getStationNetworkId(nmplTerminalUser);
+                String networkIdString = NetworkIdUtil.splitNetworkId(networkId);
+                //过滤唯一标识用户
+                if(idString.equals(networkIdString)){
+                    Map<String, TerminalUserEnum> terminalUserEnumMap = TerminalUserEnum.getTerminalUserEnumMap();
+                    Set<String> strings = terminalUserEnumMap.keySet();
+                    //获取一体机数量
+                    for(String userStatus: strings){
+                        //添加安全服务器数量
+                        TerminalUserVo userVo = getUserVo(TerminalUserEnum.SECURITY_SERVER.getCode(), userStatus, serverList, idString);
+                        if(userVo.getUserType() != null){
+                            terminalUserVoList.add(userVo);
+                        }
+                    }
+                }
             }
         }
         return terminalUserVoList;
@@ -75,8 +109,12 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
         int sum = 0;
         TerminalUserVo terminalUserVo = new TerminalUserVo();
         for(NmplTerminalUser nmplTerminalUser: list){
+            //获取唯一标识
+            String networkId = getStationNetworkId(nmplTerminalUser);
+            String idString = NetworkIdUtil.splitNetworkId(networkId);
+            //进行状态 类型 唯一标识过滤
             if(userStatus.equals(nmplTerminalUser.getTerminalStatus()) &&
-                    userType.equals(nmplTerminalUser.getUserType())){
+                    userType.equals(nmplTerminalUser.getUserType()) && networkIdString.equals(idString)){
                 sum++;
                 terminalUserVo.setUploadTime(nmplTerminalUser.getUploadTime());
                 terminalUserVo.setUserType(userType);
