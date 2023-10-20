@@ -62,12 +62,11 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         }
 
         Set<String> stringSet = new HashSet<String>();
-        for(NmplSystemHeartbeat nmplSystemHeartbeat: heartbeatList){
+        for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
             //切割小区唯一标识符
             String s = changeNetworkId(nmplSystemHeartbeat.getSourceId());
-            String networkIdString = NetworkIdUtil.splitNetworkId(s);
-            nmplSystemHeartbeat.setSourceId(networkIdString);
-            stringSet.add(networkIdString);
+            nmplSystemHeartbeat.setSourceId(s);
+            stringSet.add(s);
 
         }
         List<StationSummaryVo> summaryVos = new ArrayList<>();
@@ -251,12 +250,12 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      */
     private String changeNetworkId(String networkId){
         String[] split = networkId.split("-");
-        String networkStr = "";
-        for(int i = 0; i <= split.length -1;i++){
+        String networkIdString = "";
+        for(int i = 0;i < 4;i++){
             Integer change = Integer.parseInt(split[i],16);
-            networkStr = networkStr + change + "-";
+            networkIdString = networkIdString + change + "-";
         }
-        return networkStr.substring(0,networkStr.length() - 3);
+        return networkIdString.substring(0,networkIdString.length() - 1);
     }
 
     /**
@@ -266,11 +265,11 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      */
     private String getNetworkId(String networkId){
         String[] split = networkId.split("-");
-        String networkStr = "";
-        for(int i = 0; i <= split.length -1;i++){
+        String networkIdString = "";
+        for(int i = 0;i < 5;i++){
             Integer change = Integer.parseInt(split[i],16);
-            networkStr = networkStr + change + "-";
+            networkIdString = networkIdString + change + "-";
         }
-        return networkStr.substring(0,networkStr.length() - 1);
+        return networkIdString.substring(0,networkIdString.length() - 1);
     }
 }
