@@ -44,7 +44,7 @@ import java.util.concurrent.ExecutionException;
 public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDataService {
 
     //默认毫秒值
-    private long timer = 300000;
+    private long timer = 3000;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -86,10 +86,10 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
     @Override
     public void businessData() {
 
-        Boolean report = configDomainService.isReport(BusinessTypeEnum.BUSINESS_HEART.getCode());
-        if(!report){
-            return;
-        }
+//        Boolean report = configDomainService.isReport(BusinessTypeEnum.BUSINESS_HEART.getCode());
+//        if(!report){
+//            return;
+//        }
         try {
             //业务逻辑 查询数据
             List<StationSummaryVo> list = summaryDomainService.selectSystemHeart();

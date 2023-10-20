@@ -44,11 +44,28 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         if(CollectionUtils.isEmpty(nmplSystemHeartbeats)){
             return null;
         }
-        Set<String> stringSet = new HashSet<String>();
+
+        List<NmplSystemHeartbeat> heartbeatList = new ArrayList<>();
+        //sourceId、targetId 数据转换
         for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
-            String stationNetworkId = changeNetworkId(nmplSystemHeartbeat.getSourceId());
+            String sourceNetworkId = getNetworkId(nmplSystemHeartbeat.getSourceId());
+            String targetNetworkId = getNetworkId(nmplSystemHeartbeat.getTargetId());
+            List<NmplBaseStationInfo> sourceStation = getStation(sourceNetworkId);
+            List<NmplBaseStationInfo> targetStation = getStation(targetNetworkId);
+            List<NmplDeviceInfo> sourceDevice = getDevice(sourceNetworkId);
+            List<NmplDeviceInfo> targetDevice = getDevice(targetNetworkId);
+            if((!CollectionUtils.isEmpty(sourceStation) || !CollectionUtils.isEmpty(sourceDevice)) &&
+                    (!CollectionUtils.isEmpty(targetStation) || !CollectionUtils.isEmpty(targetDevice))){
+                heartbeatList.add(nmplSystemHeartbeat);
+            }
+
+        }
+
+        Set<String> stringSet = new HashSet<String>();
+        for(NmplSystemHeartbeat nmplSystemHeartbeat: heartbeatList){
             //切割小区唯一标识符
-            String networkIdString = NetworkIdUtil.splitNetworkId(stationNetworkId);
+            String s = changeNetworkId(nmplSystemHeartbeat.getSourceId());
+            String networkIdString = NetworkIdUtil.splitNetworkId(s);
             nmplSystemHeartbeat.setSourceId(networkIdString);
             stringSet.add(networkIdString);
 
@@ -56,7 +73,7 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         List<StationSummaryVo> summaryVos = new ArrayList<>();
         for(String networkIdString: stringSet){
            int i = 0;
-           for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
+           for(NmplSystemHeartbeat nmplSystemHeartbeat: heartbeatList){
                if(networkIdString.equals(nmplSystemHeartbeat.getSourceId())){
                    i++;
                }
@@ -200,26 +217,31 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
     }
 
     /**
-     * 获取小区唯一标识符
-     * @param nmplSystemHeartbeat
+     * 过滤基站
+     * @param networkId
      * @return
      */
-    public String getStationNetworkId(NmplSystemHeartbeat nmplSystemHeartbeat){
-        String stationNetworkId = "";
+    private List<NmplBaseStationInfo> getStation(String networkId){
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
-        criteria.andStationIdEqualTo(nmplSystemHeartbeat.getSourceId());
+        criteria.andStationNetworkIdEqualTo(networkId);
+        criteria.andIsExistEqualTo(true);
         List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(baseStationInfoExample);
-        if(!CollectionUtils.isEmpty(baseStationInfos)){
-            stationNetworkId = baseStationInfos.get(0).getStationNetworkId();
-        }else {
-            NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
-            NmplDeviceInfoExample.Criteria criteria1 = deviceInfoExample.createCriteria();
-            criteria1.andDeviceIdEqualTo((nmplSystemHeartbeat.getSourceId()));
-            List<NmplDeviceInfo> nmplDeviceInfoList = deviceInfoMapper.selectByExample(deviceInfoExample);
-            stationNetworkId = nmplDeviceInfoList.get(0).getStationNetworkId();
-        }
-        return stationNetworkId;
+        return baseStationInfos;
+    }
+
+    /**
+     * 过滤设备
+     * @param networkId
+     * @return
+     */
+    private List<NmplDeviceInfo> getDevice(String networkId){
+        NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
+        NmplDeviceInfoExample.Criteria criteria = deviceInfoExample.createCriteria();
+        criteria.andStationNetworkIdEqualTo(networkId);
+        criteria.andIsExistEqualTo(true);
+        List<NmplDeviceInfo> nmplDeviceInfoList = deviceInfoMapper.selectByExample(deviceInfoExample);
+        return nmplDeviceInfoList;
     }
 
     /**
@@ -235,5 +257,20 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
             networkStr = networkStr + change + "-";
         }
         return networkStr.substring(0,networkStr.length() - 3);
+    }
+
+    /**
+     * 将要networkId 转换
+     * @param networkId
+     * @return
+     */
+    private String getNetworkId(String networkId){
+        String[] split = networkId.split("-");
+        String networkStr = "";
+        for(int i = 0; i <= split.length -1;i++){
+            Integer change = Integer.parseInt(split[i],16);
+            networkStr = networkStr + change + "-";
+        }
+        return networkStr.substring(0,networkStr.length() - 1);
     }
 }
