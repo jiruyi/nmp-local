@@ -163,9 +163,11 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                         companyNetworkIds.add(companyInfos.get(i).getCompanyNetworkId());
                     }
                 }
-                NmplTerminalUserExample example = new NmplTerminalUserExample();
-                example.createCriteria().andCompanyNetworkIdIn(companyNetworkIds);
-                terminalUsers = terminalUserMapper.selectByExample(example);
+                if (!CollectionUtils.isEmpty(companyNetworkIds)){
+                    NmplTerminalUserExample example = new NmplTerminalUserExample();
+                    example.createCriteria().andCompanyNetworkIdIn(companyNetworkIds);
+                    terminalUsers = terminalUserMapper.selectByExample(example);
+                }
             }else {
                 // 有小区入网码标识查询小区数据
                 NmplTerminalUserExample example = new NmplTerminalUserExample();
@@ -255,6 +257,8 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
                         companyNetworkIds.add(companyInfos.get(i).getCompanyNetworkId());
                     }
                 }
+            }else {
+                companyNetworkIds.add(req.getCompanyNetworkId());
             }
 
             if (!CollectionUtils.isEmpty(companyNetworkIds)){// 如果小区id列表为空则此时没有有效小区信息

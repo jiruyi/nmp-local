@@ -42,8 +42,8 @@
             sum_type = #{sumType,jdbcType=CHAR}
             <if test="companyNetworkIds != null">
                 and company_network_id in
-                <foreach open=")" close=")" collection ="companyNetworkIds" item="vo" separator =",">
-                    #{companyNetworkId,jdbcType=VARCHAR}
+                <foreach open="(" close=")" collection ="companyNetworkIds" item="vo" separator =",">
+                    #{vo,jdbcType=VARCHAR}
                 </foreach >
 
             </if>
