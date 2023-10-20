@@ -89,6 +89,18 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private CompanyHeartbeatDomainService companyHeartbeatDomainService;
 
+    @Resource
+    private NmplSystemHeartbeatMapper systemHeartbeatMapper;
+
+    @Resource
+    private NmplCompanyHeartbeatMapper companyHeartbeatMapper;
+
+    @Resource
+    private NmplTerminalUserMapper terminalUserMapper;
+
+    @Resource
+    private NmplStationConnectCountMapper stationConnectCountMapper;
+
 
     @Autowired
     private AlarmDataFacade alarmDataFacade;
@@ -375,6 +387,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void systemHeartbeat(String url) {
+        NmplSystemHeartbeatExample nmplSystemHeartbeatExample = new NmplSystemHeartbeatExample();
         SystemHeartbeatResponse systemHeartbeatResponse = systemHeartbeatDomainService.selectSystemHeartbeat();
         Boolean flag = false;
         Result result = null;
@@ -390,10 +403,12 @@ public class TaskServiceImpl implements TaskService {
         }finally {
             logError(result,url,data,flag,msg);
         }
+        systemHeartbeatMapper.deleteByExample(nmplSystemHeartbeatExample);
     }
 
     @Override
     public void terminalUser(String url) {
+        NmplTerminalUserExample terminalUserExample = new NmplTerminalUserExample();
         TerminalUserResponse terminalUserResponse = terminalUserDomainService.selectTerminalUser();
         Boolean flag = false;
         Result result = null;
@@ -409,6 +424,7 @@ public class TaskServiceImpl implements TaskService {
         }finally {
             logError(result,url,data,flag,msg);
         }
+        terminalUserMapper.deleteByExample(terminalUserExample);
     }
 
     @Override
@@ -455,6 +471,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void updateCurrentConnectCount(String url) {
+        NmplStationConnectCountExample stationConnectCountExample = new NmplStationConnectCountExample();
         StationConnectCountResponse stationConnectCountResponse = connectCountDomainService.selectStationConnectCount();
         Boolean flag = false;
         Result result = null;
@@ -470,10 +487,12 @@ public class TaskServiceImpl implements TaskService {
         }finally {
             logError(result,url,data,flag,msg);
         }
+        stationConnectCountMapper.deleteByExample(stationConnectCountExample);
     }
 
     @Override
     public void CompanyHeartbeat(String url) {
+        NmplCompanyHeartbeatExample companyHeartbeatExample = new NmplCompanyHeartbeatExample();
         CompanyHeartbeatResponse companyHeartbeatResponse = companyHeartbeatDomainService.selectCompanyHeartbeat();
         Boolean flag = false;
         Result result = null;
@@ -489,6 +508,7 @@ public class TaskServiceImpl implements TaskService {
         }finally {
             logError(result,url,data,flag,msg);
         }
+        companyHeartbeatMapper.deleteByExample(companyHeartbeatExample);
     }
 
 
