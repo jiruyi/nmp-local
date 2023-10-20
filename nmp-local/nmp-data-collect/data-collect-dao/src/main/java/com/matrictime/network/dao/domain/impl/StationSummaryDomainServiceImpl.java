@@ -5,6 +5,7 @@ import com.matrictime.network.dao.domain.StationSummaryDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDataPushRecordMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
+import com.matrictime.network.dao.mapper.extend.NmplBaseStationInfoExtMapper;
 import com.matrictime.network.dao.mapper.extend.NmplSystemHeartbeatExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.StationSummaryEnum;
@@ -29,6 +30,9 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
     private NmplBaseStationInfoMapper baseStationInfoMapper;
 
     @Resource
+    private NmplBaseStationInfoExtMapper baseStationInfoExtMapper;
+
+    @Resource
     private NmplDeviceInfoMapper deviceInfoMapper;
 
     @Resource
@@ -44,18 +48,22 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         if(CollectionUtils.isEmpty(nmplSystemHeartbeats)){
             return null;
         }
-
         List<NmplSystemHeartbeat> heartbeatList = new ArrayList<>();
         //sourceId、targetId 数据转换
         for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
             String sourceNetworkId = getNetworkId(nmplSystemHeartbeat.getSourceId());
             String targetNetworkId = getNetworkId(nmplSystemHeartbeat.getTargetId());
-            List<NmplBaseStationInfo> sourceStation = getStation(sourceNetworkId);
-            List<NmplBaseStationInfo> targetStation = getStation(targetNetworkId);
-            List<NmplDeviceInfo> sourceDevice = getDevice(sourceNetworkId);
-            List<NmplDeviceInfo> targetDevice = getDevice(targetNetworkId);
-            if((!CollectionUtils.isEmpty(sourceStation) || !CollectionUtils.isEmpty(sourceDevice)) &&
-                    (!CollectionUtils.isEmpty(targetStation) || !CollectionUtils.isEmpty(targetDevice))){
+//            List<NmplBaseStationInfo> sourceStation = getStation(sourceNetworkId);
+//            List<NmplBaseStationInfo> targetStation = getStation(targetNetworkId);
+//            List<NmplDeviceInfo> sourceDevice = getDevice(sourceNetworkId);
+//            List<NmplDeviceInfo> targetDevice = getDevice(targetNetworkId);
+            List<NmplBaseStationInfo> source = baseStationInfoExtMapper.selectAllDevice(sourceNetworkId);
+            List<NmplBaseStationInfo> target = baseStationInfoExtMapper.selectAllDevice(targetNetworkId);
+//            if((!CollectionUtils.isEmpty(sourceStation) || !CollectionUtils.isEmpty(sourceDevice)) &&
+//                    (!CollectionUtils.isEmpty(targetStation) || !CollectionUtils.isEmpty(targetDevice))){
+//                heartbeatList.add(nmplSystemHeartbeat);
+//            }
+            if(!CollectionUtils.isEmpty(source) && !CollectionUtils.isEmpty(target)){
                 heartbeatList.add(nmplSystemHeartbeat);
             }
 
