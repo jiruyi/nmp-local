@@ -11,6 +11,8 @@ public interface StationSummaryExtMapper {
 
     Long getSum(@Param("sumType") String sumType, @Param("companyNetworkId") String companyNetworkId);
 
+    Long getSumByIn(@Param("sumType") String sumType, @Param("companyNetworkIds") List<String> companyNetworkIds);
+
     List<NmplCompanyHeartbeat> queryHeart();
 
 }

@@ -153,7 +153,18 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
             List<NmplTerminalUser> terminalUsers = new ArrayList<>();
             if (ParamCheckUtil.checkVoStrBlank(req.getCompanyNetworkId())){
                 // 没有小区入网码标识查询总数据
+                List<String>companyNetworkIds = new ArrayList<>();
+                NmplCompanyInfoExample companyInfoExample = new NmplCompanyInfoExample();
+                companyInfoExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+                List<NmplCompanyInfo> companyInfos = companyInfoMapper.selectByExample(companyInfoExample);
+
+                if (!CollectionUtils.isEmpty(companyInfos)){
+                    for (int i=0;i<companyInfos.size();i++){
+                        companyNetworkIds.add(companyInfos.get(i).getCompanyNetworkId());
+                    }
+                }
                 NmplTerminalUserExample example = new NmplTerminalUserExample();
+                example.createCriteria().andCompanyNetworkIdIn(companyNetworkIds);
                 terminalUsers = terminalUserMapper.selectByExample(example);
             }else {
                 // 有小区入网码标识查询小区数据
@@ -214,17 +225,18 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
 
         try {
             QueryDeviceResp resp = new QueryDeviceResp();
+
             //总网络数
-            long totalNet = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.TOTAL_NET_WORKS.getCode(), req.getCompanyNetworkId()));
+            long totalNet = ZERO;
 
             //总接入基站数
-            long totalInsideStation = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.BASE_STATION.getCode(), req.getCompanyNetworkId()));
+            long totalInsideStation = ZERO;
 
             //总密钥中心数
-            long totalKeyCenter = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.KET_CENTER.getCode(), req.getCompanyNetworkId()));
+            long totalKeyCenter = ZERO;
 
             //总边界基站数
-            long totalBoundaryStation = NumberUtils.getLong(summaryExtMapper.getSum(StationSummaryEnum.BORDER_BASE_STATION.getCode(), req.getCompanyNetworkId()));
+            long totalBoundaryStation = ZERO;
 
             //总一体机数
             long totalOutlinePc = ZERO;
@@ -232,29 +244,48 @@ public class MonitorDisplayServiceImpl extends SystemBaseService implements Moni
             //总安全服务器数
             long totalSafeServer = ZERO;
 
-            NmplTerminalUserExample pcUserExample = new NmplTerminalUserExample();
-            NmplTerminalUserExample.Criteria pcCriteria = pcUserExample.createCriteria();
-            pcCriteria.andUserTypeEqualTo(TerminalUserEnum.ONE_MACHINE.getCode());
-            if (!ParamCheckUtil.checkVoStrBlank(req.getCompanyNetworkId())){
-                pcCriteria.andCompanyNetworkIdEqualTo(req.getCompanyNetworkId());
-            }
-            List<NmplTerminalUser> pcTerminalUsers = terminalUserMapper.selectByExample(pcUserExample);
-            if (!CollectionUtils.isEmpty(pcTerminalUsers)){
-                for (NmplTerminalUser terminalUser:pcTerminalUsers){
-                    totalOutlinePc = totalOutlinePc + Long.valueOf(terminalUser.getSumNumber());
+            List<String> companyNetworkIds = new ArrayList<>();
+
+            if (ParamCheckUtil.checkVoStrBlank(req.getCompanyNetworkId())){// 如果小区id列表为空，默认查所有已存在小区总量
+                NmplCompanyInfoExample companyInfoExample = new NmplCompanyInfoExample();
+                companyInfoExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+                List<NmplCompanyInfo> companyInfos = companyInfoMapper.selectByExample(companyInfoExample);
+                if (!CollectionUtils.isEmpty(companyInfos)){
+                    for (int i=0;i<companyInfos.size();i++){
+                        companyNetworkIds.add(companyInfos.get(i).getCompanyNetworkId());
+                    }
                 }
             }
 
-            NmplTerminalUserExample ssUserExample = new NmplTerminalUserExample();
-            NmplTerminalUserExample.Criteria ssCriteria = ssUserExample.createCriteria();
-            ssCriteria.andUserTypeEqualTo(TerminalUserEnum.SECURITY_SERVER.getCode());
-            if (!ParamCheckUtil.checkVoStrBlank(req.getCompanyNetworkId())){
-                ssCriteria.andCompanyNetworkIdEqualTo(req.getCompanyNetworkId());
-            }
-            List<NmplTerminalUser> ssTerminalUsers = terminalUserMapper.selectByExample(ssUserExample);
-            if (!CollectionUtils.isEmpty(ssTerminalUsers)){
-                for (NmplTerminalUser terminalUser:ssTerminalUsers){
-                    totalSafeServer = totalSafeServer + Long.valueOf(terminalUser.getSumNumber());
+            if (!CollectionUtils.isEmpty(companyNetworkIds)){// 如果小区id列表为空则此时没有有效小区信息
+                //总网络数
+                totalNet = NumberUtils.getLong(summaryExtMapper.getSumByIn(StationSummaryEnum.TOTAL_NET_WORKS.getCode(), companyNetworkIds));
+
+                //总接入基站数
+                totalInsideStation = NumberUtils.getLong(summaryExtMapper.getSumByIn(StationSummaryEnum.BASE_STATION.getCode(), companyNetworkIds));
+
+                //总密钥中心数
+                totalKeyCenter = NumberUtils.getLong(summaryExtMapper.getSumByIn(StationSummaryEnum.KET_CENTER.getCode(), companyNetworkIds));
+
+                //总边界基站数
+                totalBoundaryStation = NumberUtils.getLong(summaryExtMapper.getSumByIn(StationSummaryEnum.BORDER_BASE_STATION.getCode(), companyNetworkIds));
+
+                NmplTerminalUserExample pcUserExample = new NmplTerminalUserExample();
+                pcUserExample.createCriteria().andUserTypeEqualTo(TerminalUserEnum.ONE_MACHINE.getCode()).andCompanyNetworkIdIn(companyNetworkIds);
+                List<NmplTerminalUser> pcTerminalUsers = terminalUserMapper.selectByExample(pcUserExample);
+                if (!CollectionUtils.isEmpty(pcTerminalUsers)){
+                    for (NmplTerminalUser terminalUser:pcTerminalUsers){
+                        totalOutlinePc = totalOutlinePc + Long.valueOf(terminalUser.getSumNumber());
+                    }
+                }
+
+                NmplTerminalUserExample ssUserExample = new NmplTerminalUserExample();
+                ssUserExample.createCriteria().andUserTypeEqualTo(TerminalUserEnum.SECURITY_SERVER.getCode()).andCompanyNetworkIdIn(companyNetworkIds);
+                List<NmplTerminalUser> ssTerminalUsers = terminalUserMapper.selectByExample(ssUserExample);
+                if (!CollectionUtils.isEmpty(ssTerminalUsers)){
+                    for (NmplTerminalUser terminalUser:ssTerminalUsers){
+                        totalSafeServer = totalSafeServer + Long.valueOf(terminalUser.getSumNumber());
+                    }
                 }
             }
 

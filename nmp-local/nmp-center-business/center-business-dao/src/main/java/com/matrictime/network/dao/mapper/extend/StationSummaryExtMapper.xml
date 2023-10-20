@@ -35,6 +35,21 @@
     </where>
   </select>
 
+    <select id="getSumByIn" parameterType="map" resultType="java.lang.Long">
+        select sum(cast(sum_number as decimal(10,0)))
+        from nmpl_station_summary
+        <where>
+            sum_type = #{sumType,jdbcType=CHAR}
+            <if test="companyNetworkIds != null">
+                and company_network_id in
+                <foreach open=")" close=")" collection ="companyNetworkIds" item="vo" separator =",">
+                    #{companyNetworkId,jdbcType=VARCHAR}
+                </foreach >
+
+            </if>
+        </where>
+    </select>
+
   <select id="queryHeart" resultMap="CompanyHeartbeatMap">
     select id,
            a.source_company_network_id as source_company_network_id,
