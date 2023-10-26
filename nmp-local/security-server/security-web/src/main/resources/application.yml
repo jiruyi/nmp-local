@@ -62,10 +62,10 @@ spring:
         max-wait: -1
         max-idle: 8
         min-idle: 0
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    init-sqls: CREATE DATABASE IF NOT EXISTS `nmp_security_server` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+#  flyway:
+#    enabled: true
+#    baseline-on-migrate: true
+#    init-sqls: CREATE DATABASE IF NOT EXISTS `nmp_security_server` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 #info:
 #  app.name: unified-portal
 #  company.name: www.matrictime.com

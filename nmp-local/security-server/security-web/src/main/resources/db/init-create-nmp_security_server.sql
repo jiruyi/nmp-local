@@ -16,7 +16,7 @@ CREATE DATABASE IF NOT EXISTS `nmp_security_server` DEFAULT CHARACTER SET utf8mb
 
 USE `nmp_security_server`;
 
-create table nmpl_security_server_info
+create table nmps_security_server_info
 (
     id            bigint auto_increment comment '主键ID'
         primary key,
@@ -35,7 +35,7 @@ create table nmpl_security_server_info
 )
     comment '安全服务器信息表';
 
-create table nmpl_server_heart_info
+create table nmps_server_heart_info
 (
     network_id    varchar(128)                             not null comment '入网id',
     server_status smallint                                 not null comment '状态 1:正常',
