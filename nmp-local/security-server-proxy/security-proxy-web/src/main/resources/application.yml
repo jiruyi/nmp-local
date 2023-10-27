@@ -1,5 +1,5 @@
 server:
-  port: 80111
+  port: 8021
   servlet:
       context-path: /security-server-proxy
     
