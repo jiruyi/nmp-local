@@ -3,16 +3,24 @@ package com.matrictime.network.controller;
 import com.matrictime.network.controller.aop.MonitorRequest;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.PageInfo;
+import com.matrictime.network.modelVo.SecurityServerInfoVo;
+import com.matrictime.network.req.EditServerReq;
+import com.matrictime.network.req.QueryServerReq;
+import com.matrictime.network.req.StartServerReq;
 import com.matrictime.network.service.ServerService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
+import static com.matrictime.network.constant.DataConstants.*;
+
 /**
- * 启动配置
+ * 安全服务器配置
  * @author hx
  */
 @RequestMapping(value = "/server")
@@ -24,49 +32,84 @@ public class ServerController {
     private ServerService serverService;
 
     /**
-     * 获取安全服务器的状态
+     * 查询安全服务器列表
      * @return
      */
     @MonitorRequest
-    @RequestMapping(value = "/getStatus",method = RequestMethod.POST)
-    public Result getStatus(){
+    @RequestMapping(value = "/queryServer",method = RequestMethod.POST)
+    public Result<PageInfo<SecurityServerInfoVo>> queryServer(@RequestBody QueryServerReq req){
         try {
-            Result result = serverService.getStatus();
+            Result result = serverService.queryServer(req);
             return result;
         }catch (Exception e){
-            log.error("ServerController.getStatus exception:{}",e.getMessage());
+            log.error("ServerController.queryServer exception:{}",e.getMessage());
             return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
     /**
-     * 启动配置
+     * 新增安全服务器
      * @return
      */
     @MonitorRequest
-    @RequestMapping(value = "/start",method = RequestMethod.POST)
-    public Result startServer(){
+    @RequestMapping(value = "/addServer",method = RequestMethod.POST)
+    public Result addServer(@RequestBody EditServerReq req){
         try {
-            Result result = serverService.start();
+            req.setEditType(EDIT_TYPE_ADD);
+            Result result = serverService.editServer(req);
             return result;
         }catch (Exception e){
-            log.error("ServerController.start exception:{}",e.getMessage());
+            log.error("ServerController.addServer exception:{}",e.getMessage());
             return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
 
     /**
-     * 获取启动按钮状态
+     * 修改安全服务器
      * @return
      */
     @MonitorRequest
-    @RequestMapping(value = "/getStartStatus",method = RequestMethod.POST)
-    public Result getStartStatus(){
+    @RequestMapping(value = "/updateServer",method = RequestMethod.POST)
+    public Result updateServer(@RequestBody EditServerReq req){
         try {
-            Result result = serverService.getStartStatus();
+            req.setEditType(EDIT_TYPE_UPD);
+            Result result = serverService.editServer(req);
             return result;
         }catch (Exception e){
-            log.error("ServerController.getStartStatus exception:{}",e.getMessage());
+            log.error("ServerController.updateServer exception:{}",e.getMessage());
+            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    /**
+     * 删除安全服务器
+     * @return
+     */
+    @MonitorRequest
+    @RequestMapping(value = "/delServer",method = RequestMethod.POST)
+    public Result delServer(@RequestBody EditServerReq req){
+        try {
+            req.setEditType(EDIT_TYPE_DEL);
+            Result result = serverService.editServer(req);
+            return result;
+        }catch (Exception e){
+            log.error("ServerController.delServer exception:{}",e.getMessage());
+            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    /**
+     * 启动安全服务器
+     * @return
+     */
+    @MonitorRequest
+    @RequestMapping(value = "/startServer",method = RequestMethod.POST)
+    public Result startServer(@RequestBody StartServerReq req){
+        try {
+            Result result = serverService.startServer(req);
+            return result;
+        }catch (Exception e){
+            log.error("ServerController.startServer exception:{}",e.getMessage());
             return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
         }
     }
