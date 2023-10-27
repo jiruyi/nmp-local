@@ -5,7 +5,7 @@ import com.matrictime.network.resp.GetServerStatusResp;
 
 public interface ServerService {
 
-    Result<GetServerStatusResp> getStatus();
+    Result getStatus();
 
     Result start();
 

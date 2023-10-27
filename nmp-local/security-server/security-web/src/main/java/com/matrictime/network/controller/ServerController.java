@@ -30,7 +30,7 @@ public class ServerController {
      */
     @MonitorRequest
     @RequestMapping(value = "/getStatus",method = RequestMethod.POST)
-    public Result<GetServerStatusResp> getStatus(){
+    public Result getStatus(){
         try {
             Result result = serverService.getStatus();
             return result;
