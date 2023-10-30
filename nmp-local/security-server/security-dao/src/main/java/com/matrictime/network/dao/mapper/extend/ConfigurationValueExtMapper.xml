@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.ConfigurationValueExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.ParameterConfigurationVo">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="network_id" jdbcType="VARCHAR" property="networkId" />
+        <result column="configuration_code" jdbcType="CHAR" property="configurationCode" />
+        <result column="configuration_value" jdbcType="VARCHAR" property="configurationValue" />
+        <result column="default_value" jdbcType="VARCHAR" property="defaultValue" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="is_exist" jdbcType="BIT" property="isExist" />
+    </resultMap>
+    <select id="selectConfiguration" parameterType="com.matrictime.network.request.ConfigurationValueRequest" resultMap="BaseResultMap">
+        SELECT
+            p.configuration_code,
+            c.configuration_value,
+            p.default_value
+        FROM
+            nmps_parameter_configuration p
+                LEFT JOIN nmps_configuration_value c ON p.configuration_code = c.configuration_code
+                                                            and c.network_id = #{networkId,jdbcType=VARCHAR}
+    </select>
+</mapper>
