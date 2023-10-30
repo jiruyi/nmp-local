@@ -100,6 +100,8 @@ public class DataConstants {
 
     public static final String UPDTIME_DESC = "update_time desc";
 
+    public static final String CREATE_TIME_DESC = "create_time desc";
+
     public static final int RETURN_SUCCESS = 1;
 
     public static final String VERSION_SHELL_RES_KEY = "action_result:";

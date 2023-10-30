@@ -47,9 +47,6 @@ spring:
   mvc:
     async:
       request-timeout: 60000
-  instance:
-    instance-id: security-server-proxy
-    prefer-ip-address: true     #访问路径可以显示IP地址
   redis:
     database: 0
     host: 192.168.72.14
@@ -67,9 +64,6 @@ logging:
     path: logs
   level:
     com.jzsg: info
-thread:
-  batchMaxSize: 500
-token:
-  timeOut: 12
-task:
-  saveDays: 7
+security_server:
+  ip: http://192.168.72.14
+  port: 8011

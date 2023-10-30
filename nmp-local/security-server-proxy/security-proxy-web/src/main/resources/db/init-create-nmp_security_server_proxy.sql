@@ -38,7 +38,7 @@ create table nmps_security_server_info
 create table nmps_server_heart_info
 (
     network_id    varchar(128)                             not null comment '入网id',
-    server_status smallint                                 not null comment '状态 1:正常',
+    server_status smallint                                 not null comment '状态 0：内外网正常 1：外网异常',
     create_time   datetime(2) default CURRENT_TIMESTAMP(2) not null comment '创建时间'
 )
     comment '安全服务器心跳上报信息表';
