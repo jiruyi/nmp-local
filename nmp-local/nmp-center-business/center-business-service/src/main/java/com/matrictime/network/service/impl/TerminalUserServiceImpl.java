@@ -21,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -68,10 +69,19 @@ public class TerminalUserServiceImpl implements TerminalUserService, DataHandler
             if(ObjectUtils.isEmpty(dataPushBody)){
                 return;
             }
-            NmplTerminalUserExample terminalUserExample = new NmplTerminalUserExample();
-            terminalUserMapper.deleteByExample(terminalUserExample);
+
             String dataJsonStr = dataPushBody.getBusiDataJsonStr();
             List<TerminalUserVo> terminalUserVoList = JSONArray.parseArray(dataJsonStr, TerminalUserVo.class);
+            List<String> companyNetworkIds = new ArrayList<>();
+            for (TerminalUserVo terminalUserVo: terminalUserVoList){
+                companyNetworkIds.add(terminalUserVo.getCompanyNetworkId());
+            }
+            if (!CollectionUtils.isEmpty(companyNetworkIds)){
+                NmplTerminalUserExample terminalUserExample = new NmplTerminalUserExample();
+                terminalUserExample.createCriteria().andCompanyNetworkIdIn(companyNetworkIds);
+                terminalUserMapper.deleteByExample(terminalUserExample);
+            }
+
             for(TerminalUserVo terminalUserVo: terminalUserVoList){
                 List<NmplTerminalUser> nmplTerminalUsers = terminalUserDomainService.selectTerminalUser(terminalUserVo);
                 if(CollectionUtils.isEmpty(nmplTerminalUsers)){
