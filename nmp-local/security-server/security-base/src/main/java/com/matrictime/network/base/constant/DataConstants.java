@@ -106,4 +106,7 @@ public class DataConstants {
     public static final Short OPERATE_STATUS_WAIT = 1000;
     public static final Short OPERATE_STATUS_FINISH = 1001;
 
+    public static final int ONE_THOUSAND_AND_TWENTY_FOUR = 1024;
+
+    public static final double ZERO_DOUBLE = 0.0;
 }
