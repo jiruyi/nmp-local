@@ -4,26 +4,16 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 安全服务器信息表
+ * 安全服务器关联网卡信息表
  * @author   xxxx
  * @date   2023-11-01
  */
 @Data
-public class NmpsSecurityServerInfo {
+public class NmpsNetworkCard {
     /**
      * 主键ID
      */
     private Long id;
-
-    /**
-     * 安全服务器名称
-     */
-    private String serverName;
-
-    /**
-     * 通信ip
-     */
-    private String comIp;
 
     /**
      * 入网id
@@ -31,24 +21,24 @@ public class NmpsSecurityServerInfo {
     private String networkId;
 
     /**
-     * 信令（中继）端口
+     * 网卡类型（1：物理网卡 2：虚拟网卡）
      */
-    private String signalPort;
+    private String netCardType;
 
     /**
-     * 下载密钥端口
+     * 适配器名称
      */
-    private String keyPort;
+    private String adapterName;
 
     /**
-     * 连接方式 1:内接 2:外接
+     * ipv4
      */
-    private String connectType;
+    private String ipv4;
 
     /**
-     * 状态 01:上线  02:下线
+     * ipv6
      */
-    private String serverStatus;
+    private String ipv6;
 
     /**
      * 删除标志（1代表存在 0代表删除）
@@ -88,22 +78,6 @@ public class NmpsSecurityServerInfo {
         this.id = id;
     }
 
-    public String getServerName() {
-        return serverName;
-    }
-
-    public void setServerName(String serverName) {
-        this.serverName = serverName == null ? null : serverName.trim();
-    }
-
-    public String getComIp() {
-        return comIp;
-    }
-
-    public void setComIp(String comIp) {
-        this.comIp = comIp == null ? null : comIp.trim();
-    }
-
     public String getNetworkId() {
         return networkId;
     }
@@ -112,36 +86,36 @@ public class NmpsSecurityServerInfo {
         this.networkId = networkId == null ? null : networkId.trim();
     }
 
-    public String getSignalPort() {
-        return signalPort;
+    public String getNetCardType() {
+        return netCardType;
     }
 
-    public void setSignalPort(String signalPort) {
-        this.signalPort = signalPort == null ? null : signalPort.trim();
+    public void setNetCardType(String netCardType) {
+        this.netCardType = netCardType == null ? null : netCardType.trim();
     }
 
-    public String getKeyPort() {
-        return keyPort;
+    public String getAdapterName() {
+        return adapterName;
     }
 
-    public void setKeyPort(String keyPort) {
-        this.keyPort = keyPort == null ? null : keyPort.trim();
+    public void setAdapterName(String adapterName) {
+        this.adapterName = adapterName == null ? null : adapterName.trim();
     }
 
-    public String getConnectType() {
-        return connectType;
+    public String getIpv4() {
+        return ipv4;
     }
 
-    public void setConnectType(String connectType) {
-        this.connectType = connectType == null ? null : connectType.trim();
+    public void setIpv4(String ipv4) {
+        this.ipv4 = ipv4 == null ? null : ipv4.trim();
     }
 
-    public String getServerStatus() {
-        return serverStatus;
+    public String getIpv6() {
+        return ipv6;
     }
 
-    public void setServerStatus(String serverStatus) {
-        this.serverStatus = serverStatus == null ? null : serverStatus.trim();
+    public void setIpv6(String ipv6) {
+        this.ipv6 = ipv6 == null ? null : ipv6.trim();
     }
 
     public Boolean getIsExist() {

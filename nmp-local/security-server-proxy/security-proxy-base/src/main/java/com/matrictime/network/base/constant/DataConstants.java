@@ -55,6 +55,7 @@ public class DataConstants {
     public static final String KEY_IS_SUCCESS = "isSuccess";
     public static final String KEY_URL = "url";
     public static final String KEY_USER_ID = "userId";
+    public static final String KEY_HEART_INFO_VOS = "heartInfoVos";
 
     /**
      * table name
@@ -63,10 +64,10 @@ public class DataConstants {
 
 
     /**
-     * netmanage url
+     * security_server url
      */
 
-    public static final String HEART_REPORT_URL = "/security-server/server/reportHeart";
+    public static final String HEART_REPORT_URL = "/server/heartReport";
 
     public static final Integer ERROR_MSG_MAXLENGTH = 250;
 

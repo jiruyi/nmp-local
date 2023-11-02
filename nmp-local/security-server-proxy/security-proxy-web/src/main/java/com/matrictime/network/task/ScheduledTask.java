@@ -36,13 +36,13 @@ public class ScheduledTask {
      * @author hx
      * @create 2023/4/19 0019 17:25
      */
-    @Scheduled(cron = "*/30 * * * * ?")
-    @Async
-    public void heartReport(){
-        log.info(Thread.currentThread().getName()+"======================heartReport begin=============================");
-        taskService.heartReport(new Date());
-        log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
-    }
+//    @Scheduled(cron = "*/30 * * * * ?")
+//    @Async
+//    public void heartReport(){
+//        log.info(Thread.currentThread().getName()+"======================heartReport begin=============================");
+//        taskService.heartReport(new Date());
+//        log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
+//    }
 
 }
 

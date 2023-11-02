@@ -64,6 +64,7 @@ logging:
     path: logs
   level:
     com.jzsg: info
-security_server:
-  ip: http://192.168.72.14
+security-server:
+  ip: 192.168.72.14
   port: 8011
+  context-path: /security-server

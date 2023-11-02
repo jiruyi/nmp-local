@@ -4,6 +4,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.PageInfo;
 import com.matrictime.network.modelVo.SecurityServerInfoVo;
 import com.matrictime.network.req.EditServerReq;
+import com.matrictime.network.req.HeartReportReq;
 import com.matrictime.network.req.QueryServerReq;
 import com.matrictime.network.req.StartServerReq;
 
@@ -30,6 +31,13 @@ public interface ServerService {
      * @return
      */
     Result startServer(StartServerReq req);
+
+    /**
+     * 安全服务器状态上报
+     * @param req
+     * @return
+     */
+    Result heartReport(HeartReportReq req);
 
 
 }
