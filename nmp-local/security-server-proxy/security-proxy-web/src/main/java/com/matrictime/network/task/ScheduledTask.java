@@ -22,12 +22,6 @@ public class ScheduledTask {
     @Autowired
     private TaskService taskService;
 
-    @Value("${security_server.ip}")
-    private String ip;
-
-    @Value("${security_server.port}")
-    private String port;
-
 
     /**
      * @title heartReport
@@ -36,13 +30,13 @@ public class ScheduledTask {
      * @author hx
      * @create 2023/4/19 0019 17:25
      */
-//    @Scheduled(cron = "*/30 * * * * ?")
-//    @Async
-//    public void heartReport(){
-//        log.info(Thread.currentThread().getName()+"======================heartReport begin=============================");
-//        taskService.heartReport(new Date());
-//        log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
-//    }
+    @Scheduled(cron = "*/30 * * * * ?")
+    @Async
+    public void heartReport(){
+        log.info(Thread.currentThread().getName()+"======================heartReport begin=============================");
+        taskService.heartReport(new Date());
+        log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
+    }
 
 
 

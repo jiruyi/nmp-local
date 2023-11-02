@@ -51,7 +51,7 @@ public class TaskServiceImpl implements TaskService {
     @Value("${security-server.port}")
     private String securityServerPort;
 
-    @Value("${security-server.path}")
+    @Value("${security-server.context-path}")
     private String securityServerPath;
 
     @Resource
