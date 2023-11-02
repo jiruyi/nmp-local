@@ -224,13 +224,14 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
     private double getSum(DataCollectRequest dataCollectRequest){
         List<NmplDataCollect> nmplDataCollects = dataCollectExtMapper.sumData(dataCollectRequest);
         double sum = 0d;
-        if(nmplDataCollects.size() > 1){
+        if(nmplDataCollects.size() >= 1){
             for(NmplDataCollect dataCollect: nmplDataCollects){
                 sum = sum + Double.parseDouble(dataCollect.getSumNumber());
             }
+            BigDecimal last = new BigDecimal(Double.toString(sum));
+            sum = last.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             return sum;
         }
-
         return 0d;
     }
 

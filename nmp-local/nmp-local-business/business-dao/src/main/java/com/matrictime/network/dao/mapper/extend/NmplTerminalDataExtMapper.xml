@@ -15,6 +15,7 @@
     </resultMap>
     <select id="distinctTerminalData" parameterType="com.matrictime.network.request.TerminalDataRequest" resultMap="BaseResultMap">
         SELECT
+            DISTINCT
             a.terminal_network_id,
             a.up_value,
             a.down_value,
