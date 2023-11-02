@@ -33,7 +33,7 @@ public class SampleXxlJob {
     /**
      * 1、简单任务示例（Bean模式）
      */
-    @XxlJob("demoJobHandler")
+    @XxlJob("demoJobHandler1")
     public void demoJobHandler() throws Exception {
         System.out.println("9996");
         XxlJobHelper.log("XXL-JOB, Hello World.");
@@ -41,7 +41,13 @@ public class SampleXxlJob {
         // default success
     }
 
+    @XxlJob("demoJobHandler3")
+    public void demoJobHandler3() throws Exception {
+        System.out.println("9996_2");
+        XxlJobHelper.log("XXL-JOB, Hello World.");
 
+        // default success
+    }
     /**
      * 2、分片广播任务
      */
