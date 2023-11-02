@@ -1,13 +1,17 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.dao.mapper.NmpsDataInfoMapper;
 import com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper;
 import com.matrictime.network.dao.mapper.NmpsServerHeartInfoMapper;
+import com.matrictime.network.dao.model.NmpsDataInfo;
+import com.matrictime.network.dao.model.NmpsDataInfoExample;
 import com.matrictime.network.dao.model.NmpsServerHeartInfo;
 import com.matrictime.network.dao.model.NmpsServerHeartInfoExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.HeartInfoProxyVo;
 import com.matrictime.network.modelVo.SecurityServerProxyVo;
+import com.matrictime.network.req.DataPushReq;
 import com.matrictime.network.service.SecurityServerService;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
@@ -50,7 +54,11 @@ public class TaskServiceImpl implements TaskService {
     @Value("${security-server.path}")
     private String securityServerPath;
 
+    @Resource
+    private NmpsDataInfoMapper nmpsDataInfoMapper;
 
+    @Resource
+    private RedisTemplate redisTemplate;
 
     /**
      * 安全服务器状态上报
@@ -111,5 +119,43 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
+    @Override
+    public void dataPush() {
+        try {
+            String key = "";
+            Object lastMaxId = redisTemplate.opsForValue().get(key);
+            NmpsDataInfoExample nmpsDataInfoExample = new NmpsDataInfoExample();
+            NmpsDataInfoExample.Criteria criteria = nmpsDataInfoExample.createCriteria();
 
+            if(Objects.nonNull(lastMaxId)){
+                //删除上次推送之前的数据
+                criteria.andIdLessThanOrEqualTo(Long.valueOf(lastMaxId.toString()));
+                int thisCount = nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
+                nmpsDataInfoExample.clear();
+                log.info(" last dataPush lastMaxId is:{} deletecount is:{} ",lastMaxId,thisCount);
+            }
+
+            // 查询所有的统计数据
+            nmpsDataInfoExample.setOrderByClause("id desc");
+            List<NmpsDataInfo> nmplDataCollectList = nmpsDataInfoMapper.selectByExample(nmpsDataInfoExample);
+            nmpsDataInfoExample.clear();
+            if(CollectionUtils.isEmpty(nmplDataCollectList)){
+                return;
+            }
+            Long index = nmplDataCollectList.get(0).getId();
+            DataPushReq dataPushReq = new DataPushReq();
+            dataPushReq.setKey(key);
+            dataPushReq.setIndex(String.valueOf(index));
+            dataPushReq.setDataInfoVoList(new ArrayList<>());
+//            Result result = alarmDataFacade.insertSystemData(dataCollectReq);
+//            if(ObjectUtils.isEmpty(result) ||  !result.isSuccess()){
+//                return;
+//            }
+
+//            criteria.andIdLessThanOrEqualTo(index);
+//            nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
+        }catch (Exception e){
+            log.error("dataPush  exception:{}",e.getMessage());
+        }
+    }
 }

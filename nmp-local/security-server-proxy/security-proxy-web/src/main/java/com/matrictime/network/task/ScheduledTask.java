@@ -44,5 +44,14 @@ public class ScheduledTask {
 //        log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
 //    }
 
+
+
+    @Scheduled(cron = "*/30 * * * * ?")
+    @Async
+    public void dataPush(){
+        log.info(Thread.currentThread().getName()+"======================dataPush begin=============================");
+        taskService.dataPush();
+        log.info(Thread.currentThread().getName()+"======================dataPush end=============================");
+    }
 }
 
