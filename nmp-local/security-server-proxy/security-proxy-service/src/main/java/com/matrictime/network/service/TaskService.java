@@ -10,4 +10,7 @@ public interface TaskService {
      */
     void heartReport(Date excuteTime);
 
+
+    void dataPush();
+
 }

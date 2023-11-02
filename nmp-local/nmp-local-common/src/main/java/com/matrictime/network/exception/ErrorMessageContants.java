@@ -135,4 +135,6 @@ public class ErrorMessageContants {
 
 	public static final String DATA_CANNOT_FIND_INDB = "数据库中找不到数据";
 
+	public static final String REPORT_EMPTY_DATA="上报数据为空";
+
 }

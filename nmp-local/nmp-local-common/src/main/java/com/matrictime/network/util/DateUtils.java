@@ -841,5 +841,18 @@ public class DateUtils {
         }
         return formatter.format(calendar.getTime());
     }
-
+    /**
+     * 获取最近半个小时的时间整点
+     * 入参13:29:22 返回13:00:00
+     * @param date
+     * @return
+     */
+    public static Date getCurrentHourTime(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
 }

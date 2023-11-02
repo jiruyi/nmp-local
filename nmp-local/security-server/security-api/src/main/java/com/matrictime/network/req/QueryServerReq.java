@@ -11,9 +11,9 @@ public class QueryServerReq extends BaseRequest{
     private String serverName;
 
     /**
-     * ip
+     * 通信ip
      */
-    private String ip;
+    private String comIp;
 
     /**
      * 入网id

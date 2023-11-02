@@ -6,6 +6,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.PageInfo;
 import com.matrictime.network.modelVo.SecurityServerInfoVo;
 import com.matrictime.network.req.EditServerReq;
+import com.matrictime.network.req.HeartReportReq;
 import com.matrictime.network.req.QueryServerReq;
 import com.matrictime.network.req.StartServerReq;
 import com.matrictime.network.service.ServerService;
@@ -111,6 +112,22 @@ public class ServerController {
         }catch (Exception e){
             log.error("ServerController.startServer exception:{}",e.getMessage());
             return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+
+    /**
+     * 安全服务器状态上报
+     * @param req
+     * @return
+     */
+    @RequestMapping (value = "/heartReport",method = RequestMethod.POST)
+    public Result heartReport(@RequestBody HeartReportReq req){
+        try {
+            return  serverService.heartReport(req);
+        }catch (Exception e){
+            log.error("ServerController.heartReport exception:{}",e.getMessage());
+            return new Result(false,e.getMessage());
         }
     }
 }
