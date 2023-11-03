@@ -63,7 +63,7 @@ public class CaManageServiceController {
     @RequestMapping(value = "/updateCaManage",method = RequestMethod.POST)
     public Result updateIpManage(@RequestBody CaManageRequest caManageRequest){
         try {
-            if(StringUtils.isEmpty(caManageRequest.getNetworkId()) &&
+            if(StringUtils.isEmpty(caManageRequest.getNetworkId()) ||
                     StringUtils.isEmpty(caManageRequest.getId())){
                 return new Result<>(false,"必传参没传");
             }

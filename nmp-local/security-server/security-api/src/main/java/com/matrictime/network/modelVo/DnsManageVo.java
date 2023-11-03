@@ -2,6 +2,8 @@ package com.matrictime.network.modelVo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author by wangqiang
  * @date 2023/11/2.
@@ -43,4 +45,10 @@ public class DnsManageVo {
      * 发送端口
      */
     private String sendPort;
+
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 }

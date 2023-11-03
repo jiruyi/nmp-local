@@ -2,6 +2,8 @@ package com.matrictime.network.modelVo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author by wangqiang
  * @date 2023/11/2.
@@ -58,4 +60,9 @@ public class StationManageVo {
      * 通信port
      */
     private String stationPort;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 }

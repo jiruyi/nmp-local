@@ -15,27 +15,15 @@
     </resultMap>
     <select id="selectConfig" parameterType="com.matrictime.network.req.ServerConfigRequest" resultMap="BaseResultMap">
         SELECT
-        s.server_name,
-        s.com_ip,
-        s.network_id,
-        c.access_method,
-        c.public_ip,
-        c.public_port,
-        c.access_method,
-        c.domain_name
+            s.network_id,
+            d.config_code,
+            s.config_value,
+            d.default_value
         FROM
-        nmps_security_server_info s,
-        nmps_ca_manage c
-        WHERE
-        s.is_exist = 1 and c.is_exist = 1 and s.network_id = c.network_id
-        <if test="serverName != null">
-            and s.server_name = #{serverName,jdbcType=VARCHAR}
-        </if>
-        <if test="networkId != null">
-            and s.network_id = #{networkId,jdbcType=VARCHAR}
-        </if>
-        <if test="accessMethod != null">
-            and c.access_method = #{accessMethod,jdbcType=CHAR}
-        </if>
+            nmps_default_config d
+        LEFT JOIN
+            nmps_server_config s ON
+            d.config_code = s.config_code
+            AND s.network_id = #{networkId,jdbcType=VARCHAR}
     </select>
 </mapper>

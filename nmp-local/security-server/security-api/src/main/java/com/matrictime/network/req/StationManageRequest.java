@@ -10,6 +10,11 @@ import lombok.Data;
 public class StationManageRequest {
 
     /**
+     * 主键
+     */
+    private Long id;
+
+    /**
      * 入网id
      */
     private String networkId;

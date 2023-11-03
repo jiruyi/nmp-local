@@ -4,6 +4,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.req.ServerConfigRequest;
 import com.matrictime.network.service.ServerConfigService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,11 @@ public class ServerConfigController {
     @Resource
     private ServerConfigService serverConfigService;
 
+    /**
+     * 安全服务器参数查询
+     * @param serverConfigRequest
+     * @return
+     */
     @RequestMapping(value = "/selectServerConfig",method = RequestMethod.POST)
     public Result selectConfiguration(@RequestBody ServerConfigRequest serverConfigRequest){
         try {
@@ -34,9 +40,18 @@ public class ServerConfigController {
         }
     }
 
+    /**
+     * 安全服务器配置插入
+     * @param serverConfigRequest
+     * @return
+     */
     @RequestMapping(value = "/insertServerConfig",method = RequestMethod.POST)
     public Result insertConfiguration(@RequestBody ServerConfigRequest serverConfigRequest){
         try {
+            if(StringUtils.isEmpty(serverConfigRequest.getConfigCode()) ||
+                    StringUtils.isEmpty(serverConfigRequest.getNetworkId())){
+                return new Result<>(false,"缺少必传参数");
+            }
             Result result = serverConfigService.insertServerConfig(serverConfigRequest);
             return result;
         }catch (Exception e){

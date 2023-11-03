@@ -21,11 +21,13 @@
             s.server_name,
             s.com_ip,
             s.network_id,
-            c.access_method,
+            c.id,
             c.public_ip,
             c.public_port,
+            c.lan_ip,
             c.access_method,
-            c.domain_name
+            c.domain_name,
+            c.create_time
         FROM
             nmps_security_server_info s,
             nmps_ca_manage c
