@@ -60,4 +60,9 @@ public class NmplRoleVo {
      */
     private Byte isExist;
 
+    /**
+     * 创建者名字
+     */
+    private String createUserName;
+
 }
