@@ -21,6 +21,7 @@
         <module>nmp-center-business</module>
         <module>nmp-data-collect</module>
         <module>security-server-proxy</module>
+        <module>xxl-job-admin</module>
     </modules>
 
     <properties>
