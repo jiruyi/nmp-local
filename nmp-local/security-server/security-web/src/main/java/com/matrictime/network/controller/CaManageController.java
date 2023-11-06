@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 @RequestMapping(value = "/caManage")
 @RestController
 @Slf4j
-public class CaManageServiceController {
+public class CaManageController {
 
     @Resource
     private CaManageService caManageService;
