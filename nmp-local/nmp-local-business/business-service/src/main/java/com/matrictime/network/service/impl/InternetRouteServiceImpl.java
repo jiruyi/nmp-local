@@ -72,13 +72,6 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     public Result<Integer> insert(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-//            if(!CommonCheckUtil.isIpv4Legal(internetRouteRequest.getBoundaryStationIp()) &&
-//                    !CommonCheckUtil.isIpv6Legal(internetRouteRequest.getIpV6())){
-//                throw new RuntimeException(IP_FORMAT_ERROR_MSG);
-//            }
-            if(!ObjectUtils.isEmpty(checkDataOnly(internetRouteRequest))){
-                return checkDataOnly(internetRouteRequest);
-            }
             internetRouteRequest.setRouteId(SnowFlake.nextId_String());
             internetRouteRequest.setUpdateUser(RequestContext.getUser().getCreateUser());
             int insert = internetRouteDomainService.insert(internetRouteRequest);
@@ -121,13 +114,6 @@ public class InternetRouteServiceImpl implements InternetRouteService {
     public Result<Integer> update(InternetRouteRequest internetRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-//            if(!CommonCheckUtil.isIpv4Legal(internetRouteRequest.getBoundaryStationIp()) &&
-//                    !CommonCheckUtil.isIpv6Legal(internetRouteRequest.getIpV6())){
-//                throw new RuntimeException(IP_FORMAT_ERROR_MSG);
-//            }
-            if(!ObjectUtils.isEmpty(checkDataOnly(internetRouteRequest))){
-                return checkDataOnly(internetRouteRequest);
-            }
             internetRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
             int update = internetRouteDomainService.update(internetRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){

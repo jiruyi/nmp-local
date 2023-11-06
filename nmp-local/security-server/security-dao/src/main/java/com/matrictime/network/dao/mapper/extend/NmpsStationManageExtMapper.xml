@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmpsStationManageExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.StationManageVo">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="network_id" jdbcType="VARCHAR" property="networkId" />
+        <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+        <result column="com_ip" jdbcType="VARCHAR" property="comIp" />
+        <result column="station_type" jdbcType="CHAR" property="stationType" />
+        <result column="access_method" jdbcType="CHAR" property="accessMethod" />
+        <result column="domain_name" jdbcType="VARCHAR" property="domainName" />
+        <result column="station_ip" jdbcType="VARCHAR" property="stationIp" />
+        <result column="station_port" jdbcType="VARCHAR" property="stationPort" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="is_exist" jdbcType="BIT" property="isExist" />
+    </resultMap>
+    <select id="selectStationManage" parameterType="com.matrictime.network.req.StationManageRequest" resultMap="BaseResultMap">
+        SELECT
+        s.server_name,
+        s.com_ip,
+        s.network_id,
+        s.connect_type,
+        d.id,
+        d.station_type,
+        d.access_method,
+        d.station_ip,
+        d.station_port,
+        d.domain_name,
+        d.create_time
+        FROM
+        nmps_security_server_info s,
+        nmps_station_manage d
+        WHERE
+        s.is_exist = 1 and d.is_exist = 1 and s.network_id = d.network_id
+        <if test="networkId != null">
+            and d.network_id = #{networkId,jdbcType=VARCHAR}
+        </if>
+        <if test="accessMethod != null">
+            and d.access_method = #{accessMethod,jdbcType=CHAR}
+        </if>
+    </select>
+</mapper>
