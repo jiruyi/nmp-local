@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemBaseService;
@@ -25,6 +26,7 @@ import com.matrictime.network.req.HeartReportReq;
 import com.matrictime.network.req.QueryServerReq;
 import com.matrictime.network.req.StartServerReq;
 import com.matrictime.network.service.ServerService;
+import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -40,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.matrictime.network.base.constant.DataConstants.HEART_REPORT_NETWORKID;
+import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
 import static com.matrictime.network.exception.ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG;
 
@@ -50,6 +52,12 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
     @Value("${health.deadline.time}")
     private Long healthDeadlineTime;
+
+    @Value("${security-proxy.context-path}")
+    private String securityProxyPath;
+
+    @Value("${security-proxy.port}")
+    private String securityProxyPort;
 
     @Resource
     private NmpsSecurityServerInfoMapper serverInfoMapper;
@@ -213,6 +221,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         log.info("插入安全服务器关联网卡表:{}",addCards);
 
                         // 同步代理
+                        syncProxy(vo,req.getEditType());
                     }
                     break;
                 case DataConstants.EDIT_TYPE_UPD://批量修改
@@ -251,7 +260,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         log.info("更新安全服务器关联网卡表（先删后增）:{}",updCards);
 
                         // 同步代理
-
+                        syncProxy(vo,req.getEditType());
                     }
                     break;
                 case DataConstants.EDIT_TYPE_DEL:// 逻辑删除
@@ -283,6 +292,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         log.info("逻辑删除安全服务器关联网卡表:{}",delCards);
 
                         // 同步代理
+                        syncProxy(vo,req.getEditType());
                     }
                     break;
                 default:
@@ -363,6 +373,27 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         }
 
         return result;
+    }
+
+
+    /**
+     * 安全服务器信息同步代理
+     * @param vo
+     * @param editType
+     */
+    private void syncProxy(SecurityServerInfoVo vo,String editType){
+        try {
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put(JSON_KEY_EDITTYPE,editType);
+            List<SecurityServerInfoVo> vos = new ArrayList<>();
+            vos.add(vo);
+            jsonParam.put(JSON_KEY_SECURITYSERVERINFOVOS,vos);
+
+            String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + SERVER_UPDATE_URL);
+            HttpClientUtil.post(url,jsonParam.toJSONString());
+        }catch (Exception e){
+            log.warn("ServerServiceImpl.syncProxy Exception:{}",e);
+        }
     }
 
     private void checkEditServerParam(EditServerReq req) throws Exception{

@@ -34,7 +34,7 @@ public class SecurityServerController extends SystemBaseService {
     public Result<Integer> updateServer(@RequestBody EditServerProxyReq req){
         Result<Integer> result;
         try {
-            result = buildResult(null);
+            result = serverService.updateServer(req);
         }catch (Exception e){
             log.info("SecurityServerController.update{}",e.getMessage());
             result = failResult("");

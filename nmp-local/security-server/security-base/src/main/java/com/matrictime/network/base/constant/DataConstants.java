@@ -114,4 +114,16 @@ public class DataConstants {
      * redis key
      */
     public static final String HEART_REPORT_NETWORKID = "HEART_REPORT_NETWORKID:";
+
+    /**
+     * url
+     */
+    public static final String SERVER_UPDATE_URL = "/server/update";
+
+    /**
+     * map key
+     */
+    public static final String JSON_KEY_EDITTYPE = "editType";
+    public static final String JSON_KEY_SECURITYSERVERINFOVOS = "securityServerInfoVos";
+
 }
