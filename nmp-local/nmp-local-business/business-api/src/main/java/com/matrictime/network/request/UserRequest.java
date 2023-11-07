@@ -55,4 +55,9 @@ public class UserRequest extends BaseRequest {
     private String remark;
 
     private Boolean isAdmin =false;
+
+    /**
+     * 创建者名字
+     */
+    private String createUserName;
 }

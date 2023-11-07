@@ -136,6 +136,7 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
         criteria.andStationIdEqualTo(nmplTerminalUser.getParentDeviceId());
+        criteria.andIsExistEqualTo(true);
         List<NmplBaseStationInfo> baseStationInfos = baseStationInfoMapper.selectByExample(baseStationInfoExample);
         if(!CollectionUtils.isEmpty(baseStationInfos)){
             stationNetworkId = baseStationInfos.get(0).getStationNetworkId();
@@ -143,6 +144,7 @@ public class TerminalUserDomainServiceImpl implements TerminalUserDomainService 
             NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
             NmplDeviceInfoExample.Criteria criteria1 = deviceInfoExample.createCriteria();
             criteria1.andDeviceIdEqualTo((nmplTerminalUser.getParentDeviceId()));
+            criteria1.andIsExistEqualTo(true);
             List<NmplDeviceInfo> nmplDeviceInfoList = deviceInfoMapper.selectByExample(deviceInfoExample);
             if(!CollectionUtils.isEmpty(nmplDeviceInfoList)){
                 stationNetworkId = nmplDeviceInfoList.get(0).getStationNetworkId();
