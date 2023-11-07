@@ -69,10 +69,16 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
      */
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+        if (in.readableBytes() < HEADER_SIZE) {  //这个HEAD_LENGTH是我们用于表示头长度的字节数。  由于Encoder中我们传的是一个int类型的值，所以这里HEAD_LENGTH的值为4.
+            log.info("in.readableByte   < HEADER_SIZE(48byte) ");
+            return null;
+        }
+        log.info("NettyCustomDecoder  decode start ");
         // 数据包长度
         in.markReaderIndex();
         int uTotalLen = in.getIntLE(4);
         if(in.readableBytes() < uTotalLen){
+            log.info("in.readableBytes() < uTotalLen：{} 继续读取",uTotalLen);
             in.resetReaderIndex();
             return null;
         }
@@ -81,7 +87,7 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
         String messageHeader =  in.toString(0,HEADER_SIZE, CharsetUtil.UTF_8);
         log.info("收到客户端的业务消息messageHeader:{}",messageHeader);
         String reqDataJsonStr = in.toString(HEADER_SIZE,uTotalLen-HEADER_SIZE, CharsetUtil.UTF_8);
-        in.clear();
+        in.readBytes(uTotalLen);
         return  reqDataJsonStr;
     }
 }
