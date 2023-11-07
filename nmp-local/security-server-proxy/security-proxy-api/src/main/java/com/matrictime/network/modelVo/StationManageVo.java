@@ -1,18 +1,25 @@
-package com.matrictime.network.req;
+package com.matrictime.network.modelVo;
 
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @author by wangqiang
  * @date 2023/11/2.
  */
 @Data
-public class StationManageRequest {
+public class StationManageVo {
 
     /**
-     * 主键
+     * 安全服务器名称
      */
-    private Long id;
+    private String serverName;
+
+    /**
+     * 通信ip
+     */
+    private String comIp;
 
     /**
      * 入网id
@@ -20,9 +27,9 @@ public class StationManageRequest {
     private String networkId;
 
     /**
-     * 安全服务器通信ip
+     * 连接方式 1:内接 2:外接
      */
-    private String comIp;
+    private String connectType;
 
     /**
      * 基站类型 00:基站 30:备用基站
@@ -48,4 +55,9 @@ public class StationManageRequest {
      * 通信port
      */
     private String stationPort;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 }

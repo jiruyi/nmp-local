@@ -1,27 +1,17 @@
-package com.matrictime.network.req;
+package com.matrictime.network.modelVo;
 
 import lombok.Data;
 
 /**
  * @author by wangqiang
- * @date 2023/11/2.
+ * @date 2023/11/6.
  */
 @Data
-public class ServerConfigRequest {
-    /**
-     * 主键
-     */
-    private Long id;
-
+public class ServerConfigVo {
     /**
      * 设备入网码
      */
     private String networkId;
-
-    /**
-     * 安全服务器通信ip
-     */
-    private String comIp;
 
     /**
      * 配置名称 50:加密比例 51:扩展算法 52:加密方式 53:加密算法 54:上行密钥最大值

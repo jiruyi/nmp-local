@@ -1,34 +1,29 @@
-package com.matrictime.network.req;
+package com.matrictime.network.modelVo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author by wangqiang
- * @date 2023/11/2.
+ * @date 2023/11/6.
  */
 @Data
-public class CaManageRequest {
-
-    /**
-     * 主键
-     */
-    private Long id;
-
-    /**
-     * 入网id
-     */
-    private String networkId;
-
-    /**
-     * 安全服务器通信ip
-     */
-    private String comIp;
-
+public class CaManageVo {
     /**
      * 安全服务器名称
      */
     private String serverName;
 
+    /**
+     * 通信ip
+     */
+    private String comIp;
+
+    /**
+     * 入网id
+     */
+    private String networkId;
 
     /**
      * 接入方式 01:固定接入 02:动态接入
@@ -55,4 +50,8 @@ public class CaManageRequest {
      */
     private String lanIp;
 
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 }

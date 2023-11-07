@@ -122,6 +122,20 @@ public class DataConstants {
 
     public static final String SERVER_STARTSERVER_URL = "/server/startServer";
 
+    public static final String CA_MANAGE_INSERT_URL = "/caManage/insertCaManage";
+
+    public static final String CA_MANAGE_DELETE_URL = "/caManage/deleteCaManage";
+
+    public static final String STATION_MANAGE_INSERT_URL = "/stationManage/insertStationCaManage";
+
+    public static final String STATION_MANAGE_DELETE_URL = "/stationManage/deleteStationCaManage";
+
+    public static final String DNS_MANAGE_INSERT_URL = "/dnsManage/insertDnsCaManage";
+
+    public static final String DNS_MANAGE_DELETE_URL = "/dnsManage/deleteDnsCaManage";
+
+    public static final String SERVER_CONFIG_INSERT_URL = "/serverConfig/insertServerConfig";
+
     /**
      * map key
      */
