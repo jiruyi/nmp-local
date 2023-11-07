@@ -1,25 +1,29 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.mapper.NmpsStationManageMapper;
 import com.matrictime.network.dao.mapper.extend.NmpsStationManageExtMapper;
-import com.matrictime.network.dao.model.NmpsDnsManage;
-import com.matrictime.network.dao.model.NmpsDnsManageExample;
-import com.matrictime.network.dao.model.NmpsStationManage;
-import com.matrictime.network.dao.model.NmpsStationManageExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.CaManageVo;
 import com.matrictime.network.modelVo.DnsManageVo;
 import com.matrictime.network.modelVo.StationManageVo;
 import com.matrictime.network.req.StationManageRequest;
 import com.matrictime.network.resp.DnsManageResp;
 import com.matrictime.network.resp.StationManageResp;
 import com.matrictime.network.service.StationManageService;
+import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+
+import static com.matrictime.network.base.constant.DataConstants.*;
+import static com.matrictime.network.base.constant.DataConstants.STATION_MANAGE_DELETE_URL;
 
 /**
  * @author by wangqiang
@@ -34,6 +38,12 @@ public class StationManageServiceImpl implements StationManageService {
 
     @Resource
     private NmpsStationManageExtMapper stationManageExtMapper;
+
+    @Value("${security-proxy.context-path}")
+    private String securityProxyPath;
+
+    @Value("${security-proxy.port}")
+    private String securityProxyPort;
 
     @Override
     public Result<Integer> insertStationManage(StationManageRequest stationManageRequest) {
@@ -50,6 +60,10 @@ public class StationManageServiceImpl implements StationManageService {
             NmpsStationManage nmpsStationManage = new NmpsStationManage();
             BeanUtils.copyProperties(stationManageRequest,nmpsStationManage);
             int i = stationManageMapper.insertSelective(nmpsStationManage);
+            //代理推送
+            if(i == 1){
+                syncProxy(stationManageRequest,"insert");
+            }
             result.setSuccess(true);
             result.setResultObj(i);
         }catch (Exception e){
@@ -72,6 +86,10 @@ public class StationManageServiceImpl implements StationManageService {
             criteria.andNetworkIdEqualTo(stationManageRequest.getNetworkId());
             nmpsStationManage.setIsExist(false);
             int i = stationManageMapper.updateByExampleSelective(nmpsStationManage, stationManageExample);
+            //代理推送
+            if(i == 1){
+                syncProxy(stationManageRequest,"delete");
+            }
             result.setSuccess(true);
             result.setResultObj(i);
         }catch (Exception e){
@@ -119,6 +137,10 @@ public class StationManageServiceImpl implements StationManageService {
             NmpsStationManage nmpsStationManage = new NmpsStationManage();
             BeanUtils.copyProperties(stationManageRequest,nmpsStationManage);
             int i = stationManageMapper.updateByExampleSelective(nmpsStationManage, manageExample);
+            //代理推送
+            if(i == 1){
+                syncProxy(stationManageRequest,"insert");
+            }
             result.setSuccess(true);
             result.setResultObj(i);
         }catch (Exception e){
@@ -127,5 +149,30 @@ public class StationManageServiceImpl implements StationManageService {
             log.error("updateStationManage: {}",e.getMessage());
         }
         return result;
+    }
+
+    /**
+     * 代理端推送
+     * @param stationManageRequest
+     * @param flag
+     */
+    private void syncProxy(StationManageRequest stationManageRequest, String flag){
+        try {
+            String urlString = "";
+            StationManageVo vo = new StationManageVo();
+            BeanUtils.copyProperties(stationManageRequest,vo);
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put(JSON_KEY_EDITTYPE,flag);
+            jsonParam.put("StationManageVo",vo);
+            if(flag.equals("insert")){
+                urlString = STATION_MANAGE_INSERT_URL;
+            }else {
+                urlString = STATION_MANAGE_DELETE_URL;
+            }
+            String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + urlString);
+            HttpClientUtil.post(url,jsonParam.toJSONString());
+        }catch (Exception e){
+            log.warn("StationManageServiceImpl.syncProxy Exception:{}",e);
+        }
     }
 }

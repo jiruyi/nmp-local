@@ -33,7 +33,23 @@ public class ServerController {
     private ServerService serverService;
 
     /**
-     * 查询安全服务器列表
+     * 查询安全服务器列表（分页）
+     * @return
+     */
+    @MonitorRequest
+    @RequestMapping(value = "/queryServerByPage",method = RequestMethod.POST)
+    public Result<PageInfo<SecurityServerInfoVo>> queryServerByPage(@RequestBody QueryServerReq req){
+        try {
+            Result result = serverService.queryServerByPage(req);
+            return result;
+        }catch (Exception e){
+            log.error("ServerController.queryServerByPage exception:{}",e.getMessage());
+            return new Result(false, ErrorMessageContants.SYSTEM_ERROR_MSG);
+        }
+    }
+
+    /**
+     * 查询安全服务器列表（不分页）
      * @return
      */
     @MonitorRequest

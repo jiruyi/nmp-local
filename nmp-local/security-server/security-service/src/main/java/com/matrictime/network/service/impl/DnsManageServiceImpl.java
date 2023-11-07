@@ -1,21 +1,28 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.dao.mapper.NmpsDnsManageMapper;
 import com.matrictime.network.dao.mapper.extend.NmpsDnsManageExtMapper;
+import com.matrictime.network.dao.model.NmpsCaManage;
 import com.matrictime.network.dao.model.NmpsDnsManage;
 import com.matrictime.network.dao.model.NmpsDnsManageExample;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.CaManageVo;
 import com.matrictime.network.modelVo.DnsManageVo;
 import com.matrictime.network.req.DnsManageRequest;
 import com.matrictime.network.resp.DnsManageResp;
 import com.matrictime.network.service.DnsManageService;
+import com.matrictime.network.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+
+import static com.matrictime.network.base.constant.DataConstants.*;
 
 /**
  * @author by wangqiang
@@ -30,6 +37,12 @@ public class DnsManageServiceImpl implements DnsManageService {
 
     @Resource
     private NmpsDnsManageMapper dnsManageMapper;
+
+    @Value("${security-proxy.context-path}")
+    private String securityProxyPath;
+
+    @Value("${security-proxy.port}")
+    private String securityProxyPort;
 
     @Override
     public Result<Integer> insertDnsManage(DnsManageRequest dnsManageRequest) {
@@ -46,6 +59,10 @@ public class DnsManageServiceImpl implements DnsManageService {
             NmpsDnsManage dnsManage = new NmpsDnsManage();
             BeanUtils.copyProperties(dnsManageRequest,dnsManage);
             int i = dnsManageMapper.insertSelective(dnsManage);
+            //代理推送
+            if(i == 1){
+                syncProxy(dnsManageRequest,"insert");
+            }
             result.setSuccess(true);
             result.setResultObj(i);
         }catch (Exception e){
@@ -67,6 +84,10 @@ public class DnsManageServiceImpl implements DnsManageService {
             criteria.andNetworkIdEqualTo(dnsManageRequest.getNetworkId());
             nmpsDnsManage.setIsExist(false);
             int i = dnsManageMapper.updateByExampleSelective(nmpsDnsManage, dnsManageExample);
+            //代理推送
+            if(i == 1){
+                syncProxy(dnsManageRequest,"delete");
+            }
             result.setSuccess(true);
             result.setResultObj(i);
         }catch (Exception e){
@@ -114,6 +135,10 @@ public class DnsManageServiceImpl implements DnsManageService {
             NmpsDnsManage dnsManage = new NmpsDnsManage();
             BeanUtils.copyProperties(dnsManageRequest,dnsManage);
             int i = dnsManageMapper.updateByExampleSelective(dnsManage, manageExample);
+            //代理推送
+            if(i == 1){
+                syncProxy(dnsManageRequest,"insert");
+            }
             result.setSuccess(true);
             result.setResultObj(i);
         }catch (Exception e){
@@ -122,5 +147,30 @@ public class DnsManageServiceImpl implements DnsManageService {
             log.error("updateDnsManage: {}",e.getMessage());
         }
         return result;
+    }
+
+    /**
+     * 推送到代理端
+     * @param dnsManageRequest
+     * @param flag
+     */
+    private void syncProxy(DnsManageRequest dnsManageRequest, String flag){
+        try {
+            String urlString = "";
+            DnsManageVo vo = new DnsManageVo();
+            BeanUtils.copyProperties(dnsManageRequest,vo);
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put(JSON_KEY_EDITTYPE,flag);
+            jsonParam.put("dnsManageVo",vo);
+            if(flag.equals("insert")){
+                urlString = DNS_MANAGE_INSERT_URL;
+            }else {
+                urlString = DNS_MANAGE_DELETE_URL;
+            }
+            String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + urlString);
+            HttpClientUtil.post(url,jsonParam.toJSONString());
+        }catch (Exception e){
+            log.warn("DnsManageServiceImpl.syncProxy Exception:{}",e);
+        }
     }
 }

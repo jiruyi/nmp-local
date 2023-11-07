@@ -63,8 +63,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         if (!CollectionUtils.isEmpty(nmplRoles)){
             throw new SystemException("存在相同角色名称或权限字符");
         }
-//        nmplRole.setCreateTime(new Date());
-//        nmplRole.setUpdateTime(new Date());
+
         nmplRole.setIsExist(Byte.valueOf("1"));
         nmplRoleMapper.insertSelective(nmplRole);
         List<Long>menuList = new ArrayList<>();
@@ -179,21 +178,26 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             criteria.andCreateTimeLessThanOrEqualTo(sf.parse(roleRequest.getEndTime()));
         }
         criteria.andIsExistEqualTo(Byte.valueOf("1"));
-//        Page page = PageHelper.startPage(roleRequest.getPageNo(),roleRequest.getPageSize());
+
         nmplRoleExample.setOrderByClause("create_time desc");
         List<NmplRole> nmplRoleList = nmplRoleMapper.selectByExample(nmplRoleExample);
-//        nmplRoleList = nmplRoleList.stream().sorted(Comparator.comparing(NmplRole::getCreateTime).reversed()).collect(Collectors.toList());
-//        PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
+
         List<NmplRoleVo> nmplRoles = new ArrayList<>();
+
+        //4.0.1----增加创建人信息
+        List<NmplUser> nmplUserList = nmplUserMapper.selectByExample(null);
+        Map<String,String> map = new HashMap<>();
+        for (NmplUser user : nmplUserList) {
+            map.put(String.valueOf(user.getUserId()),user.getNickName());
+        }
+
         for (NmplRole nmplRole : nmplRoleList) {
             NmplRoleVo role = new NmplRoleVo();
             BeanUtils.copyProperties(nmplRole,role);
+            role.setCreateUserName(map.getOrDefault(role.getCreateUser(),""));
             nmplRoles.add(role);
         }
-//
-//        pageResult.setList(nmplRoles);
-//        pageResult.setCount((int) page.getTotal());
-//        pageResult.setPages(page.getPages());
+
         return nmplRoles;
     }
 

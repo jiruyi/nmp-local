@@ -109,4 +109,39 @@ public class DataConstants {
     public static final int ONE_THOUSAND_AND_TWENTY_FOUR = 1024;
 
     public static final double ZERO_DOUBLE = 0.0;
+
+    /**
+     * redis key
+     */
+    public static final String HEART_REPORT_NETWORKID = "HEART_REPORT_NETWORKID:";
+
+    /**
+     * url
+     */
+    public static final String SERVER_UPDATE_URL = "/server/update";
+
+    public static final String SERVER_STARTSERVER_URL = "/server/startServer";
+
+    public static final String CA_MANAGE_INSERT_URL = "/caManage/insertCaManage";
+
+    public static final String CA_MANAGE_DELETE_URL = "/caManage/deleteCaManage";
+
+    public static final String STATION_MANAGE_INSERT_URL = "/stationManage/insertStationCaManage";
+
+    public static final String STATION_MANAGE_DELETE_URL = "/stationManage/deleteStationCaManage";
+
+    public static final String DNS_MANAGE_INSERT_URL = "/dnsManage/insertDnsCaManage";
+
+    public static final String DNS_MANAGE_DELETE_URL = "/dnsManage/deleteDnsCaManage";
+
+    public static final String SERVER_CONFIG_INSERT_URL = "/serverConfig/insertServerConfig";
+
+    /**
+     * map key
+     */
+    public static final String JSON_KEY_EDITTYPE = "editType";
+    public static final String JSON_KEY_SECURITYSERVERINFOVOS = "securityServerInfoVos";
+
+    public static final String JSON_KEY_NETWORKID = "networkId";
+
 }

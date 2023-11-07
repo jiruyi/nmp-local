@@ -12,5 +12,7 @@ public interface ServerConfigService {
 
     Result<Integer> insertServerConfig(ServerConfigRequest serverConfigRequest);
 
+    Result<Integer> deleteServerConfig(ServerConfigRequest serverConfigRequest);
+
     Result<ServerConfigResp> selectServerConfig(ServerConfigRequest serverConfigRequest);
 }

@@ -20,6 +20,11 @@ public class StationManageRequest {
     private String networkId;
 
     /**
+     * 安全服务器通信ip
+     */
+    private String comIp;
+
+    /**
      * 基站类型 00:基站 30:备用基站
      */
     private String stationType;

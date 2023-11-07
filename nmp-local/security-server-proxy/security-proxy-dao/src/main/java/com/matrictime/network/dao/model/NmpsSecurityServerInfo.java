@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 安全服务器信息表
  * @author   cxk
- * @date   2023-10-27
+ * @date   2023-11-06
  */
 @Data
 public class NmpsSecurityServerInfo {
@@ -21,9 +21,9 @@ public class NmpsSecurityServerInfo {
     private String serverName;
 
     /**
-     * ip
+     * 通信ip
      */
-    private String ip;
+    private String comIp;
 
     /**
      * 入网id
@@ -31,14 +31,19 @@ public class NmpsSecurityServerInfo {
     private String networkId;
 
     /**
-     * 网卡类型（1：物理网卡 2：虚拟网卡）
+     * 信令（中继）端口
      */
-    private String netCardType;
+    private String signalPort;
 
     /**
-     * 适配器名称
+     * 下载密钥端口
      */
-    private String adapterName;
+    private String keyPort;
+
+    /**
+     * 连接方式 1:内接 2:外接
+     */
+    private String connectType;
 
     /**
      * 状态 01:上线  02:下线
@@ -91,12 +96,12 @@ public class NmpsSecurityServerInfo {
         this.serverName = serverName == null ? null : serverName.trim();
     }
 
-    public String getIp() {
-        return ip;
+    public String getComIp() {
+        return comIp;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip == null ? null : ip.trim();
+    public void setComIp(String comIp) {
+        this.comIp = comIp == null ? null : comIp.trim();
     }
 
     public String getNetworkId() {
@@ -107,20 +112,28 @@ public class NmpsSecurityServerInfo {
         this.networkId = networkId == null ? null : networkId.trim();
     }
 
-    public String getNetCardType() {
-        return netCardType;
+    public String getSignalPort() {
+        return signalPort;
     }
 
-    public void setNetCardType(String netCardType) {
-        this.netCardType = netCardType == null ? null : netCardType.trim();
+    public void setSignalPort(String signalPort) {
+        this.signalPort = signalPort == null ? null : signalPort.trim();
     }
 
-    public String getAdapterName() {
-        return adapterName;
+    public String getKeyPort() {
+        return keyPort;
     }
 
-    public void setAdapterName(String adapterName) {
-        this.adapterName = adapterName == null ? null : adapterName.trim();
+    public void setKeyPort(String keyPort) {
+        this.keyPort = keyPort == null ? null : keyPort.trim();
+    }
+
+    public String getConnectType() {
+        return connectType;
+    }
+
+    public void setConnectType(String connectType) {
+        this.connectType = connectType == null ? null : connectType.trim();
     }
 
     public String getServerStatus() {

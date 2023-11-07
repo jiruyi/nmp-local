@@ -235,73 +235,73 @@ public class NmpsSecurityServerInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andIpIsNull() {
-            addCriterion("ip is null");
+        public Criteria andComIpIsNull() {
+            addCriterion("com_ip is null");
             return (Criteria) this;
         }
 
-        public Criteria andIpIsNotNull() {
-            addCriterion("ip is not null");
+        public Criteria andComIpIsNotNull() {
+            addCriterion("com_ip is not null");
             return (Criteria) this;
         }
 
-        public Criteria andIpEqualTo(String value) {
-            addCriterion("ip =", value, "ip");
+        public Criteria andComIpEqualTo(String value) {
+            addCriterion("com_ip =", value, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpNotEqualTo(String value) {
-            addCriterion("ip <>", value, "ip");
+        public Criteria andComIpNotEqualTo(String value) {
+            addCriterion("com_ip <>", value, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpGreaterThan(String value) {
-            addCriterion("ip >", value, "ip");
+        public Criteria andComIpGreaterThan(String value) {
+            addCriterion("com_ip >", value, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpGreaterThanOrEqualTo(String value) {
-            addCriterion("ip >=", value, "ip");
+        public Criteria andComIpGreaterThanOrEqualTo(String value) {
+            addCriterion("com_ip >=", value, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpLessThan(String value) {
-            addCriterion("ip <", value, "ip");
+        public Criteria andComIpLessThan(String value) {
+            addCriterion("com_ip <", value, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpLessThanOrEqualTo(String value) {
-            addCriterion("ip <=", value, "ip");
+        public Criteria andComIpLessThanOrEqualTo(String value) {
+            addCriterion("com_ip <=", value, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpLike(String value) {
-            addCriterion("ip like", value, "ip");
+        public Criteria andComIpLike(String value) {
+            addCriterion("com_ip like", value, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpNotLike(String value) {
-            addCriterion("ip not like", value, "ip");
+        public Criteria andComIpNotLike(String value) {
+            addCriterion("com_ip not like", value, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpIn(List<String> values) {
-            addCriterion("ip in", values, "ip");
+        public Criteria andComIpIn(List<String> values) {
+            addCriterion("com_ip in", values, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpNotIn(List<String> values) {
-            addCriterion("ip not in", values, "ip");
+        public Criteria andComIpNotIn(List<String> values) {
+            addCriterion("com_ip not in", values, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpBetween(String value1, String value2) {
-            addCriterion("ip between", value1, value2, "ip");
+        public Criteria andComIpBetween(String value1, String value2) {
+            addCriterion("com_ip between", value1, value2, "comIp");
             return (Criteria) this;
         }
 
-        public Criteria andIpNotBetween(String value1, String value2) {
-            addCriterion("ip not between", value1, value2, "ip");
+        public Criteria andComIpNotBetween(String value1, String value2) {
+            addCriterion("com_ip not between", value1, value2, "comIp");
             return (Criteria) this;
         }
 
@@ -375,143 +375,213 @@ public class NmpsSecurityServerInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeIsNull() {
-            addCriterion("net_card_type is null");
+        public Criteria andSignalPortIsNull() {
+            addCriterion("signal_port is null");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeIsNotNull() {
-            addCriterion("net_card_type is not null");
+        public Criteria andSignalPortIsNotNull() {
+            addCriterion("signal_port is not null");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeEqualTo(String value) {
-            addCriterion("net_card_type =", value, "netCardType");
+        public Criteria andSignalPortEqualTo(String value) {
+            addCriterion("signal_port =", value, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeNotEqualTo(String value) {
-            addCriterion("net_card_type <>", value, "netCardType");
+        public Criteria andSignalPortNotEqualTo(String value) {
+            addCriterion("signal_port <>", value, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeGreaterThan(String value) {
-            addCriterion("net_card_type >", value, "netCardType");
+        public Criteria andSignalPortGreaterThan(String value) {
+            addCriterion("signal_port >", value, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeGreaterThanOrEqualTo(String value) {
-            addCriterion("net_card_type >=", value, "netCardType");
+        public Criteria andSignalPortGreaterThanOrEqualTo(String value) {
+            addCriterion("signal_port >=", value, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeLessThan(String value) {
-            addCriterion("net_card_type <", value, "netCardType");
+        public Criteria andSignalPortLessThan(String value) {
+            addCriterion("signal_port <", value, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeLessThanOrEqualTo(String value) {
-            addCriterion("net_card_type <=", value, "netCardType");
+        public Criteria andSignalPortLessThanOrEqualTo(String value) {
+            addCriterion("signal_port <=", value, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeLike(String value) {
-            addCriterion("net_card_type like", value, "netCardType");
+        public Criteria andSignalPortLike(String value) {
+            addCriterion("signal_port like", value, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeNotLike(String value) {
-            addCriterion("net_card_type not like", value, "netCardType");
+        public Criteria andSignalPortNotLike(String value) {
+            addCriterion("signal_port not like", value, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeIn(List<String> values) {
-            addCriterion("net_card_type in", values, "netCardType");
+        public Criteria andSignalPortIn(List<String> values) {
+            addCriterion("signal_port in", values, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeNotIn(List<String> values) {
-            addCriterion("net_card_type not in", values, "netCardType");
+        public Criteria andSignalPortNotIn(List<String> values) {
+            addCriterion("signal_port not in", values, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeBetween(String value1, String value2) {
-            addCriterion("net_card_type between", value1, value2, "netCardType");
+        public Criteria andSignalPortBetween(String value1, String value2) {
+            addCriterion("signal_port between", value1, value2, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andNetCardTypeNotBetween(String value1, String value2) {
-            addCriterion("net_card_type not between", value1, value2, "netCardType");
+        public Criteria andSignalPortNotBetween(String value1, String value2) {
+            addCriterion("signal_port not between", value1, value2, "signalPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameIsNull() {
-            addCriterion("adapter_name is null");
+        public Criteria andKeyPortIsNull() {
+            addCriterion("key_port is null");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameIsNotNull() {
-            addCriterion("adapter_name is not null");
+        public Criteria andKeyPortIsNotNull() {
+            addCriterion("key_port is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameEqualTo(String value) {
-            addCriterion("adapter_name =", value, "adapterName");
+        public Criteria andKeyPortEqualTo(String value) {
+            addCriterion("key_port =", value, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameNotEqualTo(String value) {
-            addCriterion("adapter_name <>", value, "adapterName");
+        public Criteria andKeyPortNotEqualTo(String value) {
+            addCriterion("key_port <>", value, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameGreaterThan(String value) {
-            addCriterion("adapter_name >", value, "adapterName");
+        public Criteria andKeyPortGreaterThan(String value) {
+            addCriterion("key_port >", value, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameGreaterThanOrEqualTo(String value) {
-            addCriterion("adapter_name >=", value, "adapterName");
+        public Criteria andKeyPortGreaterThanOrEqualTo(String value) {
+            addCriterion("key_port >=", value, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameLessThan(String value) {
-            addCriterion("adapter_name <", value, "adapterName");
+        public Criteria andKeyPortLessThan(String value) {
+            addCriterion("key_port <", value, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameLessThanOrEqualTo(String value) {
-            addCriterion("adapter_name <=", value, "adapterName");
+        public Criteria andKeyPortLessThanOrEqualTo(String value) {
+            addCriterion("key_port <=", value, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameLike(String value) {
-            addCriterion("adapter_name like", value, "adapterName");
+        public Criteria andKeyPortLike(String value) {
+            addCriterion("key_port like", value, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameNotLike(String value) {
-            addCriterion("adapter_name not like", value, "adapterName");
+        public Criteria andKeyPortNotLike(String value) {
+            addCriterion("key_port not like", value, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameIn(List<String> values) {
-            addCriterion("adapter_name in", values, "adapterName");
+        public Criteria andKeyPortIn(List<String> values) {
+            addCriterion("key_port in", values, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameNotIn(List<String> values) {
-            addCriterion("adapter_name not in", values, "adapterName");
+        public Criteria andKeyPortNotIn(List<String> values) {
+            addCriterion("key_port not in", values, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameBetween(String value1, String value2) {
-            addCriterion("adapter_name between", value1, value2, "adapterName");
+        public Criteria andKeyPortBetween(String value1, String value2) {
+            addCriterion("key_port between", value1, value2, "keyPort");
             return (Criteria) this;
         }
 
-        public Criteria andAdapterNameNotBetween(String value1, String value2) {
-            addCriterion("adapter_name not between", value1, value2, "adapterName");
+        public Criteria andKeyPortNotBetween(String value1, String value2) {
+            addCriterion("key_port not between", value1, value2, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeIsNull() {
+            addCriterion("connect_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeIsNotNull() {
+            addCriterion("connect_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeEqualTo(String value) {
+            addCriterion("connect_type =", value, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeNotEqualTo(String value) {
+            addCriterion("connect_type <>", value, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeGreaterThan(String value) {
+            addCriterion("connect_type >", value, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("connect_type >=", value, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeLessThan(String value) {
+            addCriterion("connect_type <", value, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeLessThanOrEqualTo(String value) {
+            addCriterion("connect_type <=", value, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeLike(String value) {
+            addCriterion("connect_type like", value, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeNotLike(String value) {
+            addCriterion("connect_type not like", value, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeIn(List<String> values) {
+            addCriterion("connect_type in", values, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeNotIn(List<String> values) {
+            addCriterion("connect_type not in", values, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeBetween(String value1, String value2) {
+            addCriterion("connect_type between", value1, value2, "connectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andConnectTypeNotBetween(String value1, String value2) {
+            addCriterion("connect_type not between", value1, value2, "connectType");
             return (Criteria) this;
         }
 

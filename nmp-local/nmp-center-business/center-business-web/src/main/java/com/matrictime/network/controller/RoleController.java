@@ -74,18 +74,7 @@ public class RoleController {
         return roleService.modify(roleRequest);
     }
 
-    /**
-     * 设置权限
-     * @param roleRequest
-     * @return
-     */
-    @ApiOperation(value = "设置权限接口",notes = "设置权限")
-    @RequestMapping(value = "/permersion",method = RequestMethod.POST)
-    @RequiresPermissions("sys:role:permersion")
-    @SystemLog(opermodul = "角色管理模块",operDesc = "设置权限",operType = "设置权限",operLevl = "2")
-    public Result permersion(@RequestBody RoleRequest roleRequest){
-        return roleService.permersion(roleRequest);
-    }
+
 
 
 

@@ -19,6 +19,11 @@ public class DnsManageRequest {
     private String networkId;
 
     /**
+     * 安全服务器通信ip
+     */
+    private String comIp;
+
+    /**
      * 隐私ip
      */
     private String lanIp;

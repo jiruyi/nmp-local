@@ -2,6 +2,8 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.req.EditServerProxyReq;
+import com.matrictime.network.req.StartServerReq;
 import com.matrictime.network.service.SecurityServerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
 
 /**
  * 安全服务器模块
@@ -30,12 +30,24 @@ public class SecurityServerController extends SystemBaseService {
      * @return
      */
     @RequestMapping(value = "/update",method = RequestMethod.POST)
-    public Result<Integer> updateLink(){
+    public Result<Integer> updateServer(@RequestBody EditServerProxyReq req){
         Result<Integer> result;
         try {
-            result = buildResult(null);
+            result = serverService.updateServer(req);
         }catch (Exception e){
             log.info("SecurityServerController.update{}",e.getMessage());
+            result = failResult("");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/startServer",method = RequestMethod.POST)
+    public Result<Integer> startServer(@RequestBody StartServerReq req){
+        Result<Integer> result;
+        try {
+            result = serverService.startServer(req);
+        }catch (Exception e){
+            log.info("SecurityServerController.startServer{}",e.getMessage());
             result = failResult("");
         }
         return result;

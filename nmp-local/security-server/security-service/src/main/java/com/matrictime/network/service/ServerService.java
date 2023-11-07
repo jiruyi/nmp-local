@@ -13,10 +13,16 @@ import java.util.List;
 public interface ServerService {
 
     /**
-     * 查询安全服务器列表
+     * 查询安全服务器列表(分页)
      * @return
      */
-    Result<PageInfo<SecurityServerInfoVo>> queryServer(QueryServerReq req);
+    Result<PageInfo<SecurityServerInfoVo>> queryServerByPage(QueryServerReq req);
+
+    /**
+     * 查询安全服务器列表(不分页)
+     * @return
+     */
+    Result<List<SecurityServerInfoVo>> queryServer(QueryServerReq req);
 
     /**
      * 编辑安全服务器

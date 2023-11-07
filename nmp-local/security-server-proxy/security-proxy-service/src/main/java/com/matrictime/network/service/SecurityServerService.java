@@ -1,6 +1,9 @@
 package com.matrictime.network.service;
 
+import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.SecurityServerProxyVo;
+import com.matrictime.network.req.EditServerProxyReq;
+import com.matrictime.network.req.StartServerReq;
 
 import java.util.List;
 
@@ -11,4 +14,18 @@ public interface SecurityServerService {
      * @return
      */
     List<SecurityServerProxyVo> getLocalServerVos();
+
+    /**
+     * 安全服务器更新
+     * @param req
+     * @return
+     */
+    Result updateServer(EditServerProxyReq req);
+
+    /**
+     * 启动安全服务器
+     * @param req
+     * @return
+     */
+    Result<Integer> startServer(StartServerReq req);
 }

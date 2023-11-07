@@ -18,6 +18,5 @@ public interface RoleService {
 
     Result queryCreateRole(RoleRequest roleRequest);
 
-    Result permersion(RoleRequest roleRequest);
 
 }

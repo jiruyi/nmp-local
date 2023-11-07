@@ -64,6 +64,7 @@ public class DataConstants {
     public static final String EDIT_TYPE_ADD = "1";
     public static final String EDIT_TYPE_UPD = "2";
     public static final String EDIT_TYPE_DEL = "3";
+    public static final String EDIT_TYPE_PHY_DEL = "4";
 
     public static final String EDIT_RANGE_PART = "1";
     public static final String EDIT_RANGE_ALL = "2";

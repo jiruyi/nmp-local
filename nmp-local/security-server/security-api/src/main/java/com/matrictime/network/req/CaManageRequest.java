@@ -20,6 +20,11 @@ public class CaManageRequest {
     private String networkId;
 
     /**
+     * 安全服务器通信ip
+     */
+    private String comIp;
+
+    /**
      * 安全服务器名称
      */
     private String serverName;

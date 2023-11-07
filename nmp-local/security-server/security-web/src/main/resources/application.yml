@@ -73,3 +73,9 @@ token:
   timeOut: 12
 task:
   saveDays: 7
+health:
+  deadline:
+    time: 35
+security-proxy:
+  context-path: /security-server-proxy
+  port: 8021
