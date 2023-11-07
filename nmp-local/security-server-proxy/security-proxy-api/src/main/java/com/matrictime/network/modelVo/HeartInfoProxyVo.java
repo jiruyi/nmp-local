@@ -16,7 +16,7 @@ public class HeartInfoProxyVo implements Serializable {
     private String networkId;
 
     /**
-     * 状态 1:正常
+     * 状态 0：内外网正常 1：外网异常
      */
     private Short serverStatus;
 

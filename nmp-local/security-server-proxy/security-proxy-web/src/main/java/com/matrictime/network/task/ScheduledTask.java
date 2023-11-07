@@ -7,14 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
-import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Component
 @EnableAsync //开启多线程
 @Slf4j
 public class ScheduledTask {
-
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     private TaskService taskService;
@@ -27,13 +25,12 @@ public class ScheduledTask {
      * @author hx
      * @create 2023/4/19 0019 17:25
      */
-//    @Scheduled(cron = "*/30 * * * * ?")
-//    @Async
-//    public void heartReport(){
-//        log.info(Thread.currentThread().getName()+"======================heartReport begin=============================");
-//        taskService.heartReport(new Date());
-//        log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
-//    }
+    @XxlJob("heartReport")
+    public void heartReport(){
+        log.info(Thread.currentThread().getName()+"======================heartReport begin=============================");
+        taskService.heartReport(new Date());
+        log.info(Thread.currentThread().getName()+"======================heartReport end=============================");
+    }
 
 
 

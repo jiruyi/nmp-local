@@ -18,7 +18,7 @@ USE `nmp_security_proxy`;
 
 create table nmps_security_server_info
 (
-    id            bigint auto_increment comment '主键ID'    primary key,
+    id            bigint                                   not null comment '主键ID'    primary key,
     server_name   varchar(32)                              null comment '安全服务器名称',
     com_ip        varchar(128)                             null comment '通信ip',
     network_id    varchar(128)                             null comment '入网id',
@@ -37,7 +37,7 @@ create table nmps_security_server_info
 
 create table nmps_network_card
 (
-    id            bigint auto_increment comment '主键ID'    primary key,
+    id            bigint                                   not null comment '主键ID'    primary key,
     network_id    varchar(128)                             null comment '入网id',
     net_card_type char(2)                                  null comment '网卡类型（1：物理网卡 2：虚拟网卡）',
     adapter_name  varchar(64)                              null comment '适配器名称',

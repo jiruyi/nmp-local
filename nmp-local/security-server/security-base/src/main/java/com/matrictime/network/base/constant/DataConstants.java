@@ -109,4 +109,9 @@ public class DataConstants {
     public static final int ONE_THOUSAND_AND_TWENTY_FOUR = 1024;
 
     public static final double ZERO_DOUBLE = 0.0;
+
+    /**
+     * redis key
+     */
+    public static final String HEART_REPORT_NETWORKID = "HEART_REPORT_NETWORKID:";
 }

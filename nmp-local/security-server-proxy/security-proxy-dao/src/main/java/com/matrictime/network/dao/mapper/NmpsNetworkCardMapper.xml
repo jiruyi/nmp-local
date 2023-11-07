@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper">
-  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmpsSecurityServerInfo">
+<mapper namespace="com.matrictime.network.dao.mapper.NmpsNetworkCardMapper">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmpsNetworkCard">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="server_name" jdbcType="VARCHAR" property="serverName" />
-    <result column="com_ip" jdbcType="VARCHAR" property="comIp" />
     <result column="network_id" jdbcType="VARCHAR" property="networkId" />
-    <result column="signal_port" jdbcType="VARCHAR" property="signalPort" />
-    <result column="key_port" jdbcType="VARCHAR" property="keyPort" />
-    <result column="connect_type" jdbcType="CHAR" property="connectType" />
-    <result column="server_status" jdbcType="CHAR" property="serverStatus" />
+    <result column="net_card_type" jdbcType="CHAR" property="netCardType" />
+    <result column="adapter_name" jdbcType="VARCHAR" property="adapterName" />
+    <result column="ipv4" jdbcType="VARCHAR" property="ipv4" />
+    <result column="ipv6" jdbcType="VARCHAR" property="ipv6" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -76,17 +74,17 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, server_name, com_ip, network_id, signal_port, key_port, connect_type, server_status, 
-    is_exist, create_user, create_time, update_user, update_time, remark
+    id, network_id, net_card_type, adapter_name, ipv4, ipv6, is_exist, create_user, create_time, 
+    update_user, update_time, remark
   </sql>
-  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmpsSecurityServerInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmpsNetworkCardExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from nmps_security_server_info
+    from nmps_network_card
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -97,57 +95,51 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from nmps_security_server_info
+    from nmps_network_card
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from nmps_security_server_info
+    delete from nmps_network_card
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmpsSecurityServerInfoExample">
-    delete from nmps_security_server_info
+  <delete id="deleteByExample" parameterType="com.matrictime.network.dao.model.NmpsNetworkCardExample">
+    delete from nmps_network_card
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmpsSecurityServerInfo">
-    insert into nmps_security_server_info (id, server_name, com_ip, 
-      network_id, signal_port, key_port, 
-      connect_type, server_status, is_exist, 
-      create_user, create_time, update_user, 
-      update_time, remark)
-    values (#{id,jdbcType=BIGINT}, #{serverName,jdbcType=VARCHAR}, #{comIp,jdbcType=VARCHAR}, 
-      #{networkId,jdbcType=VARCHAR}, #{signalPort,jdbcType=VARCHAR}, #{keyPort,jdbcType=VARCHAR}, 
-      #{connectType,jdbcType=CHAR}, #{serverStatus,jdbcType=CHAR}, #{isExist,jdbcType=BIT}, 
-      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+  <insert id="insert" parameterType="com.matrictime.network.dao.model.NmpsNetworkCard">
+    insert into nmps_network_card (id, network_id, net_card_type, 
+      adapter_name, ipv4, ipv6, 
+      is_exist, create_user, create_time, 
+      update_user, update_time, remark
+      )
+    values (#{id,jdbcType=BIGINT}, #{networkId,jdbcType=VARCHAR}, #{netCardType,jdbcType=CHAR}, 
+      #{adapterName,jdbcType=VARCHAR}, #{ipv4,jdbcType=VARCHAR}, #{ipv6,jdbcType=VARCHAR}, 
+      #{isExist,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmpsSecurityServerInfo">
-    insert into nmps_security_server_info
+  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmpsNetworkCard">
+    insert into nmps_network_card
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
       </if>
-      <if test="serverName != null">
-        server_name,
-      </if>
-      <if test="comIp != null">
-        com_ip,
-      </if>
       <if test="networkId != null">
         network_id,
       </if>
-      <if test="signalPort != null">
-        signal_port,
+      <if test="netCardType != null">
+        net_card_type,
       </if>
-      <if test="keyPort != null">
-        key_port,
+      <if test="adapterName != null">
+        adapter_name,
       </if>
-      <if test="connectType != null">
-        connect_type,
+      <if test="ipv4 != null">
+        ipv4,
       </if>
-      <if test="serverStatus != null">
-        server_status,
+      <if test="ipv6 != null">
+        ipv6,
       </if>
       <if test="isExist != null">
         is_exist,
@@ -172,26 +164,20 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="serverName != null">
-        #{serverName,jdbcType=VARCHAR},
-      </if>
-      <if test="comIp != null">
-        #{comIp,jdbcType=VARCHAR},
-      </if>
       <if test="networkId != null">
         #{networkId,jdbcType=VARCHAR},
       </if>
-      <if test="signalPort != null">
-        #{signalPort,jdbcType=VARCHAR},
+      <if test="netCardType != null">
+        #{netCardType,jdbcType=CHAR},
       </if>
-      <if test="keyPort != null">
-        #{keyPort,jdbcType=VARCHAR},
+      <if test="adapterName != null">
+        #{adapterName,jdbcType=VARCHAR},
       </if>
-      <if test="connectType != null">
-        #{connectType,jdbcType=CHAR},
+      <if test="ipv4 != null">
+        #{ipv4,jdbcType=VARCHAR},
       </if>
-      <if test="serverStatus != null">
-        #{serverStatus,jdbcType=CHAR},
+      <if test="ipv6 != null">
+        #{ipv6,jdbcType=VARCHAR},
       </if>
       <if test="isExist != null">
         #{isExist,jdbcType=BIT},
@@ -213,38 +199,32 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmpsSecurityServerInfoExample" resultType="java.lang.Long">
-    select count(*) from nmps_security_server_info
+  <select id="countByExample" parameterType="com.matrictime.network.dao.model.NmpsNetworkCardExample" resultType="java.lang.Long">
+    select count(*) from nmps_network_card
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update nmps_security_server_info
+    update nmps_network_card
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.serverName != null">
-        server_name = #{record.serverName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.comIp != null">
-        com_ip = #{record.comIp,jdbcType=VARCHAR},
-      </if>
       <if test="record.networkId != null">
         network_id = #{record.networkId,jdbcType=VARCHAR},
       </if>
-      <if test="record.signalPort != null">
-        signal_port = #{record.signalPort,jdbcType=VARCHAR},
+      <if test="record.netCardType != null">
+        net_card_type = #{record.netCardType,jdbcType=CHAR},
       </if>
-      <if test="record.keyPort != null">
-        key_port = #{record.keyPort,jdbcType=VARCHAR},
+      <if test="record.adapterName != null">
+        adapter_name = #{record.adapterName,jdbcType=VARCHAR},
       </if>
-      <if test="record.connectType != null">
-        connect_type = #{record.connectType,jdbcType=CHAR},
+      <if test="record.ipv4 != null">
+        ipv4 = #{record.ipv4,jdbcType=VARCHAR},
       </if>
-      <if test="record.serverStatus != null">
-        server_status = #{record.serverStatus,jdbcType=CHAR},
+      <if test="record.ipv6 != null">
+        ipv6 = #{record.ipv6,jdbcType=VARCHAR},
       </if>
       <if test="record.isExist != null">
         is_exist = #{record.isExist,jdbcType=BIT},
@@ -270,15 +250,13 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update nmps_security_server_info
+    update nmps_network_card
     set id = #{record.id,jdbcType=BIGINT},
-      server_name = #{record.serverName,jdbcType=VARCHAR},
-      com_ip = #{record.comIp,jdbcType=VARCHAR},
       network_id = #{record.networkId,jdbcType=VARCHAR},
-      signal_port = #{record.signalPort,jdbcType=VARCHAR},
-      key_port = #{record.keyPort,jdbcType=VARCHAR},
-      connect_type = #{record.connectType,jdbcType=CHAR},
-      server_status = #{record.serverStatus,jdbcType=CHAR},
+      net_card_type = #{record.netCardType,jdbcType=CHAR},
+      adapter_name = #{record.adapterName,jdbcType=VARCHAR},
+      ipv4 = #{record.ipv4,jdbcType=VARCHAR},
+      ipv6 = #{record.ipv6,jdbcType=VARCHAR},
       is_exist = #{record.isExist,jdbcType=BIT},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -289,29 +267,23 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmpsSecurityServerInfo">
-    update nmps_security_server_info
+  <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmpsNetworkCard">
+    update nmps_network_card
     <set>
-      <if test="serverName != null">
-        server_name = #{serverName,jdbcType=VARCHAR},
-      </if>
-      <if test="comIp != null">
-        com_ip = #{comIp,jdbcType=VARCHAR},
-      </if>
       <if test="networkId != null">
         network_id = #{networkId,jdbcType=VARCHAR},
       </if>
-      <if test="signalPort != null">
-        signal_port = #{signalPort,jdbcType=VARCHAR},
+      <if test="netCardType != null">
+        net_card_type = #{netCardType,jdbcType=CHAR},
       </if>
-      <if test="keyPort != null">
-        key_port = #{keyPort,jdbcType=VARCHAR},
+      <if test="adapterName != null">
+        adapter_name = #{adapterName,jdbcType=VARCHAR},
       </if>
-      <if test="connectType != null">
-        connect_type = #{connectType,jdbcType=CHAR},
+      <if test="ipv4 != null">
+        ipv4 = #{ipv4,jdbcType=VARCHAR},
       </if>
-      <if test="serverStatus != null">
-        server_status = #{serverStatus,jdbcType=CHAR},
+      <if test="ipv6 != null">
+        ipv6 = #{ipv6,jdbcType=VARCHAR},
       </if>
       <if test="isExist != null">
         is_exist = #{isExist,jdbcType=BIT},
@@ -334,15 +306,13 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmpsSecurityServerInfo">
-    update nmps_security_server_info
-    set server_name = #{serverName,jdbcType=VARCHAR},
-      com_ip = #{comIp,jdbcType=VARCHAR},
-      network_id = #{networkId,jdbcType=VARCHAR},
-      signal_port = #{signalPort,jdbcType=VARCHAR},
-      key_port = #{keyPort,jdbcType=VARCHAR},
-      connect_type = #{connectType,jdbcType=CHAR},
-      server_status = #{serverStatus,jdbcType=CHAR},
+  <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmpsNetworkCard">
+    update nmps_network_card
+    set network_id = #{networkId,jdbcType=VARCHAR},
+      net_card_type = #{netCardType,jdbcType=CHAR},
+      adapter_name = #{adapterName,jdbcType=VARCHAR},
+      ipv4 = #{ipv4,jdbcType=VARCHAR},
+      ipv6 = #{ipv6,jdbcType=VARCHAR},
       is_exist = #{isExist,jdbcType=BIT},
       create_user = #{createUser,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},

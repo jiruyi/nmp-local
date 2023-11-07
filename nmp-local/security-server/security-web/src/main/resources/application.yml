@@ -73,3 +73,6 @@ token:
   timeOut: 12
 task:
   saveDays: 7
+health:
+  deadline:
+    time: 35
