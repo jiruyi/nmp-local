@@ -76,3 +76,6 @@ task:
 health:
   deadline:
     time: 35
+security-proxy:
+  context-path: /security-server-proxy
+  port: 8021
