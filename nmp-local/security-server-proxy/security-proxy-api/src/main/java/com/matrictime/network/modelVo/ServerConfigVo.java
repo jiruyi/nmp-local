@@ -1,9 +1,12 @@
 package com.matrictime.network.modelVo;
 
+import lombok.Data;
+
 /**
  * @author by wangqiang
  * @date 2023/11/6.
  */
+@Data
 public class ServerConfigVo {
     /**
      * 设备入网码
