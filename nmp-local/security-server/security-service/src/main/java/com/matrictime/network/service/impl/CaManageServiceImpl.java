@@ -13,10 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,6 +61,11 @@ public class CaManageServiceImpl implements CaManageService {
         return result;
     }
 
+    /**
+     * 删除ca管理
+     * @param caManageRequest
+     * @return
+     */
     @Override
     public Result<Integer> deleteCaManage(CaManageRequest caManageRequest) {
         Result<Integer> result = new Result<>();
@@ -84,6 +87,11 @@ public class CaManageServiceImpl implements CaManageService {
         return result;
     }
 
+    /**
+     * 查询ca管理
+     * @param caManageRequest
+     * @return
+     */
     @Override
     public Result<CaManageResp> selectCaManage(CaManageRequest caManageRequest) {
         Result<CaManageResp> result = new Result<>();
@@ -101,6 +109,11 @@ public class CaManageServiceImpl implements CaManageService {
         return result;
     }
 
+    /**
+     * 更新ca管理
+     * @param caManageRequest
+     * @return
+     */
     @Override
     public Result<Integer> updateCaManage(CaManageRequest caManageRequest) {
         Result<Integer> result = new Result<>();
@@ -130,4 +143,7 @@ public class CaManageServiceImpl implements CaManageService {
         }
         return result;
     }
+
+
+
 }
