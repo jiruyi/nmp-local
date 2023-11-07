@@ -20,6 +20,5 @@ public interface RoleDomainService {
 
     public List<NmplRoleVo> queryCreateRole(RoleRequest roleRequest) throws Exception;
 
-    public Integer permission(RoleRequest roleRequest)throws Exception;
 
 }

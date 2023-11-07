@@ -108,32 +108,6 @@ public class RoleServiceImpl extends SystemBaseService implements RoleService {
         return result;
     }
 
-    @Override
-    public Result permersion(RoleRequest roleRequest) {
-        Result<Integer> result = null;
-        try {
-            NmplUser nmplUser = RequestContext.getUser();
-            roleRequest.setUpdateUser(String.valueOf(nmplUser.getUserId()));
-            //除管理员用户，其他用户只能编辑自己创建的角色
-            if (Long.parseLong(nmplUser.getRoleId())!=DataConstants.SUPER_ADMIN && !Long.valueOf(roleRequest.getCreateUser()).equals(nmplUser.getUserId())
-                    &&Long.parseLong(nmplUser.getRoleId())!=DataConstants.COMMON_ADMIN){
-                result = failResult(ErrorCode.SYSTEM_ERROR, "非该角色的创建者，无编辑该角色的权限");
-                return result;
-            }
-            if(roleRequest.getRoleId()==null){
-                result = failResult(ErrorCode.SYSTEM_ERROR, "参数缺失");
-                return result;
-            }
-            result = buildResult(roleDomainService.permission(roleRequest));
-        }catch (SystemException e){
-            log.info("设置角色权限异常",e.getMessage());
-            result = failResult(e);
-        }catch (Exception e){
-            log.info("设置角色权限异常",e.getMessage());
-            result = failResult("");
-        }
-        return result;
-    }
 
     @Override
     public Result delete(RoleRequest roleRequest) {

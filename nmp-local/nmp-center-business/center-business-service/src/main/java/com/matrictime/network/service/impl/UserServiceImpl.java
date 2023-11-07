@@ -11,6 +11,7 @@ import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.convert.UserConvert;
 import com.matrictime.network.dao.domain.UserDomainService;
 import com.matrictime.network.dao.mapper.NmplRoleMapper;
+import com.matrictime.network.dao.mapper.NmplUserMapper;
 import com.matrictime.network.dao.model.NmplLoginDetail;
 import com.matrictime.network.dao.model.NmplRole;
 import com.matrictime.network.dao.model.NmplUser;
@@ -37,10 +38,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,6 +71,9 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
 
     @Value("${token.timeOut}")
     private Integer timeOut;
+
+    @Resource
+    private NmplUserMapper nmplUserMapper;
 
     @Override
     public Result<LoginResponse> login(LoginRequest loginRequest) {
@@ -245,6 +248,14 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
             PageInfo pageInfo = userDomainService.selectUserList(userRequest);
             //参数转换
             List<UserRequest> list =  userConvert.to(pageInfo.getList());
+
+            // 4.0.1---增加用户创建人展示
+            List<NmplUser> nmplUserList = nmplUserMapper.selectByExample(null);
+            Map<String,String> map = new HashMap<>();
+            for (NmplUser user : nmplUserList) {
+                map.put(String.valueOf(user.getUserId()),user.getNickName());
+            }
+
             //角色转换
             if(!CollectionUtils.isEmpty(list)){
                 for(UserRequest user: list){
@@ -258,6 +269,7 @@ public class UserServiceImpl  extends SystemBaseService implements UserService {
                     user.setRoleName(roleName);
 //                    user.setLoginAccount(AesEncryptUtil.aesDecrypt(user.getLoginAccount()));
 //                    user.setPhoneNumber(AesEncryptUtil.aesDecrypt(user.getPhoneNumber()));
+                    user.setCreateUserName(map.getOrDefault(user.getCreateUser(),""));
                 }
             }
             pageInfo.setList(list);

@@ -46,6 +46,8 @@ public class RoleDomainServiceImpl implements RoleDomainService {
 
     @Value("${token.timeOut}")
     private Integer timeOut;
+
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer save(RoleRequest roleRequest)throws Exception
@@ -53,16 +55,27 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         NmplRole nmplRole = new NmplRole();
         BeanUtils.copyProperties(roleRequest,nmplRole);
         NmplRoleExample nmplRoleExample = new NmplRoleExample();
-//        nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode()).andIsExistEqualTo((byte) 1);
+        nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode()).andIsExistEqualTo((byte) 1);
         nmplRoleExample.or().andRoleNameEqualTo(roleRequest.getRoleName()).andIsExistEqualTo((byte) 1);
         List<NmplRole> nmplRoles = nmplRoleMapper.selectByExample(nmplRoleExample);
         if (!CollectionUtils.isEmpty(nmplRoles)){
             throw new SystemException("存在相同角色名称或权限字符");
         }
-        nmplRole.setIsExist(Byte.valueOf("1"));
-        Integer result = 0;
-        result = nmplRoleMapper.insertSelective(nmplRole);
 
+        nmplRole.setIsExist(Byte.valueOf("1"));
+        nmplRoleMapper.insertSelective(nmplRole);
+        List<Long>menuList = new ArrayList<>();
+        menuList = roleRequest.getMenuId();
+        menuList = roleHandle(new HashSet<>(menuList));
+        Integer result = 0;
+        if (!CollectionUtils.isEmpty(menuList)){
+            for (Long meduId : menuList) {
+                NmplRoleMenuRelation nmplRoleMenuRelation = new NmplRoleMenuRelation();
+                nmplRoleMenuRelation.setRoleId(nmplRole.getRoleId());
+                nmplRoleMenuRelation.setMenuId(meduId);
+                result = nmplRoleMenuRelationMapper.insert(nmplRoleMenuRelation);
+            }
+        }
         return result;
     }
     @Transactional(rollbackFor = Exception.class)
@@ -85,6 +98,8 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         nmplRole.setUpdateUser(roleRequest.getUpdateUser());
         return nmplRoleMapper.updateByPrimaryKeySelective(nmplRole);
     }
+
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer modify(RoleRequest roleRequest)throws Exception {
@@ -94,7 +109,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         BeanUtils.copyProperties(roleRequest,nmplRole);
         if (roleRequest.getRoleName()!=null||roleRequest.getRoleCode()!=null){
             NmplRoleExample nmplRoleExample = new NmplRoleExample();
-//            nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode()).andIsExistEqualTo((byte) 1);
+            nmplRoleExample.or().andRoleCodeEqualTo(roleRequest.getRoleCode()).andIsExistEqualTo((byte) 1);
             nmplRoleExample.or().andRoleNameEqualTo(roleRequest.getRoleName()).andIsExistEqualTo((byte) 1);
             List<NmplRole>nmplRoles = nmplRoleMapper.selectByExample(nmplRoleExample);
             if (!CollectionUtils.isEmpty(nmplRoles)){
@@ -107,16 +122,6 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         nmplRole.setUpdateUser(roleRequest.getUpdateUser());
         result = nmplRoleMapper.updateByPrimaryKeySelective(nmplRole);
 
-        return result;
-    }
-
-
-    @Override
-    public Integer permission(RoleRequest roleRequest) throws Exception {
-        Integer result = 0;
-        //修改角色基本信息
-        NmplRole nmplRole = new NmplRole();
-        BeanUtils.copyProperties(roleRequest,nmplRole);
         //将角色之前的权限删除 更新权限信息
 
         NmplRoleMenuRelationExample nmplRoleMenuRelationExample = new NmplRoleMenuRelationExample();
@@ -126,7 +131,6 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         //新增该用户权限
         List<Long>menuList = new ArrayList<>();
         menuList = roleRequest.getMenuId();
-//        menuList.add(63L);
         menuList = roleHandle(new HashSet<>(menuList));
         if (!CollectionUtils.isEmpty(menuList)){
             for (Long meduId : menuList) {
@@ -140,10 +144,10 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         nmplUserExample.createCriteria().andRoleIdEqualTo(String.valueOf(roleRequest.getRoleId())).andIsExistEqualTo(true);
         List<NmplUser> nmplUserList = nmplUserMapper.selectByExample(nmplUserExample);
         for (NmplUser user : nmplUserList) {
-            if(redisTemplate.opsForValue().get(DataConstants.ACCUSATION_CENTER+user.getUserId()+ DataConstants.USER_LOGIN_STATUS)!=null){
-                redisTemplate.opsForValue().set(DataConstants.ACCUSATION_CENTER+user.getUserId()+DataConstants.USER_LOGIN_STATUS,
+            if(redisTemplate.opsForValue().get(user.getUserId()+ DataConstants.USER_LOGIN_STATUS)!=null){
+                redisTemplate.opsForValue().set(user.getUserId()+DataConstants.USER_LOGIN_STATUS,
                         LoginStatusEnum.UPDATE.getCode(),timeOut, TimeUnit.HOURS);
-                redisTemplate.delete(DataConstants.ACCUSATION_CENTER+user.getUserId()+ DataConstants.USER_LOGIN_JWT_TOKEN);
+                redisTemplate.delete(user.getUserId()+ DataConstants.USER_LOGIN_JWT_TOKEN);
                 Subject subject = (Subject) ThreadContext.get(user.getUserId()+"_SUBJECT_KEY");
                 if(subject!=null){
                     subject.logout();
@@ -152,6 +156,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         }
         return result;
     }
+
 
     @Override
     public List<NmplRoleVo> queryByConditions(RoleRequest roleRequest) throws Exception{
@@ -172,15 +177,22 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             criteria.andCreateTimeLessThanOrEqualTo(sf.parse(roleRequest.getEndTime()));
         }
         criteria.andIsExistEqualTo(Byte.valueOf("1"));
-//        Page page = PageHelper.startPage(roleRequest.getPageNo(),roleRequest.getPageSize());
+
         nmplRoleExample.setOrderByClause("create_time desc");
         List<NmplRole> nmplRoleList = nmplRoleMapper.selectByExample(nmplRoleExample);
-//        nmplRoleList = nmplRoleList.stream().sorted(Comparator.comparing(NmplRole::getCreateTime).reversed()).collect(Collectors.toList());
-//        PageInfo<NmplRoleVo> pageResult =  new PageInfo<>();
+
+        //4.0.1----增加创建人信息
+        List<NmplUser> nmplUserList = nmplUserMapper.selectByExample(null);
+        Map<String,String> map = new HashMap<>();
+        for (NmplUser user : nmplUserList) {
+            map.put(String.valueOf(user.getUserId()),user.getNickName());
+        }
+
         List<NmplRoleVo> nmplRoles = new ArrayList<>();
         for (NmplRole nmplRole : nmplRoleList) {
             NmplRoleVo role = new NmplRoleVo();
             BeanUtils.copyProperties(nmplRole,role);
+            role.setCreateUserName(map.getOrDefault(role.getCreateUser(),""));
             nmplRoles.add(role);
         }
 //
