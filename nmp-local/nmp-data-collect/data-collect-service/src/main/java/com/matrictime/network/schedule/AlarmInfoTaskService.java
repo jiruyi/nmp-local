@@ -74,9 +74,11 @@ public class AlarmInfoTaskService implements BusinessDataService, SchedulingConf
         scheduledTaskRegistrar.addTriggerTask(new Runnable() {
             @Override
             public void run() {
-
+                boolean isReport = configDomainService.isReport(BusinessTypeEnum.ALARM_DATA.getCode());
+                log.info("AlarmInfoTaskService isReport:{}",isReport);
                 //业务是否可以上报
-                if(!configDomainService.isReport(BusinessTypeEnum.ALARM_DATA.getCode())){
+                if(!isReport){
+                    log.info("AlarmInfoTaskService isReport:{},不做上报处理",isReport);
                     return;
                 }
                 log.info("告警信息上报至指控中心开始");
