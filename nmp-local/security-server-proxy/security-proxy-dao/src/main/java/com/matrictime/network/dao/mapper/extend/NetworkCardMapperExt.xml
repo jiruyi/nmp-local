@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NetworkCardMapperExt">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmpsNetworkCard">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="network_id" jdbcType="VARCHAR" property="networkId" />
+    <result column="net_card_type" jdbcType="CHAR" property="netCardType" />
+    <result column="adapter_name" jdbcType="VARCHAR" property="adapterName" />
+    <result column="ipv4" jdbcType="VARCHAR" property="ipv4" />
+    <result column="ipv6" jdbcType="VARCHAR" property="ipv6" />
+    <result column="is_exist" jdbcType="BIT" property="isExist" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+
+
+  <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.NetworkCardProxyVo">
+    insert into nmps_network_card (id, network_id, net_card_type,
+    adapter_name, ipv4, ipv6,
+    is_exist, create_user, create_time,
+    update_user, update_time, remark
+    )
+    values
+    <foreach collection ="list" item="vo" separator =",">
+      (#{vo.id,jdbcType=BIGINT}, #{vo.networkId,jdbcType=VARCHAR}, #{vo.netCardType,jdbcType=CHAR},
+      #{vo.adapterName,jdbcType=VARCHAR}, #{vo.ipv4,jdbcType=VARCHAR}, #{vo.ipv6,jdbcType=VARCHAR},
+      #{vo.isExist,jdbcType=BIT}, #{vo.createUser,jdbcType=VARCHAR}, #{vo.createTime,jdbcType=TIMESTAMP},
+      #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.remark,jdbcType=VARCHAR}
+      )
+    </foreach >
+  </insert>
+
+  <update id="batchUpdate" parameterType="com.matrictime.network.modelVo.NetworkCardProxyVo">
+    <foreach collection="list" separator=";" item="vo">
+      update nmps_network_card
+      <set>
+        <if test="vo.networkId != null">
+          network_id = #{vo.networkId,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.netCardType != null">
+          net_card_type = #{vo.netCardType,jdbcType=CHAR},
+        </if>
+        <if test="vo.adapterName != null">
+          adapter_name = #{vo.adapterName,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.ipv4 != null">
+          ipv4 = #{vo.ipv4,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.ipv6 != null">
+          ipv6 = #{vo.ipv6,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.isExist != null">
+          is_exist = #{vo.isExist,jdbcType=BIT},
+        </if>
+        <if test="vo.createUser != null">
+          create_user = #{vo.createUser,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.createTime != null">
+          create_time = #{vo.createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="vo.updateUser != null">
+          update_user = #{vo.updateUser,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.updateTime != null">
+          update_time = #{vo.updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="vo.remark != null">
+          remark = #{vo.remark,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where id = #{vo.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+</mapper>

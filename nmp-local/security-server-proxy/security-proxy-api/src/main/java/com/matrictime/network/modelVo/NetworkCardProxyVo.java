@@ -3,25 +3,18 @@ package com.matrictime.network.modelVo;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 
+/**
+ * 安全服务器关联网卡信息表
+ * @author   cxk
+ * @date   2023-11-06
+ */
 @Data
-public class SecurityServerProxyVo {
-
+public class NetworkCardProxyVo {
     /**
      * 主键ID
      */
     private Long id;
-
-    /**
-     * 安全服务器名称
-     */
-    private String serverName;
-
-    /**
-     * 通信ip
-     */
-    private String comIp;
 
     /**
      * 入网id
@@ -29,24 +22,24 @@ public class SecurityServerProxyVo {
     private String networkId;
 
     /**
-     * 信令（中继）端口
+     * 网卡类型（1：物理网卡 2：虚拟网卡）
      */
-    private String signalPort;
+    private String netCardType;
 
     /**
-     * 下载密钥端口
+     * 适配器名称
      */
-    private String keyPort;
+    private String adapterName;
 
     /**
-     * 连接方式 1:内接 2:外接
+     * ipv4
      */
-    private String connectType;
+    private String ipv4;
 
     /**
-     * 状态 01:上线  02:下线
+     * ipv6
      */
-    private String serverStatus;
+    private String ipv6;
 
     /**
      * 删除标志（1代表存在 0代表删除）
@@ -77,9 +70,4 @@ public class SecurityServerProxyVo {
      * 备注
      */
     private String remark;
-
-    /**
-     * 关联网卡信息列表
-     */
-    private List<NetworkCardProxyVo> networkCardProxyVos;
 }

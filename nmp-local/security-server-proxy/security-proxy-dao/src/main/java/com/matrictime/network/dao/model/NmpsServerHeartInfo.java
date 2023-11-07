@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 安全服务器心跳上报信息表
  * @author   cxk
- * @date   2023-10-27
+ * @date   2023-11-06
  */
 @Data
 public class NmpsServerHeartInfo {
@@ -16,7 +16,7 @@ public class NmpsServerHeartInfo {
     private String networkId;
 
     /**
-     * 状态 1:正常
+     * 状态 0：内外网正常 1：外网异常
      */
     private Short serverStatus;
 

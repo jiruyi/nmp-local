@@ -2,6 +2,7 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.req.EditServerProxyReq;
 import com.matrictime.network.service.SecurityServerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class SecurityServerController extends SystemBaseService {
      * @return
      */
     @RequestMapping(value = "/update",method = RequestMethod.POST)
-    public Result<Integer> updateLink(){
+    public Result<Integer> updateServer(@RequestBody EditServerProxyReq req){
         Result<Integer> result;
         try {
             result = buildResult(null);
