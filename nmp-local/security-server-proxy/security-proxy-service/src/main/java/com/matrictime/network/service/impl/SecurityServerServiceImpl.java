@@ -5,7 +5,6 @@ import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.NmpsNetworkCardMapper;
 import com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NetworkCardMapperExt;
-import com.matrictime.network.dao.model.NmpsNetworkCard;
 import com.matrictime.network.dao.model.NmpsNetworkCardExample;
 import com.matrictime.network.dao.model.NmpsSecurityServerInfo;
 import com.matrictime.network.dao.model.NmpsSecurityServerInfoExample;
@@ -15,21 +14,25 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.NetworkCardProxyVo;
 import com.matrictime.network.modelVo.SecurityServerProxyVo;
 import com.matrictime.network.req.EditServerProxyReq;
+import com.matrictime.network.req.StartServerReq;
 import com.matrictime.network.service.SecurityServerService;
 import com.matrictime.network.util.ParamCheckUtil;
+import com.matrictime.network.util.ShellUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.matrictime.network.base.constant.DataConstants.OPER_RUN;
 import static com.matrictime.network.constant.DataConstants.IS_EXIST;
-import static com.matrictime.network.constant.DataConstants.IS_NOT_EXIST;
-import static com.matrictime.network.exception.ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG;
+import static com.matrictime.network.exception.ErrorMessageContants.*;
 
 @Service
 @Slf4j
@@ -43,6 +46,12 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
 
     @Resource
     private NmpsNetworkCardMapper networkCardMapper;
+
+    @Value("${server-shell.run-file-name}")
+    private String serverStartFileName;
+
+    @Value("${server-shell.run-file-path}")
+    private String serverStartFilePath;
 
 
     /**
@@ -118,10 +127,8 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
 
                         // 更新安全服务器关联网卡表（先删后增）
                         NmpsNetworkCardExample deleteExample = new NmpsNetworkCardExample();
-                        deleteExample.createCriteria().andNetworkIdNotEqualTo(networkId).andIsExistEqualTo(IS_EXIST);
-                        NmpsNetworkCard networkCard = new NmpsNetworkCard();
-                        networkCard.setIsExist(IS_NOT_EXIST);
-                        int delCards = networkCardMapper.updateByExampleSelective(networkCard, deleteExample);
+                        deleteExample.createCriteria().andNetworkIdNotEqualTo(networkId);
+                        int delCards = networkCardMapper.deleteByExample(deleteExample);
                         log.info("更新安全服务器关联网卡表（先删后增）:{}",delCards);
 
                         int updCards = networkCardMapperExt.batchInsert(vo.getNetworkCardProxyVos());
@@ -129,31 +136,22 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
 
                     }
                     break;
-                case DataConstants.EDIT_TYPE_DEL:// 逻辑删除
+                case DataConstants.EDIT_TYPE_PHY_DEL:// 物理删除
                     for (SecurityServerProxyVo vo : req.getSecurityServerInfoVos()){
                         // 校验id是否为空
                         if (vo.getId() == null){
                             throw new Exception("SecurityServerInfoVos.id"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
                         }
-                        NmpsSecurityServerInfo serverInfo = serverInfoMapper.selectByPrimaryKey(vo.getId());
-                        if (serverInfo == null){
-                            throw new Exception("serverInfo"+ ErrorMessageContants.DATA_CANNOT_FIND_INDB);
-                        }
 
                         // 逻辑删除安全服务器信息表
-                        NmpsSecurityServerInfo server = new NmpsSecurityServerInfo();
-                        server.setId(vo.getId());
-                        server.setIsExist(IS_NOT_EXIST);
-                        int delServer = serverInfoMapper.updateByPrimaryKeySelective(server);
-                        log.info("逻辑删除安全服务器信息表:{}",delServer);
+                        int delServer = serverInfoMapper.deleteByPrimaryKey(vo.getId());
+                        log.info("物理删除安全服务器信息表:{}",delServer);
 
                         // 逻辑删除安全服务器关联网卡表
                         NmpsNetworkCardExample deleteExample = new NmpsNetworkCardExample();
-                        deleteExample.createCriteria().andNetworkIdNotEqualTo(serverInfo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
-                        NmpsNetworkCard networkCard = new NmpsNetworkCard();
-                        networkCard.setIsExist(IS_NOT_EXIST);
-                        int delCards = networkCardMapper.updateByExampleSelective(networkCard, deleteExample);
-                        log.info("逻辑删除安全服务器关联网卡表:{}",delCards);
+                        deleteExample.createCriteria().andNetworkIdNotEqualTo(vo.getNetworkId());
+                        int delCards = networkCardMapper.deleteByExample(deleteExample);
+                        log.info("物理删除安全服务器关联网卡表:{}",delCards);
                     }
                     break;
                 default:
@@ -168,6 +166,35 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
             result = failResult("");
         }
 
+        return result;
+    }
+
+    /**
+     * 启动安全服务器
+     * @param req
+     * @return
+     */
+    @Override
+    public Result<Integer> startServer(StartServerReq req) {
+        Result result = new Result<>();
+        try{
+            // 启动
+            String file = serverStartFileName+OPER_RUN;
+            File runFile = new File(file);
+            fileIsExist(runFile,file);
+
+            List<String> run = new ArrayList<>();
+            run.add("sh");
+            run.add(file);
+            ShellUtil.runShell(run,null);
+
+        }catch (SystemException e){
+            log.warn("SecurityServerServiceImpl.run SystemException:{}",e.getMessage());
+            result = failResult(e);
+        }catch (Exception e){
+            log.warn("SecurityServerServiceImpl.run Exception:{}",e);
+            result = failResult("");
+        }
         return result;
     }
 
@@ -264,5 +291,16 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
         }
 
         // 校验插入安全服务器关联网卡信息表数据是否合法结束
+    }
+
+    /**
+     * 判断文件是否存在
+     * @param file
+     * @param fileName
+     */
+    private void fileIsExist(File file, String fileName){
+        if (!file.exists()){
+            throw new SystemException(fileName+FILE_NOT_EXIST);
+        }
     }
 }

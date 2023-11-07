@@ -120,10 +120,14 @@ public class DataConstants {
      */
     public static final String SERVER_UPDATE_URL = "/server/update";
 
+    public static final String SERVER_STARTSERVER_URL = "/server/startServer";
+
     /**
      * map key
      */
     public static final String JSON_KEY_EDITTYPE = "editType";
     public static final String JSON_KEY_SECURITYSERVERINFOVOS = "securityServerInfoVos";
+
+    public static final String JSON_KEY_NETWORKID = "networkId";
 
 }

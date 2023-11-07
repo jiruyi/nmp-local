@@ -8,11 +8,9 @@ import com.matrictime.network.base.enums.SecurityServerEnum;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.mapper.NmpsNetworkCardMapper;
 import com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper;
+import com.matrictime.network.dao.mapper.NmpsStationManageMapper;
 import com.matrictime.network.dao.mapper.extend.NetworkCardMapperExt;
-import com.matrictime.network.dao.model.NmpsNetworkCard;
-import com.matrictime.network.dao.model.NmpsNetworkCardExample;
-import com.matrictime.network.dao.model.NmpsSecurityServerInfo;
-import com.matrictime.network.dao.model.NmpsSecurityServerInfoExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.exception.SystemException;
@@ -67,6 +65,9 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
     @Resource
     private NetworkCardMapperExt networkCardMapperExt;
+
+    @Resource
+    private NmpsStationManageMapper stationManageMapper;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -207,7 +208,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
             checkEditServerParam(req);
             switch (req.getEditType()){
                 // 批量插入
-                case DataConstants.EDIT_TYPE_ADD:
+                case EDIT_TYPE_ADD:
                     for (SecurityServerInfoVo vo : req.getSecurityServerInfoVos()){
                         checkAddServerParam(vo);
                         NmpsSecurityServerInfo serverInfo = new NmpsSecurityServerInfo();
@@ -221,10 +222,10 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         log.info("插入安全服务器关联网卡表:{}",addCards);
 
                         // 同步代理
-                        syncProxy(vo,req.getEditType());
+                        syncProxy(vo,EDIT_TYPE_ADD);
                     }
                     break;
-                case DataConstants.EDIT_TYPE_UPD://批量修改
+                case EDIT_TYPE_UPD://批量修改
                     for (SecurityServerInfoVo vo : req.getSecurityServerInfoVos()){
                         // 校验id是否为空
                         if (vo.getId() == null){
@@ -239,12 +240,12 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
                         // 更新安全服务器信息表
                         NmpsSecurityServerInfo server = new NmpsSecurityServerInfo();
+                        vo.setNetworkId(networkId);
+                        vo.setCreateTime(null);
+                        vo.setIsExist(null);
+                        vo.setComIp(null);
+                        vo.setUpdateTime(null);
                         BeanUtils.copyProperties(vo,server);
-                        server.setNetworkId(networkId);
-                        server.setCreateTime(null);
-                        server.setIsExist(null);
-                        server.setComIp(null);
-                        server.setUpdateTime(null);
                         int updServer = serverInfoMapper.updateByPrimaryKeySelective(server);
                         log.info("更新安全服务器信息表:{}",updServer);
 
@@ -260,10 +261,10 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         log.info("更新安全服务器关联网卡表（先删后增）:{}",updCards);
 
                         // 同步代理
-                        syncProxy(vo,req.getEditType());
+                        syncProxy(vo,EDIT_TYPE_UPD);
                     }
                     break;
-                case DataConstants.EDIT_TYPE_DEL:// 逻辑删除
+                case EDIT_TYPE_DEL:// 逻辑删除
                     for (SecurityServerInfoVo vo : req.getSecurityServerInfoVos()){
                         // 校验id是否为空
                         if (vo.getId() == null){
@@ -274,8 +275,8 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                             throw new Exception("serverInfo"+ ErrorMessageContants.DATA_CANNOT_FIND_INDB);
                         }
 
-                        // 判断是否绑定了相关基站
-
+                        // 判断是否关联了相关基站
+                        checkServerIsRelStation(serverInfo.getNetworkId());
                         // 逻辑删除安全服务器信息表
                         NmpsSecurityServerInfo server = new NmpsSecurityServerInfo();
                         server.setId(vo.getId());
@@ -292,7 +293,8 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         log.info("逻辑删除安全服务器关联网卡表:{}",delCards);
 
                         // 同步代理
-                        syncProxy(vo,req.getEditType());
+                        vo.setNetworkId(serverInfo.getNetworkId());
+                        syncProxy(vo,EDIT_TYPE_PHY_DEL);
                     }
                     break;
                 default:
@@ -319,6 +321,21 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
     public Result startServer(StartServerReq req){
         Result result;
         try {
+            if(!CollectionUtils.isEmpty(req.getIds())){
+                throw new Exception("Ids"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            }
+            for (Long id : req.getIds()){
+                NmpsSecurityServerInfo serverInfo = serverInfoMapper.selectByPrimaryKey(id);
+                if (serverInfo == null){
+                    throw new Exception("serverInfo"+ ErrorMessageContants.DATA_CANNOT_FIND_INDB);
+                }
+                JSONObject jsonParam = new JSONObject();
+                jsonParam.put(JSON_KEY_NETWORKID,serverInfo.getNetworkId());
+                String url = HttpClientUtil.getUrl(serverInfo.getComIp(), securityProxyPort, securityProxyPath + SERVER_STARTSERVER_URL);
+                String post = HttpClientUtil.post(url, jsonParam.toJSONString());
+                log.info("ServerServiceImpl.startServer httpPost param:{};result:{}",jsonParam.toJSONString(),post);
+            }
+
             result = buildResult(null);
         }catch (SystemException e){
             log.error("ServerServiceImpl.startServer SystemException:{}",e.getMessage());
@@ -390,7 +407,8 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
             jsonParam.put(JSON_KEY_SECURITYSERVERINFOVOS,vos);
 
             String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + SERVER_UPDATE_URL);
-            HttpClientUtil.post(url,jsonParam.toJSONString());
+            String post = HttpClientUtil.post(url, jsonParam.toJSONString());
+            log.info("ServerServiceImpl.syncProxy httpPost param:{};result:{}",jsonParam.toJSONString(),post);
         }catch (Exception e){
             log.warn("ServerServiceImpl.syncProxy Exception:{}",e);
         }
@@ -547,6 +565,19 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
     private void checkHeartReportParam(HeartReportReq req) {
         if (CollectionUtils.isEmpty(req.getHeartInfoVos())){
             throw new SystemException(ErrorCode.PARAM_IS_NULL, "HeartInfoVos"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
+        }
+    }
+
+    /**
+     * 校验安全服务器是否配置了基站
+     * @param networkId
+     */
+    private void checkServerIsRelStation(String networkId){
+        NmpsStationManageExample example = new NmpsStationManageExample();
+        example.createCriteria().andNetworkIdEqualTo(networkId).andIsExistEqualTo(IS_EXIST);
+        List<NmpsStationManage> stationManages = stationManageMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(stationManages)){
+            throw new SystemException("当前安全服务器有关联基站，请先删除基站信息");
         }
     }
 
