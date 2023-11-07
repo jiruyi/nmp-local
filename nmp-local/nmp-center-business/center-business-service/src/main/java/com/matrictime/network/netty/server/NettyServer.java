@@ -28,11 +28,11 @@ public class NettyServer {
     /**
      * boss 线程组用于处理连接工作
      */
-    private EventLoopGroup boss = new NioEventLoopGroup();
+    private EventLoopGroup boss = new NioEventLoopGroup(2);
     /**
      * work 线程组用于数据处理
      */
-    private EventLoopGroup work = new NioEventLoopGroup();
+    private EventLoopGroup work = new NioEventLoopGroup(4);
 
     @Value("${netty.port}")
     private Integer port;
@@ -51,7 +51,7 @@ public class NettyServer {
                 .localAddress(new InetSocketAddress(port))
 
                 //服务端可连接队列数,对应TCP/IP协议listen函数中backlog参数
-                .option(ChannelOption.SO_BACKLOG, 1024)
+                .option(ChannelOption.SO_BACKLOG, 128)
 
                 //设置TCP长连接,一般如果两个小时内没有数据的通信时,TCP会自动发送一个活动探测数据报文
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
