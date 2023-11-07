@@ -56,6 +56,7 @@ public class ServerConfigServiceImpl implements ServerConfigService {
             NmpsServerConfigExample.Criteria criteria = serverConfigExample.createCriteria();
             criteria.andNetworkIdEqualTo(serverConfigRequest.getNetworkId());
             criteria.andConfigCodeEqualTo(serverConfigRequest.getConfigCode());
+            criteria.andIsExistEqualTo(true);
             //数据查询
             List<NmpsServerConfig> nmpsServerConfigs = serverConfigMapper.selectByExample(serverConfigExample);
             if(CollectionUtils.isEmpty(nmpsServerConfigs)){
@@ -72,6 +73,33 @@ public class ServerConfigServiceImpl implements ServerConfigService {
             result.setErrorMsg(e.getMessage());
             result.setSuccess(false);
             log.error("insertServerConfig:{}",e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 删除配置接口
+     * @param serverConfigRequest
+     * @return
+     */
+    @Override
+    public Result<Integer> deleteServerConfig(ServerConfigRequest serverConfigRequest) {
+        Result<Integer> result = new Result<>();
+        try {
+            NmpsServerConfigExample serverConfigExample = new NmpsServerConfigExample();
+            NmpsServerConfigExample.Criteria criteria = serverConfigExample.createCriteria();
+            criteria.andNetworkIdEqualTo(serverConfigRequest.getNetworkId());
+            criteria.andConfigCodeEqualTo(serverConfigRequest.getConfigCode());
+            NmpsServerConfig serverConfig = new NmpsServerConfig();
+            BeanUtils.copyProperties(serverConfigRequest,serverConfig);
+            serverConfig.setIsExist(false);
+            int i = serverConfigMapper.updateByExampleSelective(serverConfig, serverConfigExample);
+            result.setResultObj(i);
+            result.setSuccess(true);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setExtendMsg(e.getMessage());
+            log.error("deleteServerConfig:{}",e.getMessage());
         }
         return result;
     }
