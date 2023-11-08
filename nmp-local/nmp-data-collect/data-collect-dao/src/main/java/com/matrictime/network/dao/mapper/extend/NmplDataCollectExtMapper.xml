@@ -27,13 +27,12 @@
             nmpl_data_collect a
         WHERE
         a.data_item_code in('10010','10011')
-        <if test="id != null">
-            and a.id &gt; #{id,jdbcType=BIGINT}
-        </if>
+        and a.id &gt;= #{id,jdbcType=BIGINT}
+        and a.upload_time &lt;= (SELECT upload_time + INTERVAL 30 MINUTE from nmpl_data_collect WHERE id = #{id,jdbcType=BIGINT})
         order by id asc
     </select>
 
-    <select id="selectLastData" resultMap="BaseResultMap">
+    <select id="selectLastData" parameterType="com.matrictime.network.request.DataCollectRequest" resultMap="BaseResultMap">
         SELECT
         a.id,
         a.data_item_code,
@@ -45,6 +44,9 @@
         nmpl_data_collect a
         WHERE
         a.data_item_code in('10010','10011')
-        order by id DESC limit 1
+        <if test="id != null">
+            and a.id &gt; #{id,jdbcType=BIGINT}
+        </if>
+        order by id asc limit 1
     </select>
 </mapper>
