@@ -56,8 +56,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      * @create 2023/8/29 0029 15:34
      */
     public void handlerMapping(DataPushBody dataPushBody){
-        log.info("DataPushBody businessCode is:{},tableName is :{}"
-                ,dataPushBody.getBusinessCode(),dataPushBody.getTableName());
+        log.info("DataPushBody businessCode is:{},tableName is :{}",
+                dataPushBody.getBusinessCode(),dataPushBody.getTableName());
         Map<String,DataHandlerService> map =
                 SpringContextUtils.getBeansOfType(DataHandlerService.class);
         map.get(dataPushBody.getBusinessCode()).handlerData(dataPushBody);
