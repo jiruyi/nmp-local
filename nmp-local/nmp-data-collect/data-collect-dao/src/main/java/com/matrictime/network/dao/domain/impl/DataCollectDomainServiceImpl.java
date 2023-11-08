@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -72,17 +73,22 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         }
         //唯一标识分类
         Set<String> stringSet = new HashSet();
+        //过滤数组
+        List<NmplDataCollect> lastList = new ArrayList<>();
         for(NmplDataCollect nmplDataCollect: dataCollects){
             String stationNetworkId = getStationNetworkId(nmplDataCollect);
-            String s = NetworkIdUtil.splitNetworkId(stationNetworkId);
-            stringSet.add(s);
+            if(!StringUtils.isEmpty(stationNetworkId)){
+                String s = NetworkIdUtil.splitNetworkId(stationNetworkId);
+                stringSet.add(s);
+                lastList.add(nmplDataCollect);
+            }
         }
         //基站数组
-        List<NmplDataCollect> stationList = generateList(dataCollects,DeviceTypeEnum.BASE_STATION.getCode());
+        List<NmplDataCollect> stationList = generateList(lastList,DeviceTypeEnum.BASE_STATION.getCode());
         //边界基站数组
-        List<NmplDataCollect> borderList = generateList(dataCollects,DeviceTypeEnum.BORDER_BASE_STATION.getCode());
+        List<NmplDataCollect> borderList = generateList(lastList,DeviceTypeEnum.BORDER_BASE_STATION.getCode());
         //密钥中心数组
-        List<NmplDataCollect> dList = generateList(dataCollects,DeviceTypeEnum.DISPENSER.getCode());
+        List<NmplDataCollect> dList = generateList(lastList,DeviceTypeEnum.DISPENSER.getCode());
         //生成返回体
         List<DataCollectVo> list = new ArrayList<>();
         for(String networkIdString: stringSet){
