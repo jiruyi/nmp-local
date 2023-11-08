@@ -11,6 +11,8 @@ import java.util.List;
  * @date 2023/8/16.
  */
 public interface NmplDataCollectExtMapper {
-    List<NmplDataCollect> selectDataCollect();
+    List<NmplDataCollect> selectDataCollect(DataCollectRequest dataCollectRequest);
+
+    NmplDataCollect selectLastData();
 
 }
