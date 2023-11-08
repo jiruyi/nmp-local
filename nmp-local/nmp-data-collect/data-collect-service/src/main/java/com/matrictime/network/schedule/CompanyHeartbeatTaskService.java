@@ -88,8 +88,8 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
 
     @Override
     public void businessData() {
-
         Boolean report = configDomainService.isReport(BusinessTypeEnum.COMMUNITY_HEART.getCode());
+        log.info("CompanyHeartbeatTaskService isReport:{}",report);
         if(!report){
             log.info("CompanyHeartbeatTaskService isReport:{},不做上报处理",report);
             return;

@@ -84,8 +84,8 @@ public class StationTaskService implements SchedulingConfigurer, BusinessDataSer
 
     @Override
     public void businessData() {
-
         Boolean report = configDomainService.isReport(BusinessTypeEnum.STATION_NUMBER.getCode());
+        log.info("StationTaskService isReport:{}",report);
         if(!report){
             log.info("StationTaskService isReport:{},不做上报处理",report);
             return;

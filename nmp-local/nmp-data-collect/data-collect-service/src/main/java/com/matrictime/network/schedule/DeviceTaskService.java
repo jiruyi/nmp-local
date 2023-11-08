@@ -87,8 +87,8 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
 
     @Override
     public void businessData() {
-
         Boolean report = configDomainService.isReport(BusinessTypeEnum.KEY_CENTER_DATA.getCode());
+        log.info("DeviceTaskService isReport:{}",report);
         if(!report){
             log.info("DeviceTaskService isReport:{},不做上报处理",report);
             return;
