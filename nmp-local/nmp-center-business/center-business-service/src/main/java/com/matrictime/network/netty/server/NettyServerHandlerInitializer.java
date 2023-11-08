@@ -20,11 +20,11 @@ public class NettyServerHandlerInitializer extends ChannelInitializer<Channel> {
     @Override
     protected void initChannel(Channel ch) throws Exception {
         ch.pipeline()
-//                .addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH,LENGTH_FIELD_OFFSET,
-//                        LENGTH_FIELD_LENGTH,LENGTH_ADJUSTMENT,INITIAL_BYTES_TO_STRIP))
                 .addLast(new NettyCustomDecoder(MAX_FRAME_LENGTH,LENGTH_FIELD_OFFSET,
                         LENGTH_FIELD_LENGTH,LENGTH_ADJUSTMENT,INITIAL_BYTES_TO_STRIP,false))
                 //.addLast(new ByteArrayDecoder())
-                .addLast(new NettyServerHandler());
+                .addLast(new NettyServerHandler())
+                .addLast(new ServerIdleStateHandler());
+
     }
 }
