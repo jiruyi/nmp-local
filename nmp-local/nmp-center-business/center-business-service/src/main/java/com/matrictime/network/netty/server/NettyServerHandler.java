@@ -28,9 +28,9 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     private static final Executor taskExecutor = new ThreadPoolExecutor(
             // 核心线程数
-            3,
-            // 最大线程数
             5,
+            // 最大线程数
+            15,
             // 空闲线程最大存活时间
             60L,
             // 空闲线程最大存活时间单位
