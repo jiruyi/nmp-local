@@ -84,6 +84,7 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
     public void businessData() {
         Boolean report = configDomainService.isReport(BusinessTypeEnum.TERMINAL_USER.getCode());
         if(!report){
+            log.info("TerminalUserTaskService isReport:{},不做上报处理",report);
             return;
         }
         try {

@@ -91,6 +91,7 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
     public void businessData() {
         Boolean report = configDomainService.isReport(BusinessTypeEnum.BORDER_STATION_DATA.getCode());
         if(!report){
+            log.info("BorderStationTaskService isReport:{},不做上报处理",report);
             return;
         }
         try {

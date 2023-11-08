@@ -91,6 +91,7 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
 
         Boolean report = configDomainService.isReport(BusinessTypeEnum.COMMUNITY_HEART.getCode());
         if(!report){
+            log.info("CompanyHeartbeatTaskService isReport:{},不做上报处理",report);
             return;
         }
         try {

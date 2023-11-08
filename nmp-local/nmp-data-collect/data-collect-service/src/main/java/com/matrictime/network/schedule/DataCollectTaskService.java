@@ -90,6 +90,7 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
 
         Boolean report = configDomainService.isReport(BusinessTypeEnum.DATA_TRAFFIC.getCode());
         if(!report){
+            log.info("DataCollectTaskService isReport:{},不做上报处理",report);
             return;
         }
         try {

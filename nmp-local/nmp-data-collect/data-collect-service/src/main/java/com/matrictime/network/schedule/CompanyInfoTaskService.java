@@ -91,6 +91,7 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
 
         Boolean report = configDomainService.isReport(BusinessTypeEnum.COMMUNITY_INFO.getCode());
         if(!report){
+            log.info("CompanyInfoTaskService isReport:{},不做上报处理",report);
             return;
         }
         try {
