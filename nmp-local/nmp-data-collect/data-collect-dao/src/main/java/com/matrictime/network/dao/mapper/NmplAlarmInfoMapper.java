@@ -33,4 +33,7 @@ public interface NmplAlarmInfoMapper {
     int updateByPrimaryKey(NmplAlarmInfo record);
 
     List<Map<String,String>>  selectAreaNetworkIdByIps(@Param("list") List<String> list);
+
+    Long selectMinAlarmId();
+
 }
