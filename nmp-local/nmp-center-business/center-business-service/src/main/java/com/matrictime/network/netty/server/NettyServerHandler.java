@@ -53,7 +53,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         }
         try {
             DataPushBody pushBody = JSONObject.parseObject(jsonStr, DataPushBody.class);
-            ;
             taskExecutor.execute(() -> {
                 handlerMapping(pushBody);
             });
