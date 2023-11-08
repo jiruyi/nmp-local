@@ -12,9 +12,11 @@ import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.DataCollectEnum;
 import com.matrictime.network.enums.TerminalUserEnum;
 import com.matrictime.network.modelVo.DataCollectVo;
+import com.matrictime.network.request.DataCollectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -45,35 +47,44 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
 
     @Override
     public List<DataCollectVo> selectDataCollect() {
-        List<NmplDataCollect> nmplDataCollects = dataCollectExtMapper.selectDataCollect();
-        if(CollectionUtils.isEmpty(nmplDataCollects)){
-            return null;
-        }
         NmplDataPushRecordExample pushRecordExample = new NmplDataPushRecordExample();
         pushRecordExample.createCriteria().andTableNameEqualTo(NMPL_DATA_COLLECT);
         pushRecordExample.setOrderByClause("id desc");
+        long dataId = 0l;
         List<NmplDataPushRecord> dataPushRecords = dataPushRecordMapper.selectByExample(pushRecordExample);
+        //判断是否推过该批数据
+        NmplDataCollect dataCollect = dataCollectExtMapper.selectLastData();
+        if(ObjectUtils.isEmpty(dataCollect)){
+            return null;
+        }
+        DataCollectRequest dataCollectRequest = new DataCollectRequest();
+        Long id = dataCollect.getId();
         if(!CollectionUtils.isEmpty(dataPushRecords)){
-            Long id = nmplDataCollects.get(nmplDataCollects.size() - 1).getId();
-            Long dataId = dataPushRecords.get(0).getDataId();
+            dataId = dataPushRecords.get(0).getDataId();
+            //判断是否推过该数据
             if(id <= dataId){
                 return null;
             }
+            dataCollectRequest.setId(dataId);
         }
-
+        //根据记录表中的数据进行查询
+        List<NmplDataCollect> dataCollects = dataCollectExtMapper.selectDataCollect(dataCollectRequest);
+        if(CollectionUtils.isEmpty(dataCollects)){
+            return null;
+        }
         //唯一标识分类
         Set<String> stringSet = new HashSet();
-        for(NmplDataCollect nmplDataCollect: nmplDataCollects){
+        for(NmplDataCollect nmplDataCollect: dataCollects){
             String stationNetworkId = getStationNetworkId(nmplDataCollect);
             String s = NetworkIdUtil.splitNetworkId(stationNetworkId);
             stringSet.add(s);
         }
         //基站数组
-        List<NmplDataCollect> stationList = generateList(nmplDataCollects,DeviceTypeEnum.BASE_STATION.getCode());
+        List<NmplDataCollect> stationList = generateList(dataCollects,DeviceTypeEnum.BASE_STATION.getCode());
         //边界基站数组
-        List<NmplDataCollect> borderList = generateList(nmplDataCollects,DeviceTypeEnum.BORDER_BASE_STATION.getCode());
+        List<NmplDataCollect> borderList = generateList(dataCollects,DeviceTypeEnum.BORDER_BASE_STATION.getCode());
         //密钥中心数组
-        List<NmplDataCollect> dList = generateList(nmplDataCollects,DeviceTypeEnum.DISPENSER.getCode());
+        List<NmplDataCollect> dList = generateList(dataCollects,DeviceTypeEnum.DISPENSER.getCode());
         //生成返回体
         List<DataCollectVo> list = new ArrayList<>();
         for(String networkIdString: stringSet){
