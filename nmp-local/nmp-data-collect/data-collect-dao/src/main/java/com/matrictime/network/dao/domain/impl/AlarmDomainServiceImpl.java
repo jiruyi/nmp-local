@@ -45,7 +45,7 @@ public class AlarmDomainServiceImpl implements AlarmDomainService {
     @Override
     public List<NmplAlarmInfo> queryAlarmList() {
         //起止id
-        Long startAlarmId = 0l;
+        Long startAlarmId =alarmInfoMapper.selectMinAlarmId();
         Long endAlarmId = startAlarmId+DataConstants.ALARM_INFO_EVERY_COUNT;
         //1.0 查询上次推送到的位置
         NmplDataPushRecordExample pushRecordExample = new NmplDataPushRecordExample();
