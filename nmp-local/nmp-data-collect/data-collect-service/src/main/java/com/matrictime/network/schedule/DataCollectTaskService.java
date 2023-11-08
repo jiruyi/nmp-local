@@ -87,9 +87,10 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
 
     @Override
     public void businessData() {
-
         Boolean report = configDomainService.isReport(BusinessTypeEnum.DATA_TRAFFIC.getCode());
+        log.info("DataCollectTaskService isReport:{}",report);
         if(!report){
+            log.info("DataCollectTaskService isReport:{},不做上报处理",report);
             return;
         }
         try {

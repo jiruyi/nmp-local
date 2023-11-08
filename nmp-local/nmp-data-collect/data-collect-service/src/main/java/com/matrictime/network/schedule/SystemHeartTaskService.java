@@ -85,9 +85,10 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
 
     @Override
     public void businessData() {
-
         Boolean report = configDomainService.isReport(BusinessTypeEnum.BUSINESS_HEART.getCode());
+        log.info("SystemHeartTaskService isReport:{}",report);
         if(!report){
+            log.info("SystemHeartTaskService isReport:{},不做上报处理",report);
             return;
         }
         try {
