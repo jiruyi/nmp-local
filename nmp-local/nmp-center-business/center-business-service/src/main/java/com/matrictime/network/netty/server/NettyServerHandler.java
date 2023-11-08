@@ -8,6 +8,8 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Map;
@@ -22,10 +24,14 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @ChannelHandler.Sharable
+@Component
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
+    @Autowired
+    private Executor taskExecutor;
+
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg){
         String jsonStr = (String) msg;
         if(ObjectUtils.isEmpty(msg)){
             log.info("收到客户端的业务消息为空：{}",msg);
@@ -33,8 +39,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         }
         try {
             DataPushBody pushBody = JSONObject.parseObject(jsonStr, DataPushBody.class);;
-            Executor executor = (Executor) SpringContextUtils.getBean("taskExecutor");
-            executor.execute(() ->{
+            taskExecutor.execute(() ->{
                 handlerMapping(pushBody);
             });
         }catch (Exception e){

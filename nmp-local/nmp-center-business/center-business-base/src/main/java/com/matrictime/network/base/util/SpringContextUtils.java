@@ -2,6 +2,7 @@ package com.matrictime.network.base.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Map;
 
@@ -52,7 +53,10 @@ public class SpringContextUtils {
      * @param name
      * @return
      */
-    public static Object getBean(String name){
+    public static  Object getBean(String name) throws Exception {
+        if(ObjectUtils.isEmpty(applicationContext)){
+            throw  new Exception(" applicationContext is null");
+        }
         return applicationContext.getBean(name);
     }
 
