@@ -39,7 +39,7 @@ public class DataConstants {
 
     public static final String NMPL_DATA_COLLECT = "nmpl_data_collect";
 
-    public static final Long ALARM_INFO_EVERY_COUNT  = 200l;
+    public static final Long ALARM_INFO_EVERY_COUNT  = 500l;
 
     public static final String SPLIT_LINE  = "-";
 
