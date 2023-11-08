@@ -73,7 +73,7 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
             log.info("in.readableByte   < HEADER_SIZE(48byte) ");
             return null;
         }
-        log.info("NettyCustomDecoder  decode start ");
+        log.info("NettyCustomDecoder decode start  client ip is:{}", ctx.channel().remoteAddress().toString());
         // 数据包长度
         in.markReaderIndex();
         int uTotalLen = in.getIntLE(4);
