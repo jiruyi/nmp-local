@@ -1,6 +1,5 @@
 package com.matrictime.network.dao.domain.impl;
 
-import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.util.NetworkIdUtil;
 import com.matrictime.network.dao.domain.DataCollectDomainService;
@@ -10,10 +9,8 @@ import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.mapper.extend.NmplDataCollectExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.DataCollectEnum;
-import com.matrictime.network.enums.TerminalUserEnum;
 import com.matrictime.network.modelVo.DataCollectVo;
 import com.matrictime.network.request.DataCollectRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -95,33 +92,45 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             //基站通信上行流量
             if(!CollectionUtils.isEmpty(stationList)){
                 DataCollectVo stationCollectVo = setDataCollectVo(stationList, DataCollectEnum.COMM_LOAD_UP_FLOW.getCode(), networkIdString);
-                list.add(stationCollectVo);
+                if(stationCollectVo.getSumNumber() != null){
+                    list.add(stationCollectVo);
+                }
             }
             //边界基站通信上行流量
             if(!CollectionUtils.isEmpty(borderList)){
                 DataCollectVo stationCollectVo = setDataCollectVo(borderList, DataCollectEnum.COMM_LOAD_UP_FLOW.getCode(), networkIdString);
-                list.add(stationCollectVo);
+                if(stationCollectVo.getSumNumber() != null){
+                    list.add(stationCollectVo);
+                }
             }
             //密钥中心通信上行流量
             if(!CollectionUtils.isEmpty(dList)){
                 DataCollectVo stationCollectVo = setDataCollectVo(dList, DataCollectEnum.COMM_LOAD_UP_FLOW.getCode(), networkIdString);
-                list.add(stationCollectVo);
+                if(stationCollectVo.getSumNumber() != null){
+                    list.add(stationCollectVo);
+                }
             }
 
             //基站通信下行流量
             if(!CollectionUtils.isEmpty(stationList)){
                 DataCollectVo stationCollectVo = setDataCollectVo(stationList, DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode(), networkIdString);
-                list.add(stationCollectVo);
+                if(stationCollectVo.getSumNumber() != null){
+                    list.add(stationCollectVo);
+                }
             }
             //边界基站通信下行流量
             if(!CollectionUtils.isEmpty(borderList)){
                 DataCollectVo stationCollectVo = setDataCollectVo(borderList, DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode(), networkIdString);
-                list.add(stationCollectVo);
+                if(stationCollectVo.getSumNumber() != null){
+                    list.add(stationCollectVo);
+                }
             }
             //密钥中心通信下行流量
             if(!CollectionUtils.isEmpty(dList)){
                 DataCollectVo stationCollectVo = setDataCollectVo(dList, DataCollectEnum.COMM_LOAD_DOWN_FLOW.getCode(), networkIdString);
-                list.add(stationCollectVo);
+                if(stationCollectVo.getSumNumber() != null){
+                    list.add(stationCollectVo);
+                }
             }
 
         }
