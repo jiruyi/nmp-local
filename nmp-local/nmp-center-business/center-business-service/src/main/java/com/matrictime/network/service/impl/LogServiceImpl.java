@@ -20,6 +20,7 @@ import com.matrictime.network.service.LogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -119,7 +120,12 @@ public class LogServiceImpl extends SystemBaseService implements LogService, Dat
                 return;
             }
             String alarmInfoStr = dataPushBody.getBusiDataJsonStr();
-            logDomainService.batchInsertAlarmData(JSONArray.parseArray(alarmInfoStr,AlarmInfo.class));
+            List<AlarmInfo> alarmInfos = JSONArray.parseArray(alarmInfoStr,AlarmInfo.class);
+            if(CollectionUtils.isEmpty(alarmInfos)){
+                return;
+            }
+            log.info("LogServiceImpl handlerData batchInsertAlarmData start count is :{}",alarmInfos.size());
+            logDomainService.batchInsertAlarmData(alarmInfos);
         }catch (Exception e){
             log.error("handlerData exception :{}",e);
         }
