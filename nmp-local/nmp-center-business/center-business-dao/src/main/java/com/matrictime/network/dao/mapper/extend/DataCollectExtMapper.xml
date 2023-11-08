@@ -26,10 +26,6 @@
         SELECT
             DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE - INTERVAL 30 MINUTE
         )
-        and a.upload_time &lt; (
-        SELECT
-            DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE
-        )
         and
             a.device_type = #{deviceType,jdbcType=VARCHAR}
         <if test="companyNetworkId != null">

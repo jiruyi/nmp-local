@@ -52,21 +52,19 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         pushRecordExample.setOrderByClause("id desc");
         long dataId = 0l;
         List<NmplDataPushRecord> dataPushRecords = dataPushRecordMapper.selectByExample(pushRecordExample);
-        //判断是否推过该批数据
-        NmplDataCollect dataCollect = dataCollectExtMapper.selectLastData();
+        DataCollectRequest request = new DataCollectRequest();
+        if(!CollectionUtils.isEmpty(dataPushRecords)){
+            dataId = dataPushRecords.get(0).getDataId();
+            request.setId(dataId);
+        }
+        NmplDataCollect dataCollect = dataCollectExtMapper.selectLastData(request);
         if(ObjectUtils.isEmpty(dataCollect)){
             return null;
         }
+        //构建查询条件
         DataCollectRequest dataCollectRequest = new DataCollectRequest();
-        Long id = dataCollect.getId();
-        if(!CollectionUtils.isEmpty(dataPushRecords)){
-            dataId = dataPushRecords.get(0).getDataId();
-            //判断是否推过该数据
-            if(id <= dataId){
-                return null;
-            }
-            dataCollectRequest.setId(dataId);
-        }
+        dataCollectRequest.setId(dataCollect.getId());
+        dataCollectRequest.setUploadTime(dataCollect.getUploadTime());
         //根据记录表中的数据进行查询
         List<NmplDataCollect> dataCollects = dataCollectExtMapper.selectDataCollect(dataCollectRequest);
         if(CollectionUtils.isEmpty(dataCollects)){

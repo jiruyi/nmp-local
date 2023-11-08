@@ -13,6 +13,6 @@ import java.util.List;
 public interface NmplDataCollectExtMapper {
     List<NmplDataCollect> selectDataCollect(DataCollectRequest dataCollectRequest);
 
-    NmplDataCollect selectLastData();
+    NmplDataCollect selectLastData(DataCollectRequest dataCollectRequest);
 
 }
