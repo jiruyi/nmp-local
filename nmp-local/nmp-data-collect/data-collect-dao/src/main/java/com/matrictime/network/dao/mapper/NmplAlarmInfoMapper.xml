@@ -312,11 +312,10 @@
 
   <select id="selectAreaNetworkIdByIps" parameterType="java.lang.String" resultType="map" >
     SELECT c.lan_ip as lanIp,c.station_network_id  as networkId FROM(
-    SELECT a.lan_ip,a.station_network_id FROM    nmpl_base_station_info a
+    SELECT a.lan_ip,a.station_network_id FROM    nmpl_base_station_info a WHERE  a.is_exist = 1
     UNION
-    SELECT b.lan_ip,b.station_network_id FROM    nmpl_device_info b) c
-    WHERE  a.is_exist = 1 and c.is_exist = 1
-           and lan_ip IN
+    SELECT b.lan_ip,b.station_network_id FROM    nmpl_device_info b WHERE  b.is_exist = 1 ) c
+    WHERE   lan_ip IN
     <foreach collection="list" item="ip" separator=","  open="("  close=")">
       #{ip,jdbcType=VARCHAR}
     </foreach>
