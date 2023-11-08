@@ -62,7 +62,11 @@ public class AlarmDomainServiceImpl implements AlarmDomainService {
         NmplAlarmInfoExample example = new NmplAlarmInfoExample();
         example.createCriteria().andAlarmIdGreaterThan(startAlarmId).andAlarmIdLessThanOrEqualTo(endAlarmId);
         List<NmplAlarmInfo> infoList =  alarmInfoMapper.selectByExample(example);
-        //4.0 设置小区入网码
+        //4.0 如果数据为空 需要顺延id 保证跳过这批空的id
+        if(CollectionUtils.isEmpty(infoList)){
+            insertDataPushRecord(endAlarmId);
+        }
+        //5.0 设置小区入网码
         setAreaCode(infoList);
         return infoList;
     }
