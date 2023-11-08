@@ -44,7 +44,7 @@ import java.util.concurrent.ExecutionException;
 @BusinessType(businessType = BusinessTypeEnum.DATA_TRAFFIC)
 public class DataCollectTaskService implements SchedulingConfigurer, BusinessDataService {
     //默认毫秒值
-    private long timer = 3000;
+    private long timer = 300000;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -87,12 +87,12 @@ public class DataCollectTaskService implements SchedulingConfigurer, BusinessDat
 
     @Override
     public void businessData() {
-//        Boolean report = configDomainService.isReport(BusinessTypeEnum.DATA_TRAFFIC.getCode());
-//        log.info("DataCollectTaskService isReport:{}",report);
-//        if(!report){
-//            log.info("DataCollectTaskService isReport:{},不做上报处理",report);
-//            return;
-//        }
+        Boolean report = configDomainService.isReport(BusinessTypeEnum.DATA_TRAFFIC.getCode());
+        log.info("DataCollectTaskService isReport:{}",report);
+        if(!report){
+            log.info("DataCollectTaskService isReport:{},不做上报处理",report);
+            return;
+        }
         try {
             //业务逻辑 查询数据
             List<DataCollectVo> dataCollectVos = collectDomainService.selectDataCollect();
