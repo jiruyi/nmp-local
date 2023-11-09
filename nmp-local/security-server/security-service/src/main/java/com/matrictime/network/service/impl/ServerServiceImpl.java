@@ -5,11 +5,10 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.enums.SecurityServerEnum;
-import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.mapper.NmpsNetworkCardMapper;
 import com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper;
 import com.matrictime.network.dao.mapper.NmpsStationManageMapper;
-import com.matrictime.network.dao.mapper.extend.NetworkCardMapperExt;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
@@ -37,6 +36,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -62,9 +62,6 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
     @Resource
     private NmpsNetworkCardMapper networkCardMapper;
-
-    @Resource
-    private NetworkCardMapperExt networkCardMapperExt;
 
     @Resource
     private NmpsStationManageMapper stationManageMapper;
@@ -206,22 +203,37 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         try {
             // check param is legal
             checkEditServerParam(req);
+            Date now = new Date();
             switch (req.getEditType()){
                 // 批量插入
                 case EDIT_TYPE_ADD:
                     for (SecurityServerInfoVo vo : req.getSecurityServerInfoVos()){
                         checkAddServerParam(vo);
+                        initSecurityServerVo(vo,now,EDIT_TYPE_ADD);
                         NmpsSecurityServerInfo serverInfo = new NmpsSecurityServerInfo();
                         BeanUtils.copyProperties(vo,serverInfo);
                         // 插入安全服务器信息表
                         int addServer = serverInfoMapper.insertSelective(serverInfo);
+                        vo.setId(serverInfo.getId());
                         log.info("插入安全服务器信息表:{}",addServer);
 
                         // 插入安全服务器关联网卡表
-                        int addCards = networkCardMapperExt.batchInsert(vo.getNetworkCardVos());
+                        int addCards = 0;
+                        List<NetworkCardVo> cardVos = new ArrayList<>();
+                        List<NetworkCardVo> networkCardVos = vo.getNetworkCardVos();
+                        for (int i=0;i<networkCardVos.size();i++){
+                            NetworkCardVo cardVo = networkCardVos.get(i);
+                            initNetworkCardVo(cardVo,now,EDIT_TYPE_ADD);
+                            NmpsNetworkCard card = new NmpsNetworkCard();
+                            BeanUtils.copyProperties(cardVo,card);
+                            addCards = addCards + networkCardMapper.insertSelective(card);
+                            cardVo.setId(card.getId());
+                            cardVos.add(cardVo);
+                        }
                         log.info("插入安全服务器关联网卡表:{}",addCards);
 
                         // 同步代理
+                        vo.setNetworkCardVos(cardVos);
                         syncProxy(vo,EDIT_TYPE_ADD);
                     }
                     break;
@@ -241,10 +253,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         // 更新安全服务器信息表
                         NmpsSecurityServerInfo server = new NmpsSecurityServerInfo();
                         vo.setNetworkId(networkId);
-                        vo.setCreateTime(null);
-                        vo.setIsExist(null);
-                        vo.setComIp(null);
-                        vo.setUpdateTime(null);
+                        initSecurityServerVo(vo,now,EDIT_TYPE_UPD);
                         BeanUtils.copyProperties(vo,server);
                         int updServer = serverInfoMapper.updateByPrimaryKeySelective(server);
                         log.info("更新安全服务器信息表:{}",updServer);
@@ -257,10 +266,22 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         int delCards = networkCardMapper.updateByExampleSelective(networkCard, deleteExample);
                         log.info("更新安全服务器关联网卡表（先删后增）:{}",delCards);
 
-                        int updCards = networkCardMapperExt.batchInsert(vo.getNetworkCardVos());
+                        int updCards = 0;
+                        List<NetworkCardVo> cardVos = new ArrayList<>();
+                        List<NetworkCardVo> networkCardVos = vo.getNetworkCardVos();
+                        for (int i=0;i<networkCardVos.size();i++){
+                            NetworkCardVo cardVo = networkCardVos.get(i);
+                            initNetworkCardVo(cardVo,now,EDIT_TYPE_UPD);
+                            NmpsNetworkCard card = new NmpsNetworkCard();
+                            BeanUtils.copyProperties(cardVo,card);
+                            updCards = updCards + networkCardMapper.insertSelective(card);
+                            cardVo.setId(card.getId());
+                            cardVos.add(cardVo);
+                        }
                         log.info("更新安全服务器关联网卡表（先删后增）:{}",updCards);
 
                         // 同步代理
+                        vo.setNetworkCardVos(cardVos);
                         syncProxy(vo,EDIT_TYPE_UPD);
                     }
                     break;
@@ -279,8 +300,9 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         checkServerIsRelStation(serverInfo.getNetworkId());
                         // 逻辑删除安全服务器信息表
                         NmpsSecurityServerInfo server = new NmpsSecurityServerInfo();
-                        server.setId(vo.getId());
-                        server.setIsExist(IS_NOT_EXIST);
+                        initSecurityServerVo(vo,now,EDIT_TYPE_DEL);
+                        vo.setNetworkId(serverInfo.getNetworkId());
+                        BeanUtils.copyProperties(vo,server);
                         int delServer = serverInfoMapper.updateByPrimaryKeySelective(server);
                         log.info("逻辑删除安全服务器信息表:{}",delServer);
 
@@ -293,7 +315,6 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         log.info("逻辑删除安全服务器关联网卡表:{}",delCards);
 
                         // 同步代理
-                        vo.setNetworkId(serverInfo.getNetworkId());
                         syncProxy(vo,EDIT_TYPE_PHY_DEL);
                     }
                     break;
@@ -408,7 +429,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
             String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + SERVER_UPDATE_URL);
             String post = HttpClientUtil.post(url, jsonParam.toJSONString());
-            log.info("ServerServiceImpl.syncProxy httpPost param:{};result:{}",jsonParam.toJSONString(),post);
+            log.info("ServerServiceImpl.syncProxy httpPost url:{};param:{};result:{}",url,jsonParam.toJSONString(),post);
         }catch (Exception e){
             log.warn("ServerServiceImpl.syncProxy Exception:{}",e);
         }
@@ -437,12 +458,6 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         if (ParamCheckUtil.checkVoStrBlank(vo.getComIp())){
             throw new Exception("ComIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if (ParamCheckUtil.checkVoStrBlank(vo.getSignalPort())){
-            throw new Exception("SignalPort"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (ParamCheckUtil.checkVoStrBlank(vo.getKeyPort())){
-            throw new Exception("KeyPort"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
         if (ParamCheckUtil.checkVoStrBlank(vo.getConnectType())){
             throw new Exception("ConnectType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
@@ -463,6 +478,13 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         List<NmpsSecurityServerInfo> networkIdInfos = serverInfoMapper.selectByExample(checkNetworkIdExample);
         if (!CollectionUtils.isEmpty(networkIdInfos)){
             throw new SystemException("入网码ID已存在，请重新输入");
+        }
+
+        NmpsSecurityServerInfoExample checkComIpExample = new NmpsSecurityServerInfoExample();
+        checkComIpExample.createCriteria().andComIpEqualTo(vo.getComIp()).andIsExistEqualTo(IS_EXIST);
+        List<NmpsSecurityServerInfo> comIpInfos = serverInfoMapper.selectByExample(checkComIpExample);
+        if (!CollectionUtils.isEmpty(comIpInfos)){
+            throw new SystemException("该通信ip已配置安全服务器，请重新输入");
         }
         // 校验插入安全服务器信息表数据是否合法结束
 
@@ -507,12 +529,6 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         // 校验插入安全服务器信息表数据是否合法开始
         if (ParamCheckUtil.checkVoStrBlank(vo.getServerName())){
             throw new Exception("ServerName"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (ParamCheckUtil.checkVoStrBlank(vo.getSignalPort())){
-            throw new Exception("SignalPort"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (ParamCheckUtil.checkVoStrBlank(vo.getKeyPort())){
-            throw new Exception("KeyPort"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (ParamCheckUtil.checkVoStrBlank(vo.getConnectType())){
             throw new Exception("ConnectType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
@@ -578,6 +594,67 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         List<NmpsStationManage> stationManages = stationManageMapper.selectByExample(example);
         if (!CollectionUtils.isEmpty(stationManages)){
             throw new SystemException("当前安全服务器有关联基站，请先删除基站信息");
+        }
+    }
+
+    /**
+     * 设置安全服务器默认值
+     * @param vo
+     * @param operDate
+     * @param editType
+     */
+    private void initSecurityServerVo(SecurityServerInfoVo vo,Date operDate,String editType){
+        switch (editType){
+            case EDIT_TYPE_ADD:
+                vo.setCreateTime(operDate);
+                vo.setUpdateTime(operDate);
+                vo.setServerStatus(SecurityServerEnum.STATUS_OFFLINE.getCode());
+                vo.setCreateUser(RequestContext.getUser().getUserId().toString());
+                vo.setUpdateUser(RequestContext.getUser().getUserId().toString());
+                vo.setIsExist(IS_EXIST);
+                break;
+            case EDIT_TYPE_UPD:
+                vo.setCreateTime(null);
+                vo.setIsExist(null);
+                vo.setComIp(null);
+                vo.setUpdateTime(operDate);
+                vo.setUpdateUser(RequestContext.getUser().getUserId().toString());
+            case EDIT_TYPE_DEL:
+                vo.setUpdateTime(operDate);
+                vo.setUpdateUser(RequestContext.getUser().getUserId().toString());
+                vo.setIsExist(IS_NOT_EXIST);
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 设置安全服务器关联网卡默认值
+     * @param vo
+     * @param operDate
+     * @param editType
+     */
+    private void initNetworkCardVo(NetworkCardVo vo,Date operDate,String editType){
+        switch (editType){
+            case EDIT_TYPE_ADD:
+                vo.setCreateTime(operDate);
+                vo.setUpdateTime(operDate);
+                vo.setCreateUser(RequestContext.getUser().getUserId().toString());
+                vo.setUpdateUser(RequestContext.getUser().getUserId().toString());
+                vo.setIsExist(IS_EXIST);
+                break;
+            case EDIT_TYPE_UPD:
+                vo.setId(null);
+                vo.setCreateTime(null);
+                vo.setIsExist(null);
+                vo.setUpdateTime(operDate);
+                vo.setUpdateUser(RequestContext.getUser().getUserId().toString());
+            case EDIT_TYPE_DEL:
+                vo.setUpdateTime(operDate);
+                vo.setUpdateUser(RequestContext.getUser().getUserId().toString());
+                vo.setIsExist(IS_NOT_EXIST);
+            default:
+                break;
         }
     }
 

@@ -120,7 +120,7 @@
       #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmpsNetworkCard">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.matrictime.network.dao.model.NmpsNetworkCard">
     insert into nmps_network_card
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

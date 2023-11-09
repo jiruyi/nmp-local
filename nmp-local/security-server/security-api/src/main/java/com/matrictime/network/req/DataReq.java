@@ -3,6 +3,7 @@ package com.matrictime.network.req;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 @Data
 public class DataReq {
@@ -26,4 +27,8 @@ public class DataReq {
      * 是否默认
      */
     private boolean flag = true;
+
+    private Date startTime;
+
+    private Date endTime;
 }

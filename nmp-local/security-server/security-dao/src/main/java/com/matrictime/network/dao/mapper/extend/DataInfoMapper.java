@@ -1,4 +1,4 @@
-package com.matrictime.network.dao.mapper.ext;
+package com.matrictime.network.dao.mapper.extend;
 
 import com.matrictime.network.dao.model.NmpsDataInfo;
 import com.matrictime.network.modelVo.DataInfoVo;

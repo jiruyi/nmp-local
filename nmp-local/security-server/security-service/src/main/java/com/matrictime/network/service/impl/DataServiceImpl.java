@@ -3,7 +3,7 @@ package com.matrictime.network.service.impl;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.dao.mapper.NmpsDataInfoMapper;
-import com.matrictime.network.dao.mapper.ext.DataInfoMapper;
+import com.matrictime.network.dao.mapper.extend.DataInfoMapper;
 import com.matrictime.network.dao.model.NmpsDataInfo;
 import com.matrictime.network.dao.model.NmpsDataInfoExample;
 import com.matrictime.network.exception.ErrorMessageContants;
@@ -17,15 +17,8 @@ import com.matrictime.network.service.DataService;
 import com.matrictime.network.util.DateUtils;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +53,9 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
         Result result;
         try {
             checkParam(dataReq);
+            if(!dataReq.isFlag()){
+                dataReq.setTime(findDates(dataReq.getStartTime(),dataReq.getEndTime()));
+            }
             if (dataReq.isFlag()) {
                 dataRespList.add(this.getDailyData("", dataReq.getDataType(), dataReq.getNetworkId(), dataReq.isFlag()));
             } else {
@@ -79,6 +75,42 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
         return result;
     }
 
+    public static List<String> findDates(Date dBegin, Date dEnd)
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        List<String> time = new ArrayList<>();
+        Calendar calBegin = Calendar.getInstance();
+        // 使用给定的 Date 设置此 Calendar 的时间
+        calBegin.setTime(dBegin);
+        Calendar calEnd = Calendar.getInstance();
+        // 使用给定的 Date 设置此 Calendar 的时间
+        calEnd.setTime(dEnd);
+        // 测试此日期是否在指定日期之后
+        while (dEnd.after(calBegin.getTime()))
+        {
+            time.add(formatter.format(calBegin.getTime()));
+            // 根据日历的规则，为给定的日历字段添加或减去指定的时间量
+            calBegin.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        time.add(formatter.format(calEnd.getTime()));
+        return time;
+    }
+
+    public static void main(String[] args) {
+        Date startTime = new Date();
+        Date endTime = new Date();
+
+        Calendar calBegin = Calendar.getInstance();
+        calBegin.setTime(startTime);
+        calBegin.add(Calendar.DAY_OF_MONTH,-3);
+        List<String> dates = findDates(calBegin.getTime(), endTime);
+        for (String date : dates) {
+            System.out.println(date);
+        }
+    }
+
+
+
     /**
      * 获取最新数据
      * @param dataReq
@@ -92,22 +124,22 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
 
             NmpsDataInfoExample nmpsDataInfoExample = new NmpsDataInfoExample();
             NmpsDataInfoExample.Criteria criteria = nmpsDataInfoExample.createCriteria();
-            criteria.andDataTypeEqualTo(dataReq.getDataType()).andNetworkIdEqualTo(dataReq.getNetworkId());
+            criteria.andDataTypeEqualTo(dataReq.getDataType()).andNetworkIdEqualTo(dataReq.getNetworkId())
+                    .andUploadTimeGreaterThanOrEqualTo(DateUtils.getCurrentHourTime(new Date()));;
             List<NmpsDataInfo> nmpsDataInfoList = new ArrayList<>();
             BigDecimal value = new BigDecimal(ZERO_DOUBLE);
-            if((dataReq.getDataType().equals(DataConstants.LAST_UP_DATA_VALUE) ||
-                    dataReq.getDataType().equals(DataConstants.LAST_DOWN_DATA_VALUE))){
-                criteria.andUploadTimeEqualTo(DateUtils.getCurrentHourTime(new Date()));
-                nmpsDataInfoList = nmpsDataInfoMapper.selectByExample(nmpsDataInfoExample);
-                if(!CollectionUtils.isEmpty(nmpsDataInfoList)){
-                    value.add(new BigDecimal(nmpsDataInfoList.get(0).getDataValue()).divide(new BigDecimal(ONE_THOUSAND_AND_TWENTY_FOUR*ONE_THOUSAND_AND_TWENTY_FOUR),2,4));
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            String time = formatter.format(DateUtils.getCurrentHourTime(new Date()));
+            nmpsDataInfoList = nmpsDataInfoMapper.selectByExample(nmpsDataInfoExample);
+
+            for (NmpsDataInfo nmpsDataInfo : nmpsDataInfoList) {
+                if((dataReq.getDataType().equals(DataConstants.LAST_UP_DATA_VALUE) ||
+                        dataReq.getDataType().equals(DataConstants.LAST_DOWN_DATA_VALUE))){
+                    if(!time.equals(formatter.format(nmpsDataInfo.getUploadTime()))){
+                        continue;
+                    }
                 }
-            }else {
-                criteria.andUploadTimeGreaterThanOrEqualTo(DateUtils.getCurrentHourTime(new Date()));
-                nmpsDataInfoList = nmpsDataInfoMapper.selectByExample(nmpsDataInfoExample);
-                for (NmpsDataInfo nmpsDataInfo : nmpsDataInfoList) {
-                    value.add(new BigDecimal(nmpsDataInfo.getDataValue()).divide(new BigDecimal(ONE_THOUSAND_AND_TWENTY_FOUR*ONE_THOUSAND_AND_TWENTY_FOUR),2,4));
-                }
+                value = value.add(new BigDecimal(nmpsDataInfo.getDataValue()).divide(new BigDecimal(ONE_THOUSAND_AND_TWENTY_FOUR*ONE_THOUSAND_AND_TWENTY_FOUR),2,4));
             }
             result.setResultObj(value.doubleValue());
         } catch (SystemException e) {
@@ -163,6 +195,7 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
         if (dataReq.getDataType() == null || dataReq.getNetworkId() == null) {
             throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
+
     }
 
 
@@ -212,8 +245,9 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
         }
 
 
-        if (!flag && this.isToday(date, "yyyy-MM-dd")) {
+        if (!flag && !this.isToday(date, "yyyy-MM-dd")) {
             this.redisTemplate.opsForHash().putAll(networkId + "-" + date + "-" + code, map);
+            redisTemplate.expire(networkId + "-" + date + "-" + code,24, TimeUnit.HOURS);
         }
 
         return dailyDataResp;
@@ -344,9 +378,9 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
             if((code.equals(DataConstants.LAST_UP_DATA_VALUE) || code.equals(DataConstants.LAST_DOWN_DATA_VALUE)) && !set.contains(formatter.format(nmpsDataInfo.getUploadTime()))){
                 continue;
             }
-            Double value = data.getOrDefault(DateUtils.getCurrentHourTime(nmpsDataInfo.getUploadTime()), ZERO_DOUBLE);
+            Double value = data.getOrDefault(formatter.format(DateUtils.getCurrentHourTime(nmpsDataInfo.getUploadTime())), ZERO_DOUBLE);
             BigDecimal bigDecimal = new BigDecimal(nmpsDataInfo.getDataValue());
-            bigDecimal.divide(BigDecimal.valueOf(ONE_THOUSAND_AND_TWENTY_FOUR*ONE_THOUSAND_AND_TWENTY_FOUR), 2, 4).add(BigDecimal.valueOf(value));
+            bigDecimal = bigDecimal.divide(BigDecimal.valueOf(ONE_THOUSAND_AND_TWENTY_FOUR*ONE_THOUSAND_AND_TWENTY_FOUR), 2, 4).add(BigDecimal.valueOf(value));
             data.put(formatter.format(DateUtils.getCurrentHourTime(nmpsDataInfo.getUploadTime())), bigDecimal.doubleValue());
         }
         return data;

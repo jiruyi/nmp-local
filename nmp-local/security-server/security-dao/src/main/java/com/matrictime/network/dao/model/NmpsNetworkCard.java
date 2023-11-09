@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 安全服务器关联网卡信息表
  * @author   xxxx
- * @date   2023-11-01
+ * @date   2023-11-09
  */
 @Data
 public class NmpsNetworkCard {

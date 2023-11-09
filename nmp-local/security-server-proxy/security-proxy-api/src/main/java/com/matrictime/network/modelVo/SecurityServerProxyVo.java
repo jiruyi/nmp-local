@@ -29,16 +29,6 @@ public class SecurityServerProxyVo {
     private String networkId;
 
     /**
-     * 信令（中继）端口
-     */
-    private String signalPort;
-
-    /**
-     * 下载密钥端口
-     */
-    private String keyPort;
-
-    /**
      * 连接方式 1:内接 2:外接
      */
     private String connectType;
@@ -81,5 +71,5 @@ public class SecurityServerProxyVo {
     /**
      * 关联网卡信息列表
      */
-    private List<NetworkCardProxyVo> networkCardProxyVos;
+    private List<NetworkCardProxyVo> networkCardVos;
 }
