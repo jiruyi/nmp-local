@@ -59,7 +59,7 @@ public class AlarmDomainServiceImpl implements AlarmDomainService {
         //3.0 根据起止id 查询告警数据
         NmplAlarmInfoExample example = new NmplAlarmInfoExample();
         example.createCriteria().andAlarmIdGreaterThan(startAlarmId);
-        List<NmplAlarmInfo> infoList =  alarmInfoMapper.selectByExample(example);
+        List<NmplAlarmInfo> infoList =  alarmInfoMapper.selectBatchGreatId(example);
         //5.0 设置小区入网码
         setAreaCode(infoList);
         return infoList;
