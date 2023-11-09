@@ -6,6 +6,8 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.ByteOrder;
+
 /**
  * @author jiruyi
  * @copyright www.matrictime.com
@@ -44,20 +46,7 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
     byte[] reqData ;
 
 
-    /**
-     *
-     * @param maxFrameLength 解码时，处理每个帧数据的最大长度
-     * @param lengthFieldOffset 该帧数据中，存放该帧数据的长度的数据的起始位置
-     * @param lengthFieldLength 记录该帧数据长度的字段本身的长度
-     * @param lengthAdjustment 修改帧数据长度字段中定义的值，可以为负数
-     * @param initialBytesToStrip 解析的时候需要跳过的字节数
-     * @param failFast 为true，当frame长度超过maxFrameLength时立即报TooLongFrameException异常，为false，读取完整个帧再报异常
-     */
-    public NettyCustomDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength,
-                              int lengthAdjustment, int initialBytesToStrip, boolean failFast) {
-        super(maxFrameLength, lengthFieldOffset, lengthFieldLength,
-                lengthAdjustment, initialBytesToStrip, failFast);
-    }
+
 
     /**
      * @title decode
@@ -67,25 +56,57 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
      * @author jiruyi
      * @create 2023/8/31 0031 19:03
      */
+//    @Override
+//    protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+//        if (in.readableBytes() < HEADER_SIZE) {  //这个HEAD_LENGTH是我们用于表示头长度的字节数。  由于Encoder中我们传的是一个int类型的值，所以这里HEAD_LENGTH的值为4.
+//            log.info("in.readableByte   < HEADER_SIZE(48byte) ");
+//            return null;
+//        }
+//        log.info("NettyCustomDecoder decode start  client ip is:{}", ctx.channel().remoteAddress().toString());
+//        // 数据包长度
+//        int uTotalLen = in.getIntLE(4);
+//        if(in.readableBytes() < uTotalLen){
+//            log.info("in.readableBytes() < uTotalLen：{} 继续读取",uTotalLen);
+//            return null;
+//        }
+//        log.info("收到客户端的业务消息长度：{}",uTotalLen);
+//        log.info("收到客户端的组包后消息长度：{}",in.readableBytes());
+//        String reqDataJsonStr = in.toString(HEADER_SIZE,uTotalLen-HEADER_SIZE, CharsetUtil.UTF_8);
+//        in.readBytes(uTotalLen);
+//        return  reqDataJsonStr;
+//    }
+    private  ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
+    private  int maxFrameLength;
+    private  int lengthFieldOffset;
+    private  int lengthFieldLength;
+    private  int lengthFieldEndOffset;
+    private  int lengthAdjustment;
+    private  int initialBytesToStrip;
+    private  boolean failFast;
+
+    public NettyCustomDecoder(int maxFrameLength, int lengthFieldOffset,
+                              int lengthFieldLength, int lengthAdjustment, int initialBytesToStrip, boolean failFast) {
+        super( ByteOrder.LITTLE_ENDIAN,  maxFrameLength,  lengthFieldOffset,
+         lengthFieldLength,lengthAdjustment,  initialBytesToStrip,failFast);
+        this.maxFrameLength = maxFrameLength;
+        this.lengthFieldOffset = lengthFieldOffset;
+        this.lengthFieldLength = lengthFieldLength;
+        this.lengthFieldEndOffset = lengthFieldOffset + lengthFieldLength;
+        this.lengthAdjustment = lengthAdjustment;
+        this.initialBytesToStrip = initialBytesToStrip;
+    }
+
+
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
-        if (in.readableBytes() < HEADER_SIZE) {  //这个HEAD_LENGTH是我们用于表示头长度的字节数。  由于Encoder中我们传的是一个int类型的值，所以这里HEAD_LENGTH的值为4.
-            log.info("in.readableByte   < HEADER_SIZE(48byte) ");
-            return null;
-        }
         log.info("NettyCustomDecoder decode start  client ip is:{}", ctx.channel().remoteAddress().toString());
-        // 数据包长度
-        in.markReaderIndex();
-        int uTotalLen = in.getIntLE(4);
-        if(in.readableBytes() < uTotalLen){
-            log.info("in.readableBytes() < uTotalLen：{} 继续读取",uTotalLen);
-            in.resetReaderIndex();
-            return null;
+        ByteBuf decoded =  (ByteBuf)super.decode(ctx,in);
+        log.info("NettyCustomDecoder decode end  client ip is:{}", ctx.channel().remoteAddress().toString());
+        if (decoded != null) {
+            String reqDataJsonStr = in.toString(CharsetUtil.UTF_8);
+            log.info("ByteBuf decoded(reqDataJsonStr) is:{}",reqDataJsonStr);
+            return  reqDataJsonStr;
         }
-        log.info("收到客户端的业务消息长度：{}",uTotalLen);
-        log.info("收到客户端的组包后消息长度：{}",in.readableBytes());
-        String reqDataJsonStr = in.toString(HEADER_SIZE,uTotalLen-HEADER_SIZE, CharsetUtil.UTF_8);
-        in.readBytes(uTotalLen);
-        return  reqDataJsonStr;
+        return null;
     }
 }
