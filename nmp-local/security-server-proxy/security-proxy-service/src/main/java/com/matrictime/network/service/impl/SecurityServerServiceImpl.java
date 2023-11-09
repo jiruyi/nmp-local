@@ -100,7 +100,7 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
                         log.info("代理插入安全服务器信息表:{}",addServer);
 
                         // 插入安全服务器关联网卡表
-                        int addCards = networkCardMapperExt.batchInsert(vo.getNetworkCardProxyVos());
+                        int addCards = networkCardMapperExt.batchInsert(vo.getNetworkCardVos());
                         log.info("代理插入安全服务器关联网卡表:{}",addCards);
                     }
                     break;
@@ -131,7 +131,7 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
                         int delCards = networkCardMapper.deleteByExample(deleteExample);
                         log.info("更新安全服务器关联网卡表（先删后增）:{}",delCards);
 
-                        int updCards = networkCardMapperExt.batchInsert(vo.getNetworkCardProxyVos());
+                        int updCards = networkCardMapperExt.batchInsert(vo.getNetworkCardVos());
                         log.info("更新安全服务器关联网卡表（先删后增）:{}",updCards);
 
                     }
@@ -231,13 +231,13 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
             throw new Exception("ConnectType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
 
-        if (CollectionUtils.isEmpty(vo.getNetworkCardProxyVos())){
+        if (CollectionUtils.isEmpty(vo.getNetworkCardVos())){
             throw new Exception("NetworkCardVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         // 校验插入安全服务器信息表数据是否合法结束
 
         // 校验插入安全服务器关联网卡信息表数据是否合法开始
-        for (NetworkCardProxyVo cardVo : vo.getNetworkCardProxyVos()){
+        for (NetworkCardProxyVo cardVo : vo.getNetworkCardVos()){
             if (ParamCheckUtil.checkVoStrBlank(cardVo.getNetCardType())){
                 throw new Exception("NetCardType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
@@ -272,13 +272,13 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
             throw new Exception("ConnectType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
 
-        if (CollectionUtils.isEmpty(vo.getNetworkCardProxyVos())){
+        if (CollectionUtils.isEmpty(vo.getNetworkCardVos())){
             throw new Exception("NetworkCardVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         // 校验插入安全服务器信息表数据是否合法结束
 
         // 校验插入安全服务器关联网卡信息表数据是否合法开始
-        for (NetworkCardProxyVo cardVo : vo.getNetworkCardProxyVos()){
+        for (NetworkCardProxyVo cardVo : vo.getNetworkCardVos()){
             if (ParamCheckUtil.checkVoStrBlank(cardVo.getNetCardType())){
                 throw new Exception("NetCardType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }

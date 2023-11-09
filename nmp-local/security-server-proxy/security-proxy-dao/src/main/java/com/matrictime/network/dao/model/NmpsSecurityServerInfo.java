@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 安全服务器信息表
  * @author   cxk
- * @date   2023-11-06
+ * @date   2023-11-09
  */
 @Data
 public class NmpsSecurityServerInfo {
@@ -29,16 +29,6 @@ public class NmpsSecurityServerInfo {
      * 入网id
      */
     private String networkId;
-
-    /**
-     * 信令（中继）端口
-     */
-    private String signalPort;
-
-    /**
-     * 下载密钥端口
-     */
-    private String keyPort;
 
     /**
      * 连接方式 1:内接 2:外接
@@ -110,22 +100,6 @@ public class NmpsSecurityServerInfo {
 
     public void setNetworkId(String networkId) {
         this.networkId = networkId == null ? null : networkId.trim();
-    }
-
-    public String getSignalPort() {
-        return signalPort;
-    }
-
-    public void setSignalPort(String signalPort) {
-        this.signalPort = signalPort == null ? null : signalPort.trim();
-    }
-
-    public String getKeyPort() {
-        return keyPort;
-    }
-
-    public void setKeyPort(String keyPort) {
-        this.keyPort = keyPort == null ? null : keyPort.trim();
     }
 
     public String getConnectType() {
