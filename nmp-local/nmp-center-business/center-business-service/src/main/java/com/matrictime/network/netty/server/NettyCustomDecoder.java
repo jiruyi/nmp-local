@@ -44,10 +44,6 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
     short checkSum = 0;
     //业务数据
     byte[] reqData ;
-
-
-
-
     /**
      * @title decode
      * @param [ctx, in]
@@ -97,6 +93,14 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
     }
 
 
+    /**
+      * @title decode
+      * @param [ctx, in]
+      * @return java.lang.Object
+      * @description
+      * @author jiruyi
+      * @create 2023/11/9 0009 16:10
+      */
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
         log.info("NettyCustomDecoder decode start  client ip is:{}", ctx.channel().remoteAddress().toString());
