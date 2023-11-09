@@ -235,6 +235,146 @@ public class NmplStaticRouteExample {
             return (Criteria) this;
         }
 
+        public Criteria andCompanyIdIsNull() {
+            addCriterion("company_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdIsNotNull() {
+            addCriterion("company_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdEqualTo(String value) {
+            addCriterion("company_id =", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdNotEqualTo(String value) {
+            addCriterion("company_id <>", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdGreaterThan(String value) {
+            addCriterion("company_id >", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdGreaterThanOrEqualTo(String value) {
+            addCriterion("company_id >=", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdLessThan(String value) {
+            addCriterion("company_id <", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdLessThanOrEqualTo(String value) {
+            addCriterion("company_id <=", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdLike(String value) {
+            addCriterion("company_id like", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdNotLike(String value) {
+            addCriterion("company_id not like", value, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdIn(List<String> values) {
+            addCriterion("company_id in", values, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdNotIn(List<String> values) {
+            addCriterion("company_id not in", values, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdBetween(String value1, String value2) {
+            addCriterion("company_id between", value1, value2, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyIdNotBetween(String value1, String value2) {
+            addCriterion("company_id not between", value1, value2, "companyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdIsNull() {
+            addCriterion("station_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdIsNotNull() {
+            addCriterion("station_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdEqualTo(String value) {
+            addCriterion("station_id =", value, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdNotEqualTo(String value) {
+            addCriterion("station_id <>", value, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdGreaterThan(String value) {
+            addCriterion("station_id >", value, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdGreaterThanOrEqualTo(String value) {
+            addCriterion("station_id >=", value, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdLessThan(String value) {
+            addCriterion("station_id <", value, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdLessThanOrEqualTo(String value) {
+            addCriterion("station_id <=", value, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdLike(String value) {
+            addCriterion("station_id like", value, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdNotLike(String value) {
+            addCriterion("station_id not like", value, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdIn(List<String> values) {
+            addCriterion("station_id in", values, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdNotIn(List<String> values) {
+            addCriterion("station_id not in", values, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdBetween(String value1, String value2) {
+            addCriterion("station_id between", value1, value2, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationIdNotBetween(String value1, String value2) {
+            addCriterion("station_id not between", value1, value2, "stationId");
+            return (Criteria) this;
+        }
+
         public Criteria andNetworkIdIsNull() {
             addCriterion("network_id is null");
             return (Criteria) this;
@@ -305,73 +445,143 @@ public class NmplStaticRouteExample {
             return (Criteria) this;
         }
 
-        public Criteria andServerIpIsNull() {
-            addCriterion("server_ip is null");
+        public Criteria andDeviceIdIsNull() {
+            addCriterion("device_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpIsNotNull() {
-            addCriterion("server_ip is not null");
+        public Criteria andDeviceIdIsNotNull() {
+            addCriterion("device_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpEqualTo(String value) {
-            addCriterion("server_ip =", value, "serverIp");
+        public Criteria andDeviceIdEqualTo(String value) {
+            addCriterion("device_id =", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpNotEqualTo(String value) {
-            addCriterion("server_ip <>", value, "serverIp");
+        public Criteria andDeviceIdNotEqualTo(String value) {
+            addCriterion("device_id <>", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpGreaterThan(String value) {
-            addCriterion("server_ip >", value, "serverIp");
+        public Criteria andDeviceIdGreaterThan(String value) {
+            addCriterion("device_id >", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpGreaterThanOrEqualTo(String value) {
-            addCriterion("server_ip >=", value, "serverIp");
+        public Criteria andDeviceIdGreaterThanOrEqualTo(String value) {
+            addCriterion("device_id >=", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpLessThan(String value) {
-            addCriterion("server_ip <", value, "serverIp");
+        public Criteria andDeviceIdLessThan(String value) {
+            addCriterion("device_id <", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpLessThanOrEqualTo(String value) {
-            addCriterion("server_ip <=", value, "serverIp");
+        public Criteria andDeviceIdLessThanOrEqualTo(String value) {
+            addCriterion("device_id <=", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpLike(String value) {
-            addCriterion("server_ip like", value, "serverIp");
+        public Criteria andDeviceIdLike(String value) {
+            addCriterion("device_id like", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpNotLike(String value) {
-            addCriterion("server_ip not like", value, "serverIp");
+        public Criteria andDeviceIdNotLike(String value) {
+            addCriterion("device_id not like", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpIn(List<String> values) {
-            addCriterion("server_ip in", values, "serverIp");
+        public Criteria andDeviceIdIn(List<String> values) {
+            addCriterion("device_id in", values, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpNotIn(List<String> values) {
-            addCriterion("server_ip not in", values, "serverIp");
+        public Criteria andDeviceIdNotIn(List<String> values) {
+            addCriterion("device_id not in", values, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpBetween(String value1, String value2) {
-            addCriterion("server_ip between", value1, value2, "serverIp");
+        public Criteria andDeviceIdBetween(String value1, String value2) {
+            addCriterion("device_id between", value1, value2, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andServerIpNotBetween(String value1, String value2) {
-            addCriterion("server_ip not between", value1, value2, "serverIp");
+        public Criteria andDeviceIdNotBetween(String value1, String value2) {
+            addCriterion("device_id not between", value1, value2, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameIsNull() {
+            addCriterion("server_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameIsNotNull() {
+            addCriterion("server_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameEqualTo(String value) {
+            addCriterion("server_name =", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameNotEqualTo(String value) {
+            addCriterion("server_name <>", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameGreaterThan(String value) {
+            addCriterion("server_name >", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameGreaterThanOrEqualTo(String value) {
+            addCriterion("server_name >=", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameLessThan(String value) {
+            addCriterion("server_name <", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameLessThanOrEqualTo(String value) {
+            addCriterion("server_name <=", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameLike(String value) {
+            addCriterion("server_name like", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameNotLike(String value) {
+            addCriterion("server_name not like", value, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameIn(List<String> values) {
+            addCriterion("server_name in", values, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameNotIn(List<String> values) {
+            addCriterion("server_name not in", values, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameBetween(String value1, String value2) {
+            addCriterion("server_name between", value1, value2, "serverName");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerNameNotBetween(String value1, String value2) {
+            addCriterion("server_name not between", value1, value2, "serverName");
             return (Criteria) this;
         }
 
@@ -692,426 +902,6 @@ public class NmplStaticRouteExample {
 
         public Criteria andUpdateTimeNotBetween(Date value1, Date value2) {
             addCriterion("update_time not between", value1, value2, "updateTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdIsNull() {
-            addCriterion("station_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdIsNotNull() {
-            addCriterion("station_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdEqualTo(String value) {
-            addCriterion("station_id =", value, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdNotEqualTo(String value) {
-            addCriterion("station_id <>", value, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdGreaterThan(String value) {
-            addCriterion("station_id >", value, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdGreaterThanOrEqualTo(String value) {
-            addCriterion("station_id >=", value, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdLessThan(String value) {
-            addCriterion("station_id <", value, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdLessThanOrEqualTo(String value) {
-            addCriterion("station_id <=", value, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdLike(String value) {
-            addCriterion("station_id like", value, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdNotLike(String value) {
-            addCriterion("station_id not like", value, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdIn(List<String> values) {
-            addCriterion("station_id in", values, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdNotIn(List<String> values) {
-            addCriterion("station_id not in", values, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdBetween(String value1, String value2) {
-            addCriterion("station_id between", value1, value2, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationIdNotBetween(String value1, String value2) {
-            addCriterion("station_id not between", value1, value2, "stationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6IsNull() {
-            addCriterion("ip_v6 is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6IsNotNull() {
-            addCriterion("ip_v6 is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6EqualTo(String value) {
-            addCriterion("ip_v6 =", value, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6NotEqualTo(String value) {
-            addCriterion("ip_v6 <>", value, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6GreaterThan(String value) {
-            addCriterion("ip_v6 >", value, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6GreaterThanOrEqualTo(String value) {
-            addCriterion("ip_v6 >=", value, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6LessThan(String value) {
-            addCriterion("ip_v6 <", value, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6LessThanOrEqualTo(String value) {
-            addCriterion("ip_v6 <=", value, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6Like(String value) {
-            addCriterion("ip_v6 like", value, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6NotLike(String value) {
-            addCriterion("ip_v6 not like", value, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6In(List<String> values) {
-            addCriterion("ip_v6 in", values, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6NotIn(List<String> values) {
-            addCriterion("ip_v6 not in", values, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6Between(String value1, String value2) {
-            addCriterion("ip_v6 between", value1, value2, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andIpV6NotBetween(String value1, String value2) {
-            addCriterion("ip_v6 not between", value1, value2, "ipV6");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameIsNull() {
-            addCriterion("company_name is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameIsNotNull() {
-            addCriterion("company_name is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameEqualTo(String value) {
-            addCriterion("company_name =", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameNotEqualTo(String value) {
-            addCriterion("company_name <>", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameGreaterThan(String value) {
-            addCriterion("company_name >", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameGreaterThanOrEqualTo(String value) {
-            addCriterion("company_name >=", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameLessThan(String value) {
-            addCriterion("company_name <", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameLessThanOrEqualTo(String value) {
-            addCriterion("company_name <=", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameLike(String value) {
-            addCriterion("company_name like", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameNotLike(String value) {
-            addCriterion("company_name not like", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameIn(List<String> values) {
-            addCriterion("company_name in", values, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameNotIn(List<String> values) {
-            addCriterion("company_name not in", values, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameBetween(String value1, String value2) {
-            addCriterion("company_name between", value1, value2, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameNotBetween(String value1, String value2) {
-            addCriterion("company_name not between", value1, value2, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdIsNull() {
-            addCriterion("company_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdIsNotNull() {
-            addCriterion("company_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdEqualTo(String value) {
-            addCriterion("company_id =", value, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdNotEqualTo(String value) {
-            addCriterion("company_id <>", value, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdGreaterThan(String value) {
-            addCriterion("company_id >", value, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdGreaterThanOrEqualTo(String value) {
-            addCriterion("company_id >=", value, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdLessThan(String value) {
-            addCriterion("company_id <", value, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdLessThanOrEqualTo(String value) {
-            addCriterion("company_id <=", value, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdLike(String value) {
-            addCriterion("company_id like", value, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdNotLike(String value) {
-            addCriterion("company_id not like", value, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdIn(List<String> values) {
-            addCriterion("company_id in", values, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdNotIn(List<String> values) {
-            addCriterion("company_id not in", values, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdBetween(String value1, String value2) {
-            addCriterion("company_id between", value1, value2, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyIdNotBetween(String value1, String value2) {
-            addCriterion("company_id not between", value1, value2, "companyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameIsNull() {
-            addCriterion("server_name is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameIsNotNull() {
-            addCriterion("server_name is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameEqualTo(String value) {
-            addCriterion("server_name =", value, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameNotEqualTo(String value) {
-            addCriterion("server_name <>", value, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameGreaterThan(String value) {
-            addCriterion("server_name >", value, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameGreaterThanOrEqualTo(String value) {
-            addCriterion("server_name >=", value, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameLessThan(String value) {
-            addCriterion("server_name <", value, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameLessThanOrEqualTo(String value) {
-            addCriterion("server_name <=", value, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameLike(String value) {
-            addCriterion("server_name like", value, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameNotLike(String value) {
-            addCriterion("server_name not like", value, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameIn(List<String> values) {
-            addCriterion("server_name in", values, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameNotIn(List<String> values) {
-            addCriterion("server_name not in", values, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameBetween(String value1, String value2) {
-            addCriterion("server_name between", value1, value2, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andServerNameNotBetween(String value1, String value2) {
-            addCriterion("server_name not between", value1, value2, "serverName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameIsNull() {
-            addCriterion("station_name is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameIsNotNull() {
-            addCriterion("station_name is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameEqualTo(String value) {
-            addCriterion("station_name =", value, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameNotEqualTo(String value) {
-            addCriterion("station_name <>", value, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameGreaterThan(String value) {
-            addCriterion("station_name >", value, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameGreaterThanOrEqualTo(String value) {
-            addCriterion("station_name >=", value, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameLessThan(String value) {
-            addCriterion("station_name <", value, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameLessThanOrEqualTo(String value) {
-            addCriterion("station_name <=", value, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameLike(String value) {
-            addCriterion("station_name like", value, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameNotLike(String value) {
-            addCriterion("station_name not like", value, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameIn(List<String> values) {
-            addCriterion("station_name in", values, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameNotIn(List<String> values) {
-            addCriterion("station_name not in", values, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameBetween(String value1, String value2) {
-            addCriterion("station_name between", value1, value2, "stationName");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationNameNotBetween(String value1, String value2) {
-            addCriterion("station_name not between", value1, value2, "stationName");
             return (Criteria) this;
         }
     }

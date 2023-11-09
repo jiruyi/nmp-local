@@ -139,6 +139,6 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
      */
     @Override
     public void updateTimer(long timer){
-        this.timer = timer + 2000;
+        this.timer = timer;
     }
 }

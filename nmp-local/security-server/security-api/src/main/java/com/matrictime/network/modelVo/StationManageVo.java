@@ -62,6 +62,11 @@ public class StationManageVo {
     private String stationPort;
 
     /**
+     * 下载密钥端口
+     */
+    private String keyPort;
+
+    /**
      * 创建时间
      */
     private Date createTime;

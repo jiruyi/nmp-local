@@ -136,6 +136,6 @@ public class SystemHeartTaskService implements SchedulingConfigurer, BusinessDat
      */
     @Override
     public void updateTimer(long timer){
-        this.timer = timer + 4000;
+        this.timer = timer;
     }
 }

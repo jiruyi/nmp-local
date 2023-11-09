@@ -139,6 +139,6 @@ public class CompanyHeartbeatTaskService implements SchedulingConfigurer, Busine
      */
     @Override
     public void updateTimer(long timer){
-        this.timer = timer + 1500;
+        this.timer = timer;
     }
 }

@@ -1,12 +1,15 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.matrictime.network.dao.mapper.NmpsStationManageMapper;
 import com.matrictime.network.dao.mapper.extend.NmpsStationManageExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CaManageVo;
 import com.matrictime.network.modelVo.DnsManageVo;
+import com.matrictime.network.modelVo.PageInfo;
 import com.matrictime.network.modelVo.StationManageVo;
 import com.matrictime.network.req.StationManageRequest;
 import com.matrictime.network.resp.DnsManageResp;
@@ -101,14 +104,18 @@ public class StationManageServiceImpl implements StationManageService {
     }
 
     @Override
-    public Result<StationManageResp> selectStationManage(StationManageRequest stationManageRequest) {
-        Result<StationManageResp> result = new Result<>();
-        StationManageResp stationManageResp = new StationManageResp();
+    public Result<PageInfo<StationManageVo>> selectStationManage(StationManageRequest stationManageRequest) {
+        Result<PageInfo<StationManageVo>> result = new Result<>();
+        PageInfo<StationManageVo> pageInfo = new PageInfo<>();
         try {
+            //分页查询数据
+            Page page = PageHelper.startPage(stationManageRequest.getPageNo(),stationManageRequest.getPageSize());
             List<StationManageVo> stationManageVos = stationManageExtMapper.selectStationManage(stationManageRequest);
-            stationManageResp.setList(stationManageVos);
+            pageInfo.setList(stationManageVos);
+            pageInfo.setCount((int) page.getTotal());
+            pageInfo.setPages(page.getPages());
             result.setSuccess(true);
-            result.setResultObj(stationManageResp);
+            result.setResultObj(pageInfo);
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
             result.setSuccess(false);

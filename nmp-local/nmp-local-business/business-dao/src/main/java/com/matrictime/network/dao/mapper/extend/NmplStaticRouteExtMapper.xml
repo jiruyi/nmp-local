@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplStaticRouteExtMapper">
+    <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.StaticRouteVo">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="route_id" jdbcType="VARCHAR" property="routeId" />
+        <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+        <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+        <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+        <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+        <result column="network_id" jdbcType="VARCHAR" property="networkId" />
+        <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+        <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+        <result column="is_exist" jdbcType="BIT" property="isExist" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <select id="selectStaticRoute" parameterType="com.matrictime.network.request.StaticRouteRequest" resultMap="BaseResultMap">
+        select s.id, s.company_id,s.station_id,s.network_id,s.device_id,s.server_name,s.create_time,c.company_name,b.station_name
+        from
+        nmpl_static_route s,nmpl_company_info c,nmpl_base_station_info b
+        where
+        s.company_id = c.company_id and s.station_id = b.station_id
+        and s.is_exist = 1 and c.is_exist = 1 and b.is_exist = 1
+        <if test="companyName != null">
+            and c.company_name = #{companyName,jdbcType=VARCHAR}
+        </if>
+        <if test="stationName != null">
+            and b.station_name = #{stationName,jdbcType=VARCHAR}
+        </if>
+        <if test="serverName != null">
+            and s.server_name = #{serverName,jdbcType=VARCHAR}
+        </if>
+        <if test="networkId != null">
+            and s.network_id = #{networkId,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+</mapper>

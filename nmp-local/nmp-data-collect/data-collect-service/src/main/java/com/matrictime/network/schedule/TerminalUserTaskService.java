@@ -132,6 +132,6 @@ public class TerminalUserTaskService implements SchedulingConfigurer, BusinessDa
      */
     @Override
     public void updateTimer(long timer){
-        this.timer = timer + 4500;
+        this.timer = timer;
     }
 }

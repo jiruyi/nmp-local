@@ -134,6 +134,6 @@ public class StationTaskService implements SchedulingConfigurer, BusinessDataSer
      */
     @Override
     public void updateTimer(long timer){
-        this.timer = timer + 3500;
+        this.timer = timer;
     }
 }

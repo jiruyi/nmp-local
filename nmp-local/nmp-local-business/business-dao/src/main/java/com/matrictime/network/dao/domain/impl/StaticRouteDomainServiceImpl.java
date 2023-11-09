@@ -7,6 +7,7 @@ import com.matrictime.network.base.util.SnowFlake;
 import com.matrictime.network.dao.domain.StaticRouteDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplStaticRouteMapper;
+import com.matrictime.network.dao.mapper.extend.NmplStaticRouteExtMapper;
 import com.matrictime.network.dao.model.NmplBaseStationInfo;
 import com.matrictime.network.dao.model.NmplBaseStationInfoExample;
 import com.matrictime.network.dao.model.NmplStaticRoute;
@@ -41,13 +42,25 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
     @Resource
     private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
 
+    @Resource
+    private NmplStaticRouteExtMapper staticRouteExtMapper;
+
     @Override
     public int insert(StaticRouteRequest staticRouteRequest) {
         NmplStaticRoute nmplStaticRoute = new NmplStaticRoute();
         String[] split = staticRouteRequest.getNetworkId().split("-");
         if(!checkID(split[split.length - 1],staticRouteRequest)){
-            throw new RuntimeException("ID重复");
+            throw new RuntimeException("入网Id重复");
         }
+
+        NmplStaticRouteExample staticRouteExample = new NmplStaticRouteExample();
+        NmplStaticRouteExample.Criteria criteria = staticRouteExample.createCriteria();
+        criteria.andDeviceIdEqualTo(staticRouteRequest.getDeviceId());
+        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(staticRouteExample);
+        if(!CollectionUtils.isEmpty(nmplStaticRoutes)) {
+            throw new RuntimeException("设备Id重复");
+        }
+
         BeanUtils.copyProperties(staticRouteRequest,nmplStaticRoute);
 //        nmplStaticRoute.setByteNetworkId(DecimalConversionUtil.toLH(Integer.parseInt(staticRouteRequest.getNetworkId())));
         return nmplStaticRouteMapper.insertSelective(nmplStaticRoute);
@@ -65,8 +78,17 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
     public int update(StaticRouteRequest staticRouteRequest) {
         String[] split = staticRouteRequest.getNetworkId().split("-");
         if(!checkID(split[split.length - 1],staticRouteRequest)){
-            throw new RuntimeException("ID重复");
+            throw new RuntimeException("入网Id重复");
         }
+        NmplStaticRouteExample staticRouteExample = new NmplStaticRouteExample();
+        NmplStaticRouteExample.Criteria criteria = staticRouteExample.createCriteria();
+        criteria.andDeviceIdEqualTo(staticRouteRequest.getDeviceId());
+        criteria.andIdNotEqualTo(staticRouteRequest.getId());
+        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(staticRouteExample);
+        if(!CollectionUtils.isEmpty(nmplStaticRoutes)) {
+            throw new RuntimeException("设备Id重复");
+        }
+
         NmplStaticRouteExample nmplStaticRouteExample = constructUpdateCondition(staticRouteRequest);
         NmplStaticRoute nmplStaticRoute = constructUpdateDate(staticRouteRequest);
 //        nmplStaticRoute.setByteNetworkId(DecimalConversionUtil.toLH(Integer.parseInt(staticRouteRequest.getNetworkId())));
@@ -75,62 +97,24 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
 
     @Override
     public PageInfo<StaticRouteVo> select(StaticRouteRequest staticRouteRequest) {
-        List<StaticRouteVo> list = new ArrayList<>();
-        NmplStaticRouteExample nmplStaticRouteExample = new NmplStaticRouteExample();
-        NmplStaticRouteExample.Criteria criteria = nmplStaticRouteExample.createCriteria();
-        NmplStaticRouteExample.Criteria criteria1 = nmplStaticRouteExample.createCriteria();
-        nmplStaticRouteExample.setOrderByClause("update_time desc");
-//        if(!StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
-//            criteria.andNetworkIdLike("%"+staticRouteRequest.getNetworkId()+"%");
-//            criteria1.andNetworkIdLike("%"+staticRouteRequest.getNetworkId()+"%");
-//        }
-        if(!StringUtils.isEmpty(staticRouteRequest.getStationId())){
-            criteria.andStationIdEqualTo(staticRouteRequest.getStationId());
-            criteria1.andStationIdEqualTo(staticRouteRequest.getStationId());
-        }
-        if(!StringUtils.isEmpty(staticRouteRequest.getServerIp())){
-            criteria.andServerIpLike("%"+staticRouteRequest.getServerIp()+"%");
-            criteria1.andIpV6Like("%"+staticRouteRequest.getServerIp()+"%");
-        }
-        if(!StringUtils.isEmpty(staticRouteRequest.getCompanyName())){
-            criteria.andCompanyNameEqualTo(staticRouteRequest.getCompanyName());
-            criteria1.andCompanyNameEqualTo(staticRouteRequest.getCompanyName());
-        }
-        if(!StringUtils.isEmpty(staticRouteRequest.getServerName())){
-            criteria.andServerNameEqualTo(staticRouteRequest.getServerName());
-            criteria1.andServerNameEqualTo(staticRouteRequest.getServerName());
-        }
-        if(!StringUtils.isEmpty(staticRouteRequest.getStationName())){
-            criteria.andStationNameEqualTo(staticRouteRequest.getStationName());
-            criteria1.andStationNameEqualTo(staticRouteRequest.getStationName());
-        }
-        if(!StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
-            criteria.andNetworkIdEqualTo(staticRouteRequest.getNetworkId());
-            criteria1.andNetworkIdEqualTo(staticRouteRequest.getNetworkId());
-        }
-        criteria.andIsExistEqualTo(IS_EXIST);
-        criteria1.andIsExistEqualTo(IS_EXIST);
-        nmplStaticRouteExample.or(criteria1);
         //分页查询数据
         Page page = PageHelper.startPage(staticRouteRequest.getPageNo(),staticRouteRequest.getPageSize());
-        List<NmplStaticRoute> nmplInternetRoutes = nmplStaticRouteMapper.selectByExample(nmplStaticRouteExample);
+        List<StaticRouteVo> staticRouteVos = staticRouteExtMapper.selectStaticRoute(staticRouteRequest);
         PageInfo<StaticRouteVo> pageInfo = new PageInfo<>();
-
-
 //        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
 //        nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
-        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
-        Map<String,String> baseStationInfoMap = new HashMap<>();
-        for (int i = 0; i < nmplBaseStationInfos.size(); i++) {
-            baseStationInfoMap.put(nmplBaseStationInfos.get(i).getStationId(),nmplBaseStationInfos.get(i).getStationNetworkId());
-        }
-        for(NmplStaticRoute nmplStaticRoute: nmplInternetRoutes){
-            StaticRouteVo staticRouteVo = new StaticRouteVo();
-            BeanUtils.copyProperties(nmplStaticRoute,staticRouteVo);
-            staticRouteVo.setRouteNetworkId(baseStationInfoMap.get(staticRouteVo.getStationId())+"-"+staticRouteVo.getNetworkId());
-            list.add(staticRouteVo);
-        }
-        pageInfo.setList(list);
+//        List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(null);
+//        Map<String,String> baseStationInfoMap = new HashMap<>();
+//        for (int i = 0; i < nmplBaseStationInfos.size(); i++) {
+//            baseStationInfoMap.put(nmplBaseStationInfos.get(i).getStationId(),nmplBaseStationInfos.get(i).getStationNetworkId());
+//        }
+//        for(NmplStaticRoute nmplStaticRoute: nmplInternetRoutes){
+//            StaticRouteVo staticRouteVo = new StaticRouteVo();
+//            BeanUtils.copyProperties(nmplStaticRoute,staticRouteVo);
+//            staticRouteVo.setRouteNetworkId(baseStationInfoMap.get(staticRouteVo.getStationId())+"-"+staticRouteVo.getNetworkId());
+//            list.add(staticRouteVo);
+//        }
+        pageInfo.setList(staticRouteVos);
         pageInfo.setCount((int) page.getTotal());
         pageInfo.setPages(page.getPages());
         return pageInfo;
@@ -183,7 +167,8 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
         }
         List<String> list = new ArrayList<>();
         for(NmplStaticRoute nmplStaticRoute : nmplStaticRoutes){
-            list.add(nmplStaticRoute.getNetworkId().substring(nmplStaticRoute.getNetworkId().length()-1));
+            String[] split = nmplStaticRoute.getNetworkId().split("-");
+            list.add(split[split.length -1]);
         }
         return list;
     }
