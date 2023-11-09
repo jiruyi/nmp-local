@@ -139,6 +139,6 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
      */
     @Override
     public void updateTimer(long timer){
-        this.timer = timer;
+        this.timer = timer + 3000;
     }
 }
