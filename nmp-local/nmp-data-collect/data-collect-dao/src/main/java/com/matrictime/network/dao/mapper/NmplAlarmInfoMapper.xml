@@ -320,4 +320,23 @@
       #{ip,jdbcType=VARCHAR}
     </foreach>
    </select>
+
+
+  <select id="selectMinAlarmId" resultType="java.lang.Long">
+    select alarm_id from nmpl_alarm_info order by alarm_id asc  limit 1
+  </select>
+
+
+  <select id="selectBatchGreatId" parameterType="com.matrictime.network.dao.model.NmplAlarmInfoExample" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nmpl_alarm_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    limit 500
+  </select>
 </mapper>

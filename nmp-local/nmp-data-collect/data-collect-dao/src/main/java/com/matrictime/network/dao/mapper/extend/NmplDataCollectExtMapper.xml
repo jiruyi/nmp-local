@@ -15,7 +15,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
-    <select id="selectDataCollect" resultMap="BaseResultMap">
+    <select id="selectDataCollect" parameterType="com.matrictime.network.request.DataCollectRequest" resultMap="BaseResultMap">
         SELECT
             a.id,
             a.data_item_code,
@@ -26,12 +26,27 @@
         FROM
             nmpl_data_collect a
         WHERE
-        a.upload_time &gt;= (SELECT
-            DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE - INTERVAL 30 MINUTE)
-        and a.upload_time &lt; (
+        a.data_item_code in('10010','10011')
+        and a.id &gt;= #{id,jdbcType=BIGINT}
+        and a.upload_time &lt;= (SELECT upload_time + INTERVAL 30 MINUTE from nmpl_data_collect WHERE id = #{id,jdbcType=BIGINT})
+        order by id asc
+    </select>
+
+    <select id="selectLastData" parameterType="com.matrictime.network.request.DataCollectRequest" resultMap="BaseResultMap">
         SELECT
-            DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE
-        )
-        and a.data_item_code in('10010','10011') order by id asc
+        a.id,
+        a.data_item_code,
+        a.data_item_value,
+        a.upload_time,
+        a.device_id,
+        a.device_type
+        FROM
+        nmpl_data_collect a
+        WHERE
+        a.data_item_code in('10010','10011')
+        <if test="id != null">
+            and a.id &gt; #{id,jdbcType=BIGINT}
+        </if>
+        order by id asc limit 1
     </select>
 </mapper>

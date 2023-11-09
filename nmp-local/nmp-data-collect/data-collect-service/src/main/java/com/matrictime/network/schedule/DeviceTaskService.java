@@ -111,6 +111,7 @@ public class DeviceTaskService  implements SchedulingConfigurer, BusinessDataSer
             log.info("DeviceTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
             String reqDataStr = JSONObject.toJSONString(list);
+            log.info("json:{}---------",reqDataStr);
             //发送TCP数据包
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.Device,

@@ -11,6 +11,8 @@ import java.util.Date;
 @Data
 public class DataCollectRequest extends CollectBaseRequest{
 
+    private Long id;
+
     /**
      * 设备id
      */

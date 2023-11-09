@@ -73,7 +73,7 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
             log.info("in.readableByte   < HEADER_SIZE(48byte) ");
             return null;
         }
-        log.info("NettyCustomDecoder  decode start ");
+        log.info("NettyCustomDecoder decode start  client ip is:{}", ctx.channel().remoteAddress().toString());
         // 数据包长度
         in.markReaderIndex();
         int uTotalLen = in.getIntLE(4);
@@ -84,8 +84,6 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
         }
         log.info("收到客户端的业务消息长度：{}",uTotalLen);
         log.info("收到客户端的组包后消息长度：{}",in.readableBytes());
-        String messageHeader =  in.toString(0,HEADER_SIZE, CharsetUtil.UTF_8);
-        log.info("收到客户端的业务消息messageHeader:{}",messageHeader);
         String reqDataJsonStr = in.toString(HEADER_SIZE,uTotalLen-HEADER_SIZE, CharsetUtil.UTF_8);
         in.readBytes(uTotalLen);
         return  reqDataJsonStr;
