@@ -112,6 +112,7 @@ public class AlarmInfoTaskService implements BusinessDataService, SchedulingConf
             //告警日志业务逻辑 查询数据
             alarmInfoList = alarmDomainService.queryAlarmList();
             if (CollectionUtils.isEmpty(alarmInfoList)) {
+                log.info("businessData alarmInfoList is empty");
                 return;
             }
             //查询本机数据采集和本运营商的指控中心的入网码
