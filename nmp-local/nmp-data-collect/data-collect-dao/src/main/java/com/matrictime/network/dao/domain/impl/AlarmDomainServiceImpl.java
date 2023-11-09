@@ -46,7 +46,6 @@ public class AlarmDomainServiceImpl implements AlarmDomainService {
     public List<NmplAlarmInfo> queryAlarmList() {
         //起止id
         Long startAlarmId =alarmInfoMapper.selectMinAlarmId();
-        Long endAlarmId = startAlarmId+DataConstants.ALARM_INFO_EVERY_COUNT;
         //1.0 查询上次推送到的位置
         NmplDataPushRecordExample pushRecordExample = new NmplDataPushRecordExample();
         pushRecordExample.createCriteria().andTableNameEqualTo(DataConstants.NMPL_ALARM_INFO);
@@ -56,16 +55,11 @@ public class AlarmDomainServiceImpl implements AlarmDomainService {
         if(!CollectionUtils.isEmpty(dataPushRecords)){
             Long lastAlramId = dataPushRecords.get(0).getDataId();
             startAlarmId= lastAlramId;
-            endAlarmId = endAlarmId +startAlarmId;
         }
         //3.0 根据起止id 查询告警数据
         NmplAlarmInfoExample example = new NmplAlarmInfoExample();
-        example.createCriteria().andAlarmIdGreaterThan(startAlarmId).andAlarmIdLessThanOrEqualTo(endAlarmId);
+        example.createCriteria().andAlarmIdGreaterThan(startAlarmId);
         List<NmplAlarmInfo> infoList =  alarmInfoMapper.selectByExample(example);
-        //4.0 如果数据为空 需要顺延id 保证跳过这批空的id
-        if(CollectionUtils.isEmpty(infoList)){
-            insertDataPushRecord(endAlarmId);
-        }
         //5.0 设置小区入网码
         setAreaCode(infoList);
         return infoList;

@@ -36,4 +36,6 @@ public interface NmplAlarmInfoMapper {
 
     Long selectMinAlarmId();
 
+    List<NmplAlarmInfo> selectBatchGreatId(NmplAlarmInfoExample example);
+
 }
