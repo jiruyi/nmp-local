@@ -2,6 +2,7 @@ package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
 import com.matrictime.network.req.UserReq;
+import com.matrictime.network.resp.UserInfoResp;
 
 
 public interface UserService {
@@ -23,6 +24,8 @@ public interface UserService {
      * @param req
      * @return
      */
-    Result passwordReset(UserReq req);
+    Result changePasswd(UserReq req);
+
+    Result<UserInfoResp> getUserInfo(UserReq userRequest);
 
 }

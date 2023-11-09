@@ -12,11 +12,13 @@ import com.matrictime.network.model.Result;
 
 import com.matrictime.network.req.UserReq;
 import com.matrictime.network.resp.LoginResp;
+import com.matrictime.network.resp.UserInfoResp;
 import com.matrictime.network.service.UserService;
 import com.matrictime.network.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -123,7 +125,7 @@ public class UserServiceImpl extends SystemBaseService implements UserService {
     }
 
     @Override
-    public Result passwordReset(UserReq req) {
+    public Result changePasswd(UserReq req) {
         try {
             if (req.getOldPassword() != null && req.getOldPassword().equals(req.getNewPassword())) {
                 throw new SystemException(ErrorMessageContants.EQUAL_PASSWORD_ERROR_MSG);
@@ -145,4 +147,19 @@ public class UserServiceImpl extends SystemBaseService implements UserService {
         }
     }
 
+
+
+    @Override
+    public Result<UserInfoResp> getUserInfo(UserReq userRequest) {
+        try {
+            NmpsUser user = nmpsUserMapper.selectByPrimaryKey(Long.valueOf(userRequest.getUserId()));
+            //参数转换
+            UserInfoResp userInfoResp = new UserInfoResp();
+            BeanUtils.copyProperties(user,userInfoResp);
+            return buildResult(userInfoResp);
+        }catch (Exception e){
+            log.error("selectUserList exception :{}",e.getMessage());
+            return  failResult(e);
+        }
+    }
 }
