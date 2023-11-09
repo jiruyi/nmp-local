@@ -103,7 +103,7 @@ public class NettyCustomDecoder extends LengthFieldBasedFrameDecoder {
         ByteBuf decoded =  (ByteBuf)super.decode(ctx,in);
         log.info("NettyCustomDecoder decode end  client ip is:{}", ctx.channel().remoteAddress().toString());
         if (decoded != null) {
-            String reqDataJsonStr = in.toString(CharsetUtil.UTF_8);
+            String reqDataJsonStr = decoded.toString(CharsetUtil.UTF_8);
             log.info("ByteBuf decoded(reqDataJsonStr) is:{}",reqDataJsonStr);
             return  reqDataJsonStr;
         }
