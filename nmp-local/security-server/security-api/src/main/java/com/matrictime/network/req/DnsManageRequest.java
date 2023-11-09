@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2023/11/2.
  */
 @Data
-public class DnsManageRequest {
+public class DnsManageRequest extends BaseRequest{
     /**
      * 主键
      */

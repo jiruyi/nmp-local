@@ -1,6 +1,8 @@
 package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.DnsManageVo;
+import com.matrictime.network.modelVo.PageInfo;
 import com.matrictime.network.req.CaManageRequest;
 import com.matrictime.network.req.DnsManageRequest;
 import com.matrictime.network.resp.CaManageResp;
@@ -16,7 +18,7 @@ public interface DnsManageService {
 
     Result<Integer> deleteDnsManage(DnsManageRequest dnsManageRequest);
 
-    Result<DnsManageResp> selectDnsManage(DnsManageRequest dnsManageRequest);
+    Result<PageInfo<DnsManageVo>> selectDnsManage(DnsManageRequest dnsManageRequest);
 
     Result<Integer> updateDnsManage(DnsManageRequest dnsManageRequest);
 }

@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2023/11/2.
  */
 @Data
-public class CaManageRequest {
+public class CaManageRequest extends BaseRequest{
 
     /**
      * 主键

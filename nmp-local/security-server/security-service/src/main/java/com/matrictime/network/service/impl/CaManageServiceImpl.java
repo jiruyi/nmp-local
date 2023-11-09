@@ -1,13 +1,17 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.matrictime.network.dao.mapper.NmpsCaManageMapper;
 import com.matrictime.network.dao.mapper.extend.NmpsCaManageExtMapper;
 import com.matrictime.network.dao.model.NmpsCaManage;
 import com.matrictime.network.dao.model.NmpsCaManageExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CaManageVo;
+import com.matrictime.network.modelVo.PageInfo;
 import com.matrictime.network.modelVo.SecurityServerInfoVo;
+import com.matrictime.network.modelVo.StationManageVo;
 import com.matrictime.network.req.CaManageRequest;
 import com.matrictime.network.resp.CaManageResp;
 import com.matrictime.network.service.CaManageService;
@@ -114,14 +118,18 @@ public class CaManageServiceImpl implements CaManageService {
      * @return
      */
     @Override
-    public Result<CaManageResp> selectCaManage(CaManageRequest caManageRequest) {
-        Result<CaManageResp> result = new Result<>();
-        CaManageResp caManageResp = new CaManageResp();
+    public Result<PageInfo<CaManageVo>> selectCaManage(CaManageRequest caManageRequest) {
+        Result<PageInfo<CaManageVo>> result = new Result<>();
+        PageInfo<CaManageVo> pageInfo = new PageInfo<>();
         try {
+            //分页查询数据
+            Page page = PageHelper.startPage(caManageRequest.getPageNo(),caManageRequest.getPageSize());
             List<CaManageVo> caManageVos = caManageExtMapper.selectCaManage(caManageRequest);
-            caManageResp.setList(caManageVos);
+            pageInfo.setList(caManageVos);
+            pageInfo.setCount((int) page.getTotal());
+            pageInfo.setPages(page.getPages());
             result.setSuccess(true);
-            result.setResultObj(caManageResp);
+            result.setResultObj(pageInfo);
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
             result.setSuccess(false);

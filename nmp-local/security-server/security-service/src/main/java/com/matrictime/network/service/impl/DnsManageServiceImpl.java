@@ -1,6 +1,8 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.matrictime.network.dao.mapper.NmpsDnsManageMapper;
 import com.matrictime.network.dao.mapper.extend.NmpsDnsManageExtMapper;
 import com.matrictime.network.dao.model.NmpsCaManage;
@@ -9,6 +11,7 @@ import com.matrictime.network.dao.model.NmpsDnsManageExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CaManageVo;
 import com.matrictime.network.modelVo.DnsManageVo;
+import com.matrictime.network.modelVo.PageInfo;
 import com.matrictime.network.req.DnsManageRequest;
 import com.matrictime.network.resp.DnsManageResp;
 import com.matrictime.network.service.DnsManageService;
@@ -99,14 +102,18 @@ public class DnsManageServiceImpl implements DnsManageService {
     }
 
     @Override
-    public Result<DnsManageResp> selectDnsManage(DnsManageRequest dnsManageRequest) {
-        Result<DnsManageResp> result = new Result<>();
-        DnsManageResp dnsManageResp = new DnsManageResp();
+    public Result<PageInfo<DnsManageVo>> selectDnsManage(DnsManageRequest dnsManageRequest) {
+        Result<PageInfo<DnsManageVo>> result = new Result<>();
+        PageInfo<DnsManageVo> pageInfo = new PageInfo<>();
         try {
+            //分页查询数据
+            Page page = PageHelper.startPage(dnsManageRequest.getPageNo(),dnsManageRequest.getPageSize());
             List<DnsManageVo> dnsManageVos = dnsManageExtMapper.selectDnsManage(dnsManageRequest);
-            dnsManageResp.setList(dnsManageVos);
+            pageInfo.setList(dnsManageVos);
+            pageInfo.setCount((int) page.getTotal());
+            pageInfo.setPages(page.getPages());
             result.setSuccess(true);
-            result.setResultObj(dnsManageResp);
+            result.setResultObj(pageInfo);
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
             result.setSuccess(false);

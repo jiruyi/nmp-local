@@ -1,6 +1,9 @@
 package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.CaManageVo;
+import com.matrictime.network.modelVo.PageInfo;
+import com.matrictime.network.modelVo.StationManageVo;
 import com.matrictime.network.req.CaManageRequest;
 import com.matrictime.network.resp.CaManageResp;
 
@@ -14,7 +17,7 @@ public interface CaManageService {
 
     Result<Integer> deleteCaManage(CaManageRequest caManageRequest);
 
-    Result<CaManageResp> selectCaManage(CaManageRequest caManageRequest);
+    Result<PageInfo<CaManageVo>> selectCaManage(CaManageRequest caManageRequest);
 
     Result<Integer> updateCaManage(CaManageRequest caManageRequest);
 
