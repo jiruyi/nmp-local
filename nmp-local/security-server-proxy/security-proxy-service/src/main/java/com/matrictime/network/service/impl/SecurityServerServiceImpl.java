@@ -221,12 +221,6 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
         if (ParamCheckUtil.checkVoStrBlank(vo.getComIp())){
             throw new Exception("ComIp"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if (ParamCheckUtil.checkVoStrBlank(vo.getSignalPort())){
-            throw new Exception("SignalPort"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (ParamCheckUtil.checkVoStrBlank(vo.getKeyPort())){
-            throw new Exception("KeyPort"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
         if (ParamCheckUtil.checkVoStrBlank(vo.getConnectType())){
             throw new Exception("ConnectType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
@@ -261,12 +255,6 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
         // 校验插入安全服务器信息表数据是否合法开始
         if (ParamCheckUtil.checkVoStrBlank(vo.getServerName())){
             throw new Exception("ServerName"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (ParamCheckUtil.checkVoStrBlank(vo.getSignalPort())){
-            throw new Exception("SignalPort"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
-        if (ParamCheckUtil.checkVoStrBlank(vo.getKeyPort())){
-            throw new Exception("KeyPort"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
         if (ParamCheckUtil.checkVoStrBlank(vo.getConnectType())){
             throw new Exception("ConnectType"+ErrorMessageContants.PARAM_IS_NULL_MSG);

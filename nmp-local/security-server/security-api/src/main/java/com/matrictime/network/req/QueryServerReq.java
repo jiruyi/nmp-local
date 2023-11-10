@@ -16,6 +16,11 @@ public class QueryServerReq extends BaseRequest{
     private String comIp;
 
     /**
+     * ipv4 or ipv6
+     */
+    private String ip;
+
+    /**
      * 入网id
      */
     private String networkId;
