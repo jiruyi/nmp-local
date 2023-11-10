@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Map;
@@ -74,6 +75,10 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                 dataPushBody.getBusinessCode(), dataPushBody.getTableName());
         Map<String, DataHandlerService> map =
                 SpringContextUtils.getBeansOfType(DataHandlerService.class);
+        if(CollectionUtils.isEmpty(map)){
+            log.info("applicationContext not ready please wait");
+            handlerMapping(dataPushBody);
+        }
         map.get(dataPushBody.getBusinessCode()).handlerData(dataPushBody);
     }
 

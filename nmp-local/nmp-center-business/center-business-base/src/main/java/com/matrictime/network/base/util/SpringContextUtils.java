@@ -1,5 +1,6 @@
 package com.matrictime.network.base.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ObjectUtils;
@@ -13,6 +14,7 @@ import java.util.Map;
  * @date 2023/8/29 0029 15:13
  * @desc
  */
+@Slf4j
 public class SpringContextUtils {
 
     private static ApplicationContext applicationContext;
@@ -85,6 +87,9 @@ public class SpringContextUtils {
      * @return
      */
     public static <T>  Map<String,T> getBeansOfType(Class<T> classes){
+        if(ObjectUtils.isEmpty(applicationContext)){
+            return null;
+        }
         return applicationContext.getBeansOfType(classes);
     }
 }

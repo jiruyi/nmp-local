@@ -12,11 +12,11 @@ import io.netty.channel.ChannelInitializer;
  */
 public class NettyServerHandlerInitializer extends ChannelInitializer<Channel> {
 
-    private static final int MAX_FRAME_LENGTH = 1024 * 1024;
+    private static final int MAX_FRAME_LENGTH = 5 * 1024 * 1024 *1024;
     private static final int LENGTH_FIELD_OFFSET = 4;
     private static final int LENGTH_FIELD_LENGTH = 4;
-    private static final int LENGTH_ADJUSTMENT = 0;
-    private static final int INITIAL_BYTES_TO_STRIP = 0;
+    private static final int LENGTH_ADJUSTMENT = -8;
+    private static final int INITIAL_BYTES_TO_STRIP = 48;
     @Override
     protected void initChannel(Channel ch) throws Exception {
         ch.pipeline()

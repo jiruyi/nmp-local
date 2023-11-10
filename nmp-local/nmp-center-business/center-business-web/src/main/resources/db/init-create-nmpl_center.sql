@@ -328,3 +328,5 @@ INSERT INTO `nmp_center`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, 
 INSERT INTO `nmp_center`.`nmpl_menu` (`menu_id`, `menu_name`, `parent_menu_id`, `url`, `is_frame`, `menu_type`, `menu_status`, `perms_code`, `remark`, `is_exist`, `icon`, `permission`, `component`) VALUES ('26', '设置密码', '3', NULL, '0', '2', '1', 'sys:user:changePasswd',  NULL, '1', '', '0', '');
 
 
+-- 给nmpl_alarm_info表添加索引 jry
+create index area_code_key on nmpl_alarm_info(alarm_area_code);
