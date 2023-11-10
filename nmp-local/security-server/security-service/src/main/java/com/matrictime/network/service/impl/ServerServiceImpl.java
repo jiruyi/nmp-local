@@ -271,14 +271,14 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         NmpsSecurityServerInfo server = new NmpsSecurityServerInfo();
                         initSecurityServerVo(vo,now,EDIT_TYPE_DEL);
                         vo.setNetworkId(serverInfo.getNetworkId());
-                        vo.setComIp(server.getComIp());
+                        vo.setComIp(serverInfo.getComIp());
                         BeanUtils.copyProperties(vo,server);
                         int delServer = serverInfoMapper.updateByPrimaryKeySelective(server);
                         log.info("逻辑删除安全服务器信息表:{}",delServer);
 
                         // 逻辑删除安全服务器关联网卡表
                         NmpsNetworkCardExample deleteExample = new NmpsNetworkCardExample();
-                        deleteExample.createCriteria().andNetworkIdNotEqualTo(serverInfo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
+                        deleteExample.createCriteria().andNetworkIdEqualTo(serverInfo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
                         NmpsNetworkCard networkCard = new NmpsNetworkCard();
                         networkCard.setIsExist(IS_NOT_EXIST);
                         int delCards = networkCardMapper.updateByExampleSelective(networkCard, deleteExample);

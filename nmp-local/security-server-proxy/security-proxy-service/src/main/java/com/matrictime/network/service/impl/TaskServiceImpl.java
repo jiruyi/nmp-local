@@ -25,9 +25,9 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
-import static com.matrictime.network.base.constant.DataConstants.HEART_REPORT_SPACE;
-import static com.matrictime.network.base.constant.DataConstants.KEY_HEART_INFO_VOS;
+import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.ZERO;
 
 @Service
 @Slf4j
@@ -100,7 +100,7 @@ public class TaskServiceImpl implements TaskService {
      * @param serverHeartInfos
      */
     private void heartReportToServer(List<HeartInfoProxyVo> serverHeartInfos){
-        String url = HttpClientUtil.getUrl(securityServerIp,securityServerPort,securityServerPath);
+        String url = HttpClientUtil.getUrl(securityServerIp,securityServerPort,securityServerPath+HEART_REPORT_URL);
         String post = "";
         JSONObject jsonParam = new JSONObject();
         jsonParam.put(KEY_HEART_INFO_VOS,serverHeartInfos);

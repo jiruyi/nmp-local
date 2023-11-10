@@ -127,7 +127,7 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
 
                         // 更新安全服务器关联网卡表（先删后增）
                         NmpsNetworkCardExample deleteExample = new NmpsNetworkCardExample();
-                        deleteExample.createCriteria().andNetworkIdNotEqualTo(networkId);
+                        deleteExample.createCriteria().andNetworkIdEqualTo(networkId);
                         int delCards = networkCardMapper.deleteByExample(deleteExample);
                         log.info("更新安全服务器关联网卡表（先删后增）:{}",delCards);
 
@@ -149,7 +149,7 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
 
                         // 逻辑删除安全服务器关联网卡表
                         NmpsNetworkCardExample deleteExample = new NmpsNetworkCardExample();
-                        deleteExample.createCriteria().andNetworkIdNotEqualTo(vo.getNetworkId());
+                        deleteExample.createCriteria().andNetworkIdEqualTo(vo.getNetworkId());
                         int delCards = networkCardMapper.deleteByExample(deleteExample);
                         log.info("物理删除安全服务器关联网卡表:{}",delCards);
                     }

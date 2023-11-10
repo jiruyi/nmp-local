@@ -29,7 +29,7 @@ public class SecurityServerProxyVo {
     private String networkId;
 
     /**
-     * 连接方式 1:内接 2:外接
+     * 连接方式 1:内接 0:外接
      */
     private String connectType;
 
