@@ -25,8 +25,7 @@
                 from nmpl_company_heartbeat
                 group by source_network_id,target_network_id
             ) as a
-        where s.source_network_id in (select station_network_id from nmpl_base_station_info where is_exist = 1 and station_type = '02') and
-              s.target_network_id in (select station_network_id from nmpl_base_station_info where is_exist = 1 and station_type = '02') and
+        where
               s.source_network_id = a.source_network_id and
               s.target_network_id = a.target_network_id and
               s.upload_time = a.q
