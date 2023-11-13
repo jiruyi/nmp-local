@@ -87,4 +87,6 @@ public class DataConstants {
     public static final String OPER_TARGZ = "targz.sh";
 
 
+    public static final String DATA_PUSH_URL = "/data/insert";
+
 }

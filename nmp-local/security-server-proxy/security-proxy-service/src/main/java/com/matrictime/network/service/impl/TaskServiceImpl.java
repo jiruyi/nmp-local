@@ -2,17 +2,22 @@ package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.InitDataEnum;
 import com.matrictime.network.dao.mapper.NmpsDataInfoMapper;
 import com.matrictime.network.dao.mapper.NmpsNetworkCardMapper;
 import com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper;
 import com.matrictime.network.dao.mapper.NmpsServerHeartInfoMapper;
+import com.matrictime.network.dao.model.NmpsDataInfo;
+import com.matrictime.network.dao.model.NmpsDataInfoExample;
+import com.matrictime.network.dao.model.NmpsServerHeartInfo;
+import com.matrictime.network.dao.model.NmpsServerHeartInfoExample;
+import com.matrictime.network.model.Result;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.HeartInfoProxyVo;
 import com.matrictime.network.modelVo.NetworkCardProxyVo;
 import com.matrictime.network.modelVo.SecurityServerProxyVo;
-import com.matrictime.network.req.DataPushReq;
 import com.matrictime.network.service.SecurityServerService;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
@@ -22,8 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -131,38 +134,43 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void dataPush() {
         try {
-            String key = "";
+            String cpuId = SystemUtils.getCPUProcessorID()+KEY_SPLIT_UNDERLINE;
+            String key = cpuId+localComIp+KEY_SPLIT_UNDERLINE+SECURITY_DATA_INFO_PUSH_KEY;
             Object lastMaxId = redisTemplate.opsForValue().get(key);
             NmpsDataInfoExample nmpsDataInfoExample = new NmpsDataInfoExample();
-            NmpsDataInfoExample.Criteria criteria = nmpsDataInfoExample.createCriteria();
+
 
             if(Objects.nonNull(lastMaxId)){
                 //删除上次推送之前的数据
-                criteria.andIdLessThanOrEqualTo(Long.valueOf(lastMaxId.toString()));
+                nmpsDataInfoExample.createCriteria().andIdLessThanOrEqualTo(Long.valueOf(lastMaxId.toString()));
                 int thisCount = nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
                 nmpsDataInfoExample.clear();
                 log.info(" last dataPush lastMaxId is:{} deletecount is:{} ",lastMaxId,thisCount);
             }
-
             // 查询所有的统计数据
-            nmpsDataInfoExample.setOrderByClause("id desc");
+
+            PageHelper.startPage(1, 200);
             List<NmpsDataInfo> nmplDataCollectList = nmpsDataInfoMapper.selectByExample(nmpsDataInfoExample);
-            nmpsDataInfoExample.clear();
+
             if(CollectionUtils.isEmpty(nmplDataCollectList)){
                 return;
             }
-            Long index = nmplDataCollectList.get(0).getId();
-            DataPushReq dataPushReq = new DataPushReq();
-            dataPushReq.setKey(key);
-            dataPushReq.setIndex(String.valueOf(index));
-            dataPushReq.setDataInfoVoList(new ArrayList<>());
-//            Result result = alarmDataFacade.insertSystemData(dataCollectReq);
-//            if(ObjectUtils.isEmpty(result) ||  !result.isSuccess()){
-//                return;
-//            }
 
-//            criteria.andIdLessThanOrEqualTo(index);
-//            nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
+            Long index = nmplDataCollectList.get(nmplDataCollectList.size()-1).getId();
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("key",key);
+            jsonParam.put("index",index);
+            jsonParam.put("dataInfoVoList",nmplDataCollectList);
+
+
+            String url = HttpClientUtil.getUrl(securityServerIp,securityServerPort,securityServerPath)+DATA_PUSH_URL;
+            String post = "";
+            post = HttpClientUtil.post(url, jsonParam.toJSONString());
+            Result result = JSONObject.parseObject(post, Result.class);
+            if(result.isSuccess()){
+                nmpsDataInfoExample.createCriteria().andIdLessThanOrEqualTo(index);
+                nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
+            }
         }catch (Exception e){
             log.error("dataPush  exception:{}",e.getMessage());
         }
