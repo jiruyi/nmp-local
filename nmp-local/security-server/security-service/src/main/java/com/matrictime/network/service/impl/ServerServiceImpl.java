@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
@@ -83,15 +84,18 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
     public Result<PageInfo<SecurityServerInfoVo>> queryServerByPage(QueryServerReq req){
         Result result;
         try {
-
-            Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
-
             List<SecurityServerInfoVo> serverInfoVos = serverInfoMapperExt.queryServerByPage(req);
 
-            PageInfo<SecurityServerInfoVo> pageResult = new PageInfo<>(serverInfoVos);
-            pageResult.setList(serverInfoVos);
-            pageResult.setCount((int) page.getTotal());
-            pageResult.setPages(page.getPages());
+            int total = serverInfoVos.size();
+            List<SecurityServerInfoVo> pageVos = serverInfoVos.stream().skip((req.getPageNo()-1)*req.getPageSize()).limit(req.getPageSize()).collect(Collectors.toList());
+
+            int pageSum = total % req.getPageSize() == 0 ? total/req.getPageSize() : total/req.getPageSize()+1;
+            PageHelper.startPage(req.getPageNo(),req.getPageSize());
+
+            PageInfo<SecurityServerInfoVo> pageResult = new PageInfo<>(pageVos);
+            pageResult.setCount(total);
+            pageResult.setPages(pageSum);
+            PageHelper.clearPage();
             result = buildResult(pageResult);
         }catch (SystemException e){
             log.error("ServerServiceImpl.queryServerByPage SystemException:{}",e.getMessage());
@@ -231,7 +235,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
                         // 更新安全服务器关联网卡表（先删后增）
                         NmpsNetworkCardExample deleteExample = new NmpsNetworkCardExample();
-                        deleteExample.createCriteria().andNetworkIdNotEqualTo(networkId).andIsExistEqualTo(IS_EXIST);
+                        deleteExample.createCriteria().andNetworkIdEqualTo(networkId).andIsExistEqualTo(IS_EXIST);
                         NmpsNetworkCard networkCard = new NmpsNetworkCard();
                         networkCard.setIsExist(IS_NOT_EXIST);
                         int delCards = networkCardMapper.updateByExampleSelective(networkCard, deleteExample);
