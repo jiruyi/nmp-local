@@ -23,6 +23,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/**/static/**")
                 .excludePathPatterns("/**/data/insert/**")
                 .excludePathPatterns("/server/heartReport")
+                .excludePathPatterns("/alarm/accept")
+                .excludePathPatterns("/**/swagger-ui/**")
+                .excludePathPatterns("/**/swagger-resources/**")
+                .excludePathPatterns("/**/v3/**")
+                .excludePathPatterns("/security-server/error    ")
                 .excludePathPatterns("/common/init");
     }
 }
