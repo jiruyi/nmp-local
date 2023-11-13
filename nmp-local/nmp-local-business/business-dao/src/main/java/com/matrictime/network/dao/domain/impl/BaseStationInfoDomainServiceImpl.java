@@ -576,8 +576,10 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
         NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
         criteria.andPublicNetworkIpEqualTo(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP());
+        criteria.andIsExistEqualTo(true);
         List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-        if(!CollectionUtils.isEmpty(baseStationInfos)){
+        if(!CollectionUtils.isEmpty(baseStationInfos) &&
+                !"".equals(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP())){
             throw new RuntimeException("公共ip不唯一");
         }
         //数据插入
