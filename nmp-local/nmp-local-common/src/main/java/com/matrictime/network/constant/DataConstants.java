@@ -117,4 +117,6 @@ public class DataConstants {
 
     public static final Byte SYNC_KEY_NO = 0;
 
+    public static final String SECURITY_DATA_INFO_PUSH_KEY = "security_dataInfo_push_max_id";
+
 }
