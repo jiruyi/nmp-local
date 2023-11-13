@@ -1,13 +1,16 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.InitDataEnum;
 import com.matrictime.network.dao.mapper.NmpsDataInfoMapper;
+import com.matrictime.network.dao.mapper.NmpsNetworkCardMapper;
+import com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper;
 import com.matrictime.network.dao.mapper.NmpsServerHeartInfoMapper;
-import com.matrictime.network.dao.model.NmpsDataInfo;
-import com.matrictime.network.dao.model.NmpsDataInfoExample;
-import com.matrictime.network.dao.model.NmpsServerHeartInfo;
-import com.matrictime.network.dao.model.NmpsServerHeartInfoExample;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.HeartInfoProxyVo;
+import com.matrictime.network.modelVo.NetworkCardProxyVo;
 import com.matrictime.network.modelVo.SecurityServerProxyVo;
 import com.matrictime.network.req.DataPushReq;
 import com.matrictime.network.service.SecurityServerService;
@@ -19,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -27,6 +32,7 @@ import java.util.*;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.SUCCESS_MSG;
 import static com.matrictime.network.constant.DataConstants.ZERO;
 
 @Service
@@ -48,8 +54,17 @@ public class TaskServiceImpl implements TaskService {
     @Value("${security-server.context-path}")
     private String securityServerPath;
 
+    @Value("${local.com-ip}")
+    private String localComIp;
+
     @Resource
     private NmpsDataInfoMapper nmpsDataInfoMapper;
+
+    @Resource
+    private NmpsSecurityServerInfoMapper serverInfoMapper;
+
+    @Resource
+    private NmpsNetworkCardMapper networkCardMapper;
 
     @Resource
     private RedisTemplate redisTemplate;
@@ -151,5 +166,69 @@ public class TaskServiceImpl implements TaskService {
         }catch (Exception e){
             log.error("dataPush  exception:{}",e.getMessage());
         }
+    }
+
+    /**
+     * 初始化本端代理安全服务器相关配置
+     */
+    @Override
+    public void initData() {
+        try {
+            String initData = getInitData(localComIp);
+            if (!ParamCheckUtil.checkVoStrBlank(initData)) {
+                JSONObject resp = JSONObject.parseObject(initData);
+                if (resp.containsKey(SUCCESS_MSG) && (Boolean) resp.get(SUCCESS_MSG)) {
+                    JSONObject resultObj = resp.getJSONObject(RESULT_OBJ_MSG);
+
+                    // 获取代理端安全服务器信息
+                    JSONArray serverVos = resultObj.getJSONArray(InitDataEnum.SECURITY_SERVER.getName());
+                    List<SecurityServerProxyVo> serverProxyVos = serverVos.toJavaList(SecurityServerProxyVo.class);
+                    if (!CollectionUtils.isEmpty(serverProxyVos)){
+
+                        // 初始化安全服务器信息
+                        int delServer = serverInfoMapper.deleteByExample(null);
+                        log.info("TaskServiceImpl.initData delServer:{}",delServer);
+                        for (SecurityServerProxyVo vo:serverProxyVos){
+                            NmpsSecurityServerInfo info = new NmpsSecurityServerInfo();
+                            BeanUtils.copyProperties(vo,info);
+                            int addServer = serverInfoMapper.insertSelective(info);
+                            log.info("TaskServiceImpl.initData addServer:{}",addServer);
+                        }
+
+
+                        // 初始化安全服务器关联网卡信息
+                        int delNetworkCard = networkCardMapper.deleteByExample(null);
+                        log.info("TaskServiceImpl.initData delNetworkCard:{}",delNetworkCard);
+                        JSONArray networkCardVos = resultObj.getJSONArray(InitDataEnum.NETWORK_CARD.getName());
+                        List<NetworkCardProxyVo> networkCardProxyVos = networkCardVos.toJavaList(NetworkCardProxyVo.class);
+                        if (!CollectionUtils.isEmpty(networkCardProxyVos)){
+                            for (NetworkCardProxyVo vo:networkCardProxyVos){
+                                NmpsNetworkCard card = new NmpsNetworkCard();
+                                BeanUtils.copyProperties(vo,card);
+                                int addCard = networkCardMapper.insertSelective(card);
+                                log.info("TaskServiceImpl.initData addCard:{}",addCard);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("TaskServiceImpl.initData Exception:{}",e.getMessage());
+        }
+    }
+
+    /**
+     * 从安全服务器管理中心获取初始化数据
+     * @param localComIp
+     * @return
+     * @throws Exception
+     */
+    private String getInitData(String localComIp) throws Exception{
+        String url = HttpClientUtil.getUrl(securityServerIp,securityServerPort,securityServerPath+HEART_INIT_URL);
+        JSONObject jsonParam = new JSONObject();
+        jsonParam.put(KEY_COM_IP,localComIp);
+        String post = HttpClientUtil.post(url, jsonParam.toJSONString());
+        log.info("TaskServiceImpl.getInitData http post url:{},req:{},resp:{}",url,jsonParam.toJSONString(),post);
+        return post;
     }
 }

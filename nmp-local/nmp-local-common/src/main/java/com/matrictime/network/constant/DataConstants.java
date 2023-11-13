@@ -32,6 +32,7 @@ public class DataConstants {
     public static final String REQUESET_HEADER_DEST = "jwt-dest";
 
     public static final String SUCCESS_MSG = "success";
+    public static final String RESULT_OBJ_MSG = "resultObj";
 
     public static final String HEALTH_MONITOR_DEVICE_ID = "health_monitor_device_id:";
 

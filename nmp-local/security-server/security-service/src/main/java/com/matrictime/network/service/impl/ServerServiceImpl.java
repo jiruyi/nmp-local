@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -43,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.SUCCESS_MSG;
 import static com.matrictime.network.exception.ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG;
 
 @Service
@@ -295,9 +297,11 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         }catch (SystemException e){
             log.error("ServerServiceImpl.editServer SystemException:{}",e.getMessage());
             result = failResult(e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }catch (Exception e){
             log.error("ServerServiceImpl.editServer Exception:{}",e.getMessage());
             result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return result;
@@ -312,22 +316,20 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
     public Result startServer(StartServerReq req){
         Result result;
         try {
-            if(!CollectionUtils.isEmpty(req.getIds())){
-                throw new Exception("Ids"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            if(req.getId() == null){
+                throw new Exception("Id"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
-            for (Long id : req.getIds()){
-                NmpsSecurityServerInfo serverInfo = serverInfoMapper.selectByPrimaryKey(id);
-                if (serverInfo == null){
-                    throw new Exception("serverInfo"+ ErrorMessageContants.DATA_CANNOT_FIND_INDB);
-                }
-                JSONObject jsonParam = new JSONObject();
-                jsonParam.put(JSON_KEY_NETWORKID,serverInfo.getNetworkId());
-                String url = HttpClientUtil.getUrl(serverInfo.getComIp(), securityProxyPort, securityProxyPath + SERVER_STARTSERVER_URL);
-                String post = HttpClientUtil.post(url, jsonParam.toJSONString());
-                log.info("ServerServiceImpl.startServer httpPost param:{};result:{}",jsonParam.toJSONString(),post);
+            NmpsSecurityServerInfo serverInfo = serverInfoMapper.selectByPrimaryKey(req.getId());
+            if (serverInfo == null || !serverInfo.getIsExist()){
+                throw new Exception("serverInfo"+ ErrorMessageContants.DATA_CANNOT_FIND_INDB);
             }
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put(JSON_KEY_NETWORKID,serverInfo.getNetworkId());
+            String url = HttpClientUtil.getUrl(serverInfo.getComIp(), securityProxyPort, securityProxyPath + SERVER_STARTSERVER_URL);
+            String post = HttpClientUtil.post(url, jsonParam.toJSONString());
+            log.info("ServerServiceImpl.startServer httpPost param:{};result:{}",jsonParam.toJSONString(),post);
+            result = JSONObject.parseObject(post,Result.class);
 
-            result = buildResult(null);
         }catch (SystemException e){
             log.error("ServerServiceImpl.startServer SystemException:{}",e.getMessage());
             result = failResult(e);
@@ -480,8 +482,12 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         }
 
         NmpsNetworkCardExample cardExample = new NmpsNetworkCardExample();
-        cardExample.or().andIpv4In(ipv4s).andIsExistEqualTo(IS_EXIST);
-        cardExample.or().andIpv6In(ipv6s).andIsExistEqualTo(IS_EXIST);
+        if (!CollectionUtils.isEmpty(ipv4s)){
+            cardExample.or().andIpv4In(ipv4s).andIsExistEqualTo(IS_EXIST);
+        }
+        if (!CollectionUtils.isEmpty(ipv6s)){
+            cardExample.or().andIpv6In(ipv6s).andIsExistEqualTo(IS_EXIST);
+        }
         List<NmpsNetworkCard> networkCards = networkCardMapper.selectByExample(cardExample);
         if (!CollectionUtils.isEmpty(networkCards)){
             throw new SystemException("ipv4或ipv6已存在，请重新输入");
@@ -538,8 +544,12 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         }
 
         NmpsNetworkCardExample cardExample = new NmpsNetworkCardExample();
-        cardExample.or().andIpv4In(ipv4s).andNetworkIdNotEqualTo(vo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
-        cardExample.or().andIpv6In(ipv6s).andNetworkIdNotEqualTo(vo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
+        if (!CollectionUtils.isEmpty(ipv4s)){
+            cardExample.or().andIpv4In(ipv4s).andNetworkIdNotEqualTo(vo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
+        }
+        if (!CollectionUtils.isEmpty(ipv6s)){
+            cardExample.or().andIpv6In(ipv6s).andNetworkIdNotEqualTo(vo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
+        }
         List<NmpsNetworkCard> networkCards = networkCardMapper.selectByExample(cardExample);
         if (!CollectionUtils.isEmpty(networkCards)){
             throw new SystemException("ipv4或ipv6已存在，请重新输入");

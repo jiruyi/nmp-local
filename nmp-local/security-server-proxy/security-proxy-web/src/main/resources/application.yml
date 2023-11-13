@@ -71,6 +71,8 @@ security-server:
   ip: 192.168.72.14
   port: 8011
   context-path: /security-server
+local:
+  com-ip: 192.168.72.14
 
 
 

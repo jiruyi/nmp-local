@@ -13,4 +13,9 @@ public interface TaskService {
 
     void dataPush();
 
+    /**
+     * 初始化本端代理数据
+     */
+    void initData();
+
 }

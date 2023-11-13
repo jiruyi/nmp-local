@@ -19,6 +19,22 @@ public class ScheduledTask {
 
 
     /**
+     * @title initData
+     * @return void
+     * @description  安全服务器配置同步定时任务
+     * @author hx
+     * @create 2023/4/19 0019 17:25
+     */
+    @XxlJob("initData")
+    public void initData(){
+        log.info(Thread.currentThread().getName()+"======================initData begin=============================");
+        taskService.initData();
+        log.info(Thread.currentThread().getName()+"======================initData end=============================");
+    }
+
+
+
+    /**
      * @title heartReport
      * @return void
      * @description  安全服务器状态上报定时任务

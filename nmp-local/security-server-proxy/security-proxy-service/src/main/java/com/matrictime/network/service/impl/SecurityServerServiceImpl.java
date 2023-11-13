@@ -23,6 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -30,8 +31,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.matrictime.network.base.constant.DataConstants.OPER_RUN;
-import static com.matrictime.network.constant.DataConstants.IS_EXIST;
+import static com.matrictime.network.constant.DataConstants.*;
 import static com.matrictime.network.exception.ErrorMessageContants.*;
 
 @Service
@@ -161,9 +161,11 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
         }catch (SystemException e){
             log.error("SecurityServerServiceImpl.updateServer SystemException:{}",e.getMessage());
             result = failResult(e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }catch (Exception e){
             log.error("SecurityServerServiceImpl.updateServer Exception:{}",e.getMessage());
             result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return result;
@@ -179,7 +181,7 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
         Result result = new Result<>();
         try{
             // 启动
-            String file = serverStartFileName+OPER_RUN;
+            String file = serverStartFilePath+KEY_SLASH+serverStartFileName;
             File runFile = new File(file);
             fileIsExist(runFile,file);
 
