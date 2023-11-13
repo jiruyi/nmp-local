@@ -20,6 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/**/user/login/**")
                 .excludePathPatterns("/static/**")
-                .excludePathPatterns("/**/static/**");
+                .excludePathPatterns("/**/static/**")
+                .excludePathPatterns("/**/data/insert/**")
+                .excludePathPatterns("/server/heartReport")
+                .excludePathPatterns("/common/init");
     }
 }

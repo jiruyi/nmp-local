@@ -57,6 +57,8 @@ public class DataConstants {
     public static final String KEY_USER_ID = "userId";
     public static final String KEY_HEART_INFO_VOS = "heartInfoVos";
 
+    public static final String KEY_COM_IP = "comIp";
+
     /**
      * table name
      */
@@ -68,6 +70,7 @@ public class DataConstants {
      */
 
     public static final String HEART_REPORT_URL = "/server/heartReport";
+    public static final String HEART_INIT_URL = "/common/init";
 
     public static final Integer ERROR_MSG_MAXLENGTH = 250;
 
@@ -83,5 +86,7 @@ public class DataConstants {
 
     public static final String OPER_TARGZ = "targz.sh";
 
+
+    public static final String DATA_PUSH_URL = "/data/insert";
 
 }

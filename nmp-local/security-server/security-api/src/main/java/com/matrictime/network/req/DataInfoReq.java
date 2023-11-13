@@ -15,7 +15,7 @@ public class DataInfoReq implements Serializable {
     /**
      * 最大索引
      */
-    private Integer index;
+    private Long index;
     /**
      * redis key
      */

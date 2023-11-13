@@ -2,12 +2,10 @@ package com.matrictime.network.req;
 
 import lombok.Data;
 
-
 @Data
-public class StartServerReq {
-
+public class InitReq {
     /**
-     * 安全服务器id
+     * 代理端的通信ip
      */
-    Long id;
+    private String comIp;
 }

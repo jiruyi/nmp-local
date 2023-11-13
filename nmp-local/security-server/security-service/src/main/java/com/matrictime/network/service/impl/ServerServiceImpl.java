@@ -9,6 +9,7 @@ import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.mapper.NmpsNetworkCardMapper;
 import com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper;
 import com.matrictime.network.dao.mapper.NmpsStationManageMapper;
+import com.matrictime.network.dao.mapper.extend.SecurityServerInfoMapperExt;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorCode;
 import com.matrictime.network.exception.ErrorMessageContants;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -39,9 +41,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.SUCCESS_MSG;
 import static com.matrictime.network.exception.ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG;
 
 @Service
@@ -66,6 +70,9 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
     @Resource
     private NmpsStationManageMapper stationManageMapper;
 
+    @Resource
+    private SecurityServerInfoMapperExt serverInfoMapperExt;
+
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -77,52 +84,18 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
     public Result<PageInfo<SecurityServerInfoVo>> queryServerByPage(QueryServerReq req){
         Result result;
         try {
+            List<SecurityServerInfoVo> serverInfoVos = serverInfoMapperExt.queryServerByPage(req);
 
-            Page page = PageHelper.startPage(req.getPageNo(),req.getPageSize());
+            int total = serverInfoVos.size();
+            List<SecurityServerInfoVo> pageVos = serverInfoVos.stream().skip((req.getPageNo()-1)*req.getPageSize()).limit(req.getPageSize()).collect(Collectors.toList());
 
-            // 根据条件查询密钥中心分配列表
-            NmpsSecurityServerInfoExample example = new NmpsSecurityServerInfoExample();
-            NmpsSecurityServerInfoExample.Criteria criteria = example.createCriteria();
-            if (!ParamCheckUtil.checkVoStrBlank(req.getServerName())){
-                criteria.andServerNameEqualTo(req.getServerName());
-            }
-            if (!ParamCheckUtil.checkVoStrBlank(req.getNetworkId())){
-                criteria.andNetworkIdEqualTo(req.getNetworkId());
-            }
-            if (!ParamCheckUtil.checkVoStrBlank(req.getComIp())){
-                criteria.andComIpEqualTo(req.getComIp());
-            }
-            criteria.andIsExistEqualTo(IS_EXIST);
+            int pageSum = total % req.getPageSize() == 0 ? total/req.getPageSize() : total/req.getPageSize()+1;
+            PageHelper.startPage(req.getPageNo(),req.getPageSize());
 
-            List<NmpsSecurityServerInfo> serverInfos = serverInfoMapper.selectByExample(example);
-            List<SecurityServerInfoVo> serverInfoVos = new ArrayList<>();
-            for (NmpsSecurityServerInfo info : serverInfos){
-                SecurityServerInfoVo vo = new SecurityServerInfoVo();
-                BeanUtils.copyProperties(info,vo);
-                NmpsNetworkCardExample cardExample = new NmpsNetworkCardExample();
-                NmpsNetworkCardExample.Criteria cardExampleCriteria = cardExample.createCriteria();
-                if (!ParamCheckUtil.checkVoStrBlank(req.getAdapterName())){
-                    cardExampleCriteria.andAdapterNameEqualTo(req.getAdapterName());
-                }
-                if (!ParamCheckUtil.checkVoStrBlank(req.getNetCardType())){
-                    cardExampleCriteria.andNetCardTypeEqualTo(req.getNetCardType());
-                }
-                cardExampleCriteria.andIsExistEqualTo(IS_EXIST);
-                List<NmpsNetworkCard> networkCards = networkCardMapper.selectByExample(cardExample);
-                List<NetworkCardVo> networkCardVos = new ArrayList<>();
-                for (NmpsNetworkCard card : networkCards){
-                    NetworkCardVo cardVo = new NetworkCardVo();
-                    BeanUtils.copyProperties(card,cardVo);
-                    networkCardVos.add(cardVo);
-                }
-                vo.setNetworkCardVos(networkCardVos);
-                serverInfoVos.add(vo);
-            }
-
-            PageInfo<SecurityServerInfoVo> pageResult = new PageInfo<>();
-            pageResult.setList(serverInfoVos);
-            pageResult.setCount((int) page.getTotal());
-            pageResult.setPages(page.getPages());
+            PageInfo<SecurityServerInfoVo> pageResult = new PageInfo<>(pageVos);
+            pageResult.setCount(total);
+            pageResult.setPages(pageSum);
+            PageHelper.clearPage();
             result = buildResult(pageResult);
         }catch (SystemException e){
             log.error("ServerServiceImpl.queryServerByPage SystemException:{}",e.getMessage());
@@ -169,6 +142,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                 if (!ParamCheckUtil.checkVoStrBlank(req.getNetCardType())){
                     cardExampleCriteria.andNetCardTypeEqualTo(req.getNetCardType());
                 }
+                cardExampleCriteria.andNetworkIdEqualTo(info.getNetworkId());
                 cardExampleCriteria.andIsExistEqualTo(IS_EXIST);
                 List<NmpsNetworkCard> networkCards = networkCardMapper.selectByExample(cardExample);
                 List<NetworkCardVo> networkCardVos = new ArrayList<>();
@@ -223,7 +197,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         List<NetworkCardVo> networkCardVos = vo.getNetworkCardVos();
                         for (int i=0;i<networkCardVos.size();i++){
                             NetworkCardVo cardVo = networkCardVos.get(i);
-                            initNetworkCardVo(cardVo,now,EDIT_TYPE_ADD);
+                            initNetworkCardVo(cardVo,now,EDIT_TYPE_ADD,vo.getNetworkId());
                             NmpsNetworkCard card = new NmpsNetworkCard();
                             BeanUtils.copyProperties(cardVo,card);
                             addCards = addCards + networkCardMapper.insertSelective(card);
@@ -248,11 +222,12 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                             throw new Exception("serverInfo"+ ErrorMessageContants.DATA_CANNOT_FIND_INDB);
                         }
                         String networkId = serverInfo.getNetworkId();
+                        vo.setNetworkId(networkId);
+                        vo.setComIp(serverInfo.getComIp());
                         checkUpdateServerParam(vo);
 
                         // 更新安全服务器信息表
                         NmpsSecurityServerInfo server = new NmpsSecurityServerInfo();
-                        vo.setNetworkId(networkId);
                         initSecurityServerVo(vo,now,EDIT_TYPE_UPD);
                         BeanUtils.copyProperties(vo,server);
                         int updServer = serverInfoMapper.updateByPrimaryKeySelective(server);
@@ -260,7 +235,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
                         // 更新安全服务器关联网卡表（先删后增）
                         NmpsNetworkCardExample deleteExample = new NmpsNetworkCardExample();
-                        deleteExample.createCriteria().andNetworkIdNotEqualTo(networkId).andIsExistEqualTo(IS_EXIST);
+                        deleteExample.createCriteria().andNetworkIdEqualTo(networkId).andIsExistEqualTo(IS_EXIST);
                         NmpsNetworkCard networkCard = new NmpsNetworkCard();
                         networkCard.setIsExist(IS_NOT_EXIST);
                         int delCards = networkCardMapper.updateByExampleSelective(networkCard, deleteExample);
@@ -271,7 +246,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         List<NetworkCardVo> networkCardVos = vo.getNetworkCardVos();
                         for (int i=0;i<networkCardVos.size();i++){
                             NetworkCardVo cardVo = networkCardVos.get(i);
-                            initNetworkCardVo(cardVo,now,EDIT_TYPE_UPD);
+                            initNetworkCardVo(cardVo,now,EDIT_TYPE_UPD,networkId);
                             NmpsNetworkCard card = new NmpsNetworkCard();
                             BeanUtils.copyProperties(cardVo,card);
                             updCards = updCards + networkCardMapper.insertSelective(card);
@@ -302,13 +277,14 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         NmpsSecurityServerInfo server = new NmpsSecurityServerInfo();
                         initSecurityServerVo(vo,now,EDIT_TYPE_DEL);
                         vo.setNetworkId(serverInfo.getNetworkId());
+                        vo.setComIp(serverInfo.getComIp());
                         BeanUtils.copyProperties(vo,server);
                         int delServer = serverInfoMapper.updateByPrimaryKeySelective(server);
                         log.info("逻辑删除安全服务器信息表:{}",delServer);
 
                         // 逻辑删除安全服务器关联网卡表
                         NmpsNetworkCardExample deleteExample = new NmpsNetworkCardExample();
-                        deleteExample.createCriteria().andNetworkIdNotEqualTo(serverInfo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
+                        deleteExample.createCriteria().andNetworkIdEqualTo(serverInfo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
                         NmpsNetworkCard networkCard = new NmpsNetworkCard();
                         networkCard.setIsExist(IS_NOT_EXIST);
                         int delCards = networkCardMapper.updateByExampleSelective(networkCard, deleteExample);
@@ -325,9 +301,11 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         }catch (SystemException e){
             log.error("ServerServiceImpl.editServer SystemException:{}",e.getMessage());
             result = failResult(e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }catch (Exception e){
             log.error("ServerServiceImpl.editServer Exception:{}",e.getMessage());
             result = failResult("");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return result;
@@ -342,22 +320,20 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
     public Result startServer(StartServerReq req){
         Result result;
         try {
-            if(!CollectionUtils.isEmpty(req.getIds())){
-                throw new Exception("Ids"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+            if(req.getId() == null){
+                throw new Exception("Id"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             }
-            for (Long id : req.getIds()){
-                NmpsSecurityServerInfo serverInfo = serverInfoMapper.selectByPrimaryKey(id);
-                if (serverInfo == null){
-                    throw new Exception("serverInfo"+ ErrorMessageContants.DATA_CANNOT_FIND_INDB);
-                }
-                JSONObject jsonParam = new JSONObject();
-                jsonParam.put(JSON_KEY_NETWORKID,serverInfo.getNetworkId());
-                String url = HttpClientUtil.getUrl(serverInfo.getComIp(), securityProxyPort, securityProxyPath + SERVER_STARTSERVER_URL);
-                String post = HttpClientUtil.post(url, jsonParam.toJSONString());
-                log.info("ServerServiceImpl.startServer httpPost param:{};result:{}",jsonParam.toJSONString(),post);
+            NmpsSecurityServerInfo serverInfo = serverInfoMapper.selectByPrimaryKey(req.getId());
+            if (serverInfo == null || !serverInfo.getIsExist()){
+                throw new Exception("serverInfo"+ ErrorMessageContants.DATA_CANNOT_FIND_INDB);
             }
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put(JSON_KEY_NETWORKID,serverInfo.getNetworkId());
+            String url = HttpClientUtil.getUrl(serverInfo.getComIp(), securityProxyPort, securityProxyPath + SERVER_STARTSERVER_URL);
+            String post = HttpClientUtil.post(url, jsonParam.toJSONString());
+            log.info("ServerServiceImpl.startServer httpPost param:{};result:{}",jsonParam.toJSONString(),post);
+            result = JSONObject.parseObject(post,Result.class);
 
-            result = buildResult(null);
         }catch (SystemException e){
             log.error("ServerServiceImpl.startServer SystemException:{}",e.getMessage());
             result = failResult(e);
@@ -510,8 +486,12 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         }
 
         NmpsNetworkCardExample cardExample = new NmpsNetworkCardExample();
-        cardExample.or().andIpv4In(ipv4s).andIsExistEqualTo(IS_EXIST);
-        cardExample.or().andIpv6In(ipv6s).andIsExistEqualTo(IS_EXIST);
+        if (!CollectionUtils.isEmpty(ipv4s)){
+            cardExample.or().andIpv4In(ipv4s).andIsExistEqualTo(IS_EXIST);
+        }
+        if (!CollectionUtils.isEmpty(ipv6s)){
+            cardExample.or().andIpv6In(ipv6s).andIsExistEqualTo(IS_EXIST);
+        }
         List<NmpsNetworkCard> networkCards = networkCardMapper.selectByExample(cardExample);
         if (!CollectionUtils.isEmpty(networkCards)){
             throw new SystemException("ipv4或ipv6已存在，请重新输入");
@@ -568,8 +548,12 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
         }
 
         NmpsNetworkCardExample cardExample = new NmpsNetworkCardExample();
-        cardExample.or().andIpv4In(ipv4s).andNetworkIdNotEqualTo(vo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
-        cardExample.or().andIpv6In(ipv6s).andNetworkIdNotEqualTo(vo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
+        if (!CollectionUtils.isEmpty(ipv4s)){
+            cardExample.or().andIpv4In(ipv4s).andNetworkIdNotEqualTo(vo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
+        }
+        if (!CollectionUtils.isEmpty(ipv6s)){
+            cardExample.or().andIpv6In(ipv6s).andNetworkIdNotEqualTo(vo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
+        }
         List<NmpsNetworkCard> networkCards = networkCardMapper.selectByExample(cardExample);
         if (!CollectionUtils.isEmpty(networkCards)){
             throw new SystemException("ipv4或ipv6已存在，请重新输入");
@@ -616,13 +600,14 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
             case EDIT_TYPE_UPD:
                 vo.setCreateTime(null);
                 vo.setIsExist(null);
-                vo.setComIp(null);
                 vo.setUpdateTime(operDate);
                 vo.setUpdateUser(RequestContext.getUser().getUserId().toString());
+                break;
             case EDIT_TYPE_DEL:
                 vo.setUpdateTime(operDate);
                 vo.setUpdateUser(RequestContext.getUser().getUserId().toString());
                 vo.setIsExist(IS_NOT_EXIST);
+                break;
             default:
                 break;
         }
@@ -634,9 +619,10 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
      * @param operDate
      * @param editType
      */
-    private void initNetworkCardVo(NetworkCardVo vo,Date operDate,String editType){
+    private void initNetworkCardVo(NetworkCardVo vo,Date operDate,String editType,String networkId){
         switch (editType){
             case EDIT_TYPE_ADD:
+                vo.setNetworkId(networkId);
                 vo.setCreateTime(operDate);
                 vo.setUpdateTime(operDate);
                 vo.setCreateUser(RequestContext.getUser().getUserId().toString());
@@ -645,14 +631,18 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                 break;
             case EDIT_TYPE_UPD:
                 vo.setId(null);
+                vo.setNetworkId(networkId);
                 vo.setCreateTime(null);
+                vo.setCreateUser(RequestContext.getUser().getUserId().toString());
                 vo.setIsExist(null);
                 vo.setUpdateTime(operDate);
                 vo.setUpdateUser(RequestContext.getUser().getUserId().toString());
+                break;
             case EDIT_TYPE_DEL:
                 vo.setUpdateTime(operDate);
                 vo.setUpdateUser(RequestContext.getUser().getUserId().toString());
                 vo.setIsExist(IS_NOT_EXIST);
+                break;
             default:
                 break;
         }

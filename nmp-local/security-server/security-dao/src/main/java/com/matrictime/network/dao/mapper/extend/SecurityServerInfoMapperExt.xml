@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.SecurityServerInfoMapperExt">
+  <resultMap id="BaseResultMap" type="com.matrictime.network.modelVo.SecurityServerInfoVo">
+    <id column="ss_id" jdbcType="BIGINT" property="id" />
+    <result column="ss_server_name" jdbcType="VARCHAR" property="serverName" />
+    <result column="ss_com_ip" jdbcType="VARCHAR" property="comIp" />
+    <result column="ss_network_id" jdbcType="VARCHAR" property="networkId" />
+    <result column="ss_connect_type" jdbcType="CHAR" property="connectType" />
+    <result column="ss_server_status" jdbcType="CHAR" property="serverStatus" />
+    <result column="ss_is_exist" jdbcType="BIT" property="isExist" />
+    <result column="ss_create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="ss_create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="ss_update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="ss_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="ss_remark" jdbcType="VARCHAR" property="remark" />
+    <collection property="networkCardVos" ofType="com.matrictime.network.modelVo.NetworkCardVo">
+      <id column="nc_id" jdbcType="BIGINT" property="id" />
+      <result column="nc_network_id" jdbcType="VARCHAR" property="networkId" />
+      <result column="nc_net_card_type" jdbcType="CHAR" property="netCardType" />
+      <result column="nc_adapter_name" jdbcType="VARCHAR" property="adapterName" />
+      <result column="nc_ipv4" jdbcType="VARCHAR" property="ipv4" />
+      <result column="nc_ipv6" jdbcType="VARCHAR" property="ipv6" />
+      <result column="nc_is_exist" jdbcType="BIT" property="isExist" />
+      <result column="nc_create_user" jdbcType="VARCHAR" property="createUser" />
+      <result column="nc_create_time" jdbcType="TIMESTAMP" property="createTime" />
+      <result column="nc_update_user" jdbcType="VARCHAR" property="updateUser" />
+      <result column="nc_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+      <result column="nc_remark" jdbcType="VARCHAR" property="remark" />
+    </collection>
+  </resultMap>
+  <select id="queryServerByPage" parameterType="com.matrictime.network.req.QueryServerReq" resultMap="BaseResultMap">
+    select ss.id            as ss_id,
+           ss.server_name   as ss_server_name,
+           ss.com_ip        as ss_com_ip,
+           ss.network_id    as ss_network_id,
+           ss.connect_type  as ss_connect_type,
+           ss.server_status as ss_server_status,
+           ss.is_exist      as ss_is_exist,
+           ss.create_user   as ss_create_user,
+           ss.create_time   as ss_create_time,
+           ss.update_user   as ss_update_user,
+           ss.update_time   as ss_update_time,
+           ss.remark        as ss_remark,
+           nc.id            as nc_id,
+           nc.network_id    as nc_network_id,
+           nc.net_card_type as nc_net_card_type,
+           nc.adapter_name  as nc_adapter_name,
+           nc.ipv4          as nc_ipv4,
+           nc.ipv6          as nc_ipv6,
+           nc.is_exist      as nc_is_exist,
+           nc.create_user   as nc_create_user,
+           nc.create_time   as nc_create_time,
+           nc.update_user   as nc_update_user,
+           nc.update_time   as nc_update_time,
+           nc.remark        as nc_remark
+    from (select id,
+                 server_name,
+                 com_ip,
+                 network_id,
+                 connect_type,
+                 server_status,
+                 is_exist,
+                 create_user,
+                 create_time,
+                 update_user,
+                 update_time,
+                 remark
+          from nmps_security_server_info
+          where is_exist = '1'
+         ) ss
+           inner join (select id,
+                              network_id,
+                              net_card_type,
+                              adapter_name,
+                              ipv4,
+                              ipv6,
+                              is_exist,
+                              create_user,
+                              create_time,
+                              update_user,
+                              update_time,
+                              remark
+                       from nmps_network_card
+                       where is_exist = '1') nc on ss.network_id = nc.network_id
+    <where>
+        <choose>
+            <when test="ip != null">
+            <trim prefix="(" suffix=")">
+                nc.ipv4 = #{ip,jdbcType=VARCHAR}
+                <if test="serverName != null">
+                    and ss.server_name = #{serverName,jdbcType=VARCHAR}
+                </if>
+                <if test="networkId != null">
+                    and ss.network_id = #{networkId,jdbcType=VARCHAR}
+                </if>
+                <if test="netCardType != null">
+                    and nc.net_card_type = #{netCardType,jdbcType=VARCHAR}
+                </if>
+                <if test="adapterName != null">
+                    and nc.adapter_name = #{adapterName,jdbcType=VARCHAR}
+                </if>
+            </trim>
+            <trim prefix="or (" suffix=")">
+                    nc.ipv6 = #{ip,jdbcType=VARCHAR}
+                <if test="serverName != null">
+                    and ss.server_name = #{serverName,jdbcType=VARCHAR}
+                </if>
+                <if test="networkId != null">
+                    and ss.network_id = #{networkId,jdbcType=VARCHAR}
+                </if>
+                <if test="netCardType != null">
+                    and nc.net_card_type = #{netCardType,jdbcType=VARCHAR}
+                </if>
+                <if test="adapterName != null">
+                    and nc.adapter_name = #{adapterName,jdbcType=VARCHAR}
+                </if>
+            </trim>
+            </when>
+            <otherwise>
+                <if test="serverName != null">
+                    and ss.server_name = #{serverName,jdbcType=VARCHAR}
+                </if>
+                <if test="networkId != null">
+                    and ss.network_id = #{networkId,jdbcType=VARCHAR}
+                </if>
+                <if test="netCardType != null">
+                    and nc.net_card_type = #{netCardType,jdbcType=VARCHAR}
+                </if>
+                <if test="adapterName != null">
+                    and nc.adapter_name = #{adapterName,jdbcType=VARCHAR}
+                </if>
+            </otherwise>
+        </choose>
+    </where>
+    order by ss.update_time desc
+  </select>
+</mapper>

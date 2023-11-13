@@ -32,6 +32,7 @@ public class DataConstants {
     public static final String REQUESET_HEADER_DEST = "jwt-dest";
 
     public static final String SUCCESS_MSG = "success";
+    public static final String RESULT_OBJ_MSG = "resultObj";
 
     public static final String HEALTH_MONITOR_DEVICE_ID = "health_monitor_device_id:";
 
@@ -115,5 +116,7 @@ public class DataConstants {
     public static final Byte SYNC_KEY_YES = 1;
 
     public static final Byte SYNC_KEY_NO = 0;
+
+    public static final String SECURITY_DATA_INFO_PUSH_KEY = "security_dataInfo_push_max_id";
 
 }

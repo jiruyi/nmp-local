@@ -1,15 +1,23 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.matrictime.network.base.constant.DataConstants;
+import com.matrictime.network.base.enums.InitDataEnum;
 import com.matrictime.network.dao.mapper.NmpsDataInfoMapper;
+import com.matrictime.network.dao.mapper.NmpsNetworkCardMapper;
+import com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper;
 import com.matrictime.network.dao.mapper.NmpsServerHeartInfoMapper;
 import com.matrictime.network.dao.model.NmpsDataInfo;
 import com.matrictime.network.dao.model.NmpsDataInfoExample;
 import com.matrictime.network.dao.model.NmpsServerHeartInfo;
 import com.matrictime.network.dao.model.NmpsServerHeartInfoExample;
+import com.matrictime.network.model.Result;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.modelVo.HeartInfoProxyVo;
+import com.matrictime.network.modelVo.NetworkCardProxyVo;
 import com.matrictime.network.modelVo.SecurityServerProxyVo;
-import com.matrictime.network.req.DataPushReq;
 import com.matrictime.network.service.SecurityServerService;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
@@ -25,9 +33,10 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
-import static com.matrictime.network.base.constant.DataConstants.HEART_REPORT_SPACE;
-import static com.matrictime.network.base.constant.DataConstants.KEY_HEART_INFO_VOS;
+import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.constant.DataConstants.*;
+import static com.matrictime.network.constant.DataConstants.SUCCESS_MSG;
+import static com.matrictime.network.constant.DataConstants.ZERO;
 
 @Service
 @Slf4j
@@ -48,8 +57,17 @@ public class TaskServiceImpl implements TaskService {
     @Value("${security-server.context-path}")
     private String securityServerPath;
 
+    @Value("${local.com-ip}")
+    private String localComIp;
+
     @Resource
     private NmpsDataInfoMapper nmpsDataInfoMapper;
+
+    @Resource
+    private NmpsSecurityServerInfoMapper serverInfoMapper;
+
+    @Resource
+    private NmpsNetworkCardMapper networkCardMapper;
 
     @Resource
     private RedisTemplate redisTemplate;
@@ -100,7 +118,7 @@ public class TaskServiceImpl implements TaskService {
      * @param serverHeartInfos
      */
     private void heartReportToServer(List<HeartInfoProxyVo> serverHeartInfos){
-        String url = HttpClientUtil.getUrl(securityServerIp,securityServerPort,securityServerPath);
+        String url = HttpClientUtil.getUrl(securityServerIp,securityServerPort,securityServerPath+HEART_REPORT_URL);
         String post = "";
         JSONObject jsonParam = new JSONObject();
         jsonParam.put(KEY_HEART_INFO_VOS,serverHeartInfos);
@@ -116,40 +134,109 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void dataPush() {
         try {
-            String key = "";
+            String cpuId = SystemUtils.getCPUProcessorID()+KEY_SPLIT_UNDERLINE;
+            String key = cpuId+localComIp+KEY_SPLIT_UNDERLINE+SECURITY_DATA_INFO_PUSH_KEY;
             Object lastMaxId = redisTemplate.opsForValue().get(key);
             NmpsDataInfoExample nmpsDataInfoExample = new NmpsDataInfoExample();
-            NmpsDataInfoExample.Criteria criteria = nmpsDataInfoExample.createCriteria();
+
 
             if(Objects.nonNull(lastMaxId)){
                 //删除上次推送之前的数据
-                criteria.andIdLessThanOrEqualTo(Long.valueOf(lastMaxId.toString()));
+                nmpsDataInfoExample.createCriteria().andIdLessThanOrEqualTo(Long.valueOf(lastMaxId.toString()));
                 int thisCount = nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
                 nmpsDataInfoExample.clear();
                 log.info(" last dataPush lastMaxId is:{} deletecount is:{} ",lastMaxId,thisCount);
             }
-
             // 查询所有的统计数据
-            nmpsDataInfoExample.setOrderByClause("id desc");
+
+            PageHelper.startPage(1, 200);
             List<NmpsDataInfo> nmplDataCollectList = nmpsDataInfoMapper.selectByExample(nmpsDataInfoExample);
-            nmpsDataInfoExample.clear();
+
             if(CollectionUtils.isEmpty(nmplDataCollectList)){
                 return;
             }
-            Long index = nmplDataCollectList.get(0).getId();
-            DataPushReq dataPushReq = new DataPushReq();
-            dataPushReq.setKey(key);
-            dataPushReq.setIndex(String.valueOf(index));
-            dataPushReq.setDataInfoVoList(new ArrayList<>());
-//            Result result = alarmDataFacade.insertSystemData(dataCollectReq);
-//            if(ObjectUtils.isEmpty(result) ||  !result.isSuccess()){
-//                return;
-//            }
 
-//            criteria.andIdLessThanOrEqualTo(index);
-//            nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
+            Long index = nmplDataCollectList.get(nmplDataCollectList.size()-1).getId();
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("key",key);
+            jsonParam.put("index",index);
+            jsonParam.put("dataInfoVoList",nmplDataCollectList);
+
+
+            String url = HttpClientUtil.getUrl(securityServerIp,securityServerPort,securityServerPath)+DATA_PUSH_URL;
+            String post = "";
+            post = HttpClientUtil.post(url, jsonParam.toJSONString());
+            Result result = JSONObject.parseObject(post, Result.class);
+            if(result.isSuccess()){
+                nmpsDataInfoExample.createCriteria().andIdLessThanOrEqualTo(index);
+                nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
+            }
         }catch (Exception e){
             log.error("dataPush  exception:{}",e.getMessage());
         }
+    }
+
+    /**
+     * 初始化本端代理安全服务器相关配置
+     */
+    @Override
+    public void initData() {
+        try {
+            String initData = getInitData(localComIp);
+            if (!ParamCheckUtil.checkVoStrBlank(initData)) {
+                JSONObject resp = JSONObject.parseObject(initData);
+                if (resp.containsKey(SUCCESS_MSG) && (Boolean) resp.get(SUCCESS_MSG)) {
+                    JSONObject resultObj = resp.getJSONObject(RESULT_OBJ_MSG);
+
+                    // 获取代理端安全服务器信息
+                    JSONArray serverVos = resultObj.getJSONArray(InitDataEnum.SECURITY_SERVER.getName());
+                    List<SecurityServerProxyVo> serverProxyVos = serverVos.toJavaList(SecurityServerProxyVo.class);
+                    if (!CollectionUtils.isEmpty(serverProxyVos)){
+
+                        // 初始化安全服务器信息
+                        int delServer = serverInfoMapper.deleteByExample(null);
+                        log.info("TaskServiceImpl.initData delServer:{}",delServer);
+                        for (SecurityServerProxyVo vo:serverProxyVos){
+                            NmpsSecurityServerInfo info = new NmpsSecurityServerInfo();
+                            BeanUtils.copyProperties(vo,info);
+                            int addServer = serverInfoMapper.insertSelective(info);
+                            log.info("TaskServiceImpl.initData addServer:{}",addServer);
+                        }
+
+
+                        // 初始化安全服务器关联网卡信息
+                        int delNetworkCard = networkCardMapper.deleteByExample(null);
+                        log.info("TaskServiceImpl.initData delNetworkCard:{}",delNetworkCard);
+                        JSONArray networkCardVos = resultObj.getJSONArray(InitDataEnum.NETWORK_CARD.getName());
+                        List<NetworkCardProxyVo> networkCardProxyVos = networkCardVos.toJavaList(NetworkCardProxyVo.class);
+                        if (!CollectionUtils.isEmpty(networkCardProxyVos)){
+                            for (NetworkCardProxyVo vo:networkCardProxyVos){
+                                NmpsNetworkCard card = new NmpsNetworkCard();
+                                BeanUtils.copyProperties(vo,card);
+                                int addCard = networkCardMapper.insertSelective(card);
+                                log.info("TaskServiceImpl.initData addCard:{}",addCard);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("TaskServiceImpl.initData Exception:{}",e.getMessage());
+        }
+    }
+
+    /**
+     * 从安全服务器管理中心获取初始化数据
+     * @param localComIp
+     * @return
+     * @throws Exception
+     */
+    private String getInitData(String localComIp) throws Exception{
+        String url = HttpClientUtil.getUrl(securityServerIp,securityServerPort,securityServerPath+HEART_INIT_URL);
+        JSONObject jsonParam = new JSONObject();
+        jsonParam.put(KEY_COM_IP,localComIp);
+        String post = HttpClientUtil.post(url, jsonParam.toJSONString());
+        log.info("TaskServiceImpl.getInitData http post url:{},req:{},resp:{}",url,jsonParam.toJSONString(),post);
+        return post;
     }
 }
