@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplAlarmInfoExtMapper">
+
+    <sql id="Base_Column_List">
+        alarm_id
+        , alarm_source_id, alarm_source_ip, alarm_content, alarm_level, alarm_upload_time,
+    alarm_source_type, alarm_content_type, create_time, update_time
+    </sql>
+
+    <insert id="batchInsert" parameterType="com.matrictime.network.dao.model.NmpsAlarmInfo">
+        insert into nmps_alarm_info (network_id, alarm_content,
+        alarm_level, alarm_upload_time, alarm_source_type,
+        alarm_content_type)
+        values
+        <foreach collection="alarmInfoList" item="alarm" separator=",">
+            ( #{alarm.networkId,jdbcType=VARCHAR}, #{alarm.alarmContent,jdbcType=VARCHAR},
+            #{alarm.alarmLevel,jdbcType=CHAR}, #{alarm.alarmUploadTime,jdbcType=TIMESTAMP}, #{alarm.alarmSourceType,jdbcType=CHAR},
+            #{alarm.alarmContentType,jdbcType=CHAR})
+        </foreach>
+    </insert>
+
+
+    <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.AlarmAndServerInfo">
+        <id column="alarm_id" jdbcType="BIGINT" property="alarmId" />
+        <result column="network_id" jdbcType="VARCHAR" property="networkId" />
+        <result column="alarm_content" jdbcType="VARCHAR" property="alarmContent" />
+        <result column="alarm_level" jdbcType="CHAR" property="alarmLevel" />
+        <result column="alarm_upload_time" jdbcType="TIMESTAMP" property="alarmUploadTime" />
+        <result column="alarm_source_type" jdbcType="CHAR" property="alarmSourceType" />
+        <result column="alarm_content_type" jdbcType="CHAR" property="alarmContentType" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="com_ip" jdbcType="VARCHAR" property="comIp" />
+        <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+    </resultMap>
+
+    <select id="queryAlarmDataList" resultMap="BaseResultMap"
+            parameterType="com.matrictime.network.req.AlarmDataListReq">
+        SELECT a.*,b.server_name,b.com_ip
+        FROM nmpl_alarm_info a
+        join  nmps_security_server_info b
+        on a.network_id = b.network_id
+        WHERE 1=1
+        <if test="alarmLevel != null and alarmLevel != ''">
+            AND a.alarm_level = #{alarmLevel,jdbcType=VARCHAR}
+        </if>
+        <if test="comIp != null and comIp != ''">
+            AND b.com_ip = #{comIp,jdbcType=VARCHAR}
+        </if>
+        <if test="networkId != null and networkId != ''">
+            AND a.network_id = #{networkId,jdbcType=VARCHAR}
+        </if>
+        <if test="serverName != null and serverName != ''">
+            AND b.server_name = #{serverName,jdbcType=VARCHAR}
+        </if>
+
+        <if test="startDateTime != null and endDateTime != null">
+            AND a.alarm_upload_time &gt;= #{startDateTime,jdbcType=TIMESTAMP}
+            AND a.alarm_upload_time &lt;= #{startDateTime,jdbcType=TIMESTAMP}
+        </if>
+        ORDER BY alarm_level, alarm_upload_time DESC
+    </select>
+</mapper>
