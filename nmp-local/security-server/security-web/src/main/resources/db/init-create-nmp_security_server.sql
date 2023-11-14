@@ -83,6 +83,9 @@ CREATE TABLE `nmps_user` (
            PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户信息表';
 
+INSERT INTO `nmp_security_server`.`nmps_user` (`user_id`, `login_account`, `password`, `is_exist`) VALUES ('1', 'admin', 'j2sivmjjihBLggve6ed5lw==', '1');
+
+
 CREATE TABLE `nmps_data_info` (
            `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
            `network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '入网id',
