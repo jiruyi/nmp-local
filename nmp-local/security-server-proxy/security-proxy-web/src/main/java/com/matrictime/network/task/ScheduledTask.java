@@ -59,6 +59,14 @@ public class ScheduledTask {
         log.info(Thread.currentThread().getName()+"======================dataPush end=============================");
     }
 
+    /**
+      * @title alarmInfoPush
+      * @param []
+      * @return void
+      * @description 
+      * @author jiruyi
+      * @create 2023/11/13 0013 17:56
+      */
     @XxlJob("alarmInfo")
     public void alarmInfoPush(){
         log.info(Thread.currentThread().getName()+"======================alarmInfoPush begin=============================");

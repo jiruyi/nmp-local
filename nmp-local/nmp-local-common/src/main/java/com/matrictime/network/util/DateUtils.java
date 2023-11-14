@@ -191,6 +191,21 @@ public class DateUtils {
         }
     }
 
+
+    public static Date formatDateToDate(Date date) {
+
+        if (Objects.isNull(date)) {
+            return null;
+        }
+        try {
+            SimpleDateFormat sdf = YYMMDDHHMMSS.get();
+            return sdf.parse(formatDateToString(date));
+        } catch (ParseException e) {
+
+            return null;
+        }
+    }
+
     public static String formatDateToString(Date date, SimpleDateFormat sdf) {
 
         if (date == null) {

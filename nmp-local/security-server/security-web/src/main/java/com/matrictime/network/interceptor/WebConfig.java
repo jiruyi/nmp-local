@@ -24,6 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/**/data/insert/**")
                 .excludePathPatterns("/server/heartReport")
                 .excludePathPatterns("/alarm/accept")
+                .excludePathPatterns("/alarm/data/list")
                 .excludePathPatterns("/**/swagger-ui/**")
                 .excludePathPatterns("/**/swagger-resources/**")
                 .excludePathPatterns("/**/v3/**")

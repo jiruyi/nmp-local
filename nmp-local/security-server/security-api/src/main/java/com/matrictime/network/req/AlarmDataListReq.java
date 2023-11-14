@@ -4,8 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * @author jiruyi
  * @copyright www.matrictime.com
@@ -36,24 +34,16 @@ public class AlarmDataListReq extends BaseRequest {
      */
     private String serverName;
 
-    /**
-     * 开始时间 yyyy-MM-dd hh:mm:ss
-     */
-    private String startDateTimeStr;
-    /**
-     * 结束时间 yyyy-MM-dd hh:mm:ss
-     */
-    private String endDateTimeStr;
 
     /**
      * 开始时间 日期
      */
     @ApiModelProperty(value = "开始时间  yyyy-MM-dd hh:mm:ss")
-    private Date startDateTime;
+    private String startDateTime;
     /**
      * 结束时间 日期
      */
     @ApiModelProperty(value = "结束时间  yyyy-MM-dd hh:mm:ss")
-    private Date endDateTime;
+    private String endDateTime;
 
 }

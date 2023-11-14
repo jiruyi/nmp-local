@@ -49,25 +49,45 @@ public class AlarmDataController {
 
 
     /**
-      * @title queryAlarmDataList
-      * @param [alarmDataListReq]
-      * @return com.matrictime.network.model.Result<com.matrictime.network.modelVo.PageInfo<com.matrictime.network.dao.model.NmpsAlarmInfo>>
-      * @description
-      * @author jiruyi
-      * @create 2023/11/13 0013 14:24
-      */
+     * @title queryAlarmDataList
+     * @param [alarmDataListReq]
+     * @return com.matrictime.network.model.Result<com.matrictime.network.modelVo.PageInfo<com.matrictime.network.dao.model.NmpsAlarmInfo>>
+     * @description
+     * @author jiruyi
+     * @create 2023/11/13 0013 14:24
+     */
     @ApiOperation(value = "告警信息列表查询", notes = "告警信息列表查询")
     @RequestMapping(value = "/data/list", method = RequestMethod.POST)
     public Result<PageInfo<AlarmAndServerInfo>> queryAlarmDataList(@RequestBody AlarmDataListReq alarmDataListReq) {
         try {
-
+            //setDateTime(alarmDataListReq);
             log.info("AlarmDataController queryAlarmDataList param:{}",alarmDataListReq);
             //查询
-           return alarmDataService.queryAlarmDataList(alarmDataListReq);
+            return alarmDataService.queryAlarmDataList(alarmDataListReq);
         } catch (Exception e) {
             log.error("AlarmDataController querySysAlarmDataList exception:{}", e);
             return new Result(false, e.getMessage());
         }
     }
+
+    /**
+     * @title setDateTime
+     * @param [alarmDataListReq]
+     * @return void
+     * @description
+     * @author jiruyi
+     * @create 2023/11/13 0013 18:10
+     */
+//    public void setDateTime(AlarmDataListReq alarmDataListReq){
+//        Date startDate = alarmDataListReq.getStartDateTime();
+//        Date endDate = alarmDataListReq.getEndDateTime();
+//        if(!ObjectUtils.isEmpty(startDate)){
+//            alarmDataListReq.setStartDateTime(DateUtils.formatDateToDate(startDate));
+//        }
+//        if(!ObjectUtils.isEmpty(endDate)){
+//            alarmDataListReq.setStartDateTime(DateUtils.formatDateToDate(endDate));
+//        }
+//    }
+
 
 }

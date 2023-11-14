@@ -14,7 +14,7 @@ import java.util.List;
  * @date 2023/4/19 0019 15:58
  * @desc
  */
-public interface NmplAlarmInfoExtMapper {
+public interface NmpsAlarmInfoExtMapper {
 
     int batchInsert(@Param("alarmInfoList") List<NmpsAlarmInfo> alarmInfoList);
 

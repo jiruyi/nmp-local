@@ -3,7 +3,7 @@ package com.matrictime.network.dao.domain.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.dao.domain.AlarmDomainService;
-import com.matrictime.network.dao.mapper.extend.NmplAlarmInfoExtMapper;
+import com.matrictime.network.dao.mapper.extend.NmpsAlarmInfoExtMapper;
 import com.matrictime.network.dao.model.AlarmAndServerInfo;
 import com.matrictime.network.dao.model.NmpsAlarmInfo;
 import com.matrictime.network.modelVo.PageInfo;
@@ -30,7 +30,7 @@ import java.util.List;
 public class AlarmDomainServiceImpl implements AlarmDomainService {
 
     @Autowired
-    private NmplAlarmInfoExtMapper alarmInfoExtMapper;
+    private NmpsAlarmInfoExtMapper alarmInfoExtMapper;
 
     @Autowired
     private RedisTemplate redisTemplate;

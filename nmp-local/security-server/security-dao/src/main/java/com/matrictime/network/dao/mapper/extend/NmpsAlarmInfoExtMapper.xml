@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplAlarmInfoExtMapper">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmpsAlarmInfoExtMapper">
 
     <sql id="Base_Column_List">
         alarm_id
@@ -38,7 +38,7 @@
     <select id="queryAlarmDataList" resultMap="BaseResultMap"
             parameterType="com.matrictime.network.req.AlarmDataListReq">
         SELECT a.*,b.server_name,b.com_ip
-        FROM nmpl_alarm_info a
+        FROM nmps_alarm_info a
         join  nmps_security_server_info b
         on a.network_id = b.network_id
         WHERE 1=1
@@ -55,9 +55,12 @@
             AND b.server_name = #{serverName,jdbcType=VARCHAR}
         </if>
 
-        <if test="startDateTime != null and endDateTime != null">
-            AND a.alarm_upload_time &gt;= #{startDateTime,jdbcType=TIMESTAMP}
-            AND a.alarm_upload_time &lt;= #{startDateTime,jdbcType=TIMESTAMP}
+        <if test="startDateTime != null">
+            AND DATE_FORMAT(a.alarm_upload_time,'%Y-%m-%d %T') &gt;= #{startDateTime,jdbcType=TIMESTAMP}
+        </if>
+
+        <if test="endDateTime != null">
+            AND DATE_FORMAT(a.alarm_upload_time,'%Y-%m-%d %T') &lt;= #{endDateTime,jdbcType=TIMESTAMP}
         </if>
         ORDER BY alarm_level, alarm_upload_time DESC
     </select>
