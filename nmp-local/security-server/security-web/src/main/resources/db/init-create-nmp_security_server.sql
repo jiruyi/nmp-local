@@ -83,12 +83,15 @@ CREATE TABLE `nmps_user` (
            PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户信息表';
 
+INSERT INTO `nmp_security_server`.`nmps_user` (`user_id`, `login_account`, `password`, `is_exist`) VALUES ('1', 'admin', 'j2sivmjjihBLggve6ed5lw==', '1');
+
+
 CREATE TABLE `nmps_data_info` (
            `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
            `network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '入网id',
            `data_value` bigint NOT NULL COMMENT '数据值（单位byte）',
            `data_type` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '数据类型（1000：剩余上行密钥量 1001：已使用上行密钥量 2000：剩余下行密钥量 2001：已使用下行密钥量）',
-           `upload_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '上报时间',
+           `upload_time` datetime(2) NOT NULL COMMENT '上报时间',
            `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
            PRIMARY KEY (`id`),
            KEY `index_time` (`upload_time`)

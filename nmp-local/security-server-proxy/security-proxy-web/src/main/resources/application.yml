@@ -65,8 +65,8 @@ logging:
   level:
     com.jzsg: info
 server-shell:
-  run-file-path: /usr/local/src/security-proxy
-  run-file-name: run.sh
+  run-file-path: /opt/workspace/QSS
+  run-file-name: QSS-run.sh
 security-server:
   ip: 192.168.72.167
   port: 8011

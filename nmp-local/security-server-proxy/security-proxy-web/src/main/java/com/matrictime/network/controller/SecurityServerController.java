@@ -45,6 +45,7 @@ public class SecurityServerController extends SystemBaseService {
     public Result<Integer> startServer(@RequestBody StartServerReq req){
         Result<Integer> result;
         try {
+            req.setAction("restart");
             result = serverService.startServer(req);
         }catch (Exception e){
             log.info("SecurityServerController.startServer{}",e.getMessage());
