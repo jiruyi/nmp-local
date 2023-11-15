@@ -281,13 +281,14 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                         }
 
                         String networkId = serverInfo.getNetworkId();
+                        String comIp = serverInfo.getComIp();
                         // 判断是否关联了相关基站
                         checkServerIsRelStation(networkId);
                         // 逻辑删除安全服务器信息表
                         NmpsSecurityServerInfo server = new NmpsSecurityServerInfo();
                         initSecurityServerVo(vo,now,EDIT_TYPE_DEL);
                         vo.setNetworkId(networkId);
-                        vo.setComIp(serverInfo.getComIp());
+                        vo.setComIp(comIp);
                         BeanUtils.copyProperties(vo,server);
                         int delServer = serverInfoMapper.updateByPrimaryKeySelective(server);
                         log.info("逻辑删除安全服务器信息表:{}",delServer);
@@ -305,21 +306,25 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
                         StationManageRequest manageRequest = new StationManageRequest();
                         manageRequest.setNetworkId(networkId);
+                        manageRequest.setComIp(comIp);
                         Result<Integer> stationManage = stationManageService.deleteStationManage(manageRequest);
                         log.info("stationManageService.deleteStationManage result:{}",JSONObject.toJSONString(stationManage));
 
                         ServerConfigRequest configRequest = new ServerConfigRequest();
                         configRequest.setNetworkId(networkId);
+                        configRequest.setComIp(comIp);
                         Result<Integer> deleteServerConfig = configService.deleteServerConfig(configRequest);
                         log.info("configService.deleteServerConfig result:{}",JSONObject.toJSONString(deleteServerConfig));
 
                         CaManageRequest caManageRequest = new CaManageRequest();
                         caManageRequest.setNetworkId(networkId);
+                        caManageRequest.setComIp(comIp);
                         Result<Integer> caManage = caManageService.deleteCaManage(caManageRequest);
                         log.info("caManageService.deleteCaManage result:{}",JSONObject.toJSONString(caManage));
 
                         DnsManageRequest dnsManageRequest = new DnsManageRequest();
                         dnsManageRequest.setNetworkId(networkId);
+                        dnsManageRequest.setComIp(comIp);
                         Result<Integer> dnsManage = dnsManageService.deleteDnsManage(dnsManageRequest);
                         log.info("dnsManageService.deleteDnsManage result:{}",JSONObject.toJSONString(dnsManage));
 
