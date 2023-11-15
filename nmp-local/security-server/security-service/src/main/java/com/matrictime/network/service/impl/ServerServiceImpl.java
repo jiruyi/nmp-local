@@ -19,11 +19,8 @@ import com.matrictime.network.modelVo.HeartInfoVo;
 import com.matrictime.network.modelVo.NetworkCardVo;
 import com.matrictime.network.modelVo.PageInfo;
 import com.matrictime.network.modelVo.SecurityServerInfoVo;
-import com.matrictime.network.req.EditServerReq;
-import com.matrictime.network.req.HeartReportReq;
-import com.matrictime.network.req.QueryServerReq;
-import com.matrictime.network.req.StartServerReq;
-import com.matrictime.network.service.ServerService;
+import com.matrictime.network.req.*;
+import com.matrictime.network.service.*;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -75,6 +72,18 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private CaManageService caManageService;
+
+    @Autowired
+    private DnsManageService dnsManageService;
+
+    @Autowired
+    private StationManageService stationManageService;
+
+    @Autowired
+    private ServerConfigService configService;
 
     /**
      * 查询安全服务器列表（分页）
@@ -271,12 +280,13 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
                             throw new Exception("serverInfo"+ ErrorMessageContants.DATA_CANNOT_FIND_INDB);
                         }
 
+                        String networkId = serverInfo.getNetworkId();
                         // 判断是否关联了相关基站
-                        checkServerIsRelStation(serverInfo.getNetworkId());
+                        checkServerIsRelStation(networkId);
                         // 逻辑删除安全服务器信息表
                         NmpsSecurityServerInfo server = new NmpsSecurityServerInfo();
                         initSecurityServerVo(vo,now,EDIT_TYPE_DEL);
-                        vo.setNetworkId(serverInfo.getNetworkId());
+                        vo.setNetworkId(networkId);
                         vo.setComIp(serverInfo.getComIp());
                         BeanUtils.copyProperties(vo,server);
                         int delServer = serverInfoMapper.updateByPrimaryKeySelective(server);
@@ -284,7 +294,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
                         // 逻辑删除安全服务器关联网卡表
                         NmpsNetworkCardExample deleteExample = new NmpsNetworkCardExample();
-                        deleteExample.createCriteria().andNetworkIdEqualTo(serverInfo.getNetworkId()).andIsExistEqualTo(IS_EXIST);
+                        deleteExample.createCriteria().andNetworkIdEqualTo(networkId).andIsExistEqualTo(IS_EXIST);
                         NmpsNetworkCard networkCard = new NmpsNetworkCard();
                         networkCard.setIsExist(IS_NOT_EXIST);
                         int delCards = networkCardMapper.updateByExampleSelective(networkCard, deleteExample);
@@ -292,6 +302,27 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
 
                         // 同步代理
                         syncProxy(vo,EDIT_TYPE_PHY_DEL);
+
+                        StationManageRequest manageRequest = new StationManageRequest();
+                        manageRequest.setNetworkId(networkId);
+                        Result<Integer> stationManage = stationManageService.deleteStationManage(manageRequest);
+                        log.info("stationManageService.deleteStationManage result:{}",JSONObject.toJSONString(stationManage));
+
+                        ServerConfigRequest configRequest = new ServerConfigRequest();
+                        configRequest.setNetworkId(networkId);
+                        Result<Integer> deleteServerConfig = configService.deleteServerConfig(configRequest);
+                        log.info("configService.deleteServerConfig result:{}",JSONObject.toJSONString(deleteServerConfig));
+
+                        CaManageRequest caManageRequest = new CaManageRequest();
+                        caManageRequest.setNetworkId(networkId);
+                        Result<Integer> caManage = caManageService.deleteCaManage(caManageRequest);
+                        log.info("caManageService.deleteCaManage result:{}",JSONObject.toJSONString(caManage));
+
+                        DnsManageRequest dnsManageRequest = new DnsManageRequest();
+                        dnsManageRequest.setNetworkId(networkId);
+                        Result<Integer> dnsManage = dnsManageService.deleteDnsManage(dnsManageRequest);
+                        log.info("dnsManageService.deleteDnsManage result:{}",JSONObject.toJSONString(dnsManage));
+
                     }
                     break;
                 default:
