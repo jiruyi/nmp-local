@@ -74,7 +74,7 @@ CREATE TABLE `nmps_alarm_info` (
        PRIMARY KEY (`alarm_id`),
        KEY `idx_network_id` (`network_id`),
        KEY `upload_time_key` (`alarm_upload_time`)
-) ENGINE=INNODB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 
@@ -107,7 +107,7 @@ CREATE TABLE `nmps_station_manage` (
                                        `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
                                        `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
                                        PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='基站管理';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='基站管理';
 
 
 CREATE TABLE `nmps_ca_manage` (
@@ -124,7 +124,7 @@ CREATE TABLE `nmps_ca_manage` (
                                   `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
                                   `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
                                   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='ca管理';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='ca管理';
 
 CREATE TABLE `nmps_dns_manage` (
                                    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -138,7 +138,7 @@ CREATE TABLE `nmps_dns_manage` (
                                    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
                                    `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
                                    PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='dns管理';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='dns管理';
 
 CREATE TABLE `nmps_server_config` (
                                       `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
