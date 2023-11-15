@@ -153,16 +153,26 @@ CREATE TABLE `nmps_server_config` (
                                       PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='安全服务器配置值';
 
-INSERT INTO `nmps_server_config` VALUES ('1',null, '50', '1：1', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_server_config` VALUES ('2',null, '51', 'AES', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_server_config` VALUES ('3',null, '52', '全加密', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_server_config` VALUES ('4',null, '53', 'AES', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_server_config` VALUES ('5',null, '54', '1024', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_server_config` VALUES ('6',null, '55', '512', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_server_config` VALUES ('7',null, '56', '128', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_server_config` VALUES ('8',null, '57', '1024', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_server_config` VALUES ('9',null, '58', '512', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_server_config` VALUES ('10',null, '59', '128', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO nmps_server_config (id,network_id,config_code,config_value,is_exist) VALUES('1',null,'50','1：1','1');
+
+INSERT INTO nmps_server_config (id,network_id,config_code,config_value,is_exist) VALUES('2',null,'51','AES','1');
+
+INSERT INTO nmps_server_config (id,network_id,config_code,config_value,is_exist) VALUES('3',null,'52','全加密','1');
+
+INSERT INTO nmps_server_config (id,network_id,config_code,config_value,is_exist) VALUES('4',null,'53','AES','1');
+
+INSERT INTO nmps_server_config (id,network_id,config_code,config_value,is_exist) VALUES('5',null,'54','1024','1');
+
+INSERT INTO nmps_server_config (id,network_id,config_code,config_value,is_exist) VALUES('6',null,'55','512','1');
+
+INSERT INTO nmps_server_config (id,network_id,config_code,config_value,is_exist) VALUES('7',null,'56','128','1');
+
+INSERT INTO nmps_server_config (id,network_id,config_code,config_value,is_exist) VALUES('8',null,'57','1024','1');
+
+INSERT INTO nmps_server_config (id,network_id,config_code,config_value,is_exist) VALUES('9',null,'58','512','1');
+
+INSERT INTO nmps_server_config (id,network_id,config_code,config_value,is_exist) VALUES('10',null,'59','128','1');
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -1,5 +1,5 @@
 /*
-V4.0.1增量sql包
+V4.0.2增量sql包
 */
 DROP TABLE nmpl_static_route;
 

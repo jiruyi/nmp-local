@@ -78,16 +78,25 @@ CREATE TABLE `nmps_default_config` (
                                        PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='安全服务器配置默认表';
 
-INSERT INTO `nmps_default_config` VALUES ('1', '50', '1：1', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_default_config` VALUES ('2', '51', 'AES', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_default_config` VALUES ('3', '52', '全加密', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_default_config` VALUES ('4', '53', 'AES', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_default_config` VALUES ('5', '54', '1024', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_default_config` VALUES ('6', '55', '512', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_default_config` VALUES ('7', '56', '128', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_default_config` VALUES ('8', '57', '1024', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_default_config` VALUES ('9', '58', '512', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
-INSERT INTO `nmps_default_config` VALUES ('10', '59', '128', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('1','50','1：1','1');
+
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('2','51','AES','1');
+
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('3','52','全加密','1');
+
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('4','53','AES','1');
+
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('5','54','1024','1');
+
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('6','55','512','1');
+
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('7','56','128','1');
+
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('8','57','1024','1');
+
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('9','58','512','1');
+
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('10','59','128','1');
 
 CREATE TABLE `nmps_station_manage` (
                                        `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
