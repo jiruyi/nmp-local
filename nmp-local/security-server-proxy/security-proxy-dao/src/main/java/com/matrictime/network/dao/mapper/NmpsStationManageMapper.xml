@@ -9,6 +9,7 @@
     <result column="domain_name" jdbcType="VARCHAR" property="domainName" />
     <result column="station_ip" jdbcType="VARCHAR" property="stationIp" />
     <result column="station_port" jdbcType="VARCHAR" property="stationPort" />
+    <result column="key_port" jdbcType="VARCHAR" property="keyPort" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
@@ -75,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, network_id, station_type, access_method, domain_name, station_ip, station_port, 
-    create_user, create_time, update_user, update_time, is_exist
+    key_port, create_user, create_time, update_user, update_time, is_exist
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmpsStationManageExample" resultMap="BaseResultMap">
     select
@@ -111,14 +112,14 @@
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmpsStationManage">
     insert into nmps_station_manage (id, network_id, station_type, 
       access_method, domain_name, station_ip, 
-      station_port, create_user, create_time, 
-      update_user, update_time, is_exist
-      )
+      station_port, key_port, create_user, 
+      create_time, update_user, update_time, 
+      is_exist)
     values (#{id,jdbcType=BIGINT}, #{networkId,jdbcType=VARCHAR}, #{stationType,jdbcType=CHAR}, 
       #{accessMethod,jdbcType=CHAR}, #{domainName,jdbcType=VARCHAR}, #{stationIp,jdbcType=VARCHAR}, 
-      #{stationPort,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{isExist,jdbcType=BIT}
-      )
+      #{stationPort,jdbcType=VARCHAR}, #{keyPort,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{isExist,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmpsStationManage">
     insert into nmps_station_manage
@@ -143,6 +144,9 @@
       </if>
       <if test="stationPort != null">
         station_port,
+      </if>
+      <if test="keyPort != null">
+        key_port,
       </if>
       <if test="createUser != null">
         create_user,
@@ -181,6 +185,9 @@
       </if>
       <if test="stationPort != null">
         #{stationPort,jdbcType=VARCHAR},
+      </if>
+      <if test="keyPort != null">
+        #{keyPort,jdbcType=VARCHAR},
       </if>
       <if test="createUser != null">
         #{createUser,jdbcType=VARCHAR},
@@ -229,6 +236,9 @@
       <if test="record.stationPort != null">
         station_port = #{record.stationPort,jdbcType=VARCHAR},
       </if>
+      <if test="record.keyPort != null">
+        key_port = #{record.keyPort,jdbcType=VARCHAR},
+      </if>
       <if test="record.createUser != null">
         create_user = #{record.createUser,jdbcType=VARCHAR},
       </if>
@@ -258,6 +268,7 @@
       domain_name = #{record.domainName,jdbcType=VARCHAR},
       station_ip = #{record.stationIp,jdbcType=VARCHAR},
       station_port = #{record.stationPort,jdbcType=VARCHAR},
+      key_port = #{record.keyPort,jdbcType=VARCHAR},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
@@ -288,6 +299,9 @@
       <if test="stationPort != null">
         station_port = #{stationPort,jdbcType=VARCHAR},
       </if>
+      <if test="keyPort != null">
+        key_port = #{keyPort,jdbcType=VARCHAR},
+      </if>
       <if test="createUser != null">
         create_user = #{createUser,jdbcType=VARCHAR},
       </if>
@@ -314,6 +328,7 @@
       domain_name = #{domainName,jdbcType=VARCHAR},
       station_ip = #{stationIp,jdbcType=VARCHAR},
       station_port = #{stationPort,jdbcType=VARCHAR},
+      key_port = #{keyPort,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},

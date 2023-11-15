@@ -78,9 +78,6 @@ public class StaticRouteController {
             if(StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
             }
-//            if(StringUtils.isEmpty(staticRouteRequest.getServerIp()) && StringUtils.isEmpty(staticRouteRequest.getIpV6())){
-//                return new Result<>(false,ErrorMessageContants.DEVICE_IP_IS_NULL_MSG);
-//            }
             return staticRouteService.update(staticRouteRequest);
         }catch (Exception e){
             log.info("updateStaticRoute:{}",e.getMessage());

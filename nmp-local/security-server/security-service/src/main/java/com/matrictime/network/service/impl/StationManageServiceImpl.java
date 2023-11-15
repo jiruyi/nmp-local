@@ -1,12 +1,15 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.matrictime.network.dao.mapper.NmpsStationManageMapper;
 import com.matrictime.network.dao.mapper.extend.NmpsStationManageExtMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CaManageVo;
 import com.matrictime.network.modelVo.DnsManageVo;
+import com.matrictime.network.modelVo.PageInfo;
 import com.matrictime.network.modelVo.StationManageVo;
 import com.matrictime.network.req.StationManageRequest;
 import com.matrictime.network.resp.DnsManageResp;
@@ -53,6 +56,7 @@ public class StationManageServiceImpl implements StationManageService {
             NmpsStationManageExample stationManageExample = new NmpsStationManageExample();
             NmpsStationManageExample.Criteria criteria = stationManageExample.createCriteria();
             criteria.andNetworkIdEqualTo(stationManageRequest.getNetworkId());
+            criteria.andIsExistEqualTo(true);
             List<NmpsStationManage> nmpsStationManages = stationManageMapper.selectByExample(stationManageExample);
             if(!CollectionUtils.isEmpty(nmpsStationManages)){
                 return new Result<>(false,"入网id不唯一");
@@ -101,14 +105,18 @@ public class StationManageServiceImpl implements StationManageService {
     }
 
     @Override
-    public Result<StationManageResp> selectStationManage(StationManageRequest stationManageRequest) {
-        Result<StationManageResp> result = new Result<>();
-        StationManageResp stationManageResp = new StationManageResp();
+    public Result<PageInfo<StationManageVo>> selectStationManage(StationManageRequest stationManageRequest) {
+        Result<PageInfo<StationManageVo>> result = new Result<>();
+        PageInfo<StationManageVo> pageInfo = new PageInfo<>();
         try {
+            //分页查询数据
+            Page page = PageHelper.startPage(stationManageRequest.getPageNo(),stationManageRequest.getPageSize());
             List<StationManageVo> stationManageVos = stationManageExtMapper.selectStationManage(stationManageRequest);
-            stationManageResp.setList(stationManageVos);
+            pageInfo.setList(stationManageVos);
+            pageInfo.setCount((int) page.getTotal());
+            pageInfo.setPages(page.getPages());
             result.setSuccess(true);
-            result.setResultObj(stationManageResp);
+            result.setResultObj(pageInfo);
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
             result.setSuccess(false);
@@ -126,6 +134,7 @@ public class StationManageServiceImpl implements StationManageService {
             NmpsStationManageExample.Criteria criteria = stationManageExample.createCriteria();
             criteria.andNetworkIdEqualTo(stationManageRequest.getNetworkId());
             criteria.andIdNotEqualTo(stationManageRequest.getId());
+            criteria.andIsExistEqualTo(true);
             List<NmpsStationManage> nmpsStationManages = stationManageMapper.selectByExample(stationManageExample);
             if(!CollectionUtils.isEmpty(nmpsStationManages)){
                 return new Result<>(false,"入网id不唯一");
@@ -134,6 +143,7 @@ public class StationManageServiceImpl implements StationManageService {
             NmpsStationManageExample manageExample = new NmpsStationManageExample();
             NmpsStationManageExample.Criteria manageExampleCriteria = manageExample.createCriteria();
             manageExampleCriteria.andNetworkIdEqualTo(stationManageRequest.getNetworkId());
+            manageExampleCriteria.andIsExistEqualTo(true);
             NmpsStationManage nmpsStationManage = new NmpsStationManage();
             BeanUtils.copyProperties(stationManageRequest,nmpsStationManage);
             int i = stationManageMapper.updateByExampleSelective(nmpsStationManage, manageExample);
@@ -161,16 +171,16 @@ public class StationManageServiceImpl implements StationManageService {
             String urlString = "";
             StationManageVo vo = new StationManageVo();
             BeanUtils.copyProperties(stationManageRequest,vo);
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.put(JSON_KEY_EDITTYPE,flag);
-            jsonParam.put("StationManageVo",vo);
+//            JSONObject jsonParam = new JSONObject();
+//            jsonParam.put(JSON_KEY_EDITTYPE,flag);
+//            jsonParam.put("StationManageVo",vo);
             if(flag.equals("insert")){
                 urlString = STATION_MANAGE_INSERT_URL;
             }else {
                 urlString = STATION_MANAGE_DELETE_URL;
             }
             String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + urlString);
-            HttpClientUtil.post(url,jsonParam.toJSONString());
+            HttpClientUtil.post(url,JSONObject.toJSONString(vo));
         }catch (Exception e){
             log.warn("StationManageServiceImpl.syncProxy Exception:{}",e);
         }

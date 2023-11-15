@@ -585,6 +585,76 @@ public class NmpsStationManageExample {
             return (Criteria) this;
         }
 
+        public Criteria andKeyPortIsNull() {
+            addCriterion("key_port is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortIsNotNull() {
+            addCriterion("key_port is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortEqualTo(String value) {
+            addCriterion("key_port =", value, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortNotEqualTo(String value) {
+            addCriterion("key_port <>", value, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortGreaterThan(String value) {
+            addCriterion("key_port >", value, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortGreaterThanOrEqualTo(String value) {
+            addCriterion("key_port >=", value, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortLessThan(String value) {
+            addCriterion("key_port <", value, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortLessThanOrEqualTo(String value) {
+            addCriterion("key_port <=", value, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortLike(String value) {
+            addCriterion("key_port like", value, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortNotLike(String value) {
+            addCriterion("key_port not like", value, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortIn(List<String> values) {
+            addCriterion("key_port in", values, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortNotIn(List<String> values) {
+            addCriterion("key_port not in", values, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortBetween(String value1, String value2) {
+            addCriterion("key_port between", value1, value2, "keyPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyPortNotBetween(String value1, String value2) {
+            addCriterion("key_port not between", value1, value2, "keyPort");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateUserIsNull() {
             addCriterion("create_user is null");
             return (Criteria) this;

@@ -4,22 +4,16 @@
   <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplStaticRoute">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="route_id" jdbcType="VARCHAR" property="routeId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
     <result column="network_id" jdbcType="VARCHAR" property="networkId" />
-    <result column="server_ip" jdbcType="VARCHAR" property="serverIp" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="server_name" jdbcType="VARCHAR" property="serverName" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
-    <result column="ip_v6" jdbcType="VARCHAR" property="ipV6" />
-    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
-    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
-    <result column="server_name" jdbcType="VARCHAR" property="serverName" />
-    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.matrictime.network.dao.model.NmplStaticRoute">
-    <result column="byte_network_id" jdbcType="LONGVARBINARY" property="byteNetworkId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -80,29 +74,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, route_id, network_id, server_ip, is_exist, create_user, create_time, update_user, 
-    update_time, station_id, ip_v6, company_name, company_id, server_name, station_name
+    id, route_id, company_id, station_id, network_id, device_id, server_name, is_exist, 
+    create_user, create_time, update_user, update_time
   </sql>
-  <sql id="Blob_Column_List">
-    byte_network_id
-  </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplStaticRouteExample" resultMap="ResultMapWithBLOBs">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    'true' as QUERYID,
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from nmpl_static_route
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplStaticRouteExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -118,11 +92,9 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from nmpl_static_route
     where id = #{id,jdbcType=BIGINT}
   </select>
@@ -137,18 +109,16 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplStaticRoute">
-    insert into nmpl_static_route (id, route_id, network_id, 
-      server_ip, is_exist, create_user, 
-      create_time, update_user, update_time, 
-      station_id, ip_v6, company_name, 
-      company_id, server_name, station_name, 
-      byte_network_id)
-    values (#{id,jdbcType=BIGINT}, #{routeId,jdbcType=VARCHAR}, #{networkId,jdbcType=VARCHAR}, 
-      #{serverIp,jdbcType=VARCHAR}, #{isExist,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{stationId,jdbcType=VARCHAR}, #{ipV6,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, 
-      #{companyId,jdbcType=VARCHAR}, #{serverName,jdbcType=VARCHAR}, #{stationName,jdbcType=VARCHAR}, 
-      #{byteNetworkId,jdbcType=LONGVARBINARY})
+    insert into nmpl_static_route (id, route_id, company_id, 
+      station_id, network_id, device_id, 
+      server_name, is_exist, create_user, 
+      create_time, update_user, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{routeId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, 
+      #{stationId,jdbcType=VARCHAR}, #{networkId,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, 
+      #{serverName,jdbcType=VARCHAR}, #{isExist,jdbcType=BIT}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplStaticRoute">
     insert into nmpl_static_route
@@ -159,11 +129,20 @@
       <if test="routeId != null">
         route_id,
       </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="stationId != null">
+        station_id,
+      </if>
       <if test="networkId != null">
         network_id,
       </if>
-      <if test="serverIp != null">
-        server_ip,
+      <if test="deviceId != null">
+        device_id,
+      </if>
+      <if test="serverName != null">
+        server_name,
       </if>
       <if test="isExist != null">
         is_exist,
@@ -180,27 +159,6 @@
       <if test="updateTime != null">
         update_time,
       </if>
-      <if test="stationId != null">
-        station_id,
-      </if>
-      <if test="ipV6 != null">
-        ip_v6,
-      </if>
-      <if test="companyName != null">
-        company_name,
-      </if>
-      <if test="companyId != null">
-        company_id,
-      </if>
-      <if test="serverName != null">
-        server_name,
-      </if>
-      <if test="stationName != null">
-        station_name,
-      </if>
-      <if test="byteNetworkId != null">
-        byte_network_id,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -209,11 +167,20 @@
       <if test="routeId != null">
         #{routeId,jdbcType=VARCHAR},
       </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
+      </if>
       <if test="networkId != null">
         #{networkId,jdbcType=VARCHAR},
       </if>
-      <if test="serverIp != null">
-        #{serverIp,jdbcType=VARCHAR},
+      <if test="deviceId != null">
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="serverName != null">
+        #{serverName,jdbcType=VARCHAR},
       </if>
       <if test="isExist != null">
         #{isExist,jdbcType=BIT},
@@ -229,27 +196,6 @@
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="stationId != null">
-        #{stationId,jdbcType=VARCHAR},
-      </if>
-      <if test="ipV6 != null">
-        #{ipV6,jdbcType=VARCHAR},
-      </if>
-      <if test="companyName != null">
-        #{companyName,jdbcType=VARCHAR},
-      </if>
-      <if test="companyId != null">
-        #{companyId,jdbcType=VARCHAR},
-      </if>
-      <if test="serverName != null">
-        #{serverName,jdbcType=VARCHAR},
-      </if>
-      <if test="stationName != null">
-        #{stationName,jdbcType=VARCHAR},
-      </if>
-      <if test="byteNetworkId != null">
-        #{byteNetworkId,jdbcType=LONGVARBINARY},
       </if>
     </trim>
   </insert>
@@ -268,11 +214,20 @@
       <if test="record.routeId != null">
         route_id = #{record.routeId,jdbcType=VARCHAR},
       </if>
+      <if test="record.companyId != null">
+        company_id = #{record.companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stationId != null">
+        station_id = #{record.stationId,jdbcType=VARCHAR},
+      </if>
       <if test="record.networkId != null">
         network_id = #{record.networkId,jdbcType=VARCHAR},
       </if>
-      <if test="record.serverIp != null">
-        server_ip = #{record.serverIp,jdbcType=VARCHAR},
+      <if test="record.deviceId != null">
+        device_id = #{record.deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serverName != null">
+        server_name = #{record.serverName,jdbcType=VARCHAR},
       </if>
       <if test="record.isExist != null">
         is_exist = #{record.isExist,jdbcType=BIT},
@@ -289,50 +244,7 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.stationId != null">
-        station_id = #{record.stationId,jdbcType=VARCHAR},
-      </if>
-      <if test="record.ipV6 != null">
-        ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
-      </if>
-      <if test="record.companyName != null">
-        company_name = #{record.companyName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.companyId != null">
-        company_id = #{record.companyId,jdbcType=VARCHAR},
-      </if>
-      <if test="record.serverName != null">
-        server_name = #{record.serverName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.stationName != null">
-        station_name = #{record.stationName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.byteNetworkId != null">
-        byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY},
-      </if>
     </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExampleWithBLOBs" parameterType="map">
-    update nmpl_static_route
-    set id = #{record.id,jdbcType=BIGINT},
-      route_id = #{record.routeId,jdbcType=VARCHAR},
-      network_id = #{record.networkId,jdbcType=VARCHAR},
-      server_ip = #{record.serverIp,jdbcType=VARCHAR},
-      is_exist = #{record.isExist,jdbcType=BIT},
-      create_user = #{record.createUser,jdbcType=VARCHAR},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      update_user = #{record.updateUser,jdbcType=VARCHAR},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      station_id = #{record.stationId,jdbcType=VARCHAR},
-      ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
-      company_name = #{record.companyName,jdbcType=VARCHAR},
-      company_id = #{record.companyId,jdbcType=VARCHAR},
-      server_name = #{record.serverName,jdbcType=VARCHAR},
-      station_name = #{record.stationName,jdbcType=VARCHAR},
-      byte_network_id = #{record.byteNetworkId,jdbcType=LONGVARBINARY}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -341,19 +253,16 @@
     update nmpl_static_route
     set id = #{record.id,jdbcType=BIGINT},
       route_id = #{record.routeId,jdbcType=VARCHAR},
+      company_id = #{record.companyId,jdbcType=VARCHAR},
+      station_id = #{record.stationId,jdbcType=VARCHAR},
       network_id = #{record.networkId,jdbcType=VARCHAR},
-      server_ip = #{record.serverIp,jdbcType=VARCHAR},
+      device_id = #{record.deviceId,jdbcType=VARCHAR},
+      server_name = #{record.serverName,jdbcType=VARCHAR},
       is_exist = #{record.isExist,jdbcType=BIT},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      station_id = #{record.stationId,jdbcType=VARCHAR},
-      ip_v6 = #{record.ipV6,jdbcType=VARCHAR},
-      company_name = #{record.companyName,jdbcType=VARCHAR},
-      company_id = #{record.companyId,jdbcType=VARCHAR},
-      server_name = #{record.serverName,jdbcType=VARCHAR},
-      station_name = #{record.stationName,jdbcType=VARCHAR}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -364,11 +273,20 @@
       <if test="routeId != null">
         route_id = #{routeId,jdbcType=VARCHAR},
       </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationId != null">
+        station_id = #{stationId,jdbcType=VARCHAR},
+      </if>
       <if test="networkId != null">
         network_id = #{networkId,jdbcType=VARCHAR},
       </if>
-      <if test="serverIp != null">
-        server_ip = #{serverIp,jdbcType=VARCHAR},
+      <if test="deviceId != null">
+        device_id = #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="serverName != null">
+        server_name = #{serverName,jdbcType=VARCHAR},
       </if>
       <if test="isExist != null">
         is_exist = #{isExist,jdbcType=BIT},
@@ -385,65 +303,22 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="stationId != null">
-        station_id = #{stationId,jdbcType=VARCHAR},
-      </if>
-      <if test="ipV6 != null">
-        ip_v6 = #{ipV6,jdbcType=VARCHAR},
-      </if>
-      <if test="companyName != null">
-        company_name = #{companyName,jdbcType=VARCHAR},
-      </if>
-      <if test="companyId != null">
-        company_id = #{companyId,jdbcType=VARCHAR},
-      </if>
-      <if test="serverName != null">
-        server_name = #{serverName,jdbcType=VARCHAR},
-      </if>
-      <if test="stationName != null">
-        station_name = #{stationName,jdbcType=VARCHAR},
-      </if>
-      <if test="byteNetworkId != null">
-        byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
-      </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.matrictime.network.dao.model.NmplStaticRoute">
-    update nmpl_static_route
-    set route_id = #{routeId,jdbcType=VARCHAR},
-      network_id = #{networkId,jdbcType=VARCHAR},
-      server_ip = #{serverIp,jdbcType=VARCHAR},
-      is_exist = #{isExist,jdbcType=BIT},
-      create_user = #{createUser,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_user = #{updateUser,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      station_id = #{stationId,jdbcType=VARCHAR},
-      ip_v6 = #{ipV6,jdbcType=VARCHAR},
-      company_name = #{companyName,jdbcType=VARCHAR},
-      company_id = #{companyId,jdbcType=VARCHAR},
-      server_name = #{serverName,jdbcType=VARCHAR},
-      station_name = #{stationName,jdbcType=VARCHAR},
-      byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplStaticRoute">
     update nmpl_static_route
     set route_id = #{routeId,jdbcType=VARCHAR},
+      company_id = #{companyId,jdbcType=VARCHAR},
+      station_id = #{stationId,jdbcType=VARCHAR},
       network_id = #{networkId,jdbcType=VARCHAR},
-      server_ip = #{serverIp,jdbcType=VARCHAR},
+      device_id = #{deviceId,jdbcType=VARCHAR},
+      server_name = #{serverName,jdbcType=VARCHAR},
       is_exist = #{isExist,jdbcType=BIT},
       create_user = #{createUser,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      station_id = #{stationId,jdbcType=VARCHAR},
-      ip_v6 = #{ipV6,jdbcType=VARCHAR},
-      company_name = #{companyName,jdbcType=VARCHAR},
-      company_id = #{companyId,jdbcType=VARCHAR},
-      server_name = #{serverName,jdbcType=VARCHAR},
-      station_name = #{stationName,jdbcType=VARCHAR}
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

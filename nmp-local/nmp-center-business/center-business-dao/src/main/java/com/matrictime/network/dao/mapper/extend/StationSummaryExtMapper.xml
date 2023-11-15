@@ -65,5 +65,9 @@
           from nmpl_company_heartbeat
           group by source_company_network_id, target_company_network_id) b
     where a.id = b.q
+          and upload_time &gt;= (
+            SELECT
+                DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00') + INTERVAL (FLOOR(MINUTE(NOW()) / 30) * 30) MINUTE
+            )
   </select>
 </mapper>

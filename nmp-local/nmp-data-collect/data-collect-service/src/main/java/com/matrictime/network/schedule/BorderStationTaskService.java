@@ -141,5 +141,6 @@ public class BorderStationTaskService implements SchedulingConfigurer, BusinessD
     @Override
     public void updateTimer(long timer){
         this.timer = timer;
+
     }
 }

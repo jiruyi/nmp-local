@@ -170,7 +170,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
 
         List<NmplInternetRoute> nmplInternetRoutes = nmplInternetRouteMapper.selectByExampleWithBLOBs(null);
 
-        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExampleWithBLOBs(null);
+        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(null);
         //业务服务
         for (NmplBusinessRoute nmplBusinessRoute : nmplBusinessRoutes) {
             ProxyBusinessRouteVo proxyBusinessRouteVo = new ProxyBusinessRouteVo();

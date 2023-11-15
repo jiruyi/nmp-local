@@ -5,8 +5,8 @@ import lombok.Data;
 
 /**
  * 基站管理
- * @author   wangqiang
- * @date   2023-11-02
+ * @author   xxxx
+ * @date   2023-11-09
  */
 @Data
 public class NmpsStationManage {
@@ -44,6 +44,11 @@ public class NmpsStationManage {
      * 通信port
      */
     private String stationPort;
+
+    /**
+     * 下载密钥端口
+     */
+    private String keyPort;
 
     /**
      * 创建者
@@ -124,6 +129,14 @@ public class NmpsStationManage {
 
     public void setStationPort(String stationPort) {
         this.stationPort = stationPort == null ? null : stationPort.trim();
+    }
+
+    public String getKeyPort() {
+        return keyPort;
+    }
+
+    public void setKeyPort(String keyPort) {
+        this.keyPort = keyPort == null ? null : keyPort.trim();
     }
 
     public String getCreateUser() {

@@ -111,6 +111,7 @@ public class CompanyInfoTaskService implements SchedulingConfigurer, BusinessDat
             log.info("CompanyInfoTaskService  businessData dataNetworkId:{} commandNetworkId:{}",dataNetworkId,commandNetworkId);
             //业务数据转jsonString
             String reqDataStr = JSONObject.toJSONString(companyInfoVos);
+            log.info("reqDataStr:=========================",reqDataStr);
             //发送TCP数据包
             ChannelFuture channelFuture =
                     nettyClient.sendMsg(TcpTransportUtil.getTcpDataPushVo(BusinessDataEnum.CompanyInfo,

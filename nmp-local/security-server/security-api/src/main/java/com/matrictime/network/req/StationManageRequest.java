@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2023/11/2.
  */
 @Data
-public class StationManageRequest {
+public class StationManageRequest extends BaseRequest{
 
     /**
      * 主键
@@ -48,4 +48,9 @@ public class StationManageRequest {
      * 通信port
      */
     private String stationPort;
+
+    /**
+     * 下载密钥端口
+     */
+    private String keyPort;
 }

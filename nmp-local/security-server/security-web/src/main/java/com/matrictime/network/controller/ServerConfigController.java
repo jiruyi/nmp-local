@@ -1,6 +1,7 @@
 package com.matrictime.network.controller;
 
 import com.matrictime.network.model.Result;
+import com.matrictime.network.req.ServerConfigListReq;
 import com.matrictime.network.req.ServerConfigRequest;
 import com.matrictime.network.service.ServerConfigService;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,54 @@ public class ServerConfigController {
             return result;
         }catch (Exception e){
             log.error("insertServerConfig exception:{}",e.getMessage());
+            return new Result(false, e.getMessage());
+        }
+    }
+
+    /**
+     * 同步配置
+     * @param serverConfigRequest
+     * @return
+     */
+    @RequestMapping(value = "/synConfig",method = RequestMethod.POST)
+    public Result synConfig(@RequestBody ServerConfigRequest serverConfigRequest){
+        try {
+            Result result = serverConfigService.synConfig(serverConfigRequest);
+            return result;
+        }catch (Exception e){
+            log.error("synConfig exception:{}",e.getMessage());
+            return new Result(false, e.getMessage());
+        }
+    }
+
+    /**
+     * 同步配置
+     * @param listReq
+     * @return
+     */
+    @RequestMapping(value = "/synConfigList",method = RequestMethod.POST)
+    public Result synConfigList(@RequestBody ServerConfigListReq listReq){
+        try {
+            Result result = serverConfigService.synConfigList(listReq);
+            return result;
+        }catch (Exception e){
+            log.error("synConfigList exception:{}",e.getMessage());
+            return new Result(false, e.getMessage());
+        }
+    }
+
+    /**
+     * 同步配置
+     * @param listReq
+     * @return
+     */
+    @RequestMapping(value = "/insertBatchServerConfig",method = RequestMethod.POST)
+    public Result insertBatchServerConfig(@RequestBody ServerConfigListReq listReq){
+        try {
+            Result result = serverConfigService.insertBatchServerConfig(listReq);
+            return result;
+        }catch (Exception e){
+            log.error("insertBatchServerConfig exception:{}",e.getMessage());
             return new Result(false, e.getMessage());
         }
     }

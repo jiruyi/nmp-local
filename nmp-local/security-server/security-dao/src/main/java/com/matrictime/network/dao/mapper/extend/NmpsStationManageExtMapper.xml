@@ -11,6 +11,7 @@
         <result column="domain_name" jdbcType="VARCHAR" property="domainName" />
         <result column="station_ip" jdbcType="VARCHAR" property="stationIp" />
         <result column="station_port" jdbcType="VARCHAR" property="stationPort" />
+        <result column="key_port" jdbcType="VARCHAR" property="keyPort" />
         <result column="create_user" jdbcType="VARCHAR" property="createUser" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
@@ -28,6 +29,7 @@
         d.access_method,
         d.station_ip,
         d.station_port,
+        d.key_port,
         d.domain_name,
         d.create_time
         FROM

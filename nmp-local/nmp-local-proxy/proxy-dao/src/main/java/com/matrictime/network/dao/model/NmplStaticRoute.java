@@ -5,8 +5,8 @@ import lombok.Data;
 
 /**
  * 静态路由
- * @author   xxxx
- * @date   2023-10-07
+ * @author   wangqiang
+ * @date   2023-11-09
  */
 @Data
 public class NmplStaticRoute {
@@ -21,14 +21,29 @@ public class NmplStaticRoute {
     private String routeId;
 
     /**
-     * 设备入网码
+     * 小区id
+     */
+    private String companyId;
+
+    /**
+     * 基站id
+     */
+    private String stationId;
+
+    /**
+     * 入网Id
      */
     private String networkId;
 
     /**
-     * 服务器ip
+     * 设备入网Id
      */
-    private String serverIp;
+    private String deviceId;
+
+    /**
+     * 服务名称
+     */
+    private String serverName;
 
     /**
      * 删除标志（1代表存在 0代表删除）
@@ -55,41 +70,6 @@ public class NmplStaticRoute {
      */
     private Date updateTime;
 
-    /**
-     * 基站id
-     */
-    private String stationId;
-
-    /**
-     * 服务器ip_v6
-     */
-    private String ipV6;
-
-    /**
-     * 小区名称
-     */
-    private String companyName;
-
-    /**
-     * 小区id
-     */
-    private String companyId;
-
-    /**
-     * 接入基站名称
-     */
-    private String stationName;
-
-    /**
-     * 服务名称
-     */
-    private String serverName;
-
-    /**
-     * 设备入网码(字节存储)
-     */
-    private byte[] byteNetworkId;
-
     public Long getId() {
         return id;
     }
@@ -106,6 +86,22 @@ public class NmplStaticRoute {
         this.routeId = routeId == null ? null : routeId.trim();
     }
 
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId == null ? null : companyId.trim();
+    }
+
+    public String getStationId() {
+        return stationId;
+    }
+
+    public void setStationId(String stationId) {
+        this.stationId = stationId == null ? null : stationId.trim();
+    }
+
     public String getNetworkId() {
         return networkId;
     }
@@ -114,12 +110,20 @@ public class NmplStaticRoute {
         this.networkId = networkId == null ? null : networkId.trim();
     }
 
-    public String getServerIp() {
-        return serverIp;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setServerIp(String serverIp) {
-        this.serverIp = serverIp == null ? null : serverIp.trim();
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId == null ? null : deviceId.trim();
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName == null ? null : serverName.trim();
     }
 
     public Boolean getIsExist() {
@@ -160,61 +164,5 @@ public class NmplStaticRoute {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public String getStationId() {
-        return stationId;
-    }
-
-    public void setStationId(String stationId) {
-        this.stationId = stationId == null ? null : stationId.trim();
-    }
-
-    public String getIpV6() {
-        return ipV6;
-    }
-
-    public void setIpV6(String ipV6) {
-        this.ipV6 = ipV6 == null ? null : ipV6.trim();
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName == null ? null : companyName.trim();
-    }
-
-    public String getCompanyId() {
-        return companyId;
-    }
-
-    public void setCompanyId(String companyId) {
-        this.companyId = companyId == null ? null : companyId.trim();
-    }
-
-    public String getStationName() {
-        return stationName;
-    }
-
-    public void setStationName(String stationName) {
-        this.stationName = stationName == null ? null : stationName.trim();
-    }
-
-    public String getServerName() {
-        return serverName;
-    }
-
-    public void setServerName(String serverName) {
-        this.serverName = serverName == null ? null : serverName.trim();
-    }
-
-    public byte[] getByteNetworkId() {
-        return byteNetworkId;
-    }
-
-    public void setByteNetworkId(byte[] byteNetworkId) {
-        this.byteNetworkId = byteNetworkId;
     }
 }
