@@ -61,6 +61,7 @@ public class CaManageServiceImpl implements CaManageService {
             NmpsCaManageExample caManageExample = new NmpsCaManageExample();
             NmpsCaManageExample.Criteria criteria = caManageExample.createCriteria();
             criteria.andNetworkIdEqualTo(caManageRequest.getNetworkId());
+            criteria.andIsExistEqualTo(true);
             List<NmpsCaManage> nmpsCaManages = caManageMapper.selectByExample(caManageExample);
             if(!CollectionUtils.isEmpty(nmpsCaManages)){
                 return new Result<>(false,"入网id不唯一");
@@ -152,6 +153,7 @@ public class CaManageServiceImpl implements CaManageService {
             NmpsCaManageExample.Criteria criteria = caManageExample.createCriteria();
             criteria.andNetworkIdEqualTo(caManageRequest.getNetworkId());
             criteria.andIdNotEqualTo(caManageRequest.getId());
+            criteria.andIsExistEqualTo(true);
             List<NmpsCaManage> nmpsCaManages = caManageMapper.selectByExample(caManageExample);
             if(!CollectionUtils.isEmpty(nmpsCaManages)){
                 return new Result<>(false,"入网id不唯一");
@@ -160,6 +162,7 @@ public class CaManageServiceImpl implements CaManageService {
             NmpsCaManageExample manageExample = new NmpsCaManageExample();
             NmpsCaManageExample.Criteria manageExampleCriteria = manageExample.createCriteria();
             manageExampleCriteria.andNetworkIdEqualTo(caManageRequest.getNetworkId());
+            manageExampleCriteria.andIsExistEqualTo(true);
             NmpsCaManage nmpsCaManage = new NmpsCaManage();
             BeanUtils.copyProperties(caManageRequest,nmpsCaManage);
             int i = caManageMapper.updateByExampleSelective(nmpsCaManage, manageExample);
@@ -187,16 +190,16 @@ public class CaManageServiceImpl implements CaManageService {
             String urlString = "";
             CaManageVo vo = new CaManageVo();
             BeanUtils.copyProperties(caManageRequest,vo);
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.put(JSON_KEY_EDITTYPE,flag);
-            jsonParam.put("caManageVo",vo);
+//            JSONObject jsonParam = new JSONObject();
+//            jsonParam.put(JSON_KEY_EDITTYPE,flag);
+//            jsonParam.put("caManageVo",vo);
             if(flag.equals("insert")){
                 urlString = CA_MANAGE_INSERT_URL;
             }else {
                 urlString = CA_MANAGE_DELETE_URL;
             }
             String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + urlString);
-            HttpClientUtil.post(url,jsonParam.toJSONString());
+            HttpClientUtil.post(url,JSONObject.toJSONString(vo));
         }catch (Exception e){
             log.warn("CaManageServiceImpl.syncProxy Exception:{}",e);
         }

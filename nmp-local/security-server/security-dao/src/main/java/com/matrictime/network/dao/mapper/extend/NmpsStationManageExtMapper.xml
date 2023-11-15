@@ -29,6 +29,7 @@
         d.access_method,
         d.station_ip,
         d.station_port,
+        d.key_port,
         d.domain_name,
         d.create_time
         FROM

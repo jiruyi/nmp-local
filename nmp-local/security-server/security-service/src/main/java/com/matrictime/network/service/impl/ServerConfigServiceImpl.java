@@ -9,6 +9,7 @@ import com.matrictime.network.dao.model.NmpsServerConfigExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CaManageVo;
 import com.matrictime.network.modelVo.ServerConfigVo;
+import com.matrictime.network.req.ServerConfigListReq;
 import com.matrictime.network.req.ServerConfigRequest;
 import com.matrictime.network.resp.ServerConfigResp;
 import com.matrictime.network.service.ServerConfigService;
@@ -64,11 +65,8 @@ public class ServerConfigServiceImpl implements ServerConfigService {
             }else {
                 i = serverConfigMapper.updateByExampleSelective(serverConfig,serverConfigExample);
             }
-            if(i == 1){
-                result.setSuccess(true);
-                result.setResultObj(i);
-                syncProxy(serverConfigRequest);
-            }
+            result.setSuccess(true);
+            result.setResultObj(i);
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
             result.setSuccess(false);
@@ -120,6 +118,68 @@ public class ServerConfigServiceImpl implements ServerConfigService {
         return result;
     }
 
+    @Override
+    public Result<Integer> synConfig(ServerConfigRequest serverConfigRequest) {
+        Result<Integer> result = new Result<>();
+        try {
+            syncProxy(serverConfigRequest);
+            result.setSuccess(true);
+            result.setResultObj(1);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public Result<Integer> synConfigList(ServerConfigListReq listReq) {
+        Result<Integer> result = new Result<>();
+        try {
+            for (ServerConfigRequest serverConfigRequest: listReq.getList()){
+                syncProxy(serverConfigRequest);
+            }
+            result.setSuccess(true);
+            result.setResultObj(1);
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public Result<Integer> insertBatchServerConfig(ServerConfigListReq listReq) {
+        Result<Integer> result = new Result<>();
+        try {
+            for(ServerConfigRequest request: listReq.getList()){
+                int i = 0;
+                NmpsServerConfig serverConfig = new NmpsServerConfig();
+                BeanUtils.copyProperties(request,serverConfig);
+                //构建条件
+                NmpsServerConfigExample serverConfigExample = new NmpsServerConfigExample();
+                NmpsServerConfigExample.Criteria criteria = serverConfigExample.createCriteria();
+                criteria.andNetworkIdEqualTo(request.getNetworkId());
+                criteria.andConfigCodeEqualTo(request.getConfigCode());
+                criteria.andIsExistEqualTo(true);
+                //数据查询
+                List<NmpsServerConfig> nmpsServerConfigs = serverConfigMapper.selectByExample(serverConfigExample);
+                if(CollectionUtils.isEmpty(nmpsServerConfigs)){
+                    i = serverConfigMapper.insertSelective(serverConfig);
+                }else {
+                    i = serverConfigMapper.updateByExampleSelective(serverConfig,serverConfigExample);
+                }
+                result.setSuccess(true);
+                result.setResultObj(i);
+            }
+        }catch (Exception e){
+            result.setErrorMsg(e.getMessage());
+            result.setSuccess(false);
+            log.error("insertBatchServerConfig:{}",e.getMessage());
+        }
+        return result;
+    }
+
     /**
      * 推送代理
      * @param serverConfigRequest
@@ -128,10 +188,10 @@ public class ServerConfigServiceImpl implements ServerConfigService {
         try {
             ServerConfigVo vo = new ServerConfigVo();
             BeanUtils.copyProperties(serverConfigRequest,vo);
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.put("ServerConfigVo",vo);
+//            JSONObject jsonParam = new JSONObject();
+//            jsonParam.put("ServerConfigVo",vo);
             String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + SERVER_CONFIG_INSERT_URL);
-            HttpClientUtil.post(url,jsonParam.toJSONString());
+            HttpClientUtil.post(url,JSONObject.toJSONString(vo));
         }catch (Exception e){
             log.warn("ServerConfigServiceImpl.syncProxy Exception:{}",e);
         }

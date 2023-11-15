@@ -55,6 +55,7 @@ public class DnsManageServiceImpl implements DnsManageService {
             NmpsDnsManageExample dnsManageExample = new NmpsDnsManageExample();
             NmpsDnsManageExample.Criteria criteria = dnsManageExample.createCriteria();
             criteria.andNetworkIdEqualTo(dnsManageRequest.getNetworkId());
+            criteria.andIsExistEqualTo(true);
             List<NmpsDnsManage> nmpsDnsManages = dnsManageMapper.selectByExample(dnsManageExample);
             if(!CollectionUtils.isEmpty(nmpsDnsManages)){
                 return new Result<>(false,"入网id不唯一");
@@ -131,6 +132,7 @@ public class DnsManageServiceImpl implements DnsManageService {
             NmpsDnsManageExample.Criteria criteria = dnsManageExample.createCriteria();
             criteria.andNetworkIdEqualTo(dnsManageRequest.getNetworkId());
             criteria.andIdNotEqualTo(dnsManageRequest.getId());
+            criteria.andIsExistEqualTo(true);
             List<NmpsDnsManage> nmpsDnsManages = dnsManageMapper.selectByExample(dnsManageExample);
             if(!CollectionUtils.isEmpty(nmpsDnsManages)){
                 return new Result<>(false,"入网id不唯一");
@@ -139,6 +141,7 @@ public class DnsManageServiceImpl implements DnsManageService {
             NmpsDnsManageExample manageExample = new NmpsDnsManageExample();
             NmpsDnsManageExample.Criteria manageExampleCriteria = manageExample.createCriteria();
             manageExampleCriteria.andNetworkIdEqualTo(dnsManageRequest.getNetworkId());
+            manageExampleCriteria.andIsExistEqualTo(true);
             NmpsDnsManage dnsManage = new NmpsDnsManage();
             BeanUtils.copyProperties(dnsManageRequest,dnsManage);
             int i = dnsManageMapper.updateByExampleSelective(dnsManage, manageExample);
@@ -166,16 +169,16 @@ public class DnsManageServiceImpl implements DnsManageService {
             String urlString = "";
             DnsManageVo vo = new DnsManageVo();
             BeanUtils.copyProperties(dnsManageRequest,vo);
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.put(JSON_KEY_EDITTYPE,flag);
-            jsonParam.put("dnsManageVo",vo);
+//            JSONObject jsonParam = new JSONObject();
+//            jsonParam.put(JSON_KEY_EDITTYPE,flag);
+//            jsonParam.put("dnsManageVo",vo);
             if(flag.equals("insert")){
                 urlString = DNS_MANAGE_INSERT_URL;
             }else {
                 urlString = DNS_MANAGE_DELETE_URL;
             }
             String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + urlString);
-            HttpClientUtil.post(url,jsonParam.toJSONString());
+            HttpClientUtil.post(url,JSONObject.toJSONString(vo));
         }catch (Exception e){
             log.warn("DnsManageServiceImpl.syncProxy Exception:{}",e);
         }
