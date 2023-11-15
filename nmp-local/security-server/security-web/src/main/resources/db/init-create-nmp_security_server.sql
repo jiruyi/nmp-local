@@ -138,8 +138,47 @@ CREATE TABLE `nmps_dns_manage` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='dns管理';
 
 
+-- jry  告警信息表
+CREATE TABLE `nmps_alarm_info` (
+           `alarm_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
+           `network_id` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '入网id',
+           `alarm_content` VARCHAR(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '告警内容',
+           `alarm_level` CHAR(2) DEFAULT NULL COMMENT '级别 1严重 2 紧急 3 一般',
+           `alarm_upload_time` DATETIME(2) NOT NULL COMMENT '操作时间',
+           `alarm_source_type` CHAR(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '01' COMMENT '来源类型 00资源告警 01安全服务器',
+           `alarm_content_type` CHAR(2) DEFAULT '5' COMMENT '告警内容类型  1: cpu 2 内存 3 磁盘 4流量 5 其他',
+           `create_time` DATETIME(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+           `update_time` DATETIME(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+           PRIMARY KEY (`alarm_id`),
+           KEY `idx_network_id` (`network_id`),
+           KEY `upload_time_key` (`alarm_upload_time`)
+) ENGINE=INNODB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- zyj
+CREATE TABLE `nmps_user` (
+           `user_id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+           `login_account` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '登录账号',
+           `password` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '密码',
+           `is_exist` tinyint(1) DEFAULT '1' COMMENT '删除标志（1代表存在 0代表删除）',
+           `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
+           `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+           `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
+           `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+           `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+           PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户信息表';
+
+INSERT INTO `nmp_security_server`.`nmps_user` (`user_id`, `login_account`, `password`, `is_exist`) VALUES ('1', 'admin', 'j2sivmjjihBLggve6ed5lw==', '1');
+
+
+CREATE TABLE `nmps_data_info` (
+           `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+           `network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '入网id',
+           `data_value` bigint NOT NULL COMMENT '数据值（单位byte）',
+           `data_type` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '数据类型（1000：剩余上行密钥量 1001：已使用上行密钥量 2000：剩余下行密钥量 2001：已使用下行密钥量）',
+           `upload_time` datetime(2) NOT NULL COMMENT '上报时间',
+           `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+           PRIMARY KEY (`id`),
+           KEY `index_time` (`upload_time`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='密钥信息数据上报表';

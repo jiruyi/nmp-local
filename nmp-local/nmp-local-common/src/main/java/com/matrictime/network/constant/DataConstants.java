@@ -119,4 +119,6 @@ public class DataConstants {
 
     public static final String SECURITY_DATA_INFO_PUSH_KEY = "security_dataInfo_push_max_id";
 
+    public static final String ALARM_PUSH_LAST_MAXI_ID= ":alarm_last_push_max_id";
+
 }

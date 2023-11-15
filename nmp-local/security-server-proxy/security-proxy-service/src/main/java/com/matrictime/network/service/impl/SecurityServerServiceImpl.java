@@ -186,8 +186,9 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
             fileIsExist(runFile,file);
 
             List<String> run = new ArrayList<>();
-            run.add("sh");
+//            run.add("sh");
             run.add(file);
+            run.add(req.getAction());
             ShellUtil.runShell(run,null);
 
         }catch (SystemException e){

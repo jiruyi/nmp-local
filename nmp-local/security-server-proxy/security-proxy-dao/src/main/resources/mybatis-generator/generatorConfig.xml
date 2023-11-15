@@ -37,13 +37,13 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
-        <table tableName="nmps_security_server_info" domainObjectName="NmpsSecurityServerInfo"
-               enableCountByExample="true" enableUpdateByExample="true"
-               enableDeleteByExample="true" enableSelectByExample="true"
-               selectByExampleQueryId="true">
-        </table>
+<!--        <table tableName="nmps_security_server_info" domainObjectName="NmpsSecurityServerInfo"-->
+<!--               enableCountByExample="true" enableUpdateByExample="true"-->
+<!--               enableDeleteByExample="true" enableSelectByExample="true"-->
+<!--               selectByExampleQueryId="true">-->
+<!--        </table>-->
 
-        <table tableName="nmps_server_heart_info" domainObjectName="NmpsServerHeartInfo"
+        <table tableName="nmps_alarm_info" domainObjectName="NmpsAlarmInfo"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">

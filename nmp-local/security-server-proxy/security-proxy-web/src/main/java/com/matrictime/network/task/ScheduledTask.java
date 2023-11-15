@@ -1,22 +1,23 @@
 package com.matrictime.network.task;
 
+import com.matrictime.network.service.AlarmInfoService;
 import com.matrictime.network.service.TaskService;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
-@EnableAsync //开启多线程
 @Slf4j
 public class ScheduledTask {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private AlarmInfoService alarmInfoService;
 
 
     /**
@@ -52,11 +53,25 @@ public class ScheduledTask {
 
 
     @XxlJob("dataInfo")
-//    @Scheduled(cron = "0 0/1 * * * ?")
     public void dataPush(){
         log.info(Thread.currentThread().getName()+"======================dataPush begin=============================");
         taskService.dataPush();
         log.info(Thread.currentThread().getName()+"======================dataPush end=============================");
+    }
+
+    /**
+      * @title alarmInfoPush
+      * @param []
+      * @return void
+      * @description 
+      * @author jiruyi
+      * @create 2023/11/13 0013 17:56
+      */
+    @XxlJob("alarmInfo")
+    public void alarmInfoPush(){
+        log.info(Thread.currentThread().getName()+"======================alarmInfoPush begin=============================");
+        alarmInfoService.alarmInfoPush();
+        log.info(Thread.currentThread().getName()+"======================alarmInfoPush end=============================");
     }
 }
 
