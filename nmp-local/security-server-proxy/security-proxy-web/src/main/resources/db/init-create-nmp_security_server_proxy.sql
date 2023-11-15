@@ -90,7 +90,7 @@ CREATE TABLE `nmps_data_info` (
       KEY `index_time` (`upload_time`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='密钥信息数据上报表';
 
--------------------------wq-----------------------------
+-- wq  ip管理 配置管理
 
 CREATE TABLE `nmps_station_manage` (
                                        `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
