@@ -52,7 +52,7 @@ create table nmps_network_card
 )
     comment '安全服务器关联网卡信息表';
 
--------wq---------------------------------------------------------------
+-- wq  ip管理 配置管理
 CREATE TABLE `nmps_server_config` (
                                       `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
                                       `network_id` varchar(32) DEFAULT NULL COMMENT '设备入网码',
