@@ -623,27 +623,21 @@ create table nmpl_sms_detail
 create index idx_phone
     on nmpl_sms_detail (phone);
 
-create table nmpl_static_route
-(
-    id              bigint auto_increment comment '主键'
-        primary key,
-    route_id        varchar(128)                             not null comment '路由Id',
-    network_id      varchar(50)                              not null comment '设备入网码',
-    server_ip       varchar(32)                              null comment '服务器ip_v6',
-    is_exist        tinyint(1)  default 1                    not null comment '删除标志（1代表存在 0代表删除）',
-    create_user     varchar(64)                              null comment '创建者',
-    create_time     datetime(2) default CURRENT_TIMESTAMP(2) null comment '创建时间',
-    update_user     varchar(64)                              null comment '更新者',
-    update_time     datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间',
-    station_id      varchar(128)                             not null comment '基站id',
-    ip_v6           varchar(64)                              null comment '服务器ip_v6',
-    byte_network_id blob                                     null comment '设备入网码',
-    company_name    varchar(50)                              null comment '小区名称',
-    company_id      varchar(50)                              null comment '小区id',
-    station_name    varchar(16)                              null comment '接入基站名称',
-    server_name     varchar(50)                              null comment '服务名称'
-)
-    comment '静态路由';
+CREATE TABLE `nmpl_static_route` (
+                                     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                     `route_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '路由Id',
+                                     `company_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '小区id',
+                                     `station_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '基站id',
+                                     `network_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '入网Id',
+                                     `device_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '设备入网Id',
+                                     `server_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '服务名称',
+                                     `is_exist` tinyint(1) NOT NULL DEFAULT '1' COMMENT '删除标志（1代表存在 0代表删除）',
+                                     `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
+                                     `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                     `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
+                                     `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                     PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='静态路由';
 
 create table nmpl_station_connect_count
 (
