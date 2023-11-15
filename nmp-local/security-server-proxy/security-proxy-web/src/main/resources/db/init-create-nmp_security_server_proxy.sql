@@ -60,7 +60,7 @@ create table nmps_server_heart_info
 )
     comment '安全服务器心跳上报信息表';
 
---告警信息表  jry
+-- 告警信息表  jry
 CREATE TABLE `nmps_alarm_info` (
        `alarm_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
        `network_id` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '入网id',
