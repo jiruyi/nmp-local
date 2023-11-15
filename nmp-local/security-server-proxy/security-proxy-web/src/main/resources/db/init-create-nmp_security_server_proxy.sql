@@ -58,7 +58,7 @@ create table nmps_server_heart_info
 )
     comment '安全服务器心跳上报信息表';
 
---告警信息表  jry
+-- 告警信息表  jry
 CREATE TABLE `nmps_alarm_info` (
        `alarm_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
        `network_id` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '入网id',
@@ -88,7 +88,7 @@ CREATE TABLE `nmps_data_info` (
       KEY `index_time` (`upload_time`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='密钥信息数据上报表';
 
--------------------------wq-----------------------------
+-- wq  ip管理 配置管理
 
 CREATE TABLE `nmps_station_manage` (
                                        `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
