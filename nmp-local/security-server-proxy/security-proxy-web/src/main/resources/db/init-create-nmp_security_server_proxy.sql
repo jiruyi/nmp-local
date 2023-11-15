@@ -22,8 +22,6 @@ create table nmps_security_server_info
     server_name   varchar(32)                              null comment '安全服务器名称',
     com_ip        varchar(128)                             null comment '通信ip',
     network_id    varchar(128)                             null comment '入网id',
-    signal_port   varchar(8)                               null comment '信令（中继）端口',
-    key_port      varchar(8)                               null comment '下载密钥端口',
     connect_type  char(2)                                  null comment '连接方式 1:内接 0:外接',
     server_status char(2)     default '02'                 null comment '状态 01:上线  02:下线',
     is_exist      tinyint(1)  default 1                    null comment '删除标志（1代表存在 0代表删除）',
