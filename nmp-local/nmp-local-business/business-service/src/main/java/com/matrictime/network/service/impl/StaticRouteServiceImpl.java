@@ -78,7 +78,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
 //            if(!ObjectUtils.isEmpty(checkDataOnly(staticRouteRequest))){
 //                return checkDataOnly(staticRouteRequest);
 //            }
-            //staticRouteRequest.setCreateUser(RequestContext.getUser().getCreateUser());
+            staticRouteRequest.setCreateUser(RequestContext.getUser().getCreateUser());
             staticRouteRequest.setRouteId(SnowFlake.nextId_String());
             int insert = staticRouteDomainService.insert(staticRouteRequest);
             if(insert == DataConstants.INSERT_OR_UPDATE_SUCCESS){
@@ -105,7 +105,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
     public Result<Integer> delete(StaticRouteRequest staticRouteRequest) {
         Result<Integer> result = new Result<>();
         try {
-            //staticRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
+            staticRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
             int delete = staticRouteDomainService.delete(staticRouteRequest);
             if(delete == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(delete);
@@ -133,7 +133,7 @@ public class StaticRouteServiceImpl implements StaticRouteService {
 //            if(!ObjectUtils.isEmpty(checkDataOnly(staticRouteRequest))){
 //                return checkDataOnly(staticRouteRequest);
 //            }
-            //staticRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
+            staticRouteRequest.setUpdateUser(RequestContext.getUser().getUpdateUser());
             int update = staticRouteDomainService.update(staticRouteRequest);
             if(update == DataConstants.INSERT_OR_UPDATE_SUCCESS){
                 result.setResultObj(update);
