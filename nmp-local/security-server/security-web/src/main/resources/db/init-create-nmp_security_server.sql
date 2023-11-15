@@ -69,7 +69,7 @@ CREATE TABLE `nmps_server_config` (
 CREATE TABLE `nmps_default_config` (
                                        `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
                                        `config_code` char(2) NOT NULL COMMENT '配置名称 50:加密比例 51:扩展算法 52:加密方式 53:加密算法 54:上行密钥最大值 55:上行密钥预警值 56:上行密钥最小值 57:下行密钥最大值 58:下行密钥预警值 59:下行密钥最小值',
-                                       `default_value` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '默认值',
+                                       `default_value` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '默认值 加密方式: 1 全加密 加密算法: 1 量子加密',
                                        `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
                                        `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
                                        `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
@@ -78,13 +78,13 @@ CREATE TABLE `nmps_default_config` (
                                        PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='安全服务器配置默认表';
 
-INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('1','50','1：1','1');
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('1','50','1','1');
 
 INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('2','51','AES','1');
 
-INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('3','52','全加密','1');
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('3','52','1','1');
 
-INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('4','53','AES','1');
+INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('4','53','1','1');
 
 INSERT INTO nmps_default_config (id,config_code,default_value,is_exist) VALUES('5','54','1024','1');
 
