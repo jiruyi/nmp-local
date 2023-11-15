@@ -60,6 +60,79 @@ create table nmps_server_heart_info
 )
     comment '安全服务器心跳上报信息表';
 
+-------------------------wq-----------------------------
+
+CREATE TABLE `nmps_station_manage` (
+                                       `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                       `network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '入网id',
+                                       `station_type` char(2) DEFAULT NULL COMMENT '基站类型 00:基站 30:备用基站',
+                                       `access_method` char(2) DEFAULT NULL COMMENT '接入方式 01:固定接入 02:动态接入',
+                                       `domain_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '域名',
+                                       `station_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '通信ip',
+                                       `station_port` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '通信port',
+                                       `key_port` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '下载密钥端口',
+                                       `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
+                                       `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                       `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
+                                       `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                       `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+                                       PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='基站管理';
+
+
+CREATE TABLE `nmps_ca_manage` (
+                                  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                  `network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '入网id',
+                                  `access_method` char(2) DEFAULT NULL COMMENT '接入方式 01:固定接入 02:动态接入',
+                                  `domain_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '域名',
+                                  `public_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '通信ip',
+                                  `public_port` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '通信port',
+                                  `lan_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '隐私ip',
+                                  `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
+                                  `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                  `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
+                                  `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                  `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+                                  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='ca管理';
+
+CREATE TABLE `nmps_dns_manage` (
+                                   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                   `network_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '入网id',
+                                   `lan_ip` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '隐私ip',
+                                   `receive_port` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '接收端口',
+                                   `send_port` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '发送端口',
+                                   `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
+                                   `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                   `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
+                                   `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                   `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+                                   PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='dns管理';
+
+CREATE TABLE `nmps_server_config` (
+                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                      `network_id` varchar(32) DEFAULT NULL COMMENT '设备入网码',
+                                      `config_code` char(2) NOT NULL COMMENT '配置名称 50:加密比例 51:扩展算法 52:加密方式 53:加密算法 54:上行密钥最大值 55:上行密钥预警值 56:上行密钥最小值 57:下行密钥最大值 58:下行密钥预警值 59:下行密钥最小值',
+                                      `config_value` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '配置值',
+                                      `create_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
+                                      `create_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) COMMENT '创建时间',
+                                      `update_user` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
+                                      `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+                                      `is_exist` tinyint(1) DEFAULT '1' COMMENT '1:存在 0:删除',
+                                      PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='安全服务器配置值';
+
+INSERT INTO `nmps_server_config` VALUES ('1',null, '50', '1：1', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO `nmps_server_config` VALUES ('2',null, '51', 'AES', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO `nmps_server_config` VALUES ('3',null, '52', '全加密', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO `nmps_server_config` VALUES ('4',null, '53', 'AES', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO `nmps_server_config` VALUES ('5',null, '54', '1024', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO `nmps_server_config` VALUES ('6',null, '55', '512', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO `nmps_server_config` VALUES ('7',null, '56', '128', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO `nmps_server_config` VALUES ('8',null, '57', '1024', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO `nmps_server_config` VALUES ('9',null, '58', '512', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
+INSERT INTO `nmps_server_config` VALUES ('10',null, '59', '128', '1', '2023-10-27 15:11:58.01', '1', '2023-10-27 15:11:58.01', '1');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
