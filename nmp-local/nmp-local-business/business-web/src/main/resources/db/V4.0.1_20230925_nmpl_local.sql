@@ -1,6 +1,8 @@
 /*
 V4.0.1增量sql包
 */
+DROP TABLE nmpl_static_route;
+
 CREATE TABLE `nmpl_static_route` (
                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
                                      `route_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '路由Id',
