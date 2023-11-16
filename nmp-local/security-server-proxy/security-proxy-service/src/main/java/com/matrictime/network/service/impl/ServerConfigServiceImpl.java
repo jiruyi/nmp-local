@@ -29,7 +29,7 @@ public class ServerConfigServiceImpl implements ServerConfigService {
     @Override
     public Result<Integer> insertConfig(ServerConfigVo serverConfigVo) {
         Result<Integer> result = new Result<>();
-        int insert = 0;
+        int update = 0;
         try {
             NmpsServerConfig serverConfig = new NmpsServerConfig();
             BeanUtils.copyProperties(serverConfigVo,serverConfig);
@@ -38,14 +38,9 @@ public class ServerConfigServiceImpl implements ServerConfigService {
             NmpsServerConfigExample.Criteria criteria = serverConfigExample.createCriteria();
             criteria.andConfigCodeEqualTo(serverConfigVo.getConfigCode());
             criteria.andIsExistEqualTo(true);
-            List<NmpsServerConfig> nmpsServerConfigs = serverConfigMapper.selectByExample(serverConfigExample);
-            if(CollectionUtils.isEmpty(nmpsServerConfigs)){
-                insert = serverConfigMapper.insertSelective(serverConfig);
-            }else {
-                insert = serverConfigMapper.updateByExampleSelective(serverConfig,serverConfigExample);
-            }
+            update = serverConfigMapper.updateByExampleSelective(serverConfig,serverConfigExample);
             result.setSuccess(true);
-            result.setResultObj(insert);
+            result.setResultObj(update);
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
             result.setSuccess(false);
