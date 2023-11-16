@@ -28,8 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import static com.matrictime.network.base.constant.DataConstants.ONE_THOUSAND_AND_TWENTY_FOUR;
-import static com.matrictime.network.base.constant.DataConstants.ZERO_DOUBLE;
+import static com.matrictime.network.base.constant.DataConstants.*;
 
 @Service
 public class DataServiceImpl extends SystemBaseService implements DataService {
@@ -53,12 +52,10 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
         Result result;
         try {
             checkParam(dataReq);
-            if(!dataReq.isFlag()){
-                dataReq.setTime(findDates(dataReq.getStartTime(),dataReq.getEndTime()));
-            }
             if (dataReq.isFlag()) {
                 dataRespList.add(this.getDailyData("", dataReq.getDataType(), dataReq.getNetworkId(), dataReq.isFlag()));
             } else {
+                dataReq.setTime(findDates(dataReq.getStartTime(),dataReq.getEndTime()));
                 for (String time : dataReq.getTime()) {
                     dataRespList.add(this.getDailyData(time, dataReq.getDataType(), dataReq.getNetworkId(), dataReq.isFlag()));
                 }
@@ -139,7 +136,7 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
                         continue;
                     }
                 }
-                value = value.add(new BigDecimal(nmpsDataInfo.getDataValue()).divide(new BigDecimal(ONE_THOUSAND_AND_TWENTY_FOUR*ONE_THOUSAND_AND_TWENTY_FOUR),2,4));
+                value = value.add(new BigDecimal(nmpsDataInfo.getDataValue()).divide(new BigDecimal(ONE_THOUSAND_AND_TWENTY_FOUR*ONE_THOUSAND_AND_TWENTY_FOUR),2,BigDecimal.ROUND_HALF_UP));
             }
             result.setResultObj(value.doubleValue());
         } catch (SystemException e) {
@@ -224,7 +221,7 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
             //获取一天24个时间点
             timeList = this.get24Hours();
             //从redis中获取缓存数据
-            map = this.getCacheFromRedis(networkId + "-" + date + "-" + code, date);
+            map = this.getCacheFromRedis(networkId + SEPARATOR+ date + SEPARATOR + code, date);
             if (map.isEmpty()) {
                 //从mysql中获取数据
                 map = this.getDataFromMysql(code, networkId, date, flag, new HashSet(timeList));
@@ -247,7 +244,7 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
 
         if (!flag && !this.isToday(date, "yyyy-MM-dd")) {
             this.redisTemplate.opsForHash().putAll(networkId + "-" + date + "-" + code, map);
-            redisTemplate.expire(networkId + "-" + date + "-" + code,24, TimeUnit.HOURS);
+            redisTemplate.expire(networkId + SEPARATOR + date + SEPARATOR + code,24, TimeUnit.HOURS);
         }
 
         return dailyDataResp;
@@ -380,7 +377,7 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
             }
             Double value = data.getOrDefault(formatter.format(DateUtils.getCurrentHourTime(nmpsDataInfo.getUploadTime())), ZERO_DOUBLE);
             BigDecimal bigDecimal = new BigDecimal(nmpsDataInfo.getDataValue());
-            bigDecimal = bigDecimal.divide(BigDecimal.valueOf(ONE_THOUSAND_AND_TWENTY_FOUR*ONE_THOUSAND_AND_TWENTY_FOUR), 2, 4).add(BigDecimal.valueOf(value));
+            bigDecimal = bigDecimal.divide(BigDecimal.valueOf(ONE_THOUSAND_AND_TWENTY_FOUR*ONE_THOUSAND_AND_TWENTY_FOUR), 2, BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(value));
             data.put(formatter.format(DateUtils.getCurrentHourTime(nmpsDataInfo.getUploadTime())), bigDecimal.doubleValue());
         }
         return data;

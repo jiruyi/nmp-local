@@ -144,4 +144,6 @@ public class DataConstants {
 
     public static final String JSON_KEY_NETWORKID = "networkId";
 
+    public static final String SEPARATOR = "-";
+
 }
