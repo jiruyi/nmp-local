@@ -366,7 +366,7 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
             JSONObject jsonParam = new JSONObject();
             jsonParam.put(JSON_KEY_NETWORKID,serverInfo.getNetworkId());
             String url = HttpClientUtil.getUrl(serverInfo.getComIp(), securityProxyPort, securityProxyPath + SERVER_STARTSERVER_URL);
-            String post = HttpClientUtil.post(url, jsonParam.toJSONString());
+            String post = HttpClientUtil.post(url, jsonParam.toJSONString(),60000,1000);
             log.info("ServerServiceImpl.startServer httpPost param:{};result:{}",jsonParam.toJSONString(),post);
             result = JSONObject.parseObject(post,Result.class);
 
