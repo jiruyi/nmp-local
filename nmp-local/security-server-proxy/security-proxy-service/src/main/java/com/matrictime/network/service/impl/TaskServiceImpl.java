@@ -5,19 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.InitDataEnum;
-import com.matrictime.network.dao.mapper.NmpsDataInfoMapper;
-import com.matrictime.network.dao.mapper.NmpsNetworkCardMapper;
-import com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper;
-import com.matrictime.network.dao.mapper.NmpsServerHeartInfoMapper;
+import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.NmpsDataInfo;
 import com.matrictime.network.dao.model.NmpsDataInfoExample;
 import com.matrictime.network.dao.model.NmpsServerHeartInfo;
 import com.matrictime.network.dao.model.NmpsServerHeartInfoExample;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.dao.model.*;
-import com.matrictime.network.modelVo.HeartInfoProxyVo;
-import com.matrictime.network.modelVo.NetworkCardProxyVo;
-import com.matrictime.network.modelVo.SecurityServerProxyVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.service.SecurityServerService;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
@@ -68,6 +63,18 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private NmpsNetworkCardMapper networkCardMapper;
+
+    @Resource
+    private NmpsStationManageMapper stationManageMapper;
+
+    @Resource
+    private NmpsCaManageMapper caManageMapper;
+
+    @Resource
+    private NmpsDnsManageMapper dnsManageMapper;
+
+    @Resource
+    private NmpsServerConfigMapper serverConfigMapper;
 
     @Resource
     private RedisTemplate redisTemplate;
@@ -215,6 +222,70 @@ public class TaskServiceImpl implements TaskService {
                                 BeanUtils.copyProperties(vo,card);
                                 int addCard = networkCardMapper.insertSelective(card);
                                 log.info("TaskServiceImpl.initData addCard:{}",addCard);
+                            }
+                        }
+
+                        //基站管理初始化
+                        JSONArray stationManage = resultObj.getJSONArray(InitDataEnum.STATION_MANAGE.getName());
+                        List<StationManageVo> stationManageVos = stationManage.toJavaList(StationManageVo.class);
+                        if(!CollectionUtils.isEmpty(stationManageVos)){
+                            int delStationManage = stationManageMapper.deleteByExample(null);
+                            log.info("TaskServiceImpl.initData stationManage:{}",delStationManage);
+                            for(StationManageVo stationManageVo: stationManageVos){
+                                NmpsStationManage nmpsStationManage = new NmpsStationManage();
+                                BeanUtils.copyProperties(stationManageVo,nmpsStationManage);
+                                nmpsStationManage.setIsExist(true);
+                                int insertStation = stationManageMapper.insertSelective(nmpsStationManage);
+                                log.info("TaskServiceImpl.initData insertStation:{}",insertStation);
+                            }
+                        }
+
+                        //Dns管理初始化
+                        JSONArray dnsManage = resultObj.getJSONArray(InitDataEnum.DNS_MANAGE.getName());
+                        List<DnsManageVo> dnsManageVos = dnsManage.toJavaList(DnsManageVo.class);
+                        if(!CollectionUtils.isEmpty(dnsManageVos)){
+                            int delDnsManage = dnsManageMapper.deleteByExample(null);
+                            log.info("TaskServiceImpl.initData DnsManage:{}",delDnsManage);
+                            for(DnsManageVo dnsManageVo: dnsManageVos){
+                                NmpsDnsManage nmpsDnsManage = new NmpsDnsManage();
+                                BeanUtils.copyProperties(dnsManageVo,nmpsDnsManage);
+                                nmpsDnsManage.setIsExist(true);
+                                int insertDns = dnsManageMapper.insertSelective(nmpsDnsManage);
+                                log.info("TaskServiceImpl.initData insertDns:{}",insertDns);
+                            }
+                        }
+
+                        //Ca管理初始化
+                        JSONArray caManage = resultObj.getJSONArray(InitDataEnum.CA_MANAGE.getName());
+                        List<CaManageVo> caManageVos = caManage.toJavaList(CaManageVo.class);
+                        if(!CollectionUtils.isEmpty(caManageVos)){
+                            int delCaManage = caManageMapper.deleteByExample(null);
+                            log.info("TaskServiceImpl.initData delCaManage:{}",delCaManage);
+                            for(CaManageVo caManageVo: caManageVos){
+                                NmpsCaManage nmpsCaManage = new NmpsCaManage();
+                                BeanUtils.copyProperties(caManageVo,nmpsCaManage);
+                                nmpsCaManage.setIsExist(true);
+                                int insertCa = caManageMapper.insertSelective(nmpsCaManage);
+                                log.info("TaskServiceImpl.initData insertCa:{}",insertCa);
+                            }
+                        }
+
+                        //配置管理初始化
+                        JSONArray serverConfig = resultObj.getJSONArray(InitDataEnum.SERVER_CONFIG.getName());
+                        log.info("TaskServiceImpl.initData insertServerConfig:{}",serverConfig);
+                        List<ServerConfigVo> serverConfigVos = serverConfig.toJavaList(ServerConfigVo.class);
+                        if(!CollectionUtils.isEmpty(serverConfigVos)){
+                            for(ServerConfigVo serverConfigVo: serverConfigVos){
+                                NmpsServerConfig nmpsServerConfig = new NmpsServerConfig();
+                                BeanUtils.copyProperties(serverConfigVo,nmpsServerConfig);
+                                nmpsServerConfig.setIsExist(true);
+                                if(nmpsServerConfig.getConfigValue() != null){
+                                    //构建更新条件
+                                    NmpsServerConfigExample serverConfigExample = new NmpsServerConfigExample();
+                                    serverConfigExample.createCriteria().andConfigCodeEqualTo(nmpsServerConfig.getConfigCode());
+                                    int i = serverConfigMapper.updateByExampleSelective(nmpsServerConfig, serverConfigExample);
+                                    log.info("TaskServiceImpl.initData insertServerConfig:{}",i);
+                                }
                             }
                         }
                     }

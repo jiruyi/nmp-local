@@ -1,17 +1,14 @@
 package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
-import com.matrictime.network.dao.mapper.NmpsNetworkCardMapper;
-import com.matrictime.network.dao.mapper.NmpsSecurityServerInfoMapper;
-import com.matrictime.network.dao.model.NmpsNetworkCard;
-import com.matrictime.network.dao.model.NmpsNetworkCardExample;
-import com.matrictime.network.dao.model.NmpsSecurityServerInfo;
-import com.matrictime.network.dao.model.NmpsSecurityServerInfoExample;
+import com.matrictime.network.dao.mapper.*;
+import com.matrictime.network.dao.mapper.extend.NmpsServerConfigExtMapper;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.NetworkCardVo;
-import com.matrictime.network.modelVo.SecurityServerInfoVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.req.InitReq;
+import com.matrictime.network.req.ServerConfigRequest;
 import com.matrictime.network.resp.InitResp;
 import com.matrictime.network.service.CommonService;
 import com.matrictime.network.util.ParamCheckUtil;
@@ -35,6 +32,20 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
 
     @Resource
     private NmpsNetworkCardMapper networkCardMapper;
+
+    @Resource
+    private NmpsStationManageMapper stationManageMapper;
+
+    @Resource
+    private NmpsDnsManageMapper dnsManageMapper;
+
+    @Resource
+    private NmpsCaManageMapper caManageMapper;
+
+    @Resource
+    private NmpsServerConfigExtMapper serverConfigExtMapper;
+
+
     /**
      * 获取对应代理端安全服务器的相关信息
      * @param req
@@ -78,6 +89,59 @@ public class CommonServiceImpl extends SystemBaseService implements CommonServic
             }
             resp.setInitNetworkCardVos(networkCardVos);
 
+            //基站管理查询
+            List<StationManageVo> stationManageVos = new ArrayList<>();
+            if(!CollectionUtils.isEmpty(networkIds)){
+                NmpsStationManageExample stationManageExample = new NmpsStationManageExample();
+                stationManageExample.createCriteria().andIsExistEqualTo(true).andNetworkIdIn(networkIds);
+                List<NmpsStationManage> nmpsStationManages = stationManageMapper.selectByExample(stationManageExample);
+
+                for(NmpsStationManage stationManage: nmpsStationManages){
+                    StationManageVo stationManageVo = new StationManageVo();
+                    BeanUtils.copyProperties(stationManage,stationManageVo);
+                    stationManageVos.add(stationManageVo);
+                }
+            }
+            resp.setInitStationManageVos(stationManageVos);
+
+            //ca管理查询
+            List<CaManageVo> caManageVos = new ArrayList<>();
+            if(!CollectionUtils.isEmpty(networkIds)){
+                NmpsCaManageExample caManageExample = new NmpsCaManageExample();
+                caManageExample.createCriteria().andIsExistEqualTo(true).andNetworkIdIn(networkIds);
+                List<NmpsCaManage> nmpsCaManages = caManageMapper.selectByExample(caManageExample);
+
+                for(NmpsCaManage caManage: nmpsCaManages){
+                    CaManageVo caManageVo = new CaManageVo();
+                    BeanUtils.copyProperties(caManage,caManageVo);
+                    caManageVos.add(caManageVo);
+                }
+            }
+            resp.setInitCaManageVos(caManageVos);
+
+            //dns管理查询
+            List<DnsManageVo> dnsManageVos = new ArrayList<>();
+            if(!CollectionUtils.isEmpty(networkIds)){
+                NmpsDnsManageExample dnsManageExample = new NmpsDnsManageExample();
+                dnsManageExample.createCriteria().andIsExistEqualTo(true).andNetworkIdIn(networkIds);
+                List<NmpsDnsManage> nmpsDnsManages = dnsManageMapper.selectByExample(dnsManageExample);
+
+                for(NmpsDnsManage dnsManage: nmpsDnsManages){
+                    DnsManageVo dnsManageVo = new DnsManageVo();
+                    BeanUtils.copyProperties(dnsManage,dnsManageVo);
+                    dnsManageVos.add(dnsManageVo);
+                }
+            }
+            resp.setInitDnsManageVo(dnsManageVos);
+
+            //配置管理查询
+            List<ServerConfigVo> serverConfigVos = new ArrayList<>();
+            if(!CollectionUtils.isEmpty(networkIds)){
+                ServerConfigRequest serverConfigRequest = new ServerConfigRequest();
+                serverConfigRequest.setNetworkId(networkIds.get(0));
+                serverConfigVos = serverConfigExtMapper.selectConfig(serverConfigRequest);
+            }
+            resp.setInitServerConfigVo(serverConfigVos);
             result = buildResult(resp);
         }catch (Exception e){
             log.error("CommonServiceImpl.init Exception:{}",e);
