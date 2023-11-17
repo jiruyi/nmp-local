@@ -190,104 +190,109 @@ public class TaskServiceImpl implements TaskService {
     public void initData() {
         try {
             String initData = getInitData(localComIp);
-            if (!ParamCheckUtil.checkVoStrBlank(initData)) {
-                JSONObject resp = JSONObject.parseObject(initData);
-                if (resp.containsKey(SUCCESS_MSG) && (Boolean) resp.get(SUCCESS_MSG)) {
-                    JSONObject resultObj = resp.getJSONObject(RESULT_OBJ_MSG);
+            log.info("initData is Blank:{}",initData);
+            if (ParamCheckUtil.checkVoStrBlank(initData)){
+                return;
+            }
+            JSONObject resp = JSONObject.parseObject(initData);
+            if (!resp.containsKey(SUCCESS_MSG) || !(Boolean) resp.get(SUCCESS_MSG)){
+                log.warn("initData resp resp false:{}",resp.toJSONString());
+                return;
+            }
+            JSONObject resultObj = resp.getJSONObject(RESULT_OBJ_MSG);
 
-                    // 获取代理端安全服务器信息
-                    JSONArray serverVos = resultObj.getJSONArray(InitDataEnum.SECURITY_SERVER.getName());
-                    List<SecurityServerProxyVo> serverProxyVos = serverVos.toJavaList(SecurityServerProxyVo.class);
-                    if (!CollectionUtils.isEmpty(serverProxyVos)){
+            // 获取代理端安全服务器信息
+            JSONArray serverVos = resultObj.getJSONArray(InitDataEnum.SECURITY_SERVER.getName());
+            List<SecurityServerProxyVo> serverProxyVos = serverVos.toJavaList(SecurityServerProxyVo.class);
+            if (CollectionUtils.isEmpty(serverProxyVos)){
+                log.warn("initData serverProxyVos isEmpty");
+                return;
+            }
 
-                        // 初始化安全服务器信息
-                        int delServer = serverInfoMapper.deleteByExample(null);
-                        log.info("TaskServiceImpl.initData delServer:{}",delServer);
-                        for (SecurityServerProxyVo vo:serverProxyVos){
-                            NmpsSecurityServerInfo info = new NmpsSecurityServerInfo();
-                            BeanUtils.copyProperties(vo,info);
-                            int addServer = serverInfoMapper.insertSelective(info);
-                            log.info("TaskServiceImpl.initData addServer:{}",addServer);
-                        }
+            // 初始化安全服务器信息
+            int delServer = serverInfoMapper.deleteByExample(null);
+            log.info("TaskServiceImpl.initData delServer:{}",delServer);
+            for (SecurityServerProxyVo vo:serverProxyVos){
+                NmpsSecurityServerInfo info = new NmpsSecurityServerInfo();
+                BeanUtils.copyProperties(vo,info);
+                int addServer = serverInfoMapper.insertSelective(info);
+                log.info("TaskServiceImpl.initData addServer:{}",addServer);
+            }
 
+            // 初始化安全服务器关联网卡信息
+            int delNetworkCard = networkCardMapper.deleteByExample(null);
+            log.info("TaskServiceImpl.initData delNetworkCard:{}",delNetworkCard);
+            JSONArray networkCardVos = resultObj.getJSONArray(InitDataEnum.NETWORK_CARD.getName());
+            List<NetworkCardProxyVo> networkCardProxyVos = networkCardVos.toJavaList(NetworkCardProxyVo.class);
+            if (!CollectionUtils.isEmpty(networkCardProxyVos)){
+                for (NetworkCardProxyVo vo:networkCardProxyVos){
+                    NmpsNetworkCard card = new NmpsNetworkCard();
+                    BeanUtils.copyProperties(vo,card);
+                    int addCard = networkCardMapper.insertSelective(card);
+                    log.info("TaskServiceImpl.initData addCard:{}",addCard);
+                }
+            }
 
-                        // 初始化安全服务器关联网卡信息
-                        int delNetworkCard = networkCardMapper.deleteByExample(null);
-                        log.info("TaskServiceImpl.initData delNetworkCard:{}",delNetworkCard);
-                        JSONArray networkCardVos = resultObj.getJSONArray(InitDataEnum.NETWORK_CARD.getName());
-                        List<NetworkCardProxyVo> networkCardProxyVos = networkCardVos.toJavaList(NetworkCardProxyVo.class);
-                        if (!CollectionUtils.isEmpty(networkCardProxyVos)){
-                            for (NetworkCardProxyVo vo:networkCardProxyVos){
-                                NmpsNetworkCard card = new NmpsNetworkCard();
-                                BeanUtils.copyProperties(vo,card);
-                                int addCard = networkCardMapper.insertSelective(card);
-                                log.info("TaskServiceImpl.initData addCard:{}",addCard);
-                            }
-                        }
+            //基站管理初始化
+            JSONArray stationManage = resultObj.getJSONArray(InitDataEnum.STATION_MANAGE.getName());
+            List<StationManageVo> stationManageVos = stationManage.toJavaList(StationManageVo.class);
+            if(!CollectionUtils.isEmpty(stationManageVos)){
+                int delStationManage = stationManageMapper.deleteByExample(null);
+                log.info("TaskServiceImpl.initData stationManage:{}",delStationManage);
+                for(StationManageVo stationManageVo: stationManageVos){
+                    NmpsStationManage nmpsStationManage = new NmpsStationManage();
+                    BeanUtils.copyProperties(stationManageVo,nmpsStationManage);
+                    nmpsStationManage.setIsExist(true);
+                    int insertStation = stationManageMapper.insertSelective(nmpsStationManage);
+                    log.info("TaskServiceImpl.initData insertStation:{}",insertStation);
+                }
+            }
 
-                        //基站管理初始化
-                        JSONArray stationManage = resultObj.getJSONArray(InitDataEnum.STATION_MANAGE.getName());
-                        List<StationManageVo> stationManageVos = stationManage.toJavaList(StationManageVo.class);
-                        if(!CollectionUtils.isEmpty(stationManageVos)){
-                            int delStationManage = stationManageMapper.deleteByExample(null);
-                            log.info("TaskServiceImpl.initData stationManage:{}",delStationManage);
-                            for(StationManageVo stationManageVo: stationManageVos){
-                                NmpsStationManage nmpsStationManage = new NmpsStationManage();
-                                BeanUtils.copyProperties(stationManageVo,nmpsStationManage);
-                                nmpsStationManage.setIsExist(true);
-                                int insertStation = stationManageMapper.insertSelective(nmpsStationManage);
-                                log.info("TaskServiceImpl.initData insertStation:{}",insertStation);
-                            }
-                        }
+            //Dns管理初始化
+            JSONArray dnsManage = resultObj.getJSONArray(InitDataEnum.DNS_MANAGE.getName());
+            List<DnsManageVo> dnsManageVos = dnsManage.toJavaList(DnsManageVo.class);
+            if(!CollectionUtils.isEmpty(dnsManageVos)){
+                int delDnsManage = dnsManageMapper.deleteByExample(null);
+                log.info("TaskServiceImpl.initData DnsManage:{}",delDnsManage);
+                for(DnsManageVo dnsManageVo: dnsManageVos){
+                    NmpsDnsManage nmpsDnsManage = new NmpsDnsManage();
+                    BeanUtils.copyProperties(dnsManageVo,nmpsDnsManage);
+                    nmpsDnsManage.setIsExist(true);
+                    int insertDns = dnsManageMapper.insertSelective(nmpsDnsManage);
+                    log.info("TaskServiceImpl.initData insertDns:{}",insertDns);
+                }
+            }
 
-                        //Dns管理初始化
-                        JSONArray dnsManage = resultObj.getJSONArray(InitDataEnum.DNS_MANAGE.getName());
-                        List<DnsManageVo> dnsManageVos = dnsManage.toJavaList(DnsManageVo.class);
-                        if(!CollectionUtils.isEmpty(dnsManageVos)){
-                            int delDnsManage = dnsManageMapper.deleteByExample(null);
-                            log.info("TaskServiceImpl.initData DnsManage:{}",delDnsManage);
-                            for(DnsManageVo dnsManageVo: dnsManageVos){
-                                NmpsDnsManage nmpsDnsManage = new NmpsDnsManage();
-                                BeanUtils.copyProperties(dnsManageVo,nmpsDnsManage);
-                                nmpsDnsManage.setIsExist(true);
-                                int insertDns = dnsManageMapper.insertSelective(nmpsDnsManage);
-                                log.info("TaskServiceImpl.initData insertDns:{}",insertDns);
-                            }
-                        }
+            //Ca管理初始化
+            JSONArray caManage = resultObj.getJSONArray(InitDataEnum.CA_MANAGE.getName());
+            List<CaManageVo> caManageVos = caManage.toJavaList(CaManageVo.class);
+            if(!CollectionUtils.isEmpty(caManageVos)){
+                int delCaManage = caManageMapper.deleteByExample(null);
+                log.info("TaskServiceImpl.initData delCaManage:{}",delCaManage);
+                for(CaManageVo caManageVo: caManageVos){
+                    NmpsCaManage nmpsCaManage = new NmpsCaManage();
+                    BeanUtils.copyProperties(caManageVo,nmpsCaManage);
+                    nmpsCaManage.setIsExist(true);
+                    int insertCa = caManageMapper.insertSelective(nmpsCaManage);
+                    log.info("TaskServiceImpl.initData insertCa:{}",insertCa);
+                }
+            }
 
-                        //Ca管理初始化
-                        JSONArray caManage = resultObj.getJSONArray(InitDataEnum.CA_MANAGE.getName());
-                        List<CaManageVo> caManageVos = caManage.toJavaList(CaManageVo.class);
-                        if(!CollectionUtils.isEmpty(caManageVos)){
-                            int delCaManage = caManageMapper.deleteByExample(null);
-                            log.info("TaskServiceImpl.initData delCaManage:{}",delCaManage);
-                            for(CaManageVo caManageVo: caManageVos){
-                                NmpsCaManage nmpsCaManage = new NmpsCaManage();
-                                BeanUtils.copyProperties(caManageVo,nmpsCaManage);
-                                nmpsCaManage.setIsExist(true);
-                                int insertCa = caManageMapper.insertSelective(nmpsCaManage);
-                                log.info("TaskServiceImpl.initData insertCa:{}",insertCa);
-                            }
-                        }
-
-                        //配置管理初始化
-                        JSONArray serverConfig = resultObj.getJSONArray(InitDataEnum.SERVER_CONFIG.getName());
-                        log.info("TaskServiceImpl.initData insertServerConfig:{}",serverConfig);
-                        List<ServerConfigVo> serverConfigVos = serverConfig.toJavaList(ServerConfigVo.class);
-                        if(!CollectionUtils.isEmpty(serverConfigVos)){
-                            for(ServerConfigVo serverConfigVo: serverConfigVos){
-                                NmpsServerConfig nmpsServerConfig = new NmpsServerConfig();
-                                BeanUtils.copyProperties(serverConfigVo,nmpsServerConfig);
-                                nmpsServerConfig.setIsExist(true);
-                                if(nmpsServerConfig.getConfigValue() != null){
-                                    //构建更新条件
-                                    NmpsServerConfigExample serverConfigExample = new NmpsServerConfigExample();
-                                    serverConfigExample.createCriteria().andConfigCodeEqualTo(nmpsServerConfig.getConfigCode());
-                                    int i = serverConfigMapper.updateByExampleSelective(nmpsServerConfig, serverConfigExample);
-                                    log.info("TaskServiceImpl.initData insertServerConfig:{}",i);
-                                }
-                            }
-                        }
+            //配置管理初始化
+            JSONArray serverConfig = resultObj.getJSONArray(InitDataEnum.SERVER_CONFIG.getName());
+            log.info("TaskServiceImpl.initData insertServerConfig:{}",serverConfig);
+            List<ServerConfigVo> serverConfigVos = serverConfig.toJavaList(ServerConfigVo.class);
+            if(!CollectionUtils.isEmpty(serverConfigVos)){
+                for(ServerConfigVo serverConfigVo: serverConfigVos){
+                    NmpsServerConfig nmpsServerConfig = new NmpsServerConfig();
+                    BeanUtils.copyProperties(serverConfigVo,nmpsServerConfig);
+                    nmpsServerConfig.setIsExist(true);
+                    if(nmpsServerConfig.getConfigValue() != null){
+                        //构建更新条件
+                        NmpsServerConfigExample serverConfigExample = new NmpsServerConfigExample();
+                        serverConfigExample.createCriteria().andConfigCodeEqualTo(nmpsServerConfig.getConfigCode());
+                        int i = serverConfigMapper.updateByExampleSelective(nmpsServerConfig, serverConfigExample);
+                        log.info("TaskServiceImpl.initData insertServerConfig:{}",i);
                     }
                 }
             }
@@ -309,5 +314,12 @@ public class TaskServiceImpl implements TaskService {
         String post = HttpClientUtil.post(url, jsonParam.toJSONString());
         log.info("TaskServiceImpl.getInitData http post url:{},req:{},resp:{}",url,jsonParam.toJSONString(),post);
         return post;
+    }
+
+    public static void main(String[] args) {
+        if (!false || !true){
+            System.out.println(true);
+        }
+
     }
 }
