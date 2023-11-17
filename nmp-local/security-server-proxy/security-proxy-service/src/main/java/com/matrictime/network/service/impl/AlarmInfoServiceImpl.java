@@ -8,6 +8,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.service.AlarmInfoService;
 import com.matrictime.network.util.HttpClientUtil;
 import com.matrictime.network.util.SystemUtils;
+import com.xxl.job.core.context.XxlJobHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,6 +73,7 @@ public class AlarmInfoServiceImpl implements AlarmInfoService {
             List<NmpsAlarmInfo> alarmInfoList = alarmDomainService.queryAlarmList();
             if (CollectionUtils.isEmpty(alarmInfoList)) {
                 log.info(" alarmInfoPush alarmInfoList is empty");
+                XxlJobHelper.log("alarmInfoPush alarmInfoList is empty");
                 return;
             }
             //推送数据
@@ -81,10 +83,12 @@ public class AlarmInfoServiceImpl implements AlarmInfoService {
             //删除此次推送之前的数据 防止redis查询maxId失败
             Long maxAlarmId = alarmInfoList.stream().max(Comparator.comparingLong(NmpsAlarmInfo::getAlarmId)).get().getAlarmId();
             log.info("alarmPush this time maxAlarmId ：{}", maxAlarmId);
+            XxlJobHelper.log("alarmPush this time maxAlarmId ：{}", maxAlarmId);
             int deleteCount = alarmDomainService.deleteThisTimePushData(maxAlarmId);
             log.info("alarmPush this time delete data count：{}", deleteCount);
         } catch (Exception e) {
             log.error("DataPushService alarmPush exception:{}", e.getMessage());
+            XxlJobHelper.handleFail(e.getMessage());
         }
     }
 
