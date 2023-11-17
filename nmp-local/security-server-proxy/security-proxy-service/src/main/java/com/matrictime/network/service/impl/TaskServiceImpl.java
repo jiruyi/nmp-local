@@ -182,11 +182,13 @@ public class TaskServiceImpl implements TaskService {
             post = HttpClientUtil.post(url, jsonParam.toJSONString());
             Result result = JSONObject.parseObject(post, Result.class);
             if(result.isSuccess()){
+                XxlJobHelper.log("DataPush this time maxId ：{}", index);
                 nmpsDataInfoExample.createCriteria().andIdLessThanOrEqualTo(index);
                 nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
             }
         }catch (Exception e){
             log.error("dataPush  exception:{}",e.getMessage());
+            XxlJobHelper.handleFail(e.getMessage());
         }
     }
 
