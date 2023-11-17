@@ -47,6 +47,11 @@ public class DnsManageServiceImpl implements DnsManageService {
     @Value("${security-proxy.port}")
     private String securityProxyPort;
 
+    /**
+     * dns管理插入
+     * @param dnsManageRequest
+     * @return
+     */
     @Override
     public Result<Integer> insertDnsManage(DnsManageRequest dnsManageRequest) {
         Result<Integer> result = new Result<>();
@@ -65,7 +70,7 @@ public class DnsManageServiceImpl implements DnsManageService {
             int i = dnsManageMapper.insertSelective(dnsManage);
             //代理推送
             if(i == 1){
-                syncProxy(dnsManageRequest,"insert");
+                syncProxy(dnsManageRequest,DNS_MANAGE_INSERT_URL);
             }
             result.setSuccess(true);
             result.setResultObj(i);
@@ -77,6 +82,11 @@ public class DnsManageServiceImpl implements DnsManageService {
         return result;
     }
 
+    /**
+     * dns删除
+     * @param dnsManageRequest
+     * @return
+     */
     @Override
     public Result<Integer> deleteDnsManage(DnsManageRequest dnsManageRequest) {
         Result<Integer> result = new Result<>();
@@ -90,7 +100,7 @@ public class DnsManageServiceImpl implements DnsManageService {
             int i = dnsManageMapper.updateByExampleSelective(nmpsDnsManage, dnsManageExample);
             //代理推送
             if(i == 1){
-                syncProxy(dnsManageRequest,"delete");
+                syncProxy(dnsManageRequest,DNS_MANAGE_DELETE_URL);
             }
             result.setSuccess(true);
             result.setResultObj(i);
@@ -102,6 +112,11 @@ public class DnsManageServiceImpl implements DnsManageService {
         return result;
     }
 
+    /**
+     * dns管理查询
+     * @param dnsManageRequest
+     * @return
+     */
     @Override
     public Result<PageInfo<DnsManageVo>> selectDnsManage(DnsManageRequest dnsManageRequest) {
         Result<PageInfo<DnsManageVo>> result = new Result<>();
@@ -123,6 +138,11 @@ public class DnsManageServiceImpl implements DnsManageService {
         return result;
     }
 
+    /**
+     * dns管理更新
+     * @param dnsManageRequest
+     * @return
+     */
     @Override
     public Result<Integer> updateDnsManage(DnsManageRequest dnsManageRequest) {
         Result<Integer> result = new Result<>();
@@ -147,7 +167,7 @@ public class DnsManageServiceImpl implements DnsManageService {
             int i = dnsManageMapper.updateByExampleSelective(dnsManage, manageExample);
             //代理推送
             if(i == 1){
-                syncProxy(dnsManageRequest,"insert");
+                syncProxy(dnsManageRequest,DNS_MANAGE_INSERT_URL);
             }
             result.setSuccess(true);
             result.setResultObj(i);
@@ -166,18 +186,9 @@ public class DnsManageServiceImpl implements DnsManageService {
      */
     private void syncProxy(DnsManageRequest dnsManageRequest, String flag){
         try {
-            String urlString = "";
             DnsManageVo vo = new DnsManageVo();
             BeanUtils.copyProperties(dnsManageRequest,vo);
-//            JSONObject jsonParam = new JSONObject();
-//            jsonParam.put(JSON_KEY_EDITTYPE,flag);
-//            jsonParam.put("dnsManageVo",vo);
-            if(flag.equals("insert")){
-                urlString = DNS_MANAGE_INSERT_URL;
-            }else {
-                urlString = DNS_MANAGE_DELETE_URL;
-            }
-            String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + urlString);
+            String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + flag);
             HttpClientUtil.post(url,JSONObject.toJSONString(vo));
         }catch (Exception e){
             log.warn("DnsManageServiceImpl.syncProxy Exception:{}",e);

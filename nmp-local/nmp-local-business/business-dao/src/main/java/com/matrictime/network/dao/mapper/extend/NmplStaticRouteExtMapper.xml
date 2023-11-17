@@ -27,6 +27,12 @@
         <if test="companyName != null">
             and c.company_name = #{companyName,jdbcType=VARCHAR}
         </if>
+        <if test="companyId != null">
+            and c.company_id = #{companyId,jdbcType=VARCHAR}
+        </if>
+        <if test="stationId != null">
+            and b.station_id = #{stationId,jdbcType=VARCHAR}
+        </if>
         <if test="stationName != null">
             and b.station_name = #{stationName,jdbcType=VARCHAR}
         </if>

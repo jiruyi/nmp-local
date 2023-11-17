@@ -25,9 +25,17 @@ public class DnsManageController {
     @Resource
     private DnsManageService dnsManageService;
 
+    /**
+     * dns管理插入
+     * @param dnsManageRequest
+     * @return
+     */
     @RequestMapping(value = "/insertDnsManage",method = RequestMethod.POST)
-    public Result insertCaManage(@RequestBody DnsManageRequest dnsManageRequest){
+    public Result insertDnsManage(@RequestBody DnsManageRequest dnsManageRequest){
         try {
+            if(StringUtils.isEmpty(dnsManageRequest.getNetworkId())){
+                return new Result<>(false,"必传参没传");
+            }
             Result result = dnsManageService.insertDnsManage(dnsManageRequest);
             return result;
         }catch (Exception e){
@@ -36,8 +44,13 @@ public class DnsManageController {
         }
     }
 
+    /**
+     * dns管理查询
+     * @param dnsManageRequest
+     * @return
+     */
     @RequestMapping(value = "/selectDnsManage",method = RequestMethod.POST)
-    public Result selectIpManage(@RequestBody DnsManageRequest dnsManageRequest){
+    public Result selectDnsManage(@RequestBody DnsManageRequest dnsManageRequest){
         try {
             Result result = dnsManageService.selectDnsManage(dnsManageRequest);
             return result;
@@ -47,8 +60,13 @@ public class DnsManageController {
         }
     }
 
+    /**
+     * dns管理删除
+     * @param dnsManageRequest
+     * @return
+     */
     @RequestMapping(value = "/deleteDnsManage",method = RequestMethod.POST)
-    public Result deleteIpManage(@RequestBody DnsManageRequest dnsManageRequest){
+    public Result deleteDnsManage(@RequestBody DnsManageRequest dnsManageRequest){
         try {
             if(StringUtils.isEmpty(dnsManageRequest.getNetworkId())){
                 return new Result<>(false,"必传参没传");
@@ -61,8 +79,13 @@ public class DnsManageController {
         }
     }
 
+    /**
+     * dns管理更新
+     * @param dnsManageRequest
+     * @return
+     */
     @RequestMapping(value = "/updateDnsManage",method = RequestMethod.POST)
-    public Result updateIpManage(@RequestBody DnsManageRequest dnsManageRequest){
+    public Result updateDnsManage(@RequestBody DnsManageRequest dnsManageRequest){
         try {
             if(StringUtils.isEmpty(dnsManageRequest.getNetworkId()) ||
                     StringUtils.isEmpty(dnsManageRequest.getId())){

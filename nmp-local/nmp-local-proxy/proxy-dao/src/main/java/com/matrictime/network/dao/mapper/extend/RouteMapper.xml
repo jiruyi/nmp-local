@@ -185,18 +185,17 @@
   <!--  staticRoute begin  -->
   <insert id="batchStaticInsert" parameterType="com.matrictime.network.modelVo.NmplStaticRouteVo">
     insert into nmpl_static_route (id, route_id, network_id,
-    server_ip, is_exist, create_user,
+    is_exist, create_user,
     create_time, update_user, update_time,
-    station_id, ip_v6, byte_network_id,station_name,company_name,company_id,server_name
+    station_id,company_id,server_name,device_id
     )
     values
     <foreach collection ="list" item="vo" separator =",">
       (#{vo.id,jdbcType=BIGINT}, #{vo.routeId,jdbcType=VARCHAR}, #{vo.networkId,jdbcType=VARCHAR},
-      #{vo.serverIp,jdbcType=VARCHAR}, #{vo.isExist,jdbcType=BIT}, #{vo.createUser,jdbcType=VARCHAR},
+      #{vo.isExist,jdbcType=BIT}, #{vo.createUser,jdbcType=VARCHAR},
       #{vo.createTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP},
-      #{vo.stationId,jdbcType=VARCHAR}, #{vo.ipV6,jdbcType=VARCHAR}, #{vo.byteNetworkId,jdbcType=LONGVARBINARY},
-      #{vo.stationName,jdbcType=VARCHAR}, #{vo.companyName,jdbcType=VARCHAR}, #{vo.companyId,jdbcType=VARCHAR},
-      #{vo.serverName,jdbcType=VARCHAR}
+      #{vo.stationId,jdbcType=VARCHAR}, #{vo.companyId,jdbcType=VARCHAR},
+      #{vo.serverName,jdbcType=VARCHAR},#{vo.deviceId,jdbcType=VARCHAR}
       )
     </foreach >
   </insert>
@@ -210,9 +209,6 @@
         </if>
         <if test="info.networkId != null">
           network_id = #{info.networkId,jdbcType=VARCHAR},
-        </if>
-        <if test="info.serverIp != null">
-          server_ip = #{info.serverIp,jdbcType=VARCHAR},
         </if>
         <if test="info.isExist != null">
           is_exist = #{info.isExist,jdbcType=BIT},
@@ -229,27 +225,20 @@
         <if test="info.updateTime != null">
           update_time = #{info.updateTime,jdbcType=TIMESTAMP},
         </if>
+
         <if test="info.stationId != null">
           station_id = #{info.stationId,jdbcType=VARCHAR},
         </if>
-        <if test="info.ipV6 != null">
-          ip_v6 = #{info.ipV6,jdbcType=VARCHAR},
-        </if>
-        <if test="info.byteNetworkId != null">
-          byte_network_id = #{byteNetworkId,jdbcType=LONGVARBINARY},
-        </if>
 
-        <if test="info.stationName != null">
-          station_name = #{info.stationName,jdbcType=VARCHAR},
-        </if>
-        <if test="info.companyName != null">
-          company_name = #{info.companyName,jdbcType=VARCHAR},
-        </if>
         <if test="info.companyId != null">
           company_id = #{info.companyId,jdbcType=VARCHAR},
         </if>
         <if test="info.serverName != null">
           server_name = #{info.serverName,jdbcType=VARCHAR}
+        </if>
+
+        <if test="info.deviceId != null">
+          device_id = #{info.deviceId,jdbcType=VARCHAR}
         </if>
       </set>
       where id = #{info.id,jdbcType=BIGINT}

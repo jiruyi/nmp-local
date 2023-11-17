@@ -37,7 +37,8 @@ public class StaticRouteController {
     @RequestMapping(value = "/insertStaticRoute",method = RequestMethod.POST)
     public Result<Integer> insertStaticRoute(@RequestBody StaticRouteRequest staticRouteRequest){
         try {
-            if(StringUtils.isEmpty(staticRouteRequest.getNetworkId())){
+            if(StringUtils.isEmpty(staticRouteRequest.getNetworkId()) ||
+                    StringUtils.isEmpty(staticRouteRequest.getDeviceId())){
                 return new Result<>(false, ErrorMessageContants.NETWORK_ID_IS_NULL_MSG);
             }
             return staticRouteService.insert(staticRouteRequest);

@@ -379,15 +379,22 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             voList.add(vo);
 
             String editType = null;
+            List<String> editList = new ArrayList<>();
             // 判断路由信息是否存在
-            if (nmplStaticRoute != null){// 路由已存在，则更新路由信息
+            if (nmplStaticRoute != null){
+                // 路由已存在，则更新路由信息
                 batchNum = routeDomainService.updateStaticRoute(voList);
-
                 editType = EDIT_TYPE_UPD;
-            }else {// 路由不存在在插入路由信息
+                for(int i = 0;i< batchNum; i++){
+                    editList.add(editType);
+                }
+            }else {
+                // 路由不存在在插入路由信息
                 batchNum = routeDomainService.insertStaticRoute(voList);
-
                 editType = EDIT_TYPE_ADD;
+                for(int i = 0;i< batchNum; i++){
+                    editList.add(editType);
+                }
             }
 
             // 通知有路由信息变更
@@ -397,8 +404,10 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
                 Iterator<String> iterator = noticeDeviceTypes.iterator();
                 while (iterator.hasNext()){
                     String next = iterator.next();
-                    int flag = updateInfoService.updateInfo(next, NMPL_STATIC_ROUTE, editType, SYSTEM_NM, createTime);
-                    addNum = addNum +flag;
+                    for(String editString: editList){
+                        int flag = updateInfoService.updateInfo(next, NMPL_STATIC_ROUTE, editString, SYSTEM_NM, createTime);
+                        addNum = addNum +flag;
+                    }
                 }
             }
 

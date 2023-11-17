@@ -105,6 +105,9 @@ public class BusinessRouteDomainServiceImpl implements BusinessRouteDomainServic
         if(StationTypeEnum.INSIDE.getCode().equals(baseStationInfoRequest.getStationType())){
             criteria.andStationTypeEqualTo(baseStationInfoRequest.getStationType());
         }
+        if(!StringUtils.isEmpty(baseStationInfoRequest.getRelationOperatorId())){
+            criteria.andRelationOperatorIdEqualTo(baseStationInfoRequest.getRelationOperatorId());
+        }
         criteria.andIsExistEqualTo(true);
         List<NmplBaseStationInfo> nmplBaseStationInfos = baseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         for(NmplBaseStationInfo nmplBaseStationInfo: nmplBaseStationInfos){

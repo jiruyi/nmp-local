@@ -71,7 +71,7 @@ public class CaManageServiceImpl implements CaManageService {
             int i = caManageMapper.insertSelective(nmpsCaManage);
             //代理推送
             if(i == 1){
-                syncProxy(caManageRequest,"insert");
+                syncProxy(caManageRequest,CA_MANAGE_INSERT_URL);
             }
             result.setSuccess(true);
             result.setResultObj(i);
@@ -103,7 +103,7 @@ public class CaManageServiceImpl implements CaManageService {
             result.setResultObj(i);
             //代理推送
             if(i == 1){
-                syncProxy(caManageRequest,"delete");
+                syncProxy(caManageRequest,CA_MANAGE_DELETE_URL);
             }
         }catch (Exception e){
             result.setErrorMsg(e.getMessage());
@@ -168,7 +168,7 @@ public class CaManageServiceImpl implements CaManageService {
             int i = caManageMapper.updateByExampleSelective(nmpsCaManage, manageExample);
             //代理推送
             if(i == 1){
-                syncProxy(caManageRequest,"insert");
+                syncProxy(caManageRequest,CA_MANAGE_INSERT_URL);
             }
             result.setSuccess(true);
             result.setResultObj(i);
@@ -187,18 +187,9 @@ public class CaManageServiceImpl implements CaManageService {
      */
     private void syncProxy(CaManageRequest caManageRequest,String flag){
         try {
-            String urlString = "";
             CaManageVo vo = new CaManageVo();
             BeanUtils.copyProperties(caManageRequest,vo);
-//            JSONObject jsonParam = new JSONObject();
-//            jsonParam.put(JSON_KEY_EDITTYPE,flag);
-//            jsonParam.put("caManageVo",vo);
-            if(flag.equals("insert")){
-                urlString = CA_MANAGE_INSERT_URL;
-            }else {
-                urlString = CA_MANAGE_DELETE_URL;
-            }
-            String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + urlString);
+            String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + flag);
             HttpClientUtil.post(url,JSONObject.toJSONString(vo));
         }catch (Exception e){
             log.warn("CaManageServiceImpl.syncProxy Exception:{}",e);

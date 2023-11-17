@@ -47,51 +47,66 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
 
     @Override
     public int insert(StaticRouteRequest staticRouteRequest) {
-        NmplStaticRoute nmplStaticRoute = new NmplStaticRoute();
-        String[] split = staticRouteRequest.getNetworkId().split("-");
-        if(!checkID(split[split.length - 1],staticRouteRequest)){
+
+        //判断入网id
+        NmplStaticRouteExample staticRouteExample = new NmplStaticRouteExample();
+        NmplStaticRouteExample.Criteria criteria = staticRouteExample.createCriteria();
+        criteria.andNetworkIdEqualTo(staticRouteRequest.getNetworkId());
+        criteria.andIsExistEqualTo(true);
+        List<NmplStaticRoute> staticRoutes = nmplStaticRouteMapper.selectByExample(staticRouteExample);
+        if(!CollectionUtils.isEmpty(staticRoutes)) {
             throw new RuntimeException("入网Id重复");
         }
 
-        NmplStaticRouteExample staticRouteExample = new NmplStaticRouteExample();
-        NmplStaticRouteExample.Criteria criteria = staticRouteExample.createCriteria();
-        criteria.andDeviceIdEqualTo(staticRouteRequest.getDeviceId());
-        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(staticRouteExample);
+        //判断设备Id
+        NmplStaticRouteExample example = new NmplStaticRouteExample();
+        NmplStaticRouteExample.Criteria staticRouteExampleCriteria = example.createCriteria();
+        staticRouteExampleCriteria.andDeviceIdEqualTo(staticRouteRequest.getDeviceId());
+        staticRouteExampleCriteria.andIsExistEqualTo(true);
+        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(example);
         if(!CollectionUtils.isEmpty(nmplStaticRoutes)) {
             throw new RuntimeException("设备Id重复");
         }
-
+        NmplStaticRoute nmplStaticRoute = new NmplStaticRoute();
         BeanUtils.copyProperties(staticRouteRequest,nmplStaticRoute);
-//        nmplStaticRoute.setByteNetworkId(DecimalConversionUtil.toLH(Integer.parseInt(staticRouteRequest.getNetworkId())));
         return nmplStaticRouteMapper.insertSelective(nmplStaticRoute);
     }
 
     @Override
     public int delete(StaticRouteRequest staticRouteRequest) {
         NmplStaticRouteExample nmplInternetRouteExample = constructUpdateCondition(staticRouteRequest);
-        NmplStaticRoute nmplStaticRoute = constructUpdateDate(staticRouteRequest);
+        NmplStaticRoute nmplStaticRoute = constructUpdateData(staticRouteRequest);
         nmplStaticRoute.setIsExist(false);
         return nmplStaticRouteMapper.updateByExampleSelective(nmplStaticRoute,nmplInternetRouteExample);
     }
 
     @Override
     public int update(StaticRouteRequest staticRouteRequest) {
-        String[] split = staticRouteRequest.getNetworkId().split("-");
-        if(!checkID(split[split.length - 1],staticRouteRequest)){
-            throw new RuntimeException("入网Id重复");
-        }
+
+        //判断入网id
         NmplStaticRouteExample staticRouteExample = new NmplStaticRouteExample();
         NmplStaticRouteExample.Criteria criteria = staticRouteExample.createCriteria();
-        criteria.andDeviceIdEqualTo(staticRouteRequest.getDeviceId());
+        criteria.andNetworkIdEqualTo(staticRouteRequest.getNetworkId());
+        criteria.andIsExistEqualTo(true);
         criteria.andIdNotEqualTo(staticRouteRequest.getId());
-        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(staticRouteExample);
+        List<NmplStaticRoute> staticRoutes = nmplStaticRouteMapper.selectByExample(staticRouteExample);
+        if(!CollectionUtils.isEmpty(staticRoutes)) {
+            throw new RuntimeException("入网Id重复");
+        }
+
+        //判断设备id
+        NmplStaticRouteExample example = new NmplStaticRouteExample();
+        NmplStaticRouteExample.Criteria staticRouteExampleCriteria = example.createCriteria();
+        staticRouteExampleCriteria.andDeviceIdEqualTo(staticRouteRequest.getDeviceId());
+        staticRouteExampleCriteria.andIdNotEqualTo(staticRouteRequest.getId());
+        staticRouteExampleCriteria.andIsExistEqualTo(true);
+        List<NmplStaticRoute> nmplStaticRoutes = nmplStaticRouteMapper.selectByExample(example);
         if(!CollectionUtils.isEmpty(nmplStaticRoutes)) {
             throw new RuntimeException("设备Id重复");
         }
 
         NmplStaticRouteExample nmplStaticRouteExample = constructUpdateCondition(staticRouteRequest);
-        NmplStaticRoute nmplStaticRoute = constructUpdateDate(staticRouteRequest);
-//        nmplStaticRoute.setByteNetworkId(DecimalConversionUtil.toLH(Integer.parseInt(staticRouteRequest.getNetworkId())));
+        NmplStaticRoute nmplStaticRoute = constructUpdateData(staticRouteRequest);
         return nmplStaticRouteMapper.updateByExampleSelective(nmplStaticRoute,nmplStaticRouteExample);
     }
 
@@ -127,7 +142,7 @@ public class StaticRouteDomainServiceImpl implements StaticRouteDomainService {
      * @param staticRouteRequest
      * @return
      */
-    private NmplStaticRoute constructUpdateDate(StaticRouteRequest staticRouteRequest){
+    private NmplStaticRoute constructUpdateData(StaticRouteRequest staticRouteRequest){
         NmplStaticRoute nmplStaticRoute = new NmplStaticRoute();
         BeanUtils.copyProperties(staticRouteRequest,nmplStaticRoute);
         return nmplStaticRoute;

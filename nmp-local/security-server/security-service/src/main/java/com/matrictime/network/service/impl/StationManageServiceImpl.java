@@ -48,6 +48,11 @@ public class StationManageServiceImpl implements StationManageService {
     @Value("${security-proxy.port}")
     private String securityProxyPort;
 
+    /**
+     * 基站管理插入
+     * @param stationManageRequest
+     * @return
+     */
     @Override
     public Result<Integer> insertStationManage(StationManageRequest stationManageRequest) {
         Result<Integer> result = new Result<>();
@@ -66,7 +71,7 @@ public class StationManageServiceImpl implements StationManageService {
             int i = stationManageMapper.insertSelective(nmpsStationManage);
             //代理推送
             if(i == 1){
-                syncProxy(stationManageRequest,"insert");
+                syncProxy(stationManageRequest,STATION_MANAGE_INSERT_URL);
             }
             result.setSuccess(true);
             result.setResultObj(i);
@@ -78,6 +83,11 @@ public class StationManageServiceImpl implements StationManageService {
         return result;
     }
 
+    /**
+     * 基站管理删除
+     * @param stationManageRequest
+     * @return
+     */
     @Override
     public Result<Integer> deleteStationManage(StationManageRequest stationManageRequest) {
         Result<Integer> result = new Result<>();
@@ -92,7 +102,7 @@ public class StationManageServiceImpl implements StationManageService {
             int i = stationManageMapper.updateByExampleSelective(nmpsStationManage, stationManageExample);
             //代理推送
             if(i == 1){
-                syncProxy(stationManageRequest,"delete");
+                syncProxy(stationManageRequest,STATION_MANAGE_DELETE_URL);
             }
             result.setSuccess(true);
             result.setResultObj(i);
@@ -104,6 +114,11 @@ public class StationManageServiceImpl implements StationManageService {
         return result;
     }
 
+    /**
+     * 基站管理查询
+     * @param stationManageRequest
+     * @return
+     */
     @Override
     public Result<PageInfo<StationManageVo>> selectStationManage(StationManageRequest stationManageRequest) {
         Result<PageInfo<StationManageVo>> result = new Result<>();
@@ -125,6 +140,11 @@ public class StationManageServiceImpl implements StationManageService {
         return result;
     }
 
+    /**
+     * 基站管理更新
+     * @param stationManageRequest
+     * @return
+     */
     @Override
     public Result<Integer> updateStationManage(StationManageRequest stationManageRequest) {
         Result<Integer> result = new Result<>();
@@ -149,7 +169,7 @@ public class StationManageServiceImpl implements StationManageService {
             int i = stationManageMapper.updateByExampleSelective(nmpsStationManage, manageExample);
             //代理推送
             if(i == 1){
-                syncProxy(stationManageRequest,"insert");
+                syncProxy(stationManageRequest,STATION_MANAGE_INSERT_URL);
             }
             result.setSuccess(true);
             result.setResultObj(i);
@@ -168,18 +188,9 @@ public class StationManageServiceImpl implements StationManageService {
      */
     private void syncProxy(StationManageRequest stationManageRequest, String flag){
         try {
-            String urlString = "";
             StationManageVo vo = new StationManageVo();
             BeanUtils.copyProperties(stationManageRequest,vo);
-//            JSONObject jsonParam = new JSONObject();
-//            jsonParam.put(JSON_KEY_EDITTYPE,flag);
-//            jsonParam.put("StationManageVo",vo);
-            if(flag.equals("insert")){
-                urlString = STATION_MANAGE_INSERT_URL;
-            }else {
-                urlString = STATION_MANAGE_DELETE_URL;
-            }
-            String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + urlString);
+            String url = HttpClientUtil.getUrl(vo.getComIp(), securityProxyPort, securityProxyPath + flag);
             HttpClientUtil.post(url,JSONObject.toJSONString(vo));
         }catch (Exception e){
             log.warn("StationManageServiceImpl.syncProxy Exception:{}",e);

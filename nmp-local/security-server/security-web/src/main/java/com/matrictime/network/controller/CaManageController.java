@@ -24,9 +24,17 @@ public class CaManageController {
     @Resource
     private CaManageService caManageService;
 
+    /**
+     * ca管理插入
+     * @param caManageRequest
+     * @return
+     */
     @RequestMapping(value = "/insertCaManage",method = RequestMethod.POST)
     public Result insertCaManage(@RequestBody CaManageRequest caManageRequest){
         try {
+            if(StringUtils.isEmpty(caManageRequest.getNetworkId())){
+                return new Result<>(false,"必传参没传");
+            }
             Result result = caManageService.insertCaManage(caManageRequest);
             return result;
         }catch (Exception e){
@@ -35,6 +43,11 @@ public class CaManageController {
         }
     }
 
+    /**
+     * ca管理查询
+     * @param caManageRequest
+     * @return
+     */
     @RequestMapping(value = "/selectCaManage",method = RequestMethod.POST)
     public Result selectIpManage(@RequestBody CaManageRequest caManageRequest){
         try {
@@ -46,6 +59,11 @@ public class CaManageController {
         }
     }
 
+    /**
+     * ca管理删除
+     * @param caManageRequest
+     * @return
+     */
     @RequestMapping(value = "/deleteCaManage",method = RequestMethod.POST)
     public Result deleteIpManage(@RequestBody CaManageRequest caManageRequest){
         try {
@@ -60,6 +78,11 @@ public class CaManageController {
         }
     }
 
+    /**
+     * ca管理更新
+     * @param caManageRequest
+     * @return
+     */
     @RequestMapping(value = "/updateCaManage",method = RequestMethod.POST)
     public Result updateIpManage(@RequestBody CaManageRequest caManageRequest){
         try {

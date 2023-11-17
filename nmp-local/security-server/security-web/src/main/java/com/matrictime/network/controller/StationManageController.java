@@ -25,9 +25,17 @@ public class StationManageController {
     @Resource
     private StationManageService stationManageService;
 
+    /**
+     * 基站管理插入
+     * @param stationManageRequest
+     * @return
+     */
     @RequestMapping(value = "/insertStationManage",method = RequestMethod.POST)
-    public Result insertCaManage(@RequestBody StationManageRequest stationManageRequest){
+    public Result insertStationManage(@RequestBody StationManageRequest stationManageRequest){
         try {
+            if(StringUtils.isEmpty(stationManageRequest.getNetworkId())){
+                return new Result<>(false,"必传参没传");
+            }
             Result result = stationManageService.insertStationManage(stationManageRequest);
             return result;
         }catch (Exception e){
@@ -36,8 +44,13 @@ public class StationManageController {
         }
     }
 
+    /**
+     * 基站管理查询
+     * @param stationManageRequest
+     * @return
+     */
     @RequestMapping(value = "/selectStationManage",method = RequestMethod.POST)
-    public Result selectIpManage(@RequestBody StationManageRequest stationManageRequest){
+    public Result selectStationManage(@RequestBody StationManageRequest stationManageRequest){
         try {
             Result result = stationManageService.selectStationManage(stationManageRequest);
             return result;
@@ -47,8 +60,13 @@ public class StationManageController {
         }
     }
 
+    /**
+     * 基站管理删除
+     * @param stationManageRequest
+     * @return
+     */
     @RequestMapping(value = "/deleteStationManage",method = RequestMethod.POST)
-    public Result deleteIpManage(@RequestBody StationManageRequest stationManageRequest){
+    public Result deleteStationManage(@RequestBody StationManageRequest stationManageRequest){
         try {
             if(StringUtils.isEmpty(stationManageRequest.getNetworkId())){
                 return new Result<>(false,"必传参没传");
@@ -61,8 +79,13 @@ public class StationManageController {
         }
     }
 
+    /**
+     * 基站管理更新
+     * @param stationManageRequest
+     * @return
+     */
     @RequestMapping(value = "/updateStationManage",method = RequestMethod.POST)
-    public Result updateIpManage(@RequestBody StationManageRequest stationManageRequest){
+    public Result updateStationManage(@RequestBody StationManageRequest stationManageRequest){
         try {
             if(StringUtils.isEmpty(stationManageRequest.getNetworkId()) ||
                     StringUtils.isEmpty(stationManageRequest.getId())){
