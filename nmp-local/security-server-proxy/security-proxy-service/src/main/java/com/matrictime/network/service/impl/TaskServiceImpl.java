@@ -16,6 +16,7 @@ import com.matrictime.network.modelVo.*;
 import com.matrictime.network.service.SecurityServerService;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
+import com.xxl.job.core.context.XxlJobHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,40 +85,46 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public void heartReport(Date excuteTime) {
-        // 获取当前代理上配置的安全服务器列表
-        List<SecurityServerProxyVo> localServerVos = serverService.getLocalServerVos();
-        if (!CollectionUtils.isEmpty(localServerVos)){
-            List<HeartInfoProxyVo> heartInfos = new ArrayList<>();
+        try{
+            // 获取当前代理上配置的安全服务器列表
+            List<SecurityServerProxyVo> localServerVos = serverService.getLocalServerVos();
+            if (!CollectionUtils.isEmpty(localServerVos)){
+                List<HeartInfoProxyVo> heartInfos = new ArrayList<>();
 
-            for (SecurityServerProxyVo serverProxyVo : localServerVos){
-                // 查询安全服务器上报状态信息
-                NmpsServerHeartInfoExample serverHeartInfoExample = new NmpsServerHeartInfoExample();
-                serverHeartInfoExample.setOrderByClause(CREATE_TIME_DESC);
-                Date minUploadTime = DateUtils.addSecondsForDate(excuteTime, -HEART_REPORT_SPACE);
-                serverHeartInfoExample.createCriteria().andNetworkIdEqualTo(serverProxyVo.getNetworkId()).andCreateTimeLessThan(excuteTime).andCreateTimeGreaterThanOrEqualTo(minUploadTime);
-                List<NmpsServerHeartInfo> serverHeartInfos = serverHeartInfoMapper.selectByExample(serverHeartInfoExample);
-                if (!CollectionUtils.isEmpty(serverHeartInfos)){
-                    HeartInfoProxyVo vo = new HeartInfoProxyVo();
-                    BeanUtils.copyProperties(serverHeartInfos.get(ZERO),vo);
-                    heartInfos.add(vo);
+                for (SecurityServerProxyVo serverProxyVo : localServerVos){
+                    // 查询安全服务器上报状态信息
+                    NmpsServerHeartInfoExample serverHeartInfoExample = new NmpsServerHeartInfoExample();
+                    serverHeartInfoExample.setOrderByClause(CREATE_TIME_DESC);
+                    Date minUploadTime = DateUtils.addSecondsForDate(excuteTime, -HEART_REPORT_SPACE);
+                    serverHeartInfoExample.createCriteria().andNetworkIdEqualTo(serverProxyVo.getNetworkId()).andCreateTimeLessThan(excuteTime).andCreateTimeGreaterThanOrEqualTo(minUploadTime);
+                    List<NmpsServerHeartInfo> serverHeartInfos = serverHeartInfoMapper.selectByExample(serverHeartInfoExample);
+                    if (!CollectionUtils.isEmpty(serverHeartInfos)){
+                        HeartInfoProxyVo vo = new HeartInfoProxyVo();
+                        BeanUtils.copyProperties(serverHeartInfos.get(ZERO),vo);
+                        heartInfos.add(vo);
+                    }
                 }
+
+                // 上报安全服务器管理中心
+                if (!CollectionUtils.isEmpty(heartInfos)){
+                    heartReportToServer(heartInfos);
+                }else {
+                    log.info("TaskServiceImpl.heartReport:当前代理上没有查询到安全服务器有效心跳信息");
+                }
+            }else {
+                log.info("TaskServiceImpl.heartReport:当前代理上没有安全服务器节点信息配置");
             }
 
-            // 上报安全服务器管理中心
-            if (!CollectionUtils.isEmpty(heartInfos)){
-                heartReportToServer(heartInfos);
-            }else {
-                log.info("TaskServiceImpl.heartReport:当前代理上没有查询到安全服务器有效心跳信息");
-            }
-        }else {
-            log.info("TaskServiceImpl.heartReport:当前代理上没有安全服务器节点信息配置");
+            // 清除基站历史状态上报数据
+            NmpsServerHeartInfoExample heartInfoExample = new NmpsServerHeartInfoExample();
+            heartInfoExample.createCriteria().andCreateTimeLessThan(excuteTime);
+            int delete = serverHeartInfoMapper.deleteByExample(heartInfoExample);
+            log.info("TaskServiceImpl.heartReport delete:{}",delete);
+        }catch (Exception e){
+            log.error("TaskServiceImpl.heartReport Exception:{}",e);
+            XxlJobHelper.handleFail("TaskServiceImpl.heartReport Exception:"+e.getMessage());
         }
 
-        // 清除基站历史状态上报数据
-        NmpsServerHeartInfoExample heartInfoExample = new NmpsServerHeartInfoExample();
-        heartInfoExample.createCriteria().andCreateTimeLessThan(excuteTime);
-        int delete = serverHeartInfoMapper.deleteByExample(heartInfoExample);
-        log.info("TaskServiceImpl.heartReport delete:{}",delete);
     }
 
     /**
@@ -175,11 +182,13 @@ public class TaskServiceImpl implements TaskService {
             post = HttpClientUtil.post(url, jsonParam.toJSONString());
             Result result = JSONObject.parseObject(post, Result.class);
             if(result.isSuccess()){
+                XxlJobHelper.log("DataPush this time maxId ：{}", index);
                 nmpsDataInfoExample.createCriteria().andIdLessThanOrEqualTo(index);
                 nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
             }
         }catch (Exception e){
             log.error("dataPush  exception:{}",e.getMessage());
+            XxlJobHelper.handleFail(e.getMessage());
         }
     }
 
@@ -298,6 +307,7 @@ public class TaskServiceImpl implements TaskService {
             }
         } catch (Exception e) {
             log.error("TaskServiceImpl.initData Exception:{}",e.getMessage());
+            XxlJobHelper.handleFail("TaskServiceImpl.initData Exception:"+e.getMessage());
         }
     }
 
@@ -314,12 +324,5 @@ public class TaskServiceImpl implements TaskService {
         String post = HttpClientUtil.post(url, jsonParam.toJSONString());
         log.info("TaskServiceImpl.getInitData http post url:{},req:{},resp:{}",url,jsonParam.toJSONString(),post);
         return post;
-    }
-
-    public static void main(String[] args) {
-        if (!false || !true){
-            System.out.println(true);
-        }
-
     }
 }
