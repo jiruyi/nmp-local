@@ -21,6 +21,7 @@ import com.matrictime.network.util.ShellUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -189,7 +190,7 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
 //            run.add("sh");
             run.add(file);
             run.add(req.getAction());
-            ShellUtil.runShell(run,null);
+            runShell(run);
 
         }catch (SystemException e){
             log.warn("SecurityServerServiceImpl.run SystemException:{}",e.getMessage());
@@ -199,6 +200,11 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
             result = failResult("");
         }
         return result;
+    }
+
+    @Async
+    public void runShell(List<String> run){
+        ShellUtil.runShell(run,null);
     }
 
     private void checkEditServerParam(EditServerProxyReq req) throws Exception{
