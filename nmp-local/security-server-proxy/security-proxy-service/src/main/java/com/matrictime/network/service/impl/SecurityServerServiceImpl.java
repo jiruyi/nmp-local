@@ -48,6 +48,9 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
     @Resource
     private NmpsNetworkCardMapper networkCardMapper;
 
+    @Resource
+    private CommonServiceimpl commonService;
+
     @Value("${server-shell.run-file-name}")
     private String serverStartFileName;
 
@@ -190,7 +193,7 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
 //            run.add("sh");
             run.add(file);
             run.add(req.getAction());
-            runShell(run);
+            commonService.startServerShell(run);
 
         }catch (SystemException e){
             log.warn("SecurityServerServiceImpl.run SystemException:{}",e.getMessage());
@@ -200,11 +203,6 @@ public class SecurityServerServiceImpl extends SystemBaseService implements Secu
             result = failResult("");
         }
         return result;
-    }
-
-    @Async
-    public void runShell(List<String> run){
-        ShellUtil.runShell(run,null);
     }
 
     private void checkEditServerParam(EditServerProxyReq req) throws Exception{
