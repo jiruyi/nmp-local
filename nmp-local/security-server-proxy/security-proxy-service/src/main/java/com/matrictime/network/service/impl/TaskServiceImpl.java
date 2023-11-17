@@ -16,6 +16,7 @@ import com.matrictime.network.modelVo.*;
 import com.matrictime.network.service.SecurityServerService;
 import com.matrictime.network.service.TaskService;
 import com.matrictime.network.util.*;
+import com.xxl.job.core.context.XxlJobHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,11 +176,13 @@ public class TaskServiceImpl implements TaskService {
             post = HttpClientUtil.post(url, jsonParam.toJSONString());
             Result result = JSONObject.parseObject(post, Result.class);
             if(result.isSuccess()){
+                XxlJobHelper.log("DataPush this time maxId ：{}", index);
                 nmpsDataInfoExample.createCriteria().andIdLessThanOrEqualTo(index);
                 nmpsDataInfoMapper.deleteByExample(nmpsDataInfoExample);
             }
         }catch (Exception e){
             log.error("dataPush  exception:{}",e.getMessage());
+            XxlJobHelper.handleFail(e.getMessage());
         }
     }
 
