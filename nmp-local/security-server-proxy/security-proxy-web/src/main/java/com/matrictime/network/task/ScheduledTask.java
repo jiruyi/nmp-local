@@ -29,7 +29,7 @@ public class ScheduledTask {
      * @create 2023/4/19 0019 17:25
      */
 //    @XxlJob("initData")
-    @Scheduled(cron = "* * 0/12 * * ?")
+    @Scheduled(cron = "0 0 0/12 * * ?")
     public void initData(){
         log.info(Thread.currentThread().getName()+"======================initData begin=============================");
         taskService.initData();
