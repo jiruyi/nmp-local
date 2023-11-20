@@ -234,7 +234,7 @@
           company_id = #{info.companyId,jdbcType=VARCHAR},
         </if>
         <if test="info.serverName != null">
-          server_name = #{info.serverName,jdbcType=VARCHAR}
+          server_name = #{info.serverName,jdbcType=VARCHAR},
         </if>
 
         <if test="info.deviceId != null">
