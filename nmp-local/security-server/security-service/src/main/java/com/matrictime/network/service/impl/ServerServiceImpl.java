@@ -515,13 +515,13 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
             }
             if (!ParamCheckUtil.checkVoStrBlank(cardVo.getIpv4())){
                 if (ipv4s.contains(cardVo.getIpv4())){
-                    throw new Exception("Ipv4不唯一");
+                    throw new SystemException("Ipv4不唯一，请重新输入");
                 }
                 ipv4s.add(cardVo.getIpv4());
             }
             if (!ParamCheckUtil.checkVoStrBlank(cardVo.getIpv6())){
                 if (ipv4s.contains(cardVo.getIpv4())){
-                    throw new Exception("Ipv6不唯一");
+                    throw new SystemException("Ipv6不唯一，请重新输入");
                 }
                 ipv6s.add(cardVo.getIpv6());
             }
@@ -583,13 +583,13 @@ public class ServerServiceImpl extends SystemBaseService implements ServerServic
             }
             if (!ParamCheckUtil.checkVoStrBlank(cardVo.getIpv4())){
                 if (ipv4s.contains(cardVo.getIpv4())){
-                    throw new Exception("Ipv4不唯一");
+                    throw new SystemException("Ipv4不唯一，请重新输入");
                 }
                 ipv4s.add(cardVo.getIpv4());
             }
             if (!ParamCheckUtil.checkVoStrBlank(cardVo.getIpv6())){
                 if (ipv6s.contains(cardVo.getIpv6())){
-                    throw new Exception("Ipv6不唯一");
+                    throw new SystemException("Ipv6不唯一，请重新输入");
                 }
                 ipv6s.add(cardVo.getIpv6());
             }
