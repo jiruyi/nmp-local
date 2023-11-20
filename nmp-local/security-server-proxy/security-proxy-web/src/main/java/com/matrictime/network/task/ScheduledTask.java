@@ -5,6 +5,7 @@ import com.matrictime.network.service.TaskService;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -67,7 +68,7 @@ public class ScheduledTask {
       * @author jiruyi
       * @create 2023/11/13 0013 17:56
       */
-    @XxlJob("alarmInfo")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void alarmInfoPush(){
         log.info(Thread.currentThread().getName()+"======================alarmInfoPush begin=============================");
         alarmInfoService.alarmInfoPush();
