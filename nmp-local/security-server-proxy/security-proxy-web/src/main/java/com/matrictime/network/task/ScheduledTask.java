@@ -55,7 +55,7 @@ public class ScheduledTask {
 
 
 
-    @XxlJob("dataInfo")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void dataPush(){
         log.info(Thread.currentThread().getName()+"======================dataPush begin=============================");
         taskService.dataPush();
