@@ -1,6 +1,8 @@
 /*
 V4.0.2增量sql包
 */
+USE `nmp_local`;
+
 DROP TABLE nmpl_static_route;
 
 CREATE TABLE `nmpl_static_route` (
