@@ -7,6 +7,7 @@
         <result column="server_name" jdbcType="VARCHAR" property="serverName" />
         <result column="com_ip" jdbcType="VARCHAR" property="comIp" />
         <result column="station_type" jdbcType="CHAR" property="stationType" />
+        <result column="connect_type" jdbcType="CHAR" property="connectType" />
         <result column="access_method" jdbcType="CHAR" property="accessMethod" />
         <result column="domain_name" jdbcType="VARCHAR" property="domainName" />
         <result column="station_ip" jdbcType="VARCHAR" property="stationIp" />

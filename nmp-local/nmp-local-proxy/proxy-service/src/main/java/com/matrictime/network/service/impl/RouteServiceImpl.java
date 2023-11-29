@@ -241,11 +241,15 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
         try {
             Date createTime = new Date();
             vo.setUpdateTime(createTime);
-            List<NmplInternetRouteVo> voList = new ArrayList<>(1);
-            voList.add(vo);
+//            List<NmplInternetRouteVo> voList = new ArrayList<>(1);
+//            voList.add(vo);
 
             // 新增路由信息
-            int batchNum = routeDomainService.insertInternetRoute(voList);
+            NmplInternetRoute nmplInternetRoute = new NmplInternetRoute();
+            BeanUtils.copyProperties(vo,nmplInternetRoute);
+            int batchNum = nmplInternetRouteMapper.insertSelective(nmplInternetRoute);
+
+//            routeDomainService.insertInternetRoute(voList);
 
             // 通知有路由信息变更
             Set<String> noticeDeviceTypes = updateInfoService.getNoticeDeviceTypes();
@@ -288,13 +292,21 @@ public class RouteServiceImpl  extends SystemBaseService implements RouteService
             voList.add(vo);
 
             String editType = null;
+            NmplInternetRoute internetRoute = new NmplInternetRoute();
+            BeanUtils.copyProperties(vo,internetRoute);
             // 判断路由信息是否存在
-            if (nmplInternetRoute != null){// 路由已存在，则更新路由信息
-                batchNum = routeDomainService.updateInternetRoute(voList);
+            if (nmplInternetRoute != null){
+                // 路由已存在，则更新路由信息
+                NmplInternetRouteExample internetRouteExample = new NmplInternetRouteExample();
+                NmplInternetRouteExample.Criteria criteria = internetRouteExample.createCriteria();
+                criteria.andIdEqualTo(internetRoute.getId());
+                batchNum = nmplInternetRouteMapper.updateByExampleSelective(internetRoute,internetRouteExample);
+//                batchNum = routeDomainService.updateInternetRoute(voList);
 
                 editType = EDIT_TYPE_UPD;
             }else {// 路由不存在在插入路由信息
-                batchNum = routeDomainService.insertInternetRoute(voList);
+                batchNum = nmplInternetRouteMapper.insertSelective(internetRoute);
+//                 routeDomainService.insertInternetRoute(voList);
 
                 editType = EDIT_TYPE_ADD;
             }

@@ -225,18 +225,15 @@
         <if test="info.updateTime != null">
           update_time = #{info.updateTime,jdbcType=TIMESTAMP},
         </if>
-
         <if test="info.stationId != null">
           station_id = #{info.stationId,jdbcType=VARCHAR},
         </if>
-
         <if test="info.companyId != null">
           company_id = #{info.companyId,jdbcType=VARCHAR},
         </if>
         <if test="info.serverName != null">
-          server_name = #{info.serverName,jdbcType=VARCHAR},
+          server_name = #{info.serverName,jdbcType=VARCHAR}
         </if>
-
         <if test="info.deviceId != null">
           device_id = #{info.deviceId,jdbcType=VARCHAR}
         </if>
