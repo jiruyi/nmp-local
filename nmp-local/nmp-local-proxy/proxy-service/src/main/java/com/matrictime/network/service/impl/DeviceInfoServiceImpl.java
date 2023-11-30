@@ -69,9 +69,6 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
         try {
             Date createTime = new Date();
             infoVo.setUpdateTime(createTime);
-            if(infoVo.getStationNetworkId()!=null){
-                infoVo.setStationNetworkId(DataChangeUtil.BidChange(infoVo.getStationNetworkId()));
-            }
             if (infoVo.getIsLocal()){
                 NmplLocalDeviceInfo deviceInfo = new NmplLocalDeviceInfo();
                 BeanUtils.copyProperties(infoVo,deviceInfo);
@@ -108,10 +105,6 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
         try {
             Date createTime = new Date();
             infoVo.setUpdateTime(createTime);
-            //统一处理 将StationNetworkId转化为16进制形式
-            if(infoVo.getStationNetworkId()!=null){
-                infoVo.setStationNetworkId(DataChangeUtil.BidChange(infoVo.getStationNetworkId()));
-            }
             if (infoVo.getIsLocal()){
                 NmplLocalDeviceInfo stationInfo = new NmplLocalDeviceInfo();
                 BeanUtils.copyProperties(infoVo,stationInfo);
@@ -195,11 +188,6 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
         List<CenterDeviceInfoVo> cache = new ArrayList<>();
         List<CenterDeviceInfoVo> generator = new ArrayList<>();
         for (CenterDeviceInfoVo vo:deviceInfoVos){
-            //统一处理 将StationNetworkId转化为16进制形式
-            if(vo.getStationNetworkId()!=null){
-                vo.setStationNetworkId(DataChangeUtil.BidChange(vo.getStationNetworkId()));
-            }
-
             if (DeviceTypeEnum.DISPENSER.getCode().equals(vo.getDeviceType())){
                 keycenter.add(vo);
             }
@@ -282,9 +270,6 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
         List<DeviceInfoVo> deviceInfos = new ArrayList<>(deviceInfoVos.size());
         for (CenterDeviceInfoVo vo : deviceInfoVos){
             DeviceInfoVo deviceInfoVo = new DeviceInfoVo();
-            if(vo.getStationNetworkId()!=null){
-                vo.setStationNetworkId(DataChangeUtil.BidChange(vo.getStationNetworkId()));
-            }
             BeanUtils.copyProperties(vo,deviceInfoVo);
             deviceInfoVo.setUpdateTime(createTime);
             deviceInfos.add(deviceInfoVo);
