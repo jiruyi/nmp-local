@@ -20,7 +20,7 @@ public interface BaseStationInfoService {
 
     Result<Integer> deleteBaseStationInfo(DeleteBaseStationInfoRequest request);
 
-    void initLocalInfo(CenterBaseStationInfoVo infoVo);
+    void initLocalInfo(List<CenterBaseStationInfoVo> infoVo);
 
     void initInfo(List<CenterBaseStationInfoVo> baseStationInfoList);
 }

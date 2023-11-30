@@ -33,9 +33,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
 import static com.matrictime.network.base.constant.DataConstants.KEY_SPLIT;
@@ -192,48 +190,73 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
      */
     @Override
     @Transactional
-    public void initLocalInfo(CenterBaseStationInfoVo infoVo){
+    public void initLocalInfo(List<CenterBaseStationInfoVo> infoVo){
 
         List<NmplLocalBaseStationInfo> stationInfos = nmplLocalBaseStationInfoMapper.selectByExample(new NmplLocalBaseStationInfoExample());
 
-        if (CollectionUtils.isEmpty(stationInfos)){// 本机没有基站数据
+        if (CollectionUtils.isEmpty(stationInfos)) {// 本机没有基站数据
             // 插入本机基站信息
-            Date createTime = new Date();
-            NmplLocalBaseStationInfo stationInfo = new NmplLocalBaseStationInfo();
-            BeanUtils.copyProperties(infoVo,stationInfo);
-            stationInfo.setUpdateTime(createTime);
-            int addlocal = nmplLocalBaseStationInfoMapper.insertSelective(stationInfo);
-
-            int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-
-        }else {// 本机有基站数据
-            NmplLocalBaseStationInfo tempLocalBase = stationInfos.get(0);
-            String stationStatus = tempLocalBase.getStationStatus();
-            if (DeviceStatusEnum.NORMAL.getCode().equals(stationStatus)){// 本机基站状态是未激活
-
-                // 直接删除数据重新载入即可
-                nmplLocalBaseStationInfoMapper.deleteByExample(new NmplLocalBaseStationInfoExample());
+            Set<String> ids = new HashSet<>();
+            for (NmplLocalBaseStationInfo stationInfo : stationInfos) {
+                ids.add(String.valueOf(stationInfo.getId()));
+                nmplBaseStationInfoMapper.deleteByPrimaryKey(stationInfo.getId());
+            }
+            for (NmplLocalBaseStationInfo stationInfo : stationInfos) {
                 Date createTime = new Date();
-                NmplLocalBaseStationInfo stationInfo = new NmplLocalBaseStationInfo();
-                BeanUtils.copyProperties(infoVo,stationInfo);
-                stationInfo.setUpdateTime(createTime);
-                int addlocal = nmplLocalBaseStationInfoMapper.insertSelective(stationInfo);
-
-                int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
-
-            }else {// 本机基站状态是除了未激活，此时只能编辑部分信息
-
-                // 更新本机基站信息
-                Date createTime = new Date();
-                NmplLocalBaseStationInfo stationInfo = new NmplLocalBaseStationInfo();
-                BeanUtils.copyProperties(infoVo,stationInfo);
-                stationInfo.setUpdateTime(createTime);
-                nmplLocalBaseStationInfoMapper.updateByPrimaryKeySelective(stationInfo);
-
-                int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
-
+                NmplLocalBaseStationInfo nmplLocalBaseStationInfo = new NmplLocalBaseStationInfo();
+                BeanUtils.copyProperties(stationInfo, nmplLocalBaseStationInfo);
+                nmplLocalBaseStationInfo.setUpdateTime(createTime);
+                nmplLocalBaseStationInfoMapper.insertSelective(nmplLocalBaseStationInfo);
+                if (ids.contains(stationInfo.getId())) {
+                    int updateLocal = updateInfoService.updateInfo(nmplLocalBaseStationInfo.getStationType(), NMPL_LOCAL_BASE_STATION_INFO, EDIT_TYPE_UPD, SYSTEM_NM, createTime);
+                } else {
+                    int updateLocal = updateInfoService.updateInfo(nmplLocalBaseStationInfo.getStationType(), NMPL_LOCAL_BASE_STATION_INFO, EDIT_TYPE_ADD, SYSTEM_NM, createTime);
+                }
             }
         }
+
+//        //统一处理 将StationNetworkId转化为16进制形式
+//        if(infoVo.getStationNetworkId()!=null){
+//            infoVo.setStationNetworkId(DataChangeUtil.BidChange(infoVo.getStationNetworkId()));
+//        }
+//        if (CollectionUtils.isEmpty(stationInfos)){// 本机没有基站数据
+//            // 插入本机基站信息
+//            Date createTime = new Date();
+//            NmplLocalBaseStationInfo stationInfo = new NmplLocalBaseStationInfo();
+//            BeanUtils.copyProperties(infoVo,stationInfo);
+//            stationInfo.setUpdateTime(createTime);
+//            int addlocal = nmplLocalBaseStationInfoMapper.insertSelective(stationInfo);
+//
+//            int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
+//
+//        }else {// 本机有基站数据
+//            NmplLocalBaseStationInfo tempLocalBase = stationInfos.get(0);
+//            String stationStatus = tempLocalBase.getStationStatus();
+//            if (DeviceStatusEnum.NORMAL.getCode().equals(stationStatus)){// 本机基站状态是未激活
+//
+//                // 直接删除数据重新载入即可
+//                nmplLocalBaseStationInfoMapper.deleteByExample(new NmplLocalBaseStationInfoExample());
+//                Date createTime = new Date();
+//                NmplLocalBaseStationInfo stationInfo = new NmplLocalBaseStationInfo();
+//                BeanUtils.copyProperties(infoVo,stationInfo);
+//                stationInfo.setUpdateTime(createTime);
+//                int addlocal = nmplLocalBaseStationInfoMapper.insertSelective(stationInfo);
+//
+//                int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
+//
+//            }else {// 本机基站状态是除了未激活，此时只能编辑部分信息
+//
+//                // 更新本机基站信息
+//                Date createTime = new Date();
+//                NmplLocalBaseStationInfo stationInfo = new NmplLocalBaseStationInfo();
+//                BeanUtils.copyProperties(infoVo,stationInfo);
+//                stationInfo.setUpdateTime(createTime);
+//                nmplLocalBaseStationInfoMapper.updateByPrimaryKeySelective(stationInfo);
+//
+//                int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
+//
+//            }
+//        }
     }
 
     /**

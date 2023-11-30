@@ -253,7 +253,7 @@ public class TaskServiceImpl implements TaskService {
                 return;
             }
             Long maxId = nmplDataCollectList.get(0).getId();
-            criteria.andIdLessThanOrEqualTo(maxId);
+            nmplDataCollectExample.createCriteria().andIdLessThanOrEqualTo(maxId);
             nmplDataCollectMapper.deleteByExample(nmplDataCollectExample);
         }catch (Exception e){
             log.error("DataPushService dataCollectPush exception:{}",e.getMessage());
