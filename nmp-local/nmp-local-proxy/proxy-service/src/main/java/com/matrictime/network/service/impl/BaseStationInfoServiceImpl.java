@@ -193,27 +193,28 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     public void initLocalInfo(List<CenterBaseStationInfoVo> infoVo){
 
         List<NmplLocalBaseStationInfo> stationInfos = nmplLocalBaseStationInfoMapper.selectByExample(new NmplLocalBaseStationInfoExample());
+        Set<Long> ids = new HashSet<>();
+        if (!CollectionUtils.isEmpty(stationInfos)) {
+            // 本机有基站数据
 
-        if (CollectionUtils.isEmpty(stationInfos)) {// 本机没有基站数据
-            // 插入本机基站信息
-            Set<String> ids = new HashSet<>();
             for (NmplLocalBaseStationInfo stationInfo : stationInfos) {
-                ids.add(String.valueOf(stationInfo.getId()));
-                nmplBaseStationInfoMapper.deleteByPrimaryKey(stationInfo.getId());
-            }
-            for (NmplLocalBaseStationInfo stationInfo : stationInfos) {
-                Date createTime = new Date();
-                NmplLocalBaseStationInfo nmplLocalBaseStationInfo = new NmplLocalBaseStationInfo();
-                BeanUtils.copyProperties(stationInfo, nmplLocalBaseStationInfo);
-                nmplLocalBaseStationInfo.setUpdateTime(createTime);
-                nmplLocalBaseStationInfoMapper.insertSelective(nmplLocalBaseStationInfo);
-                if (ids.contains(stationInfo.getId())) {
-                    int updateLocal = updateInfoService.updateInfo(nmplLocalBaseStationInfo.getStationType(), NMPL_LOCAL_BASE_STATION_INFO, EDIT_TYPE_UPD, SYSTEM_NM, createTime);
-                } else {
-                    int updateLocal = updateInfoService.updateInfo(nmplLocalBaseStationInfo.getStationType(), NMPL_LOCAL_BASE_STATION_INFO, EDIT_TYPE_ADD, SYSTEM_NM, createTime);
-                }
+                ids.add(stationInfo.getId());
+                nmplLocalBaseStationInfoMapper.deleteByPrimaryKey(stationInfo.getId());
             }
         }
+        for (CenterBaseStationInfoVo centerBaseStationInfoVo : infoVo) {
+            Date createTime = new Date();
+            NmplLocalBaseStationInfo nmplLocalBaseStationInfo = new NmplLocalBaseStationInfo();
+            BeanUtils.copyProperties(centerBaseStationInfoVo, nmplLocalBaseStationInfo);
+            nmplLocalBaseStationInfo.setUpdateTime(createTime);
+            nmplLocalBaseStationInfoMapper.insertSelective(nmplLocalBaseStationInfo);
+            if (ids.contains(centerBaseStationInfoVo.getId())) {
+                int updateLocal = updateInfoService.updateInfo(nmplLocalBaseStationInfo.getStationType(), NMPL_LOCAL_BASE_STATION_INFO, EDIT_TYPE_UPD, SYSTEM_NM, createTime);
+            } else {
+                int updateLocal = updateInfoService.updateInfo(nmplLocalBaseStationInfo.getStationType(), NMPL_LOCAL_BASE_STATION_INFO, EDIT_TYPE_ADD, SYSTEM_NM, createTime);
+            }
+        }
+
 
 //        //统一处理 将StationNetworkId转化为16进制形式
 //        if(infoVo.getStationNetworkId()!=null){
