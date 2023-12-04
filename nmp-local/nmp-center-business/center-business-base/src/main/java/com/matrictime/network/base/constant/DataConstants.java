@@ -34,4 +34,10 @@ public class DataConstants {
 
     public static final String ZERO_STRING = "0";
 
+    public static final Integer HALF_HOUR = 30;
+
+    public static final Integer ONE_HOUR = 60;
+
+    public static final String ZERO_POINT = "00";
+
 }
