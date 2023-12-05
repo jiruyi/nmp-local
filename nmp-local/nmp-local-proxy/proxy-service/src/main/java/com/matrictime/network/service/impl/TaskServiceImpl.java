@@ -159,19 +159,31 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public void heartReport(Date excuteTime) {
+        Date lastUploadTime = DateUtils.addSecondsForDate(excuteTime, -HEART_REPORT_SPACE);
         // 查询基站的状态上报数据
         NmplStationHeartInfoExample stationExample = new NmplStationHeartInfoExample();
         stationExample.setOrderByClause("create_time desc");
+        stationExample.createCriteria().andCreateTimeLessThan(excuteTime).andCreateTimeGreaterThanOrEqualTo(lastUploadTime);
         List<NmplStationHeartInfo> stationHeartInfos = nmplStationHeartInfoMapper.selectByExample(stationExample);
         if (!CollectionUtils.isEmpty(stationHeartInfos)){
-            NmplStationHeartInfo heartInfo = stationHeartInfos.get(NumberUtils.INTEGER_ZERO);
-            Date lastUploadTime = DateUtils.addSecondsForDate(heartInfo.getCreateTime(), HEART_REPORT_SPACE);
+            Map<String,NmplStationHeartInfo> distMap = new HashMap<>();
+            for (int i=0;i<stationHeartInfos.size();i++){
+                NmplStationHeartInfo tempInfo = stationHeartInfos.get(i);
+                if (!distMap.containsKey(tempInfo.getStationId())){
+                    distMap.put(tempInfo.getStationId(),tempInfo);
+                }
+            }
 
-            // 判断最新数据是否有效，并上报网管中心站点状态
-            checkHeartReport(excuteTime,lastUploadTime,heartInfo.getRemark(),heartInfo.getStationId());
+            Iterator<Map.Entry<String, NmplStationHeartInfo>> iterator = distMap.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<String, NmplStationHeartInfo> infoEntry = iterator.next();
+                NmplStationHeartInfo heartInfo = infoEntry.getValue();
+                // 上报网管中心站点状态
+                postHeartReport(heartInfo.getRemark(),heartInfo.getStationId());
+            }
 
             // 清除基站历史状态上报数据
-            stationExample.createCriteria().andCreateTimeLessThanOrEqualTo(stationHeartInfos.get(NumberUtils.INTEGER_ZERO).getCreateTime());
+            stationExample.createCriteria().andCreateTimeLessThan(excuteTime);
             int deleteStation = nmplStationHeartInfoMapper.deleteByExample(stationExample);
             log.info("TaskServiceImpl.heartReport deleteStation:{}",deleteStation);
         }
@@ -179,16 +191,16 @@ public class TaskServiceImpl implements TaskService {
         // 查询设备的心跳上报数据
         NmplKeycenterHeartInfoExample keycenterExample = new NmplKeycenterHeartInfoExample();
         keycenterExample.setOrderByClause("create_time desc");
+        keycenterExample.createCriteria().andCreateTimeLessThan(excuteTime).andCreateTimeGreaterThanOrEqualTo(lastUploadTime);
         List<NmplKeycenterHeartInfo> keycenterHeartInfos = nmplKeycenterHeartInfoMapper.selectByExample(keycenterExample);
         if (!CollectionUtils.isEmpty(keycenterHeartInfos)){
             NmplKeycenterHeartInfo heartInfo = keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO);
-            Date lastUploadTime = DateUtils.addSecondsForDate(heartInfo.getCreateTime(), HEART_REPORT_SPACE);
 
-            // 判断最新数据是否有效，并上报网管中心站点状态
-            checkHeartReport(excuteTime,lastUploadTime,heartInfo.getRemark(),heartInfo.getDeviceId());
+            // 上报网管中心站点状态
+            postHeartReport(heartInfo.getRemark(),heartInfo.getDeviceId());
 
             // 清除密钥中心历史状态上报数据
-            keycenterExample.createCriteria().andCreateTimeLessThanOrEqualTo(keycenterHeartInfos.get(NumberUtils.INTEGER_ZERO).getCreateTime());
+            keycenterExample.createCriteria().andCreateTimeLessThan(excuteTime);
             int deleteKeycenter = nmplKeycenterHeartInfoMapper.deleteByExample(keycenterExample);
             log.info("TaskServiceImpl.heartReport deleteKeycenter:{}",deleteKeycenter);
         }
@@ -196,22 +208,17 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 站点状态上报网管中心
-     * @param excuteTime
-     * @param lastUploadTime
      * @param status
      * @param deviceId
      */
-    private void checkHeartReport(Date excuteTime,Date lastUploadTime,String status,String deviceId){
-        // 判断最新一次上报的时间是否在30秒以内，是则上报，否则为无效数据不上报
-        if (excuteTime.compareTo(lastUploadTime) == -1){
-            CheckHeartReq req = new CheckHeartReq();
-            req.setStatus(status);
-            req.setDeviceId(deviceId);
+    private void postHeartReport(String status,String deviceId){
+        CheckHeartReq req = new CheckHeartReq();
+        req.setStatus(status);
+        req.setDeviceId(deviceId);
 
-            // 上报中心网管
-            Result result = alarmDataFacade.checkHeart(req);
-            log.info("TaskServiceImpl.checkHeartReport alarmDataFacade.checkHeart:{}",result.toString());
-        }
+        // 上报中心网管
+        Result result = alarmDataFacade.checkHeart(req);
+        log.info("TaskServiceImpl.checkHeartReport alarmDataFacade.checkHeart:{}",result.toString());
     }
 
     /**
