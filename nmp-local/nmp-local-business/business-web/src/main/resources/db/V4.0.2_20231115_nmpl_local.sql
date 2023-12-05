@@ -1,6 +1,7 @@
 /*
 V4.0.2增量sql包
 */
+-- wq
 USE `nmp_local`;
 
 DROP TABLE nmpl_static_route;
@@ -20,3 +21,7 @@ CREATE TABLE `nmpl_static_route` (
                                      `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
                                      PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='静态路由';
+
+truncate table nmpl_company_heartbeat;
+
+truncate table nmpl_system_heartbeat;

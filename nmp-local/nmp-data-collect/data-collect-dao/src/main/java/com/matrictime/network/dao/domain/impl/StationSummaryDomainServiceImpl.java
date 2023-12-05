@@ -51,8 +51,8 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         List<NmplSystemHeartbeat> heartbeatList = new ArrayList<>();
         //sourceId、targetId 数据转换
         for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
-            String sourceNetworkId = getNetworkId(nmplSystemHeartbeat.getSourceId());
-            String targetNetworkId = getNetworkId(nmplSystemHeartbeat.getTargetId());
+            String sourceNetworkId = nmplSystemHeartbeat.getSourceId();
+            String targetNetworkId = nmplSystemHeartbeat.getTargetId();
 //            List<NmplBaseStationInfo> sourceStation = getStation(sourceNetworkId);
 //            List<NmplBaseStationInfo> targetStation = getStation(targetNetworkId);
 //            List<NmplDeviceInfo> sourceDevice = getDevice(sourceNetworkId);
@@ -72,7 +72,7 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
         Set<String> stringSet = new HashSet<String>();
         for(NmplSystemHeartbeat nmplSystemHeartbeat: nmplSystemHeartbeats){
             //切割小区唯一标识符
-            String s = changeNetworkId(nmplSystemHeartbeat.getSourceId());
+            String s = nmplSystemHeartbeat.getSourceId();
             nmplSystemHeartbeat.setSourceId(s);
             stringSet.add(s);
 
@@ -256,28 +256,28 @@ public class StationSummaryDomainServiceImpl implements StationSummaryDomainServ
      * @param networkId
      * @return
      */
-    private String changeNetworkId(String networkId){
-        String[] split = networkId.split("-");
-        String networkIdString = "";
-        for(int i = 0;i < 4;i++){
-            Integer change = Integer.parseInt(split[i],16);
-            networkIdString = networkIdString + change + "-";
-        }
-        return networkIdString.substring(0,networkIdString.length() - 1);
-    }
+//    private String changeNetworkId(String networkId){
+//        String[] split = networkId.split("-");
+//        String networkIdString = "";
+//        for(int i = 0;i < 4;i++){
+//            Integer change = Integer.parseInt(split[i],16);
+//            networkIdString = networkIdString + change + "-";
+//        }
+//        return networkIdString.substring(0,networkIdString.length() - 1);
+//    }
 
     /**
      * 将要networkId 转换
      * @param networkId
      * @return
      */
-    private String getNetworkId(String networkId){
-        String[] split = networkId.split("-");
-        String networkIdString = "";
-        for(int i = 0;i < 5;i++){
-            Integer change = Integer.parseInt(split[i],16);
-            networkIdString = networkIdString + change + "-";
-        }
-        return networkIdString.substring(0,networkIdString.length() - 1);
-    }
+//    private String getNetworkId(String networkId){
+//        String[] split = networkId.split("-");
+//        String networkIdString = "";
+//        for(int i = 0;i < 5;i++){
+//            Integer change = Integer.parseInt(split[i],16);
+//            networkIdString = networkIdString + change + "-";
+//        }
+//        return networkIdString.substring(0,networkIdString.length() - 1);
+//    }
 }

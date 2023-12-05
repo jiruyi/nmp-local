@@ -38,8 +38,8 @@ public class CompanyHeartbeatDomainServiceImpl implements CompanyHeartbeatDomain
         List<CompanyHeartbeatVo> list = new ArrayList<>();
         for(NmplCompanyHeartbeat nmplCompanyHeartbeat: nmplCompanyHeartbeats){
             CompanyHeartbeatVo companyHeartbeatVo = new CompanyHeartbeatVo();
-            String sourceId = changeNetworkId(nmplCompanyHeartbeat.getSourceNetworkId());
-            String targetId = changeNetworkId(nmplCompanyHeartbeat.getTargetNetworkId());
+            String sourceId = nmplCompanyHeartbeat.getSourceNetworkId();
+            String targetId = nmplCompanyHeartbeat.getTargetNetworkId();
             //获取小区唯一标识
             companyHeartbeatVo.setSourceCompanyNetworkId(NetworkIdUtil.splitNetworkId(sourceId));
             companyHeartbeatVo.setTargetCompanyNetworkId(NetworkIdUtil.splitNetworkId(targetId));
@@ -62,14 +62,14 @@ public class CompanyHeartbeatDomainServiceImpl implements CompanyHeartbeatDomain
      * @param networkId
      * @return
      */
-    private String changeNetworkId(String networkId){
-        String[] split = networkId.split("-");
-        String networkStr = "";
-        for(int i = 0; i <= 4;i++){
-            Integer change = Integer.parseInt(split[i],16);
-            networkStr = networkStr + change + "-";
-        }
-        return networkStr.substring(0,networkStr.length() - 1);
-    }
+//    private String changeNetworkId(String networkId){
+//        String[] split = networkId.split("-");
+//        String networkStr = "";
+//        for(int i = 0; i <= 4;i++){
+//            Integer change = Integer.parseInt(split[i],16);
+//            networkStr = networkStr + change + "-";
+//        }
+//        return networkStr.substring(0,networkStr.length() - 1);
+//    }
 
 }
