@@ -31,6 +31,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.matrictime.network.base.constant.DataConstants.*;
+
 /**
  * @author by wangqiang
  * @date 2023/8/10.
@@ -64,7 +66,7 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
             DataTimeVo dataTimeVo = new DataTimeVo();
             for(NmplDataCollect nmplDataCollect: nmplDataCollects){
                 String formatTime = formatter.format(nmplDataCollect.getUploadTime());
-                if(list.get(i).equals(formatTime)){
+                if(compareTime(list.get(i), formatTime)){
                     if(StringUtils.isEmpty(nmplDataCollect.getSumNumber())){
                         nmplDataCollect.setSumNumber("0");
                     }
@@ -115,6 +117,32 @@ public class DataCollectDomainServiceImpl implements DataCollectDomainService {
         return timeList;
     }
 
+    /**
+     * 时间分段比较
+     * @param time 时间刻度时间点
+     * @param uploadTime 数据库上传时间
+     * @return
+     */
+    private Boolean compareTime(String time,String uploadTime){
+        String[] timeSplit = time.split(":");
+        String[] uploadTimeSplit = uploadTime.split(":");
+        if(ZERO_POINT.equals(timeSplit[1])){
+            if(uploadTimeSplit[0].equals(timeSplit[0])){
+                if(Integer.parseInt(timeSplit[1]) <= Integer.parseInt(uploadTimeSplit[1]) &&
+                        Integer.parseInt(uploadTimeSplit[1]) < HALF_HOUR){
+                    return true;
+                }
+            }
+        }else {
+            if(uploadTimeSplit[0].equals(timeSplit[0])){
+                if(Integer.parseInt(timeSplit[1]) <= Integer.parseInt(uploadTimeSplit[1]) &&
+                        Integer.parseInt(uploadTimeSplit[1]) < ONE_HOUR){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * 查询负载总量

@@ -24,7 +24,7 @@ public class ProxyResp implements Serializable {
     private boolean isExist=false;
 
 
-    private ProxyBaseStationInfoVo localStation;
+    private  List<ProxyBaseStationInfoVo> localStation = new ArrayList<>();
 
     private List<ProxyDeviceInfoVo> localDeviceInfoVos=new ArrayList<>();
 

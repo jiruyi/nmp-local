@@ -65,10 +65,12 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                         boolean isExist = resultObj.getBooleanValue("exist");
                         if (isExist){
                             // 初始化本机基站
-                            CenterBaseStationInfoVo localStation = resultObj.getObject("localStation", CenterBaseStationInfoVo.class);
-                            if (localStation!=null){
-                                baseStationInfoService.initLocalInfo(localStation);
+                            JSONArray stationInfoVos = resultObj.getJSONArray("localStation");
+                            List<CenterBaseStationInfoVo> centerBaseStationInfoVoList = stationInfoVos.toJavaList(CenterBaseStationInfoVo.class);
+                            if (!CollectionUtils.isEmpty(centerBaseStationInfoVoList)){
+                                baseStationInfoService.initLocalInfo(centerBaseStationInfoVoList);
                             }
+
                             // 初始化基站列表信息
                             JSONArray baseStationInfoList = resultObj.getJSONArray("baseStationInfoList");
                             List<CenterBaseStationInfoVo> centerBaseStationInfoVos = baseStationInfoList.toJavaList(CenterBaseStationInfoVo.class);

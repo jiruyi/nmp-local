@@ -2,6 +2,7 @@ package com.matrictime.network.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.annotation.SystemLog;
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.LogDomainService;
 import com.matrictime.network.dao.model.NmplOperateLog;
 import com.matrictime.network.model.Result;
@@ -113,6 +114,13 @@ public class LogHandlerAspect {
             networkLog.setOperUrl(request.getRequestURI());
             /**入参*/
             networkLog.setOperRequParam(getParamStr(joinPoint));
+            /**操作人*/
+            try {
+                networkLog.setOperUserId(RequestContext.getUser().getLoginAccount());
+                networkLog.setOperUserName(RequestContext.getUser().getNickName());
+            }catch (Exception e){
+                logger.error("操作人参数设置异常 不影响后续操作");
+            }
             setFromAnnatationParamter(joinPoint, networkLog);
         } catch (Exception e) {
             logger.error("packageModel exception:{}", e.getMessage());
@@ -142,11 +150,6 @@ public class LogHandlerAspect {
             networkLog.setOperType(systemLog.operType());
             /**级别*/
             networkLog.setOperLevel(systemLog.operLevl());
-            /**用户*/
-//            if (!ObjectUtils.isEmpty(RequestContext.getUser())) {
-//                networkLog.setOperUserId(RequestContext.getUser().getUserId().toString());
-//                networkLog.setOperUserName(RequestContext.getUser().getUserName());
-//            }
         } catch (Exception e) {
             logger.error("setFromAnnatationParamter exception:{}", e.getMessage());
         }

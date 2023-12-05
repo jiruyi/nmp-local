@@ -61,7 +61,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
         try {
             checkParam(req);
             ProxyResp proxyResp = new ProxyResp();
-            List<String> deviceIds = getLocalDeviceIds(proxyResp,req);
+            getLocalDevices(proxyResp,req);
             if(!proxyResp.isExist()){
                 return buildResult(proxyResp);
             }
@@ -96,18 +96,18 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      * @param ip
      * @return
      */
-    private ProxyBaseStationInfoVo getLocalStationInfoVo(String ip){
+    private List<ProxyBaseStationInfoVo> getLocalStationInfoVo(String ip){
         NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
         nmplBaseStationExample.createCriteria().andLanIpEqualTo(ip).andIsExistEqualTo(true);
         List<NmplBaseStation> nmplBaseStationInfos = nmplBaseStationMapper.selectByExampleWithBLOBs(nmplBaseStationExample);
-        if(!CollectionUtils.isEmpty(nmplBaseStationInfos)){
+        List<ProxyBaseStationInfoVo> proxyBaseStationInfoVoList = new ArrayList<>();
+
+        for (NmplBaseStation nmplBaseStationInfo : nmplBaseStationInfos) {
             ProxyBaseStationInfoVo infoVo = new ProxyBaseStationInfoVo();
-            BeanUtils.copyProperties(nmplBaseStationInfos.get(0),infoVo);
-            log.info("localStationInfo get sucess");
-            return infoVo;
-        }else {
-            return null;
+            BeanUtils.copyProperties(nmplBaseStationInfo,infoVo);
+            proxyBaseStationInfoVoList.add(infoVo);
         }
+        return proxyBaseStationInfoVoList;
     }
 
     /**
@@ -137,10 +137,10 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      * @param req
      * @return
      */
-    private List<String> getLocalDeviceIds (ProxyResp proxyResp,ProxyReq req){
-        ProxyBaseStationInfoVo localStation = getLocalStationInfoVo(req.getIp());
+    private void getLocalDevices (ProxyResp proxyResp,ProxyReq req){
+        List<ProxyBaseStationInfoVo> localStation = getLocalStationInfoVo(req.getIp());
         List<ProxyDeviceInfoVo> localDeviceInfoVos = getLocalDeviceInfoVo(req.getIp());
-        if(localStation==null&&CollectionUtils.isEmpty(localDeviceInfoVos)){
+        if(CollectionUtils.isEmpty(localStation) && CollectionUtils.isEmpty(localDeviceInfoVos)){
             proxyResp.setExist(false);
             log.info("this ip device is not exsit");
         }else {
@@ -148,14 +148,6 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             proxyResp.setLocalDeviceInfoVos(localDeviceInfoVos);
             proxyResp.setExist(true);
         }
-        List<String> deviceIds = new ArrayList<>();
-        if(localStation!=null){
-            deviceIds.add(localStation.getStationId());
-        }
-        for (ProxyDeviceInfoVo localDeviceInfoVo : localDeviceInfoVos) {
-            deviceIds.add(localDeviceInfoVo.getDeviceId());
-        }
-        return deviceIds;
     }
 
 

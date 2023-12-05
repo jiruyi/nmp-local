@@ -169,7 +169,8 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     public void insertCheckUnique(BaseStationInfoRequest baseStationInfoRequest) {
         //同设备ip不可相同
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-        nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(baseStationInfoRequest.getLanIp()).andIsExistEqualTo(true);
+        nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(baseStationInfoRequest.getLanIp()).andIsExistEqualTo(true)
+                        .andStationTypeEqualTo(baseStationInfoRequest.getStationType());
         nmplBaseStationInfoExample.or().andStationNetworkIdEqualTo(baseStationInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
 
@@ -206,7 +207,8 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
     public void insertCheckBorder(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
         //同设备ip不可相同
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-        nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(borderBaseStationInfoRequest.getLanIp()).andIsExistEqualTo(true);
+        nmplBaseStationInfoExample.createCriteria().andLanIpEqualTo(borderBaseStationInfoRequest.getLanIp()).andIsExistEqualTo(true)
+                .andStationTypeEqualTo(borderBaseStationInfoRequest.getStationType());
         nmplBaseStationInfoExample.or().andStationNetworkIdEqualTo(borderBaseStationInfoRequest.getStationNetworkId()).andIsExistEqualTo(true);
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
 

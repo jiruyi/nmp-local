@@ -8,6 +8,7 @@ import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
 import com.matrictime.network.base.enums.DeviceStatusEnum;
+import com.matrictime.network.base.enums.StationTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.DecimalConversionUtil;
 import com.matrictime.network.base.util.SnowFlake;
@@ -88,6 +89,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
             //将设备id由雪花数改成sequence
             baseStationInfoRequest.setStationId(baseStationInfoRequest.getStationNetworkId());
             baseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
+            baseStationInfoRequest.setStationType(StationTypeEnum.INSIDE.getCode());
             baseStationInfoRequest.setIsExist("1");
             baseStationInfoRequest.setStationStatus(DeviceStatusEnum.NORMAL.getCode());
 
@@ -127,6 +129,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         try {
             //参数校验
             checkParam(baseStationInfoRequest);
+            baseStationInfoRequest.setStationType(StationTypeEnum.INSIDE.getCode());
             baseStationInfoRequest.setByteNetworkId(DecimalConversionUtil.idToByteArray(baseStationInfoRequest.getStationNetworkId()));
             baseStationInfoRequest.setPrefixNetworkId(DecimalConversionUtil.getPreBid(baseStationInfoRequest.getByteNetworkId()));
             baseStationInfoRequest.setSuffixNetworkId(DecimalConversionUtil.getSuffBid(baseStationInfoRequest.getByteNetworkId()));
@@ -565,6 +568,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         Result<Integer> result = new Result<>();
         Integer insertFlag = null;
         try {
+            borderBaseStationInfoRequest.setStationType(StationTypeEnum.BOUNDARY.getCode());
             //将设备id由雪花数改成sequence
             borderBaseStationInfoRequest.setStationId(borderBaseStationInfoRequest.getStationNetworkId());
             borderBaseStationInfoRequest.setCreateUser(RequestContext.getUser().getUserId().toString());
@@ -637,6 +641,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     public Result<Integer> updateBorderBaseStation(BorderBaseStationInfoRequest borderBaseStationInfoRequest) {
         Result<Integer> result = new Result<>();
         try {
+            borderBaseStationInfoRequest.setStationType(StationTypeEnum.BOUNDARY.getCode());
             Integer i = baseStationInfoDomainService.updateBorderBaseStation(borderBaseStationInfoRequest);
             if (i.equals(INSERT_OR_UPDATE_SUCCESS)) {
                 result.setSuccess(true);
