@@ -47,7 +47,7 @@ public class TerminalDataController {
         return result;
     }
 
-    @SystemLog(opermodul = "终端流量",operDesc = "终端流量流量收集",operType = "插入")
+    //@SystemLog(opermodul = "终端流量",operDesc = "终端流量流量收集",operType = "插入")
     @RequestMapping(value = "/collectTerminalData",method = RequestMethod.POST)
     public Result<Integer> collectTerminalData(@RequestBody TerminalDataListRequest terminalDataListRequest){
         Result<Integer> result = new Result<>();

@@ -40,7 +40,7 @@ public class StationConnectCountController {
         return result;
     }
 
-    @SystemLog(opermodul = "设备当前用户",operDesc = "上报各个用户总数",operType = "上报各个用户总数")
+    //@SystemLog(opermodul = "设备当前用户",operDesc = "上报各个用户总数",operType = "上报各个用户总数")
     @RequestMapping(value = "/insertStationConnectCount",method = RequestMethod.POST)
     public Result<Integer> insertStationConnectCount(@RequestBody StationConnectCountResponse stationConnectCountResponse){
         Result<Integer> result = new Result<>();
