@@ -1,5 +1,6 @@
 package com.matrictime.network.controller;
 
+import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 指控中心数据展示模块
@@ -35,7 +35,7 @@ public class MonitorDisplayController {
      * @return
      */
     @RequestMapping(value = "/queryCompanyUser",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "大屏展示",operDesc = "查询小区用户数",operType = "查询")
+    @SystemLog(opermodul = "大屏展示",operDesc = "查询小区列表用户数",operType = "查询")
     @RequiresPermissions("sys:accusation:query")
     public Result<QueryCompanyUserResp> queryCompanyUser(){
         try {
@@ -52,7 +52,7 @@ public class MonitorDisplayController {
      * @return
      */
     @RequestMapping(value = "/queryUserUnit",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "大屏展示",operDesc = "查询用户数",operType = "编辑")
+    @SystemLog(opermodul = "大屏展示",operDesc = "查询单个小区内用户数",operType = "编辑")
     @RequiresPermissions("sys:communityDetail:query")
     public Result<queryUserResp> queryUserUnit(@RequestBody QueryUserReq req){
         try {
@@ -71,7 +71,7 @@ public class MonitorDisplayController {
      * @return
      */
     @RequestMapping(value = "/queryUser",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "大屏展示",operDesc = "查询用户数",operType = "编辑")
+    @SystemLog(opermodul = "大屏展示",operDesc = "查询用户数",operType = "编辑")
     @RequiresPermissions("sys:accusation:query")
     public Result<queryUserResp> queryUser(){
         try {
@@ -89,7 +89,7 @@ public class MonitorDisplayController {
      * @return
      */
     @RequestMapping(value = "/queryDeviceUnit",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "大屏展示",operDesc = "查询设备数",operType = "查询")
+    @SystemLog(opermodul = "大屏展示",operDesc = "查询单个小区内设备数",operType = "查询")
     @RequiresPermissions("sys:communityDetail:query")
     public Result<QueryDeviceResp> queryDeviceUnit(@RequestBody QueryDeviceReq req){
         try {
@@ -108,7 +108,7 @@ public class MonitorDisplayController {
      * @return
      */
     @RequestMapping(value = "/queryDevice",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "大屏展示",operDesc = "查询设备数",operType = "查询")
+    @SystemLog(opermodul = "大屏展示",operDesc = "查询设备数",operType = "查询")
     @RequiresPermissions("sys:accusation:query")
     public Result<QueryDeviceResp> queryDevice(){
         try {
@@ -126,7 +126,7 @@ public class MonitorDisplayController {
      * @return
      */
     @RequestMapping(value = "/queryMapInfo",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "大屏展示",operDesc = "查询地图信息",operType = "查询")
+    @SystemLog(opermodul = "大屏展示",operDesc = "查询地图信息",operType = "查询")
     @RequiresPermissions("sys:accusation:query")
     public Result<QueryMapInfoResp> queryMapInfo(){
         try {
