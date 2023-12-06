@@ -3,13 +3,13 @@ package com.matrictime.network.service.impl;
 
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.enums.DeviceStatusEnum;
-import com.matrictime.network.base.enums.DeviceTypeEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
 import com.matrictime.network.base.util.DataChangeUtil;
 import com.matrictime.network.constant.DataConstants;
 import com.matrictime.network.dao.domain.DeviceInfoDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
+import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.exception.SystemException;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CenterDeviceInfoVo;
@@ -140,7 +140,7 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
     @Transactional
     public Integer updateTable(String deviceType, Date createTime, String operationType, String tableName) {
 
-        if (DeviceTypeEnum.DISPENSER.getCode().equals(deviceType)){
+        if (DeviceTypeEnum.DEVICE_DISPENSER.getCode().equals(deviceType)){
             NmplUpdateInfoKeycenter updateInfo = new NmplUpdateInfoKeycenter();
             updateInfo.setTableName(tableName);
             updateInfo.setOperationType(operationType);
@@ -150,7 +150,7 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
             return nmplUpdateInfoKeycenterMapper.insertSelective(updateInfo);
         }
 
-        if (DeviceTypeEnum.CACHE.getCode().equals(deviceType)){
+        if (DeviceTypeEnum.DEVICE_CACHE.getCode().equals(deviceType)){
             NmplUpdateInfoCache updateInfo = new NmplUpdateInfoCache();
             updateInfo.setTableName(tableName);
             updateInfo.setOperationType(operationType);
@@ -160,7 +160,7 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
             return nmplUpdateInfoCacheMapper.insertSelective(updateInfo);
         }
 
-        if (DeviceTypeEnum.GENERATOR.getCode().equals(deviceType)){
+        if (DeviceTypeEnum.DEVICE_GENERATOR.getCode().equals(deviceType)){
             NmplUpdateInfoGenerator updateInfo = new NmplUpdateInfoGenerator();
             updateInfo.setTableName(tableName);
             updateInfo.setOperationType(operationType);
@@ -175,7 +175,7 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
     }
 
     /**
-     * 初始化本机设备  local表中暂时不放数据采集和指控中心 无交互业务
+     * 初始化本机设备  local表中暂时不放数据采集和指控中心 无交互业务(4.0.3版本废除)
      * @param deviceInfoVos
      */
     @Override
@@ -187,22 +187,32 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
         List<CenterDeviceInfoVo> keycenter = new ArrayList<>();
         List<CenterDeviceInfoVo> cache = new ArrayList<>();
         List<CenterDeviceInfoVo> generator = new ArrayList<>();
+        List<CenterDeviceInfoVo> database = new ArrayList<>();
+        List<CenterDeviceInfoVo> accusecenter = new ArrayList<>();
         for (CenterDeviceInfoVo vo:deviceInfoVos){
-            if (DeviceTypeEnum.DISPENSER.getCode().equals(vo.getDeviceType())){
+            if (DeviceTypeEnum.DEVICE_DISPENSER.equals(vo.getDeviceType())){
                 keycenter.add(vo);
             }
-            if (DeviceTypeEnum.GENERATOR.getCode().equals(vo.getDeviceType())){
+            if (DeviceTypeEnum.DEVICE_GENERATOR.getCode().equals(vo.getDeviceType())){
                 generator.add(vo);
             }
-            if (DeviceTypeEnum.CACHE.getCode().equals(vo.getDeviceType())){
+            if (DeviceTypeEnum.DEVICE_CACHE.getCode().equals(vo.getDeviceType())){
                 cache.add(vo);
+            }
+            if (DeviceTypeEnum.DATA_BASE.getCode().equals(vo.getDeviceType())){
+                database.add(vo);
+            }
+            if (DeviceTypeEnum.ACCUSE_CENTER.getCode().equals(vo.getDeviceType())){
+                accusecenter.add(vo);
             }
 
         }
 
-        infoVoMap.put(DeviceTypeEnum.DISPENSER.getCode(),keycenter);
-        infoVoMap.put(DeviceTypeEnum.GENERATOR.getCode(),generator);
-        infoVoMap.put(DeviceTypeEnum.CACHE.getCode(),cache);
+        infoVoMap.put(DeviceTypeEnum.DEVICE_DISPENSER.getCode(),keycenter);
+        infoVoMap.put(DeviceTypeEnum.DEVICE_GENERATOR.getCode(),generator);
+        infoVoMap.put(DeviceTypeEnum.DEVICE_CACHE.getCode(),cache);
+        infoVoMap.put(DeviceTypeEnum.DATA_BASE.getCode(),database);
+        infoVoMap.put(DeviceTypeEnum.ACCUSE_CENTER.getCode(),accusecenter);
 
         // 遍历初始化数据
         for(Map.Entry<String, List<CenterDeviceInfoVo>> entry : infoVoMap.entrySet()){
