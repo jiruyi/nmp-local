@@ -41,7 +41,6 @@ public class ShiroConfig {
         filterMap.put("/data/saveData","anon");
         filterMap.put("/signal/addSignal","anon");
         filterMap.put("/monitor/checkHeart","anon");
-        filterMap.put("/version/getVersionFile","anon");
 
         //filterMap.put("/**", "authc");
         shiroFilter.setFilterChainDefinitionMap(filterMap);

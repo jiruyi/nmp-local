@@ -94,12 +94,12 @@ public class OutLineSorterController {
     }
 
 
-    @ApiOperation(value = "离线分发机认证接口",notes = "离线分发机认证")
-    @RequestMapping(value = "/auth",method = RequestMethod.POST)
-    @SystemLog(opermodul = "离线分发机管理模块",operDesc = "认证离线分发机",operType = "认证")
-    public Result authOutlineSorter(@RequestBody OutlineSorterReq outlineSorterReq){
-        return outlineSorterService.auth(outlineSorterReq);
-    }
+//    @ApiOperation(value = "离线分发机认证接口",notes = "离线分发机认证")
+//    @RequestMapping(value = "/auth",method = RequestMethod.POST)
+//    @SystemLog(opermodul = "离线分发机管理模块",operDesc = "认证离线分发机",operType = "认证")
+//    public Result authOutlineSorter(@RequestBody OutlineSorterReq outlineSorterReq){
+//        return outlineSorterService.auth(outlineSorterReq);
+//    }
 
 
 
