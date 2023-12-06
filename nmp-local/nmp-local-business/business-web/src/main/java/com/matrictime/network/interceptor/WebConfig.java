@@ -43,10 +43,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/**/bill/saveBill/**")
                 .excludePathPatterns("/signal/addSignal")
                 .excludePathPatterns("/monitor/checkHeart")
-                .excludePathPatterns("/outlineSorter/auth")
-                .excludePathPatterns("/config/insertOrUpdate")
+                .excludePathPatterns("/baseStation/selectDevice")
+                .excludePathPatterns("/baseStation/selectByOperatorId")
                 .excludePathPatterns("/proxy/init")
                 .excludePathPatterns("/alarm/accept")
+                .excludePathPatterns("/baseStation/savePcData")
                 .excludePathPatterns("/terminalUser/updateTerminalUser")
                 .excludePathPatterns("/systemHeartbeat/updateSystemHeartbeat")
                 .excludePathPatterns("/terminalData/collectTerminalData")
@@ -54,8 +55,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/monitor/physicalDeviceHeartbeat")
                 .excludePathPatterns("/monitor/physicalDeviceResource")
                 .excludePathPatterns("/monitor/systemResource")
-                .excludePathPatterns("/link/selectDevice")
-                .excludePathPatterns("/link/selectBaseStation")
+                .excludePathPatterns("/baseStation/updateCurrentConnectCount")
                 .excludePathPatterns("/stationConnectCount/insertStationConnectCount")
                 .excludePathPatterns("/companyHeartbeat/insertCompanyHeartbeat");
     }

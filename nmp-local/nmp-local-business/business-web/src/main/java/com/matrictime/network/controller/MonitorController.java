@@ -1,13 +1,13 @@
 package com.matrictime.network.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
 import com.matrictime.network.service.MonitorService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,9 +32,10 @@ public class MonitorController {
      * @return
      */
     @RequestMapping (value = "/checkHeart",method = RequestMethod.POST)
-    @SystemLog(opermodul = "监控模块",operDesc = "心跳监控",operType = "查询")
+//    @SystemLog(opermodul = "监控模块",operDesc = "心跳监控",operType = "查询")
     public Result<CheckHeartResp> checkHeart(@RequestBody CheckHeartReq req){
         try {
+            log.info("MonitorController.checkHeart req:{}", JSONObject.toJSONString(req));
             return  monitorService.checkHeart(req);
         }catch (Exception e){
             log.error("MonitorController.checkHeart exception:{}",e.getMessage());
@@ -48,9 +49,10 @@ public class MonitorController {
      * @return
      */
     @RequestMapping (value = "/physicalDeviceHeartbeat",method = RequestMethod.POST)
-    @SystemLog(opermodul = "监控模块",operDesc = "物理设备心跳",operType = "上报")
+//    @SystemLog(opermodul = "监控模块",operDesc = "物理设备心跳",operType = "上报")
     public Result physicalDeviceHeartbeat(@RequestBody PhysicalDeviceHeartbeatReq req){
         try {
+            log.info("MonitorController.physicalDeviceHeartbeat req:{}", JSONObject.toJSONString(req));
             return  monitorService.physicalDeviceHeartbeat(req);
         }catch (Exception e){
             log.error("MonitorController.physicalDeviceHeartbeat exception:{}",e.getMessage());
@@ -64,9 +66,10 @@ public class MonitorController {
      * @return
      */
     @RequestMapping (value = "/physicalDeviceResource",method = RequestMethod.POST)
-    @SystemLog(opermodul = "监控模块",operDesc = "物理设备资源情况信息",operType = "上报")
+//    @SystemLog(opermodul = "监控模块",operDesc = "物理设备资源情况信息",operType = "上报")
     public Result physicalDeviceResource(@RequestBody PhysicalDeviceResourceReq req){
         try {
+            log.info("MonitorController.physicalDeviceResource req:{}", JSONObject.toJSONString(req));
             return  monitorService.physicalDeviceResource(req);
         }catch (Exception e){
             log.error("MonitorController.physicalDeviceResource exception:{}",e.getMessage());
@@ -80,9 +83,10 @@ public class MonitorController {
      * @return
      */
     @RequestMapping (value = "/systemResource",method = RequestMethod.POST)
-    @SystemLog(opermodul = "监控模块",operDesc = "运行系统资源信息",operType = "上报")
+//    @SystemLog(opermodul = "监控模块",operDesc = "运行系统资源信息",operType = "上报")
     public Result systemResource(@RequestBody SystemResourceReq req){
         try {
+            log.info("MonitorController.systemResource req:{}", JSONObject.toJSONString(req));
             return  monitorService.systemResource(req);
         }catch (Exception e){
             log.error("MonitorController.systemResource exception:{}",e.getMessage());

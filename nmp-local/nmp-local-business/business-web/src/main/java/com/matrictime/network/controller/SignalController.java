@@ -58,7 +58,7 @@ public class SignalController {
      * @return
      */
     @RequestMapping (value = "/addSignal",method = RequestMethod.POST)
-    @SystemLog(opermodul = "信令模块",operDesc = "信令上报",operType = "操作")
+//    @SystemLog(opermodul = "信令模块",operDesc = "信令上报",operType = "操作")
     public Result addSignal(@RequestBody AddSignalReq req){
         try {
             return  signalService.addSignal(req);
