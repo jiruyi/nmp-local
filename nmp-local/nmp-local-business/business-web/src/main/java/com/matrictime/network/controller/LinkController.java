@@ -90,10 +90,10 @@ public class LinkController {
             log.error("LinkController.checkInsertLinkParam exception:{}","LinkName"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if (vo.getLinkType() == null){
-            log.error("LinkController.checkInsertLinkParam exception:{}","LinkType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-            throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
+//        if (vo.getLinkType() == null){
+//            log.error("LinkController.checkInsertLinkParam exception:{}","LinkType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//            throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
+//        }
         if (ParamCheckUtil.checkVoStrBlank(vo.getMainDeviceId())){
             log.error("LinkController.checkInsertLinkParam exception:{}","MainDeviceId"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
@@ -114,10 +114,10 @@ public class LinkController {
             log.error("LinkController.checkInsertLinkParam exception:{}","FollowPort"+ErrorMessageContants.PARAM_IS_NULL_MSG);
             throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        if (vo.getActiveAuth() == null){
-            log.error("LinkController.checkInsertLinkParam exception:{}","ActiveAuth"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-            throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
-        }
+//        if (vo.getActiveAuth() == null){
+//            log.error("LinkController.checkInsertLinkParam exception:{}","ActiveAuth"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//            throw new Exception(ErrorMessageContants.PARAM_IS_NULL_MSG);
+//        }
     }
 
     /**
