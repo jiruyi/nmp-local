@@ -1,6 +1,8 @@
 package com.matrictime.network.controller;
 
 import com.matrictime.network.base.SystemException;
+import com.matrictime.network.base.enums.SystemUserEnum;
+import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.AcceptAlarmDataReq;
@@ -15,9 +17,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author jiruyi
@@ -46,6 +49,7 @@ public class AlarmDataController {
     @ApiOperation(value = "告警信息数据推送", notes = "告警信息数据推送")
     @RequestMapping(value = "/accept", method = RequestMethod.POST)
     public Result acceptAlarmData(@RequestBody AcceptAlarmDataReq req) {
+        RequestContext.setUserInfo(SystemUserEnum.NMP_PROXY);
         return alarmDataService.acceptAlarmData(req.getAlarmInfoList(),req.getCpuId());
     }
 

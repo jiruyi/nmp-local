@@ -2,6 +2,7 @@ package com.matrictime.network.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.annotation.SystemLog;
+import com.matrictime.network.base.enums.SystemUserEnum;
 import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.dao.domain.LogDomainService;
 import com.matrictime.network.dao.model.NmplOperateLog;
@@ -120,8 +121,8 @@ public class LogHandlerAspect {
                 networkLog.setOperUserName(RequestContext.getUser().getNickName());
             }catch (Exception e){
                 logger.info("操作人参数设置异常 不影响后续操作 默认为系统");
-                networkLog.setOperUserId("system");
-                networkLog.setOperUserName("system");
+                networkLog.setOperUserId(SystemUserEnum.SYSTEM.getLoginAccount());
+                networkLog.setOperUserName(SystemUserEnum.SYSTEM.getNickName());
             }
             setFromAnnatationParamter(joinPoint, networkLog);
         } catch (Exception e) {
