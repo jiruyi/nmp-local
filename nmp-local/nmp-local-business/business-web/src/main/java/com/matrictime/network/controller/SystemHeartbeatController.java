@@ -29,7 +29,7 @@ public class SystemHeartbeatController {
     @Resource
     private SystemHeartbeatService systemHeartbeatService;
 
-    @SystemLog(opermodul = "业务心跳管理",operDesc = "更新心跳状态",operType = "更新")
+    //@SystemLog(opermodul = "业务心跳管理",operDesc = "更新心跳状态",operType = "更新")
     @RequestMapping(value = "/updateSystemHeartbeat",method = RequestMethod.POST)
     public Result<Integer> updateSystemHeartbeat(@RequestBody SystemHeartbeatResponse systemHeartbeatResponse){
         Result<Integer> result = new Result<>();

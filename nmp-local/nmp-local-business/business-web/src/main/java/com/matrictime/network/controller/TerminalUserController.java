@@ -29,7 +29,7 @@ public class TerminalUserController {
     @Resource
     private TerminalUserService terminalUserService;
 
-    @SystemLog(opermodul = "终端用户管理",operDesc = "更新用户状态",operType = "更新")
+    //@SystemLog(opermodul = "终端用户管理",operDesc = "更新用户状态",operType = "更新")
     @RequestMapping(value = "/updateTerminalUser",method = RequestMethod.POST)
     public Result<Integer> updateTerminalUser(@RequestBody TerminalUserResponse terminalUserResponse){
         Result<Integer> result = new Result<>();

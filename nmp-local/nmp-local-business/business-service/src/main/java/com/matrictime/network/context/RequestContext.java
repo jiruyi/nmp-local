@@ -1,5 +1,6 @@
 package com.matrictime.network.context;
 
+import com.matrictime.network.base.enums.SystemUserEnum;
 import com.matrictime.network.dao.model.NmplUser;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +30,12 @@ public class RequestContext {
     public static void setUser(NmplUser user) {
         local.get().put(THREADLOCAL_KEY_USER, user);
     }
-
+    public static void setUserInfo(SystemUserEnum systemUserEnum) {
+        NmplUser user = NmplUser.builder().
+                loginAccount(systemUserEnum.getLoginAccount()).
+                nickName(systemUserEnum.getNickName()).build();
+        local.get().put(THREADLOCAL_KEY_USER, user);
+    }
     public static NmplUser getUser() {
         return (NmplUser) local.get().get(THREADLOCAL_KEY_USER);
     }
