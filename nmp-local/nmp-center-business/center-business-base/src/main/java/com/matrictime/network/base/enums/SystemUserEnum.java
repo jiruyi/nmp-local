@@ -14,7 +14,10 @@ public enum SystemUserEnum {
     SYSTEM("system","系统");
     private String loginAccount;
     private String nickName;
-    SystemUserEnum(String nmp_proxy, String 网管代理) {
+
+    SystemUserEnum(String loginAccount, String nickName) {
+        this.loginAccount = loginAccount;
+        this.nickName = nickName;
     }
 
     public String getLoginAccount() {
