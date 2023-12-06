@@ -259,10 +259,10 @@ public class DeviceServiceImpl  extends SystemBaseService implements DeviceServi
     private Map<String,String> getAllUrl(String relationOperatorId){
         Map<String,String> map = new HashMap<>();
         NmplBaseStationInfoExample nmplBaseStationInfoExample  = new NmplBaseStationInfoExample();
-        nmplBaseStationInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
+        nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
-        nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
+        nmplDeviceInfoExample.createCriteria().andIsExistEqualTo(true);
         List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
         for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
             map.put(nmplBaseStationInfo.getLanIp(),nmplBaseStationInfo.getStationId());
