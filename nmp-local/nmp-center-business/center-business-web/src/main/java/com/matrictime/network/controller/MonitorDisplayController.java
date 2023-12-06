@@ -52,7 +52,7 @@ public class MonitorDisplayController {
      * @return
      */
     @RequestMapping(value = "/queryUserUnit",method = RequestMethod.POST)
-    @SystemLog(opermodul = "大屏展示",operDesc = "查询单个小区内用户数",operType = "编辑")
+    @SystemLog(opermodul = "大屏展示",operDesc = "查询单个小区内用户数",operType = "查询")
     @RequiresPermissions("sys:communityDetail:query")
     public Result<queryUserResp> queryUserUnit(@RequestBody QueryUserReq req){
         try {
@@ -71,7 +71,7 @@ public class MonitorDisplayController {
      * @return
      */
     @RequestMapping(value = "/queryUser",method = RequestMethod.POST)
-    @SystemLog(opermodul = "大屏展示",operDesc = "查询用户数",operType = "编辑")
+    @SystemLog(opermodul = "大屏展示",operDesc = "查询用户数",operType = "查询")
     @RequiresPermissions("sys:accusation:query")
     public Result<queryUserResp> queryUser(){
         try {
