@@ -365,7 +365,7 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
         nmplBaseStationInfoExample.createCriteria().andIsExistEqualTo(true);
         List<NmplBaseStationInfo> nmplBaseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
         NmplDeviceInfoExample nmplDeviceInfoExample = new NmplDeviceInfoExample();
-        nmplDeviceInfoExample.createCriteria().andRelationOperatorIdEqualTo(relationOperatorId).andIsExistEqualTo(true);
+        nmplDeviceInfoExample.createCriteria().andIsExistEqualTo(true);
         List<NmplDeviceInfo> nmplDeviceInfos = nmplDeviceInfoMapper.selectByExample(nmplDeviceInfoExample);
         for (NmplBaseStationInfo nmplBaseStationInfo : nmplBaseStationInfos) {
             map.put(nmplBaseStationInfo.getLanIp(), nmplBaseStationInfo.getStationId());
