@@ -25,7 +25,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(sessionHandlerInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/**/user/login/**")
-                .excludePathPatterns("/**/dataCollect/selectCompanyLoadData/**")
                 .excludePathPatterns("/**/companyHeartbeat/insertCompanyHeartbeat/**")
                 .excludePathPatterns("/**/companyStationSummary/receiveStationSummary/**")
                 .excludePathPatterns("/**/companyTerminalUser/receiveTerminalUser/**")
