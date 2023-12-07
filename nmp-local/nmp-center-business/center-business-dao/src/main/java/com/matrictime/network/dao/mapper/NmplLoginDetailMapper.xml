@@ -98,6 +98,9 @@
       <if test="loginAccount != null and loginAccount != '' ">
         login_account like  concat('%',#{loginAccount},'%')
       </if>
+      <if test="loginIp != null and loginIp != '' ">
+        and login_ip = #{loginIp}
+      </if>
       <if test="isSuccess != null">
         and is_success = #{isSuccess}
       </if>
