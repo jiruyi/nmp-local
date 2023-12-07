@@ -397,11 +397,11 @@ public class ConfigController {
      * @param configurationReq
      * @return
      */
-    @RequestMapping (value = "/insertOrUpdate",method = RequestMethod.POST)
-    @SystemLog(opermodul = "配置模块",operDesc = "更新设备配置信息",operType = "更新")
-    public Result insertOrUpdate(@RequestBody ConfigurationReq configurationReq){
-        return  configurationService.insertOrUpdate(configurationReq);
-    }
+//    @RequestMapping (value = "/insertOrUpdate",method = RequestMethod.POST)
+//    @SystemLog(opermodul = "配置模块",operDesc = "更新设备配置信息",operType = "更新")
+//    public Result insertOrUpdate(@RequestBody ConfigurationReq configurationReq){
+//        return  configurationService.insertOrUpdate(configurationReq);
+//    }
 
 
     /**

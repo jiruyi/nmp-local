@@ -32,7 +32,7 @@ public class SystemConfigController {
      * @return
      */
     @RequestMapping(value = "/queryBasicConfig",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "基础配置",operDesc = "基础配置查询",operType = "查询")
+    @SystemLog(opermodul = "基础配置",operDesc = "基础配置查询",operType = "查询")
     @RequiresPermissions("sys:basicSetting:query")
     public Result<PageInfo> queryBasicConfig(){
         try {
@@ -48,7 +48,7 @@ public class SystemConfigController {
      * @return
      */
     @RequestMapping(value = "/updateBasicConfig",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "基础配置",operDesc = "基础配置编辑",operType = "编辑")
+    @SystemLog(opermodul = "基础配置",operDesc = "基础配置编辑",operType = "编辑")
     @RequiresPermissions("sys:basicSetting:update")
     public Result updateBasicConfig(@RequestBody EditBasicConfigReq req){
         try {
@@ -65,7 +65,7 @@ public class SystemConfigController {
      * @return
      */
     @RequestMapping(value = "/queryDictionary",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "字典表",operDesc = "字典表查询",operType = "查询")
+    @SystemLog(opermodul = "字典表",operDesc = "字典表查询",operType = "查询")
     @RequiresPermissions("sys:dictionary:query")
     public Result<PageInfo> queryDictionary(@RequestBody QueryDictionaryReq req){
         try {
@@ -82,7 +82,7 @@ public class SystemConfigController {
      * @return
      */
     @RequestMapping(value = "/uploadDictionary",method = RequestMethod.POST)
-//    @SystemLog(opermodul = "字典表",operDesc = "字典表上传",operType = "上传")
+    @SystemLog(opermodul = "字典表",operDesc = "字典表上传",operType = "上传")
     @RequiresPermissions("sys:dictionary:export")
     public Result uploadDictionary(@RequestBody MultipartFile file){
         return systemConfigService.uploadDictionary(file);
