@@ -183,6 +183,7 @@ public class TaskServiceImpl implements TaskService {
             }
 
             // 清除基站历史状态上报数据
+            stationExample.clear();
             stationExample.createCriteria().andCreateTimeLessThan(excuteTime);
             int deleteStation = nmplStationHeartInfoMapper.deleteByExample(stationExample);
             log.info("TaskServiceImpl.heartReport deleteStation:{}",deleteStation);
@@ -200,6 +201,7 @@ public class TaskServiceImpl implements TaskService {
             postHeartReport(heartInfo.getRemark(),heartInfo.getDeviceId());
 
             // 清除密钥中心历史状态上报数据
+            keycenterExample.clear();
             keycenterExample.createCriteria().andCreateTimeLessThan(excuteTime);
             int deleteKeycenter = nmplKeycenterHeartInfoMapper.deleteByExample(keycenterExample);
             log.info("TaskServiceImpl.heartReport deleteKeycenter:{}",deleteKeycenter);
