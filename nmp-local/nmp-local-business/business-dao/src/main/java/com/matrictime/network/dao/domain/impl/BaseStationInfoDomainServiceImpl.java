@@ -575,15 +575,19 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
                 throw new RuntimeException("端口ip不唯一");
             }
         }
-        NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
-        NmplBaseStationInfoExample.Criteria criteria = nmplBaseStationInfoExample.createCriteria();
-        criteria.andPublicNetworkIpEqualTo(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP());
-        criteria.andIsExistEqualTo(true);
-        List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(nmplBaseStationInfoExample);
-        if(!CollectionUtils.isEmpty(baseStationInfos) &&
-                !"".equals(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP())){
-            throw new RuntimeException("公共ip不唯一");
+
+        if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP())){
+            NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
+            NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
+            criteria.andPublicNetworkIpEqualTo(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP());
+            criteria.andStationTypeEqualTo(borderBaseStationInfoRequest.getStationType()).andIsExistEqualTo(true);
+            List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
+            if(!CollectionUtils.isEmpty(baseStationInfos)){
+                throw new RuntimeException("公共ip不唯一");
+            }
         }
+
+
         //数据插入
         NmplBaseStation nmplbaseStation = new NmplBaseStation();
         BeanUtils.copyProperties(borderBaseStationInfoRequest,nmplbaseStation);
@@ -624,14 +628,17 @@ public class BaseStationInfoDomainServiceImpl implements BaseStationInfoDomainSe
             }
         }
         //校验公共ip
-        NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
-        NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
-        criteria.andPublicNetworkIpEqualTo(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP());
-        criteria.andStationIdNotEqualTo(borderBaseStationInfoRequest.getStationId());
-        List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
-        if(!CollectionUtils.isEmpty(baseStationInfos)){
-            throw new RuntimeException("公共ip不唯一");
+        if(!StringUtils.isEmpty(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP())){
+            NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
+            NmplBaseStationInfoExample.Criteria criteria = baseStationInfoExample.createCriteria();
+            criteria.andPublicNetworkIpEqualTo(borderBaseStationInfoRequest.getPublicNetworkIp().getCommunicationIP());
+            criteria.andStationIdNotEqualTo(borderBaseStationInfoRequest.getStationId()).andStationTypeEqualTo(borderBaseStationInfoRequest.getStationType()).andIsExistEqualTo(true);
+            List<NmplBaseStationInfo> baseStationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
+            if(!CollectionUtils.isEmpty(baseStationInfos)){
+                throw new RuntimeException("公共ip不唯一");
+            }
         }
+
 
         //数据更新
         NmplBaseStationInfoExample nmplBaseStationInfoExample = new NmplBaseStationInfoExample();
