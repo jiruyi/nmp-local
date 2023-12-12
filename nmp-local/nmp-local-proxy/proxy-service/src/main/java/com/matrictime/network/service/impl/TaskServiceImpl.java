@@ -181,13 +181,12 @@ public class TaskServiceImpl implements TaskService {
                 // 上报网管中心站点状态
                 postHeartReport(heartInfo.getRemark(),heartInfo.getStationId());
             }
-
-            // 清除基站历史状态上报数据
-            stationExample.clear();
-            stationExample.createCriteria().andCreateTimeLessThan(excuteTime);
-            int deleteStation = nmplStationHeartInfoMapper.deleteByExample(stationExample);
-            log.info("TaskServiceImpl.heartReport deleteStation:{}",deleteStation);
         }
+        // 清除基站历史状态上报数据
+        stationExample.clear();
+        stationExample.createCriteria().andCreateTimeLessThan(excuteTime);
+        int deleteStation = nmplStationHeartInfoMapper.deleteByExample(stationExample);
+        log.info("TaskServiceImpl.heartReport deleteStation:{}",deleteStation);
 
         // 查询设备的心跳上报数据
         NmplKeycenterHeartInfoExample keycenterExample = new NmplKeycenterHeartInfoExample();
@@ -199,13 +198,13 @@ public class TaskServiceImpl implements TaskService {
 
             // 上报网管中心站点状态
             postHeartReport(heartInfo.getRemark(),heartInfo.getDeviceId());
-
-            // 清除密钥中心历史状态上报数据
-            keycenterExample.clear();
-            keycenterExample.createCriteria().andCreateTimeLessThan(excuteTime);
-            int deleteKeycenter = nmplKeycenterHeartInfoMapper.deleteByExample(keycenterExample);
-            log.info("TaskServiceImpl.heartReport deleteKeycenter:{}",deleteKeycenter);
         }
+
+        // 清除密钥中心历史状态上报数据
+        keycenterExample.clear();
+        keycenterExample.createCriteria().andCreateTimeLessThan(excuteTime);
+        int deleteKeycenter = nmplKeycenterHeartInfoMapper.deleteByExample(keycenterExample);
+        log.info("TaskServiceImpl.heartReport deleteKeycenter:{}",deleteKeycenter);
     }
 
     /**
