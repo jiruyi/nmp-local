@@ -190,7 +190,7 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
         List<CenterDeviceInfoVo> database = new ArrayList<>();
         List<CenterDeviceInfoVo> accusecenter = new ArrayList<>();
         for (CenterDeviceInfoVo vo:deviceInfoVos){
-            if (DeviceTypeEnum.DEVICE_DISPENSER.equals(vo.getDeviceType())){
+            if (DeviceTypeEnum.DEVICE_DISPENSER.getCode().equals(vo.getDeviceType())){
                 keycenter.add(vo);
             }
             if (DeviceTypeEnum.DEVICE_GENERATOR.getCode().equals(vo.getDeviceType())){
