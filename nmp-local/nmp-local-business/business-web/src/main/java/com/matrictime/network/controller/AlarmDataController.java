@@ -1,8 +1,6 @@
 package com.matrictime.network.controller;
 
 import com.matrictime.network.base.SystemException;
-import com.matrictime.network.base.enums.SystemUserEnum;
-import com.matrictime.network.context.RequestContext;
 import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.AcceptAlarmDataReq;
@@ -49,8 +47,6 @@ public class AlarmDataController {
     @ApiOperation(value = "告警信息数据推送", notes = "告警信息数据推送")
     @RequestMapping(value = "/accept", method = RequestMethod.POST)
     public Result acceptAlarmData(@RequestBody AcceptAlarmDataReq req) {
-        //设置用户  此请求用户为网管代理
-        RequestContext.setUserInfo(SystemUserEnum.NMP_PROXY);
         return alarmDataService.acceptAlarmData(req.getAlarmInfoList(),req.getCpuId());
     }
 
