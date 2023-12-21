@@ -118,24 +118,10 @@ public class DataServiceImpl extends SystemBaseService implements DataService {
         Result result = new Result();
         try {
             this.checkParam(dataReq);
-
-            NmpsDataInfoExample nmpsDataInfoExample = new NmpsDataInfoExample();
-            NmpsDataInfoExample.Criteria criteria = nmpsDataInfoExample.createCriteria();
-            criteria.andDataTypeEqualTo(dataReq.getDataType()).andNetworkIdEqualTo(dataReq.getNetworkId())
-                    .andUploadTimeGreaterThanOrEqualTo(DateUtils.getCurrentHourTime(new Date()));;
             List<NmpsDataInfo> nmpsDataInfoList = new ArrayList<>();
             BigDecimal value = new BigDecimal(ZERO_DOUBLE);
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-            String time = formatter.format(DateUtils.getCurrentHourTime(new Date()));
-            nmpsDataInfoList = nmpsDataInfoMapper.selectByExample(nmpsDataInfoExample);
-
+            nmpsDataInfoList = dataInfoMapper.getLatestData(dataReq.getDataType(),dataReq.getNetworkId());
             for (NmpsDataInfo nmpsDataInfo : nmpsDataInfoList) {
-                if((dataReq.getDataType().equals(DataConstants.LAST_UP_DATA_VALUE) ||
-                        dataReq.getDataType().equals(DataConstants.LAST_DOWN_DATA_VALUE))){
-                    if(!time.equals(formatter.format(nmpsDataInfo.getUploadTime()))){
-                        continue;
-                    }
-                }
                 value = value.add(new BigDecimal(nmpsDataInfo.getDataValue()).divide(new BigDecimal(ONE_THOUSAND_AND_TWENTY_FOUR*ONE_THOUSAND_AND_TWENTY_FOUR),2,BigDecimal.ROUND_HALF_UP));
             }
             result.setResultObj(value.doubleValue());

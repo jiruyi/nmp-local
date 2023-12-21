@@ -10,4 +10,7 @@ public interface DataInfoMapper {
     List<NmpsDataInfo> selectDataList(@Param("dataType") String dataType, @Param("networkId") String networkId, @Param("time") String time);
 
     int batchInsert(@Param("list") List<DataInfoVo> dataInfoVoList);
+
+
+    List<NmpsDataInfo> getLatestData (@Param("dataType") String dataType, @Param("networkId") String networkId);
 }
