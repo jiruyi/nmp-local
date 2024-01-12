@@ -133,7 +133,7 @@ public class SystemDataCollectServiceImpl implements SystemDataCollectService {
             Long maxId =dataCollectReq.getDataCollectVoList().get(0).getId();
             String ip = dataCollectReq.getDataCollectVoList().get(0).getDeviceIp();
             log.info("this time acceptAlarmData ip:{},maxId:{}",ip,maxId);
-            redisTemplate.opsForValue().set(ip+DATACOLLECT_PUSH_LAST_MAXI_ID,String.valueOf(maxId));
+            redisTemplate.opsForValue().set(dataCollectReq.getKey(),String.valueOf(maxId));
 
             result.setResultObj(i);
             result.setSuccess(true);

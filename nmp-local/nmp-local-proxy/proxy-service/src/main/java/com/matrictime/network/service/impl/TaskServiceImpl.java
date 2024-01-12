@@ -108,8 +108,8 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @Value("${local.ip}")
-    private String localIp;
+//    @Value("${local.ip}")
+//    private String localIp;
 
     @Value("${error.cpu}")
     private String errorCpu;
@@ -231,15 +231,16 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void dataCollectPush() {
         try {
+            String cpuId = SystemUtils.getCPUProcessorID();
             NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
             NmplDataCollectExample.Criteria criteria = nmplDataCollectExample.createCriteria();
-            Object lastMaxId = redisTemplate.opsForValue().get(localIp+DATACOLLECT_PUSH_LAST_MAXI_ID);
+            Object lastMaxId = redisTemplate.opsForValue().get(cpuId+DATACOLLECT_PUSH_LAST_MAXI_ID);
             if(Objects.nonNull(lastMaxId)){
                 //删除上次推送之前的数据
                 criteria.andIdLessThanOrEqualTo(Long.valueOf(lastMaxId.toString()));
                 int thisCount = nmplDataCollectMapper.deleteByExample(nmplDataCollectExample);
                 nmplDataCollectExample.clear();
-                log.info("ip is:{} last dataCollect lastMaxId is:{} deletecount is:{} ",localIp,lastMaxId,thisCount);
+                log.info("cpuId is:{} last dataCollect lastMaxId is:{} deletecount is:{} ",cpuId,lastMaxId,thisCount);
             }
             // 查询所有的统计数据
             nmplDataCollectExample.setOrderByClause("id desc");
@@ -250,9 +251,10 @@ public class TaskServiceImpl implements TaskService {
             }
             // 补充数据
             DataCollectReq dataCollectReq = new DataCollectReq();
+            dataCollectReq.setKey(cpuId+DATACOLLECT_PUSH_LAST_MAXI_ID);
             List<DataCollectVo> dataCollectVoList = new ArrayList<>();
             for (NmplDataCollect nmplDataCollect : nmplDataCollectList) {
-                nmplDataCollect.setDeviceIp(localIp);
+//                nmplDataCollect.setDeviceIp(localIp);
                 DataCollectVo dataCollectVo = new DataCollectVo();
                 BeanUtils.copyProperties(nmplDataCollect,dataCollectVo);
                 dataCollectVoList.add(dataCollectVo);
