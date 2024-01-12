@@ -15,6 +15,7 @@ import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.CenterDeviceInfoVo;
 import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.service.DeviceInfoService;
+import com.matrictime.network.service.ProxyConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
@@ -56,6 +57,9 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
     @Resource
     private NmplDeviceInfoMapper nmplDeviceInfoMapper;
 
+    @Autowired
+    private ProxyConfigService proxyConfigService;
+
 
     /**
      * 新增设备
@@ -74,8 +78,10 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
                 BeanUtils.copyProperties(infoVo,deviceInfo);
                 int local = nmplLocalDeviceInfoMapper.insertSelective(deviceInfo);
 
+                Result ipConfig = proxyConfigService.addOrUpdateLocalIpConfig();
+
                 int updateLocal = deviceInfoService.updateTable(infoVo.getDeviceType(), createTime, EDIT_TYPE_ADD, NMPL_LOCAL_DEVICE_INFO);
-                log.info("DeviceInfoServiceImpl.addDeviceInfo：local:{},updateLocal:{}",local,updateLocal);
+                log.info("DeviceInfoServiceImpl.addDeviceInfo：local:{},updateLocal:{},ipConfig:{}",local,updateLocal,ipConfig);
             }
 
             // 插入通知表通知device表更新
@@ -110,8 +116,10 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
                 BeanUtils.copyProperties(infoVo,stationInfo);
                 int local = nmplLocalDeviceInfoMapper.updateByPrimaryKeySelective(stationInfo);
 
+                Result ipConfig = proxyConfigService.addOrUpdateLocalIpConfig();
+
                 int updateLocal = deviceInfoService.updateTable(infoVo.getDeviceType(), createTime, EDIT_TYPE_UPD, NMPL_LOCAL_DEVICE_INFO);
-                log.info("DeviceInfoServiceImpl.updateDeviceInfo：local:{},updateLocal:{}",local,updateLocal);
+                log.info("DeviceInfoServiceImpl.updateDeviceInfo：local:{},updateLocal:{},ipConfig:{}",local,updateLocal,ipConfig);
             }
 
             // 插入通知表通知device表更新
@@ -205,7 +213,6 @@ public class DeviceInfoServiceImpl extends SystemBaseService implements DeviceIn
             if (DeviceTypeEnum.ACCUSE_CENTER.getCode().equals(vo.getDeviceType())){
                 accusecenter.add(vo);
             }
-
         }
 
         infoVoMap.put(DeviceTypeEnum.DEVICE_DISPENSER.getCode(),keycenter);

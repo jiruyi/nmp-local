@@ -9,4 +9,6 @@ public interface ProxyConfigDomainService {
     int addOrUpdateProxyConfig(NmplProxyConfig config);
 
     List<String> getLocalIps();
+
+    NmplProxyConfig queryProxyConfigByCode(String code);
 }

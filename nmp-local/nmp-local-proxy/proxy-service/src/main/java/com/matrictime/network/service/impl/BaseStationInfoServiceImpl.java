@@ -12,6 +12,7 @@ import com.matrictime.network.modelVo.CenterBaseStationInfoVo;
 import com.matrictime.network.request.AddBaseStationInfoRequest;
 import com.matrictime.network.request.DeleteBaseStationInfoRequest;
 import com.matrictime.network.service.BaseStationInfoService;
+import com.matrictime.network.service.ProxyConfigService;
 import com.matrictime.network.service.UpdateInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -44,6 +45,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     @Autowired
     private UpdateInfoService updateInfoService;
 
+    @Autowired
+    private ProxyConfigService proxyConfigService;
+
 
 
     /**
@@ -67,11 +71,13 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 BeanUtils.copyProperties(infoVo,stationInfo);
                 int addlocal = nmplLocalBaseStationInfoMapper.insertSelective(stationInfo);
 
+                Result ipConfig = proxyConfigService.addOrUpdateLocalIpConfig();
+
                 int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
 
                 log.info("BaseStationInfoServiceImpl.addBaseStationInfo：" +
-                                "addlocal:{},updateLocal:{}",
-                        addlocal,updateLocal);
+                                "addlocal:{},updateLocal:{},ipConfig:{}",
+                        addlocal,updateLocal,ipConfig);
             }
 
             NmplLocalBaseStationInfoExample localBaseExample = new NmplLocalBaseStationInfoExample();
@@ -116,9 +122,11 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 BeanUtils.copyProperties(infoVo,stationInfo);
                 int local = nmplLocalBaseStationInfoMapper.updateByPrimaryKeySelective(stationInfo);
 
+                Result ipConfig = proxyConfigService.addOrUpdateLocalIpConfig();
+
                 int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
 
-                log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：local:{},updateLocal:{}",local,updateLocal);
+                log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：local:{},updateLocal:{},ipConfig:{}",local,updateLocal,ipConfig);
             }
 
             /* 其他基站的推送更新 */

@@ -47,4 +47,16 @@ public class ProxyConfigDomainServiceImpl implements ProxyConfigDomainService {
         }
         return result;
     }
+
+    @Override
+    public NmplProxyConfig queryProxyConfigByCode(String code) {
+        NmplProxyConfig result = null;
+        NmplProxyConfigExample example = new NmplProxyConfigExample();
+        example.createCriteria().andConfigCodeEqualTo(ProxyConfigEnum.LOCAL_IP.getCode());
+        List<NmplProxyConfig> nmplProxyConfigs = proxyConfigMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(nmplProxyConfigs)){
+            result = nmplProxyConfigs.get(ZERO);
+        }
+        return result;
+    }
 }
