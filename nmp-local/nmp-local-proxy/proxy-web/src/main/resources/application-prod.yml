@@ -71,13 +71,6 @@ logging:
 thread:
   batchMaxSize: 500
 
-netmanage:
-  ip: http://192.168.72.14
-  port: 8002
-
-local:
-  ip: 192.168.72.103
-
 eureka:
   client:
     service-url:
