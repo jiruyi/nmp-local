@@ -7,7 +7,10 @@ import oshi.util.FormatUtil;
 import oshi.util.Util;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.*;
 
 public class SystemUtils {
@@ -201,6 +204,42 @@ public class SystemUtils {
         return identifier.getProcessorID().replace(" ","");
     }
 
+    /**
+     * 获取本机IP 地址
+     */
+    public static Set<String> getLocalIp4Address() throws SocketException{
+        Set<String> result = new HashSet<>();
+        List<Inet4Address> list = null;
+        list = getLocalIp4AddressFromNetworkInterface();
+        list.forEach(d -> {
+            result.add(d.toString().replaceAll("/", ""));
+        });
+        return result;
+    }
+
+    /**
+     * 获取本机所有网卡信息   得到所有IPv4信息
+     * @return Inet4Address>
+     */
+    public static List<Inet4Address> getLocalIp4AddressFromNetworkInterface() throws SocketException {
+        List<Inet4Address> addresses = new ArrayList<>();
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        if (networkInterfaces == null) {
+            return addresses;
+        }
+        while (networkInterfaces.hasMoreElements()) {
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+            while (inetAddresses.hasMoreElements()) {
+                InetAddress inetAddress = inetAddresses.nextElement();
+                if (inetAddress instanceof Inet4Address) {
+                    addresses.add((Inet4Address) inetAddress);
+                }
+            }
+        }
+        return addresses;
+    }
+
     public static void getSystest(){
         SystemInfo si = new SystemInfo();
         OperatingSystem op = si.getOperatingSystem();
@@ -232,12 +271,12 @@ public class SystemUtils {
 //            for (int i=0;i<100;i++){
 //                System.out.println(getCPUusePercent());
 //            }
-            SystemInfo si = new SystemInfo();
-            HardwareAbstractionLayer hardware = si.getHardware();
-            CentralProcessor processor = hardware.getProcessor();
-            CentralProcessor.ProcessorIdentifier identifier = processor.getProcessorIdentifier();
-            System.out.println(identifier.getIdentifier());
-            System.out.println(identifier.getProcessorID());
+//            SystemInfo si = new SystemInfo();
+//            HardwareAbstractionLayer hardware = si.getHardware();
+//            CentralProcessor processor = hardware.getProcessor();
+//            CentralProcessor.ProcessorIdentifier identifier = processor.getProcessorIdentifier();
+//            System.out.println(identifier.getIdentifier());
+//            System.out.println(identifier.getProcessorID());
 
 //            for (int i=0;i<20;i++){
 //                System.out.println(getCPUusePercent());
@@ -266,6 +305,7 @@ public class SystemUtils {
 //                boolean pingResult = getPingResult(ip);
 //                System.out.println(pingResult);
 //            }
+            System.out.println(getLocalIp4Address());
         } catch (Exception e) {
             System.out.println("Failed to bind to port " + port);
             e.printStackTrace();

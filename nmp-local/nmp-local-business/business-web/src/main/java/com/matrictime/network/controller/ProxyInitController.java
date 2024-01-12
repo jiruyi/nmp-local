@@ -4,6 +4,7 @@ import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.ProxyReq;
 import com.matrictime.network.request.SignalIoReq;
+import com.matrictime.network.response.ProxyResp;
 import com.matrictime.network.response.SignalIoResp;
 import com.matrictime.network.service.ProxyInitService;
 import com.matrictime.network.service.SignalService;
@@ -30,7 +31,7 @@ public class ProxyInitController {
      * @return
      */
     @RequestMapping (value = "/init",method = RequestMethod.POST)
-    public Result init(@RequestBody ProxyReq req){
+    public Result<ProxyResp> init(@RequestBody ProxyReq req){
         return proxyInitService.init(req);
     }
 

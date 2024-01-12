@@ -56,8 +56,8 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      *  代理程序启动初始化获取该ip下的所有信息
      */
     @Override
-    public Result init(ProxyReq req) {
-        Result result = null;
+    public Result<ProxyResp> init(ProxyReq req) {
+        Result<ProxyResp> result = null;
         try {
             checkParam(req);
             ProxyResp proxyResp = new ProxyResp();
@@ -84,7 +84,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      * @param req
      */
     private void checkParam(ProxyReq req){
-        if(req.getIp().isEmpty()){
+        if(CollectionUtils.isEmpty(req.getIps())){
             throw new SystemException(ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
     }
@@ -93,12 +93,12 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
 
     /**
      * 获取该ip下的基站信息
-     * @param ip
+     * @param ips
      * @return
      */
-    private List<ProxyBaseStationInfoVo> getLocalStationInfoVo(String ip){
+    private List<ProxyBaseStationInfoVo> getLocalStationInfoVo(List ips){
         NmplBaseStationExample nmplBaseStationExample = new NmplBaseStationExample();
-        nmplBaseStationExample.createCriteria().andLanIpEqualTo(ip).andIsExistEqualTo(true);
+        nmplBaseStationExample.createCriteria().andLanIpIn(ips).andIsExistEqualTo(true);
         List<NmplBaseStation> nmplBaseStationInfos = nmplBaseStationMapper.selectByExampleWithBLOBs(nmplBaseStationExample);
         List<ProxyBaseStationInfoVo> proxyBaseStationInfoVoList = new ArrayList<>();
 
@@ -112,12 +112,12 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
 
     /**
      * 获取该ip下的设备信息
-     * @param ip
+     * @param ips
      * @return
      */
-    private List<ProxyDeviceInfoVo> getLocalDeviceInfoVo(String ip){
+    private List<ProxyDeviceInfoVo> getLocalDeviceInfoVo(List ips){
         NmplDeviceExample nmplDeviceExample = new NmplDeviceExample();
-        nmplDeviceExample.createCriteria().andLanIpEqualTo(ip).andIsExistEqualTo(true);
+        nmplDeviceExample.createCriteria().andLanIpIn(ips).andIsExistEqualTo(true);
         List<NmplDevice> nmplDeviceInfos = nmplDeviceMapper.selectByExampleWithBLOBs(nmplDeviceExample);
 
         List<ProxyDeviceInfoVo> res = new ArrayList<>();
@@ -138,8 +138,9 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
      * @return
      */
     private void getLocalDevices (ProxyResp proxyResp,ProxyReq req){
-        List<ProxyBaseStationInfoVo> localStation = getLocalStationInfoVo(req.getIp());
-        List<ProxyDeviceInfoVo> localDeviceInfoVos = getLocalDeviceInfoVo(req.getIp());
+        List<String> ips = new ArrayList<>(req.getIps());
+        List<ProxyBaseStationInfoVo> localStation = getLocalStationInfoVo(ips);
+        List<ProxyDeviceInfoVo> localDeviceInfoVos = getLocalDeviceInfoVo(ips);
         if(CollectionUtils.isEmpty(localStation) && CollectionUtils.isEmpty(localDeviceInfoVos)){
             proxyResp.setExist(false);
             log.info("this ip device is not exsit");
@@ -147,6 +148,14 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             proxyResp.setLocalStation(localStation);
             proxyResp.setLocalDeviceInfoVos(localDeviceInfoVos);
             proxyResp.setExist(true);
+            Set<String> localIps = new HashSet<>();
+            for (ProxyBaseStationInfoVo vo:localStation){
+                localIps.add(vo.getLanIp());
+            }
+            for (ProxyDeviceInfoVo vo:localDeviceInfoVos){
+                localIps.add(vo.getLanIp());
+            }
+            proxyResp.setLocalIps(new ArrayList<>(localIps));
         }
     }
 

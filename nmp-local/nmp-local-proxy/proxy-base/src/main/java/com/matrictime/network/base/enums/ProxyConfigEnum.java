@@ -2,7 +2,8 @@ package com.matrictime.network.base.enums;
 
 public enum ProxyConfigEnum {
     REDIS_IP("1000","redis ip"),
-    REDIS_PASSWORD("1002","redis password");
+    REDIS_PASSWORD("1002","redis password"),
+    LOCAL_IP("1001","local ip");
 
 
     private String code;
