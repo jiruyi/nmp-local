@@ -1,0 +1,11 @@
+version: '2.5'
+services:
+  eureka:
+    image: openjdk:8
+    network_mode: host
+    ports:
+      - "7003:7002"
+    volumes:
+      - ./nmp-local-eureka-1.0.0-executable.jar:/app/nmp-local-eureka-1.0.0-executable.jar
+      - /usr/local/src/docker/eureka/logs:/app/logs
+    command: java -jar /app/nmp-local-eureka-1.0.0-executable.jar
