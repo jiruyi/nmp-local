@@ -65,13 +65,9 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
             ProxyReq proxyReq = new ProxyReq();
             proxyReq.setIps(localIps);
 
-            Result<ProxyResp> initResult = alarmDataFacade.init(proxyReq);
+            ProxyResp initResult = alarmDataFacade.init(proxyReq);
             log.info("initInfo.post postRes:{}",JSONObject.toJSONString(initResult));
-            if (!initResult.isSuccess()){
-                log.info("InitInfoServiceImpl.initInfo result false!");
-                return;
-            }
-            if (!initResult.getResultObj().isExist()){
+            if (!initResult.isExist()){
                 log.info("InitInfoServiceImpl.initInfo local devices are not exist!");
                 return;
             }
@@ -79,11 +75,11 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
             NmplProxyConfig proxyConfig = new NmplProxyConfig();
             proxyConfig.setConfigCode(ProxyConfigEnum.LOCAL_IP.getCode());
             proxyConfig.setConfigDesc(ProxyConfigEnum.LOCAL_IP.getDesc());
-            proxyConfig.setConfigValue(JSONObject.toJSONString(initResult.getResultObj().getLocalIps()));
+            proxyConfig.setConfigValue(JSONObject.toJSONString(initResult.getLocalIps()));
             proxyConfigDomainService.addOrUpdateProxyConfig(proxyConfig);
 
             // 初始化本机基站
-            List<ProxyBaseStationInfoVo> localStationList = initResult.getResultObj().getLocalStation();
+            List<ProxyBaseStationInfoVo> localStationList = initResult.getLocalStation();
             if (!CollectionUtils.isEmpty(localStationList)){
                 List<CenterBaseStationInfoVo> centerBaseStationInfoVos = new ArrayList<>();
                 for (int i=0;i<localStationList.size();i++){
@@ -95,7 +91,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
             }
 
             // 初始化本机设备信息
-            List<ProxyDeviceInfoVo> localDeviceInfoList = initResult.getResultObj().getLocalDeviceInfoVos();
+            List<ProxyDeviceInfoVo> localDeviceInfoList = initResult.getLocalDeviceInfoVos();
             if (!CollectionUtils.isEmpty(localDeviceInfoList)){
                 List<CenterDeviceInfoVo> centerDeviceInfoVos = new ArrayList<>();
                 for (int i=0;i<localDeviceInfoList.size();i++){
@@ -107,7 +103,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
             }
 
             // 初始化基站列表信息
-            List<ProxyBaseStationInfoVo> baseStationInfoList = initResult.getResultObj().getBaseStationInfoList();
+            List<ProxyBaseStationInfoVo> baseStationInfoList = initResult.getBaseStationInfoList();
             if (!CollectionUtils.isEmpty(baseStationInfoList)){
                 List<CenterBaseStationInfoVo> centerBaseStationInfoVos = new ArrayList<>();
                 for (int i=0;i<baseStationInfoList.size();i++){
@@ -119,7 +115,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
             }
 
             // 初始化设备列表信息
-            List<ProxyDeviceInfoVo> deviceInfoList = initResult.getResultObj().getDeviceInfoVos();
+            List<ProxyDeviceInfoVo> deviceInfoList = initResult.getDeviceInfoVos();
             if (!CollectionUtils.isEmpty(deviceInfoList)){
                 List<CenterDeviceInfoVo> centerDeviceInfoVos = new ArrayList<>();
                 for (int i=0;i<deviceInfoList.size();i++){
@@ -131,7 +127,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
             }
 
             // 初始化业务路由列表信息
-            List<ProxyBusinessRouteVo> businessRouteVoList = initResult.getResultObj().getBusinessRouteVoList();
+            List<ProxyBusinessRouteVo> businessRouteVoList = initResult.getBusinessRouteVoList();
             if (!CollectionUtils.isEmpty(businessRouteVoList)){
                 List<NmplBusinessRouteVo> nmplBusinessRouteVos = new ArrayList<>();
                 for (int i=0;i<businessRouteVoList.size();i++){
@@ -143,7 +139,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
             }
 
             //初始化出网路由
-            List<ProxyInternetRouteVo> internetRouteVoList = initResult.getResultObj().getInternetRouteVoList();
+            List<ProxyInternetRouteVo> internetRouteVoList = initResult.getInternetRouteVoList();
             if (!CollectionUtils.isEmpty(internetRouteVoList)){
                 List<NmplInternetRouteVo> nmplInternetRouteVos = new ArrayList<>();
                 for (int i=0;i<internetRouteVoList.size();i++){
@@ -155,7 +151,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
             }
 
             //初始化静态路由
-            List<ProxyStaticRouteVo> staticRouteVoList = initResult.getResultObj().getStaticRouteVoList();
+            List<ProxyStaticRouteVo> staticRouteVoList = initResult.getStaticRouteVoList();
             if (!CollectionUtils.isEmpty(staticRouteVoList)){
                 List<NmplStaticRouteVo> nmplStaticRouteVos = new ArrayList<>();
                 for (int i=0;i<staticRouteVoList.size();i++){
@@ -167,7 +163,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
             }
 
             // 初始化链路列表信息
-            List<LocalLinkVo> localLinkVoList = initResult.getResultObj().getLocalLinkVos();
+            List<LocalLinkVo> localLinkVoList = initResult.getLocalLinkVos();
             if (!CollectionUtils.isEmpty(localLinkVoList)){
                 List<ProxyLinkVo> localLinkVos = new ArrayList<>();
                 for (int i=0;i<localLinkVoList.size();i++){
@@ -179,7 +175,7 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
             }
 
             // 初始化一体机列表信息
-            List<NmplOutlinePcInfoVo> nmplOutlinePcInfoVoList = initResult.getResultObj().getNmplOutlinePcInfoVos();
+            List<NmplOutlinePcInfoVo> nmplOutlinePcInfoVoList = initResult.getNmplOutlinePcInfoVos();
             if (!CollectionUtils.isEmpty(nmplOutlinePcInfoVoList)){
                 List<CenterNmplOutlinePcInfoVo> centerNmplOutlinePcInfoVos = new ArrayList<>();
                 for (int i=0;i<nmplOutlinePcInfoVoList.size();i++){

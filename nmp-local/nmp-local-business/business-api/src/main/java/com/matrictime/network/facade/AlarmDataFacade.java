@@ -81,7 +81,7 @@ public interface AlarmDataFacade {
     Result insertCompanyHeartbeat(CompanyHeartbeatResponse companyHeartbeatResponse);
 
     @RequestMapping(value= "/proxy/init",method = RequestMethod.POST)
-    Result<ProxyResp> init(ProxyReq req);
+    ProxyResp init(ProxyReq req);
 
 
 }

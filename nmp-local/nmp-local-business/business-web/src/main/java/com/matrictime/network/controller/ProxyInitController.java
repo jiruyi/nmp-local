@@ -31,8 +31,13 @@ public class ProxyInitController {
      * @return
      */
     @RequestMapping (value = "/init",method = RequestMethod.POST)
-    public Result<ProxyResp> init(@RequestBody ProxyReq req){
-        return proxyInitService.init(req);
+    public ProxyResp init(@RequestBody ProxyReq req){
+        Result<ProxyResp> result = proxyInitService.init(req);
+        if(result.isSuccess()){
+            return result.getResultObj();
+        }else {
+            return new ProxyResp();
+        }
     }
 
 }
