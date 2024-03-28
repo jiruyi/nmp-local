@@ -31,6 +31,8 @@ public class TaskConfigVo {
      */
     private String deviceType;
 
+    private String deviceId;
+
     /**
      * 任务类型 01:定时任务 02:周期任务
      */
