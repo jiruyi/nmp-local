@@ -27,4 +27,14 @@ public enum DeviceTypeEnum {
         this.code = code;
         this.conditionDesc = conditionDesc;
     }
+
+    // 根据value返回枚举类型,主要在switch中使用
+     public static DeviceTypeEnum getByCode(String code) {
+         for (DeviceTypeEnum deviceTypeEnum : values()) {
+             if (deviceTypeEnum.getCode() == code) {
+                 return deviceTypeEnum;
+             }
+         }
+         return null;
+     }
 }
