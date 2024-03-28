@@ -52,6 +52,9 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
     @Autowired
     private ProxyConfigDomainService proxyConfigDomainService;
 
+    @Autowired
+    private TaskConfigService taskConfigService;
+
     @Override
 //    @Transactional
     public void initInfo() {
@@ -184,6 +187,18 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                     centerNmplOutlinePcInfoVos.add(vo);
                 }
                 outlinePcService.initInfo(centerNmplOutlinePcInfoVos);
+            }
+
+            // 初始化定时任务配置列表信息
+            List<TaskConfigVo> taskConfigVoList = initResult.getTaskConfigVoList();
+            if (!CollectionUtils.isEmpty(taskConfigVoList)){
+                List<CenterTaskConfigVo> centerTaskConfigVos = new ArrayList<>();
+                for (int i=0;i<taskConfigVoList.size();i++){
+                    CenterTaskConfigVo vo = new CenterTaskConfigVo();
+                    BeanUtils.copyProperties(taskConfigVoList.get(i),vo);
+                    centerTaskConfigVos.add(vo);
+                }
+                taskConfigService.initInfo(centerTaskConfigVos);
             }
         } catch (Exception e) {
             log.error("InitInfoServiceImpl.initInfo:{}",e);

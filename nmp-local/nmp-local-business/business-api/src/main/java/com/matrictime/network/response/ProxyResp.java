@@ -39,4 +39,6 @@ public class ProxyResp implements Serializable {
 
     private List<String> localIps = new ArrayList<>();
 
+    private List<TaskConfigVo> taskConfigVoList = new ArrayList<>();
+
 }

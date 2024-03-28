@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.NmplTaskConfigExtMapper">
+  <update id="batchUpdate" parameterType="com.matrictime.network.modelVo.TaskConfigVo">
+    <foreach collection="list" separator=";" item="info">
+        update nmpl_task_config
+      <set>
+        <if test="info.taskId != null">
+          task_id = #{info.taskId,jdbcType=VARCHAR},
+        </if>
+        <if test="info.taskName != null">
+          task_name = #{info.taskName,jdbcType=VARCHAR},
+        </if>
+        <if test="info.deviceType != null">
+          device_type = #{info.deviceType,jdbcType=CHAR},
+        </if>
+        <if test="info.taskType != null">
+          task_type = #{info.taskType,jdbcType=CHAR},
+        </if>
+        <if test="info.currentValue != null">
+          current_value = #{info.currentValue,jdbcType=BIGINT},
+        </if>
+        <if test="info.defaultValue != null">
+          default_value = #{info.defaultValue,jdbcType=BIGINT},
+        </if>
+        <if test="info.status != null">
+          status = #{info.status,jdbcType=BIT},
+        </if>
+        <if test="info.remark != null">
+          remark = #{info.remark,jdbcType=VARCHAR},
+        </if>
+        <if test="info.updateTime != null">
+          update_time = #{info.updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="info.updateUser != null">
+          update_user = #{info.updateUser,jdbcType=VARCHAR},
+        </if>
+        <if test="info.isExist != null">
+          is_exist = #{info.isExist,jdbcType=BIT},
+        </if>
+      </set>
+      where id = #{info.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+</mapper>
