@@ -9,6 +9,7 @@ import com.matrictime.network.dao.model.NmplTaskConfig;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.TaskConfigVo;
+import com.matrictime.network.modelVo.TaskVo;
 import com.matrictime.network.request.EditTaskReq;
 import com.matrictime.network.request.QueryTaskReq;
 import com.matrictime.network.response.EditConfigResp;
@@ -19,15 +20,17 @@ import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static com.matrictime.network.constant.DataConstants.SYNC_KEY_NO;
 import static com.matrictime.network.exception.ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG;
 
 @Slf4j
@@ -36,6 +39,10 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
 
     @Autowired
     private TaskConfigDomainService taskConfigDomainService;
+
+    @Autowired
+    private AsyncService asyncService;
+
 
     @Override
     public Result<PageInfo> queryTaskByPages(QueryTaskReq req) {
@@ -69,6 +76,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
                 //批量修改
                 case DataConstants.EDIT_TYPE_UPD:
                     List<TaskConfigVo> vos = new ArrayList<>();
+                    List<TaskVo> taskVos = new ArrayList<>();
                     for (TaskConfigVo vo : req.getTaskConfigVos()){
                         // 校验id是否为空
                         if (vo.getId() == null){

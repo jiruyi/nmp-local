@@ -48,15 +48,15 @@ public class TaskConfigController {
     }
 
     /**
-     * 接入基站编辑配置
+     * 定时任务配置同步
      * @author hexu
      * @param req
      * @return
      */
-    @RequestMapping (value = "/update",method = RequestMethod.POST)
-    @SystemLog(opermodul = "通用网元定时任务配置",operDesc = "编辑接口",operType = "编辑",operLevl = "2")
+    @RequestMapping (value = "/sync",method = RequestMethod.POST)
+    @SystemLog(opermodul = "通用网元定时任务配置",operDesc = "同步接口",operType = "同步",operLevl = "2")
     @RequiresPermissions("sys:task:update")
-    public Result<EditTaskResp> update(@RequestBody EditTaskReq req){
+    public Result<EditTaskResp> sync(@RequestBody EditTaskReq req){
         try {
             req.setEditType(EDIT_TYPE_UPD);
             return taskConfigService.edit(req);
