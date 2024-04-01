@@ -9,8 +9,7 @@ import java.util.List;
 @Data
 public class EditTaskConfigReq implements Serializable {
 
-    private static final long serialVersionUID = -2429211530188092607L;
-
+    private static final long serialVersionUID = -2206096516394520764L;
     /**
      * 批量编辑对象
      */
