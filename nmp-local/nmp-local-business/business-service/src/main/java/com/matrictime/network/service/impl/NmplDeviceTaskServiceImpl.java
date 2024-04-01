@@ -1,19 +1,19 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
-import com.matrictime.network.dao.mapper.NmplBaseStationMapper;
-import com.matrictime.network.dao.mapper.NmplDeviceMapper;
-import com.matrictime.network.dao.mapper.NmplDeviceTaskConfigMapper;
-import com.matrictime.network.dao.mapper.NmplTaskConfigMapper;
+import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 
 import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.model.Result;
+import com.matrictime.network.modelVo.DeviceReportBusinessVo;
 import com.matrictime.network.modelVo.NmplDeviceTaskConfigVo;
 import com.matrictime.network.modelVo.TaskVo;
+import com.matrictime.network.request.DeviceReportBusinessReq;
 import com.matrictime.network.request.DeviceTaskConfigReq;
 import com.matrictime.network.service.NmplDeviceTaskService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.Future;
 
+import static com.matrictime.network.base.constant.DataConstants.SYNC_TASK_CONFIG;
 import static com.matrictime.network.base.exception.ErrorMessageContants.PARAM_IS_NULL_MSG;
 
 @Service
@@ -129,12 +130,15 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
             for (String ip : ipList) {
                 TaskVo taskVo =new TaskVo();
                 taskVo.setDeviceType(deviceTaskConfigReq.getDeviceType());
-                taskVo.setData(JSON.toJSON(deviceTaskConfigReq.getNmplDeviceTaskConfigVoList()).toString());
+                Map<String,String> map = new HashMap<>();
+                JSONObject json = new JSONObject();
+                json.put("taskConfigVos",deviceTaskConfigReq.getNmplDeviceTaskConfigVoList());
+                taskVo.setData(json.toJSONString());
                 taskVo.setIp(ip);
                 taskVoList.add(taskVo);
             }
-            Future<Map<String, Boolean>> mapFuture = pushToProxy(taskVoList);
-            result = buildResult(mapFuture);
+            List<Future> futureList = pushToProxy(taskVoList);
+            result = buildResult(futureList);
         } catch (SystemException e) {
             log.info("网元定时任务配置同步异常", e.getMessage());
             result = failResult(e);
@@ -160,9 +164,10 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
     }
 
 
-
-    public Future<Map<String,Boolean>> pushToProxy(List<TaskVo> taskVoList){
+    @Override
+    public List<Future> pushToProxy(List<TaskVo> taskVoList){
         Future<Map<String, Boolean>> mapFuture = null;
+        List<Future> result = new ArrayList<>();
         for (TaskVo taskVo : taskVoList) {
             String url;
             switch (DeviceTypeEnum.getByCode(taskVo.getDeviceType())){
@@ -171,15 +176,16 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
 //                    url = "http://" + taskVo.getIp() + ":" + datacollectPort + datacollectContextPath + "";
 //                    break;
                 default:
-                    url = "http://" + taskVo.getIp() + ":" + proxyPort + proxyContextPath + "";
+                    url = "http://" + taskVo.getIp() + ":" + proxyPort + proxyContextPath + SYNC_TASK_CONFIG;
                     break;
             }
             Map<String,String> map = new HashMap<>();
             map.put(DataConstants.KEY_DATA, taskVo.getData());
             map.put(DataConstants.KEY_URL, url);
             mapFuture = asyncService.httpUpdateDeviceTask(map);
+            result.add(mapFuture);
         }
-        return mapFuture;
+        return result;
     }
 
     /**

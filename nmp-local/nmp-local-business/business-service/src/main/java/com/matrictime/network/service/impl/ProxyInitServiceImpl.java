@@ -52,6 +52,13 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
     @Resource
     NmplInternetRouteMapper nmplInternetRouteMapper;
 
+    @Resource
+    NmplDeviceTaskConfigMapper nmplDeviceTaskConfigMapper;
+
+    @Resource
+    NmplTaskConfigMapper nmplTaskConfigMapper;
+
+
     /**
      *  代理程序启动初始化获取该ip下的所有信息
      */
@@ -70,6 +77,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             getRouteVoList(proxyResp);
             getlinkVoList(proxyResp);
             getOutlinePcInfoList(proxyResp);
+            getDeviceTask(proxyResp);
             result = buildResult(proxyResp);
         }catch (Exception e){
             log.error("代理初始化异常异常：",e.getMessage());
@@ -264,5 +272,50 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
         }
         proxyResp.setNmplOutlinePcInfoVos(nmplOutlinePcInfoVos);
         log.info("OutlinePcInfo query sucess");
+    }
+
+    /**
+     * 获取定时任务配置信息
+     */
+    private void getDeviceTask(ProxyResp proxyResp){
+        Set<String> deviceTypeSets = new HashSet<>();
+        List<String> deviceIds = new ArrayList<>();
+        Map<String,String> typeToId = new HashMap<>();
+        for (ProxyBaseStationInfoVo proxyBaseStationInfoVo : proxyResp.getLocalStation()) {
+            deviceTypeSets.add(proxyBaseStationInfoVo.getStationType());
+            deviceIds.add(proxyBaseStationInfoVo.getStationId());
+            typeToId.put(proxyBaseStationInfoVo.getStationType(),proxyBaseStationInfoVo.getStationId());
+        }
+        for (ProxyDeviceInfoVo localDeviceInfoVo : proxyResp.getLocalDeviceInfoVos()) {
+            deviceTypeSets.add(localDeviceInfoVo.getDeviceType());
+            deviceIds.add(localDeviceInfoVo.getDeviceId());
+            typeToId.put(localDeviceInfoVo.getDeviceType(),localDeviceInfoVo.getDeviceId());
+        }
+        //获取所有的定时任务配置
+        NmplTaskConfigExample nmplTaskConfigExample = new NmplTaskConfigExample();
+        nmplTaskConfigExample.createCriteria().andDeviceTypeIn(new ArrayList<>(deviceTypeSets)).andIsExistEqualTo(true);
+        List<NmplTaskConfig> nmplTaskConfigs = nmplTaskConfigMapper.selectByExample(nmplTaskConfigExample);
+
+        NmplDeviceTaskConfigExample nmplDeviceTaskConfigExample = new NmplDeviceTaskConfigExample();
+        nmplDeviceTaskConfigExample.createCriteria().andDeviceIdIn(deviceIds).andIsExistEqualTo(true);
+        List<NmplDeviceTaskConfig> nmplDeviceTaskConfigs = nmplDeviceTaskConfigMapper.selectByExample(nmplDeviceTaskConfigExample);
+
+        Map<String,NmplDeviceTaskConfig> map = new HashMap<>();
+        for (NmplDeviceTaskConfig nmplDeviceTaskConfig : nmplDeviceTaskConfigs) {
+            map.put(nmplDeviceTaskConfig.getTaskId(),nmplDeviceTaskConfig);
+        }
+
+        for (NmplTaskConfig nmplTaskConfig : nmplTaskConfigs) {
+            TaskConfigVo taskConfigVo = new TaskConfigVo();
+            Long localValue = nmplTaskConfig.getCurrentValue()!=null?nmplTaskConfig.getCurrentValue():nmplTaskConfig.getDefaultValue();
+            if(map.containsKey(nmplTaskConfig.getTaskId())){
+               localValue = map.get(nmplTaskConfig.getTaskId()).getCurrentValue()!=null?map.get(nmplTaskConfig.getTaskId()).getCurrentValue():localValue;
+            }
+            BeanUtils.copyProperties(nmplTaskConfig,taskConfigVo);
+            taskConfigVo.setCurrentValue(localValue);
+            taskConfigVo.setDeviceId(typeToId.get(nmplTaskConfig.getDeviceType()));
+            proxyResp.getTaskConfigVoList().add(taskConfigVo);
+        }
+        log.info("TaskConfig query sucess");
     }
 }
