@@ -137,8 +137,8 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
                 taskVo.setIp(ip);
                 taskVoList.add(taskVo);
             }
-            Future<Map<String, Boolean>> mapFuture = pushToProxy(taskVoList);
-            result = buildResult(mapFuture);
+            List<Future> futureList = pushToProxy(taskVoList);
+            result = buildResult(futureList);
         } catch (SystemException e) {
             log.info("网元定时任务配置同步异常", e.getMessage());
             result = failResult(e);
@@ -165,8 +165,9 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
 
 
     @Override
-    public Future<Map<String,Boolean>> pushToProxy(List<TaskVo> taskVoList){
+    public List<Future> pushToProxy(List<TaskVo> taskVoList){
         Future<Map<String, Boolean>> mapFuture = null;
+        List<Future> result = new ArrayList<>();
         for (TaskVo taskVo : taskVoList) {
             String url;
             switch (DeviceTypeEnum.getByCode(taskVo.getDeviceType())){
@@ -182,8 +183,9 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
             map.put(DataConstants.KEY_DATA, taskVo.getData());
             map.put(DataConstants.KEY_URL, url);
             mapFuture = asyncService.httpUpdateDeviceTask(map);
+            result.add(mapFuture);
         }
-        return mapFuture;
+        return result;
     }
 
     /**

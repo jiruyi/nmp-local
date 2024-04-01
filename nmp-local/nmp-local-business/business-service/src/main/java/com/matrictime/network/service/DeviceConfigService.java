@@ -21,8 +21,8 @@ public interface DeviceConfigService {
 
     Result saveReportBusiness(DeviceReportBusinessReq deviceReportBusinessReq);
 
-    public Future<Map<String,Boolean>> pushReportBusinessToProxy(List<TaskVo> taskVoList);
+    List<Future> pushReportBusinessToProxy(List<TaskVo> taskVoList);
 
-    public Future<Map<String,Boolean>> pushConfigToProxy(List<TaskVo> taskVoList);
+    List<Future> pushConfigToProxy(List<TaskVo> taskVoList);
 
 }

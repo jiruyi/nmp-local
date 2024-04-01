@@ -15,6 +15,6 @@ public interface NmplDeviceTaskService {
     Result save(DeviceTaskConfigReq deviceTaskConfigReq);
 
 
-    public Future<Map<String,Boolean>> pushToProxy(List<TaskVo> taskVoList);
+    List<Future> pushToProxy(List<TaskVo> taskVoList);
 
 }

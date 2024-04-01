@@ -145,7 +145,7 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
                 taskVo.setIp(ip);
                 taskVoList.add(taskVo);
             }
-            Future<Map<String, Boolean>> mapFuture = pushConfigToProxy(taskVoList);
+            List<Future> mapFuture = pushConfigToProxy(taskVoList);
             result = buildResult(mapFuture);
         } catch (SystemException e) {
             log.info("网元定时任务配置同步异常", e.getMessage());
@@ -171,8 +171,9 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
     }
 
     @Override
-    public Future<Map<String,Boolean>> pushConfigToProxy(List<TaskVo> taskVoList){
+    public List<Future> pushConfigToProxy(List<TaskVo> taskVoList){
         Future<Map<String, Boolean>> mapFuture = null;
+        List<Future> result = new ArrayList<>();
         for (TaskVo taskVo : taskVoList) {
             String url;
             switch (DeviceTypeEnum.getByCode(taskVo.getDeviceType())){
@@ -192,8 +193,9 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
             map.put(DataConstants.KEY_DATA, taskVo.getData());
             map.put(DataConstants.KEY_URL, url);
             mapFuture = asyncService.httpUpdateDeviceTask(map);
+            result.add(mapFuture);
         }
-        return mapFuture;
+        return result;
     }
 
     /**
@@ -320,7 +322,7 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
                 taskVo.setIp(ip);
                 taskVoList.add(taskVo);
             }
-            Future<Map<String, Boolean>> mapFuture = pushReportBusinessToProxy(taskVoList);
+            List<Future> mapFuture = pushReportBusinessToProxy(taskVoList);
             result = buildResult(mapFuture);
         } catch (SystemException e) {
             log.info("网元定时任务配置同步异常", e.getMessage());
@@ -333,8 +335,9 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
     }
 
     @Override
-    public Future<Map<String,Boolean>> pushReportBusinessToProxy(List<TaskVo> taskVoList){
+    public List<Future> pushReportBusinessToProxy(List<TaskVo> taskVoList){
         Future<Map<String, Boolean>> mapFuture = null;
+        List<Future> result = new ArrayList<>();
         for (TaskVo taskVo : taskVoList) {
             String url;
             switch (DeviceTypeEnum.getByCode(taskVo.getDeviceType())){
@@ -346,8 +349,9 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
             map.put(DataConstants.KEY_DATA, taskVo.getData());
             map.put(DataConstants.KEY_URL, url);
             mapFuture = asyncService.httpUpdateDeviceTask(map);
+            result.add(mapFuture);
         }
-        return mapFuture;
+        return result;
     }
 
 }
