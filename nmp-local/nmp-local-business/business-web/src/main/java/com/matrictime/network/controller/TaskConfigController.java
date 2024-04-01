@@ -59,7 +59,7 @@ public class TaskConfigController {
     public Result<EditTaskResp> update(@RequestBody EditTaskReq req){
         try {
             req.setEditType(EDIT_TYPE_UPD);
-            return configService.editConfig(req);
+            return taskConfigService.edit(req);
         }catch (Exception e){
             log.error("ConfigController.editInStationConfig exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
