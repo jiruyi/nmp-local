@@ -623,7 +623,7 @@ public class AsyncService{
         Set<String> set = dataMap.keySet();
         for (String url : set) {
             try {
-                String post = HttpClientUtil.post(url, dataMap.get(url));
+                String post = HttpClientUtil.post(url, dataMap.get(com.matrictime.network.base.constant.DataConstants.KEY_DATA));
                 JSONObject jsonObject = JSONObject.parseObject(post);
                 if (jsonObject != null) {
                     Object success = jsonObject.get(KEY_SUCCESS);
