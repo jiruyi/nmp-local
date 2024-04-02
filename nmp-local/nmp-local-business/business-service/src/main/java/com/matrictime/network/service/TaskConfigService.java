@@ -1,9 +1,9 @@
 package com.matrictime.network.service;
 
 import com.matrictime.network.model.Result;
-import com.matrictime.network.request.EditTaskReq;
+import com.matrictime.network.request.SyncTaskReq;
 import com.matrictime.network.request.QueryTaskReq;
-import com.matrictime.network.response.EditTaskResp;
+import com.matrictime.network.response.SyncTaskResp;
 import com.matrictime.network.response.PageInfo;
 
 public interface TaskConfigService {
@@ -20,5 +20,5 @@ public interface TaskConfigService {
      * @param req
      * @return
      */
-    Result<EditTaskResp> edit(EditTaskReq req);
+    Result<SyncTaskResp> sync(SyncTaskReq req);
 }

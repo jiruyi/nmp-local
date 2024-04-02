@@ -2,11 +2,9 @@ package com.matrictime.network.controller;
 
 import com.matrictime.network.annotation.SystemLog;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.request.EditConfigReq;
-import com.matrictime.network.request.EditTaskReq;
+import com.matrictime.network.request.SyncTaskReq;
 import com.matrictime.network.request.QueryTaskReq;
-import com.matrictime.network.response.EditConfigResp;
-import com.matrictime.network.response.EditTaskResp;
+import com.matrictime.network.response.SyncTaskResp;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.TaskConfigService;
 import lombok.extern.slf4j.Slf4j;
@@ -56,12 +54,11 @@ public class TaskConfigController {
     @RequestMapping (value = "/sync",method = RequestMethod.POST)
     @SystemLog(opermodul = "通用网元定时任务配置",operDesc = "同步接口",operType = "同步",operLevl = "2")
     @RequiresPermissions("sys:task:update")
-    public Result<EditTaskResp> sync(@RequestBody EditTaskReq req){
+    public Result<SyncTaskResp> sync(@RequestBody SyncTaskReq req){
         try {
-            req.setEditType(EDIT_TYPE_UPD);
-            return taskConfigService.edit(req);
+            return taskConfigService.sync(req);
         }catch (Exception e){
-            log.error("ConfigController.editInStationConfig exception:{}",e.getMessage());
+            log.error("ConfigController.sync exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }
