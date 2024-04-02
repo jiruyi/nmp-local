@@ -1,34 +1,33 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
 import com.matrictime.network.dao.domain.TaskConfigDomainService;
-import com.matrictime.network.dao.model.NmplConfig;
 import com.matrictime.network.dao.model.NmplTaskConfig;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.TaskConfigVo;
-import com.matrictime.network.request.EditTaskReq;
+import com.matrictime.network.modelVo.TaskVo;
+import com.matrictime.network.request.SyncTaskReq;
 import com.matrictime.network.request.QueryTaskReq;
 import com.matrictime.network.response.EditConfigResp;
-import com.matrictime.network.response.EditTaskResp;
+import com.matrictime.network.response.SyncTaskResp;
 import com.matrictime.network.response.PageInfo;
+import com.matrictime.network.service.DeviceConfigService;
 import com.matrictime.network.service.TaskConfigService;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.matrictime.network.constant.DataConstants.SYNC_KEY_NO;
-import static com.matrictime.network.exception.ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG;
+import java.util.*;
+import java.util.concurrent.Future;
 
 @Slf4j
 @Service
@@ -36,6 +35,13 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
 
     @Autowired
     private TaskConfigDomainService taskConfigDomainService;
+
+    @Autowired
+    private DeviceConfigService deviceConfigService;
+
+    @Autowired
+    private DeviceExtraInfoDomainService deviceExtraInfoDomainService;
+
 
     @Override
     public Result<PageInfo> queryTaskByPages(QueryTaskReq req) {
@@ -55,36 +61,36 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
 
     @Override
     @Transactional
-    public Result<EditTaskResp> edit(EditTaskReq req) {
+    public Result<SyncTaskResp> sync(SyncTaskReq req) {
         Result result;
 
         try {
-            EditConfigResp resp = null;
+            SyncTaskResp resp = null;
             // check param is legal
-            checkEditConfigParam(req);
-            switch (req.getEditType()){
-                // 批量插入（暂未使用）
-                case DataConstants.EDIT_TYPE_ADD:
-                    break;
-                //批量修改
-                case DataConstants.EDIT_TYPE_UPD:
-                    List<TaskConfigVo> vos = new ArrayList<>();
-                    for (TaskConfigVo vo : req.getTaskConfigVos()){
-                        // 校验id是否为空
-                        if (vo.getId() == null){
-                            throw new Exception("TaskConfigVos.id"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
-                        }
-                        vos.add(vo);
-                    }
-                    Integer upd = taskConfigDomainService.update(vos);
+            checkSyncTaskParam(req);
 
-                    break;
-                // 批量删除（暂未使用）
-                case DataConstants.EDIT_TYPE_DEL:
-                    break;
-                default:
-                    throw new Exception("EditType"+ PARAM_IS_UNEXPECTED_MSG);
+            List<TaskConfigVo> vos = new ArrayList<>();
+            Map<String,List<TaskConfigVo>> taskMap = new HashMap<>();
+            List<TaskConfigVo> taskConfigVos = req.getTaskConfigVos();
+            List<TaskConfigVo> tempTask = new ArrayList<>();
+            for (int i = 0; i< taskConfigVos.size(); i++){
+                TaskConfigVo vo = taskConfigVos.get(i);
+                String mapKey = vo.getDeviceType();
+                // 校验id是否为空
+                if (vo.getId() == null){
+                    throw new Exception("TaskConfigVos.id"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
+                }
+                vos.add(vo);
+                if (taskMap.containsKey(mapKey)){
+                    tempTask = taskMap.get(mapKey);
+                }
+                tempTask.add(vo);
+                taskMap.put(mapKey,tempTask);
             }
+            Integer upd = taskConfigDomainService.update(vos);
+            List<TaskVo> taskVos = getTaskVo(taskMap);
+            List<Future> futures = deviceConfigService.pushConfigToProxy(taskVos);
+
             result = buildResult(resp);
         }catch (Exception e){
             log.error("TaskConfigServiceImpl.edit Exception:{}",e.getMessage());
@@ -96,16 +102,36 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
     }
 
 
-    private void checkEditConfigParam(EditTaskReq req) throws Exception{
+    private void checkSyncTaskParam(SyncTaskReq req) throws Exception{
         // 校验操作类型入参是否合法
-        if (ParamCheckUtil.checkVoStrBlank(req.getEditType())){
-            throw new Exception("editType"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+        if (CollectionUtils.isEmpty(req.getTaskConfigVos())){
+            throw new Exception("TaskConfigVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
         }
-        // 校验操作类型为新增时入参是否合法
-        if (DataConstants.EDIT_TYPE_ADD.equals(req.getEditType()) || DataConstants.EDIT_TYPE_UPD.equals(req.getEditType())){
-            if (CollectionUtils.isEmpty(req.getTaskConfigVos())){
-                throw new Exception("TaskConfigVos"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+    }
+
+    /**
+     * 定时任务配置同步数据重组
+     * @param taskMap
+     * @return
+     */
+    private List<TaskVo> getTaskVo(Map<String,List<TaskConfigVo>> taskMap){
+        List<TaskVo> taskVos = new ArrayList<>();
+        Iterator<Map.Entry<String, List<TaskConfigVo>>> iterator = taskMap.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<String, List<TaskConfigVo>> entry = iterator.next();
+            String key = entry.getKey();
+            List<TaskConfigVo> value = entry.getValue();
+            Set<String> ips = deviceExtraInfoDomainService.getIpByDeviceType(key);
+            for (String ip:ips){
+                TaskVo vo = new TaskVo();
+                vo.setIp(ip);
+                vo.setDeviceType(key);
+                JSONObject data = new JSONObject();
+                data.put("taskConfigVos",value);
+                vo.setData(data.toJSONString());
+                taskVos.add(vo);
             }
         }
+        return taskVos;
     }
 }

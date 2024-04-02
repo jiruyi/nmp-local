@@ -8,6 +8,7 @@ import com.matrictime.network.request.DeviceExtraInfoRequest;
 import com.matrictime.network.response.PageInfo;
 
 import java.util.List;
+import java.util.Set;
 
 
 public interface DeviceExtraInfoDomainService {
@@ -22,4 +23,6 @@ public interface DeviceExtraInfoDomainService {
     List<NmplDeviceInfoExtVo> selectDevices(DeviceExtraInfoRequest deviceExtraInfoRequest);
 
     List<NmplDeviceInfoExtVo> query(NmplDeviceExtraInfo nmplDeviceExtraInfo);
+
+    Set<String> getIpByDeviceType(String deviceType);
 }

@@ -10,10 +10,7 @@ import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceExtraInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
-import com.matrictime.network.dao.model.NmplBaseStationInfo;
-import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
-import com.matrictime.network.dao.model.NmplDeviceExtraInfoExample;
-import com.matrictime.network.dao.model.NmplDeviceInfo;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.modelVo.DeviceExtraVo;
 import com.matrictime.network.modelVo.NmplDeviceInfoExtVo;
@@ -26,10 +23,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
 @Service
 @Slf4j
@@ -149,6 +145,30 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
     @Override
     public List<NmplDeviceInfoExtVo> query(NmplDeviceExtraInfo nmplDeviceExtraInfo) {
         return nmplDeviceExtraInfoMapper.query(nmplDeviceExtraInfo);
+    }
+
+    /**
+     * 根据设备类型获取隐私ip
+     * @param deviceType
+     * @return
+     */
+    @Override
+    public Set<String> getIpByDeviceType(String deviceType) {
+        Set<String> ipSet = new HashSet<>();
+        NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
+        baseStationInfoExample.createCriteria().andStationTypeEqualTo(deviceType).andIsExistEqualTo(IS_EXIST);
+        List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
+        for (NmplBaseStationInfo info:stationInfos){
+            ipSet.add(info.getLanIp());
+        }
+
+        NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
+        deviceInfoExample.createCriteria().andDeviceTypeEqualTo(deviceType).andIsExistEqualTo(IS_EXIST);
+        List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(deviceInfoExample);
+        for (NmplDeviceInfo info:deviceInfos){
+            ipSet.add(info.getLanIp());
+        }
+        return ipSet;
     }
 }
 
