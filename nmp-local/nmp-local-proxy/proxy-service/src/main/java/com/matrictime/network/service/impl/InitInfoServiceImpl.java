@@ -10,6 +10,7 @@ import com.matrictime.network.dao.model.NmplProxyConfig;
 import com.matrictime.network.facade.AlarmDataFacade;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.*;
+import com.matrictime.network.request.EditConfigReq;
 import com.matrictime.network.request.ProxyReq;
 import com.matrictime.network.response.ProxyResp;
 import com.matrictime.network.service.*;
@@ -54,6 +55,9 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
 
     @Autowired
     private TaskConfigService taskConfigService;
+
+    @Autowired
+    private ConfigService configService;
 
     @Override
 //    @Transactional
@@ -199,6 +203,17 @@ public class InitInfoServiceImpl extends SystemBaseService implements InitInfoSe
                     centerTaskConfigVos.add(vo);
                 }
                 taskConfigService.initInfo(centerTaskConfigVos);
+            }
+
+            List<ConfigVo> configVoList = initResult.getConfigVoList();
+            if (!CollectionUtils.isEmpty(configVoList)){
+                List<CenterConfigVo> centerConfigVos = new ArrayList<>();
+                for (int i=0;i<configVoList.size();i++){
+                    CenterConfigVo vo = new CenterConfigVo();
+                    BeanUtils.copyProperties(configVoList.get(i),vo);
+                    centerConfigVos.add(vo);
+                }
+                configService.initInfo(centerConfigVos);
             }
         } catch (Exception e) {
             log.error("InitInfoServiceImpl.initInfo:{}",e);

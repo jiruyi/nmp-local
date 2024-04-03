@@ -1,6 +1,6 @@
 package com.matrictime.network.request;
 
-import com.matrictime.network.modelVo.NmplConfigVo;
+import com.matrictime.network.modelVo.CenterConfigVo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -19,7 +19,7 @@ public class EditConfigReq implements Serializable {
     /**
      * 批量编辑对象-修改必输
      */
-    private List<NmplConfigVo> configVos;
+    private List<CenterConfigVo> configVos;
 
     /**
      * 批量删除id列表（单条删除亦可）-删除必输

@@ -41,4 +41,6 @@ public class ProxyResp implements Serializable {
 
     private List<TaskConfigVo> taskConfigVoList = new ArrayList<>();
 
+    private List<ConfigVo> configVoList = new ArrayList<>();
+
 }

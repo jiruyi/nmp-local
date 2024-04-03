@@ -3,14 +3,14 @@
 <mapper namespace="com.matrictime.network.dao.mapper.NmplConfigMapper">
   <resultMap id="BaseResultMap" type="com.matrictime.network.dao.model.NmplConfig">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="device_type" jdbcType="CHAR" property="deviceType" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
     <result column="config_name" jdbcType="VARCHAR" property="configName" />
     <result column="config_code" jdbcType="VARCHAR" property="configCode" />
     <result column="config_value" jdbcType="VARCHAR" property="configValue" />
-    <result column="default_value" jdbcType="VARCHAR" property="defaultValue" />
     <result column="unit" jdbcType="VARCHAR" property="unit" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
   </resultMap>
@@ -73,8 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, device_type, config_name, config_code, config_value, default_value, unit, create_time, 
-    update_time, is_exist, remark
+    id, device_id, config_name, config_code, config_value, unit, status, update_time, 
+    update_user, is_exist, remark
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplConfigExample" resultMap="BaseResultMap">
     select
@@ -108,13 +108,13 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.matrictime.network.dao.model.NmplConfig">
-    insert into nmpl_config (id, device_type, config_name, 
-      config_code, config_value, default_value, 
-      unit, create_time, update_time, 
+    insert into nmpl_config (id, device_id, config_name, 
+      config_code, config_value, unit, 
+      status, update_time, update_user, 
       is_exist, remark)
-    values (#{id,jdbcType=BIGINT}, #{deviceType,jdbcType=CHAR}, #{configName,jdbcType=VARCHAR}, 
-      #{configCode,jdbcType=VARCHAR}, #{configValue,jdbcType=VARCHAR}, #{defaultValue,jdbcType=VARCHAR}, 
-      #{unit,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{configName,jdbcType=VARCHAR}, 
+      #{configCode,jdbcType=VARCHAR}, #{configValue,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
       #{isExist,jdbcType=BIT}, #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplConfig">
@@ -123,8 +123,8 @@
       <if test="id != null">
         id,
       </if>
-      <if test="deviceType != null">
-        device_type,
+      <if test="deviceId != null">
+        device_id,
       </if>
       <if test="configName != null">
         config_name,
@@ -135,17 +135,17 @@
       <if test="configValue != null">
         config_value,
       </if>
-      <if test="defaultValue != null">
-        default_value,
-      </if>
       <if test="unit != null">
         unit,
       </if>
-      <if test="createTime != null">
-        create_time,
+      <if test="status != null">
+        status,
       </if>
       <if test="updateTime != null">
         update_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
       </if>
       <if test="isExist != null">
         is_exist,
@@ -158,8 +158,8 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="deviceType != null">
-        #{deviceType,jdbcType=CHAR},
+      <if test="deviceId != null">
+        #{deviceId,jdbcType=VARCHAR},
       </if>
       <if test="configName != null">
         #{configName,jdbcType=VARCHAR},
@@ -170,17 +170,17 @@
       <if test="configValue != null">
         #{configValue,jdbcType=VARCHAR},
       </if>
-      <if test="defaultValue != null">
-        #{defaultValue,jdbcType=VARCHAR},
-      </if>
       <if test="unit != null">
         #{unit,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
       </if>
       <if test="isExist != null">
         #{isExist,jdbcType=BIT},
@@ -202,8 +202,8 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.deviceType != null">
-        device_type = #{record.deviceType,jdbcType=CHAR},
+      <if test="record.deviceId != null">
+        device_id = #{record.deviceId,jdbcType=VARCHAR},
       </if>
       <if test="record.configName != null">
         config_name = #{record.configName,jdbcType=VARCHAR},
@@ -214,17 +214,17 @@
       <if test="record.configValue != null">
         config_value = #{record.configValue,jdbcType=VARCHAR},
       </if>
-      <if test="record.defaultValue != null">
-        default_value = #{record.defaultValue,jdbcType=VARCHAR},
-      </if>
       <if test="record.unit != null">
         unit = #{record.unit,jdbcType=VARCHAR},
       </if>
-      <if test="record.createTime != null">
-        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=TINYINT},
       </if>
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null">
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
       </if>
       <if test="record.isExist != null">
         is_exist = #{record.isExist,jdbcType=BIT},
@@ -240,14 +240,14 @@
   <update id="updateByExample" parameterType="map">
     update nmpl_config
     set id = #{record.id,jdbcType=BIGINT},
-      device_type = #{record.deviceType,jdbcType=CHAR},
+      device_id = #{record.deviceId,jdbcType=VARCHAR},
       config_name = #{record.configName,jdbcType=VARCHAR},
       config_code = #{record.configCode,jdbcType=VARCHAR},
       config_value = #{record.configValue,jdbcType=VARCHAR},
-      default_value = #{record.defaultValue,jdbcType=VARCHAR},
       unit = #{record.unit,jdbcType=VARCHAR},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=TINYINT},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
       is_exist = #{record.isExist,jdbcType=BIT},
       remark = #{record.remark,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -257,8 +257,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.matrictime.network.dao.model.NmplConfig">
     update nmpl_config
     <set>
-      <if test="deviceType != null">
-        device_type = #{deviceType,jdbcType=CHAR},
+      <if test="deviceId != null">
+        device_id = #{deviceId,jdbcType=VARCHAR},
       </if>
       <if test="configName != null">
         config_name = #{configName,jdbcType=VARCHAR},
@@ -269,17 +269,17 @@
       <if test="configValue != null">
         config_value = #{configValue,jdbcType=VARCHAR},
       </if>
-      <if test="defaultValue != null">
-        default_value = #{defaultValue,jdbcType=VARCHAR},
-      </if>
       <if test="unit != null">
         unit = #{unit,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
       </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
       </if>
       <if test="isExist != null">
         is_exist = #{isExist,jdbcType=BIT},
@@ -292,14 +292,14 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.matrictime.network.dao.model.NmplConfig">
     update nmpl_config
-    set device_type = #{deviceType,jdbcType=CHAR},
+    set device_id = #{deviceId,jdbcType=VARCHAR},
       config_name = #{configName,jdbcType=VARCHAR},
       config_code = #{configCode,jdbcType=VARCHAR},
       config_value = #{configValue,jdbcType=VARCHAR},
-      default_value = #{defaultValue,jdbcType=VARCHAR},
       unit = #{unit,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
       is_exist = #{isExist,jdbcType=BIT},
       remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}

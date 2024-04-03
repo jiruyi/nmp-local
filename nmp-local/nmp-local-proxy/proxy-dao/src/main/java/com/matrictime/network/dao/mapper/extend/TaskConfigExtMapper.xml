@@ -20,35 +20,35 @@
     <foreach collection="list" separator=";" item="vo">
       update nmpl_task_config
       <set>
-        <if test="taskId != null">
-          task_id = #{taskId,jdbcType=VARCHAR},
+        <if test="vo.taskId != null">
+          task_id = #{vo.taskId,jdbcType=VARCHAR},
         </if>
-        <if test="taskName != null">
-          task_name = #{taskName,jdbcType=VARCHAR},
+        <if test="vo.taskName != null">
+          task_name = #{vo.taskName,jdbcType=VARCHAR},
         </if>
-        <if test="taskType != null">
-          task_type = #{taskType,jdbcType=CHAR},
+        <if test="vo.taskType != null">
+          task_type = #{vo.taskType,jdbcType=CHAR},
         </if>
-        <if test="deviceId != null">
-          device_id = #{deviceId,jdbcType=VARCHAR},
+        <if test="vo.deviceId != null">
+          device_id = #{vo.deviceId,jdbcType=VARCHAR},
         </if>
-        <if test="currentValue != null">
-          current_value = #{currentValue,jdbcType=BIGINT},
+        <if test="vo.currentValue != null">
+          current_value = #{vo.currentValue,jdbcType=BIGINT},
         </if>
-        <if test="status != null">
-          status = #{status,jdbcType=BIT},
+        <if test="vo.status != null">
+          status = #{vo.status,jdbcType=BIT},
         </if>
-        <if test="remark != null">
-          remark = #{remark,jdbcType=VARCHAR},
+        <if test="vo.remark != null">
+          remark = #{vo.remark,jdbcType=VARCHAR},
         </if>
-        <if test="updateTime != null">
-          update_time = #{updateTime,jdbcType=TIMESTAMP},
+        <if test="vo.updateTime != null">
+          update_time = #{vo.updateTime,jdbcType=TIMESTAMP},
         </if>
-        <if test="updateUser != null">
-          update_user = #{updateUser,jdbcType=VARCHAR},
+        <if test="vo.updateUser != null">
+          update_user = #{vo.updateUser,jdbcType=VARCHAR},
         </if>
-        <if test="isExist != null">
-          is_exist = #{isExist,jdbcType=BIT},
+        <if test="vo.isExist != null">
+          is_exist = #{vo.isExist,jdbcType=BIT},
         </if>
       </set>
       where id = #{vo.id,jdbcType=BIGINT}

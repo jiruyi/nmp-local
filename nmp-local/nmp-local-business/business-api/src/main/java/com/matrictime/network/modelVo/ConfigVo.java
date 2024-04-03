@@ -6,18 +6,18 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class NmplConfigVo implements Serializable {
+public class ConfigVo implements Serializable {
 
-    private static final long serialVersionUID = -2288406664669678585L;
+    private static final long serialVersionUID = 180778315290722539L;
     /**
      * 主键
      */
     private Long id;
 
     /**
-     * 系统类型 01:接入基站 02:边界基站 11:密钥中心 20:数据采集
+     * 设备id
      */
-    private String deviceType;
+    private String deviceId;
 
     /**
      * 配置项名称
@@ -35,11 +35,6 @@ public class NmplConfigVo implements Serializable {
     private String configValue;
 
     /**
-     * 默认值
-     */
-    private String defaultValue;
-
-    /**
      * 单位
      */
     private String unit;
@@ -48,16 +43,6 @@ public class NmplConfigVo implements Serializable {
      * 状态 1同步 0 未同步
      */
     private Byte status;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 创建人
-     */
-    private String createUser;
 
     /**
      * 更新时间

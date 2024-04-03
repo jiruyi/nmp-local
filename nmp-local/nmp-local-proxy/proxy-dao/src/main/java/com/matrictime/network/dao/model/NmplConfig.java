@@ -4,9 +4,9 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 
- * @author   xxxx
- * @date   2023-07-13
+ * 系统配置表
+ * @author   cxk
+ * @date   2024-04-02
  */
 @Data
 public class NmplConfig {
@@ -16,9 +16,9 @@ public class NmplConfig {
     private Long id;
 
     /**
-     * 01:接入基站 02:边界基站 11:密钥中心 20:数据采集
+     * 设备id
      */
-    private String deviceType;
+    private String deviceId;
 
     /**
      * 配置项名称
@@ -36,24 +36,24 @@ public class NmplConfig {
     private String configValue;
 
     /**
-     * 默认值
-     */
-    private String defaultValue;
-
-    /**
      * 单位
      */
     private String unit;
 
     /**
-     * 创建时间
+     * 状态 1同步 0 未同步
      */
-    private Date createTime;
+    private Byte status;
 
     /**
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 修改人
+     */
+    private String updateUser;
 
     /**
      * 状态 true:存在(1)  false:删除(0)
@@ -73,12 +73,12 @@ public class NmplConfig {
         this.id = id;
     }
 
-    public String getDeviceType() {
-        return deviceType;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType == null ? null : deviceType.trim();
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId == null ? null : deviceId.trim();
     }
 
     public String getConfigName() {
@@ -105,14 +105,6 @@ public class NmplConfig {
         this.configValue = configValue == null ? null : configValue.trim();
     }
 
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue == null ? null : defaultValue.trim();
-    }
-
     public String getUnit() {
         return unit;
     }
@@ -121,12 +113,12 @@ public class NmplConfig {
         this.unit = unit == null ? null : unit.trim();
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public Byte getStatus() {
+        return status;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setStatus(Byte status) {
+        this.status = status;
     }
 
     public Date getUpdateTime() {
@@ -135,6 +127,14 @@ public class NmplConfig {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser == null ? null : updateUser.trim();
     }
 
     public Boolean getIsExist() {
