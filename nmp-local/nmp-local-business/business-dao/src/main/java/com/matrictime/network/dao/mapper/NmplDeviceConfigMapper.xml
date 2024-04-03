@@ -11,8 +11,6 @@
     <result column="default_value" jdbcType="VARCHAR" property="defaultValue" />
     <result column="unit" jdbcType="VARCHAR" property="unit" />
     <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
     <result column="is_exist" jdbcType="BIT" property="isExist" />
@@ -78,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, device_id, device_type, config_name, config_code, config_value, default_value, 
-    unit, status, create_time, create_user, update_time, update_user, is_exist, remark
+    unit, status, update_time, update_user, is_exist, remark
   </sql>
   <select id="selectByExample" parameterType="com.matrictime.network.dao.model.NmplDeviceConfigExample" resultMap="BaseResultMap">
     select
@@ -115,15 +113,13 @@
     insert into nmpl_device_config (id, device_id, device_type, 
       config_name, config_code, config_value, 
       default_value, unit, status, 
-      create_time, create_user, update_time, 
-      update_user, is_exist, remark
-      )
+      update_time, update_user, is_exist, 
+      remark)
     values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{deviceType,jdbcType=CHAR}, 
       #{configName,jdbcType=VARCHAR}, #{configCode,jdbcType=VARCHAR}, #{configValue,jdbcType=VARCHAR}, 
       #{defaultValue,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{isExist,jdbcType=BIT}, #{remark,jdbcType=VARCHAR}
-      )
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{isExist,jdbcType=BIT}, 
+      #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.matrictime.network.dao.model.NmplDeviceConfig">
     insert into nmpl_device_config
@@ -154,12 +150,6 @@
       </if>
       <if test="status != null">
         status,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="createUser != null">
-        create_user,
       </if>
       <if test="updateTime != null">
         update_time,
@@ -201,12 +191,6 @@
       </if>
       <if test="status != null">
         #{status,jdbcType=TINYINT},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createUser != null">
-        #{createUser,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
@@ -258,12 +242,6 @@
       <if test="record.status != null">
         status = #{record.status,jdbcType=TINYINT},
       </if>
-      <if test="record.createTime != null">
-        create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.createUser != null">
-        create_user = #{record.createUser,jdbcType=VARCHAR},
-      </if>
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -292,8 +270,6 @@
       default_value = #{record.defaultValue,jdbcType=VARCHAR},
       unit = #{record.unit,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=TINYINT},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      create_user = #{record.createUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       is_exist = #{record.isExist,jdbcType=BIT},
@@ -329,12 +305,6 @@
       <if test="status != null">
         status = #{status,jdbcType=TINYINT},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createUser != null">
-        create_user = #{createUser,jdbcType=VARCHAR},
-      </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -360,8 +330,6 @@
       default_value = #{defaultValue,jdbcType=VARCHAR},
       unit = #{unit,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_user = #{createUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
       is_exist = #{isExist,jdbcType=BIT},

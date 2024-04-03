@@ -339,12 +339,7 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
         Future<Map<String, Boolean>> mapFuture = null;
         List<Future> result = new ArrayList<>();
         for (TaskVo taskVo : taskVoList) {
-            String url;
-            switch (DeviceTypeEnum.getByCode(taskVo.getDeviceType())){
-                default:
-                    url = "http://" + taskVo.getIp() + ":" + datacollectPort + datacollectContextPath + "";
-                    break;
-            }
+            String url = "http://" + taskVo.getIp() + ":" + datacollectPort + datacollectContextPath + "";
             Map<String,String> map = new HashMap<>();
             map.put(DataConstants.KEY_DATA, taskVo.getData());
             map.put(DataConstants.KEY_URL, url);

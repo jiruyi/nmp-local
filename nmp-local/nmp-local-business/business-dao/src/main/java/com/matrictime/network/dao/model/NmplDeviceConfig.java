@@ -4,9 +4,9 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 
+ * 节点网元系统配置表
  * @author   hexu
- * @date   2024-04-01
+ * @date   2024-04-02
  */
 @Data
 public class NmplDeviceConfig {
@@ -54,16 +54,6 @@ public class NmplDeviceConfig {
      * 状态 1同步 0 未同步
      */
     private Byte status;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 创建人
-     */
-    private String createUser;
 
     /**
      * 更新时间
@@ -155,22 +145,6 @@ public class NmplDeviceConfig {
 
     public void setStatus(Byte status) {
         this.status = status;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getCreateUser() {
-        return createUser;
-    }
-
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser == null ? null : createUser.trim();
     }
 
     public Date getUpdateTime() {
