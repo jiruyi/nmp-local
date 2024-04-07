@@ -48,4 +48,46 @@
     order by update_time desc
   </select>
 
+  <update id="batchUpdate" parameterType="com.matrictime.network.modelVo.ConfigVo">
+    <foreach collection="list" separator=";" item="info">
+      update nmpl_config
+      <set>
+        <if test="info.deviceType != null">
+          device_type = #{info.deviceType,jdbcType=CHAR},
+        </if>
+        <if test="info.configName != null">
+          config_name = #{info.configName,jdbcType=VARCHAR},
+        </if>
+        <if test="info.configCode != null">
+          config_code = #{info.configCode,jdbcType=VARCHAR},
+        </if>
+        <if test="info.configValue != null">
+          config_value = #{info.configValue,jdbcType=VARCHAR},
+        </if>
+        <if test="info.defaultValue != null">
+          default_value = #{info.defaultValue,jdbcType=VARCHAR},
+        </if>
+        <if test="info.unit != null">
+          unit = #{info.unit,jdbcType=VARCHAR},
+        </if>
+        <if test="info.status != null">
+          status = #{info.status,jdbcType=TINYINT},
+        </if>
+        <if test="info.updateTime != null">
+          update_time = #{info.updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="info.updateUser != null">
+          update_user = #{info.updateUser,jdbcType=VARCHAR},
+        </if>
+        <if test="info.isExist != null">
+          is_exist = #{info.isExist,jdbcType=BIT},
+        </if>
+        <if test="info.remark != null">
+          remark = #{info.remark,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where id = #{info.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+
 </mapper>

@@ -1,19 +1,22 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.constant.DataConstants;
+import com.matrictime.network.dao.domain.ConfigDomainService;
+import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.enums.DeviceTypeEnum;
 import com.matrictime.network.exception.ErrorMessageContants;
 import com.matrictime.network.model.Result;
-import com.matrictime.network.modelVo.NmplConfigVo;
-import com.matrictime.network.modelVo.NmplReportBusinessVo;
+import com.matrictime.network.modelVo.*;
 import com.matrictime.network.request.*;
 import com.matrictime.network.response.*;
 import com.matrictime.network.service.ConfigService;
+import com.matrictime.network.service.DeviceConfigService;
 import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -24,7 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import static com.matrictime.network.constant.BusinessConsts.SWITCH_CONFIGCODE;
 import static com.matrictime.network.constant.DataConstants.*;
 import static com.matrictime.network.exception.ErrorMessageContants.PARAM_IS_UNEXPECTED_MSG;
@@ -38,35 +44,19 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     private NmplConfigMapper nmplConfigMapper;
 
     @Autowired(required = false)
-    private NmplBaseStationInfoMapper nmplBaseStationInfoMapper;
-
-    @Autowired(required = false)
-    private NmplDeviceInfoMapper nmplDeviceInfoMapper;
-
-    @Autowired(required = false)
     private NmplReportBusinessMapper nmplReportBusinessMapper;
 
     @Autowired
-    private AsyncService asyncService;
+    private ConfigDomainService configDomainService;
 
-    @Value("${thread.maxPoolSize}")
-    private Integer maxPoolSize;
+    @Autowired
+    private DeviceConfigService deviceConfigService;
 
-    // TODO: 2022/4/1 上线前需要确定等待时间
-    @Value("${config.async.time.out}")
-    private int asyncTimeOut;
+    @Resource
+    private NmplDeviceConfigMapper deviceConfigMapper;
 
-    @Value("${proxy.context-path}")
-    private String proxyPath;
-
-    @Value("${proxy.port}")
-    private String proxyPort;
-
-    @Value("${datacollect.context-path}")
-    private String dataCollectPath;
-
-    @Value("${datacollect.port}")
-    private String dataCollectPort;
+    @Autowired
+    private DeviceExtraInfoDomainService deviceExtraInfoDomainService;
 
     /**
      * 系统设置查询接口（支持分页查询）
@@ -118,6 +108,30 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
 
         try {
             SyncConfigResp resp = new SyncConfigResp();
+            List<ConfigVo> vos = new ArrayList<>();
+            Map<String,List<ConfigVo>> taskMap = new HashMap<>();
+            List<ConfigVo> configVos = req.getConfigVos();
+            List<ConfigVo> tempTask = new ArrayList<>();
+            for (int i = 0; i< configVos.size(); i++){
+                ConfigVo vo = configVos.get(i);
+                String mapKey = vo.getDeviceType();
+                // 校验id是否为空
+                if (vo.getId() == null){
+                    throw new Exception("TaskConfigVos.id"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
+                }
+                vos.add(vo);
+                if (taskMap.containsKey(mapKey)){
+                    tempTask = taskMap.get(mapKey);
+                }
+                tempTask.add(vo);
+                taskMap.put(mapKey,tempTask);
+            }
+            Integer upd = configDomainService.update(vos);
+            NmplDeviceConfigExample configExample = new NmplDeviceConfigExample();
+            configExample.createCriteria().andIsExistEqualTo(IS_EXIST);
+            List<NmplDeviceConfig> deviceConfigs = deviceConfigMapper.selectByExample(configExample);
+            List<TaskVo> taskVos = getTaskVo(taskMap,deviceConfigs);
+            List<Map<String, Boolean>> futures = deviceConfigService.pushConfigToProxy(taskVos);
 
             result = buildResult(resp);
         }catch (Exception e){
@@ -127,6 +141,63 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
         }
 
         return result;
+    }
+
+    /**
+     * 系统配置同步数据重组
+     * @param taskMap
+     * @return
+     */
+    private List<TaskVo> getTaskVo(Map<String,List<ConfigVo>> taskMap,List<NmplDeviceConfig> deviceConfigs){
+        List<TaskVo> taskVos = new ArrayList<>();
+        Iterator<Map.Entry<String, List<ConfigVo>>> iterator = taskMap.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<String, List<ConfigVo>> entry = iterator.next();
+            String key = entry.getKey();
+            List<ConfigVo> value = entry.getValue();
+            List<DeviceInfoVo> devices = deviceExtraInfoDomainService.getDeviceByDeviceType(key);
+            for (DeviceInfoVo deviceInfoVo:devices){
+                TaskVo vo = new TaskVo();
+                vo.setIp(deviceInfoVo.getLanIp());
+                vo.setDeviceType(key);
+                JSONObject data = new JSONObject();
+                value = resetValue(deviceConfigs,value,deviceInfoVo.getDeviceId());
+                data.put("configVos",value);
+                vo.setData(data.toJSONString());
+                taskVos.add(vo);
+            }
+        }
+        return taskVos;
+    }
+
+    /**
+     * 配置推送到网元上的值
+     * @param deviceConfigs
+     * @param configs
+     * @param deviceId
+     * @return
+     */
+    private List<ConfigVo> resetValue(List<NmplDeviceConfig> deviceConfigs, List<ConfigVo> configs, String deviceId){
+        List<ConfigVo> returnList = new ArrayList<>();
+        for (int i=0;i<configs.size();i++){
+            ConfigVo configVo = configs.get(i);
+            String defaultValue = configVo.getDefaultValue();
+            String configValue = configVo.getConfigValue();
+            // 网元配置了值则设置成网元的值
+            if (!CollectionUtils.isEmpty(deviceConfigs)){
+                List<NmplDeviceConfig> collect = deviceConfigs.stream().filter(config -> config.getDeviceId().equals(deviceId) && ParamCheckUtil.checkVoStrBlank(config.getConfigValue())).collect(Collectors.toList());
+                if (!CollectionUtils.isEmpty(collect)){
+                    configValue = collect.get(0).getConfigValue();
+                }
+            }
+            // 网元和修改都没值则设置成默认值
+            if (configValue == null){
+                configVo.setConfigValue(defaultValue);
+            }
+            configVo.setConfigValue(configValue);
+            returnList.add(configVo);
+        }
+        return returnList;
     }
 
     /**

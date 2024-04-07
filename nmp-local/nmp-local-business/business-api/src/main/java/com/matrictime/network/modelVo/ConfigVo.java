@@ -40,6 +40,11 @@ public class ConfigVo implements Serializable {
     private String configValue;
 
     /**
+     * 默认值
+     */
+    private String defaultValue;
+
+    /**
      * 单位
      */
     private String unit;

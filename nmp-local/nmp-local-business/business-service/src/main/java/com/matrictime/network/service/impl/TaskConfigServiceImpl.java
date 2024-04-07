@@ -20,6 +20,7 @@ import com.matrictime.network.request.QueryTaskReq;
 import com.matrictime.network.response.SyncTaskResp;
 import com.matrictime.network.response.PageInfo;
 import com.matrictime.network.service.DeviceConfigService;
+import com.matrictime.network.service.NmplDeviceTaskService;
 import com.matrictime.network.service.TaskConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
     private TaskConfigDomainService taskConfigDomainService;
 
     @Autowired
-    private DeviceConfigService deviceConfigService;
+    private NmplDeviceTaskService deviceTaskService;
 
     @Autowired
     private DeviceExtraInfoDomainService deviceExtraInfoDomainService;
@@ -101,7 +102,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
             deviceTaskConfigExample.createCriteria().andIsExistEqualTo(IS_EXIST);
             List<NmplDeviceTaskConfig> deviceTaskConfigs = deviceTaskConfigMapper.selectByExample(deviceTaskConfigExample);
             List<TaskVo> taskVos = getTaskVo(taskMap,deviceTaskConfigs);
-            List<Map<String, Boolean>> futures = deviceConfigService.pushConfigToProxy(taskVos);
+            List<Map<String, Boolean>> futures = deviceTaskService.pushToProxy(taskVos);
 
             result = buildResult(resp);
         }catch (Exception e){
@@ -136,9 +137,6 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
             List<DeviceInfoVo> devices = deviceExtraInfoDomainService.getDeviceByDeviceType(key);
             for (DeviceInfoVo deviceInfoVo:devices){
                 TaskVo vo = new TaskVo();
-                if (!CollectionUtils.isEmpty(deviceTaskConfigs)){
-
-                }
                 vo.setIp(deviceInfoVo.getLanIp());
                 vo.setDeviceType(key);
                 JSONObject data = new JSONObject();
