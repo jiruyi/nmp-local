@@ -101,7 +101,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
             deviceTaskConfigExample.createCriteria().andIsExistEqualTo(IS_EXIST);
             List<NmplDeviceTaskConfig> deviceTaskConfigs = deviceTaskConfigMapper.selectByExample(deviceTaskConfigExample);
             List<TaskVo> taskVos = getTaskVo(taskMap,deviceTaskConfigs);
-            List<Future> futures = deviceConfigService.pushConfigToProxy(taskVos);
+            List<Map<String, Boolean>> futures = deviceConfigService.pushConfigToProxy(taskVos);
 
             result = buildResult(resp);
         }catch (Exception e){

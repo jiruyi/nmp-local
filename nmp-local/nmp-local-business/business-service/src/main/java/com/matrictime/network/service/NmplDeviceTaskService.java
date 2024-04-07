@@ -15,6 +15,6 @@ public interface NmplDeviceTaskService {
     Result save(DeviceTaskConfigReq deviceTaskConfigReq);
 
 
-    List<Future> pushToProxy(List<TaskVo> taskVoList);
+    List<Map<String, Boolean>> pushToProxy(List<TaskVo> taskVoList)throws Exception;
 
 }

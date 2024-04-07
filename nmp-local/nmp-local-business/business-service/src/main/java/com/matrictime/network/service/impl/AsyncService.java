@@ -638,9 +638,10 @@ public class AsyncService{
             }
         } catch (Exception e) {
             result.put(url, false);
-            log.error(e.getMessage());
+            log.error("httpUpdateDevice.HttpClientUtil Exception:{},url:{}",e.getMessage(),url);
+        }finally {
+            return new AsyncResult<>(result);
         }
-        return new AsyncResult<>(result);
     }
 
 

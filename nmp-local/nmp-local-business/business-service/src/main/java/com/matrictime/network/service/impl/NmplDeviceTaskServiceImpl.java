@@ -98,10 +98,12 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
                     //将这条数据插入到节点网元定时任务配置表中
                     NmplDeviceTaskConfig nmplDeviceTaskConfig = new NmplDeviceTaskConfig();
                     BeanUtils.copyProperties(nmplTaskConfig,nmplDeviceTaskConfig);
+                    nmplDeviceTaskConfig.setDeviceId(deviceTaskConfigReq.getDeviceId());
                     nmplDeviceTaskConfig.setId(null);
                     nmplDeviceTaskConfig.setCurrentValue(null);
                     nmplDeviceTaskConfigMapper.insertSelective(nmplDeviceTaskConfig);
                 }
+                nmplDeviceTaskConfigVo.setDeviceId(deviceTaskConfigReq.getDeviceId());
                 configVos.add(nmplDeviceTaskConfigVo);
             }
             result = buildResult(configVos);
@@ -119,26 +121,31 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
     public Result save(DeviceTaskConfigReq deviceTaskConfigReq) {
         Result result = null;
         try {
+            queryCheckParam(deviceTaskConfigReq);
             saveCheckParam(deviceTaskConfigReq);
             for (NmplDeviceTaskConfigVo nmplDeviceTaskConfigVo : deviceTaskConfigReq.getNmplDeviceTaskConfigVoList()) {
                 NmplDeviceTaskConfig nmplDeviceTaskConfig = new NmplDeviceTaskConfig();
                 BeanUtils.copyProperties(nmplDeviceTaskConfigVo,nmplDeviceTaskConfig);
-                nmplDeviceTaskConfigMapper.updateByPrimaryKeySelective(nmplDeviceTaskConfig);
+
+                NmplDeviceTaskConfigExample nmplDeviceTaskConfigExample = new NmplDeviceTaskConfigExample();
+                nmplDeviceTaskConfigExample.createCriteria().andDeviceIdEqualTo(nmplDeviceTaskConfig.getDeviceId()).
+                        andTaskIdEqualTo(nmplDeviceTaskConfig.getTaskId()).andIsExistEqualTo(nmplDeviceTaskConfig.getIsExist());
+                nmplDeviceTaskConfigMapper.updateByExampleSelective(nmplDeviceTaskConfig,nmplDeviceTaskConfigExample);
             }
             List<String> ipList = getIpList(deviceTaskConfigReq.getDeviceId(), deviceTaskConfigReq.getDeviceType());
             List<TaskVo> taskVoList = new ArrayList<>();
             for (String ip : ipList) {
                 TaskVo taskVo =new TaskVo();
                 taskVo.setDeviceType(deviceTaskConfigReq.getDeviceType());
-                Map<String,String> map = new HashMap<>();
+
                 JSONObject json = new JSONObject();
                 json.put("taskConfigVos",deviceTaskConfigReq.getNmplDeviceTaskConfigVoList());
                 taskVo.setData(json.toJSONString());
                 taskVo.setIp(ip);
                 taskVoList.add(taskVo);
             }
-            List<Future> futureList = pushToProxy(taskVoList);
-            result = buildResult(futureList);
+            List<Map<String, Boolean>> maps = pushToProxy(taskVoList);
+            result = buildResult(maps);
         } catch (SystemException e) {
             log.info("网元定时任务配置同步异常", e.getMessage());
             result = failResult(e);
@@ -165,9 +172,9 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
 
 
     @Override
-    public List<Future> pushToProxy(List<TaskVo> taskVoList){
+    public List<Map<String, Boolean>> pushToProxy(List<TaskVo> taskVoList)throws Exception{
         Future<Map<String, Boolean>> mapFuture = null;
-        List<Future> result = new ArrayList<>();
+        List<Map<String, Boolean>> result = new ArrayList<>();
         for (TaskVo taskVo : taskVoList) {
             String url;
             switch (DeviceTypeEnum.getByCode(taskVo.getDeviceType())){
@@ -183,7 +190,8 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
             map.put(DataConstants.KEY_DATA, taskVo.getData());
             map.put(DataConstants.KEY_URL, url);
             mapFuture = asyncService.httpUpdateDeviceTask(map);
-            result.add(mapFuture);
+            Map<String, Boolean> stringBooleanMap = mapFuture.get();
+            result.add(stringBooleanMap);
         }
         return result;
     }

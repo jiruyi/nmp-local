@@ -21,8 +21,7 @@ public interface DeviceConfigService {
 
     Result saveReportBusiness(DeviceReportBusinessReq deviceReportBusinessReq);
 
-    List<Future> pushReportBusinessToProxy(List<TaskVo> taskVoList);
 
-    List<Future> pushConfigToProxy(List<TaskVo> taskVoList);
+    List<Map<String, Boolean>> pushConfigToProxy(List<TaskVo> taskVoList)throws Exception;
 
 }
