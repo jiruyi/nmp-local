@@ -10,10 +10,6 @@ public class DeviceConfigVo implements Serializable {
 
     private static final long serialVersionUID = 5064991216109579000L;
 
-    /**
-     * 主键
-     */
-    private Long id;
 
     /**
      * 设备id

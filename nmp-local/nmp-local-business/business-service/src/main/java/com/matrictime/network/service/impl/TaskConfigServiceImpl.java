@@ -89,7 +89,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
             }
             Integer upd = taskConfigDomainService.update(vos);
             List<TaskVo> taskVos = getTaskVo(taskMap);
-            List<Future> futures = deviceConfigService.pushConfigToProxy(taskVos);
+            List<Map<String, Boolean>> futures = deviceConfigService.pushConfigToProxy(taskVos);
 
             result = buildResult(resp);
         }catch (Exception e){

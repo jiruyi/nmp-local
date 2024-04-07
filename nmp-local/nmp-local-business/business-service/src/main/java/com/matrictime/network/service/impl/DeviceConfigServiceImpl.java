@@ -1,6 +1,7 @@
 package com.matrictime.network.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.base.SystemException;
 import com.matrictime.network.base.constant.DataConstants;
@@ -29,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import static com.matrictime.network.base.constant.DataConstants.DATA_SYNC_CONFIG_URL;
+import static com.matrictime.network.base.constant.DataConstants.SYNC_CONFIG_URL;
 import static com.matrictime.network.base.exception.ErrorMessageContants.PARAM_IS_NULL_MSG;
 
 @Service
@@ -108,10 +111,12 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
                     //将这条数据插入到节点网元配置表中
                     NmplDeviceConfig nmplDeviceConfig = new NmplDeviceConfig();
                     BeanUtils.copyProperties(nmplConfig,nmplDeviceConfig);
+                    nmplDeviceConfig.setDeviceId(deviceConfigReq.getDeviceId());
                     nmplDeviceConfig.setId(null);
                     nmplDeviceConfig.setConfigValue(null);
                     nmplDeviceConfigMapper.insertSelective(nmplDeviceConfig);
                 }
+                deviceConfigVo.setDeviceId(deviceConfigReq.getDeviceId());
                 configVos.add(deviceConfigVo);
             }
             result = buildResult(configVos);
@@ -130,28 +135,35 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
     public Result save(DeviceConfigReq deviceConfigReq) {
         Result result = null;
         try {
+            queryCheckParam(deviceConfigReq);
             saveCheckParam(deviceConfigReq);
             for (DeviceConfigVo DeviceConfigVo : deviceConfigReq.getDeviceConfigVoList()) {
                 NmplDeviceConfig nmplDeviceConfig = new NmplDeviceConfig();
-                BeanUtils.copyProperties(DeviceConfigVo,nmplDeviceConfig);
-                nmplDeviceConfigMapper.updateByPrimaryKeySelective(nmplDeviceConfig);
+                BeanUtils.copyProperties(DeviceConfigVo, nmplDeviceConfig);
+
+                NmplDeviceConfigExample nmplDeviceConfigExample = new NmplDeviceConfigExample();
+                nmplDeviceConfigExample.createCriteria().andDeviceIdEqualTo(nmplDeviceConfig.getDeviceId()).
+                        andConfigCodeEqualTo(nmplDeviceConfig.getConfigCode()).andIsExistEqualTo(nmplDeviceConfig.getIsExist());
+                nmplDeviceConfigMapper.updateByExample(nmplDeviceConfig, nmplDeviceConfigExample);
             }
             List<String> ipList = getIpList(deviceConfigReq.getDeviceId(), deviceConfigReq.getDeviceType());
             List<TaskVo> taskVoList = new ArrayList<>();
             for (String ip : ipList) {
-                TaskVo taskVo =new TaskVo();
+                TaskVo taskVo = new TaskVo();
                 taskVo.setDeviceType(deviceConfigReq.getDeviceType());
-                taskVo.setData(JSON.toJSON(deviceConfigReq.getDeviceConfigVoList()).toString());
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("configVos", deviceConfigReq.getDeviceConfigVoList());
+                taskVo.setData(jsonObject.toJSONString());
                 taskVo.setIp(ip);
                 taskVoList.add(taskVo);
             }
-            List<Future> mapFuture = pushConfigToProxy(taskVoList);
-            result = buildResult(mapFuture);
+            List<Map<String, Boolean>> res = pushConfigToProxy(taskVoList);
+            result = buildResult(res);
         } catch (SystemException e) {
-            log.info("网元定时任务配置同步异常", e.getMessage());
+            log.info("网元配置同步异常", e.getMessage());
             result = failResult(e);
         } catch (Exception e) {
-            log.error("网元定时任务配置同步异常：{}", e.getMessage());
+            log.error("网元配置同步异常：{}", e.getMessage());
             result = failResult("");
         }
         return result;
@@ -171,29 +183,28 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
     }
 
     @Override
-    public List<Future> pushConfigToProxy(List<TaskVo> taskVoList){
+    public List<Map<String, Boolean>> pushConfigToProxy(List<TaskVo> taskVoList)throws Exception{
         Future<Map<String, Boolean>> mapFuture = null;
-        List<Future> result = new ArrayList<>();
+        List<Map<String, Boolean>>  result= new ArrayList<>();
         for (TaskVo taskVo : taskVoList) {
             String url;
             switch (DeviceTypeEnum.getByCode(taskVo.getDeviceType())){
                 case DATA_BASE:
-//                    后续如果要特殊化处理需要走此处
-//                    url = "http://" + taskVo.getIp() + ":" + datacollectPort + datacollectContextPath + "";
-//                    break;
+                    url = "http://" + taskVo.getIp() + ":" + datacollectPort + datacollectContextPath + DATA_SYNC_CONFIG_URL;
+                    break;
                 case ACCUSE_CENTER:
 //                    后续如果要特殊化处理需要走此处
 //                    url = "http://" + taskVo.getIp() + ":" + datacollectPort + datacollectContextPath + "";
 //                    break;
                 default:
-                    url = "http://" + taskVo.getIp() + ":" + proxyPort + proxyContextPath + "";
+                    url = "http://" + taskVo.getIp() + ":" + proxyPort + proxyContextPath + SYNC_CONFIG_URL;
                     break;
             }
             Map<String,String> map = new HashMap<>();
             map.put(DataConstants.KEY_DATA, taskVo.getData());
             map.put(DataConstants.KEY_URL, url);
             mapFuture = asyncService.httpUpdateDeviceTask(map);
-            result.add(mapFuture);
+            result.add(mapFuture.get());
         }
         return result;
     }
@@ -256,95 +267,88 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
             //校验参数
             queryCheckParam(deviceReportBusinessReq);
 
-            //查询通用网元配置与此设备相关的配置
-            NmplReportBusinessExample nmplReportBusinessExample = new NmplReportBusinessExample();
-            nmplReportBusinessExample.createCriteria().andIsExistEqualTo(true);
-            List<NmplReportBusiness> nmplReportBusinesses = nmplReportBusinessMapper.selectByExample(nmplReportBusinessExample);
+            //获取list
+            List<DeviceReportBusinessVo> deviceReportBusinessVoList = getDeviceReportBusinessVoList(deviceReportBusinessReq.getDeviceId());
 
-            //查询节点网元配置
-            NmplDeviceReportBusinessExample nmplDeviceReportBusinessExample = new NmplDeviceReportBusinessExample();
-            nmplDeviceReportBusinessExample.createCriteria().andIsExistEqualTo(true).andDeviceIdEqualTo(deviceReportBusinessReq.getDeviceId());
-            List<NmplDeviceReportBusiness> nmplDeviceReportBusinesses = nmplDeviceReportBusinessMapper.selectByExample(nmplDeviceReportBusinessExample);
-
-            Map<String, NmplDeviceReportBusiness> map = new HashMap<>();
-            for (NmplDeviceReportBusiness nmplDeviceReportBusiness : nmplDeviceReportBusinesses) {
-                map.put(nmplDeviceReportBusiness.getBusinessCode(), nmplDeviceReportBusiness);
-            }
-
-            List<DeviceReportBusinessVo> deviceReportBusinessVoList = new ArrayList<>();
-            //根据原则 节点修改值>通用修改值>默认值
-            for (NmplReportBusiness nmplReportBusiness : nmplReportBusinesses) {
-                DeviceReportBusinessVo deviceReportBusinessVo = new DeviceReportBusinessVo();
-                BeanUtils.copyProperties(nmplReportBusiness, deviceReportBusinessVo);
-                String totalValue = nmplReportBusiness.getBusinessValue() != null ? nmplReportBusiness.getBusinessValue() : nmplReportBusiness.getDefaultValue();
-                deviceReportBusinessVo.setDefaultValue(totalValue);
-                if (map.containsKey(nmplReportBusiness.getBusinessCode())) {
-                    deviceReportBusinessVo.setBusinessValue(map.get(nmplReportBusiness.getBusinessCode()).getBusinessValue() != null ? map.get(nmplReportBusiness.getBusinessCode()).getBusinessValue() : totalValue);
-                } else {
-                    deviceReportBusinessVo.setBusinessValue(totalValue);
-
-                    //将这条数据插入到节点网元定时任务配置表中
-                    NmplDeviceReportBusiness nmplDeviceReportBusiness = new NmplDeviceReportBusiness();
-                    BeanUtils.copyProperties(nmplReportBusiness, nmplDeviceReportBusiness);
-                    nmplDeviceReportBusiness.setId(null);
-                    nmplDeviceReportBusiness.setBusinessValue(null);
-                    nmplDeviceReportBusinessMapper.insertSelective(nmplDeviceReportBusiness);
-                }
-                deviceReportBusinessVoList.add(deviceReportBusinessVo);
-            }
             result = buildResult(deviceReportBusinessVoList);
         } catch (SystemException e) {
-            log.info("网元定时任务配置查询异常", e.getMessage());
+            log.info("数据采集配置查询异常", e.getMessage());
             result = failResult(e);
         } catch (Exception e) {
-            log.error("网元定时任务配置查询异常：{}", e.getMessage());
+            log.error("数据采集配置查询异常：{}", e.getMessage());
             result = failResult("");
         }
         return result;
     }
+
+    private List<DeviceReportBusinessVo> getDeviceReportBusinessVoList(String deviceId){
+        //查询通用网元配置与此设备相关的配置
+        NmplReportBusinessExample nmplReportBusinessExample = new NmplReportBusinessExample();
+        nmplReportBusinessExample.createCriteria().andIsExistEqualTo(true);
+        List<NmplReportBusiness> nmplReportBusinesses = nmplReportBusinessMapper.selectByExample(nmplReportBusinessExample);
+
+        //查询节点网元配置
+        NmplDeviceReportBusinessExample nmplDeviceReportBusinessExample = new NmplDeviceReportBusinessExample();
+        nmplDeviceReportBusinessExample.createCriteria().andIsExistEqualTo(true).andDeviceIdEqualTo(deviceId);
+        List<NmplDeviceReportBusiness> nmplDeviceReportBusinesses = nmplDeviceReportBusinessMapper.selectByExample(nmplDeviceReportBusinessExample);
+
+        Map<String, NmplDeviceReportBusiness> map = new HashMap<>();
+        for (NmplDeviceReportBusiness nmplDeviceReportBusiness : nmplDeviceReportBusinesses) {
+            map.put(nmplDeviceReportBusiness.getBusinessCode(), nmplDeviceReportBusiness);
+        }
+
+        List<DeviceReportBusinessVo> deviceReportBusinessVoList = new ArrayList<>();
+        //根据原则 节点修改值>通用修改值>默认值
+        for (NmplReportBusiness nmplReportBusiness : nmplReportBusinesses) {
+            DeviceReportBusinessVo deviceReportBusinessVo = new DeviceReportBusinessVo();
+            BeanUtils.copyProperties(nmplReportBusiness, deviceReportBusinessVo);
+            String totalValue = nmplReportBusiness.getBusinessValue() != null ? nmplReportBusiness.getBusinessValue() : nmplReportBusiness.getDefaultValue();
+            deviceReportBusinessVo.setDefaultValue(totalValue);
+            if (map.containsKey(nmplReportBusiness.getBusinessCode())) {
+                deviceReportBusinessVo.setBusinessValue(map.get(nmplReportBusiness.getBusinessCode()).getBusinessValue() != null ? map.get(nmplReportBusiness.getBusinessCode()).getBusinessValue() : totalValue);
+            } else {
+                deviceReportBusinessVo.setBusinessValue(totalValue);
+
+                //将这条数据插入到节点网元定时任务配置表中
+                NmplDeviceReportBusiness nmplDeviceReportBusiness = new NmplDeviceReportBusiness();
+                BeanUtils.copyProperties(nmplReportBusiness, nmplDeviceReportBusiness);
+                nmplDeviceReportBusiness.setId(null);
+                nmplDeviceReportBusiness.setDeviceId(deviceId);
+                nmplDeviceReportBusiness.setBusinessValue(null);
+                nmplDeviceReportBusinessMapper.insertSelective(nmplDeviceReportBusiness);
+            }
+            deviceReportBusinessVo.setDeviceId(deviceId);
+            deviceReportBusinessVoList.add(deviceReportBusinessVo);
+        }
+        return deviceReportBusinessVoList;
+    }
+
+
+
 
     @Override
     public Result saveReportBusiness(DeviceReportBusinessReq deviceReportBusinessReq) {
         Result result = null;
         try {
+            queryCheckParam(deviceReportBusinessReq);
             saveCheckParam(deviceReportBusinessReq);
+            int flag = 0;
             for (DeviceReportBusinessVo deviceReportBusinessVo : deviceReportBusinessReq.getDeviceReportBusinessVoList()) {
-                NmplDeviceReportBusiness nmplDeviceTaskConfigVo = new NmplDeviceReportBusiness();
-                BeanUtils.copyProperties(deviceReportBusinessVo,nmplDeviceTaskConfigVo);
-                nmplDeviceReportBusinessMapper.updateByPrimaryKeySelective(nmplDeviceTaskConfigVo);
+                NmplDeviceReportBusiness nmplDeviceReportBusiness = new NmplDeviceReportBusiness();
+                BeanUtils.copyProperties(deviceReportBusinessVo,nmplDeviceReportBusiness);
+
+                NmplDeviceReportBusinessExample example = new NmplDeviceReportBusinessExample();
+                example.createCriteria().andDeviceIdEqualTo(nmplDeviceReportBusiness.getDeviceId()).
+                        andBusinessCodeEqualTo(nmplDeviceReportBusiness.getBusinessCode()).andIsExistEqualTo(nmplDeviceReportBusiness.getIsExist());
+                flag = nmplDeviceReportBusinessMapper.updateByExample(nmplDeviceReportBusiness,example);
             }
-            List<String> ipList = getIpList(deviceReportBusinessReq.getDeviceId(), deviceReportBusinessReq.getDeviceType());
-            List<TaskVo> taskVoList = new ArrayList<>();
-            for (String ip : ipList) {
-                TaskVo taskVo =new TaskVo();
-                taskVo.setDeviceType(deviceReportBusinessReq.getDeviceType());
-                taskVo.setData(JSON.toJSON(deviceReportBusinessReq.getDeviceReportBusinessVoList()).toString());
-                taskVo.setIp(ip);
-                taskVoList.add(taskVo);
-            }
-            List<Future> mapFuture = pushReportBusinessToProxy(taskVoList);
-            result = buildResult(mapFuture);
+            result = buildResult(flag);
         } catch (SystemException e) {
-            log.info("网元定时任务配置同步异常", e.getMessage());
+            log.info("数据采集配置同步异常", e.getMessage());
             result = failResult(e);
         } catch (Exception e) {
-            log.error("网元定时任务配置同步异常：{}", e.getMessage());
+            log.error("数据采集配置同步异常：{}", e.getMessage());
             result = failResult("");
-        }
-        return result;
-    }
-
-    @Override
-    public List<Future> pushReportBusinessToProxy(List<TaskVo> taskVoList){
-        Future<Map<String, Boolean>> mapFuture = null;
-        List<Future> result = new ArrayList<>();
-        for (TaskVo taskVo : taskVoList) {
-            String url = "http://" + taskVo.getIp() + ":" + datacollectPort + datacollectContextPath + "";
-            Map<String,String> map = new HashMap<>();
-            map.put(DataConstants.KEY_DATA, taskVo.getData());
-            map.put(DataConstants.KEY_URL, url);
-            mapFuture = asyncService.httpUpdateDeviceTask(map);
-            result.add(mapFuture);
         }
         return result;
     }

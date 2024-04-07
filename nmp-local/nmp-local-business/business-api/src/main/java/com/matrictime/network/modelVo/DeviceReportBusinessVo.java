@@ -11,11 +11,6 @@ public class DeviceReportBusinessVo implements Serializable {
 
     private static final long serialVersionUID = -1939686594152745528L;
     /**
-     * 主键
-     */
-    private Long id;
-
-    /**
      * 设备id
      */
     private String deviceId;

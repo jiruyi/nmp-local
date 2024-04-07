@@ -58,6 +58,12 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
     @Resource
     NmplTaskConfigMapper nmplTaskConfigMapper;
 
+    @Resource
+    NmplConfigMapper nmplConfigMapper;
+
+    @Resource
+    NmplDeviceConfigMapper nmplDeviceConfigMapper;
+
 
     /**
      *  代理程序启动初始化获取该ip下的所有信息
@@ -318,4 +324,50 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
         }
         log.info("TaskConfig query sucess");
     }
+
+    /**
+     * 获取定时任务配置信息
+     */
+    private void getDeviceConfig(ProxyResp proxyResp){
+        Set<String> deviceTypeSets = new HashSet<>();
+        List<String> deviceIds = new ArrayList<>();
+        Map<String,String> typeToId = new HashMap<>();
+        for (ProxyBaseStationInfoVo proxyBaseStationInfoVo : proxyResp.getLocalStation()) {
+            deviceTypeSets.add(proxyBaseStationInfoVo.getStationType());
+            deviceIds.add(proxyBaseStationInfoVo.getStationId());
+            typeToId.put(proxyBaseStationInfoVo.getStationType(),proxyBaseStationInfoVo.getStationId());
+        }
+        for (ProxyDeviceInfoVo localDeviceInfoVo : proxyResp.getLocalDeviceInfoVos()) {
+            deviceTypeSets.add(localDeviceInfoVo.getDeviceType());
+            deviceIds.add(localDeviceInfoVo.getDeviceId());
+            typeToId.put(localDeviceInfoVo.getDeviceType(),localDeviceInfoVo.getDeviceId());
+        }
+        //获取所有的定时任务配置
+        NmplConfigExample nmplConfigExample = new NmplConfigExample();
+        nmplConfigExample.createCriteria().andDeviceTypeIn(new ArrayList<>(deviceTypeSets)).andIsExistEqualTo(true);
+        List<NmplConfig> nmplConfigs = nmplConfigMapper.selectByExample(nmplConfigExample);
+
+        NmplDeviceConfigExample nmplDeviceConfigExample = new NmplDeviceConfigExample();
+        nmplDeviceConfigExample.createCriteria().andDeviceIdIn(deviceIds).andIsExistEqualTo(true);
+        List<NmplDeviceConfig> nmplDeviceConfigs = nmplDeviceConfigMapper.selectByExample(nmplDeviceConfigExample);
+
+        Map<String,NmplDeviceConfig> map = new HashMap<>();
+        for (NmplDeviceConfig nmplDeviceConfig : nmplDeviceConfigs) {
+            map.put(nmplDeviceConfig.getConfigCode(),nmplDeviceConfig);
+        }
+
+        for (NmplConfig nmplConfig : nmplConfigs) {
+            ConfigVo configVo = new ConfigVo();
+            String localValue = nmplConfig.getConfigValue()!=null?nmplConfig.getConfigValue():nmplConfig.getDefaultValue();
+            if(map.containsKey(nmplConfig.getConfigCode())){
+                localValue = map.get(nmplConfig.getConfigCode()).getConfigValue()!=null?map.get(nmplConfig.getConfigCode()).getConfigValue():localValue;
+            }
+            BeanUtils.copyProperties(nmplConfig,configVo);
+            configVo.setConfigValue(localValue);
+            configVo.setDeviceId(typeToId.get(nmplConfig.getDeviceType()));
+            proxyResp.getConfigVoList().add(configVo);
+        }
+        log.info("Config query sucess");
+    }
+
 }
