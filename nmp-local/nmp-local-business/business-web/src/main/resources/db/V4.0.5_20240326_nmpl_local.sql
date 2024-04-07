@@ -39,3 +39,5 @@ create table nmpl_device_task_config
     is_exist       tinyint(1)  default 1                    null comment '状态 true:存在(1)  false:删除(0)'
 )
     comment '节点网元定时任务配置表';
+
+alter table nmpl_report_business add report_time datetime(2)  null comment '上报时间';

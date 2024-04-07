@@ -13,6 +13,7 @@ import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.modelVo.DeviceExtraVo;
+import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.NmplDeviceInfoExtVo;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
 import com.matrictime.network.response.PageInfo;
@@ -153,22 +154,28 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
      * @return
      */
     @Override
-    public Set<String> getIpByDeviceType(String deviceType) {
-        Set<String> ipSet = new HashSet<>();
+    public List<DeviceInfoVo> getDeviceByDeviceType(String deviceType) {
+        List<DeviceInfoVo> devices = new ArrayList<>();
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         baseStationInfoExample.createCriteria().andStationTypeEqualTo(deviceType).andIsExistEqualTo(IS_EXIST);
         List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
         for (NmplBaseStationInfo info:stationInfos){
-            ipSet.add(info.getLanIp());
+            DeviceInfoVo vo = new DeviceInfoVo();
+            vo.setDeviceId(info.getStationId());
+            vo.setLanIp(info.getLanIp());
+            devices.add(vo);
         }
 
         NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
         deviceInfoExample.createCriteria().andDeviceTypeEqualTo(deviceType).andIsExistEqualTo(IS_EXIST);
         List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(deviceInfoExample);
         for (NmplDeviceInfo info:deviceInfos){
-            ipSet.add(info.getLanIp());
+            DeviceInfoVo vo = new DeviceInfoVo();
+            vo.setDeviceId(info.getDeviceId());
+            vo.setLanIp(info.getLanIp());
+            devices.add(vo);
         }
-        return ipSet;
+        return devices;
     }
 }
 

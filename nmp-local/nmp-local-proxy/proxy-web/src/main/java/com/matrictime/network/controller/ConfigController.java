@@ -23,12 +23,12 @@ public class ConfigController extends SystemBaseService {
     @Autowired
     private ConfigService configService;
 
-    @RequestMapping (value = "/sync",method = RequestMethod.POST)
+    @RequestMapping (value = "/syncConfig",method = RequestMethod.POST)
     public Result syncConfig(@RequestBody EditConfigReq req){
         try {
             return configService.update(req.getConfigVos());
         }catch (Exception e){
-            log.error("ConfigController.sync exception:{}",e.getMessage());
+            log.error("ConfigController.syncConfig exception:{}",e.getMessage());
             return new Result(false,e.getMessage());
         }
     }

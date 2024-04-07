@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 
 import static com.matrictime.network.constant.BusinessConsts.COMMON_SWITCH_ON;
@@ -60,6 +61,11 @@ public class ConfigDomainServiceImpl implements ConfigDomainService {
                 // 两个开关同时开启时上报
                 if (COMMON_SWITCH_ON.equals(dataValue) && COMMON_SWITCH_ON.equals(businessValue)){
                     result = true;
+                    // 更新上报时间
+                    NmplReportBusiness reportBusiness = new NmplReportBusiness();
+                    reportBusiness.setId(reportBusinesses.get(0).getId());
+                    reportBusiness.setReportTime(new Date());
+                    nmplReportBusinessMapper.updateByPrimaryKeySelective(reportBusiness);
                 }
             }
         }catch (Exception e){

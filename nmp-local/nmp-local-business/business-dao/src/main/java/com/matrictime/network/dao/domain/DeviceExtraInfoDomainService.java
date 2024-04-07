@@ -3,6 +3,7 @@ package com.matrictime.network.dao.domain;
 
 import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
 import com.matrictime.network.modelVo.DeviceExtraVo;
+import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.NmplDeviceInfoExtVo;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
 import com.matrictime.network.response.PageInfo;
@@ -24,5 +25,5 @@ public interface DeviceExtraInfoDomainService {
 
     List<NmplDeviceInfoExtVo> query(NmplDeviceExtraInfo nmplDeviceExtraInfo);
 
-    Set<String> getIpByDeviceType(String deviceType);
+    List<DeviceInfoVo> getDeviceByDeviceType(String deviceType);
 }

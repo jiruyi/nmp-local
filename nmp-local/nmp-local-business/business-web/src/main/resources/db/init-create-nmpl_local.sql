@@ -533,6 +533,7 @@ create table nmpl_report_business
     business_code  varchar(32)                              null comment '业务编码',
     business_value varchar(128)                             null comment '业务配置值',
     default_value  varchar(128)                             null comment '默认值',
+    report_time    datetime(2)                              null comment '上报时间',
     create_time    datetime(2) default CURRENT_TIMESTAMP(2) null comment '创建时间',
     create_user    varchar(20)                              null comment '创建人',
     update_time    datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间',

@@ -20,6 +20,11 @@ public class ConfigVo implements Serializable {
     private String deviceId;
 
     /**
+     * 设备类型 01:接入基站 02:边界基站 11:密钥中心 20:数据采集
+     */
+    private String deviceType;
+
+    /**
      * 配置项名称
      */
     private String configName;
