@@ -35,7 +35,7 @@ public class TaskConfigController {
      */
     @RequestMapping (value = "/queryByPages",method = RequestMethod.POST)
     @SystemLog(opermodul = "通用网元定时任务配置",operDesc = "查询接口（支持分页查询）",operType = "查询")
-    @RequiresPermissions("sys:task:query")
+    @RequiresPermissions("sys:taskConfig:query")
     public Result<PageInfo> queryByPages(@RequestBody QueryTaskReq req){
         try {
             return taskConfigService.queryTaskByPages(req);
@@ -53,7 +53,7 @@ public class TaskConfigController {
      */
     @RequestMapping (value = "/sync",method = RequestMethod.POST)
     @SystemLog(opermodul = "通用网元定时任务配置",operDesc = "同步接口",operType = "同步",operLevl = "2")
-    @RequiresPermissions("sys:task:update")
+    @RequiresPermissions("sys:taskConfig:sync")
     public Result<SyncTaskResp> sync(@RequestBody SyncTaskReq req){
         try {
             return taskConfigService.sync(req);
