@@ -108,6 +108,7 @@ public class ConfigController {
      */
     @RequestMapping (value = "/reportBusinessData",method = RequestMethod.POST)
     @SystemLog(opermodul = "配置模块",operDesc = "手动上报业务数据",operType = "上报")
+    @RequiresPermissions("sys:parmDataCollect:report")
     public Result reportBusinessData(){
         return  configurationService.reportBusinessData();
     }
