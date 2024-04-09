@@ -89,7 +89,7 @@ public class NmplDeviceTaskServiceImpl extends SystemBaseService implements Nmpl
                 NmplDeviceTaskConfigVo nmplDeviceTaskConfigVo = new NmplDeviceTaskConfigVo();
                 BeanUtils.copyProperties(nmplTaskConfig,nmplDeviceTaskConfigVo);
                 Long totalValue = nmplTaskConfig.getCurrentValue()!=null?nmplTaskConfig.getCurrentValue():nmplTaskConfig.getDefaultValue();
-                nmplDeviceTaskConfigVo.setDefultValue(totalValue);
+                nmplDeviceTaskConfigVo.setDefaultValue(totalValue);
                 if(map.containsKey(nmplTaskConfig.getTaskId())){
                     nmplDeviceTaskConfigVo.setCurrentValue(map.get(nmplTaskConfig.getTaskId()).getCurrentValue()!=null?map.get(nmplTaskConfig.getTaskId()).getCurrentValue():totalValue);
                 }else {

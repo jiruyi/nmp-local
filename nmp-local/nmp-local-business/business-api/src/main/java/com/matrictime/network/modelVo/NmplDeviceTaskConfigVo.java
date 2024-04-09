@@ -41,7 +41,7 @@ public class NmplDeviceTaskConfigVo  implements Serializable {
     /**
      * 默认值
      */
-    private Long defultValue;
+    private Long defaultValue;
 
     /**
      * 启停 1启动 0 停止

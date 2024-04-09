@@ -82,7 +82,11 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
 
             //查询通用网元配置与此设备相关的配置
             NmplConfigExample nmplConfigExample = new NmplConfigExample();
-            nmplConfigExample.createCriteria().andDeviceTypeEqualTo(deviceConfigReq.getDeviceType()).andIsExistEqualTo(true);
+            NmplConfigExample.Criteria criteria = nmplConfigExample.createCriteria();
+            criteria.andDeviceTypeEqualTo(deviceConfigReq.getDeviceType()).andIsExistEqualTo(true);
+            if(deviceConfigReq.getConfigName()!=null){
+                criteria.andConfigNameLike("%"+deviceConfigReq.getConfigName()+"%");
+            }
             List<NmplConfig> nmplConfigs =  nmplConfigMapper.selectByExample(nmplConfigExample);
 
             //查询节点网元配置
@@ -144,7 +148,7 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
                 NmplDeviceConfigExample nmplDeviceConfigExample = new NmplDeviceConfigExample();
                 nmplDeviceConfigExample.createCriteria().andDeviceIdEqualTo(nmplDeviceConfig.getDeviceId()).
                         andConfigCodeEqualTo(nmplDeviceConfig.getConfigCode()).andIsExistEqualTo(nmplDeviceConfig.getIsExist());
-                nmplDeviceConfigMapper.updateByExample(nmplDeviceConfig, nmplDeviceConfigExample);
+                nmplDeviceConfigMapper.updateByExampleSelective(nmplDeviceConfig, nmplDeviceConfigExample);
             }
             List<String> ipList = getIpList(deviceConfigReq.getDeviceId(), deviceConfigReq.getDeviceType());
             List<TaskVo> taskVoList = new ArrayList<>();
@@ -247,7 +251,7 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
 
 
     private void queryCheckParam(DeviceReportBusinessReq deviceReportBusinessReq){
-        if(deviceReportBusinessReq.getDeviceId()==null||deviceReportBusinessReq.getDeviceType()==null){
+        if(deviceReportBusinessReq.getDeviceId()==null){
             throw new SystemException(PARAM_IS_NULL_MSG);
         }
     }
@@ -330,7 +334,6 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
     public Result saveReportBusiness(DeviceReportBusinessReq deviceReportBusinessReq) {
         Result result = null;
         try {
-            queryCheckParam(deviceReportBusinessReq);
             saveCheckParam(deviceReportBusinessReq);
             int flag = 0;
             for (DeviceReportBusinessVo deviceReportBusinessVo : deviceReportBusinessReq.getDeviceReportBusinessVoList()) {
@@ -340,7 +343,7 @@ public class DeviceConfigServiceImpl extends SystemBaseService implements Device
                 NmplDeviceReportBusinessExample example = new NmplDeviceReportBusinessExample();
                 example.createCriteria().andDeviceIdEqualTo(nmplDeviceReportBusiness.getDeviceId()).
                         andBusinessCodeEqualTo(nmplDeviceReportBusiness.getBusinessCode()).andIsExistEqualTo(nmplDeviceReportBusiness.getIsExist());
-                flag = nmplDeviceReportBusinessMapper.updateByExample(nmplDeviceReportBusiness,example);
+                flag = nmplDeviceReportBusinessMapper.updateByExampleSelective(nmplDeviceReportBusiness,example);
             }
             result = buildResult(flag);
         } catch (SystemException e) {

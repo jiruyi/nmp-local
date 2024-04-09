@@ -23,4 +23,6 @@ public class DeviceConfigReq implements Serializable {
     private String deviceType;
 
     private List<DeviceConfigVo> deviceConfigVoList = new ArrayList<>();
+
+    private String configName;
 }

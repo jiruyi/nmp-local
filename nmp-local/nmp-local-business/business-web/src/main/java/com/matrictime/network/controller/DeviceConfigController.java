@@ -199,6 +199,17 @@ public class DeviceConfigController {
         return deviceConfigService.save(deviceConfigReq);
     }
 
+    //@RequiresPermissions("sys:deviceTask:dataBaseConfig")
+    @RequestMapping(value = "/dataBaseReportBusinessQuery",method = RequestMethod.POST)
+    public Result dataBaseReportBusinessQuery(@RequestBody DeviceReportBusinessReq deviceReportBusinessReq){
+        return deviceConfigService.queryReportBusiness(deviceReportBusinessReq);
+    }
+
+    //@RequiresPermissions("sys:deviceTask:dataBaseConfig")
+    @RequestMapping(value = "/dataBaseReportBusinessSave",method = RequestMethod.POST)
+    public Result dataBaseReportBusinessSave(@RequestBody DeviceReportBusinessReq deviceReportBusinessReq){
+        return deviceConfigService.saveReportBusiness(deviceReportBusinessReq);
+    }
 
 
 
@@ -230,17 +241,6 @@ public class DeviceConfigController {
         return deviceConfigService.save(deviceConfigReq);
     }
 
-    //@RequiresPermissions("sys:deviceTask:accuseCenterConfig")
-    @RequestMapping(value = "/accuseCenterReportBusinessQuery",method = RequestMethod.POST)
-    public Result accuseCenterReportBusinessQuery(@RequestBody DeviceReportBusinessReq deviceReportBusinessReq){
-        return deviceConfigService.queryReportBusiness(deviceReportBusinessReq);
-    }
-
-    //@RequiresPermissions("sys:deviceTask:accuseCenterConfig")
-    @RequestMapping(value = "/accuseCenterReportBusinessSave",method = RequestMethod.POST)
-    public Result accuseCenterReportBusinessSave(@RequestBody DeviceReportBusinessReq deviceReportBusinessReq){
-        return deviceConfigService.saveReportBusiness(deviceReportBusinessReq);
-    }
 
 
 }
