@@ -109,7 +109,18 @@ public class ConfigController {
     @RequestMapping (value = "/reportBusinessData",method = RequestMethod.POST)
     @SystemLog(opermodul = "配置模块",operDesc = "手动上报业务数据",operType = "上报")
     @RequiresPermissions("sys:parmDataCollect:report")
-    public Result reportBusinessData(){
-        return  configurationService.reportBusinessData();
+    public Result reportBusinessData(@RequestBody EditDataCollectConfigReq req){
+        return  configurationService.reportBusinessData(req);
+    }
+
+    /**
+     * 手动上报业务数据
+     * @author zhangyunjie
+     * @return
+     */
+    @RequestMapping (value = "/reportDeviceBusinessData",method = RequestMethod.POST)
+    @SystemLog(opermodul = "配置模块",operDesc = "手动上报业务数据",operType = "上报")
+    public Result reportDeviceBusinessData(@RequestBody EditDataCollectConfigReq req){
+        return  configurationService.reportDeviceBusinessData(req);
     }
 }

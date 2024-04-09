@@ -21,4 +21,8 @@ public class EditDataCollectConfigReq implements Serializable {
      * 数据采集配置
      */
     private List<NmplConfigVo> nmplConfigVos;
+
+    private String deviceId;
+
+    private String ip;
 }
