@@ -84,6 +84,7 @@ public class ProxyInitServiceImpl extends SystemBaseService implements ProxyInit
             getlinkVoList(proxyResp);
             getOutlinePcInfoList(proxyResp);
             getDeviceTask(proxyResp);
+            getDeviceConfig(proxyResp);
             result = buildResult(proxyResp);
         }catch (Exception e){
             log.error("代理初始化异常异常：",e.getMessage());
