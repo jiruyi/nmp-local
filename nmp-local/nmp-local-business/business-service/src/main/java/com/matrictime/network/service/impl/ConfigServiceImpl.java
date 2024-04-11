@@ -212,7 +212,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
 
         try {
             // check param is legal
-            checkEditDataCollectConfigParam(req);
+//            checkEditDataCollectConfigParam(req);
             for (NmplReportBusinessVo vo : req.getNmplReportBusinessVos()){
                 // 校验id是否为空
                 if (vo.getId() == null){

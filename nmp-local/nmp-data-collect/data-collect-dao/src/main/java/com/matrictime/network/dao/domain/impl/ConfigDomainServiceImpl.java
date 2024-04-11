@@ -144,7 +144,7 @@ public class ConfigDomainServiceImpl implements ConfigDomainService {
         NmplDeviceReportBusinessExample deviceReportBusinessExample = new NmplDeviceReportBusinessExample();
         deviceReportBusinessExample.createCriteria().andDeviceIdEqualTo(deviceId).andBusinessCodeEqualTo(businessCode).andIsExistEqualTo(IS_EXIST);
         List<NmplDeviceReportBusiness> deviceReportBusinesses = nmplDeviceReportBusinessMapper.selectByExample(deviceReportBusinessExample);
-        if (!CollectionUtils.isEmpty(deviceReportBusinesses)){// 网元值不为空
+        if (!CollectionUtils.isEmpty(deviceReportBusinesses) && !ParamCheckUtil.checkVoStrBlank(deviceReportBusinesses.get(0).getBusinessValue())){// 网元值不为空
             res.setReportValue(deviceReportBusinesses.get(0).getBusinessValue());
             res.setRange(EDIT_RANGE_PART);
             res.setPartId(deviceReportBusinesses.get(0).getId());

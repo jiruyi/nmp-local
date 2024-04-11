@@ -791,8 +791,8 @@ INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config
 INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config_value, default_value, unit, status, update_time, update_user, is_exist, remark) VALUES ('01', '通信状态上报', 'as0005', '60', '60', 's', 0, '2024-04-02 10:39:39.62', null, 1, null);
 INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config_value, default_value, unit, status, update_time, update_user, is_exist, remark) VALUES ('11', '生成密钥量', 'kc0001', '10', '10', 'T', 0, '2024-04-02 10:39:39.75', null, 1, null);
 INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config_value, default_value, unit, status, update_time, update_user, is_exist, remark) VALUES ('11', '分发密钥量', 'kc0002', '1', '1', 'T', 0, '2024-04-02 10:39:39.91', null, 1, null);
-INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config_value, default_value, unit, status, update_time, update_user, is_exist, remark) VALUES ('20', '采集周期', 'dc0001', '101', '1800', 's', 0, '2024-04-02 10:39:40', null, 1, null);
-INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config_value, default_value, unit, status, update_time, update_user, is_exist, remark) VALUES ('20', '上报周期', 'dc0002', '100', '1800', 's', 0, '2024-04-02 10:39:40', null, 1, null);
+INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config_value, default_value, unit, status, update_time, update_user, is_exist, remark) VALUES ('20', '采集周期', 'dc0001', '10', '1800', 's', 0, '2024-04-02 10:39:40', null, 1, null);
+INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config_value, default_value, unit, status, update_time, update_user, is_exist, remark) VALUES ('20', '上报周期', 'dc0002', '10', '1800', 's', 0, '2024-04-02 10:39:40', null, 1, null);
 INSERT INTO nmp_local.nmpl_config (device_type, config_name, config_code, config_value, default_value, unit, status, update_time, update_user, is_exist, remark) VALUES ('20', '数据采集开关', 'dataSwitch', '0', '0', null, 1, '2024-04-02 10:39:40', null, 1, null);
 
 

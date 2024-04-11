@@ -107,9 +107,9 @@ public class TaskController extends BusinessConifg {
 
             for (NmplConfigVo configVo: req.getConfigVos()){
                 if (ConfigEnum.REPORT_PERIOD.getCode().equals(configVo.getConfigCode())){// 目前只处理上报周期配置
-                    if (CollectionUtils.isEmpty(req.getReportBusiness())){
-                        throw new Exception("reportBusiness"+ErrorMessageContants.PARAM_IS_NULL_MSG);
-                    }
+//                    if (CollectionUtils.isEmpty(req.getReportBusiness())){
+//                        throw new Exception("reportBusiness"+ErrorMessageContants.PARAM_IS_NULL_MSG);
+//                    }
 
                     for (String businessCode: codeList){
                         configServiceMap.get(businessCode).updateTimer(Long.valueOf(configVo.getConfigValue())*1000);
