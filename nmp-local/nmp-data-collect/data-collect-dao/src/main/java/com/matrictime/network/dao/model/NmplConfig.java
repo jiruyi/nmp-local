@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 系统配置表
  * @author   cxk
- * @date   2023-08-29
+ * @date   2024-04-11
  */
 @Data
 public class NmplConfig {
@@ -49,16 +49,6 @@ public class NmplConfig {
      * 状态 1同步 0 未同步
      */
     private Byte status;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 创建人
-     */
-    private String createUser;
 
     /**
      * 更新时间
@@ -142,22 +132,6 @@ public class NmplConfig {
 
     public void setStatus(Byte status) {
         this.status = status;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getCreateUser() {
-        return createUser;
-    }
-
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser == null ? null : createUser.trim();
     }
 
     public Date getUpdateTime() {
