@@ -52,7 +52,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             Date createTime = new Date();
             // 获取代理库系统配置
             List<NmplConfig> nmplConfigs = nmplConfigMapper.selectByExample(null);
-            Map<Long, NmplConfig> localMap = nmplConfigs.stream().collect(Collectors.toMap(NmplConfig::getId, Function.identity(), (key1, key2) -> key2));
+            Map<String, NmplConfig> localMap = nmplConfigs.stream().collect(Collectors.toMap(NmplConfig::getConfigCode, Function.identity(), (key1, key2) -> key2));
 
             // 将录入系统配置按设备类型分组
             Map<String, List<CenterConfigVo>> map = groupTask(centerConfigVos);
@@ -69,7 +69,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 for (int i=0;i<list.size();i++){
                     CenterConfigVo vo = list.get(i);
                     vo.setUpdateTime(createTime);
-                    if (localMap.containsKey(vo.getId())){
+                    if (localMap.containsKey(vo.getConfigCode())){
                         updateFlag = true;
                         updateList.add(vo);
                     }else {

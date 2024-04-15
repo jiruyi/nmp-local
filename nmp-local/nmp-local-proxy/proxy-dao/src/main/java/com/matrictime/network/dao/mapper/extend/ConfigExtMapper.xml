@@ -3,13 +3,13 @@
 <mapper namespace="com.matrictime.network.dao.mapper.extend.ConfigExtMapper">
 
   <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.CenterTaskConfigVo">
-    insert into nmpl_config (id, device_id, config_name,
+    insert into nmpl_config (device_id, config_name,
     config_code, config_value, unit,
     status, update_time, update_user,
     is_exist, remark)
     values
     <foreach collection ="list" item="vo" separator =",">
-      (#{vo.id,jdbcType=BIGINT}, #{vo.deviceId,jdbcType=VARCHAR}, #{vo.configName,jdbcType=VARCHAR},
+      (#{vo.deviceId,jdbcType=VARCHAR}, #{vo.configName,jdbcType=VARCHAR},
       #{vo.configCode,jdbcType=VARCHAR}, #{vo.configValue,jdbcType=VARCHAR}, #{vo.unit,jdbcType=VARCHAR},
       #{vo.status,jdbcType=TINYINT}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR},
       #{vo.isExist,jdbcType=BIT}, #{vo.remark,jdbcType=VARCHAR})
@@ -51,7 +51,7 @@
           remark = #{vo.remark,jdbcType=VARCHAR},
         </if>
       </set>
-      where id = #{vo.id,jdbcType=BIGINT}
+      where config_code = #{vo.configCode,jdbcType=VARCHAR}
     </foreach>
   </update>
 </mapper>

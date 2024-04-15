@@ -3,13 +3,13 @@
 <mapper namespace="com.matrictime.network.dao.mapper.extend.TaskConfigExtMapper">
 
   <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.CenterTaskConfigVo">
-    insert into nmpl_task_config (id, task_id, task_name,
+    insert into nmpl_task_config (task_id, task_name,
       task_type, device_id, current_value,
       status, remark, update_time,
       update_user, is_exist)
     values
     <foreach collection ="list" item="vo" separator =",">
-      (#{vo.id,jdbcType=BIGINT}, #{vo.taskId,jdbcType=VARCHAR}, #{vo.taskName,jdbcType=VARCHAR},
+      (#{vo.taskId,jdbcType=VARCHAR}, #{vo.taskName,jdbcType=VARCHAR},
       #{vo.taskType,jdbcType=CHAR}, #{vo.deviceId,jdbcType=VARCHAR}, #{vo.currentValue,jdbcType=BIGINT},
       #{vo.status,jdbcType=BIT}, #{vo.remark,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP},
       #{vo.updateUser,jdbcType=VARCHAR}, #{vo.isExist,jdbcType=BIT})
@@ -51,7 +51,7 @@
           is_exist = #{vo.isExist,jdbcType=BIT},
         </if>
       </set>
-      where id = #{vo.id,jdbcType=BIGINT}
+      where task_id = #{vo.taskId,jdbcType=VARCHAR}
     </foreach>
   </update>
 </mapper>

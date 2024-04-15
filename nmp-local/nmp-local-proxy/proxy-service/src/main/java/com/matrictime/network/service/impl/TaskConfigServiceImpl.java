@@ -66,7 +66,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
             Date createTime = new Date();
             // 获取代理库定时任务配置
             List<NmplTaskConfig> taskConfigs = taskConfigMapper.selectByExample(null);
-            Map<Long, NmplTaskConfig> localMap = taskConfigs.stream().collect(Collectors.toMap(NmplTaskConfig::getId, Function.identity(), (key1, key2) -> key2));
+            Map<String, NmplTaskConfig> localMap = taskConfigs.stream().collect(Collectors.toMap(NmplTaskConfig::getTaskId, Function.identity(), (key1, key2) -> key2));
 
             // 将录入定时任务按设备类型分组
             Map<String, List<CenterTaskConfigVo>> map = groupTask(centerTaskConfigVos);
@@ -83,7 +83,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
                 for (int i=0;i<list.size();i++){
                     CenterTaskConfigVo vo = list.get(i);
                     vo.setUpdateTime(createTime);
-                    if (localMap.containsKey(vo.getId())){
+                    if (localMap.containsKey(vo.getTaskId())){
                         updateFlag = true;
                         updateList.add(vo);
                     }else {
@@ -139,21 +139,4 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
         return resultMap;
     }
 
-    public static void main(String[] args) {
-        List<NmplTaskConfig> taskConfigs = new ArrayList<>();
-        NmplTaskConfig config1 = new NmplTaskConfig();
-        config1.setId(1L);
-        config1.setTaskId("1");
-        NmplTaskConfig config2 = new NmplTaskConfig();
-        config2.setId(2L);
-        config2.setTaskId("2");
-        NmplTaskConfig config3 = new NmplTaskConfig();
-        config3.setId(3L);
-        config3.setTaskId("3");
-        taskConfigs.add(config1);
-        taskConfigs.add(config2);
-        taskConfigs.add(config3);
-        Map<Long, NmplTaskConfig> maps = taskConfigs.stream().collect(Collectors.toMap(NmplTaskConfig::getId, Function.identity(), (key1, key2) -> key2));
-        System.out.println(JSONObject.toJSONString(maps));
-    }
 }
