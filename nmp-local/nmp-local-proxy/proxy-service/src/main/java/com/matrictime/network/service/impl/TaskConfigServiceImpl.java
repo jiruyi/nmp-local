@@ -63,10 +63,12 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
     public Result<UpdateTaskConfigResp> update(List<CenterTaskConfigVo> centerTaskConfigVos) {
         Result result;
         try{
-            Date createTime = new Date();
+            Date inserTime = new Date();
+            Date updateTime = new Date(inserTime.getTime()+100);
             // 获取代理库定时任务配置
             List<NmplTaskConfig> taskConfigs = taskConfigMapper.selectByExample(null);
             Map<String, NmplTaskConfig> localMap = taskConfigs.stream().collect(Collectors.toMap(NmplTaskConfig::getTaskId, Function.identity(), (key1, key2) -> key2));
+            log.info("localMap:{}", JSONObject.toJSONString(localMap));
 
             // 将录入定时任务按设备类型分组
             Map<String, List<CenterTaskConfigVo>> map = groupTask(centerTaskConfigVos);
@@ -82,11 +84,13 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
                 // 遍历判断是插入还是更新操作
                 for (int i=0;i<list.size();i++){
                     CenterTaskConfigVo vo = list.get(i);
-                    vo.setUpdateTime(createTime);
+
                     if (localMap.containsKey(vo.getTaskId())){
+                        vo.setUpdateTime(updateTime);
                         updateFlag = true;
                         updateList.add(vo);
                     }else {
+                        vo.setUpdateTime(inserTime);
                         addFlag = true;
                         insertList.add(vo);
                     }
@@ -99,11 +103,11 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
                 }
                 // 通知设备更新
                 if (updateFlag){
-                    updateInfoService.updateInfo(entry.getKey(),NMPL_TASK_CONFIG,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
+                    updateInfoService.updateInfo(entry.getKey(),NMPL_TASK_CONFIG,EDIT_TYPE_UPD,SYSTEM_NM,updateTime);
                 }
                 // 通知设备插入
                 if (addFlag){
-                    updateInfoService.updateInfo(entry.getKey(),NMPL_TASK_CONFIG,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
+                    updateInfoService.updateInfo(entry.getKey(),NMPL_TASK_CONFIG,EDIT_TYPE_ADD,SYSTEM_NM,inserTime);
                 }
             }
             result = buildResult(null);
@@ -137,6 +141,22 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
             resultMap.put(key,value);
         }
         return resultMap;
+    }
+
+    public static void main(String[] args) {
+        List<NmplTaskConfig> taskConfigs = new ArrayList<>();
+        NmplTaskConfig config1 = new NmplTaskConfig();
+        config1.setTaskId("1");
+        NmplTaskConfig config2 = new NmplTaskConfig();
+        config2.setTaskId("2");
+        NmplTaskConfig config3 = new NmplTaskConfig();
+        config3.setTaskId("3");
+        taskConfigs.add(config2);
+        taskConfigs.add(config1);
+        taskConfigs.add(config3);
+        Map<String, NmplTaskConfig> localMap = taskConfigs.stream().collect(Collectors.toMap(NmplTaskConfig::getTaskId, Function.identity(), (key1, key2) -> key2));
+
+        System.out.println(JSONObject.toJSONString(localMap));
     }
 
 }

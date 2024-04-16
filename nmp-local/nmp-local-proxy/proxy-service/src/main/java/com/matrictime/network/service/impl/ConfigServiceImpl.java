@@ -1,5 +1,6 @@
 package com.matrictime.network.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
 import com.matrictime.network.dao.mapper.NmplConfigMapper;
 import com.matrictime.network.dao.mapper.extend.ConfigExtMapper;
@@ -49,10 +50,13 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
     public Result<UpdateConfigResp> update(List<CenterConfigVo> centerConfigVos) {
         Result result;
         try{
-            Date createTime = new Date();
+            Date inserTime = new Date();
+            Date updateTime = new Date(inserTime.getTime()+100);
+
             // 获取代理库系统配置
             List<NmplConfig> nmplConfigs = nmplConfigMapper.selectByExample(null);
             Map<String, NmplConfig> localMap = nmplConfigs.stream().collect(Collectors.toMap(NmplConfig::getConfigCode, Function.identity(), (key1, key2) -> key2));
+            log.info("localMap:{}", JSONObject.toJSONString(localMap));
 
             // 将录入系统配置按设备类型分组
             Map<String, List<CenterConfigVo>> map = groupTask(centerConfigVos);
@@ -68,11 +72,13 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 // 遍历判断是插入还是更新操作
                 for (int i=0;i<list.size();i++){
                     CenterConfigVo vo = list.get(i);
-                    vo.setUpdateTime(createTime);
+
                     if (localMap.containsKey(vo.getConfigCode())){
+                        vo.setUpdateTime(updateTime);
                         updateFlag = true;
                         updateList.add(vo);
                     }else {
+                        vo.setUpdateTime(inserTime);
                         addFlag = true;
                         insertList.add(vo);
                     }
@@ -85,11 +91,11 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                 }
                 // 通知设备更新
                 if (updateFlag){
-                    updateInfoService.updateInfo(entry.getKey(),NMPL_CONFIG,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
+                    updateInfoService.updateInfo(entry.getKey(),NMPL_CONFIG,EDIT_TYPE_UPD,SYSTEM_NM,updateTime);
                 }
                 // 通知设备插入
                 if (addFlag){
-                    updateInfoService.updateInfo(entry.getKey(),NMPL_CONFIG,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
+                    updateInfoService.updateInfo(entry.getKey(),NMPL_CONFIG,EDIT_TYPE_ADD,SYSTEM_NM,inserTime);
                 }
             }
             result = buildResult(null);
