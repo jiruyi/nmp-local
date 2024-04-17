@@ -111,7 +111,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             List<ConfigVo> vos = new ArrayList<>();
             Map<String,List<ConfigVo>> taskMap = new HashMap<>();
             List<ConfigVo> configVos = req.getConfigVos();
-            List<ConfigVo> tempTask = new ArrayList<>();
+
             for (int i = 0; i< configVos.size(); i++){
                 ConfigVo vo = configVos.get(i);
                 String mapKey = vo.getDeviceType();
@@ -120,6 +120,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
                     throw new Exception("TaskConfigVos.id"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
                 }
                 vos.add(vo);
+                List<ConfigVo> tempTask = new ArrayList<>();
                 if (taskMap.containsKey(mapKey)){
                     tempTask = taskMap.get(mapKey);
                 }
@@ -131,6 +132,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             configExample.createCriteria().andIsExistEqualTo(IS_EXIST);
             List<NmplDeviceConfig> deviceConfigs = deviceConfigMapper.selectByExample(configExample);
             List<TaskVo> taskVos = getTaskVo(taskMap,deviceConfigs);
+            log.info("taskVos:{}",taskVos);
             List<Map<String, Boolean>> futures = deviceConfigService.pushConfigToProxy(taskVos);
 
             result = buildResult(resp);
@@ -149,20 +151,23 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
      * @return
      */
     private List<TaskVo> getTaskVo(Map<String,List<ConfigVo>> taskMap,List<NmplDeviceConfig> deviceConfigs){
+        log.info("taskMap:{}",JSONObject.toJSONString(taskMap));
         List<TaskVo> taskVos = new ArrayList<>();
         Iterator<Map.Entry<String, List<ConfigVo>>> iterator = taskMap.entrySet().iterator();
         while (iterator.hasNext()){
             Map.Entry<String, List<ConfigVo>> entry = iterator.next();
             String key = entry.getKey();
             List<ConfigVo> value = entry.getValue();
+            log.info("value:{}",JSONObject.toJSONString(value));
             List<DeviceInfoVo> devices = deviceExtraInfoDomainService.getDeviceByDeviceType(key);
             for (DeviceInfoVo deviceInfoVo:devices){
                 TaskVo vo = new TaskVo();
                 vo.setIp(deviceInfoVo.getLanIp());
                 vo.setDeviceType(key);
                 JSONObject data = new JSONObject();
-                value = resetValue(deviceConfigs,value,deviceInfoVo.getDeviceId());
-                data.put("configVos",value);
+                log.info("value:{},deviceId:{}",JSONObject.toJSONString(value),deviceInfoVo.getDeviceId());
+                List<ConfigVo> configVos = resetValue(deviceConfigs,value,deviceInfoVo.getDeviceId());
+                data.put("configVos",configVos);
                 vo.setData(data.toJSONString());
                 taskVos.add(vo);
             }
@@ -178,23 +183,37 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
      * @return
      */
     private List<ConfigVo> resetValue(List<NmplDeviceConfig> deviceConfigs, List<ConfigVo> configs, String deviceId){
+        log.info("deviceConfigs:{};configs:{};deviceId:{}",JSONObject.toJSONString(deviceConfigs),JSONObject.toJSONString(configs),deviceId);
+        List<ConfigVo> resetConfigs = new ArrayList<>();
+        for (ConfigVo vo:configs){
+            ConfigVo tempVo = new ConfigVo();
+            BeanUtils.copyProperties(vo,tempVo);
+            resetConfigs.add(tempVo);
+        }
         List<ConfigVo> returnList = new ArrayList<>();
-        for (int i=0;i<configs.size();i++){
-            ConfigVo configVo = configs.get(i);
+        for (int i=0;i<resetConfigs.size();i++){
+            ConfigVo configVo = resetConfigs.get(i);
             String defaultValue = configVo.getDefaultValue();
             String configValue = configVo.getConfigValue();
             // 网元配置了值则设置成网元的值
             if (!CollectionUtils.isEmpty(deviceConfigs)){
-                List<NmplDeviceConfig> collect = deviceConfigs.stream().filter(config -> config.getDeviceId().equals(deviceId) && ParamCheckUtil.checkVoStrBlank(config.getConfigValue())).collect(Collectors.toList());
-                if (!CollectionUtils.isEmpty(collect)){
-                    configValue = collect.get(0).getConfigValue();
+//                List<NmplDeviceConfig> collect = deviceConfigs.stream().filter(config -> config.getDeviceId().equals(deviceId) && ParamCheckUtil.checkVoStrBlank(config.getConfigValue())).collect(Collectors.toList());
+//                if (!CollectionUtils.isEmpty(collect)){
+//                    configValue = collect.get(0).getConfigValue();
+//                }
+                for (NmplDeviceConfig deviceConfig:deviceConfigs){
+                    if (deviceId.equals(deviceConfig.getDeviceId()) && configVo.getConfigCode().equals(deviceConfig.getConfigCode()) && !ParamCheckUtil.checkVoStrBlank(deviceConfig.getConfigValue())){
+                        configValue = deviceConfig.getConfigValue();
+                    }
                 }
             }
+            configVo.setConfigValue(configValue);
+
             // 网元和修改都没值则设置成默认值
-            if (configValue == null){
+            if (ParamCheckUtil.checkVoStrBlank(configValue)){
                 configVo.setConfigValue(defaultValue);
             }
-            configVo.setConfigValue(configValue);
+
             returnList.add(configVo);
         }
         return returnList;

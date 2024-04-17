@@ -23,6 +23,7 @@ import com.matrictime.network.service.DeviceConfigService;
 import com.matrictime.network.service.NmplDeviceTaskService;
 import com.matrictime.network.service.TaskConfigService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,7 +83,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
             List<TaskConfigVo> vos = new ArrayList<>();
             Map<String,List<TaskConfigVo>> taskMap = new HashMap<>();
             List<TaskConfigVo> taskConfigVos = req.getTaskConfigVos();
-            List<TaskConfigVo> tempTask = new ArrayList<>();
+
             for (int i = 0; i< taskConfigVos.size(); i++){
                 TaskConfigVo vo = taskConfigVos.get(i);
                 String mapKey = vo.getDeviceType();
@@ -91,6 +92,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
                     throw new Exception("TaskConfigVos.id"+ ErrorMessageContants.PARAM_IS_NULL_MSG);
                 }
                 vos.add(vo);
+                List<TaskConfigVo> tempTask = new ArrayList<>();
                 if (taskMap.containsKey(mapKey)){
                     tempTask = taskMap.get(mapKey);
                 }
@@ -102,6 +104,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
             deviceTaskConfigExample.createCriteria().andIsExistEqualTo(IS_EXIST);
             List<NmplDeviceTaskConfig> deviceTaskConfigs = deviceTaskConfigMapper.selectByExample(deviceTaskConfigExample);
             List<TaskVo> taskVos = getTaskVo(taskMap,deviceTaskConfigs);
+            log.info("taskVos:{}",taskVos);
             List<Map<String, Boolean>> futures = deviceTaskService.pushToProxy(taskVos);
 
             result = buildResult(resp);
@@ -128,6 +131,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
      * @return
      */
     private List<TaskVo> getTaskVo(Map<String,List<TaskConfigVo>> taskMap,List<NmplDeviceTaskConfig> deviceTaskConfigs){
+        log.info("taskMap:{}",JSONObject.toJSONString(taskMap));
         List<TaskVo> taskVos = new ArrayList<>();
         Iterator<Map.Entry<String, List<TaskConfigVo>>> iterator = taskMap.entrySet().iterator();
         while (iterator.hasNext()){
@@ -140,8 +144,8 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
                 vo.setIp(deviceInfoVo.getLanIp());
                 vo.setDeviceType(key);
                 JSONObject data = new JSONObject();
-                value = resetValue(deviceTaskConfigs,value,deviceInfoVo.getDeviceId());
-                data.put("taskConfigVos",value);
+                List<TaskConfigVo> taskConfigVos = resetValue(deviceTaskConfigs,value,deviceInfoVo.getDeviceId());
+                data.put("taskConfigVos",taskConfigVos);
                 vo.setData(data.toJSONString());
                 taskVos.add(vo);
             }
@@ -157,23 +161,36 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
      * @return
      */
     private List<TaskConfigVo> resetValue(List<NmplDeviceTaskConfig> deviceTaskConfigs, List<TaskConfigVo> taskConfigs, String deviceId){
+        log.info("deviceTaskConfigs:{};taskConfigs:{};deviceId:{}",JSONObject.toJSONString(deviceTaskConfigs),JSONObject.toJSONString(taskConfigs),deviceId);
+        List<TaskConfigVo> resetTaskConfigs = new ArrayList<>();
+        for (TaskConfigVo vo:taskConfigs){
+            TaskConfigVo tempVo = new TaskConfigVo();
+            BeanUtils.copyProperties(vo,tempVo);
+            resetTaskConfigs.add(tempVo);
+        }
+
         List<TaskConfigVo> returnList = new ArrayList<>();
-        for (int i=0;i<taskConfigs.size();i++){
-            TaskConfigVo taskConfigVo = taskConfigs.get(i);
+        for (int i=0;i<resetTaskConfigs.size();i++){
+            TaskConfigVo taskConfigVo = resetTaskConfigs.get(i);
             Long defaultValue = taskConfigVo.getDefaultValue();
             Long currentValue = taskConfigVo.getCurrentValue();
             // 网元配置了值则设置成网元的值
             if (!CollectionUtils.isEmpty(deviceTaskConfigs)){
-                List<NmplDeviceTaskConfig> collect = deviceTaskConfigs.stream().filter(taskConfig -> taskConfig.getDeviceId().equals(deviceId) && taskConfig.getCurrentValue() != null).collect(Collectors.toList());
-                if (!CollectionUtils.isEmpty(collect)){
-                    currentValue = collect.get(0).getCurrentValue();
+//                List<NmplDeviceTaskConfig> collect = deviceTaskConfigs.stream().filter(taskConfig -> taskConfig.getDeviceId().equals(deviceId) && taskConfig.getCurrentValue() != null).collect(Collectors.toList());
+//                if (!CollectionUtils.isEmpty(collect)){
+//                    currentValue = collect.get(0).getCurrentValue();
+//                }
+                for (NmplDeviceTaskConfig taskConfig:deviceTaskConfigs){
+                    if (deviceId.equals(taskConfig.getDeviceId()) && taskConfigVo.getTaskId().equals(taskConfig.getTaskId()) && taskConfig.getCurrentValue() != null){
+                        currentValue = taskConfig.getCurrentValue();
+                    }
                 }
             }
+            taskConfigVo.setCurrentValue(currentValue);
             // 网元和修改都没值则设置成默认值
             if (currentValue == null){
                 taskConfigVo.setCurrentValue(defaultValue);
             }
-            taskConfigVo.setCurrentValue(currentValue);
             returnList.add(taskConfigVo);
         }
         return returnList;
