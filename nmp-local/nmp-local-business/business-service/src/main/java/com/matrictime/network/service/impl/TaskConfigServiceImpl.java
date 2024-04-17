@@ -157,6 +157,7 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
      * @return
      */
     private List<TaskConfigVo> resetValue(List<NmplDeviceTaskConfig> deviceTaskConfigs, List<TaskConfigVo> taskConfigs, String deviceId){
+        log.info("deviceTaskConfigs:{};taskConfigs:{};deviceId:{}",JSONObject.toJSONString(deviceTaskConfigs),JSONObject.toJSONString(taskConfigs),deviceId);
         List<TaskConfigVo> returnList = new ArrayList<>();
         for (int i=0;i<taskConfigs.size();i++){
             TaskConfigVo taskConfigVo = taskConfigs.get(i);
@@ -164,16 +165,21 @@ public class TaskConfigServiceImpl extends SystemBaseService implements TaskConf
             Long currentValue = taskConfigVo.getCurrentValue();
             // 网元配置了值则设置成网元的值
             if (!CollectionUtils.isEmpty(deviceTaskConfigs)){
-                List<NmplDeviceTaskConfig> collect = deviceTaskConfigs.stream().filter(taskConfig -> taskConfig.getDeviceId().equals(deviceId) && taskConfig.getCurrentValue() != null).collect(Collectors.toList());
-                if (!CollectionUtils.isEmpty(collect)){
-                    currentValue = collect.get(0).getCurrentValue();
+//                List<NmplDeviceTaskConfig> collect = deviceTaskConfigs.stream().filter(taskConfig -> taskConfig.getDeviceId().equals(deviceId) && taskConfig.getCurrentValue() != null).collect(Collectors.toList());
+//                if (!CollectionUtils.isEmpty(collect)){
+//                    currentValue = collect.get(0).getCurrentValue();
+//                }
+                for (NmplDeviceTaskConfig taskConfig:deviceTaskConfigs){
+                    if (deviceId.equals(taskConfig.getDeviceId()) && taskConfigVo.getTaskId().equals(taskConfig.getTaskId()) && taskConfig.getCurrentValue() != null){
+                        currentValue = taskConfig.getCurrentValue();
+                    }
                 }
             }
+            taskConfigVo.setCurrentValue(currentValue);
             // 网元和修改都没值则设置成默认值
             if (currentValue == null){
                 taskConfigVo.setCurrentValue(defaultValue);
             }
-            taskConfigVo.setCurrentValue(currentValue);
             returnList.add(taskConfigVo);
         }
         return returnList;

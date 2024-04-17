@@ -178,6 +178,7 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
      * @return
      */
     private List<ConfigVo> resetValue(List<NmplDeviceConfig> deviceConfigs, List<ConfigVo> configs, String deviceId){
+        log.info("deviceConfigs:{};configs:{};deviceId:{}",JSONObject.toJSONString(deviceConfigs),JSONObject.toJSONString(configs),deviceId);
         List<ConfigVo> returnList = new ArrayList<>();
         for (int i=0;i<configs.size();i++){
             ConfigVo configVo = configs.get(i);
@@ -185,16 +186,23 @@ public class ConfigServiceImpl extends SystemBaseService implements ConfigServic
             String configValue = configVo.getConfigValue();
             // 网元配置了值则设置成网元的值
             if (!CollectionUtils.isEmpty(deviceConfigs)){
-                List<NmplDeviceConfig> collect = deviceConfigs.stream().filter(config -> config.getDeviceId().equals(deviceId) && ParamCheckUtil.checkVoStrBlank(config.getConfigValue())).collect(Collectors.toList());
-                if (!CollectionUtils.isEmpty(collect)){
-                    configValue = collect.get(0).getConfigValue();
+//                List<NmplDeviceConfig> collect = deviceConfigs.stream().filter(config -> config.getDeviceId().equals(deviceId) && ParamCheckUtil.checkVoStrBlank(config.getConfigValue())).collect(Collectors.toList());
+//                if (!CollectionUtils.isEmpty(collect)){
+//                    configValue = collect.get(0).getConfigValue();
+//                }
+                for (NmplDeviceConfig deviceConfig:deviceConfigs){
+                    if (deviceId.equals(deviceConfig.getDeviceId()) && configVo.getConfigCode().equals(deviceConfig.getConfigCode()) && ParamCheckUtil.checkVoStrBlank(deviceConfig.getConfigValue())){
+                        configValue = deviceConfig.getConfigValue();
+                    }
                 }
             }
+            configVo.setConfigValue(configValue);
+
             // 网元和修改都没值则设置成默认值
-            if (configValue == null){
+            if (ParamCheckUtil.checkVoStrBlank(configValue)){
                 configVo.setConfigValue(defaultValue);
             }
-            configVo.setConfigValue(configValue);
+
             returnList.add(configVo);
         }
         return returnList;
