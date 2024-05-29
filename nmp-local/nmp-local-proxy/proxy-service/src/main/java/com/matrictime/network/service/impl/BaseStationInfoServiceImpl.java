@@ -1,42 +1,31 @@
 package com.matrictime.network.service.impl;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.matrictime.network.base.SystemBaseService;
-import com.matrictime.network.base.enums.DeviceStatusEnum;
 import com.matrictime.network.base.exception.ErrorMessageContants;
-import com.matrictime.network.base.util.DataChangeUtil;
 import com.matrictime.network.dao.domain.BaseStationInfoDomainService;
-import com.matrictime.network.dao.domain.DeviceInfoDomainService;
 import com.matrictime.network.dao.mapper.*;
 import com.matrictime.network.dao.model.*;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.modelVo.BaseStationInfoVo;
 import com.matrictime.network.modelVo.CenterBaseStationInfoVo;
-import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.request.AddBaseStationInfoRequest;
 import com.matrictime.network.request.DeleteBaseStationInfoRequest;
-import com.matrictime.network.request.InitInfoReq;
-import com.matrictime.network.response.ProxyResp;
 import com.matrictime.network.service.BaseStationInfoService;
+import com.matrictime.network.service.ProxyConfigService;
 import com.matrictime.network.service.UpdateInfoService;
-import com.matrictime.network.util.HttpClientUtil;
-import com.matrictime.network.util.ParamCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.*;
 
 import static com.matrictime.network.base.constant.DataConstants.*;
-import static com.matrictime.network.base.constant.DataConstants.KEY_SPLIT;
 import static com.matrictime.network.constant.DataConstants.*;
 
 
@@ -48,9 +37,6 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
     private BaseStationInfoDomainService baseStationInfoDomainService;
 
     @Resource
-    private NmplUpdateInfoBaseMapper nmplUpdateInfoBaseMapper;
-
-    @Resource
     private NmplLocalBaseStationInfoMapper nmplLocalBaseStationInfoMapper;
 
     @Resource
@@ -58,6 +44,9 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
 
     @Autowired
     private UpdateInfoService updateInfoService;
+
+    @Autowired
+    private ProxyConfigService proxyConfigService;
 
 
 
@@ -82,11 +71,13 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 BeanUtils.copyProperties(infoVo,stationInfo);
                 int addlocal = nmplLocalBaseStationInfoMapper.insertSelective(stationInfo);
 
+                Result ipConfig = proxyConfigService.addOrUpdateLocalIpConfig();
+
                 int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_ADD,SYSTEM_NM,createTime);
 
                 log.info("BaseStationInfoServiceImpl.addBaseStationInfo：" +
-                                "addlocal:{},updateLocal:{}",
-                        addlocal,updateLocal);
+                                "addlocal:{},updateLocal:{},ipConfig:{}",
+                        addlocal,updateLocal,ipConfig);
             }
 
             NmplLocalBaseStationInfoExample localBaseExample = new NmplLocalBaseStationInfoExample();
@@ -131,9 +122,11 @@ public class BaseStationInfoServiceImpl extends SystemBaseService implements Bas
                 BeanUtils.copyProperties(infoVo,stationInfo);
                 int local = nmplLocalBaseStationInfoMapper.updateByPrimaryKeySelective(stationInfo);
 
+                Result ipConfig = proxyConfigService.addOrUpdateLocalIpConfig();
+
                 int updateLocal = updateInfoService.updateInfo(infoVo.getStationType(),NMPL_LOCAL_BASE_STATION_INFO,EDIT_TYPE_UPD,SYSTEM_NM,createTime);
 
-                log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：local:{},updateLocal:{}",local,updateLocal);
+                log.info("BaseStationInfoServiceImpl.updateBaseStationInfo：local:{},updateLocal:{},ipConfig:{}",local,updateLocal,ipConfig);
             }
 
             /* 其他基站的推送更新 */

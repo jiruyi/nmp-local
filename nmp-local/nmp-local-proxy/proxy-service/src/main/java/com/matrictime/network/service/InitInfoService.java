@@ -4,5 +4,5 @@ import com.matrictime.network.request.InitInfoReq;
 
 public interface InitInfoService {
 
-    void initInfo(InitInfoReq req);
+    void initInfo();
 }

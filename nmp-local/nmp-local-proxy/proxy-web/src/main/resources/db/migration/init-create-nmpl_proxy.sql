@@ -117,21 +117,22 @@ create table nmpl_company_heartbeat
 )
     comment '小区业务心跳';
 
-create table nmpl_config
-(
-    id            bigint                                   not null comment '主键'
-        primary key,
-    device_type   char(2)                                  null comment '01:接入基站 02:边界基站 11:密钥中心 20:数据采集',
-    config_name   varchar(100)                             null comment '配置项名称',
-    config_code   varchar(32)                              null comment '配置编码',
-    config_value  varchar(2000)                            null comment '配置值',
-    default_value varchar(2000)                            null comment '默认值',
-    unit          varchar(32)                              null comment '单位',
-    create_time   datetime(2) default CURRENT_TIMESTAMP(2) null comment '创建时间',
-    update_time   datetime(2) default CURRENT_TIMESTAMP(2) null on update CURRENT_TIMESTAMP(2) comment '更新时间',
-    is_exist      tinyint(1)  default 1                    null comment '状态 true:存在(1)  false:删除(0)',
-    remark        varchar(100)                             null comment '备注'
-);
+CREATE TABLE `nmpl_config` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `device_id` varchar(128) NOT NULL COMMENT '设备id',
+    `config_name` varchar(100) DEFAULT NULL COMMENT '配置项名称',
+    `config_code` varchar(32) NOT NULL COMMENT '配置编码',
+    `config_value` varchar(2000) NOT NULL COMMENT '配置值',
+    `unit` varchar(32) DEFAULT NULL COMMENT '单位',
+    `status` tinyint DEFAULT '1' COMMENT '状态 1同步 0 未同步',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+    `update_user` varchar(20) DEFAULT NULL COMMENT '修改人',
+    `is_exist` tinyint(1) DEFAULT '1' COMMENT '状态 true:存在(1)  false:删除(0)',
+    `remark` varchar(100) DEFAULT NULL COMMENT '备注',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY(`config_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='系统配置表';
+
 
 create table nmpl_data_collect
 (
@@ -499,7 +500,29 @@ create table nmpl_update_info_keycenter
 )
     comment '数据更新信息表(秘钥中心专用)';
 
+CREATE TABLE `nmpl_proxy_config` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `config_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '配置编码',
+    `config_value` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '配置值',
+    `config_desc` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '配置描述',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `nmpl_task_config` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `task_id` varchar(16) NOT NULL COMMENT '任务ID',
+    `task_name` varchar(16) DEFAULT NULL COMMENT '业务名称',
+    `task_type` char(2) NOT NULL COMMENT '任务类型 01:定时任务 02:周期任务',
+    `device_id` varchar(128) NOT NULL COMMENT '设备id',
+    `current_value` bigint NOT NULL COMMENT '当前值',
+    `status` tinyint(1) DEFAULT '1' COMMENT '启停 1启动 0 停止',
+    `remark` varchar(64) DEFAULT NULL COMMENT '备注',
+    `update_time` datetime(2) DEFAULT CURRENT_TIMESTAMP(2) ON UPDATE CURRENT_TIMESTAMP(2) COMMENT '更新时间',
+    `update_user` varchar(20) DEFAULT NULL COMMENT '修改人',
+    `is_exist` tinyint(1) DEFAULT '1' COMMENT '状态 true:存在(1)  false:删除(0)',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY (`task_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='定时任务配置表';
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -27,4 +27,15 @@
             ( #{data.networkId},#{data.dataValue}, #{data.dataType}, #{data.uploadTime})
         </foreach >
     </insert>
+
+    <select id="getLatestData" resultMap="BaseResultMap">
+        select
+            data_value, upload_time
+        from nmps_data_info
+        where
+            data_type = #{dataType,jdbcType=VARCHAR}
+          and network_id = #{networkId,jdbcType=VARCHAR}
+        order by upload_time desc limit 1
+    </select>
+
 </mapper>

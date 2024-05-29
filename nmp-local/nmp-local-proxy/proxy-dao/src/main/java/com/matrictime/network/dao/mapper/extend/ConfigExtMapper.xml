@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.ConfigExtMapper">
+
+  <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.CenterTaskConfigVo">
+    insert into nmpl_config (device_id, config_name,
+    config_code, config_value, unit,
+    status, update_time, update_user,
+    is_exist, remark)
+    values
+    <foreach collection ="list" item="vo" separator =",">
+      (#{vo.deviceId,jdbcType=VARCHAR}, #{vo.configName,jdbcType=VARCHAR},
+      #{vo.configCode,jdbcType=VARCHAR}, #{vo.configValue,jdbcType=VARCHAR}, #{vo.unit,jdbcType=VARCHAR},
+      #{vo.status,jdbcType=TINYINT}, #{vo.updateTime,jdbcType=TIMESTAMP}, #{vo.updateUser,jdbcType=VARCHAR},
+      #{vo.isExist,jdbcType=BIT}, #{vo.remark,jdbcType=VARCHAR})
+    </foreach >
+  </insert>
+
+  <update id="batchUpdate" parameterType="com.matrictime.network.modelVo.CenterConfigVo">
+    <foreach collection="list" separator=";" item="vo">
+      update nmpl_config
+      <set>
+        <if test="vo.deviceId != null">
+          device_id = #{vo.deviceId,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.configName != null">
+          config_name = #{vo.configName,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.configCode != null">
+          config_code = #{vo.configCode,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.configValue != null">
+          config_value = #{vo.configValue,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.unit != null">
+          unit = #{vo.unit,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.status != null">
+          status = #{vo.status,jdbcType=TINYINT},
+        </if>
+        <if test="vo.updateTime != null">
+          update_time = #{vo.updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="vo.updateUser != null">
+          update_user = #{vo.updateUser,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.isExist != null">
+          is_exist = #{vo.isExist,jdbcType=BIT},
+        </if>
+        <if test="vo.remark != null">
+          remark = #{vo.remark,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where config_code = #{vo.configCode,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+</mapper>

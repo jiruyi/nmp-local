@@ -165,73 +165,73 @@ public class NmplConfigExample {
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeIsNull() {
-            addCriterion("device_type is null");
+        public Criteria andDeviceIdIsNull() {
+            addCriterion("device_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeIsNotNull() {
-            addCriterion("device_type is not null");
+        public Criteria andDeviceIdIsNotNull() {
+            addCriterion("device_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeEqualTo(String value) {
-            addCriterion("device_type =", value, "deviceType");
+        public Criteria andDeviceIdEqualTo(String value) {
+            addCriterion("device_id =", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeNotEqualTo(String value) {
-            addCriterion("device_type <>", value, "deviceType");
+        public Criteria andDeviceIdNotEqualTo(String value) {
+            addCriterion("device_id <>", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeGreaterThan(String value) {
-            addCriterion("device_type >", value, "deviceType");
+        public Criteria andDeviceIdGreaterThan(String value) {
+            addCriterion("device_id >", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeGreaterThanOrEqualTo(String value) {
-            addCriterion("device_type >=", value, "deviceType");
+        public Criteria andDeviceIdGreaterThanOrEqualTo(String value) {
+            addCriterion("device_id >=", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeLessThan(String value) {
-            addCriterion("device_type <", value, "deviceType");
+        public Criteria andDeviceIdLessThan(String value) {
+            addCriterion("device_id <", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeLessThanOrEqualTo(String value) {
-            addCriterion("device_type <=", value, "deviceType");
+        public Criteria andDeviceIdLessThanOrEqualTo(String value) {
+            addCriterion("device_id <=", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeLike(String value) {
-            addCriterion("device_type like", value, "deviceType");
+        public Criteria andDeviceIdLike(String value) {
+            addCriterion("device_id like", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeNotLike(String value) {
-            addCriterion("device_type not like", value, "deviceType");
+        public Criteria andDeviceIdNotLike(String value) {
+            addCriterion("device_id not like", value, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeIn(List<String> values) {
-            addCriterion("device_type in", values, "deviceType");
+        public Criteria andDeviceIdIn(List<String> values) {
+            addCriterion("device_id in", values, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeNotIn(List<String> values) {
-            addCriterion("device_type not in", values, "deviceType");
+        public Criteria andDeviceIdNotIn(List<String> values) {
+            addCriterion("device_id not in", values, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeBetween(String value1, String value2) {
-            addCriterion("device_type between", value1, value2, "deviceType");
+        public Criteria andDeviceIdBetween(String value1, String value2) {
+            addCriterion("device_id between", value1, value2, "deviceId");
             return (Criteria) this;
         }
 
-        public Criteria andDeviceTypeNotBetween(String value1, String value2) {
-            addCriterion("device_type not between", value1, value2, "deviceType");
+        public Criteria andDeviceIdNotBetween(String value1, String value2) {
+            addCriterion("device_id not between", value1, value2, "deviceId");
             return (Criteria) this;
         }
 
@@ -445,76 +445,6 @@ public class NmplConfigExample {
             return (Criteria) this;
         }
 
-        public Criteria andDefaultValueIsNull() {
-            addCriterion("default_value is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueIsNotNull() {
-            addCriterion("default_value is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueEqualTo(String value) {
-            addCriterion("default_value =", value, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueNotEqualTo(String value) {
-            addCriterion("default_value <>", value, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueGreaterThan(String value) {
-            addCriterion("default_value >", value, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueGreaterThanOrEqualTo(String value) {
-            addCriterion("default_value >=", value, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueLessThan(String value) {
-            addCriterion("default_value <", value, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueLessThanOrEqualTo(String value) {
-            addCriterion("default_value <=", value, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueLike(String value) {
-            addCriterion("default_value like", value, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueNotLike(String value) {
-            addCriterion("default_value not like", value, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueIn(List<String> values) {
-            addCriterion("default_value in", values, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueNotIn(List<String> values) {
-            addCriterion("default_value not in", values, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueBetween(String value1, String value2) {
-            addCriterion("default_value between", value1, value2, "defaultValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andDefaultValueNotBetween(String value1, String value2) {
-            addCriterion("default_value not between", value1, value2, "defaultValue");
-            return (Criteria) this;
-        }
-
         public Criteria andUnitIsNull() {
             addCriterion("unit is null");
             return (Criteria) this;
@@ -585,63 +515,63 @@ public class NmplConfigExample {
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeIsNull() {
-            addCriterion("create_time is null");
+        public Criteria andStatusIsNull() {
+            addCriterion("status is null");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeIsNotNull() {
-            addCriterion("create_time is not null");
+        public Criteria andStatusIsNotNull() {
+            addCriterion("status is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeEqualTo(Date value) {
-            addCriterion("create_time =", value, "createTime");
+        public Criteria andStatusEqualTo(Byte value) {
+            addCriterion("status =", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeNotEqualTo(Date value) {
-            addCriterion("create_time <>", value, "createTime");
+        public Criteria andStatusNotEqualTo(Byte value) {
+            addCriterion("status <>", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeGreaterThan(Date value) {
-            addCriterion("create_time >", value, "createTime");
+        public Criteria andStatusGreaterThan(Byte value) {
+            addCriterion("status >", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("create_time >=", value, "createTime");
+        public Criteria andStatusGreaterThanOrEqualTo(Byte value) {
+            addCriterion("status >=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeLessThan(Date value) {
-            addCriterion("create_time <", value, "createTime");
+        public Criteria andStatusLessThan(Byte value) {
+            addCriterion("status <", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeLessThanOrEqualTo(Date value) {
-            addCriterion("create_time <=", value, "createTime");
+        public Criteria andStatusLessThanOrEqualTo(Byte value) {
+            addCriterion("status <=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeIn(List<Date> values) {
-            addCriterion("create_time in", values, "createTime");
+        public Criteria andStatusIn(List<Byte> values) {
+            addCriterion("status in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeNotIn(List<Date> values) {
-            addCriterion("create_time not in", values, "createTime");
+        public Criteria andStatusNotIn(List<Byte> values) {
+            addCriterion("status not in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeBetween(Date value1, Date value2) {
-            addCriterion("create_time between", value1, value2, "createTime");
+        public Criteria andStatusBetween(Byte value1, Byte value2) {
+            addCriterion("status between", value1, value2, "status");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeNotBetween(Date value1, Date value2) {
-            addCriterion("create_time not between", value1, value2, "createTime");
+        public Criteria andStatusNotBetween(Byte value1, Byte value2) {
+            addCriterion("status not between", value1, value2, "status");
             return (Criteria) this;
         }
 
@@ -702,6 +632,76 @@ public class NmplConfigExample {
 
         public Criteria andUpdateTimeNotBetween(Date value1, Date value2) {
             addCriterion("update_time not between", value1, value2, "updateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserIsNull() {
+            addCriterion("update_user is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserIsNotNull() {
+            addCriterion("update_user is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserEqualTo(String value) {
+            addCriterion("update_user =", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserNotEqualTo(String value) {
+            addCriterion("update_user <>", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserGreaterThan(String value) {
+            addCriterion("update_user >", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserGreaterThanOrEqualTo(String value) {
+            addCriterion("update_user >=", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserLessThan(String value) {
+            addCriterion("update_user <", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserLessThanOrEqualTo(String value) {
+            addCriterion("update_user <=", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserLike(String value) {
+            addCriterion("update_user like", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserNotLike(String value) {
+            addCriterion("update_user not like", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserIn(List<String> values) {
+            addCriterion("update_user in", values, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserNotIn(List<String> values) {
+            addCriterion("update_user not in", values, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserBetween(String value1, String value2) {
+            addCriterion("update_user between", value1, value2, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserNotBetween(String value1, String value2) {
+            addCriterion("update_user not between", value1, value2, "updateUser");
             return (Criteria) this;
         }
 

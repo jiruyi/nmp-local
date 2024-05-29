@@ -64,4 +64,9 @@ public class NmplReportBusinessVo implements Serializable {
      * 状态 true:存在(1)  false:删除(0)
      */
     private Boolean isExist;
+
+    /**
+     * 上报时间
+     */
+    private Date reportTime;
 }

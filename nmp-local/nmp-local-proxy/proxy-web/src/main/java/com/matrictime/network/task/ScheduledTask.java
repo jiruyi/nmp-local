@@ -29,13 +29,6 @@ public class ScheduledTask {
     @Autowired
     private   DataPushService dataPushService;
 
-    @Value("${netmanage.ip}")
-    private String ip;
-
-    @Value("${netmanage.port}")
-    private String port;
-
-
     /**
      * @title heartReport
      * @return void
@@ -131,7 +124,7 @@ public class ScheduledTask {
     @Async
     public void systemHeartbeat(){
         log.info(Thread.currentThread().getName()+"======================SystemHeartbeat begin=============================");
-        taskService.systemHeartbeat(ip + KEY_SPLIT + port + SYSTEM_HEARTBEAT_URL);
+        taskService.systemHeartbeat(SYSTEM_HEARTBEAT_URL);
         log.info(Thread.currentThread().getName()+"======================SystemHeartbeat end=============================");
     }
 
@@ -139,7 +132,7 @@ public class ScheduledTask {
     @Async
     public void terminalUser(){
         log.info(Thread.currentThread().getName()+"======================TerminalUser begin=============================");
-        taskService.terminalUser(ip + KEY_SPLIT + port + TERMINAL_USER_URL);
+        taskService.terminalUser(TERMINAL_USER_URL);
         log.info(Thread.currentThread().getName()+"======================TerminalUser end=============================");
     }
 
@@ -147,7 +140,7 @@ public class ScheduledTask {
     @Async
     public void terminalData(){
         log.info(Thread.currentThread().getName()+"======================terminalData begin=============================");
-        taskService.collectTerminalData(ip + KEY_SPLIT + port + TERMINAL_DATA_URL);
+        taskService.collectTerminalData(TERMINAL_DATA_URL);
         log.info(Thread.currentThread().getName()+"======================terminalData end=============================");
     }
 
@@ -155,7 +148,7 @@ public class ScheduledTask {
     @Async
     public void updateCurrentConnectCount(){
         log.info(Thread.currentThread().getName()+"======================updateCurrentConnectCount begin=============================");
-        taskService.updateCurrentConnectCount(ip + KEY_SPLIT + port + UPDATE_CURRENT_URL);
+        taskService.updateCurrentConnectCount(UPDATE_CURRENT_URL);
         log.info(Thread.currentThread().getName()+"======================updateCurrentConnectCount end=============================");
     }
 
@@ -163,7 +156,7 @@ public class ScheduledTask {
     @Async
     public void insertCompanyHeartbeat(){
         log.info(Thread.currentThread().getName()+"======================insertCompanyHeartbeat begin=============================");
-        taskService.CompanyHeartbeat(ip + KEY_SPLIT + port + INSERT_COMPANY_HEART);
+        taskService.CompanyHeartbeat(INSERT_COMPANY_HEART);
         log.info(Thread.currentThread().getName()+"======================insertCompanyHeartbeat end=============================");
     }
 

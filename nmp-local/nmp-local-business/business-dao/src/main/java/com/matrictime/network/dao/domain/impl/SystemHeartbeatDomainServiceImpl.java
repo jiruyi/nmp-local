@@ -93,8 +93,8 @@ public class SystemHeartbeatDomainServiceImpl implements SystemHeartbeatDomainSe
             for(SystemHeartbeatVo nmplSystemHeartbeat: systemHeartbeatVoList){
                 nmplSystemHeartbeat.setTargetName(getTargetName(nmplSystemHeartbeat));
                 nmplSystemHeartbeat.setSourceName(getSourceName(nmplSystemHeartbeat));
-                nmplSystemHeartbeat.setSourceId(changeNetworkId(nmplSystemHeartbeat.getSourceId()));
-                nmplSystemHeartbeat.setTargetId(changeNetworkId(nmplSystemHeartbeat.getTargetId()));
+                nmplSystemHeartbeat.setSourceId(nmplSystemHeartbeat.getSourceId());
+                nmplSystemHeartbeat.setTargetId(nmplSystemHeartbeat.getTargetId());
                 list.add(nmplSystemHeartbeat);
             }
             systemHeartbeatResponse.setList(list);

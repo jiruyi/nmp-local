@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 数据采集业务上报配置表
  * @author   hexu
- * @date   2023-07-13
+ * @date   2024-04-03
  */
 @Data
 public class NmplReportBusiness {
@@ -59,6 +59,11 @@ public class NmplReportBusiness {
      * 状态 true:存在(1)  false:删除(0)
      */
     private Boolean isExist;
+
+    /**
+     * 上报时间
+     */
+    private Date reportTime;
 
     public Long getId() {
         return id;
@@ -138,5 +143,13 @@ public class NmplReportBusiness {
 
     public void setIsExist(Boolean isExist) {
         this.isExist = isExist;
+    }
+
+    public Date getReportTime() {
+        return reportTime;
+    }
+
+    public void setReportTime(Date reportTime) {
+        this.reportTime = reportTime;
     }
 }

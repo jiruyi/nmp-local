@@ -143,6 +143,9 @@ public class DataConstants {
 
     public static final String NMPL_CONFIG = "nmpl_config";
 
+    public static final String NMPL_TASK_CONFIG = "nmpl_task_config";
+
+
 
     /**
      * netmanage url

@@ -18,18 +18,12 @@ public class InitController {
     @Resource
     private InitInfoService initInfoService;
 
-    @Value("${local.ip}")
-    private String localIp;
-
-
     /**
      * 代理初始化
      */
     @RequestMapping(value = "/initInfo",method = RequestMethod.POST)
     public void initInfo(){
-        InitInfoReq req = new InitInfoReq();
-        req.setLocalIp(localIp);
-        initInfoService.initInfo(req);
+        initInfoService.initInfo();
     }
 
 }

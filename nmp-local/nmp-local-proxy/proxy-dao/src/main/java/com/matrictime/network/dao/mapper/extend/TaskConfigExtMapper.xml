@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrictime.network.dao.mapper.extend.TaskConfigExtMapper">
+
+  <insert id="batchInsert" parameterType="com.matrictime.network.modelVo.CenterTaskConfigVo">
+    insert into nmpl_task_config (task_id, task_name,
+      task_type, device_id, current_value,
+      status, remark, update_time,
+      update_user, is_exist)
+    values
+    <foreach collection ="list" item="vo" separator =",">
+      (#{vo.taskId,jdbcType=VARCHAR}, #{vo.taskName,jdbcType=VARCHAR},
+      #{vo.taskType,jdbcType=CHAR}, #{vo.deviceId,jdbcType=VARCHAR}, #{vo.currentValue,jdbcType=BIGINT},
+      #{vo.status,jdbcType=BIT}, #{vo.remark,jdbcType=VARCHAR}, #{vo.updateTime,jdbcType=TIMESTAMP},
+      #{vo.updateUser,jdbcType=VARCHAR}, #{vo.isExist,jdbcType=BIT})
+    </foreach >
+  </insert>
+
+  <update id="batchUpdate" parameterType="com.matrictime.network.modelVo.CenterTaskConfigVo">
+    <foreach collection="list" separator=";" item="vo">
+      update nmpl_task_config
+      <set>
+        <if test="vo.taskId != null">
+          task_id = #{vo.taskId,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.taskName != null">
+          task_name = #{vo.taskName,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.taskType != null">
+          task_type = #{vo.taskType,jdbcType=CHAR},
+        </if>
+        <if test="vo.deviceId != null">
+          device_id = #{vo.deviceId,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.currentValue != null">
+          current_value = #{vo.currentValue,jdbcType=BIGINT},
+        </if>
+        <if test="vo.status != null">
+          status = #{vo.status,jdbcType=BIT},
+        </if>
+        <if test="vo.remark != null">
+          remark = #{vo.remark,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.updateTime != null">
+          update_time = #{vo.updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="vo.updateUser != null">
+          update_user = #{vo.updateUser,jdbcType=VARCHAR},
+        </if>
+        <if test="vo.isExist != null">
+          is_exist = #{vo.isExist,jdbcType=BIT},
+        </if>
+      </set>
+      where task_id = #{vo.taskId,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+</mapper>

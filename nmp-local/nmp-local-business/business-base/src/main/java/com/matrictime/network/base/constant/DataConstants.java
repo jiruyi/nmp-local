@@ -221,6 +221,8 @@ public class DataConstants {
     public static final String STOP_FILE = "/version/stop";
     public static final String UNINSTALL_FILE = "/version/uninstall";
 
+    public static final String SYNC_TASK_CONFIG = "/task/sync";
+
 
     public static final String VERSION_INIT_STATUS = "1";
     public static final String VERSION_RUN_STATUS = "2";

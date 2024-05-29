@@ -616,4 +616,36 @@ public class AsyncService{
         }
     }
 
+
+    @Async("taskExecutor")
+    public <T> Future<Map<String,Boolean>>httpUpdateDeviceTask(Map<String,String> map) {
+        Map<String, Boolean> result = new HashMap<>();
+        String url = map.get(com.matrictime.network.base.constant.DataConstants.KEY_URL);
+        try {
+            String post = HttpClientUtil.post(url, map.get(com.matrictime.network.base.constant.DataConstants.KEY_DATA));
+            JSONObject jsonObject = JSONObject.parseObject(post);
+            if (jsonObject != null) {
+                Object success = jsonObject.get(KEY_SUCCESS);
+                if (success != null && success instanceof Boolean) {
+                    if ((Boolean) success) {
+                        result.put(url, true);
+                    } else {
+                        result.put(url, false);
+                    }
+                } else {
+                    result.put(url, false);
+                }
+            }
+        } catch (Exception e) {
+            result.put(url, false);
+            log.error("httpUpdateDevice.HttpClientUtil Exception:{},url:{}",e.getMessage(),url);
+        }finally {
+            return new AsyncResult<>(result);
+        }
+    }
+
+
+
+
+
 }

@@ -108,8 +108,8 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @Value("${local.ip}")
-    private String localIp;
+//    @Value("${local.ip}")
+//    private String localIp;
 
     @Value("${error.cpu}")
     private String errorCpu;
@@ -152,6 +152,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Resource
     private InitInfoService initInfoService;
+
+    @Autowired
+    private ProxyConfigDomainService proxyConfigDomainService;
 
 
     /**
@@ -228,15 +231,16 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void dataCollectPush() {
         try {
+            String cpuId = SystemUtils.getCPUProcessorID();
             NmplDataCollectExample nmplDataCollectExample = new NmplDataCollectExample();
             NmplDataCollectExample.Criteria criteria = nmplDataCollectExample.createCriteria();
-            Object lastMaxId = redisTemplate.opsForValue().get(localIp+DATACOLLECT_PUSH_LAST_MAXI_ID);
+            Object lastMaxId = redisTemplate.opsForValue().get(cpuId+DATACOLLECT_PUSH_LAST_MAXI_ID);
             if(Objects.nonNull(lastMaxId)){
                 //删除上次推送之前的数据
                 criteria.andIdLessThanOrEqualTo(Long.valueOf(lastMaxId.toString()));
                 int thisCount = nmplDataCollectMapper.deleteByExample(nmplDataCollectExample);
                 nmplDataCollectExample.clear();
-                log.info("ip is:{} last dataCollect lastMaxId is:{} deletecount is:{} ",localIp,lastMaxId,thisCount);
+                log.info("cpuId is:{} last dataCollect lastMaxId is:{} deletecount is:{} ",cpuId,lastMaxId,thisCount);
             }
             // 查询所有的统计数据
             nmplDataCollectExample.setOrderByClause("id desc");
@@ -247,9 +251,10 @@ public class TaskServiceImpl implements TaskService {
             }
             // 补充数据
             DataCollectReq dataCollectReq = new DataCollectReq();
+            dataCollectReq.setKey(cpuId+DATACOLLECT_PUSH_LAST_MAXI_ID);
             List<DataCollectVo> dataCollectVoList = new ArrayList<>();
             for (NmplDataCollect nmplDataCollect : nmplDataCollectList) {
-                nmplDataCollect.setDeviceIp(localIp);
+//                nmplDataCollect.setDeviceIp(localIp);
                 DataCollectVo dataCollectVo = new DataCollectVo();
                 BeanUtils.copyProperties(nmplDataCollect,dataCollectVo);
                 dataCollectVoList.add(dataCollectVo);
@@ -277,59 +282,67 @@ public class TaskServiceImpl implements TaskService {
     public void physicalDeviceHeartbeat(Date uploadTime) {
         // 获取所有物理设备ip列表
         List<String> ips = getIps();
+        if (CollectionUtils.isEmpty(ips)){
+            log.info("TaskServiceImpl.physicalDeviceHeartbeat ips are null,please check database!");
+            return;
+        }
+
+        List<String> localIps = proxyConfigDomainService.getLocalIps();
+        if (CollectionUtils.isEmpty(localIps)){
+            log.info("TaskServiceImpl.physicalDeviceHeartbeat localIps are null,please check database!");
+            return;
+        }
 
         List<PhysicalDeviceHeartbeatVo> reqList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(ips)){
-            for (String ip : ips){
+        for (String localIp : localIps) {
+            for (String ip : ips) {
                 try {
                     PhysicalDeviceHeartbeatVo vo = new PhysicalDeviceHeartbeatVo();
 
                     // 比较ip大小拼接主键，小ip在前，大ip在后，用下划线拼接，例：192.168.72.14_192.168.68.125
                     int i = CompareUtil.compareIp(localIp, ip);
-                    if (i==0){
+                    if (i == 0) {
                         continue;
-                    }else if (i>0){
-                        vo.setIp1Ip2(ip+KEY_SPLIT_UNDERLINE+localIp);
-                    }else if (i<0){
-                        vo.setIp1Ip2(localIp+KEY_SPLIT_UNDERLINE+ip);
+                    } else if (i > 0) {
+                        vo.setIp1Ip2(ip + KEY_SPLIT_UNDERLINE + localIp);
+                    } else if (i < 0) {
+                        vo.setIp1Ip2(localIp + KEY_SPLIT_UNDERLINE + ip);
                     }
 
                     // 获取两个ip ping的结果
                     boolean ping = SystemUtils.getPingResult(ip);
-                    if (ping){
+                    if (ping) {
                         vo.setStatus(CONNECT_STATUS_SUCCESS);
-                    }else {
+                    } else {
                         vo.setStatus(CONNECT_STATUS_FAIL);
                     }
                     reqList.add(vo);
                 } catch (Exception e) {
-                    log.warn("TaskServiceImpl.physicalDeviceHeartbeat exception:{}",e);
+                    log.warn("TaskServiceImpl.physicalDeviceHeartbeat exception:{}", e);
                 }
             }
             Boolean flag = false;
             Result result = null;
             String data = "";
-            String msg =null;
-            if (!CollectionUtils.isEmpty(reqList)){
+            String msg = null;
+            if (!CollectionUtils.isEmpty(reqList)) {
                 try {
                     // 拼接上报数据并上报网管中心
                     PhysicalDeviceHeartbeatReq req = new PhysicalDeviceHeartbeatReq();
                     req.setHeartbeatList(reqList);
                     req.setUploadTime(uploadTime);
-                    log.info("alarmDataFacade.physicalDeviceHeartbeat req:{}",req.toString());
+                    log.info("alarmDataFacade.physicalDeviceHeartbeat req:{}", req.toString());
                     result = alarmDataFacade.physicalDeviceHeartbeat(req);
                     data = req.toString();
-                }catch (Exception e){
+                } catch (Exception e) {
                     flag = true;
                     msg = e.getMessage();
-                    log.info("physicalDeviceHeartbeat push Exception:{}",e.getMessage());
-                }finally {
-                    logError(result,"/monitor/physicalDeviceHeartbeat",data,flag,msg);
+                    log.info("physicalDeviceHeartbeat push Exception:{}", e.getMessage());
+                } finally {
+                    logError(result, "/monitor/physicalDeviceHeartbeat", data, flag, msg);
                 }
             }
         }
-
-
     }
 
 
@@ -344,9 +357,14 @@ public class TaskServiceImpl implements TaskService {
         String data = "";
         String msg =null;
         try {
+            List<String> localIps = proxyConfigDomainService.getLocalIps();
+            if (CollectionUtils.isEmpty(localIps)){
+                log.info("TaskServiceImpl.physicalDeviceHeartbeat localIps are null,please check database!");
+                return;
+            }
             // 拼接上报数据并上报网管中心
             PhysicalDeviceResourceReq req = new PhysicalDeviceResourceReq();
-            req.setPdrList(getPdrList(uploadTime));
+            req.setPdrList(getPdrList(uploadTime,localIps));
             log.info("alarmDataFacade.physicalDeviceResource req:{}",req.toString());
             result = alarmDataFacade.physicalDeviceResource(req);
             data = req.toString();
@@ -586,7 +604,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     private List<String> getIps(){
-        List<String> ips = new ArrayList<>();
+        Set<String> ips = new HashSet<>();
 
         NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
         baseStationInfoExample.createCriteria().andIsExistEqualTo(IS_EXIST);
@@ -595,9 +613,7 @@ public class TaskServiceImpl implements TaskService {
         if (!CollectionUtils.isEmpty(stationInfos)){
             for (NmplBaseStationInfo stationInfo: stationInfos){
                 String lanIp = stationInfo.getLanIp();
-                if (!localIp.equals(lanIp)){
-                    ips.add(lanIp);
-                }
+                ips.add(lanIp);
             }
         }
 
@@ -608,12 +624,11 @@ public class TaskServiceImpl implements TaskService {
         if (!CollectionUtils.isEmpty(deviceInfos)){
             for (NmplDeviceInfo deviceInfo: deviceInfos){
                 String lanIp = deviceInfo.getLanIp();
-                if (!localIp.equals(lanIp)){
-                    ips.add(lanIp);
-                }
+                ips.add(lanIp);
             }
         }
-        return ips;
+        List<String> result = new ArrayList<>(ips);
+        return result;
     }
 
     /**
@@ -621,56 +636,56 @@ public class TaskServiceImpl implements TaskService {
      * @param uploadTime
      * @return
      */
-    private List<PhysicalDeviceResourceVo> getPdrList(Date uploadTime){
+    private List<PhysicalDeviceResourceVo> getPdrList(Date uploadTime,List<String> localIps){
         List<PhysicalDeviceResourceVo> pdrList = new ArrayList<>();
+        for (String localIp : localIps){
+            // 获取cpu信息
+            PhysicalDeviceResourceVo cpu = new PhysicalDeviceResourceVo();
+            cpu.setDeviceIp(localIp);
+            cpu.setResourceType(AlarmPhyConTypeEnum.CPU.getContentType());
+            cpu.setResourceValue(String.valueOf(SystemUtils.getCPUcores()));
+            cpu.setResourcePercent(SystemUtils.getCPUusePercent());
+            cpu.setUploadTime(uploadTime);
+            pdrList.add(cpu);
+            insertAlarmInfo(cpu);
 
-        // 获取cpu信息
-        PhysicalDeviceResourceVo cpu = new PhysicalDeviceResourceVo();
-        cpu.setDeviceIp(localIp);
-        cpu.setResourceType(AlarmPhyConTypeEnum.CPU.getContentType());
-        cpu.setResourceValue(String.valueOf(SystemUtils.getCPUcores()));
-        cpu.setResourcePercent(SystemUtils.getCPUusePercent());
-        cpu.setUploadTime(uploadTime);
-        pdrList.add(cpu);
-        insertAlarmInfo(cpu);
+            // 获取内存信息
+            PhysicalDeviceResourceVo memory = new PhysicalDeviceResourceVo();
+            memory.setDeviceIp(localIp);
+            memory.setResourceType(AlarmPhyConTypeEnum.MEM.getContentType());
+            long totalMemory = SystemUtils.getTotalMemory();
+            long availMemory = SystemUtils.getAvailableMemory();
+            String[] totalMemArray = FormatUtil.formatBy1024(totalMemory);
+            memory.setResourceValue(totalMemArray[0]);
+            memory.setResourceUnit(totalMemArray[1]);
+            memory.setResourcePercent(FormatUtil.formatUnits(totalMemory-availMemory,totalMemory));
+            memory.setUploadTime(uploadTime);
+            pdrList.add(memory);
+            insertAlarmInfo(memory);
 
-        // 获取内存信息
-        PhysicalDeviceResourceVo memory = new PhysicalDeviceResourceVo();
-        memory.setDeviceIp(localIp);
-        memory.setResourceType(AlarmPhyConTypeEnum.MEM.getContentType());
-        long totalMemory = SystemUtils.getTotalMemory();
-        long availMemory = SystemUtils.getAvailableMemory();
-        String[] totalMemArray = FormatUtil.formatBy1024(totalMemory);
-        memory.setResourceValue(totalMemArray[0]);
-        memory.setResourceUnit(totalMemArray[1]);
-        memory.setResourcePercent(FormatUtil.formatUnits(totalMemory-availMemory,totalMemory));
-        memory.setUploadTime(uploadTime);
-        pdrList.add(memory);
-        insertAlarmInfo(memory);
+            // 获取磁盘信息
+            PhysicalDeviceResourceVo disk = new PhysicalDeviceResourceVo();
+            disk.setDeviceIp(localIp);
+            disk.setResourceType(AlarmPhyConTypeEnum.DISK.getContentType());
+            long totalDisk = SystemUtils.getTotalFileSys();
+            long availDisk = SystemUtils.getUsableFileSys();
+            String[] totalDiskArray = FormatUtil.formatBy1024(totalDisk);
+            disk.setResourceValue(totalDiskArray[0]);
+            disk.setResourceUnit(totalDiskArray[1]);
+            disk.setResourcePercent(FormatUtil.formatUnits(totalDisk-availDisk,totalDisk));
+            disk.setUploadTime(uploadTime);
+            pdrList.add(disk);
+            insertAlarmInfo(disk);
 
-        // 获取磁盘信息
-        PhysicalDeviceResourceVo disk = new PhysicalDeviceResourceVo();
-        disk.setDeviceIp(localIp);
-        disk.setResourceType(AlarmPhyConTypeEnum.DISK.getContentType());
-        long totalDisk = SystemUtils.getTotalFileSys();
-        long availDisk = SystemUtils.getUsableFileSys();
-        String[] totalDiskArray = FormatUtil.formatBy1024(totalDisk);
-        disk.setResourceValue(totalDiskArray[0]);
-        disk.setResourceUnit(totalDiskArray[1]);
-        disk.setResourcePercent(FormatUtil.formatUnits(totalDisk-availDisk,totalDisk));
-        disk.setUploadTime(uploadTime);
-        pdrList.add(disk);
-        insertAlarmInfo(disk);
-
-        // 获取网络流量信息
-        PhysicalDeviceResourceVo netLoad = new PhysicalDeviceResourceVo();
-        netLoad.setDeviceIp(localIp);
-        netLoad.setResourceType(AlarmPhyConTypeEnum.FLOW.getContentType());
-        long load = SystemUtils.getNetLoad(localIp);
-        netLoad.setResourceValue(String.valueOf(load));
-        netLoad.setUploadTime(uploadTime);
-        insertAlarmInfo(netLoad);
-
+            // 获取网络流量信息
+            PhysicalDeviceResourceVo netLoad = new PhysicalDeviceResourceVo();
+            netLoad.setDeviceIp(localIp);
+            netLoad.setResourceType(AlarmPhyConTypeEnum.FLOW.getContentType());
+            long load = SystemUtils.getNetLoad(localIp);
+            netLoad.setResourceValue(String.valueOf(load));
+            netLoad.setUploadTime(uploadTime);
+            insertAlarmInfo(netLoad);
+        }
         return pdrList;
     }
 
@@ -825,8 +840,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void init() {
-        InitInfoReq req = new InitInfoReq();
-        req.setLocalIp(localIp);
-        initInfoService.initInfo(req);
+        initInfoService.initInfo();
     }
 }

@@ -3,10 +3,7 @@ package com.matrictime.network.facade;
 import com.matrictime.network.model.AlarmInfo;
 import com.matrictime.network.model.Result;
 import com.matrictime.network.request.*;
-import com.matrictime.network.response.CompanyHeartbeatResponse;
-import com.matrictime.network.response.StationConnectCountResponse;
-import com.matrictime.network.response.SystemHeartbeatResponse;
-import com.matrictime.network.response.TerminalUserResponse;
+import com.matrictime.network.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,6 +79,9 @@ public interface AlarmDataFacade {
 
     @RequestMapping(value= "/companyHeartbeat/insertCompanyHeartbeat",method = RequestMethod.POST)
     Result insertCompanyHeartbeat(CompanyHeartbeatResponse companyHeartbeatResponse);
+
+    @RequestMapping(value= "/proxy/init",method = RequestMethod.POST)
+    ProxyResp init(ProxyReq req);
 
 
 }

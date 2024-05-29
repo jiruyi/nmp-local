@@ -10,12 +10,10 @@ import com.matrictime.network.dao.domain.DeviceExtraInfoDomainService;
 import com.matrictime.network.dao.mapper.NmplBaseStationInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceExtraInfoMapper;
 import com.matrictime.network.dao.mapper.NmplDeviceInfoMapper;
-import com.matrictime.network.dao.model.NmplBaseStationInfo;
-import com.matrictime.network.dao.model.NmplDeviceExtraInfo;
-import com.matrictime.network.dao.model.NmplDeviceExtraInfoExample;
-import com.matrictime.network.dao.model.NmplDeviceInfo;
+import com.matrictime.network.dao.model.*;
 import com.matrictime.network.dao.model.extend.NmplDeviceInfoExt;
 import com.matrictime.network.modelVo.DeviceExtraVo;
+import com.matrictime.network.modelVo.DeviceInfoVo;
 import com.matrictime.network.modelVo.NmplDeviceInfoExtVo;
 import com.matrictime.network.request.DeviceExtraInfoRequest;
 import com.matrictime.network.response.PageInfo;
@@ -26,10 +24,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static com.matrictime.network.constant.DataConstants.IS_EXIST;
 
 @Service
 @Slf4j
@@ -149,6 +146,36 @@ public class DeviceExtraInfoDomainServiceImpl implements DeviceExtraInfoDomainSe
     @Override
     public List<NmplDeviceInfoExtVo> query(NmplDeviceExtraInfo nmplDeviceExtraInfo) {
         return nmplDeviceExtraInfoMapper.query(nmplDeviceExtraInfo);
+    }
+
+    /**
+     * 根据设备类型获取隐私ip
+     * @param deviceType
+     * @return
+     */
+    @Override
+    public List<DeviceInfoVo> getDeviceByDeviceType(String deviceType) {
+        List<DeviceInfoVo> devices = new ArrayList<>();
+        NmplBaseStationInfoExample baseStationInfoExample = new NmplBaseStationInfoExample();
+        baseStationInfoExample.createCriteria().andStationTypeEqualTo(deviceType).andIsExistEqualTo(IS_EXIST);
+        List<NmplBaseStationInfo> stationInfos = nmplBaseStationInfoMapper.selectByExample(baseStationInfoExample);
+        for (NmplBaseStationInfo info:stationInfos){
+            DeviceInfoVo vo = new DeviceInfoVo();
+            vo.setDeviceId(info.getStationId());
+            vo.setLanIp(info.getLanIp());
+            devices.add(vo);
+        }
+
+        NmplDeviceInfoExample deviceInfoExample = new NmplDeviceInfoExample();
+        deviceInfoExample.createCriteria().andDeviceTypeEqualTo(deviceType).andIsExistEqualTo(IS_EXIST);
+        List<NmplDeviceInfo> deviceInfos = nmplDeviceInfoMapper.selectByExample(deviceInfoExample);
+        for (NmplDeviceInfo info:deviceInfos){
+            DeviceInfoVo vo = new DeviceInfoVo();
+            vo.setDeviceId(info.getDeviceId());
+            vo.setLanIp(info.getLanIp());
+            devices.add(vo);
+        }
+        return devices;
     }
 }
 

@@ -99,4 +99,6 @@ public class DataCollectReq extends BaseRequest implements Serializable {
     private String accessType;
 
     private String borderType;
+
+    private String key;
 }

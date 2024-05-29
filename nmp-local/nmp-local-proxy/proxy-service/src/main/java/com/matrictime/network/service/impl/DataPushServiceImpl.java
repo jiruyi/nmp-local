@@ -34,9 +34,6 @@ import static com.matrictime.network.constant.DataConstants.KEY_SPLIT_UNDERLINE;
 @Service
 public class DataPushServiceImpl implements DataPushService {
 
-    @Value("${local.ip}")
-    private String localIp;
-
     @Autowired
     private  AlarmDomainService alarmDomainService;
 
@@ -50,6 +47,8 @@ public class DataPushServiceImpl implements DataPushService {
     private RedisTemplate redisTemplate;
 
     private static final String ALARM_PUSH_LAST_MAXI_ID= ":alarm_last_push_max_id";
+
+    private static final String ALARM_PUSH= "ALARM_PUSH";
     /**
      * @title alarmPush
      * @param
@@ -64,7 +63,7 @@ public class DataPushServiceImpl implements DataPushService {
         try {
             //获取本机ip作为redis key 标识
 //            String cpuId = SystemUtil.getCpuId();
-            String cpuId = SystemUtils.getCPUProcessorID()+KEY_SPLIT_UNDERLINE+localIp;
+            String cpuId = SystemUtils.getCPUProcessorID()+KEY_SPLIT_UNDERLINE+ALARM_PUSH;
             log.info("SystemUtils.getCPUProcessorID {}",cpuId);
             Object lastMaxId = redisTemplate.opsForValue().get(cpuId+ALARM_PUSH_LAST_MAXI_ID);
             if(Objects.nonNull(lastMaxId)){
